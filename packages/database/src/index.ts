@@ -7,6 +7,7 @@ export {
 export { DatabaseModule } from "./modules/database/database.module";
 export { DatabaseService } from "./modules/database/database.service";
 export type {
+  DatabaseModuleOptions,
   DatabaseOptions,
   PostgresConnection,
   PostgresConnectionField,
@@ -15,15 +16,16 @@ export type {
   PostgresDataSourceSettings,
   PostgresEnvironmentKey,
   PostgresEnvironmentShape,
+  PostgresEnvironmentSource,
   PostgresEnvironmentSuffix,
   PostgresProject,
 } from "./modules/database/database.types";
 export {
   createDataSource,
-  postgresDataSourceOptions,
-} from "./modules/database/database.utilities";
-export {
   postgresConnection,
+  postgresDataSourceOptions,
+  postgresEnvironment,
+  postgresEnvironmentKey,
   postgresEnvironmentKeys,
   postgresEnvironmentSchema,
 } from "./modules/database/database.utilities";

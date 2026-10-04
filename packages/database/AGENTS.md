@@ -28,15 +28,18 @@ src/
   index.ts                          # Public API
   modules/
     database/
-      database-testing.*.ts         # startDatabaseTestingModule, the testing entry's Nest helper
       database.constants.ts         # Variable suffixes and connection defaults
-      database.factories.ts         # postgresDataSourceOptions, createDataSource
       database.module.ts            # DatabaseModule.forRoot over TypeOrmModule.forRootAsync
       database.service.ts           # The TypeORM options factory forRoot hands TypeORM
       database.types.ts
-      database.utilities.ts         # postgresEnvironmentSchema, postgresConnection
-      entities/                     # Identifiable → Creatable → Updatable → Deletable
-testing/                            # Vitest setup
+      database.utilities.ts         # postgresEnvironmentSchema, postgresDataSourceOptions, createDataSource, variable names
+      entities/                     # identifiable → creatable → updatable → deletable
+      postgres-container.*.ts       # startPostgresContainer, the testing entry's harness
+testing/
+  index.ts                          # The @codebase/database/testing entry
+  database-testing.*.ts             # startDatabaseTestingModule, the entry's Nest helper
+  fixtures/                         # The integration suites' entities, modules, and migration
+  setup.ts, mocks.ts                # Vitest setup
 ```
 
 ## Development
@@ -50,6 +53,10 @@ testing/                            # Vitest setup
 - **Never name a schema in code.** It comes from `<PROJECT>_POSTGRES_SCHEMA`.
 - **Never run migrations from `DatabaseModule.forRoot`.** It takes none;
   `createDataSource` and `startPostgresContainer` do.
+- **Keep the testing entry under `testing/`.** It imports `@nestjs/testing`,
+  and dependency-cruiser's `no-test-imports-in-app` allows test tooling only
+  from a `testing/` path, in this package and in every consumer that cruises
+  into it.
 - **Never name a real project in this package's tests.** Use `fixture`, and
   `sample` where a second is needed.
 - **Never import GraphQL into the base entities.** Meanderaw and caelundas

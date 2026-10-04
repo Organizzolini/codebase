@@ -13,15 +13,43 @@ import {
 import type {
   DatabaseOptions,
   PostgresConnection,
+  PostgresConnectionField,
   PostgresConnectionSource,
   PostgresDataSourceOptions,
   PostgresDataSourceSettings,
   PostgresEnvironmentShape,
+  PostgresEnvironmentSource,
   PostgresProject,
   PostgresSettingsShape,
 } from "./database.types";
 
 // 🌎 Utilities
+
+/**
+ * Holds `shape` to having a key for every one of `project`'s
+ * `<PROJECT>_POSTGRES_*` variables, which is what types
+ * {@link postgresEnvironmentSchema}'s computed keys from the project's name.
+ * It checks the keys alone, never the schema under each, and throws, naming
+ * each missing variable, when one is absent.
+ */
+export function assertPostgresEnvironmentKeys<Project extends string>(
+  shape: Readonly<Record<string, z.ZodType>>,
+  project: Project,
+): asserts shape is PostgresEnvironmentShape<Project> {
+  const missing: string[] = [];
+
+  for (const key of postgresEnvironmentKeys(project)) {
+    if (!(key in shape)) {
+      missing.push(key);
+    }
+  }
+
+  if (missing.length > 0) {
+    throw new Error(
+      `The Postgres environment schema for '${project}' lacks ${missing.join(", ")}.`,
+    );
+  }
+}
 
 /**
  * The `DataSource` a project's TypeORM command-line entry exports, built from
@@ -52,23 +80,20 @@ export function createDataSource(
 
 /**
  * The connection a project's prefixed variables describe, defaulted the way
- * {@link postgresEnvironmentSchema} defaults them. Unprefixed variables are
- * never read.
+ * `postgresEnvironmentSchema` defaults them. Unprefixed variables are never
+ * read.
  */
 export function postgresConnection({
   environment,
   project,
 }: PostgresConnectionSource): PostgresConnection {
-  const prefix = postgresEnvironmentPrefix(project);
+  const settings: Record<string, unknown> = {};
 
-  return postgresSettingsSchema(project).parse(
-    Object.fromEntries(
-      Object.entries(POSTGRES_ENVIRONMENT_SUFFIXES).map(([field, suffix]) => [
-        field,
-        environment[`${prefix}${suffix}`],
-      ]),
-    ),
-  );
+  for (const field of POSTGRES_CONNECTION_FIELDS) {
+    settings[field] = environment[postgresEnvironmentKey(project, field)];
+  }
+
+  return postgresSettingsSchema(project).parse(settings);
 }
 
 /**
@@ -105,13 +130,52 @@ export function postgresDataSourceOptions(
   };
 }
 
+/**
+ * `connection` as the project's `<PROJECT>_POSTGRES_*` variables: what to
+ * stub into the environment for a `DatabaseModule` to read it back.
+ */
+export function postgresEnvironment({
+  connection,
+  project,
+}: PostgresEnvironmentSource): Record<string, string> {
+  const environment: Record<string, string> = {};
+
+  for (const field of POSTGRES_CONNECTION_FIELDS) {
+    environment[postgresEnvironmentKey(project, field)] = String(
+      connection[field],
+    );
+  }
+
+  return environment;
+}
+
+/**
+ * The variable a project reads `field` from, for example
+ * `LEXICO_POSTGRES_DATABASE` for lexico's `database`. Throws when the name
+ * could not prefix a variable or name a database, schema, or role unquoted.
+ */
+export function postgresEnvironmentKey(
+  project: string,
+  field: PostgresConnectionField,
+): string {
+  if (!PROJECT_NAME_PATTERN.test(project)) {
+    throw new Error(
+      `Project name '${project}' must match ${String(PROJECT_NAME_PATTERN)} to name its Postgres variables, database, schema, and role.`,
+    );
+  }
+
+  return `${project.toUpperCase()}_${POSTGRES_ENVIRONMENT_SUFFIXES[field]}`;
+}
+
 /** The `<PROJECT>_POSTGRES_*` variable names a project reads. */
 export function postgresEnvironmentKeys(project: string): string[] {
-  const prefix = postgresEnvironmentPrefix(project);
+  const keys: string[] = [];
 
-  return Object.values(POSTGRES_ENVIRONMENT_SUFFIXES).map(
-    (suffix) => `${prefix}${suffix}`,
-  );
+  for (const field of POSTGRES_CONNECTION_FIELDS) {
+    keys.push(postgresEnvironmentKey(project, field));
+  }
+
+  return keys;
 }
 
 /**
@@ -122,23 +186,23 @@ export function postgresEnvironmentKeys(project: string): string[] {
  * z.object({ ...postgresEnvironmentSchema({ project: "lexico" }), ... })
  * ```
  *
+ * Its keys are typed from the project's name, which computed keys cannot
+ * carry on their own, so {@link assertPostgresEnvironmentKeys} checks the
+ * one key per connection field it builds.
+ *
  * Throws when the name could not prefix a variable or name a database.
  */
 export function postgresEnvironmentSchema<Project extends string>({
   project,
 }: PostgresProject<Project>): PostgresEnvironmentShape<Project> {
-  const prefix = postgresEnvironmentPrefix(project);
   const settings = postgresSettingsSchema(project).shape;
-  const shape = Object.fromEntries(
-    POSTGRES_CONNECTION_FIELDS.map((field) => [
-      `${prefix}${POSTGRES_ENVIRONMENT_SUFFIXES[field]}`,
-      settings[field],
-    ]),
-  );
+  const shape: Record<string, z.ZodType> = {};
 
-  if (!isPostgresEnvironmentShape(shape, project)) {
-    throw new Error(`Incomplete Postgres environment for '${project}'.`);
+  for (const field of POSTGRES_CONNECTION_FIELDS) {
+    shape[postgresEnvironmentKey(project, field)] = settings[field];
   }
+
+  assertPostgresEnvironmentKeys(shape, project);
 
   return shape;
 }
@@ -160,26 +224,4 @@ export function postgresSettingsSchema(
     schema: z.string().min(1).default(project),
     username: z.string().min(1).default(`${project}_username`),
   });
-}
-
-/**
- * Whether `shape` holds a schema under every one of the project's variable
- * names: what lets the computed keys keep their literal types.
- */
-function isPostgresEnvironmentShape<Project extends string>(
-  shape: Readonly<Record<string, unknown>>,
-  project: Project,
-): shape is PostgresEnvironmentShape<Project> {
-  return postgresEnvironmentKeys(project).every((key) => key in shape);
-}
-
-/** `LEXICO_` for `lexico`, after checking the name can carry one. */
-function postgresEnvironmentPrefix(project: string): string {
-  if (!PROJECT_NAME_PATTERN.test(project)) {
-    throw new Error(
-      `Project name '${project}' must match ${String(PROJECT_NAME_PATTERN)} to name its Postgres variables, database, schema, and role.`,
-    );
-  }
-
-  return `${project.toUpperCase()}_`;
 }

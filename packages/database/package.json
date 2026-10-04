@@ -2,7 +2,9 @@
   "dependencies": {
     "@nestjs/common": "catalog:",
     "@nestjs/config": "catalog:",
+    "@nestjs/testing": "catalog:",
     "@nestjs/typeorm": "catalog:",
+    "@testcontainers/postgresql": "catalog:",
     "pg": "catalog:",
     "reflect-metadata": "catalog:",
     "tslib": "catalog:",
@@ -12,7 +14,6 @@
   },
   "devDependencies": {
     "@golevelup/ts-vitest": "catalog:",
-    "@nestjs/testing": "catalog:",
     "@nx/eslint-plugin": "catalog:",
     "@swc/helpers": "catalog:",
     "@types/node": "catalog:",
@@ -21,6 +22,7 @@
   },
   "exports": {
     ".": "./src/index.ts",
+    "./testing": "./testing/index.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -36,6 +38,10 @@
       ".": {
         "default": "./dist/src/index.js",
         "types": "./dist/src/index.d.ts"
+      },
+      "./testing": {
+        "default": "./dist/testing/index.js",
+        "types": "./dist/testing/index.d.ts"
       },
       "./package.json": "./package.json"
     },

@@ -4,9 +4,11 @@ import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
 import {
+  assertPostgresEnvironmentKeys,
   createDataSource,
   postgresConnection,
   postgresDataSourceOptions,
+  postgresEnvironment,
   postgresEnvironmentSchema,
 } from "./database.utilities";
 
@@ -24,6 +26,26 @@ const connection: PostgresConnection = {
 };
 
 describe("database utilities", () => {
+  describe(assertPostgresEnvironmentKeys, () => {
+    it("accepts a shape with a key for every one of the project's variables", () => {
+      expect(() => {
+        assertPostgresEnvironmentKeys(
+          postgresEnvironmentSchema({ project: "fixture" }),
+          "fixture",
+        );
+      }).not.toThrow();
+    });
+
+    it("names every variable a shape has no key for", () => {
+      expect(() => {
+        assertPostgresEnvironmentKeys(
+          { FIXTURE_POSTGRES_HOST: z.string() },
+          "fixture",
+        );
+      }).toThrow(/FIXTURE_POSTGRES_DATABASE, FIXTURE_POSTGRES_PASSWORD/);
+    });
+  });
+
   describe(createDataSource, () => {
     it("builds the command-line data source from the project's prefixed variables alone", () => {
       const dataSource = createDataSource(
@@ -123,6 +145,31 @@ describe("database utilities", () => {
       ).toMatchObject({
         entities: ["src/**/*.entity.ts"],
         migrations: ["src/modules/database/migrations/*.ts"],
+      });
+    });
+  });
+
+  describe(postgresEnvironment, () => {
+    it("renders a connection as the project's prefixed variables", () => {
+      expect(
+        postgresEnvironment({
+          connection: {
+            database: "fixture_testing",
+            host: "127.0.0.1",
+            password: "fixture_password",
+            port: 55_432,
+            schema: "fixture",
+            username: "fixture_username",
+          },
+          project: "fixture",
+        }),
+      ).toStrictEqual({
+        FIXTURE_POSTGRES_DATABASE: "fixture_testing",
+        FIXTURE_POSTGRES_HOST: "127.0.0.1",
+        FIXTURE_POSTGRES_PASSWORD: "fixture_password",
+        FIXTURE_POSTGRES_PORT: "55432",
+        FIXTURE_POSTGRES_SCHEMA: "fixture",
+        FIXTURE_POSTGRES_USERNAME: "fixture_username",
       });
     });
   });

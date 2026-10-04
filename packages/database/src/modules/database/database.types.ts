@@ -64,6 +64,11 @@ export type PostgresEnvironmentShape<Project extends string> = {
   ]: PostgresSettingsShape[Field];
 };
 
+/** A connection to render as the project's variables. */
+export interface PostgresEnvironmentSource extends PostgresProject {
+  readonly connection: PostgresConnection;
+}
+
 /** One of the six endings, for example `POSTGRES_DATABASE`. */
 export type PostgresEnvironmentSuffix =
   (typeof POSTGRES_ENVIRONMENT_SUFFIXES)[PostgresConnectionField];

@@ -11,5 +11,10 @@
     "testing/**"
   ],
   "extends": "./tsconfig.json",
+  "files": [
+    "testing/database-testing.types.ts",
+    "testing/database-testing.utilities.ts",
+    "testing/index.ts"
+  ],
   "include": ["src/**/*.ts", "src/**/*.tsx"]
 }

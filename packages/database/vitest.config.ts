@@ -14,8 +14,21 @@ export default mergeConfig(
          * The integration suite exercises every column against a database.
          */
         exclude: ["src/**/*.entity.ts", "src/**/*.test.ts"],
-        include: ["src/**/*.ts"],
+        /**
+         * The testing entry's Nest helper too: it lives under `testing/`,
+         * where code may import test tooling, but it is shipped code.
+         */
+        include: ["src/**/*.ts", "testing/database-testing.utilities.ts"],
       },
+      /**
+       * Two minutes per `beforeAll`, where the shared default is ten seconds:
+       * the integration suite's one hook pulls and starts a Postgres
+       * container and migrates it, which takes several seconds on a
+       * developer's machine and several times that on a CI runner.
+       */
+      hookTimeout: 120_000,
+      /** Two minutes per test too, for the containers some tests start themselves. */
+      testTimeout: 120_000,
     },
   }),
 );
