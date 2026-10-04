@@ -246,10 +246,11 @@ echo ""
 echo "⚙️  Devcontainer configuration structure (local ↔ cloud)"
 
 # Common fields: cloud must be in sync with local (source of truth)
-if cd "${WORKSPACE_ROOT}" && pnpm exec nx run synchronization:devcontainer-configuration:check > /dev/null 2>&1; then
+if SYNC_OUTPUT=$(cd "${WORKSPACE_ROOT}" && pnpm exec nx run synchronization:devcontainer-configuration:check 2>&1); then
   pass "cloud config common fields are in sync with local config"
 else
   fail "cloud config is out of sync with local config — run: pnpm exec nx run synchronization:devcontainer-configuration:write"
+  printf '%s\n' "${SYNC_OUTPUT}" | sed 's/^/    /'
 fi
 
 # local: must have docker-outside-of-docker, must not have docker-in-docker, must not have docker-storage mount
