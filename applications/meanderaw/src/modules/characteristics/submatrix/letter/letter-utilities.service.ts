@@ -156,7 +156,6 @@ export class LetterUtilitiesService {
           orientation.template,
         ),
         key,
-        letter: true,
         name: this.displayName(key),
         submatrix: orientation.window,
         valueType: "number",
@@ -283,8 +282,7 @@ export class LetterUtilitiesService {
   /**
    * A letter's sixteen evaluators, one per orientation in
    * {@link LetterUtilitiesService.orientationNames} order. Each has its own
-   * key, display name, description, formula, and window, is marked a letter,
-   * and counts the template its orientation draws. Orientations drawing the
+   * key, display name, description, formula, and window, and counts the template its orientation draws. Orientations drawing the
    * same ink count it alike, and share every alias given for any of them.
    */
   public evaluators(

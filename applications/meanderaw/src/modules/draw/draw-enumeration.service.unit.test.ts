@@ -14,7 +14,7 @@ import type { MeanderRecord } from "../database/database.types";
 
 /**
  * What this service does with the enumeration rather than what the
- * enumeration finds: which shapes it walks, what provenance it stamps, and
+ * enumeration finds: which shapes it walks, that it marks no row hardcoded, and
  * that a shape's rows reach the database a shape at a time. What the rows
  * actually hold is asserted against a real connection in
  * `draw-enumeration.service.integration.test.ts`.
@@ -76,7 +76,7 @@ describe(DrawEnumerationService, () => {
       expect(drawRecordService.record).toHaveBeenCalledWith(
         "00",
         { columns: 1, rows: 3 },
-        "enumerated",
+        false,
       );
     });
 

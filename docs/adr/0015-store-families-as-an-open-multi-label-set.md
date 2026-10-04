@@ -1,5 +1,7 @@
 # 0015: Store Families as an Open Multi-Label Set
 
+The boolean `characteristics` array is superseded by [ADR 0018](0018-store-every-characteristic-in-one-sparse-json-map.md), and the `drawingHash` drift guard by [ADR 0019](0019-drop-the-drift-check-and-the-drawing-hash.md).
+
 ## Context
 
 The historical `meanderaw` corpus filed each meander under exactly one architectural family (e.g., `whirl`, `box`, `snake`), which the database encoded as a single `family` column with an enum constraint.

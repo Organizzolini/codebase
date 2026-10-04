@@ -10,13 +10,13 @@ import {
   CHARACTERISTIC_KEY_SET,
   CHARACTERISTIC_KEYS,
   CharacteristicRegistryError,
-  COLUMN_CHARACTERISTIC_KEY_SET,
-  COLUMN_CHARACTERISTIC_KEYS,
+  NUMERIC_CHARACTERISTIC_KEYS,
 } from "./characteristics.constants";
 import { TileCrossingComponentDeltaCountCharacteristicService } from "./path/tile-crossing/tile-crossing-component-delta-count-characteristic.service";
 
 import type { Code, CodeObject } from "../code/code.types";
 import type {
+  BooleanCharacteristicKey,
   CandidateEvaluator,
   CharacteristicContext,
   CharacteristicEvaluator,
@@ -25,9 +25,8 @@ import type {
   Characteristics,
   CharacteristicValue,
   CharacteristicValueType,
-  ColumnCharacteristicRecord,
-  GlyphCounts,
-  LetterCharacteristicKey,
+  NumericCharacteristicRecord,
+  StoredCharacteristics,
 } from "./characteristics.types";
 import type { OnApplicationBootstrap } from "@nestjs/common";
 
@@ -40,10 +39,8 @@ import type { OnApplicationBootstrap } from "@nestjs/common";
  * application boots, and fills one {@link Characteristics} record per Code
  * from a single shared context.
  *
- * It splits a record the way a meander row stores it, too: the column half
- * ({@link CharacteristicsService.columnRecord}) and the letter half
- * ({@link CharacteristicsService.glyphCounts}), told apart by each
- * evaluator's own `letter` mark.
+ * It also reduces a record to the sparse map a meander row stores
+ * ({@link CharacteristicsService.stored}).
  *
  * It also answers the two questions about a Code as filed rather than about
  * its repeating unit — whether it reduces, and the canonical-phase
@@ -65,9 +62,6 @@ export class CharacteristicsService implements OnApplicationBootstrap {
   ) {}
 
   // 🔐 Private Fields
-
-  /** {@link letterKeys}'s answer, read off the evaluators the first time it is asked for. */
-  private letters: readonly LetterCharacteristicKey[] | undefined;
 
   /**
    * Every evaluator in key-list order, discovered and checked once. The
@@ -97,34 +91,6 @@ export class CharacteristicsService implements OnApplicationBootstrap {
     }
   }
 
-  /** Narrows a record built from {@link COLUMN_CHARACTERISTIC_KEYS} to {@link ColumnCharacteristicRecord}, throwing if a key was left out. */
-  private assertColumnRecord(
-    values: Readonly<Record<string, number>>,
-  ): asserts values is ColumnCharacteristicRecord {
-    const missing = COLUMN_CHARACTERISTIC_KEYS.find(
-      (key) => typeof values[key] !== "number",
-    );
-
-    if (missing !== undefined) {
-      throw new CharacteristicRegistryError(
-        `Numeric characteristic "${missing}" is missing from the record`,
-      );
-    }
-  }
-
-  /** Throws unless an evaluator is marked a letter exactly when its key is numeric and has no column of its own, so no value is stored twice or nowhere. */
-  private assertStorage(evaluator: CharacteristicEvaluator): void {
-    const { key, letter } = evaluator.metadata;
-
-    if ((letter === true) !== this.isLetterKey(key)) {
-      throw new CharacteristicRegistryError(
-        letter === true
-          ? `Characteristic "${key}" is marked a letter, but only a numeric key without a column of its own may be`
-          : `Characteristic "${key}" has no column of its own, but is not marked a letter`,
-      );
-    }
-  }
-
   /**
    * The evaluator candidates one discovered provider holds: itself when it
    * is shaped like an evaluator, every evaluator-shaped member when it is a
@@ -149,7 +115,6 @@ export class CharacteristicsService implements OnApplicationBootstrap {
       this.candidates(instance),
     )) {
       const evaluator = this.verify(candidate);
-      this.assertStorage(evaluator);
       if (byKey.has(evaluator.metadata.key)) {
         throw new CharacteristicRegistryError(
           `Two evaluators claim characteristic "${evaluator.metadata.key}"`,
@@ -225,25 +190,6 @@ export class CharacteristicsService implements OnApplicationBootstrap {
     return CHARACTERISTIC_KEY_SET.has(key);
   }
 
-  /** Whether a key names a letter glyph count: a numeric key without a column of its own. */
-  private isLetterKey(key: string): key is LetterCharacteristicKey {
-    return (
-      this.valueTypeOf(key) === "number" &&
-      !COLUMN_CHARACTERISTIC_KEY_SET.has(key)
-    );
-  }
-
-  /** Every letter glyph count's key, in key-list order, read off the metadata of the evaluators marked `letter`. */
-  private letterKeys(): readonly LetterCharacteristicKey[] {
-    this.letters ??= this.evaluators()
-      .map((evaluator) => evaluator.metadata)
-      .filter((metadata) => metadata.letter === true)
-      .map((metadata) => metadata.key)
-      .filter((key) => this.isLetterKey(key));
-
-    return this.letters;
-  }
-
   /** The value type a key's list promises. */
   private valueTypeOf(
     key: string,
@@ -269,19 +215,6 @@ export class CharacteristicsService implements OnApplicationBootstrap {
 
   // 🌎 Public Methods
 
-  /** The column half of a computed record: every numeric characteristic a meander row stores under a column of its own, with every letter and boolean key left out. */
-  public columnRecord(
-    characteristics: Characteristics,
-  ): ColumnCharacteristicRecord {
-    const values: Readonly<Record<string, number>> = Object.fromEntries(
-      COLUMN_CHARACTERISTIC_KEYS.map((key) => [key, characteristics[key]]),
-    );
-
-    this.assertColumnRecord(values);
-
-    return values;
-  }
-
   /** Every characteristic of a Code's repeating unit, computed by every evaluator from one shared context. */
   public compute(code: Code | CodeObject): Characteristics {
     const context = this.contextService.create(code);
@@ -292,15 +225,6 @@ export class CharacteristicsService implements OnApplicationBootstrap {
     this.assertCharacteristics(values);
 
     return values;
-  }
-
-  /** The letter half of a computed record, as a meander row's `glyphs` map stores it: every letter the Code contains, under its key, and no letter it does not. */
-  public glyphCounts(characteristics: Characteristics): GlyphCounts {
-    return Object.fromEntries(
-      this.letterKeys()
-        .filter((key) => characteristics[key] !== 0)
-        .map((key) => [key, characteristics[key]]),
-    );
   }
 
   /** Whether the Code as filed is wider than its repeating unit — a property of the filing, not of the unit, so not a record field. */
@@ -330,6 +254,35 @@ export class CharacteristicsService implements OnApplicationBootstrap {
   }
 
   /**
+   * A computed record as a meander row's `characteristics` map stores it:
+   * every numeric key whose value is not zero, then `true` under every
+   * boolean key that holds, then `isReducible` when the filed Code is wider
+   * than its unit — each run in key-list order, and no zero or `false` at all.
+   */
+  public stored(
+    characteristics: Characteristics,
+    isReducible: boolean,
+  ): StoredCharacteristics {
+    const numbers: Partial<NumericCharacteristicRecord> = Object.fromEntries(
+      NUMERIC_CHARACTERISTIC_KEYS.filter(
+        (key) => characteristics[key] !== 0,
+      ).map((key) => [key, characteristics[key]]),
+    );
+    const truths: Partial<Record<BooleanCharacteristicKey, true>> =
+      Object.fromEntries(
+        BOOLEAN_CHARACTERISTIC_KEYS.filter((key) => characteristics[key]).map(
+          (key) => [key, true as const],
+        ),
+      );
+
+    return {
+      ...numbers,
+      ...truths,
+      ...(isReducible ? { isReducible: true } : {}),
+    };
+  }
+
+  /**
    * The tile-crossing component delta of the Code exactly as filed, not of
    * its repeating unit — the canonical-phase scorer, which compares cuts of
    * the same band and so must see the width it was cut at.
@@ -338,16 +291,5 @@ export class CharacteristicsService implements OnApplicationBootstrap {
     return this.tileCrossingComponentDeltaCountService.compute(
       this.contextService.createUnreduced(code),
     );
-  }
-
-  /** The boolean half of a computed record that holds, as the `characteristics` column stores it: every key from {@link BOOLEAN_CHARACTERISTIC_KEYS} whose value is `true`, followed by `"isReducible"` when the filed Code is wider than its unit. */
-  public trueBooleanKeys(
-    characteristics: Characteristics,
-    isReducible: boolean,
-  ): string[] {
-    return [
-      ...BOOLEAN_CHARACTERISTIC_KEYS.filter((key) => characteristics[key]),
-      ...(isReducible ? ["isReducible"] : []),
-    ];
   }
 }
