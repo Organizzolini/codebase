@@ -14,7 +14,12 @@ members = ["applications/affirmations"]
 
 # Tools the workspace-root Nx targets invoke, over files outside any project.
 [dependency-groups]
-dev = ["sqlfluff>=3.0", "vulture>=2.14", "yamllint>=1.35"]
+dev = [
+    "shellcheck-py>=0.10",
+    "sqlfluff>=3.0",
+    "vulture>=2.14",
+    "yamllint>=1.35",
+]
 
 # Python projects extend the settings below via
 # [tool.ruff] extend = "../../pyproject.toml"

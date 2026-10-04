@@ -25,18 +25,18 @@
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)" || exit 0
-cd "$ROOT" || exit 0
+cd "${ROOT}" || exit 0
 
 LOCKFILE="skills-lock.json"
 SKILLS_DIRECTORY=".agents/skills"
 RETRY_HINT="💡 Retry with 'pnpm exec nx run codebase:install-skills'"
 
-if [ -n "${SKIP_SKILLS_INSTALL:-}" ]; then
+if [[ -n "${SKIP_SKILLS_INSTALL:-}" ]]; then
   echo "🤹 SKIP_SKILLS_INSTALL is set, leaving skills alone"
   exit 0
 fi
 
-if [ ! -f "$LOCKFILE" ]; then
+if [[ ! -f "${LOCKFILE}" ]]; then
   exit 0
 fi
 
@@ -45,7 +45,7 @@ fi
 # is never confused with "nothing could be read" — the old version swallowed
 # both into an empty result and then reported success over a corrupt lockfile.
 locked_skills_missing_from_disk() {
-  node -e '
+  node - <<'JS'
 const fs = require("fs");
 try {
   const parsed = JSON.parse(fs.readFileSync("skills-lock.json", "utf8"));
@@ -58,7 +58,7 @@ try {
   process.stderr.write(`⚠️  skills-lock.json could not be listed: ${error.message}\n`);
   process.exit(1);
 }
-'
+JS
 }
 
 if MISSING="$(locked_skills_missing_from_disk)"; then
@@ -68,32 +68,32 @@ else
   MISSING=""
 fi
 
-if [ "$LOCKFILE_READABLE" = false ]; then
-  echo "⚠️  $LOCKFILE could not be read, so no skill was restored and none was verified"
-  echo "$RETRY_HINT"
+if [[ "${LOCKFILE_READABLE}" = false ]]; then
+  echo "⚠️  ${LOCKFILE} could not be read, so no skill was restored and none was verified"
+  echo "${RETRY_HINT}"
   exit 0
 fi
 
-if [ -z "$MISSING" ] && [ -z "${SKILLS_INSTALL_FORCE:-}" ]; then
-  echo "🤹 Skills already restored from $LOCKFILE"
+if [[ -z "${MISSING}" ]] && [[ -z "${SKILLS_INSTALL_FORCE:-}" ]]; then
+  echo "🤹 Skills already restored from ${LOCKFILE}"
   exit 0
 fi
 
-if [ -n "$MISSING" ]; then
-  echo "🤹 Restoring $(echo "$MISSING" | wc -w | tr -d ' ') missing skills from $LOCKFILE"
+if [[ -n "${MISSING}" ]]; then
+  echo "🤹 Restoring $(echo "${MISSING}" | wc -w | tr -d ' ') missing skills from ${LOCKFILE}"
 else
-  echo "🤹 SKILLS_INSTALL_FORCE is set, re-restoring every skill in $LOCKFILE"
+  echo "🤹 SKILLS_INSTALL_FORCE is set, re-restoring every skill in ${LOCKFILE}"
 fi
 
 # Resolve the CLI. node_modules/.bin is linked before the root postinstall runs,
 # but fall back to pnpm exec rather than assuming it.
-if [ -x "node_modules/.bin/skills" ]; then
+if [[ -x "node_modules/.bin/skills" ]]; then
   SKILLS_COMMAND=("node_modules/.bin/skills")
 elif command -v pnpm &>/dev/null; then
   SKILLS_COMMAND=(pnpm exec skills)
 else
-  echo "⚠️  The skills CLI is unavailable, so skills declared in $LOCKFILE are missing"
-  echo "$RETRY_HINT"
+  echo "⚠️  The skills CLI is unavailable, so skills declared in ${LOCKFILE} are missing"
+  echo "${RETRY_HINT}"
   exit 0
 fi
 
@@ -103,7 +103,7 @@ in_work_tree() {
 
 # Only worth restoring the lockfile if it started clean and we are in a work tree.
 LOCKFILE_WAS_CLEAN=false
-if in_work_tree && git diff --quiet -- "$LOCKFILE" &>/dev/null; then
+if in_work_tree && git diff --quiet -- "${LOCKFILE}" &>/dev/null; then
   LOCKFILE_WAS_CLEAN=true
 fi
 
@@ -111,10 +111,10 @@ if ! "${SKILLS_COMMAND[@]}" experimental_install; then
   echo "⚠️  Skill restoration did not complete"
 fi
 
-if [ "$LOCKFILE_WAS_CLEAN" = true ] &&
-  ! git diff --quiet -- "$LOCKFILE" &>/dev/null; then
-  git checkout -- "$LOCKFILE" &>/dev/null &&
-    echo "🤹 Reverted the hashes rewritten in $LOCKFILE; 'skills update' moves the pins"
+if [[ "${LOCKFILE_WAS_CLEAN}" = true ]] &&
+  ! git diff --quiet -- "${LOCKFILE}" &>/dev/null; then
+  git checkout -- "${LOCKFILE}" &>/dev/null &&
+    echo "🤹 Reverted the hashes rewritten in ${LOCKFILE}; 'skills update' moves the pins"
 fi
 
 # Return the skill folders to the content this repository pins.
@@ -129,20 +129,20 @@ fi
 # git already holds it. An edit to an installed copy does not survive, but
 # restoration overwrote it before this point regardless — installed skills are
 # owned upstream, so the source repository is where to edit them.
-if in_work_tree && ! git diff --quiet -- "$SKILLS_DIRECTORY" &>/dev/null; then
-  git checkout -- "$SKILLS_DIRECTORY" &>/dev/null &&
+if in_work_tree && ! git diff --quiet -- "${SKILLS_DIRECTORY}" &>/dev/null; then
+  git checkout -- "${SKILLS_DIRECTORY}" &>/dev/null &&
     echo "🤹 Returned the skill folders to the committed content"
 fi
 
 if ! STILL_MISSING="$(locked_skills_missing_from_disk)"; then
-  echo "⚠️  Restoration ran, but $LOCKFILE could not be re-read to confirm the result"
-  echo "$RETRY_HINT"
+  echo "⚠️  Restoration ran, but ${LOCKFILE} could not be re-read to confirm the result"
+  echo "${RETRY_HINT}"
   exit 0
 fi
-if [ -n "$STILL_MISSING" ]; then
-  echo "⚠️  Skills still missing: $STILL_MISSING"
-  echo "$RETRY_HINT"
+if [[ -n "${STILL_MISSING}" ]]; then
+  echo "⚠️  Skills still missing: ${STILL_MISSING}"
+  echo "${RETRY_HINT}"
   exit 0
 fi
 
-echo "✅ Restored every skill declared in $LOCKFILE"
+echo "✅ Restored every skill declared in ${LOCKFILE}"

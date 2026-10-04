@@ -20,17 +20,17 @@ source ./scripts/local/software.sh
 source ./scripts/local/environment.sh
 source ./scripts/local/dependencies.sh
 echo ""
-current_shell="$(basename "$SHELL")"
-case "$current_shell" in
-  zsh)  rc_file="~/.zshrc" ;;
-  bash) rc_file="~/.bashrc" ;;
+current_shell="$(basename "${SHELL}")"
+case "${current_shell}" in
+  zsh)  rc_file="${HOME}/.zshrc" ;;
+  bash) rc_file="${HOME}/.bashrc" ;;
   *)    rc_file="" ;;
 esac
 
 echo "🎉 Setup complete! All tools and shell configuration are ready."
 echo "   New terminal windows will automatically have all tools available."
-if [ -n "$rc_file" ]; then
+if [[ -n "${rc_file}" ]]; then
   echo ""
   echo "   To activate in this terminal, run:"
-  echo "   source $rc_file"
+  echo "   source ${rc_file}"
 fi

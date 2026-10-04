@@ -19,7 +19,7 @@ if ! curl -sf http://localhost:11434/api/version &>/dev/null; then
     disown
   fi
   echo "⏳ Waiting for Ollama to be ready..."
-  for i in {1..15}; do
+  for _ in {1..15}; do
     if curl -sf http://localhost:11434/api/version &>/dev/null; then
       break
     fi

@@ -11,8 +11,8 @@ SCRIPT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # ✅ Validation
 
-ERROR=$(bash "$SCRIPT_DIRECTORY/check-gh-authentication.sh" 2>&1 || true)
-[ -z "$ERROR" ] && exit 0
+ERROR=$(bash "${SCRIPT_DIRECTORY}/check-gh-authentication.sh" 2>&1 || true)
+[[ -z "${ERROR}" ]] && exit 0
 
 # 📋 Context
 
@@ -33,10 +33,10 @@ else
 5. If project access still fails, grant the missing scopes with \"gh auth refresh --scopes read:project,read:org\"."
 fi
 
-CONTEXT="$ERROR
+CONTEXT="${ERROR}
 🚨 GitHub authentication is required in this repository.
 
 Action required:
-$REMEDIATION"
+${REMEDIATION}"
 
-printf '%s' "$CONTEXT" | bash "$SCRIPT_DIRECTORY/emit-session-hook-context.sh"
+printf '%s' "${CONTEXT}" | bash "${SCRIPT_DIRECTORY}/emit-session-hook-context.sh"

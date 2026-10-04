@@ -18,12 +18,12 @@ else
 fi
 
 echo "🔐 Configuring gpg-agent to use pinentry-mac..."
-GNUPG_DIR="$HOME/.gnupg"
-mkdir -p "$GNUPG_DIR" && chmod 700 "$GNUPG_DIR"
-AGENT_CONF="$GNUPG_DIR/gpg-agent.conf"
+GNUPG_DIR="${HOME}/.gnupg"
+mkdir -p "${GNUPG_DIR}" && chmod 700 "${GNUPG_DIR}"
+AGENT_CONF="${GNUPG_DIR}/gpg-agent.conf"
 PINENTRY_PATH="$(brew --prefix)/bin/pinentry-mac"
-if [ ! -f "$AGENT_CONF" ] || ! grep -q "pinentry-program" "$AGENT_CONF"; then
-  echo "pinentry-program $PINENTRY_PATH" >> "$AGENT_CONF"
+if [[ ! -f "${AGENT_CONF}" ]] || ! grep -q "pinentry-program" "${AGENT_CONF}"; then
+  echo "pinentry-program ${PINENTRY_PATH}" >> "${AGENT_CONF}"
   echo "✅ pinentry-mac configured in gpg-agent.conf"
 else
   echo "👍 gpg-agent.conf already configured"
@@ -44,12 +44,12 @@ if ! gpg --list-secret-keys --keyid-format=long | grep -q '^sec'; then
 else
   echo "👍 GPG signing key found"
   GPG_KEY_ID=$(gpg --list-secret-keys --keyid-format=long | grep '^sec' | awk '{print $2}' | cut -d'/' -f2 | head -1)
-  echo "   Key ID: $GPG_KEY_ID"
+  echo "   Key ID: ${GPG_KEY_ID}"
   if ! git config --global user.signingkey &>/dev/null; then
-    git config --global user.signingkey "$GPG_KEY_ID"
+    git config --global user.signingkey "${GPG_KEY_ID}"
     git config --global commit.gpgsign true
     git config --global gpg.program gpg
-    echo "✅ git global signing configured with key $GPG_KEY_ID"
+    echo "✅ git global signing configured with key ${GPG_KEY_ID}"
   else
     echo "👍 git signing already configured globally"
   fi

@@ -13,7 +13,7 @@ if ! git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
 fi
 
 current_branch_name="$(git branch --show-current)"
-if [[ -z "$current_branch_name" ]]; then
+if [[ -z "${current_branch_name}" ]]; then
   echo "❌ Detached HEAD detected. Checkout a branch before deleting others." >&2
   exit 1
 fi
@@ -42,27 +42,27 @@ fi
 stale_branch_names=()
 
 while read -r branch_name; do
-  if [[ -z "$branch_name" ]]; then
+  if [[ -z "${branch_name}" ]]; then
     continue
   fi
 
-  branch_commit_unix_timestamp="$(git log -1 --format='%ct' "$branch_name")"
-  branch_commit_date="$(git log -1 --format='%cs' "$branch_name")"
+  branch_commit_unix_timestamp="$(git log -1 --format='%ct' "${branch_name}")"
+  branch_commit_date="$(git log -1 --format='%cs' "${branch_name}")"
 
-  if [[ "$branch_name" == "$current_branch_name" ]]; then
+  if [[ "${branch_name}" == "${current_branch_name}" ]]; then
     continue
   fi
 
-  if [[ "$branch_name" == "main" || "$branch_name" == "develop" ]]; then
+  if [[ "${branch_name}" == "main" || "${branch_name}" == "develop" ]]; then
     continue
   fi
 
-  if [[ -n "$open_pull_request_branch_names" ]] && printf '%s\n' "$open_pull_request_branch_names" | grep -Fxq "$branch_name"; then
+  if [[ -n "${open_pull_request_branch_names}" ]] && printf '%s\n' "${open_pull_request_branch_names}" | grep -Fxq "${branch_name}"; then
     continue
   fi
 
-  if [[ "$branch_commit_unix_timestamp" -lt "$cutoff_unix_timestamp" ]]; then
-    stale_branch_names+=("$branch_name|$branch_commit_date")
+  if [[ "${branch_commit_unix_timestamp}" -lt "${cutoff_unix_timestamp}" ]]; then
+    stale_branch_names+=("${branch_name}|${branch_commit_date}")
   fi
 done < <(git for-each-ref refs/heads --format='%(refname:short)')
 
@@ -81,7 +81,7 @@ done
 echo "🧹 Deleting stale local branches..."
 for stale_branch_record in "${stale_branch_names[@]}"; do
   stale_branch_name="${stale_branch_record%%|*}"
-  git branch -D "$stale_branch_name"
+  git branch -D "${stale_branch_name}"
 done
 
 echo "✅ Deleted ${#stale_branch_names[@]} stale local branch(es)."

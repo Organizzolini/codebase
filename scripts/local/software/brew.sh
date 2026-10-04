@@ -16,17 +16,17 @@ fi
 brew_install_or_check() {
   local name="$1"
   local tap="$2" # optional tap path, e.g. "supabase/tap/supabase"
-  local formula="${tap:-$name}"
+  local formula="${tap:-${name}}"
 
-  echo "🔍 Checking for $name installation..."
-  if ! command -v "$name" &> /dev/null; then
-    echo "📦 $name not found. Installing via Homebrew..."
-    brew install "$formula"
-    echo "✅ $name installed via Homebrew"
+  echo "🔍 Checking for ${name} installation..."
+  if ! command -v "${name}" &> /dev/null; then
+    echo "📦 ${name} not found. Installing via Homebrew..."
+    brew install "${formula}"
+    echo "✅ ${name} installed via Homebrew"
   else
-    echo "👍 $name is already installed"
-    if brew outdated | grep -q "$name"; then
-      echo "🔄 $name is outdated. To update, run: brew upgrade $formula"
+    echo "👍 ${name} is already installed"
+    if brew outdated | grep -q "${name}"; then
+      echo "🔄 ${name} is outdated. To update, run: brew upgrade ${formula}"
     fi
   fi
 }

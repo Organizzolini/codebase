@@ -1,12 +1,15 @@
+# shellcheck shell=sh
+# Husky runs hooks with sh, so there is no shebang.
+
 set -e
 
 # ⏱️ Log timestamp
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S %z')
-printf '[%s] pre-commit\n' "$TIMESTAMP"
+printf '[%s] pre-commit\n' "${TIMESTAMP}"
 
 # 🔐 Check GPG git signing configuration
 REPOSITORY_ROOT="$(git rev-parse --show-toplevel)"
-"$REPOSITORY_ROOT/scripts/git/check-commit-signing-configuration.sh"
+"${REPOSITORY_ROOT}/scripts/git/check-commit-signing-configuration.sh"
 
 # 🗒️ Clear notepads
 git restore --staged notepads/notepad.jsonc || true
@@ -52,7 +55,7 @@ if [ "${EXIT_CODE}" = "137" ] || grep -q "Task failed to spawn" last-lint-staged
     printf '   You are on Node %s. Node 26 is killed by the operating system on\n' "$(node --version)"
     printf '   any single argument past ~1 KB, which a long staged file list can\n'
     printf '   reach. Switch to the pinned version and commit again:\n'
-    printf '   nvm use   # %s, per .nvmrc\n\n' "$(cat "$REPOSITORY_ROOT/.nvmrc")"
+    printf '   nvm use   # %s, per .nvmrc\n\n' "$(cat "${REPOSITORY_ROOT}/.nvmrc")"
   else
     printf '   The likely cause is the operating system reclaiming memory.\n'
     printf '   Free some memory and commit again, or run the analysis directly:\n'
@@ -61,15 +64,14 @@ if [ "${EXIT_CODE}" = "137" ] || grep -q "Task failed to spawn" last-lint-staged
 fi
 
 # 🖨️ Log output
-LAST_LINT_STAGED_OUTPUT=$(cat last-lint-staged-output.log \
-  | grep -vE '\(node:[0-9]+\) Warning: The .NO_COLOR' \
+LAST_LINT_STAGED_OUTPUT=$(grep -vE '\(node:[0-9]+\) Warning: The .NO_COLOR' last-lint-staged-output.log \
   | grep -vE '\(Use .node --trace-warnings' \
   | grep -vE 'Your AI agent configuration is outdated' \
   | perl -pe 's/\x1B\[[0-9;]*[a-zA-Z]//g' \
   | perl -0777 -pe 's/\n{3,}/\n\n/g')
 
-printf "%s\n" "$LAST_LINT_STAGED_OUTPUT"
-printf '[%s] pre-commit\n%s\n' "$TIMESTAMP" "$LAST_LINT_STAGED_OUTPUT" > last-lint-staged-output.log
+printf "%s\n" "${LAST_LINT_STAGED_OUTPUT}"
+printf '[%s] pre-commit\n%s\n' "${TIMESTAMP}" "${LAST_LINT_STAGED_OUTPUT}" > last-lint-staged-output.log
 
 # 🚫 Exit
-exit "$EXIT_CODE"
+exit "${EXIT_CODE}"
