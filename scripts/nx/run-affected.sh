@@ -59,7 +59,9 @@ if [[ -z "${spelling}" ]]; then
 fi
 
 echo "✂️ Not affecting ${TARGET} with spelling files:"
-sed 's/^/  /' <<<"${spelling}"
+while IFS= read -r spelling_path; do
+  printf '  %s\n' "${spelling_path}"
+done <<<"${spelling}"
 
 kept="$(grep -Ev "${spelling_paths}" <<<"${changed}" || true)"
 printf '%s\n' "${kept}" \
