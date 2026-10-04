@@ -22,6 +22,5 @@
   "typeCoverage": {
     "atLeast": 100,
     "strict": true
-  },
-  "version": "0.0.1"
+  }
 }

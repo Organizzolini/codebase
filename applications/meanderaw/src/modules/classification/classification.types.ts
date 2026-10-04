@@ -42,7 +42,7 @@ export interface MeanderFamilyRule {
  * its {@link Characteristics} are measured on. `classify` needs no column
  * count: every rule reads only `rows` and `isReducible`.
  */
-export interface MeanderShape {
+export interface MeanderFiledShape {
   readonly isReducible: boolean;
   readonly rows: number;
 }
@@ -50,6 +50,6 @@ export interface MeanderShape {
 /**
  * Everything a family rule reads: the tile's measured Characteristics record and its shape.
  */
-export interface MeanderStructure extends MeanderShape {
+export interface MeanderStructure extends MeanderFiledShape {
   readonly characteristics: Characteristics;
 }

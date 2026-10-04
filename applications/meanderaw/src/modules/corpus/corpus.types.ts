@@ -16,7 +16,7 @@
  * It is a **non-empty** tuple rather than a plain array, because every entry
  * here came out of some `output/<family>/` directory and
  * `CorpusService.ingest` walks the families rather than the entries. An
- * entry filed under nothing would match no family and vanish from the sweep
+ * entry filed under nothing would match no family and vanish from the draw run
  * with no row and no error, so the type refuses to describe one. See `HISTORICAL_CORPUS` for the whole set and
  * `docs/adr/0013-hold-the-historical-corpus-as-a-test-set.md` for why the
  * labels are not to be trusted back into place.

@@ -18,7 +18,7 @@ import type { NxProject, WorkspaceGraph } from "@codependix/nx-projects";
  *
  * The adapters live here, in the host that already builds all four, rather
  * than in `@codependix/boundaries` — which would otherwise have to depend on
- * `nestjs-spelunker` and `typescript` to name the types it translates, for a
+ * `@nestjs/core` and `typescript` to name the types it translates, for a
  * package whose whole job is evaluating rules. The four
  * already share an identical `{ source, target }` edge shape by construction,
  * so each adapter is only ever nodes, edges, and the attributes rules select

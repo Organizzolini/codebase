@@ -7,7 +7,6 @@
     "@nestjs/common": "catalog:ic-suite",
     "@nestjs/config": "catalog:",
     "@nestjs/core": "catalog:ic-suite",
-    "nestjs-spelunker": "catalog:",
     "pino": "catalog:",
     "pino-pretty": "catalog:",
     "reflect-metadata": "catalog:"

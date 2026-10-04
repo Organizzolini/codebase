@@ -38,6 +38,8 @@
     "{applications,packages,tools}/**/src/generators/**/generator.ts",
     "{applications,packages,tools}/**/src/generators.ts",
     "{applications,packages,tools}/**/src/repl.ts",
+    // A worker thread's entry point is spawned by URL, never imported.
+    "{applications,packages,tools}/**/src/worker.ts",
     "{applications,packages,tools}/**/testing/**/*.ts",
     // conformetry-examples: every example is read and run rather than imported,
     // so nothing in the module graph reaches one. knip names the same paths in
@@ -161,6 +163,10 @@
     "license-checker",
     // Invoked by the openwiki target rather than imported.
     "openwiki",
+    // Started by the `@nx/js:verdaccio` executor behind the root
+    // `local-registry` target, which resolves it by name rather than importing
+    // it. Knip's Nx plugin reads that executor, so knip needs no entry.
+    "verdaccio",
     // Apollo 5's Express integration, which @nestjs/apollo resolves by name
     // when lexico-api's GraphQLModule starts. lexico-api's eslint.config.ts
     // and knip workspace carve it out for the same reason.

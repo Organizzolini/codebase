@@ -101,7 +101,7 @@
         "{workspaceRoot}/**/package.json",
         {
           "input": "production",
-          "projects": ["logger", "validation"]
+          "projects": ["logging", "validation"]
         },
         {
           "externalDependencies": [
@@ -133,7 +133,7 @@
         "{workspaceRoot}/pnpm-workspace.yaml",
         {
           "input": "production",
-          "projects": ["logger", "validation"]
+          "projects": ["logging", "validation"]
         },
         {
           "externalDependencies": [
@@ -162,7 +162,7 @@
         "{workspaceRoot}/README.md",
         {
           "input": "production",
-          "projects": ["logger", "validation"]
+          "projects": ["logging", "validation"]
         },
         {
           "externalDependencies": [
@@ -571,6 +571,14 @@
         "cwd": "{projectRoot}"
       }
     },
+    "local-registry": {
+      "executor": "@nx/js:verdaccio",
+      "options": {
+        "config": ".verdaccio/config.yml",
+        "port": 4873,
+        "storage": "tmp/local-registry/storage"
+      }
+    },
     "markdown-lint": {
       "cache": true,
       "configurations": {
@@ -659,10 +667,10 @@
       "cache": true,
       "configurations": {
         "check": {
-          "command": "oxlint --config configuration/oxlint.config.ts --ignore-path configuration/.oxlintignore '*.ts' '*.js' '.devcontainer/scripts/' 'scripts/' 'documentation/' 'infrastructure/' --ignore-pattern='infrastructure/helm/**/templates'"
+          "command": "oxlint --config configuration/oxlint.config.ts --ignore-path \"$PWD/configuration/.oxlintignore\" '*.ts' '*.js' '.devcontainer/scripts/' 'scripts/' 'documentation/' 'infrastructure/' --ignore-pattern='infrastructure/helm/**/templates'"
         },
         "write": {
-          "command": "oxlint --config configuration/oxlint.config.ts --ignore-path configuration/.oxlintignore {args} '*.ts' '*.js' '.devcontainer/scripts/' 'scripts/' 'documentation/' 'infrastructure/' --ignore-pattern='infrastructure/helm/**/templates'"
+          "command": "oxlint --config configuration/oxlint.config.ts --ignore-path \"$PWD/configuration/.oxlintignore\" {args} '*.ts' '*.js' '.devcontainer/scripts/' 'scripts/' 'documentation/' 'infrastructure/' --ignore-pattern='infrastructure/helm/**/templates'"
         }
       },
       "defaultConfiguration": "check",
@@ -786,10 +794,10 @@
       "cache": true,
       "configurations": {
         "check": {
-          "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path configuration/.prettierignore --check --ignore-unknown ."
+          "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path .gitignore --ignore-path configuration/.prettierignore --check --ignore-unknown ."
         },
         "write": {
-          "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path configuration/.prettierignore --write --ignore-unknown ."
+          "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path .gitignore --ignore-path configuration/.prettierignore --write --ignore-unknown ."
         }
       },
       "defaultConfiguration": "write",
@@ -802,7 +810,7 @@
         }
       ],
       "options": {
-        "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path configuration/.prettierignore --ignore-unknown .",
+        "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path .gitignore --ignore-path configuration/.prettierignore --ignore-unknown .",
         "cwd": "{projectRoot}"
       }
     },

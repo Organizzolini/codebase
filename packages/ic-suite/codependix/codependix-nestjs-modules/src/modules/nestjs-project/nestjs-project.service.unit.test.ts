@@ -1,7 +1,7 @@
 import path from "node:path";
 
 import { createMock } from "@golevelup/ts-vitest";
-import { NestFactory } from "@nestjs/core";
+import { ModulesContainer, NestFactory } from "@nestjs/core";
 import { Test } from "@nestjs/testing";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -13,7 +13,6 @@ import { NestjsProjectService } from "./nestjs-project.service";
 
 import type { NestjsProject } from "./nestjs-project.types";
 import type { INestApplicationContext } from "@nestjs/common";
-import type { SpelunkedTree } from "nestjs-spelunker";
 
 /** Paths the mocked workspace reports as existing. */
 const existingPaths = new Set<string>();
@@ -24,11 +23,17 @@ const workspaceEntries = new Map<string, string[]>();
 /** Entry names the mocked workspace reports as files rather than directories. */
 const workspaceFileEntries = new Set<string>();
 
-/** Options the mocked explorer was given, in call order. */
-const exploreOptions: { ignoreImports?: RegExp[] }[] = [];
+/** The part of a NestJS `Module` the explorer reads. */
+interface ContainerModule {
+  readonly imports: Set<ContainerModule>;
+  readonly name: string;
+}
 
-/** Tree the mocked explorer returns. */
-let exploredTree: SpelunkedTree[] = [];
+/**
+ * Modules the mocked container holds, in registration order, each with the
+ * names of the modules it imports.
+ */
+let containerModules: [name: string, imports: string[]][] = [];
 
 /** Root modules the mocked container was built from, in call order. */
 const exploredRootModules: unknown[] = [];
@@ -55,17 +60,6 @@ vi.mock("node:fs", async (importOriginal) => {
     ),
   };
 });
-
-vi.mock("nestjs-spelunker", () => ({
-  SpelunkerModule: {
-    explore: vi.fn<
-      (application: unknown, options: { ignoreImports?: RegExp[] }) => unknown
-    >((_application: unknown, options: { ignoreImports?: RegExp[] }) => {
-      exploreOptions.push(options);
-      return exploredTree;
-    }),
-  },
-}));
 
 /** Builds a project graph node with the given tags. */
 /** One discovered project, as `codependix-nx-projects` hands it over. */
@@ -96,8 +90,7 @@ describe(NestjsProjectService, () => {
     existingPaths.clear();
     workspaceEntries.clear();
     workspaceFileEntries.clear();
-    exploreOptions.length = 0;
-    exploredTree = [];
+    containerModules = [];
     exploredRootModules.length = 0;
     vi.clearAllMocks();
   });
@@ -215,6 +208,28 @@ describe(NestjsProjectService, () => {
       };
     }
 
+    /**
+     * Builds the `ModulesContainer` the mocked container hands out, linking
+     * each module to the ones it imports the way NestJS does: by reference.
+     */
+    function buildModulesContainer(): Map<string, ContainerModule> {
+      const modules = new Map<string, ContainerModule>(
+        containerModules.map(([name]) => [name, { imports: new Set(), name }]),
+      );
+
+      for (const [name, imports] of containerModules) {
+        for (const importedName of imports) {
+          const importedModule = modules.get(importedName);
+
+          if (importedModule !== undefined) {
+            modules.get(name)?.imports.add(importedModule);
+          }
+        }
+      }
+
+      return modules;
+    }
+
     /** Records the root module the container was asked to build. */
     function mockApplicationContext(): void {
       vi.spyOn(NestFactory, "createApplicationContext").mockImplementation(
@@ -222,22 +237,22 @@ describe(NestjsProjectService, () => {
           await Promise.resolve();
           exploredRootModules.push(rootModule);
 
-          return createMock<INestApplicationContext>();
+          return createMock<INestApplicationContext>({
+            get: vi.fn<(token: unknown) => Map<string, ContainerModule>>(
+              (token: unknown) => {
+                expect(token).toBe(ModulesContainer);
+
+                return buildModulesContainer();
+              },
+            ),
+          });
         },
       );
     }
 
     it("explores the root module a project exports", async () => {
       mockApplicationContext();
-      exploredTree = [
-        {
-          controllers: [],
-          exports: [],
-          imports: [],
-          name: "MainModule",
-          providers: {},
-        },
-      ];
+      containerModules = [["MainModule", []]];
 
       const tree = await service.exploreProject(
         buildProject("testing/main.module.ts"),
@@ -245,8 +260,9 @@ describe(NestjsProjectService, () => {
 
       expect(tree).toStrictEqual([
         {
-          ...exploredTree[0],
           declaringFile: "testing/main.module.ts",
+          imports: [],
+          name: "MainModule",
         },
       ]);
       expect(exploredRootModules[0]).toBe(MainModule);
@@ -308,26 +324,15 @@ describe(NestjsProjectService, () => {
     it("attaches declaring files to explored library modules", async () => {
       mockApplicationContext();
       mockPackageTree();
-      exploredTree = [
-        {
-          controllers: [],
-          exports: [],
-          imports: [],
-          name: "ModuleGraphModule",
-          providers: {},
-        },
-      ];
+      containerModules = [["ModuleGraphModule", []]];
 
       const tree = await service.exploreProject(buildProject(undefined));
 
       expect(tree).toStrictEqual([
         {
-          controllers: [],
           declaringFile: "src/modules/module-graph/module-graph.module.ts",
-          exports: [],
           imports: [],
           name: "ModuleGraphModule",
-          providers: {},
         },
       ]);
     });
@@ -361,12 +366,14 @@ describe(NestjsProjectService, () => {
       mockApplicationContext();
       existingPaths.add(path.join(process.cwd(), "src"));
       workspaceEntries.set("src", []);
+      containerModules = [
+        ["SyntheticRootModule", ["ConfigModule"]],
+        ["ConfigModule", []],
+      ];
 
-      await service.exploreProject(buildProject(undefined));
+      const tree = await service.exploreProject(buildProject(undefined));
 
-      expect(
-        exploreOptions[0]?.ignoreImports?.map((pattern) => pattern.source),
-      ).toContain("^ConfigModule$");
+      expect(tree).toStrictEqual([]);
     });
 
     it("finds no modules in a package with no source directory", async () => {
@@ -383,12 +390,79 @@ describe(NestjsProjectService, () => {
 
     it("leaves ConfigModule in the graph of a project that declares it", async () => {
       mockApplicationContext();
+      containerModules = [
+        ["MainModule", ["ConfigModule"]],
+        ["ConfigModule", []],
+      ];
 
-      await service.exploreProject(buildProject("testing/main.module.ts"));
+      const tree = await service.exploreProject(
+        buildProject("testing/main.module.ts"),
+      );
+
+      expect(tree.map((node) => node.name)).toStrictEqual([
+        "MainModule",
+        "ConfigModule",
+      ]);
+    });
+
+    it("reports each module's imports by name, in the container's order", async () => {
+      mockApplicationContext();
+      containerModules = [
+        ["MainModule", ["LeafModule", "SharedModule"]],
+        ["LeafModule", ["SharedModule"]],
+        ["SharedModule", []],
+      ];
+
+      const tree = await service.exploreProject(
+        buildProject("testing/main.module.ts"),
+      );
 
       expect(
-        exploreOptions[0]?.ignoreImports?.map((pattern) => pattern.source),
-      ).not.toContain("^ConfigModule$");
+        tree.map((node) => ({ imports: node.imports, name: node.name })),
+      ).toStrictEqual([
+        { imports: ["LeafModule", "SharedModule"], name: "MainModule" },
+        { imports: ["SharedModule"], name: "LeafModule" },
+        { imports: [], name: "SharedModule" },
+      ]);
+    });
+
+    it("leaves NestJS's own InternalCoreModule out of the graph and its imports", async () => {
+      mockApplicationContext();
+      containerModules = [
+        ["InternalCoreModule", []],
+        ["MainModule", ["InternalCoreModule"]],
+      ];
+
+      const tree = await service.exploreProject(
+        buildProject("testing/main.module.ts"),
+      );
+
+      expect(tree).toStrictEqual([
+        {
+          declaringFile: "testing/main.module.ts",
+          imports: [],
+          name: "MainModule",
+        },
+      ]);
+    });
+
+    it("leaves an ignored module out of every other module's imports", async () => {
+      mockApplicationContext();
+      containerModules = [
+        ["MainModule", ["ConfigHostModule", "LeafModule"]],
+        ["ConfigHostModule", []],
+        ["LeafModule", []],
+      ];
+
+      const tree = await service.exploreProject(
+        buildProject("testing/main.module.ts"),
+      );
+
+      expect(tree.map((node) => node.name)).toStrictEqual([
+        "MainModule",
+        "LeafModule",
+      ]);
+      expect(tree[0]?.imports).toStrictEqual(["LeafModule"]);
     });
   });
 });

@@ -23,11 +23,11 @@ import {
   TEST_SCHEMA_INITIALIZATION,
 } from "../../../testing/database";
 import {
-  SWEEP_TIMEOUT_MILLISECONDS,
-  type SweepFixture,
-  sweepFixture,
-  sweepModuleMetadata,
-} from "../../../testing/draw-sweep";
+  DRAW_RUN_TIMEOUT_MILLISECONDS,
+  type DrawRunFixture,
+  drawRunFixture,
+  drawRunModuleMetadata,
+} from "../../../testing/draw-run";
 import { meanderRecord } from "../../../testing/meanders";
 import { HISTORICAL_CORPUS } from "../corpus/historical-corpus.constants";
 
@@ -35,33 +35,32 @@ import { DrawCodeService } from "./draw-code.service";
 
 vi.mock("node:fs/promises", () => ({
   mkdir: vi.fn<() => Promise<void>>(),
-  writeFile: vi.fn<(path: string, data: string) => Promise<void>>(),
+  writeFile: vi.fn<(path: string, data: unknown) => Promise<void>>(),
 }));
 
-/** Compiles a fresh sweep, over an emptied schema in `container`, with `--code` and logging mocked out. */
-async function compileSweep(
+/** Compiles a fresh draw run, over an emptied schema in `container`, with `--code` and logging mocked out. */
+async function compileDrawRun(
   container: StartedPostgreSqlContainer,
-): Promise<SweepFixture> {
+): Promise<DrawRunFixture> {
   const module = await Test.createTestingModule(
-    sweepModuleMetadata(container, [
+    drawRunModuleMetadata(container, [
       { provide: DrawCodeService, useValue: createMock<DrawCodeService>() },
       { provide: LoggerService, useValue: createMock<LoggerService>() },
     ]),
   ).compile();
 
-  return sweepFixture(module);
+  return drawRunFixture(module);
 }
 
 /**
- * `DrawCommand`'s sweep over a database that already commits one hardcoded
+ * `DrawCommand`'s draw run over a database that already commits one hardcoded
  * entry's lattice address, split from
- * `draw-sweep.command.integration.test.ts` only for time. This case writes
- * before it sweeps, so it cannot share that file's sweep over an empty
- * database; in its own file vitest runs the two sweeps in parallel rather
- * than one after the other. `node:fs/promises` stays mocked for the same
- * reason it is there: the committed `output/index.html` is not disposable.
+ * `draw-run.command.integration.test.ts` only for time. This case writes
+ * before it draws, so it cannot share that file's draw run over an empty
+ * database; in its own file vitest runs the two draw runs in parallel rather
+ * than one after the other.
  */
-describe("drawCommand sweep mode", () => {
+describe("drawCommand draw run", () => {
   let container: StartedPostgreSqlContainer;
 
   beforeAll(async () => {
@@ -76,21 +75,21 @@ describe("drawCommand sweep mode", () => {
   });
 
   describe("over a database already holding a hardcoded entry's address", () => {
-    let sweep: SweepFixture;
+    let drawRun: DrawRunFixture;
 
     beforeEach(async () => {
-      sweep = await compileSweep(container);
+      drawRun = await compileDrawRun(container);
     });
 
     afterEach(async () => {
-      await sweep.dataSource.destroy();
+      await drawRun.dataSource.destroy();
     });
 
     it(
-      "ignores the sweep quietly when a hardcoded entry's lattice address is already committed",
+      "ignores the draw run quietly when a hardcoded entry's lattice address is already committed",
       async () => {
         const duplicated = HISTORICAL_CORPUS.find((entry) =>
-          sweep.corpus.isBeyondEnumeration(entry),
+          drawRun.corpus.isPreserved(entry),
         );
 
         if (duplicated === undefined) {
@@ -99,7 +98,7 @@ describe("drawCommand sweep mode", () => {
           );
         }
 
-        await sweep.repository.save(
+        await drawRun.repository.save(
           meanderRecord({
             characteristics: { bettiNumber0Count: 1, freeEndCount: 2 },
             code: `${String(duplicated.columns).padStart(2, "0")}x${String(duplicated.rows).padStart(2, "0")}y${duplicated.code}`,
@@ -110,9 +109,9 @@ describe("drawCommand sweep mode", () => {
           }),
         );
 
-        await expect(sweep.command.run([], {})).resolves.not.toThrow();
+        await expect(drawRun.command.run([], {})).resolves.not.toThrow();
       },
-      SWEEP_TIMEOUT_MILLISECONDS,
+      DRAW_RUN_TIMEOUT_MILLISECONDS,
     );
   });
 });

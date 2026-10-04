@@ -89,6 +89,7 @@
     "typescript-7": "catalog:",
     "typescript-eslint": "catalog:",
     "validate-branch-name": "catalog:",
+    "verdaccio": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
     "vitest": "catalog:",
@@ -127,5 +128,5 @@
     ]
   },
   "type": "module",
-  "version": "2.31.0"
+  "version": "2.32.0"
 }

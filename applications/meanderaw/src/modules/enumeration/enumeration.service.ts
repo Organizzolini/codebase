@@ -3,7 +3,7 @@ import { ConfigService } from "@nestjs/config";
 
 import { CodeService } from "../code/code.service";
 
-import { SWEEP_MINIMUM_ROWS } from "./enumeration.constants";
+import { DRAW_MINIMUM_ROWS } from "./enumeration.constants";
 import { TileEnumerationService } from "./tile-enumeration.service";
 
 import type { MeanderShape } from "../database/database.types";
@@ -35,11 +35,10 @@ import type { EnumeratedMeander, Environment } from "./enumeration.types";
  * could disagree about the same space. A repeat of `rows` by `columns` holds
  * `columns × (2 × rows - 1)` edges and the walk is `2 ** edges` wide, so the
  * budget is what keeps the space a size somebody chose rather than one
- * somebody discovers. At sixteen it admits fourteen shapes and 30,279
- * distinct meanders, enumerated and rendered in about eight seconds — of
- * which the 8,551 at five rows and under are exactly the set the `mosaic`
- * half of the corpus already commits, reproduced rather than recomputed
- * differently.
+ * somebody discovers. At twenty-four it admits twenty-five shapes and
+ * 7,059,159 distinct meanders — of which the 8,551 in the eleven shapes the
+ * `mosaic` half of the corpus already commits are reproduced rather than
+ * recomputed differently.
  *
  * **No family filter is applied anywhere in here**, which is the point:
  * every repeat within budget is produced, and a repeat that satisfies no
@@ -60,25 +59,24 @@ export class EnumerationService {
     configService: ConfigService<Environment>,
   ) {
     this.maximumColumns =
-      configService.get<number>("SWEEP_MAXIMUM_COLUMNS") ??
+      configService.get<number>("DRAW_MAXIMUM_COLUMNS") ??
       Number.MAX_SAFE_INTEGER;
     this.maximumRows =
-      configService.get<number>("SWEEP_MAXIMUM_ROWS") ??
-      Number.MAX_SAFE_INTEGER;
+      configService.get<number>("DRAW_MAXIMUM_ROWS") ?? Number.MAX_SAFE_INTEGER;
   }
 
   // 🔐 Private Fields
 
   /**
-   * The widest column count the sweep sweeps, read once from
-   * `SWEEP_MAXIMUM_COLUMNS` at construction and layered on top of the edge
+   * The widest column count the draw run draws, read once from
+   * `DRAW_MAXIMUM_COLUMNS` at construction and layered on top of the edge
    * budget as a review filter rather than replacing it.
    */
   private readonly maximumColumns: number;
 
   /**
-   * The deepest row count the sweep sweeps, read once from
-   * `SWEEP_MAXIMUM_ROWS` at construction and layered on top of the edge
+   * The deepest row count the draw run draws, read once from
+   * `DRAW_MAXIMUM_ROWS` at construction and layered on top of the edge
    * budget as a review filter rather than replacing it.
    */
   private readonly maximumRows: number;
@@ -108,32 +106,33 @@ export class EnumerationService {
     }));
   }
 
-  /** Whether the budget admits a shape, which is the only thing that decides whether the sweep walks it. */
+  /** Whether the budget admits a shape, which is the only thing that decides whether the draw run walks it. */
   isAdmitted(shape: MeanderShape): boolean {
     return this.tileEnumerationService.isAdmitted(shape);
   }
 
   /**
-   * Every shape the sweep covers, shallowest first and narrowest first
+   * Every shape the draw run covers, shallowest first and narrowest first
    * within a row count.
    *
-   * Both ends are the budget's rather than a table's, by default. The sweep
-   * starts at {@link SWEEP_MINIMUM_ROWS} and climbs while a single-column
-   * repeat is still admitted, which stops it at eight rows unconfigured; the
-   * column span at each row count is however many the budget leaves, which
-   * is five at two rows and one from five rows down. `SWEEP_MAXIMUM_ROWS`
-   * and `SWEEP_MAXIMUM_COLUMNS` layer a further review filter on top of
-   * those two ends — never past them, since a shape past the budget is
-   * still refused — and default to unbounded, so an unconfigured sweep is
+   * Both ends are the budget's rather than a table's, by default. The draw run
+   * starts at {@link DRAW_MINIMUM_ROWS} and climbs while a single-column
+   * repeat is still admitted, which stops it at twelve rows unconfigured;
+   * the column span at each row count is however many the budget leaves,
+   * which is eight at two rows and one from seven rows down.
+   * `DRAW_MAXIMUM_ROWS` and `DRAW_MAXIMUM_COLUMNS` layer a further review
+   * filter on top of those two ends — never past them, since a shape past
+   * the budget is still refused — and default to unbounded, so an
+   * unconfigured draw run is
    * exactly this. A family's own row range is not consulted here and could
-   * not be: enumeration applies no per-family filter, and a repeat is swept
+   * not be: enumeration applies no per-family filter, and a repeat is drawn
    * because it fits, not because some family was expecting it.
    */
   shapes(): MeanderShape[] {
     const shapes: MeanderShape[] = [];
 
     for (
-      let rows = SWEEP_MINIMUM_ROWS;
+      let rows = DRAW_MINIMUM_ROWS;
       rows <= this.maximumRows && this.isAdmitted({ columns: 1, rows });
       rows += 1
     ) {

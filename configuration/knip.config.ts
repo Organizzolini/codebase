@@ -134,6 +134,7 @@ const config: KnipConfig = {
         // Skill scripts are invoked by the skill framework, not imported in code
         "**/.agents/skills/**",
         "**/.claude/skills/**",
+        "**/.claude/worktrees/**",
         "**/.github/skills/**",
       ],
       ignoreBinaries: [
@@ -242,6 +243,9 @@ const config: KnipConfig = {
 
     // meanderaw: Greek meander (key/fret) SVG generator CLI
     "applications/meanderaw": {
+      // The CLI, the REPL its own target runs, and the sweep's worker
+      // thread — spawned by URL, so nothing imports it.
+      entry: ["src/main.ts", "src/repl.ts", "src/worker.ts"],
       project: "src/**/*.ts",
     },
 

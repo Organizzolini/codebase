@@ -21,6 +21,9 @@ permissions:
   packages: write
   issues: write
   pull-requests: write
+  # The identity token pnpm signs each package's npm provenance attestation
+  # with; without it, `pnpm publish --provenance` refuses to publish.
+  id-token: write
 
 # Never cancel a deployment/release run. Concurrency is scoped per-ref so
 # releases on main queue sequentially without colliding. A pull request's run
@@ -45,13 +48,18 @@ jobs:
           # v2.31.0 took 7m19s: 4 minutes to set up, build, trace, graph, and
           # measure, and 3 for semantic-release, most of it the version
           # commit's pre-commit hook. A cold Nx cache adds about 4 to the
-          # first part, and the hook checks only the projects the commit
-          # reaches. A timeout leaves no tag or version commit behind, and the
-          # next run retries.
+          # first part. `nx release version` makes a second version commit
+          # whose hook checks every bumped ic-suite package and its
+          # dependents (25 projects on the first release), none of them
+          # cached because each bump changes a manifest, so this leaves room
+          # for that hook and the npm publish. Re-size it from the first real
+          # release run. A timeout before the push leaves nothing behind; a
+          # later one is finished by the next run, whose publish skips
+          # versions already on npm.
           - id: push-releases
             name: Releases
             emoji: 🦸
-            timeout: 12
+            timeout: 24
 
     steps:
       # Decides from the GitHub API alone, before any checkout, so a run with
@@ -269,6 +277,93 @@ jobs:
           pnpm exec nx run-many --target=codometer --configuration=write \
             --exclude=codebase
           pnpm exec nx run codebase:codometer:write
+
+      # Versions the ic-suite packages from their conventional commits, commits
+      # and tags `<project>@<version>`. Checkout persists no credentials, so
+      # the remote carries the release token for this push and
+      # semantic-release's. Nx's own `--git-push` would add `--no-verify` and
+      # skip the pre-push hook, so the push is made here instead. GitHub
+      # rejects any push to this repository that updates more than 6 refs, and
+      # a first release tags 20 or more packages, so the release commit goes
+      # first, on its own, and its tags follow 6 at a time. A batch that fails
+      # leaves `main` already carrying the versions, and the missing tags can
+      # be pushed from that commit without versioning again.
+      - name: 🏷️ Version Packages
+        if: >-
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases'
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GIT_COMMITTER_EMAIL: jimmypaolini@gmail.com
+          GIT_COMMITTER_NAME: Jimmy Paolini
+        run: |
+          git remote set-url origin \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          pnpm exec nx release version --git-commit --git-tag
+          git push origin HEAD:refs/heads/main
+          mapfile -t tags < <(git tag --points-at HEAD --list '*@*')
+          for ((start = 0; start < ${#tags[@]}; start += 6)); do
+            refs=()
+            for tag in "${tags[@]:start:6}"; do
+              refs+=("refs/tags/${tag}")
+            done
+            git push origin "${refs[@]}"
+          done
+
+      # Publishes every package in the Nx release group, read from nx.json,
+      # whose version is not on npm yet, so a re-run sends only what is
+      # missing. pnpm rather than `nx release publish`, because pnpm honors
+      # provenance only as the `--provenance` flag, which Nx cannot pass:
+      # NPM_CONFIG_PROVENANCE and `publishConfig.provenance` are ignored.
+      # `setup-node` writes no registry `.npmrc`, so the token goes in the user
+      # config.
+      - name: 📦 Publish Packages
+        if: >-
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
+          filters=()
+          release_projects="$(jq -r '.release.projects | join(",")' nx.json)"
+          for project in $(pnpm exec nx show projects --projects "${release_projects}" --json | jq -r '.[]'); do
+            filters+=(--filter "./$(pnpm exec nx show project "${project}" --json | jq -r .root)")
+          done
+          pnpm -r "${filters[@]}" publish --provenance --no-git-checks \
+            --tag latest --registry https://registry.npmjs.org
+
+      # One GitHub release per package tag that has none yet, so a run that
+      # stopped after the push is completed by the next. `--latest=false`
+      # keeps the codebase's `v*` release as Latest for the README badge.
+      - name: 🗒️ Create Package Releases
+        if: >-
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases'
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          released="$(gh release list --limit 1000 --json tagName --jq '.[].tagName')"
+          for tag in $(git tag --list '*@*'); do
+            if grep -qxF "${tag}" <<< "${released}"; then continue; fi
+            project="${tag%@*}"
+            version="${tag##*@}"
+            root="$(pnpm exec nx show project "${project}" --json | jq -r .root)"
+            name="$(jq -r .name "${root}/package.json")"
+            previous="$(git tag --list "${project}@*" --sort=-v:refname --merged "${tag}^" | head -1)"
+            {
+              echo "Published to npm as [\`${name}@${version}\`](https://www.npmjs.com/package/${name}/v/${version})."
+              if [[ -n "${previous}" ]]; then
+                echo
+                echo "Changes since \`${previous}\`:"
+                echo
+                git log --no-merges --invert-grep --grep='^chore(release):' \
+                  --format='- %s (%h)' "${previous}..${tag}" -- "${root}"
+              fi
+            } > "${RUNNER_TEMP}/release-notes.md"
+            gh release create "${tag}" --verify-tag --latest=false \
+              --title "${name} ${version}" --notes-file "${RUNNER_TEMP}/release-notes.md"
+          done
 
       - name: 🦸 Push Releases
         if: >-

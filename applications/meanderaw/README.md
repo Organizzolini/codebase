@@ -27,8 +27,8 @@ decided by whether a Code was named:
 | `nx run meanderaw:start --args="--rows <n> --columns <n> --code <code>"` | That one, as a single row in the same database |
 
 The three flags of the single-drawing mode go together: `--code` is what
-selects that mode over the sweep, and it is refused without both `--rows` and
-`--columns`, since passing none of the three is how the sweep is asked for.
+selects that mode over the draw run, and it is refused without both `--rows` and
+`--columns`, since passing none of the three is how the draw run is asked for.
 
 **There is nothing else to pass.** `--type`, `--modifier` and the parameters it carried
 (`--strands`, `--branches`, `--direction`, `--flip`, `--offset`), `--sub-family`,
@@ -50,9 +50,12 @@ output/
   families/*.html   every meander of one family, drawn
 ```
 
-The rows themselves live in Postgres rather than in `output/`, so these pages, rebuilt from
-the database, are the only thing a sweep commits — see
-[ADR 0020](../../docs/adr/0020-store-meanders-in-postgres.md).
+A draw run commits nothing. The rows live in Postgres rather than in the repository — see
+[ADR 0020](../../docs/adr/0020-store-meanders-in-postgres.md) — and the pages are written on
+every draw run but gitignored: at the default edge budget's millions of rows they are gigabytes
+of HTML, each page streamed to disk a batch of rows at a time because one family's page
+outgrows a JavaScript string — see
+[ADR 0021](../../docs/adr/0021-stop-committing-the-meander-pages.md).
 
 That is the whole of it, and the shrinking is the point of this design rather than a side
 effect of it. `output/` used to hold 9,877 committed SVG files under ten family
@@ -111,7 +114,7 @@ A Characteristic added, renamed, or removed needs no schema change, which is why
 of them shares the map rather than taking a column: see
 [ADR 0018](../../docs/adr/0018-store-every-characteristic-in-one-sparse-json-map.md).
 
-**Nothing checks the database against a fresh sweep.** A drift check used to
+**Nothing checks the database against a fresh draw run.** A drift check used to
 run on every commit, and a `drawingHash` column fed it; both are gone, for now — see
 [ADR 0019](../../docs/adr/0019-drop-the-drift-check-and-the-drawing-hash.md). The one
 property the schema enforces is that a Code is unique, so after changing the renderer, the
@@ -131,18 +134,16 @@ rather than overlapping.**
   `HARDCODED_MEANDERS_BY_FAMILY` for exactly where the boundary sits and why the filter
   is by shape rather than by Code.
 
-A duplicate lattice address across the two is a build failure rather than a convention
-nobody checks: the formatted Code spells out the lattice, rows, and columns, so the
-unique index over `code` refuses the second insert,
-and the sweep runs the enumerated half first so the refusal names the hardcoded entry
-that caused it.
+A duplicate lattice address within either half is a build failure rather than a convention
+nobody checks: the formatted Code spells out the lattice, rows, and columns, so the unique
+index over `code` refuses the second insert. Across the two, the hardcoded corpus is
+ingested first and the draw run skips any Code a hardcoded row already holds, so a hardcoded
+meander keeps its row and hand-filed family.
 
-`output/index.html` and the family pages beside it are rebuilt from this database at the
-end of every sweep, rather than from a tree of files.
-
-`.gitattributes` marks the whole of `output/` as generated, so the database does not count
-toward this repository's language bar, and `.codometerignore`, `.prettierignore`, and
-`cspell` all leave the directory alone.
+`output/index.html` and the family pages beside it are rebuilt from the database at the
+end of every draw run, and are gitignored rather than committed; nothing checks a draw run
+against a committed copy. `.codometerignore`, `.prettierignore`, and `cspell` all leave
+the directory alone.
 
 ## 🏛️ Meander Charter
 
@@ -195,7 +196,7 @@ committed output rather than from a generated drawing.
 What the measurements found. They were taken across the 114 named patterns and 3,179
 enumerated `mosaic` tiles that existed before `cross`; every count below is restated
 against the corpus as it now stands, 1,118 named patterns beside 8,759 enumerated tiles.
-The named half was 174 until the sweep's row range was raised to the command line's own,
+The named half was 174 until the draw run's row range was raised to the command line's own,
 and it has moved with every family that gained a mode or a parameter since — and, when
 closing both band borders left four names drawing what another name already drew, with the
 four that were deleted, and again with `branch`'s six two-row drawings, which insetting
@@ -272,7 +273,7 @@ Wider-than-one-stroke gaps occur only where a band terminates, which is
 [#338](https://github.com/Organizzolini/codebase/issues/338) and is not a family
 property.
 
-**The named half of the sweep runs to each family's own `FAMILY_MAXIMUM_ROWS`**, which is
+**The named half of the draw run runs to each family's own `FAMILY_MAXIMUM_ROWS`**, which is
 the same record the command line validates against — so every drawing the command line can
 be asked for is also a drawing this repository commits and the charter gates: 1,118
 combinations, each family from its own structural minimum through its own ceiling. That
@@ -282,7 +283,7 @@ ceiling is the shared `MAXIMUM_VALUE` of 12 for nine of the ten families, and 6 
 It stopped at 8 until [#507](https://github.com/Organizzolini/codebase/issues/507), and that
 issue lived in the four row counts between — `chain` and `snake` drew self-retracing ink at
 9 through 12 rows, reachable from the command line by anybody and covered by nothing,
-because the corpus stopped at 8 and the charter swept the corpus. Raising the sweep's range
+because the corpus stopped at 8 and the charter swept the corpus. Raising the draw run's range
 to the command line's own closed the gap for both at once, which is why neither has a
 maximum of its own any more. Most of the counts below moved by that change and nothing else.
 
@@ -355,7 +356,7 @@ What replaces them at the command line is `--sub-family`. `--type mosaic --rows 
 is refused by `MissingSubFamilyError` rather than defaulting to the bar, and the message
 names the eight sub-families to choose from. `MotifRegistryService` holds no entry for the
 family at all, which `MotifDrawnType` makes a type error rather than a lookup answering
-`undefined`, and `DrawCombinationsService` leaves it out of the named-type sweep entirely
+`undefined`, and `DrawCombinationsService` leaves it out of the named-type draw run entirely
 — so the named half is 1,118 rather than 1,142, and every one of this family's 8,551
 drawings comes from one enumeration.
 
@@ -567,7 +568,7 @@ Three consequences, and each is asserted rather than assumed:
   false together rather than true together whenever a tile is neither.
 
 Across the 8,551 tiles the enumeration admits — every shape the edge budget allows, which
-is exactly what the sweep commits:
+is exactly what the draw run commits:
 
 | Sub-family | Tiles |
 | --- | --- |
@@ -698,7 +699,7 @@ nx run meanderaw:start --args="--type mosaic --sub-family dots --rows 6"
 ```
 
 The name lands in the output path — `output/mosaic/6-rows/dots-6-repeats.svg` — and in
-the sweep's own, where a tile with a name carries it after its identifier
+the draw run's own, where a tile with a name carries it after its identifier
 (`output/mosaic/6-rows/1-columns/00000-dots.svg`) and a tile without one
 carries the identifier alone.
 
@@ -741,7 +742,7 @@ the charter suite.
 
 [#412](https://github.com/Organizzolini/codebase/issues/412) runs the same measurement
 across all 3,179 tiles of the `mosaic` permutation set at 4 through 8 rows, which the
-sweep committed under `output/mosaic/<rows>-rows/permutations/` at the time, before that
+draw run committed under `output/mosaic/<rows>-rows/permutations/` at the time, before that
 level was removed — the only
 family with an enumerated unit space, so the only one this measurement can run over every
 tile rather than a handful of named modifiers. The space it measured is not the space
@@ -836,7 +837,7 @@ unchanged.
 
 ### Shortlist
 
-Three candidates scale cleanly across every row count the permutation sweep covered when
+Three candidates scale cleanly across every row count the permutation draw run covered when
 the survey ran (4 through 8; it stops at 6 now), which is what makes each "a family"
 rather than one lucky tile. All three
 are _branches only_ — **verified `negativeXJunctions === 0` at every one of their five
@@ -900,7 +901,7 @@ eight — of which each family contributes exactly one. Materializing it would n
 look through. The recommendation is to **leave the asymmetry**, and this section records
 the measurements behind that.
 
-This was a spike. It changed no code, and everything below is measurement on the sweep
+This was a spike. It changed no code, and everything below is measurement on the draw run
 `nx run meanderaw:start` already writes.
 
 > **What changed since, and what did not.** `mosaic` has since moved onto that shared
@@ -955,7 +956,7 @@ already written down, as prose about pictures rather than as a rule about a grap
 
 ### What the six families are, measured
 
-Parsing all 78 non-`mosaic` documents the sweep writes back into that lattice — one
+Parsing all 78 non-`mosaic` documents the draw run writes back into that lattice — one
 interior repeat unit each, wrapped at its own family's pitch, so band termination never
 enters — gives one uniform result:
 
@@ -985,7 +986,7 @@ independently and from the other direction.
 A `mosaic` tile used to be an exact cover of its cells by dots and one-unit dashes, and a
 cell **is** a lattice point: a dot is an isolated point, a dash is a single lattice edge.
 So such a tile is exactly a **matching** of the tile's lattice, every unmatched point drawn
-as a dot. Re-deriving that enumeration from the one-line description reproduced the sweep
+as a dot. Re-deriving that enumeration from the one-line description reproduced the draw run
 as it then stood tile for tile — 8, 15, 18, 50, 40, 159, 93, 567, 216, and 2,013 per row
 count and column span, 3,179 in all — so the two descriptions were the same description.
 
@@ -1028,7 +1029,7 @@ defines:
 
 Counts are before folding by the tile's symmetry group (translations, horizontal mirror,
 level flip), which divides by at most `4 × pitch` and never moves the order of magnitude:
-the `mosaic` sweep's folded 2,013 tiles at 8 rows and 2 columns come from 11,275 unfolded,
+the `mosaic` draw run's folded 2,013 tiles at 8 rows and 2 columns come from 11,275 unfolded,
 a factor of 5.6.
 
 The narrower regions are smaller and still far past looking through. On the same 4 × 4
@@ -1141,7 +1142,7 @@ If the decision is ever revisited, a follow-up implementation ticket would have 
 `COMPATIBLE_MODIFIERS`, `SUB_FAMILIES`, the command-line surface, and the output filename
 scheme, and the only safety net is 23 byte-exact reference assets concentrated at 5 rows.
 The expand phase would add the tile type and a tile-driven renderer alongside the existing
-services and prove byte-equality family by family across the whole 114-file sweep; only
+services and prove byte-equality family by family across the whole 114-file draw run; only
 then could the contract phase delete the per-family path emission.
 
 > **What has since been implemented, and what has not.** The fourth bullet is done, and
@@ -1169,7 +1170,7 @@ then could the contract phase delete the per-family path emission.
 
 **Measured**: every pitch, degree histogram, bare-point count, and junction count in the
 tables above, over all 78 non-`mosaic` documents; the `mosaic` tile counts, re-derived from
-the matching description and checked against the committed sweep as it stood then; every space size marked
+the matching description and checked against the committed draw run as it stood then; every space size marked
 with a number, computed exactly (the charter-legal counts by transfer matrix, cross-checked
 against brute force at 3 × 3; the Hamiltonian and simple-traversal counts by enumeration,
 cross-checked against brute force at 3 × 3, 4 × 3, and 4 × 4).
@@ -1329,7 +1330,7 @@ at the negative's own row count would leave the canvas's bottom lattice row with
 it — invariant 2 broken for a bookkeeping reason rather than a drawn one. It is also why
 the family's structural minimum is 3 where `MOSAIC_TILE_MINIMUM_ROWS` is 4.
 
-One consequence of the offset: the sweep draws `negative` at 3 through 12 rows, so
+One consequence of the offset: the draw run draws `negative` at 3 through 12 rows, so
 everything from its 8-row drawings up inverts a source of 9 rows or more — past what the
 survey enumerated, and past where the `mosaic` permutation half stops committing tiles.
 Those fifty drawings have no committed source to be compared against, and are gated by the
@@ -1778,7 +1779,7 @@ floor is the modifier's rather than the family's — only `aligned` sweeps a ply
 the reason under "The ply" below.
 
 **The family commits no unmodified drawing, and that is deliberate.** Drawn with no
-modifier it is a two-strand `plied` bundle, so the sweep used to write those same bytes as
+modifier it is a two-strand `plied` bundle, so the draw run used to write those same bytes as
 `plain-…svg` while every sibling was named for its ply — one filename in the family that
 could not be read as a ply. `TYPES_WITH_MODIFIER_NAMED_DEFAULT` drops the unmodified entry
 for this type and lets `plied` carry the drawing under `plied-strands-2-…svg` instead.
@@ -1853,7 +1854,7 @@ figures for this one shape.
 says so.** Three collapses hide in `strands × 3`, no two in the same place: rotating a
 partition whose depths are all equal changes nothing; `alternating` and `one` name the same
 ribbon below three strands; and flipping a flat strip is a no-op, since it turns at the top
-and the bottom of the same row. So the sweep asks the geometry which variants are distinct
+and the bottom of the same row. So the draw run asks the geometry which variants are distinct
 rather than enumerating the product and committing the same drawing several times over —
 `786` across the whole family rather than the `1,199` a naive cross product would have
 written, with the difference being duplicates rather than drawings.
@@ -1945,7 +1946,7 @@ re-derived:
   name rather than a new pattern.
 - Squeezing them is **unreachable** for most of the space. Drawing at `unit / (2N)` is
   drawing at `rows × N` rows, so at this family's own ply of two every pattern is asked
-  for at twice its row count. The space is the **56** family/rows pairs the sweep covers
+  for at twice its row count. The space is the **56** family/rows pairs the draw run covers
   across the six original families — `boxes` and `mosaic` at 3 through 12 rows, `chain`,
   `snake`, `swirl` and `whirl` at 4 through 12, so 20 + 36 = 56. **36 of those 56 cannot
   be drawn**: their doubled row count runs past the shared `MAXIMUM_VALUE` of 12, which is
@@ -1962,7 +1963,7 @@ re-derived:
   the zigzag turns at every step at every row count the command line accepts.
   `meander-generation.service.unit.test.ts` measures that off rendered path data, across
   every family rather than the six this passage counts, so the claim fails rather than
-  goes stale. What is left is the ceiling on its own — and fixing #507 also took the sweep
+  goes stale. What is left is the ceiling on its own — and fixing #507 also took the draw run
   out to 12 rows, which is why the space is 56 rather than 32.
   `draw-combinations.service.unit.test.ts` pins both 56 and 36 against the real
   enumeration.
@@ -2004,7 +2005,7 @@ of no other.
 All three of this family's modifiers carry `strands`, and the command line takes any of them
 as `--modifier <name> --strands N`. With no modifier the family draws a `plied` bundle at
 its default ply of two, and `plied` naming two is byte-identical to that — asserted, and the
-reason the sweep leaves the unmodified entry out rather than committing the same drawing
+reason the draw run leaves the unmodified entry out rather than committing the same drawing
 under a second filename. `aligned` has nothing to collide with at either end, so its range
 is swept whole.
 
@@ -2021,7 +2022,7 @@ one another needs two of them to have one. That is an argument about the family'
 rather than about its geometry: a single-strand ply is one bracket per repeat unit, two
 lattice columns wide, and it covers both its columns to the full height of the band exactly
 as every deeper ply covers its own. It is the shallow end of the same axis, and a range with
-no bottom step is one the sweep cannot show the shape of.
+no bottom step is one the draw run cannot show the shape of.
 
 **At one strand there is nothing left to ply or serpentine, so only one name survives
 there.** `aligned-strands-1`, `plied-strands-1`, `serpentine-strands-1`, and
@@ -2038,9 +2039,9 @@ opens the same way by having no other unit to differ from, which is the one desc
 that drawing that stays true.
 
 The family's structural minimum is **2 rows**, and what sets it is the family's own axis
-rather than any one drawing's geometry. It used to be 4: the sweep applied one flat list of
+rather than any one drawing's geometry. It used to be 4: the draw run applied one flat list of
 plies to every row count alike, so the list's deepest entry had to be shallow enough for the
-shallowest row count to accept, and that entry was 4. The sweep asks per row now, so a ply
+shallowest row count to accept, and that entry was 4. The draw run asks per row now, so a ply
 deeper than the band is never enumerated and there is no longer a number for the minimum to
 agree with.
 
@@ -5211,9 +5212,9 @@ graph LR
   file_src_modules_draw_draw_index_types_ts["src/modules/draw/draw-index.types.ts"]
   file_src_modules_draw_draw_record_service_ts["src/modules/draw/draw-record.service.ts"]
   file_src_modules_draw_draw_record_service_unit_test_ts["src/modules/draw/draw-record.service.unit.test.ts"]
-  file_src_modules_draw_draw_sweep_collision_command_integration_test_ts["src/modules/draw/draw-sweep-collision.command.integration.test.ts"]
-  file_src_modules_draw_draw_sweep_regeneration_command_integration_test_ts["src/modules/draw/draw-sweep-regeneration.command.integration.test.ts"]
-  file_src_modules_draw_draw_sweep_command_integration_test_ts["src/modules/draw/draw-sweep.command.integration.test.ts"]
+  file_src_modules_draw_draw_sweep_collision_command_integration_test_ts["src/modules/draw/draw-run-collision.command.integration.test.ts"]
+  file_src_modules_draw_draw_sweep_regeneration_command_integration_test_ts["src/modules/draw/draw-run-regeneration.command.integration.test.ts"]
+  file_src_modules_draw_draw_sweep_command_integration_test_ts["src/modules/draw/draw-run.command.integration.test.ts"]
   file_src_modules_draw_draw_command_integration_test_ts["src/modules/draw/draw.command.integration.test.ts"]
   file_src_modules_draw_draw_command_ts["src/modules/draw/draw.command.ts"]
   file_src_modules_draw_draw_command_unit_test_ts["src/modules/draw/draw.command.unit.test.ts"]
@@ -5264,7 +5265,7 @@ graph LR
   file_src_modules_tile_tile_types_ts["src/modules/tile/tile.types.ts"]
   file_src_repl_ts["src/repl.ts"]
   file_testing_database_ts["testing/database.ts"]
-  file_testing_draw_sweep_ts["testing/draw-sweep.ts"]
+  file_testing_draw_sweep_ts["testing/draw-run.ts"]
   file_testing_legacy_characteristics_ts["testing/legacy-characteristics.ts"]
   file_testing_letters_ts["testing/letters.ts"]
   file_testing_meanders_ts["testing/meanders.ts"]
@@ -7097,40 +7098,40 @@ graph LR
 
 ### Project
 
-![Lines of Code](https://img.shields.io/badge/Lines_of_Code-45059-22c55e?style=flat-square)
-![Repository Size](https://img.shields.io/badge/Repository_Size-53.44_MB-6b7280?style=flat-square)
+![Lines of Code](https://img.shields.io/badge/Lines_of_Code-45461-22c55e?style=flat-square)
+![Repository Size](https://img.shields.io/badge/Repository_Size-33.91_MB-6b7280?style=flat-square)
 ![Folders](https://img.shields.io/badge/Folders-38-4a4a4a?style=flat-square)
-![Source Files](https://img.shields.io/badge/Source_Files-436-3178c6?style=flat-square)
+![Source Files](https://img.shields.io/badge/Source_Files-439-3178c6?style=flat-square)
 
 ### Measured Targets
 
-![Compiled JavaScript Size](https://img.shields.io/badge/Compiled_JavaScript_Size-237.86_kB_gzip-6b7280?style=flat-square)
+![Compiled JavaScript Size](https://img.shields.io/badge/Compiled_JavaScript_Size-238.91_kB_gzip-6b7280?style=flat-square)
 
 ### TypeScript
 
-![TypeScript Files](https://img.shields.io/badge/TypeScript_Files-436-3178c6?style=flat-square)
-![Interfaces](https://img.shields.io/badge/Interfaces-54-0ea5e9?style=flat-square)
+![TypeScript Files](https://img.shields.io/badge/TypeScript_Files-439-3178c6?style=flat-square)
+![Interfaces](https://img.shields.io/badge/Interfaces-56-0ea5e9?style=flat-square)
 ![Generic Declarations](https://img.shields.io/badge/Generic_Declarations-7-0369a1?style=flat-square)
 ![Enums](https://img.shields.io/badge/Enums-0-f97316?style=flat-square)
 ![Decorators](https://img.shields.io/badge/Decorators-456-db2777?style=flat-square)
-![Doc Comments](https://img.shields.io/badge/Doc_Comments-859-6366f1?style=flat-square)
+![Doc Comments](https://img.shields.io/badge/Doc_Comments-867-6366f1?style=flat-square)
 ![Static Methods](https://img.shields.io/badge/Static_Methods-0-166534?style=flat-square)
 
 ### JavaScript
 
 ![JavaScript Files](https://img.shields.io/badge/JavaScript_Files-0-f7df1e?style=flat-square)
-![Test Files](https://img.shields.io/badge/Test_Files-177-10b981?style=flat-square)
-![External Packages](https://img.shields.io/badge/External_Packages-14-8b5cf6?style=flat-square)
+![Test Files](https://img.shields.io/badge/Test_Files-178-10b981?style=flat-square)
+![External Packages](https://img.shields.io/badge/External_Packages-16-8b5cf6?style=flat-square)
 ![Classes](https://img.shields.io/badge/Classes-201-7c3aed?style=flat-square)
-![Functions](https://img.shields.io/badge/Functions-2419-16a34a?style=flat-square)
-![Methods](https://img.shields.io/badge/Methods-511-15803d?style=flat-square)
-![Sync Functions](https://img.shields.io/badge/Sync_Functions-2541-4ade80?style=flat-square)
-![Async Functions](https://img.shields.io/badge/Async_Functions-389-059669?style=flat-square)
-![Constants](https://img.shields.io/badge/Constants-1277-dc2626?style=flat-square)
-![Imports](https://img.shields.io/badge/Imports-2485-0284c7?style=flat-square)
-![Exported Symbols](https://img.shields.io/badge/Exported_Symbols-341-ea580c?style=flat-square)
-![Comments](https://img.shields.io/badge/Comments-1617-64748b?style=flat-square)
-![Comment Lines](https://img.shields.io/badge/Comment_Lines-4878-475569?style=flat-square)
+![Functions](https://img.shields.io/badge/Functions-2440-16a34a?style=flat-square)
+![Methods](https://img.shields.io/badge/Methods-512-15803d?style=flat-square)
+![Sync Functions](https://img.shields.io/badge/Sync_Functions-2551-4ade80?style=flat-square)
+![Async Functions](https://img.shields.io/badge/Async_Functions-401-059669?style=flat-square)
+![Constants](https://img.shields.io/badge/Constants-1280-dc2626?style=flat-square)
+![Imports](https://img.shields.io/badge/Imports-2520-0284c7?style=flat-square)
+![Exported Symbols](https://img.shields.io/badge/Exported_Symbols-348-ea580c?style=flat-square)
+![Comments](https://img.shields.io/badge/Comments-1632-64748b?style=flat-square)
+![Comment Lines](https://img.shields.io/badge/Comment_Lines-4930-475569?style=flat-square)
 ![TODO Comments](https://img.shields.io/badge/TODO_Comments-0-ca8a04?style=flat-square)
 
 ### Python
@@ -7151,16 +7152,16 @@ graph LR
 ### JSON
 
 ![JSON Files](https://img.shields.io/badge/JSON_Files-4-a16207?style=flat-square)
-![JSON Lines](https://img.shields.io/badge/JSON_Lines-169-ca8a04?style=flat-square)
+![JSON Lines](https://img.shields.io/badge/JSON_Lines-170-ca8a04?style=flat-square)
 ![JSON Objects](https://img.shields.io/badge/JSON_Objects-44-7c3aed?style=flat-square)
 ![JSON Arrays](https://img.shields.io/badge/JSON_Arrays-15-8b5cf6?style=flat-square)
-![JSON Properties](https://img.shields.io/badge/JSON_Properties-109-0284c7?style=flat-square)
-![JSON Strings](https://img.shields.io/badge/JSON_Strings-84-16a34a?style=flat-square)
+![JSON Properties](https://img.shields.io/badge/JSON_Properties-111-0284c7?style=flat-square)
+![JSON Strings](https://img.shields.io/badge/JSON_Strings-85-16a34a?style=flat-square)
 ![JSON Numbers](https://img.shields.io/badge/JSON_Numbers-1-059669?style=flat-square)
 ![JSON Booleans](https://img.shields.io/badge/JSON_Booleans-9-0ea5e9?style=flat-square)
 ![JSON Nulls](https://img.shields.io/badge/JSON_Nulls-0-64748b?style=flat-square)
-![JSON Items](https://img.shields.io/badge/JSON_Items-40-475569?style=flat-square)
-![JSON Nodes](https://img.shields.io/badge/JSON_Nodes-153-dc2626?style=flat-square)
+![JSON Items](https://img.shields.io/badge/JSON_Items-39-475569?style=flat-square)
+![JSON Nodes](https://img.shields.io/badge/JSON_Nodes-154-dc2626?style=flat-square)
 ![JSON Max Depth](https://img.shields.io/badge/JSON_Max_Depth-7-ea580c?style=flat-square)
 
 ### YAML
@@ -7249,7 +7250,7 @@ graph LR
 ![Utilities Files](https://img.shields.io/badge/Utilities_Files-0-0ea5e9?style=flat-square)
 ![TypeORM Entities](https://img.shields.io/badge/TypeORM_Entities-1-059669?style=flat-square)
 ![Unit Tests](https://img.shields.io/badge/Unit_Tests-167-ca8a04?style=flat-square)
-![Integration Tests](https://img.shields.io/badge/Integration_Tests-9-7c3aed?style=flat-square)
+![Integration Tests](https://img.shields.io/badge/Integration_Tests-10-7c3aed?style=flat-square)
 ![End To End Tests](https://img.shields.io/badge/End_To_End_Tests-1-0284c7?style=flat-square)
 ![CSS Comment Budget](https://img.shields.io/badge/CSS_Comment_Budget-0-16a34a?style=flat-square)
 ![HCL Comment Budget](https://img.shields.io/badge/HCL_Comment_Budget-0-ea580c?style=flat-square)
@@ -7286,23 +7287,23 @@ graph LR
 ### Markdown
 
 ![Markdown Files](https://img.shields.io/badge/Markdown_Files-1-083fa1?style=flat-square)
-![Markdown Lines](https://img.shields.io/badge/Markdown_Lines-372-1f6feb?style=flat-square)
+![Markdown Lines](https://img.shields.io/badge/Markdown_Lines-385-1f6feb?style=flat-square)
 ![H1](https://img.shields.io/badge/H1-1-7c3aed?style=flat-square)
 ![H2](https://img.shields.io/badge/H2-8-8b5cf6?style=flat-square)
 ![H3](https://img.shields.io/badge/H3-16-a78bfa?style=flat-square)
 ![H4](https://img.shields.io/badge/H4-0-c4b5fd?style=flat-square)
 ![H5](https://img.shields.io/badge/H5-0-ddd6fe?style=flat-square)
 ![H6](https://img.shields.io/badge/H6-0-ede9fe?style=flat-square)
-![Paragraphs](https://img.shields.io/badge/Paragraphs-70-64748b?style=flat-square)
+![Paragraphs](https://img.shields.io/badge/Paragraphs-71-64748b?style=flat-square)
 ![Lists](https://img.shields.io/badge/Lists-8-16a34a?style=flat-square)
 ![List Items](https://img.shields.io/badge/List_Items-33-22c55e?style=flat-square)
 ![Task List Items](https://img.shields.io/badge/Task_List_Items-0-4ade80?style=flat-square)
 ![Tables](https://img.shields.io/badge/Tables-2-0284c7?style=flat-square)
 ![Table Rows](https://img.shields.io/badge/Table_Rows-10-0ea5e9?style=flat-square)
-![Links](https://img.shields.io/badge/Links-16-059669?style=flat-square)
+![Links](https://img.shields.io/badge/Links-17-059669?style=flat-square)
 ![Images](https://img.shields.io/badge/Images-0-10b981?style=flat-square)
 ![Code Blocks](https://img.shields.io/badge/Code_Blocks-15-dc2626?style=flat-square)
-![Inline Code](https://img.shields.io/badge/Inline_Code-131-ef4444?style=flat-square)
+![Inline Code](https://img.shields.io/badge/Inline_Code-143-ef4444?style=flat-square)
 ![Block Quotes](https://img.shields.io/badge/Block_Quotes-0-ca8a04?style=flat-square)
 ![Thematic Breaks](https://img.shields.io/badge/Thematic_Breaks-0-a16207?style=flat-square)
 <!-- codometer:end -->

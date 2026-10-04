@@ -38,9 +38,11 @@ async function createService(
 // 🔧 Configuration
 
 /**
- * Every shape the edge budget admits, with the tile counts each holds: how
- * many the family enumerates now, and how many of those the original
- * exact-cover rule would have found.
+ * The eleven shapes the `mosaic` half of the corpus commits — every shape a
+ * budget of sixteen admitted up to five rows — with the tile counts each
+ * holds: how many the family enumerates now, and how many of those the
+ * original exact-cover rule would have found. Today's budget admits all of
+ * them and more; `enumeration.service.unit.test.ts` lists the rest.
  *
  * Written out rather than derived, because these numbers are the thing being
  * asserted. A change to the enumeration rule that resized the space would
@@ -101,7 +103,7 @@ describe(TileEnumerationService, () => {
   });
 
   describe("the edge budget", () => {
-    it("admits exactly eleven shapes, none of them above five rows", () => {
+    it("pins the eleven `mosaic` shapes, none of them above five rows", () => {
       expect(
         ADMITTED_SHAPES.map(({ columns, rows }) => `${rows}x${columns}`),
       ).toStrictEqual([
@@ -120,10 +122,11 @@ describe(TileEnumerationService, () => {
     });
 
     it("gives a shallower band more columns, since a tile's edge count grows in both dimensions at once", () => {
-      expect(service.maximumColumns(2)).toBe(5);
-      expect(service.maximumColumns(3)).toBe(3);
-      expect(service.maximumColumns(4)).toBe(2);
-      expect(service.maximumColumns(5)).toBe(1);
+      expect(service.maximumColumns(2)).toBe(8);
+      expect(service.maximumColumns(3)).toBe(4);
+      expect(service.maximumColumns(4)).toBe(3);
+      expect(service.maximumColumns(5)).toBe(2);
+      expect(service.maximumColumns(7)).toBe(1);
     });
 
     it("counts a shape's edges as columns times two rows less one", () => {
@@ -149,15 +152,22 @@ describe(TileEnumerationService, () => {
 
   describe("the configured edge budget", () => {
     it("reads a smaller budget than today's default from the environment", async () => {
-      const configured = await createService({ SWEEP_EDGE_BUDGET: 10 });
+      const configured = await createService({ DRAW_EDGE_BUDGET: 10 });
 
       expect(configured.isAdmitted({ columns: 3, rows: 2 })).toBe(true);
       expect(configured.isAdmitted({ columns: 4, rows: 2 })).toBe(false);
       expect(configured.maximumColumns(2)).toBe(3);
     });
 
+    it("refuses to walk a shape whose edges outgrow a 32-bit mask, however large the budget", async () => {
+      const configured = await createService({ DRAW_EDGE_BUDGET: 40 });
+
+      expect(configured.isAdmitted({ columns: 3, rows: 6 })).toBe(true);
+      expect(() => configured.orbitMinima(6, 3)).toThrow(OversizedTileError);
+    });
+
     it("names the configured budget rather than today's default in a refusal", async () => {
-      const configured = await createService({ SWEEP_EDGE_BUDGET: 10 });
+      const configured = await createService({ DRAW_EDGE_BUDGET: 10 });
 
       expect(() => configured.enumerate(2, 4)).toThrow(
         /past the budget of 10/u,
@@ -183,8 +193,8 @@ describe(TileEnumerationService, () => {
       }).compile();
       const unset = await module.resolve(TileEnumerationService);
 
-      expect(unset.isAdmitted({ columns: 5, rows: 2 })).toBe(true);
-      expect(unset.isAdmitted({ columns: 6, rows: 2 })).toBe(false);
+      expect(unset.isAdmitted({ columns: 8, rows: 2 })).toBe(true);
+      expect(unset.isAdmitted({ columns: 9, rows: 2 })).toBe(false);
     });
   });
 
@@ -232,7 +242,7 @@ describe(TileEnumerationService, () => {
       expect(new Set(identifiers).size).toBe(tiles.length);
     });
 
-    it("orders tiles by the key it folds on, so a sweep is stable across runs", () => {
+    it("orders tiles by the key it folds on, so a draw run is stable across runs", () => {
       const keys = service
         .enumerate(4, 1)
         .map((tile) => symmetryService.edgeKey(tile));
@@ -277,6 +287,54 @@ describe(TileEnumerationService, () => {
       expect(identifiers).toContain("01x03y048");
     });
 
+    // 🎯 The walk keeps one assignment per symmetry class without building
+    // the rest, so it is checked against the walk it replaced: build every
+    // assignment, fold each to its class's representative, keep the
+    // distinct ones. The two must name exactly the same tiles.
+    it.each(
+      ADMITTED_SHAPES.filter(
+        ({ columns, rows }) => columns * (2 * rows - 1) <= 12,
+      ),
+    )(
+      "keeps exactly the classes a walk over every assignment finds, at $rows rows and $columns columns",
+      ({ columns, rows }) => {
+        const shape = { columns, rows };
+        const everyClass = new Set<string>();
+
+        for (let mask = 0; mask < 2 ** service.edges(shape); mask += 1) {
+          everyClass.add(
+            symmetryService.edgeKey(
+              symmetryService.canonicalTile(service.tile(shape, mask)),
+            ),
+          );
+        }
+
+        expect(
+          service
+            .enumerate(rows, columns)
+            .map((tile) => symmetryService.edgeKey(tile)),
+        ).toStrictEqual(
+          [...everyClass].toSorted((first, second) =>
+            first.localeCompare(second),
+          ),
+        );
+      },
+    );
+
+    it("keeps one bitmask per symmetry class, which is how many tiles a shape enumerates", () => {
+      expect(service.orbitMinima(3, 3)).toHaveLength(
+        service.enumerate(3, 3).length,
+      );
+    });
+
+    it("reads a bitmask's set bits as the edges of a tile, in edge-key order", () => {
+      expect(
+        symmetryService.edgeKey(
+          service.tile({ columns: 2, rows: 2 }, 0b100101),
+        ),
+      ).toBe("101001");
+    });
+
     it.each(ADMITTED_SHAPES)(
       "enumerates $tiles distinct tiles at $rows rows and $columns columns",
       ({ columns, rows, tiles }) => {
@@ -301,7 +359,7 @@ describe(TileEnumerationService, () => {
      * cover of its cells. That is a region strictly inside a ceiling of two
      * direction bits, so filtering the wider enumeration down to it has to
      * return exactly the set the narrower rule returned, shape for shape.
-     * The five shapes the old sweep committed are the last five rows here,
+     * The five shapes the old draw run committed are the last five rows here,
      * and 8 / 15 / 18 / 50 / 40 are the file counts those directories held.
      */
     it.each(ADMITTED_SHAPES)(

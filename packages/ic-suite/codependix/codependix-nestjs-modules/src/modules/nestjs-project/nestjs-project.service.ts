@@ -3,8 +3,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 
 import { Injectable } from "@nestjs/common";
-import { NestFactory } from "@nestjs/core";
-import { SpelunkerModule } from "nestjs-spelunker";
+import { ModulesContainer, NestFactory } from "@nestjs/core";
 
 import { LoggerService } from "@codebase/logging";
 
@@ -19,11 +18,14 @@ import {
 } from "./nestjs-project.constants";
 
 import type {
+  NestjsExploredModule,
   NestjsProject,
-  NestjsSpelunkedTree,
 } from "./nestjs-project.types";
-import type { DynamicModule, Type } from "@nestjs/common";
-import type { SpelunkedTree } from "nestjs-spelunker";
+import type {
+  DynamicModule,
+  INestApplicationContext,
+  Type,
+} from "@nestjs/common";
 
 /**
  * Discovers the workspace's `framework:nestjs` projects and explores each
@@ -99,6 +101,46 @@ export class NestjsProjectService {
     }
 
     return declaringFiles;
+  }
+
+  /**
+   * Lists every module in a container with the modules it imports, both by
+   * class name and in the container's registration order, leaving the ignored
+   * modules out of the list and out of every import.
+   *
+   * Reads the container through its public `ModulesContainer` provider, which
+   * a preview-mode container still hands out because NestJS registers it as a
+   * value. The container's view is what `import` edges report, so a global
+   * module appears as an import of every module rather than only of those
+   * that name it.
+   */
+  private exploreContainer(
+    application: INestApplicationContext,
+    ignoredModules: RegExp[],
+  ): NestjsExploredModule[] {
+    const modules = [...application.get(ModulesContainer).values()];
+    const exploredNames = new Set<string>();
+
+    for (const { name } of modules) {
+      if (!ignoredModules.some((pattern) => pattern.test(name))) {
+        exploredNames.add(name);
+      }
+    }
+
+    const explored: NestjsExploredModule[] = [];
+
+    for (const { imports, name } of modules) {
+      if (!exploredNames.has(name)) continue;
+
+      explored.push({
+        imports: [...imports]
+          .map((importedModule) => importedModule.name)
+          .filter((importedName) => exploredNames.has(importedName)),
+        name,
+      });
+    }
+
+    return explored;
   }
 
   /** Finds every module definition file beneath a directory. */
@@ -187,7 +229,9 @@ export class NestjsProjectService {
   }
 
   /** Explores a project's container in preview mode and returns its tree. */
-  async exploreProject(project: NestjsProject): Promise<NestjsSpelunkedTree[]> {
+  async exploreProject(
+    project: NestjsProject,
+  ): Promise<NestjsExploredModule[]> {
     const { rootModuleFile } = project;
     const rootModule =
       rootModuleFile === undefined
@@ -201,17 +245,15 @@ export class NestjsProjectService {
       preview: true,
     });
 
-    let tree: SpelunkedTree[];
+    let tree: NestjsExploredModule[];
 
     try {
-      tree = SpelunkerModule.explore(application, {
-        ignoreImports: [
-          ...NESTJS_PROJECT_IGNORED_MODULES,
-          ...(rootModuleFile === undefined
-            ? NESTJS_PROJECT_SYNTHETIC_IGNORED_MODULES
-            : []),
-        ],
-      });
+      tree = this.exploreContainer(application, [
+        ...NESTJS_PROJECT_IGNORED_MODULES,
+        ...(rootModuleFile === undefined
+          ? NESTJS_PROJECT_SYNTHETIC_IGNORED_MODULES
+          : []),
+      ]);
     } finally {
       this.logger.debug("🚀 Booted a project's container", undefined, {
         project: project.name,

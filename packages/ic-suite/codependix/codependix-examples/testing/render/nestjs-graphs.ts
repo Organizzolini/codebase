@@ -181,7 +181,7 @@ async function buildAmbientDocument(): Promise<ExampleDocument> {
     jsonExports: [],
     sections: await buildAmbientSections(),
     summary:
-      "`SpelunkerModule.explore` reports the container's view rather than the decorators', so a `@Global()` module arrives as an import of every other module. Drawn literally it would bury the structure worth reading, so its edges are left out and it is drawn as a rounded node.",
+      "`NestjsProjectService.exploreProject` reports the container's view rather than the decorators', so a `@Global()` module arrives as an import of every other module. Drawn literally it would bury the structure worth reading, so its edges are left out and it is drawn as a rounded node.",
     title: "The ambient-module heuristic",
   };
 }

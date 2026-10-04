@@ -84,6 +84,13 @@ export default [
       // Agent scratch space — gitignored (`.superpowers/sdd/.gitignore` is a
       // bare `*`) and never source, the same reason as the Python caches above
       "**/.superpowers/**",
+      // meanderaw's draw run writes its index and family pages here — gitignored,
+      // never source, and gigabytes at the default edge budget, past the 2 GiB a
+      // single file read can hold, so reading one would crash the whole run
+      "**/applications/meanderaw/output/**",
+      // Nested local worktrees created by agent tooling; untracked scratch
+      // repositories that should never be linted as part of this workspace.
+      "**/.claude/worktrees/**",
       "**/vite.config.*.timestamp*",
       "**/vitest.config.*.timestamp*",
       "**/codometer-report.json",
@@ -1478,6 +1485,25 @@ export default [
           minValues: 2,
           order: { caseSensitive: false, natural: true, type: "asc" },
           pathPattern: "^(?!runArgs$)",
+        },
+      ],
+    },
+  },
+
+  // 🧩 nx.json project patterns
+  // Nx reads a `projects` pattern list in order, and one that opens with a
+  // `!` exclusion starts from every project in the workspace. Sorting moves
+  // every exclusion ahead of the include it narrows, so `release.projects`
+  // would silently match all projects instead of the publishable ones.
+  {
+    files: ["**/nx.json"],
+    rules: {
+      "jsonc/sort-array-values": [
+        "error",
+        {
+          minValues: 2,
+          order: { caseSensitive: false, natural: true, type: "asc" },
+          pathPattern: String.raw`^(?!(?:.*\.)?(?:commands?|projects)$)`,
         },
       ],
     },
