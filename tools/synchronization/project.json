@@ -169,29 +169,6 @@
         "cwd": "{workspaceRoot}"
       }
     },
-    "readme-version": {
-      "cache": true,
-      "configurations": {
-        "check": {
-          "command": "NODE_OPTIONS='' node --import @swc-node/register/esm-register tools/synchronization/src/main.ts readme-version check"
-        },
-        "write": {
-          "command": "NODE_OPTIONS='' node --import @swc-node/register/esm-register tools/synchronization/src/main.ts readme-version write"
-        }
-      },
-      "defaultConfiguration": "check",
-      "description": "Reconciles the version in the root README.md title against `package.json`. `check` runs on a pull request; `write` runs on the default branch's release.",
-      "executor": "nx:run-commands",
-      "inputs": [
-        "{projectRoot}/**/*.ts",
-        "{workspaceRoot}/package.json",
-        "{workspaceRoot}/README.md",
-        "shared-globals"
-      ],
-      "options": {
-        "cwd": "{workspaceRoot}"
-      }
-    },
     "repl": {},
     "skill-exclusions": {
       "cache": true,

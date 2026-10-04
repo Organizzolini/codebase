@@ -1,4 +1,9 @@
-# Codebase v2.30.2
+# 🧑‍💻 Codebase
+
+[![Version](https://img.shields.io/github/v/release/Organizzolini/codebase?logo=semanticrelease&label=Version)](https://github.com/Organizzolini/codebase/releases/latest)
+[![Continuous Integration](https://github.com/Organizzolini/codebase/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/Organizzolini/codebase/actions/workflows/continuous-integration.yml)
+[![Continuous Deployment](https://github.com/Organizzolini/codebase/actions/workflows/continuous-deployment.yml/badge.svg)](https://github.com/Organizzolini/codebase/actions/workflows/continuous-deployment.yml)
+[![Continuous Compliance](https://github.com/Organizzolini/codebase/actions/workflows/continuous-compliance.yml/badge.svg)](https://github.com/Organizzolini/codebase/actions/workflows/continuous-compliance.yml)
 
 [![Nx](https://img.shields.io/badge/Nx-Codebase-143055?logo=nx)](https://nx.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript)](https://www.typescriptlang.org/)
@@ -37,16 +42,10 @@
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-K8s-326CE5?logo=kubernetes)](https://kubernetes.io/)
 [![Terraform](https://img.shields.io/badge/Terraform-IaC-844FBA?logo=terraform)](https://www.terraform.io/)
 
-[![Continuous Integration](https://github.com/Organizzolini/codebase/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/Organizzolini/codebase/actions/workflows/continuous-integration.yml)
-[![Continuous Deployment](https://github.com/Organizzolini/codebase/actions/workflows/continuous-deployment.yml/badge.svg)](https://github.com/Organizzolini/codebase/actions/workflows/continuous-deployment.yml)
-[![Continuous Compliance](https://github.com/Organizzolini/codebase/actions/workflows/continuous-compliance.yml/badge.svg)](https://github.com/Organizzolini/codebase/actions/workflows/continuous-compliance.yml)
-
-A modern TypeScript codebase with Nx, featuring automated releases, comprehensive code quality tools, and strict type safety.
-
 ## 💽 Projects
 
 **🔮 [affirmations](applications/affirmations)** - Python LangChain + Ollama affirmation generator (LangGraph ReAct agent, SearxNG)\
-**🛰️ [caelundas](applications/caelundas)** - Swiss Ephemeris calendar generator that turns astronomical events into an `.ics` file
+**🛰️ [caelundas](applications/caelundas)** - Swiss Ephemeris calendar generator that turns astronomical events into an `.ics` file\
 <details>
 <summary><strong>🔭 callidescope</strong> - Call stack tracing toolchain that follows control flow through injected dependencies and reports where a stack got too deep</summary>
 
