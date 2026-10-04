@@ -54,21 +54,28 @@ jobs:
           - target: guard-code
             name: Guard
             emoji: 💂
-          # Meanderaw runs in a leg of its own. Uncached, it takes over seven
-          # minutes beside every other project's tests, and it waits for a
-          # free `--parallel` slot before starting, so a run that affects
-          # everything (an `nx.json` change) outlasted the 12-minute limit.
-          # Alone it takes about three. The other leg keeps the `Test` name
-          # that branch protection requires.
+          # Tests run in three legs that together cover every project once.
+          # Meanderaw alone: uncached, it took over seven minutes beside every
+          # other project's tests and waited for a free `--parallel` slot, so a
+          # run that affects everything (an `nx.json` change) outlasted the
+          # 12-minute limit; alone it takes about three. ic-suite's 36 packages
+          # were most of what remained. The third leg, everything else, keeps
+          # the `Test` name branch protection has always required. A leg whose
+          # projects are unaffected runs nothing.
           - target: test-code
             name: Test
             emoji: 🧑‍🔬
-            exclude: meanderaw
+            exclude: meanderaw,packages/ic-suite/**
           - target: test-code
             name: Test Meanderaw
             emoji: 🧑‍🔬
             exclude: "*,!meanderaw"
             shard: meanderaw
+          - target: test-code
+            name: Test IC Suite
+            emoji: 🧑‍🔬
+            exclude: "*,!packages/ic-suite/**"
+            shard: ic-suite
           - target: secure-code
             name: Secure
             emoji: 🕵️
