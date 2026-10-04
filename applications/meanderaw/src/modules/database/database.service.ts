@@ -116,7 +116,11 @@ export class DatabaseService {
       if (after !== undefined) {
         query.andWhere(
           "(meander.rows, meander.columns, meander.code) > (:rows, :columns, :code)",
-          { code: after.code, columns: after.columns, rows: after.rows },
+          {
+            code: after.code,
+            columns: after.columns,
+            rows: after.rows,
+          },
         );
       }
 
@@ -187,7 +191,7 @@ export class DatabaseService {
    * `save`. These rows are new by construction — the draw run walks a space, it
    * does not revisit one — so `save`'s lookup per row is wasted, and
    * `insert` still spends about 100 µs a row building its statement and
-   * reading back generated ids nobody uses. The draw run writes 2,331,597 rows,
+   * reading back generated ids nobody uses. The draw run writes 7,059,159 rows,
    * so that bookkeeping alone was minutes. Each value is still converted by
    * the driver's own `preparePersistentValue`, so a row reads back exactly
    * as `save` would have stored it. Placeholders are Postgres's numbered
@@ -199,8 +203,8 @@ export class DatabaseService {
    * driver would otherwise commit each statement on its own, and a commit is
    * the expensive part of a write — the draw run's rows took about a fifth as
    * long this way, measured when it wrote 30,279. It also makes the refusal
-   * below whole: a batch that hits a duplicate leaves no half-written shape
-   * behind.
+   * below whole: a batch that hits a duplicate leaves none of its rows
+   * behind, and the draw run fails rather than carrying on past it.
    *
    * Chunked because a single statement's parameter count is bounded, so a
    * whole shape's worth of rows in one statement is a limit nobody declared

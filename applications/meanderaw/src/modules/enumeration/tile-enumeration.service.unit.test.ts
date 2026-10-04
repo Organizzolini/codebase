@@ -122,7 +122,7 @@ describe(TileEnumerationService, () => {
     });
 
     it("gives a shallower band more columns, since a tile's edge count grows in both dimensions at once", () => {
-      expect(service.maximumColumns(2)).toBe(7);
+      expect(service.maximumColumns(2)).toBe(8);
       expect(service.maximumColumns(3)).toBe(4);
       expect(service.maximumColumns(4)).toBe(3);
       expect(service.maximumColumns(5)).toBe(2);
@@ -186,8 +186,8 @@ describe(TileEnumerationService, () => {
       }).compile();
       const unset = await module.resolve(TileEnumerationService);
 
-      expect(unset.isAdmitted({ columns: 7, rows: 2 })).toBe(true);
-      expect(unset.isAdmitted({ columns: 8, rows: 2 })).toBe(false);
+      expect(unset.isAdmitted({ columns: 8, rows: 2 })).toBe(true);
+      expect(unset.isAdmitted({ columns: 9, rows: 2 })).toBe(false);
     });
   });
 

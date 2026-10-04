@@ -6,8 +6,7 @@ import { SymmetryService } from "../symmetry/symmetry.service";
 
 import { DrawRecordService } from "./draw-record.service";
 
-import type { MeanderShape } from "../database/database.types";
-import type { KeyedMeanderRecord } from "./draw.types";
+import type { MeanderRecord, MeanderShape } from "../database/database.types";
 
 /**
  * Draws one batch of a shape's orbit minima into the rows the database
@@ -45,24 +44,18 @@ export class DrawWorkerService {
 
   // 🌎 Public Methods
 
-  /**
-   * Every mask's meander as an enumerated row, keyed by its
-   * representative's edge key, in the order the masks were given.
-   */
-  records(shape: MeanderShape, masks: readonly number[]): KeyedMeanderRecord[] {
-    return masks.map((mask) => {
-      const representative = this.symmetryService.canonicalTile(
-        this.tileEnumerationService.tile(shape, mask),
-      );
-
-      return {
-        key: this.symmetryService.edgeKey(representative),
-        record: this.drawRecordService.record(
-          this.codeService.spell(representative),
-          shape,
-          false,
+  /** Every mask's meander as an enumerated row, in the order the masks were given. */
+  records(shape: MeanderShape, masks: readonly number[]): MeanderRecord[] {
+    return masks.map((mask) =>
+      this.drawRecordService.record(
+        this.codeService.spell(
+          this.symmetryService.canonicalTile(
+            this.tileEnumerationService.tile(shape, mask),
+          ),
         ),
-      };
-    });
+        shape,
+        false,
+      ),
+    );
   }
 }

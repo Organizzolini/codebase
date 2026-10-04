@@ -41,21 +41,10 @@ export interface DrawCommandOptions {
 /** A worker thread's answer to one {@link DrawWorkerTask}: its records, or why it could not draw them. */
 export type DrawWorkerReply =
   | { readonly error: string }
-  | { readonly records: readonly KeyedMeanderRecord[] };
+  | { readonly records: readonly MeanderRecord[] };
 
 /** A batch of one shape's orbit minima, sent to a worker thread to draw. */
 export interface DrawWorkerTask {
   readonly masks: readonly number[];
   readonly shape: MeanderShape;
-}
-
-/**
- * One drawn meander and the key the draw run orders it by: its
- * representative's edge key, which is the order `TileEnumerationService`
- * enumerates in. Workers finish batches in any order, so the key is what
- * puts a shape's rows back in one stable order before they are written.
- */
-export interface KeyedMeanderRecord {
-  readonly key: string;
-  readonly record: MeanderRecord;
 }

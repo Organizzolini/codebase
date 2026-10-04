@@ -20,7 +20,7 @@ export const DEFAULT_DATABASE_NAME = "meanderaw_development";
  * A bound rather than a tuning knob. One statement's parameter count is
  * limited, so a whole shape's worth of rows in one statement would be
  * reaching a limit nobody declared — the draw run's largest shape alone holds
- * 1,049,600 of them. A row binds nine parameters, its `id` defaulting in the
+ * 4,196,352 of them. A row binds nine parameters, its `id` defaulting in the
  * database, so five hundred rows bind about four and a half thousand, well
  * under the 65,535 one Postgres statement admits; `DatabaseService`'s
  * integration test writes more than two chunks to hold that true.

@@ -2,8 +2,9 @@
  * The edge budget every whole-draw-run suite runs at, pinned below the
  * application's own default.
  *
- * The default sets the size of the committed corpus, and at twenty-two that
- * is millions of rows and half an hour of work — a size a suite cannot pay
+ * The default sets the size of the corpus a draw run writes, and at
+ * twenty-four that is millions of rows and minutes of work — a size a suite
+ * cannot pay
  * per run. These suites assert how a draw run behaves rather than how large the
  * committed one is, so they pin twelve, which still walks every code path:
  * nine shapes, 2,079 enumerated meanders, and the hardcoded corpus beyond

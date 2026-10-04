@@ -12,15 +12,12 @@ import { DRAW_POOL_BATCH_SIZE, DrawWorkerError } from "./draw.constants";
 
 import type { MeanderRecord, MeanderShape } from "../database/database.types";
 import type { Environment } from "../enumeration/enumeration.types";
-import type {
-  DrawWorkerReply,
-  DrawWorkerTask,
-  KeyedMeanderRecord,
-} from "./draw.types";
+import type { DrawWorkerReply, DrawWorkerTask } from "./draw.types";
 
 /**
- * Draws a shape's meanders across worker threads, and hands back its rows in
- * the one order a single thread would have drawn them in.
+ * Draws a shape's meanders across worker threads, and hands its rows back a
+ * wave of batches at a time, in the one order a single thread would have
+ * drawn them in.
  *
  * Walking a shape's symmetry classes is cheap — `orbitMinima` is a few
  * nanoseconds an assignment, on this thread — but drawing each class's row
@@ -28,8 +25,14 @@ import type {
  * no meander depending on another. So the minima are cut into batches and
  * dealt to `DRAW_WORKERS` threads, each running {@link DrawWorkerService}
  * in its own context booted from `src/worker.ts`, while this thread only
- * deals batches and sorts what comes back. With no workers configured the
+ * deals batches and hands back what returns. With no workers configured the
  * same service runs in-process, which is what the suites pin.
+ *
+ * Rows are handed back a wave at a time — one batch per thread — rather than
+ * a whole shape at a time, and the next wave is already drawing while this
+ * one is written. The largest shape at the default budget holds over four
+ * million meanders, which as one array of rows would outgrow the machine;
+ * as waves, no more than two of them are ever held at once.
  *
  * Threads are spawned on first use and kept for the whole draw run, since
  * booting one costs about a second; {@link close} ends them, and the draw run
@@ -62,44 +65,22 @@ export class DrawPoolService implements OnModuleDestroy {
 
   // 🔏 Private Methods
 
-  /**
-   * Deals a shape's minima to every thread in batches, each thread taking
-   * the next batch as soon as it finishes one, and answers with every row
-   * in batch order.
-   */
-  private async distribute(
-    shape: MeanderShape,
-    masks: readonly number[],
-  ): Promise<KeyedMeanderRecord[]> {
+  /** Cuts a shape's minima into the batches a thread draws at once. */
+  private batchesOf(masks: readonly number[]): number[][] {
     const batches: number[][] = [];
 
     for (let start = 0; start < masks.length; start += DRAW_POOL_BATCH_SIZE) {
       batches.push(masks.slice(start, start + DRAW_POOL_BATCH_SIZE));
     }
 
-    const drawn: (readonly KeyedMeanderRecord[])[] = [];
-    let next = 0;
-
-    await Promise.all(
-      this.spawn().map(async (worker) => {
-        for (let index = next; index < batches.length; index = next) {
-          next += 1;
-          drawn[index] = await this.draw(worker, {
-            masks: batches[index] ?? [],
-            shape,
-          });
-        }
-      }),
-    );
-
-    return drawn.flat();
+    return batches;
   }
 
   /** Sends one batch to one thread and resolves with the rows it posts back. */
   private async draw(
     worker: Worker,
     task: DrawWorkerTask,
-  ): Promise<readonly KeyedMeanderRecord[]> {
+  ): Promise<readonly MeanderRecord[]> {
     return new Promise((resolve, reject) => {
       const onError = (error: Error): void => {
         worker.off("message", onMessage);
@@ -144,7 +125,80 @@ export class DrawPoolService implements OnModuleDestroy {
     return this.workers;
   }
 
+  /** Draws a wave of batches, one per thread, starting at batch `start`. */
+  private async wave(
+    shape: MeanderShape,
+    batches: readonly (readonly number[])[],
+    start: number,
+  ): Promise<(readonly MeanderRecord[])[]> {
+    const workers = this.spawn();
+
+    return Promise.all(
+      workers
+        .slice(0, batches.length - start)
+        .map(async (worker, index) =>
+          this.draw(worker, { masks: batches[start + index] ?? [], shape }),
+        ),
+    );
+  }
+
+  /**
+   * Hands back a shape's batches a wave at a time, the next wave already
+   * drawing while this one's rows are written. A wave still drawing when the
+   * reader stops — because a write failed — is awaited before returning, so
+   * its rejection is never left unobserved.
+   */
+  private async *waves(
+    shape: MeanderShape,
+    batches: readonly (readonly number[])[],
+  ): AsyncGenerator<readonly MeanderRecord[]> {
+    const size = this.spawn().length;
+    let pending = this.wave(shape, batches, 0);
+
+    try {
+      for (let start = 0; start < batches.length; start += size) {
+        const drawn = await pending;
+
+        pending =
+          start + size < batches.length
+            ? this.wave(shape, batches, start + size)
+            : Promise.resolve([]);
+
+        yield* drawn;
+      }
+    } finally {
+      await pending.catch(() => []);
+    }
+  }
+
   // 🌎 Public Methods
+
+  /**
+   * Every meander of one shape as the rows the database holds for them, a
+   * batch at a time, one per symmetry class, in the order the shape's orbit
+   * minima ascend.
+   *
+   * With threads, a wave of batches — one per thread — is drawn at once, and
+   * the next wave starts drawing before this one's rows are handed back, so
+   * writing a wave overlaps drawing the next and at most two are ever held.
+   */
+  async *batches(
+    shape: MeanderShape,
+  ): AsyncGenerator<readonly MeanderRecord[]> {
+    const batches = this.batchesOf(
+      this.tileEnumerationService.orbitMinima(shape.rows, shape.columns),
+    );
+
+    if (this.workerCount === 0) {
+      for (const masks of batches) {
+        yield this.drawWorkerService.records(shape, masks);
+      }
+
+      return;
+    }
+
+    yield* this.waves(shape, batches);
+  }
 
   /** Ends every thread the pool spawned; the next shape spawns fresh ones. */
   async close(): Promise<void> {
@@ -157,27 +211,5 @@ export class DrawPoolService implements OnModuleDestroy {
   /** Ends the pool's threads with the application, so none outlives it. */
   async onModuleDestroy(): Promise<void> {
     await this.close();
-  }
-
-  /**
-   * Every meander of one shape as the row the database holds for it, one
-   * per symmetry class, ordered by representative edge key — the order
-   * `TileEnumerationService.enumerate` names them in.
-   */
-  async records(shape: MeanderShape): Promise<MeanderRecord[]> {
-    const masks = this.tileEnumerationService.orbitMinima(
-      shape.rows,
-      shape.columns,
-    );
-    const keyed =
-      this.workerCount === 0
-        ? this.drawWorkerService.records(shape, masks)
-        : await this.distribute(shape, masks);
-
-    return keyed
-      .toSorted((first, second) =>
-        first.key < second.key ? -1 : first.key > second.key ? 1 : 0,
-      )
-      .map(({ record }) => record);
   }
 }

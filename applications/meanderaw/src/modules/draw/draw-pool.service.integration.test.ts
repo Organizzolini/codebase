@@ -14,6 +14,8 @@ import { DrawPoolService } from "./draw-pool.service";
 import { DrawRecordService } from "./draw-record.service";
 import { DrawWorkerService } from "./draw-worker.service";
 
+import type { MeanderRecord, MeanderShape } from "../database/database.types";
+
 /** Compiles a pool over the real drawing services, with `workers` threads. */
 async function compilePool(workers: number): Promise<DrawPoolService> {
   const module = await Test.createTestingModule({
@@ -34,6 +36,20 @@ async function compilePool(workers: number): Promise<DrawPoolService> {
   }).compile();
 
   return module.resolve(DrawPoolService);
+}
+
+/** Reads every row a pool draws for one shape, across every batch it hands back. */
+async function rowsOf(
+  pool: DrawPoolService,
+  shape: MeanderShape,
+): Promise<MeanderRecord[]> {
+  const rows: MeanderRecord[] = [];
+
+  for await (const batch of pool.batches(shape)) {
+    rows.push(...batch);
+  }
+
+  return rows;
 }
 
 /**
@@ -57,9 +73,9 @@ describe("drawPoolService across worker threads", () => {
 
   it("draws exactly the rows, in exactly the order, a pool with no workers draws", async () => {
     const shape = { columns: 2, rows: 3 };
-    const expected = await inProcess.records(shape);
+    const expected = await rowsOf(inProcess, shape);
 
     expect(expected).toHaveLength(204);
-    await expect(threaded.records(shape)).resolves.toStrictEqual(expected);
+    await expect(rowsOf(threaded, shape)).resolves.toStrictEqual(expected);
   });
 });

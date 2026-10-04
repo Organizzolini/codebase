@@ -58,7 +58,11 @@ describe(DrawEnumerationService, () => {
       { columns: 1, rows: 3 },
       { columns: 2, rows: 3 },
     ]);
-    vi.mocked(drawPoolService.records).mockResolvedValue([record]);
+    vi.mocked(drawPoolService.batches).mockImplementation(
+      async function* batches() {
+        yield await Promise.resolve([record]);
+      },
+    );
     vi.mocked(databaseService.codes).mockResolvedValue(new Set());
     vi.mocked(databaseService.saveAll).mockResolvedValue(1);
   });
@@ -84,7 +88,11 @@ describe(DrawEnumerationService, () => {
     it("skips a meander whose Code a row of its shape already holds, so a hardcoded row wins", async () => {
       const other = createMock<MeanderRecord>({ code: "01" });
 
-      vi.mocked(drawPoolService.records).mockResolvedValue([record, other]);
+      vi.mocked(drawPoolService.batches).mockImplementation(
+        async function* batches() {
+          yield await Promise.resolve([record, other]);
+        },
+      );
       vi.mocked(databaseService.codes).mockResolvedValue(new Set(["00"]));
 
       await service.persist([{ columns: 1, rows: 3 }]);
@@ -99,7 +107,7 @@ describe(DrawEnumerationService, () => {
     it("writes the rows the pool draws for each shape", async () => {
       await service.persist([{ columns: 1, rows: 3 }]);
 
-      expect(drawPoolService.records).toHaveBeenCalledWith({
+      expect(drawPoolService.batches).toHaveBeenCalledWith({
         columns: 1,
         rows: 3,
       });
@@ -122,7 +130,7 @@ describe(DrawEnumerationService, () => {
     it("walks every shape the budget admits, rather than a range of its own", async () => {
       await service.drawAll();
 
-      expect(vi.mocked(drawPoolService.records).mock.calls).toStrictEqual([
+      expect(vi.mocked(drawPoolService.batches).mock.calls).toStrictEqual([
         [{ columns: 1, rows: 3 }],
         [{ columns: 2, rows: 3 }],
       ]);

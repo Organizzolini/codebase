@@ -53,14 +53,16 @@ export class DrawEnumerationService {
   }
 
   /**
-   * Draws the shapes named and writes every meander they hold, one shape's
-   * rows at a time, answering with how many were written.
+   * Draws the shapes named and writes every meander they hold, a batch of
+   * rows at a time as the pool hands them back, answering with how many were
+   * written.
    *
-   * A shape at a time rather than the whole draw run at once: the largest
-   * shape alone holds 1,049,600 meanders, and holding every shape's rows in
-   * memory before writing any of them buys nothing. Each shape is drawn
-   * across `DrawPoolService`'s worker threads, which are ended once the last
-   * shape is written — or the draw run fails — so none outlives it.
+   * A batch at a time rather than a shape at a time: the largest shape alone
+   * holds 4,196,352 meanders, and holding a shape's rows in memory before
+   * writing any of them is what bounds how far the budget can rise. Each
+   * shape is drawn across `DrawPoolService`'s worker threads, which are ended
+   * once the last shape is written — or the draw run fails — so none
+   * outlives it.
    *
    * A meander whose Code a row of its shape already holds is skipped rather
    * than written: the hardcoded corpus is ingested first, and a hardcoded
@@ -74,11 +76,12 @@ export class DrawEnumerationService {
     try {
       for (const shape of shapes) {
         const held = await this.databaseService.codes(shape);
-        const records = await this.drawPoolService.records(shape);
 
-        written += await this.databaseService.saveAll(
-          records.filter(({ code }) => !held.has(code)),
-        );
+        for await (const records of this.drawPoolService.batches(shape)) {
+          written += await this.databaseService.saveAll(
+            records.filter(({ code }) => !held.has(code)),
+          );
+        }
       }
     } finally {
       await this.drawPoolService.close();

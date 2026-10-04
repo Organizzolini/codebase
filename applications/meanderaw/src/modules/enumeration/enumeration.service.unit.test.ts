@@ -68,11 +68,11 @@ describe(EnumerationService, () => {
 
   describe("shapes", () => {
     // 🎯 The whole draw run, as the two numbers that decide it: the edge budget,
-    // and the shallowest repeat worth walking. Eleven of these twenty-three
+    // and the shallowest repeat worth walking. Eleven of these twenty-five
     // shapes are the ones the `mosaic` half of the corpus already commits;
-    // the rest are what a budget of twenty-two admits past that family's own
-    // row and column ceilings — seven columns at two rows, and single
-    // columns down to eleven rows.
+    // the rest are what a budget of twenty-four admits past that family's own
+    // row and column ceilings — eight columns at two rows, and single
+    // columns down to twelve rows.
     it("draws every shape the edge budget admits, from the shallowest repeat upward", () => {
       expect(
         service.shapes().map(({ columns, rows }) => `${rows}r${columns}c`),
@@ -84,6 +84,7 @@ describe(EnumerationService, () => {
         "2r5c",
         "2r6c",
         "2r7c",
+        "2r8c",
         "3r1c",
         "3r2c",
         "3r3c",
@@ -100,6 +101,7 @@ describe(EnumerationService, () => {
         "9r1c",
         "10r1c",
         "11r1c",
+        "12r1c",
       ]);
     });
 
@@ -124,6 +126,7 @@ describe(EnumerationService, () => {
         "2r5c",
         "2r6c",
         "2r7c",
+        "2r8c",
         "3r1c",
         "3r2c",
         "3r3c",
@@ -152,6 +155,7 @@ describe(EnumerationService, () => {
         "9r1c",
         "10r1c",
         "11r1c",
+        "12r1c",
       ]);
     });
 

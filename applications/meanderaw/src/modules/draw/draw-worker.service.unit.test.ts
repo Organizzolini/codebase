@@ -51,7 +51,6 @@ describe(DrawWorkerService, () => {
   beforeEach(() => {
     vi.mocked(tileEnumerationService.tile).mockReturnValue(tile);
     vi.mocked(symmetryService.canonicalTile).mockReturnValue(representative);
-    vi.mocked(symmetryService.edgeKey).mockReturnValue("01000");
     vi.mocked(codeService.spell).mockReturnValue("01x03y048");
     vi.mocked(drawRecordService.record).mockReturnValue(record);
   });
@@ -74,15 +73,8 @@ describe(DrawWorkerService, () => {
       );
     });
 
-    it("keys each record by its representative's edge key, one per mask, in mask order", () => {
-      vi.mocked(symmetryService.edgeKey)
-        .mockReturnValueOnce("01000")
-        .mockReturnValueOnce("00100");
-
-      expect(service.records(shape, [2, 4])).toStrictEqual([
-        { key: "01000", record },
-        { key: "00100", record },
-      ]);
+    it("records one row per mask, in mask order", () => {
+      expect(service.records(shape, [2, 4])).toStrictEqual([record, record]);
     });
   });
 });

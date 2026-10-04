@@ -31,7 +31,7 @@ edges it was extracted against, extracted once as Codes from the retired file tr
 `CorpusService.isPreserved` is the filter, by shape against the fixed
 `HISTORICAL_CORPUS_EDGE_BUDGET` rather than the draw run's own budget, so raising
 `EDGE_BUDGET` never drops one. Rows with it false hold what `EnumerationService` walks — the
-twenty-three shapes the edge budget admits, one meander per symmetry class. The corpus is
+twenty-five shapes the edge budget admits, one meander per symmetry class. The corpus is
 ingested first, and the draw run skips any Code a hardcoded row already holds, so a hardcoded
 row keeps its Code and hand-filed family. Only enumerated meanders are folded by
 symmetry: a hardcoded mirror or flip of an enumerated meander stays a row of its own.
@@ -40,9 +40,9 @@ symmetry: a hardcoded mirror or flip of an enumerated meander stays a row of its
 **What bounds the enumeration is one edge budget, not a column cap.** A repeat of `rows` by
 `columns` holds `columns * (2 * rows - 1)` edges, its only degrees of freedom — so a shape
 holds `2 ** edges` repeats and rows and columns are not independent knobs. `EDGE_BUDGET`
-caps that edge count at 22, overridable through `DRAW_EDGE_BUDGET`, and
-`DRAW_MINIMUM_ROWS` sets the floor at 2, which between them admit twenty-three shapes: 2×1
-through 2×7, 3×1 through 3×4, 4×1 through 4×3, 5×1, 5×2, 6×1, 6×2, and 7×1 through 11×1. A
+caps that edge count at 24, overridable through `DRAW_EDGE_BUDGET`, and
+`DRAW_MINIMUM_ROWS` sets the floor at 2, which between them admit twenty-five shapes: 2×1
+through 2×8, 3×1 through 3×4, 4×1 through 4×3, 5×1, 5×2, 6×1, 6×2, and 7×1 through 12×1. A
 shape past the budget is refused rather than enumerated slowly. Raising it is a one-line
 change with a visible effect on the shapes `enumeration.service.unit.test.ts` asserts — which
 is the point of it being one number. The suites that run a whole draw run pin their own budget

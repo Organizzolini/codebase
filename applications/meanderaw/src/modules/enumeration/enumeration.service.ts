@@ -35,8 +35,8 @@ import type { EnumeratedMeander, Environment } from "./enumeration.types";
  * could disagree about the same space. A repeat of `rows` by `columns` holds
  * `columns × (2 × rows - 1)` edges and the walk is `2 ** edges` wide, so the
  * budget is what keeps the space a size somebody chose rather than one
- * somebody discovers. At twenty-two it admits twenty-three shapes and
- * 2,331,597 distinct meanders — of which the 8,551 in the eleven shapes the
+ * somebody discovers. At twenty-four it admits twenty-five shapes and
+ * 7,059,159 distinct meanders — of which the 8,551 in the eleven shapes the
  * `mosaic` half of the corpus already commits are reproduced rather than
  * recomputed differently.
  *
@@ -117,9 +117,9 @@ export class EnumerationService {
    *
    * Both ends are the budget's rather than a table's, by default. The draw run
    * starts at {@link DRAW_MINIMUM_ROWS} and climbs while a single-column
-   * repeat is still admitted, which stops it at eleven rows unconfigured;
+   * repeat is still admitted, which stops it at twelve rows unconfigured;
    * the column span at each row count is however many the budget leaves,
-   * which is seven at two rows and one from seven rows down.
+   * which is eight at two rows and one from seven rows down.
    * `DRAW_MAXIMUM_ROWS` and `DRAW_MAXIMUM_COLUMNS` layer a further review
    * filter on top of those two ends — never past them, since a shape past
    * the budget is still refused — and default to unbounded, so an
