@@ -120,6 +120,11 @@ const scopes = [
   },
   {
     description:
+      "Shared Postgres package: environment, TypeORM module, base entities, test harness, and migrations",
+    name: "database",
+  },
+  {
+    description:
       "Dependency version changes (upgrades, additions, removals via pnpm)",
     name: "dependencies",
   },
