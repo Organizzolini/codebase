@@ -67,7 +67,7 @@ resolve_login_shell_token() {
   local shell_output
   shell_output="$(
     "${login_shell}" -lc \
-      'printf "\n<gh-token>%s</gh-token>\n" "${GH_TOKEN:-${GITHUB_TOKEN:-}}"' \
+      "printf '\\n<gh-token>%s</gh-token>\\n' \"\${GH_TOKEN:-\${GITHUB_TOKEN:-}}\"" \
       </dev/null 2>/dev/null || true
   )"
 

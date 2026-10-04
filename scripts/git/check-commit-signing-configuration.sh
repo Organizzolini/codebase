@@ -3,13 +3,13 @@
 set -e
 
 commit_gpg_sign="$(git config --bool --get commit.gpgsign || true)"
-if [[ "$commit_gpg_sign" != "true" ]]; then
+if [[ "${commit_gpg_sign}" != "true" ]]; then
   echo "❌ Git commit signing is required. Set commit.gpgsign=true before committing." >&2
   exit 1
 fi
 
 signing_key="$(git config --get user.signingkey || true)"
-if [[ -z "$signing_key" ]]; then
+if [[ -z "${signing_key}" ]]; then
   echo "❌ Git signing key is required. Set user.signingkey before committing." >&2
   exit 1
 fi
@@ -19,8 +19,8 @@ if ! command -v gpg > /dev/null 2>&1; then
   exit 1
 fi
 
-if ! gpg --list-secret-keys --keyid-format=long "$signing_key" | grep -q '^sec'; then
-  echo "❌ No GPG secret key found for user.signingkey=$signing_key." >&2
+if ! gpg --list-secret-keys --keyid-format=long "${signing_key}" | grep -q '^sec'; then
+  echo "❌ No GPG secret key found for user.signingkey=${signing_key}." >&2
   exit 1
 fi
 
@@ -35,23 +35,23 @@ fi
 # multi-identity keyring.
 if [[ -z "${CI:-}" && -z "${GITHUB_ACTIONS:-}" ]]; then
   git_email="$(git config --get user.email || true)"
-  if [[ -z "$git_email" ]]; then
+  if [[ -z "${git_email}" ]]; then
     echo "❌ Git user.email is required to verify the signing key's identity." >&2
     exit 1
   fi
 
   key_uid_emails="$(
-    gpg --with-colons --list-secret-keys "$signing_key" 2> /dev/null \
+    gpg --with-colons --list-secret-keys "${signing_key}" 2> /dev/null \
       | awk -F: '$1 == "uid" { print $10 }' \
       | grep -oE '<[^>]+>' \
       | tr -d '<>'
   )"
 
-  if ! grep -qxF "$git_email" <<< "$key_uid_emails"; then
-    echo "❌ Signing key user.signingkey=$signing_key does not belong to $git_email." >&2
-    echo "   Its GPG identity is: $(echo "$key_uid_emails" | paste -sd', ' -)" >&2
-    echo "   Set a signing key for $git_email, scoped to this repository:" >&2
-    echo "     gpg --list-secret-keys --keyid-format=long $git_email" >&2
+  if ! grep -qxF "${git_email}" <<< "${key_uid_emails}"; then
+    echo "❌ Signing key user.signingkey=${signing_key} does not belong to ${git_email}." >&2
+    echo "   Its GPG identity is: $(echo "${key_uid_emails}" | paste -sd', ' -)" >&2
+    echo "   Set a signing key for ${git_email}, scoped to this repository:" >&2
+    echo "     gpg --list-secret-keys --keyid-format=long ${git_email}" >&2
     echo "     git config user.signingkey <key-id>   # no --global: keep other repos untouched" >&2
     exit 1
   fi
@@ -87,13 +87,13 @@ gpg_wrapper="$(mktemp)"
 smoke_test_stderr="$(mktemp)"
 trap 'rm -f "$gpg_wrapper" "$smoke_test_stderr"' EXIT
 
-cat > "$gpg_wrapper" << GPG_WRAPPER
+cat > "${gpg_wrapper}" << GPG_WRAPPER
 #!/usr/bin/env bash
 exec ${gpg_program:-gpg} --batch --no-tty --pinentry-mode ${pinentry_mode} "\$@"
 GPG_WRAPPER
-chmod +x "$gpg_wrapper"
+chmod +x "${gpg_wrapper}"
 
-git_options=(-c "gpg.program=$gpg_wrapper")
+git_options=(-c "gpg.program=${gpg_wrapper}")
 
 tree_hash="$(git write-tree)"
 test_commit_message='commit-signing-smoke-test'
@@ -104,8 +104,8 @@ if git rev-parse --verify HEAD > /dev/null 2>&1; then
 fi
 
 if ! test_commit_hash="$(
-  printf '%s' "$test_commit_message" | \
-    git "${git_options[@]}" commit-tree "$tree_hash" "${parent_options[@]}" -S 2> "$smoke_test_stderr"
+  printf '%s' "${test_commit_message}" | \
+    git "${git_options[@]}" commit-tree "${tree_hash}" "${parent_options[@]}" -S 2> "${smoke_test_stderr}"
 )"; then
   # A cancelled pinentry only means the agent holds no cached passphrase. The key
   # itself is fine — the checks above proved it exists — and the next real commit
@@ -114,18 +114,18 @@ if ! test_commit_hash="$(
   # This never applies in CI: there the passphrase is preloaded into the agent, so
   # any signing failure is a real one that must fail the run rather than be
   # skipped.
-  if [[ "$pinentry_mode" == 'cancel' ]] && grep -q 'Operation cancelled' "$smoke_test_stderr"; then
+  if [[ "${pinentry_mode}" == 'cancel' ]] && grep -q 'Operation cancelled' "${smoke_test_stderr}"; then
     exit 0
   fi
 
   # gpg's own stderr is replayed on purpose: it names the actual failure.
-  cat "$smoke_test_stderr" >&2
-  echo "❌ Git commit signing smoke test failed: gpg could not sign with user.signingkey=$signing_key." >&2
+  cat "${smoke_test_stderr}" >&2
+  echo "❌ Git commit signing smoke test failed: gpg could not sign with user.signingkey=${signing_key}." >&2
   echo '   Verify the GPG key and its passphrase match (GPG_PRIVATE_KEY / GPG_PASSPHRASE in CI).' >&2
   exit 1
 fi
 
-if ! git "${git_options[@]}" verify-commit "$test_commit_hash" > /dev/null 2>&1; then
+if ! git "${git_options[@]}" verify-commit "${test_commit_hash}" > /dev/null 2>&1; then
   echo '❌ Git commit signing smoke test failed: the test signature did not verify.' >&2
   exit 1
 fi

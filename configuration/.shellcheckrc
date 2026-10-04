@@ -1,0 +1,47 @@
+# ShellCheck configuration for the workspace's shell scripts. The root
+# project's `shellcheck` target passes it with `--rcfile`, because shellcheck
+# only searches each script's own directory and its parents, and scripts/
+# is not under configuration/.
+#
+# Only directive keys are read here: `enable`, `disable`, `source`,
+# `source-path`, `shell`, `external-sources`, and `extended-analysis`. Any
+# other key, `severity` included, is ignored without a word, so the target
+# sets `--severity=style` (the lowest, strictest floor) on its command line.
+# A misspelled check name is ignored the same way, which is why every name
+# below is copied from `shellcheck --list-optional`.
+
+# Follow `source`d files into the analysis rather than reporting SC1091, so a
+# helper library is checked through every script that uses it.
+external-sources=true
+
+# Resolve a relative `source` path against the sourcing script's own directory,
+# which is how `scripts/nx/` and the `scripts/git/` hooks find their helpers.
+source-path=SCRIPTDIR
+
+# Dataflow analysis is the default; it is named so that turning it off is a
+# visible edit rather than a silent one.
+extended-analysis=true
+
+# Nine of the eleven optional checks. Each is listed by name rather than with
+# `enable=all`, so a check added by a future shellcheck release is adopted
+# deliberately, with its findings fixed, instead of failing every script on
+# upgrade.
+enable=add-default-case
+enable=avoid-negated-conditions
+enable=avoid-nullary-conditions
+enable=check-unassigned-uppercase
+enable=deprecate-which
+enable=quote-safe-variables
+enable=require-double-brackets
+enable=require-variable-braces
+enable=useless-use-of-cat
+
+# Left off on purpose:
+#
+# - check-extra-masked-returns (SC2312) flags every `$(command)` inside
+#   another command. Nearly every hit is an informational version print such as
+#   `echo "Node: $(node --version)"`, where a `|| true` on each would add noise
+#   and no safety.
+# - check-set-e-suppressed (SC2310) flags every function called as an `if` or
+#   `||` predicate. That is a deliberate pattern here, so the check reports the
+#   idiom rather than a bug.

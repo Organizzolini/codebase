@@ -22,28 +22,29 @@ fi
 # Prepare nvm and pre-install the .nvmrc version before use.
 # nvm is a shell function, so source once in no-auto-use mode and then run
 # install/use explicitly.
-export NVM_DIR="$HOME/.nvm"
-mkdir -p "$NVM_DIR"
+export NVM_DIR="${HOME}/.nvm"
+mkdir -p "${NVM_DIR}"
 NVM_SCRIPT_PATH="$(brew --prefix nvm)/nvm.sh"
 
-. "$NVM_SCRIPT_PATH" --no-use
+# shellcheck source=/dev/null
+. "${NVM_SCRIPT_PATH}" --no-use
 
 # ── Node.js version from .nvmrc or .node-version ───────────────────────────
 # Prefer .nvmrc, then .node-version. Strip leading 'v' if present and pass the
 # explicit version to nvm so it's deterministic in CI and scripts.
 echo "🔍 Installing Node.js from .nvmrc or .node-version..."
 node_version=""
-if [ -f ".nvmrc" ]; then
+if [[ -f ".nvmrc" ]]; then
   node_version=$(cat .nvmrc)
-elif [ -f ".node-version" ]; then
+elif [[ -f ".node-version" ]]; then
   node_version=$(cat .node-version)
 fi
 # strip leading v
 node_version=${node_version#v}
-if [ -n "$node_version" ]; then
-  echo "🔧 Requested node version: $node_version"
-  nvm install "$node_version"
-  nvm use "$node_version"
+if [[ -n "${node_version}" ]]; then
+  echo "🔧 Requested node version: ${node_version}"
+  nvm install "${node_version}"
+  nvm use "${node_version}"
 else
   echo "⚠️  No .nvmrc or .node-version found — falling back to nvm default"
   nvm install
@@ -57,10 +58,10 @@ echo "👍 Node.js $(nvm current)"
 # ~/.config/husky/init.sh is sourced by every hook before it runs, making
 # nvm-managed node and uv-managed Python available inside git hooks.
 echo "🔍 Setting up husky init..."
-mkdir -p "$HOME/.config/husky"
-HUSKY_INIT_FILE="$HOME/.config/husky/init.sh"
-if [ ! -f "$HUSKY_INIT_FILE" ] || ! grep -q 'PNPM_HOME' "$HUSKY_INIT_FILE"; then
-  cat > "$HUSKY_INIT_FILE" << 'HUSKY_INIT'
+mkdir -p "${HOME}/.config/husky"
+HUSKY_INIT_FILE="${HOME}/.config/husky/init.sh"
+if [[ ! -f "${HUSKY_INIT_FILE}" ]] || ! grep -q 'PNPM_HOME' "${HUSKY_INIT_FILE}"; then
+  cat > "${HUSKY_INIT_FILE}" << 'HUSKY_INIT'
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 
@@ -80,9 +81,9 @@ fi
 brew_install_or_check "pnpm"
 
 echo "🔍 Setting up pnpm global bin directory..."
-export PNPM_HOME="$HOME/.local/share/pnpm"
-mkdir -p "$PNPM_HOME/bin"
-export PATH="$PNPM_HOME/bin:$PNPM_HOME:$PATH"
+export PNPM_HOME="${HOME}/.local/share/pnpm"
+mkdir -p "${PNPM_HOME}/bin"
+export PATH="${PNPM_HOME}/bin:${PNPM_HOME}:${PATH}"
 pnpm setup 2>/dev/null || true
 
 # ── nx (global) ───────────────────────────────────────────────────────────────

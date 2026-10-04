@@ -5,8 +5,6 @@
 
 set -euo pipefail
 
-OLLAMA_MODEL="gemma4:e2b"
-
 echo "🦙 Checking Ollama..."
 
 if ! command -v ollama &>/dev/null; then
@@ -34,7 +32,7 @@ if ! curl -sf http://localhost:11434/api/version &>/dev/null; then
   fi
 
   echo "⏳ Waiting for Ollama to be ready..."
-  for i in {1..15}; do
+  for _ in {1..15}; do
     if curl -sf http://localhost:11434/api/version &>/dev/null; then
       break
     fi
