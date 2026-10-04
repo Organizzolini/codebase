@@ -20,6 +20,11 @@ inputs:
   target:
     description: The matrix check target being run
     required: true
+  shard:
+    description: |
+      The matrix leg's shard, when one target is split across legs. It
+      suffixes the coverage artifact, whose name must be unique per run.
+    default: ""
 
 runs:
   using: composite
@@ -110,7 +115,7 @@ runs:
       if: inputs.target == 'test-code'
       uses: actions/upload-artifact@v7
       with:
-        name: coverage-reports
+        name: coverage-reports${{ inputs.shard && format('-{0}', inputs.shard) || '' }}
         path: |
           coverage/
           applications/**/coverage/
