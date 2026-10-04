@@ -1,7 +1,7 @@
 {
   "author": "Jimmy Paolini",
   "bugs": {
-    "url": "https://github.com/Organizzolini/codebase/issues"
+    "url": "https://github.com/organizzolini/codebase/issues"
   },
   "dependencies": {
     "@nestjs/common": "catalog:ic-suite",
@@ -26,7 +26,7 @@
     "LICENSE",
     "README.md"
   ],
-  "homepage": "https://github.com/Organizzolini/codebase/tree/main/packages/ic-suite/conformetry/conformetry-core#readme",
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/packages/ic-suite/conformetry/conformetry-core#readme",
   "keywords": [
     "code-generation",
     "conformance",
@@ -54,7 +54,7 @@
   "repository": {
     "directory": "packages/ic-suite/conformetry/conformetry-core",
     "type": "git",
-    "url": "git+https://github.com/Organizzolini/codebase.git"
+    "url": "git+https://github.com/organizzolini/codebase.git"
   },
   "type": "module",
   "typeCoverage": {

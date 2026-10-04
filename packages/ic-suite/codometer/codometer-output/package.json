@@ -1,7 +1,7 @@
 {
   "author": "Jimmy Paolini",
   "bugs": {
-    "url": "https://github.com/Organizzolini/codebase/issues"
+    "url": "https://github.com/organizzolini/codebase/issues"
   },
   "dependencies": {
     "@codometer/configuration": "workspace:*",
@@ -33,7 +33,7 @@
     "LICENSE",
     "README.md"
   ],
-  "homepage": "https://github.com/Organizzolini/codebase/tree/main/packages/ic-suite/codometer/codometer-output#readme",
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/packages/ic-suite/codometer/codometer-output#readme",
   "keywords": [
     "codometer",
     "json-report",
@@ -60,7 +60,7 @@
   "repository": {
     "directory": "packages/ic-suite/codometer/codometer-output",
     "type": "git",
-    "url": "git+https://github.com/Organizzolini/codebase.git"
+    "url": "git+https://github.com/organizzolini/codebase.git"
   },
   "type": "module",
   "typeCoverage": {
