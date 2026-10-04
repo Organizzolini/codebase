@@ -64,7 +64,9 @@ describe(DrawCommand, () => {
     clear = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
     draw = vi
       .fn<() => Promise<Meander>>()
-      .mockResolvedValue(createMock<Meander>({ id: 1 }));
+      .mockResolvedValue(
+        createMock<Meander>({ id: "01a107d6-cff8-7238-8684-a2a863bc6928" }),
+      );
     ingest = vi.fn<() => Promise<Meander[]>>().mockResolvedValue([]);
     sweep = vi.fn<() => Promise<number>>().mockResolvedValue(30_279);
 

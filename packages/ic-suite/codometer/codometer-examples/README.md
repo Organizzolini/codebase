@@ -517,12 +517,24 @@ graph LR
   file_examples_write_check_codometer_config_ts["examples/write-check/codometer.config.ts"]
   file_testing_codometer_ts["testing/codometer.ts"]
   file_testing_corpus_integration_test_ts["testing/corpus.integration.test.ts"]
+  file_testing_documentation_integration_test_ts["testing/documentation.integration.test.ts"]
   file_testing_examples_integration_test_ts["testing/examples.integration.test.ts"]
+  file_testing_limit_paths_integration_test_ts["testing/limit-paths.integration.test.ts"]
+  file_testing_limits_integration_test_ts["testing/limits.integration.test.ts"]
+  file_testing_output_integration_test_ts["testing/output.integration.test.ts"]
   file_testing_run_examples_ts["testing/run-examples.ts"]
   file_testing_setup_ts["testing/setup.ts"]
+  file_testing_write_check_integration_test_ts["testing/write-check.integration.test.ts"]
+  file_testing_written_reports_integration_test_ts["testing/written-reports.integration.test.ts"]
   file_vitest_config_ts["vitest.config.ts"]
   file_testing_corpus_integration_test_ts --> file_testing_codometer_ts
+  file_testing_documentation_integration_test_ts --> file_testing_codometer_ts
   file_testing_examples_integration_test_ts --> file_testing_codometer_ts
+  file_testing_limit_paths_integration_test_ts --> file_testing_codometer_ts
+  file_testing_limits_integration_test_ts --> file_testing_codometer_ts
+  file_testing_output_integration_test_ts --> file_testing_codometer_ts
   file_testing_run_examples_ts --> file_testing_codometer_ts
+  file_testing_write_check_integration_test_ts --> file_testing_codometer_ts
+  file_testing_written_reports_integration_test_ts --> file_testing_codometer_ts
 ```
 <!-- codependix:end name="codependix-file-imports" -->

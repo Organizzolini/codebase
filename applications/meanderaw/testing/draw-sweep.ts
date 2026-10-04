@@ -18,6 +18,9 @@ import { EnumerationModule } from "../src/modules/enumeration/enumeration.module
 import { EnumerationService } from "../src/modules/enumeration/enumeration.service";
 import { GeometryModule } from "../src/modules/geometry/geometry.module";
 
+import { testDataSourceOptions } from "./database";
+
+import type { TestDatabaseContainer } from "./database";
 import type {
   INestApplicationContext,
   ModuleMetadata,
@@ -55,17 +58,19 @@ export async function sweepFixture(
 
 /**
  * The module `DrawCommand`'s sweep compiles into: the real enumeration,
- * ingestion, and index services over a fresh in-memory `better-sqlite3`
- * connection, plus whatever `mocks` the caller stands in for `--code` and
- * logging.
+ * ingestion, and index services over an emptied schema in `container`'s
+ * Postgres database, plus whatever `mocks` the caller stands in for `--code`
+ * and logging.
  *
  * Shared by the sweep-mode suites, which are split across files so vitest
  * runs their sweeps in parallel rather than one after another. Each caller
- * compiles it and mocks `node:fs/promises` itself: `vi.mock` is hoisted only
- * within a test file, and the testing packages are development dependencies
- * this production-scoped folder cannot import.
+ * starts its own container, compiles this, and mocks `node:fs/promises`
+ * itself: `vi.mock` is hoisted only within a test file, and the testing
+ * packages are development dependencies this production-scoped folder
+ * cannot import.
  */
 export function sweepModuleMetadata(
+  container: TestDatabaseContainer,
   mocks: readonly Provider[],
 ): ModuleMetadata {
   return {
@@ -75,13 +80,7 @@ export function sweepModuleMetadata(
         validate: (config: Record<string, unknown>) =>
           environmentSchema.parse(config),
       }),
-      TypeOrmModule.forRoot({
-        database: ":memory:",
-        entities: [Meander],
-        logging: false,
-        synchronize: true,
-        type: "better-sqlite3",
-      }),
+      TypeOrmModule.forRoot(testDataSourceOptions(container)),
       TypeOrmModule.forFeature([Meander]),
       GeometryModule,
       CharacteristicsModule,

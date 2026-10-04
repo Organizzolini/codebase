@@ -8,7 +8,7 @@ import { Meander } from "./entities/Meander.entity";
 import type { MeanderRecord } from "./database.types";
 
 /**
- * Persists meanders to the committed sqlite database. Holds no decoding or
+ * Persists meanders to the `meanderaw_development` Postgres database. Holds no decoding or
  * rendering logic of its own — every field it writes arrives already
  * computed, so this is the one seam between the generic rendering pipeline
  * and TypeORM.
@@ -31,25 +31,16 @@ export class DatabaseService {
   // 🌎 Public Methods
 
   /**
-   * Deletes every meander row and restarts the table's id sequence, so a
-   * sweep regenerates the committed database rather than colliding
-   * with the rows it already holds.
+   * Deletes every meander row, so a sweep regenerates the database rather
+   * than colliding with the rows it already holds.
    *
    * Only the `meanders` table the sweep writes is touched — any other table
-   * survives. Resetting its `sqlite_sequence` entry as well is what lets a
-   * regenerated sweep number its rows exactly as a sweep into an empty file
-   * would, rather than continuing from the old maximum id. One transaction,
-   * so a failure leaves the committed rows in place.
+   * survives. One `TRUNCATE`, which Postgres runs in its own transaction, so
+   * a failure leaves the rows in place. Ids are uuidv7s rather than a
+   * sequence, so there is no counter to restart.
    */
   async clear(): Promise<void> {
-    const { tableName } = this.meanderRepository.metadata;
-
-    await this.meanderRepository.manager.transaction(async (manager) => {
-      await manager.clear(Meander);
-      await manager.query("DELETE FROM sqlite_sequence WHERE name = ?", [
-        tableName,
-      ]);
-    });
+    await this.meanderRepository.clear();
   }
 
   /**
@@ -65,25 +56,20 @@ export class DatabaseService {
   }
 
   /**
-   * Finds one meander by its lattice address, which is its identity.
+   * Finds one meander by its formatted Code, which is its identity: the
+   * Code already spells out its columns, rows, lattice, and repeats.
    */
-  async findOneByLattice(
-    lattice: string,
-    rows: number,
-    columns: number,
-  ): Promise<Meander | null> {
-    return this.meanderRepository.findOneBy({ columns, lattice, rows });
+  async findOneByCode(code: string): Promise<Meander | null> {
+    return this.meanderRepository.findOneBy({ code });
   }
 
   /**
    * Writes one meander row, letting the database assign its `id`.
    *
-   * Refuses — by rejecting, through the unique index over `code`, `rows`
-   * and `columns`, rather than by checking here — a lattice address a row
-   * already committed carries, since that triple is a meander's whole
-   * identity and two rows sharing one would mean the same meander was
-   * recorded twice. See `Meander`'s own doc comment for why the Code alone
-   * is not that identity.
+   * Refuses — by rejecting, through the unique index over `code`, rather
+   * than by checking here — a Code a row already committed carries, since
+   * the formatted Code is a meander's whole identity and two rows sharing
+   * one would mean the same meander was recorded twice.
    */
   async save(record: MeanderRecord): Promise<Meander> {
     return this.meanderRepository.save(record);
@@ -109,8 +95,8 @@ export class DatabaseService {
    * being reached at some row count nobody chose. The chunk size is a size, not a tuning knob: what
    * matters is that it is bounded.
    *
-   * A duplicate lattice address is refused by the unique index over `code`,
-   * `rows` and `columns`, exactly as {@link save} is, which is spec #813's
+   * A duplicate Code is refused by the unique index over `code`, exactly as
+   * {@link save} is, which is spec #813's
    * thirty-second user story — a duplicate is a build failure rather than a
    * convention nobody checks. The refusal rejects the whole chunk rather
    * than one row, since a sweep that carried on past a colliding address

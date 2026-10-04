@@ -40,7 +40,9 @@ describe(CorpusService, () => {
     freeEndCount: 2,
     isSingleArc: true,
   } as const;
-  const savedMeander = createMock<Meander>({ id: 1 });
+  const savedMeander = createMock<Meander>({
+    id: "01a107d6-cff8-7238-8684-a2a863bc6928",
+  });
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -100,7 +102,7 @@ describe(CorpusService, () => {
     );
     vi.mocked(classificationService.classify).mockReturnValue("snake");
     vi.mocked(enumerationService.isAdmitted).mockReturnValue(false);
-    vi.mocked(databaseService.findOneByLattice).mockResolvedValue(null);
+    vi.mocked(databaseService.findOneByCode).mockResolvedValue(null);
     vi.mocked(databaseService.save).mockResolvedValue(savedMeander);
   });
 
@@ -224,8 +226,20 @@ describe(CorpusService, () => {
       expect(databaseService.save).not.toHaveBeenCalled();
     });
 
+    it("looks an entry up by the canonical Code it would be saved under, which carries its shape and repeats", async () => {
+      vi.mocked(codeService.canonicalPhase).mockImplementation((parsed) => ({
+        ...parsed,
+        digits: "4",
+        repeats: 2,
+      }));
+
+      await service.ingest([entry]);
+
+      expect(databaseService.findOneByCode).toHaveBeenCalledWith("01x04y4r02");
+    });
+
     it("returns existing record if already found in database", async () => {
-      vi.mocked(databaseService.findOneByLattice).mockResolvedValueOnce(
+      vi.mocked(databaseService.findOneByCode).mockResolvedValueOnce(
         savedMeander,
       );
 
@@ -244,7 +258,9 @@ describe(CorpusService, () => {
     });
 
     it("ingests family by family in the order the retired file tree gave them up", async () => {
-      const second = createMock<Meander>({ id: 2 });
+      const second = createMock<Meander>({
+        id: "01a107d6-cff8-7238-8684-a2a863bc6929",
+      });
 
       vi.mocked(databaseService.save)
         .mockResolvedValueOnce(savedMeander)
@@ -261,7 +277,9 @@ describe(CorpusService, () => {
     });
 
     it("resolves with every saved row", async () => {
-      const second = createMock<Meander>({ id: 2 });
+      const second = createMock<Meander>({
+        id: "01a107d6-cff8-7238-8684-a2a863bc6929",
+      });
 
       vi.mocked(databaseService.save)
         .mockResolvedValueOnce(savedMeander)

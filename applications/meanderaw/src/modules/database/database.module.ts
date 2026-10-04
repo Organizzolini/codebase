@@ -1,40 +1,39 @@
 import { Module } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
-import { DEFAULT_DATABASE_PATH } from "./database.constants";
+import { meanderDataSourceOptions } from "./database.factories";
 import { DatabaseService } from "./database.service";
 import { Meander } from "./entities/Meander.entity";
 
 /**
- * Wires up the committed sqlite database every meander is now persisted to,
- * opened at {@link DEFAULT_DATABASE_PATH}.
+ * Wires up the Postgres database every meander is persisted to: the server,
+ * credentials, database, and schema the `POSTGRES_*` variables name, by
+ * default `meanderaw_development` for both of the last two.
  *
  * A test exercising `DatabaseService` builds its own `TestingModule`
- * against a temporary or in-memory `better-sqlite3` connection instead of
- * importing this module, the same way `DrawCommand`'s own "real generation
- * integration" tests assemble their providers directly rather than
- * importing `DrawModule` — so this module's own path stays fixed to the one
- * real file the committed database lives at.
- *
- * `synchronize: true` rather than a migrations directory: this database has
- * exactly one writer, the CLI itself, and no concurrent consumer ever runs a
- * stale schema against a newer file the way a shared service's migration
- * discipline guards against. Spec #813 also asks for a schema "extensible
- * with new Characteristic columns over time... without a large migration",
- * which is what letting TypeORM synchronize the schema on every run already
- * buys for free — the same choice `packages/lexico-entities` makes for its
- * own, actively-migrated Postgres database.
+ * against a throwaway Postgres container instead of importing this module,
+ * the same way `DrawCommand`'s own "real generation integration" tests
+ * assemble their providers directly rather than importing `DrawModule`.
+ * See `meanderDataSourceOptions` for why the schema synchronizes rather
+ * than migrates.
  */
 @Module({
   controllers: [],
   exports: [DatabaseService, TypeOrmModule],
   imports: [
-    TypeOrmModule.forRoot({
-      database: DEFAULT_DATABASE_PATH,
-      entities: [Meander],
-      logging: false,
-      synchronize: true,
-      type: "better-sqlite3",
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configurationService: ConfigService) =>
+        meanderDataSourceOptions({
+          database: configurationService.getOrThrow<string>("POSTGRES_DB"),
+          host: configurationService.getOrThrow<string>("POSTGRES_HOST"),
+          password:
+            configurationService.getOrThrow<string>("POSTGRES_PASSWORD"),
+          port: configurationService.getOrThrow<number>("POSTGRES_PORT"),
+          schema: configurationService.getOrThrow<string>("POSTGRES_SCHEMA"),
+          username: configurationService.getOrThrow<string>("POSTGRES_USER"),
+        }),
     }),
     TypeOrmModule.forFeature([Meander]),
   ],

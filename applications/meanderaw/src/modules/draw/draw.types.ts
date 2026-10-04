@@ -18,7 +18,7 @@ export interface CodeDrawingOptions {
  *
  * Every field is optional, and that is the command's whole contract: `draw`
  * with no flag sweeps every meander the application can draw into the
- * committed database, and `draw --rows <n> --columns <n> --code <code>`
+ * meander database, and `draw --rows <n> --columns <n> --code <code>`
  * draws that one. `--rows`, `--columns`, and `--code` are checked together
  * rather than declared `required`, because passing none of them is how the
  * sweep is asked for — see `IncompleteCodeDrawingError`.
@@ -28,7 +28,7 @@ export interface CodeDrawingOptions {
  * `--output-directory` flags this once carried are retired with the
  * per-family procedural pipeline they named a drawing in. A meander is now
  * addressed by its lattice address alone, and the database it is written to
- * is `DEFAULT_DATABASE_PATH` rather than somewhere a flag points.
+ * is the one `POSTGRES_DB` names rather than somewhere a flag points.
  */
 export interface DrawCommandOptions {
   code?: string;

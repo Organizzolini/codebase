@@ -10,8 +10,8 @@ import { CorpusService } from "./corpus.service";
 
 /**
  * Registers `CorpusService`: the generic decoder and Characteristic
- * computation every Code is read through, plus the committed sqlite
- * database it persists a row to — the same modules `DrawCodeService`
+ * computation every Code is read through, plus the meander database it
+ * persists a row to — the same modules `DrawCodeService`
  * reaches for a `--code` drawing, since ingesting the historical corpus is
  * the same "decode, measure, persist" pipeline
  * run over extracted constants instead of one command-line Code — plus the

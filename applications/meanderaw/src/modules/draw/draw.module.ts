@@ -27,7 +27,7 @@ import { DrawCommand } from "./draw.command";
  * decoder and renderer every family's Code is drawn through,
  * `CharacteristicsModule` measures that same Code,
  * `EnumerationModule` walks the space the sweep covers, and
- * `DatabaseModule` is the committed sqlite database all of it
+ * `DatabaseModule` is the Postgres database all of it
  * persists to and `DrawIndexService` reads back from, and `GeometryModule`
  * is the same scaling rule the renderer drew against, which the index page
  * reads back to place each repeat of a tile one step along its band. `CorpusModule`
@@ -35,10 +35,10 @@ import { DrawCommand } from "./draw.command";
  * one service `DrawCommand` calls once per sweep with the historical corpus,
  * trusting its family/subFamily rather than classifying them.
  *
- * `DatabaseModule` always opens the one committed database file — a
- * test exercising `DrawCommand`, `DrawCodeService`, `DrawEnumerationService`,
- * `DrawIndexService`, or `CorpusService` builds its own
- * `TestingModule` against a temporary or in-memory connection instead of
+ * `DatabaseModule` always connects to the local `meanderaw_development`
+ * database — a test exercising `DrawCommand`, `DrawCodeService`,
+ * `DrawEnumerationService`, `DrawIndexService`, or `CorpusService` builds
+ * its own `TestingModule` against a throwaway Postgres container instead of
  * importing this module.
  */
 @Module({

@@ -19,11 +19,11 @@ import { IncompleteCodeDrawingError } from "./draw.constants";
 import type { DrawCommandOptions } from "./draw.types";
 
 /**
- * Draws meanders into the committed sqlite database. It is the
+ * Draws meanders into the `meanderaw_development` Postgres database. It is the
  * application's only command, and its default, so running it with no
  * arguments at all runs this.
  *
- * Both of its modes write the committed database, and which one runs is
+ * Both of its modes write the meander database, and which one runs is
  * decided by whether a Code was named:
  *
  * - **`draw`** sweeps everything, in two halves that between them are the
@@ -55,7 +55,7 @@ import type { DrawCommandOptions } from "./draw.types";
  */
 @Command({
   description:
-    "Draw meanders into the committed sqlite database: with no flag, sweep every meander the application can draw into it (the whole lattice's unit space, enumerated and classified into a family by each meander's own structure, plus the historical corpus's hardcoded constants beyond the enumeration's budget); with --rows, --columns, and --code, draw that one",
+    "Draw meanders into the meanderaw_development Postgres database: with no flag, sweep every meander the application can draw into it (the whole lattice's unit space, enumerated and classified into a family by each meander's own structure, plus the historical corpus's hardcoded constants beyond the enumeration's budget); with --rows, --columns, and --code, draw that one",
   name: "draw",
   options: { isDefault: true },
 })

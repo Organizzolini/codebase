@@ -9,6 +9,7 @@
     "reflect-metadata": "catalog:",
     "tslib": "catalog:",
     "typeorm": "catalog:",
+    "typeorm-naming-strategies": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -16,7 +17,7 @@
     "@nestjs/testing": "catalog:",
     "@nx/eslint-plugin": "catalog:",
     "@swc/helpers": "catalog:",
-    "@types/better-sqlite3": "catalog:",
+    "@testcontainers/postgresql": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "typescript": "catalog:",

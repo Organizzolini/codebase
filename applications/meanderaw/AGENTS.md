@@ -15,8 +15,10 @@ nx run meanderaw:start
 
 ## 🏛️ Before You Change a Meander
 
-**A meander is a row in `output/meanders.sqlite`, addressed by its lattice address — its
-Code, its rows, and its columns — and nothing else.** There is no `output/<family>/*.svg`
+**A meander is a row in the `meanderaw_development` Postgres database, addressed by its
+lattice address — its Code, its rows, and its columns — and nothing else.** The formatted
+Code spells out all three, so `code` alone is its identity; the row's `id` is a uuidv7
+the database assigns, which changes on every sweep and must never reach committed output. There is no `output/<family>/*.svg`
 tree, no per-family procedural motif service, and no `--type`/`--modifier` command line.
 Generation is lattice-first for every family: a budgeted enumeration produces every
 structurally distinct repeat within reach, one generic family-agnostic renderer draws each
@@ -58,14 +60,14 @@ reclassifying the historical corpus through the new predicates explicitly out of
 `HardcodedMeandersService` carries that metadata over rather than re-deriving it. Do not
 "fix" a hardcoded row whose structure would classify differently.
 
-**A duplicate lattice address is a build failure.** The unique index over
-`(code, rows, columns)` refuses the second insert, and the sweep runs the enumerated half
+**A duplicate lattice address is a build failure.** The unique index over `code` refuses
+the second insert, and the sweep runs the enumerated half
 first so the refusal names the hardcoded entry that caused it. Do not soften that into an
 upsert.
 
 **No row stores its drawing.** The renderer draws each meander from its Code, rows, and
 columns when the index pages are built, so a renderer change needs no database change at
-all. Nothing currently checks the committed database against a fresh sweep, either; a
+all. Nothing currently checks the database against a fresh sweep, either; a
 Code's uniqueness is the one property the schema enforces.
 
 ### The charter, and what became of its gate
@@ -85,8 +87,8 @@ have.
 **Every Characteristic lives in that one map, and a missing key means zero or `false`.**
 No Characteristic has a column of its own, so adding one needs no schema change — see
 [ADR 0018](../../docs/adr/0018-store-every-characteristic-in-one-sparse-json-map.md). Raw
-SQL reads one as `COALESCE(json_extract(characteristics, '$.key'), 0)`; a bare
-`json_extract` is NULL for a missing key and silently drops it from a zero filter.
+SQL reads one as `COALESCE((characteristics ->> 'key')::numeric, 0)`; a bare `->>` is
+NULL for a missing key and silently drops it from a zero filter.
 
 The three invariants that most often catch a change:
 
@@ -185,14 +187,15 @@ Outputs structured JSON in production (`NODE_ENV=production`) and pretty-printed
 Always prefer running tasks through Nx rather than calling the underlying tools directly.
 
 ```bash
-nx run meanderaw:start                    # Clear output/meanders.sqlite's meander rows, then regenerate the sweep into it
+nx run codebase:postgres-container:up     # The local Postgres the database lives in
+nx run meanderaw:start                    # Clear the meander rows, then regenerate the sweep into them
 nx run meanderaw:typecheck-code,lint-code,format-code,deprecate-code,guard-code   # Every static check, in one graph
 nx run meanderaw:typecheck       # tsc --noEmit
 nx run meanderaw:oxfmt           # Formatting
 ```
 
 This application has **one command, `draw`**, and it is the default — so `start` runs it,
-and it always writes `output/meanders.sqlite`. With no arguments it clears that
+and it always writes the `meanderaw_development` database. With no arguments it clears that
 database's meander rows and sweeps every meander the application can draw back into it: the whole lattice's unit space, enumerated
 and classified, then the historical corpus's hardcoded Codes beyond that budget. With
 `--rows`, `--columns`, and `--code` it decodes, measures, and persists that one:
@@ -202,8 +205,17 @@ nx run meanderaw:start --args="--rows 3 --columns 2 --code 3c9a"
 ```
 
 **Nothing but `start` runs the command**, so no aggregate target — `guard-code`, `lint-code`,
-or any other — rewrites the committed database as a side effect. Keep it that way: a
-`dependsOn` on `start` would rewrite `output/meanders.sqlite` on every run.
+or any other — rewrites the database and the committed pages as a side effect. Keep it
+that way: a `dependsOn` on `start` would rewrite them on every run.
+
+**The database lives in Postgres, not in the repository.** The local Docker init creates
+the `meanderaw_development` database and the schema of the same name, which `POSTGRES_DB`
+and `POSTGRES_SCHEMA` in this project's `.env` name — that file must exist, since it is
+what overrides the root `.env`'s `POSTGRES_DB="postgres"`, lexico's database. The committed
+`output/*.html` pages are the only artifact a sweep commits — see
+[ADR 0020](../../docs/adr/0020-store-meanders-in-postgres.md). Integration suites start
+their own throwaway `postgres:18-alpine` container through `@testcontainers/postgresql`
+and hand it to `testing/database.ts`, so Docker must be running to test them.
 
 There is deliberately no second command, and no other flag — see "One Command" and
 "Output Layout" in [README.md](./README.md).

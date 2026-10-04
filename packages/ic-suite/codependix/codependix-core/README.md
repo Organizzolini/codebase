@@ -60,9 +60,11 @@ graph LR
 <!-- codependix:end name="codependix-file-imports" -->
 
 <!-- codependix:start name="codependix-nestjs-modules" -->
+```mermaid
+flowchart LR
+  CodependixCoreModule
+```
 <!-- codependix:end name="codependix-nestjs-modules" -->
-
-<!-- callidescope:start -->
 
 ## 🔭 Callidescope
 
