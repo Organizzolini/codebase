@@ -170,7 +170,7 @@
 </details>
 
 **🪵 [logger](packages/logger)** - Shared pino-backed NestJS `LoggerService` and `LoggerModule`\
-**🏺 [meanderaw](applications/meanderaw)** - CLI that enumerates Greek meander (key/fret) patterns into a committed SQLite database, measuring and classifying each by its Code
+**🏺 [meanderaw](applications/meanderaw)** - CLI that enumerates Greek meander (key/fret) patterns into a Postgres database, measuring and classifying each by its Code
 
 **🧑‍💻 [JimmyPaolini](applications/JimmyPaolini)** - GitHub profile site\
 **↔️ [synchronization](tools/synchronization)** - NestJS CLI that regenerates the workspace's derived configuration and documentation, and fails CI when they drift\
@@ -4050,6 +4050,8 @@ graph LR
   file_meanderaw_src_modules_corpus_historical_corpus_9_constants_ts["meanderaw/src/modules/corpus/historical-corpus-9.constants.ts"]
   file_meanderaw_src_modules_corpus_historical_corpus_constants_ts["meanderaw/src/modules/corpus/historical-corpus.constants.ts"]
   file_meanderaw_src_modules_database_database_constants_ts["meanderaw/src/modules/database/database.constants.ts"]
+  file_meanderaw_src_modules_database_database_factories_ts["meanderaw/src/modules/database/database.factories.ts"]
+  file_meanderaw_src_modules_database_database_module_integration_test_ts["meanderaw/src/modules/database/database.module.integration.test.ts"]
   file_meanderaw_src_modules_database_database_module_ts["meanderaw/src/modules/database/database.module.ts"]
   file_meanderaw_src_modules_database_database_service_integration_test_ts["meanderaw/src/modules/database/database.service.integration.test.ts"]
   file_meanderaw_src_modules_database_database_service_ts["meanderaw/src/modules/database/database.service.ts"]
@@ -4120,6 +4122,7 @@ graph LR
   file_meanderaw_src_modules_tile_tile_service_unit_test_ts["meanderaw/src/modules/tile/tile.service.unit.test.ts"]
   file_meanderaw_src_modules_tile_tile_types_ts["meanderaw/src/modules/tile/tile.types.ts"]
   file_meanderaw_src_repl_ts["meanderaw/src/repl.ts"]
+  file_meanderaw_testing_database_ts["meanderaw/testing/database.ts"]
   file_meanderaw_testing_draw_sweep_ts["meanderaw/testing/draw-sweep.ts"]
   file_meanderaw_testing_legacy_characteristics_ts["meanderaw/testing/legacy-characteristics.ts"]
   file_meanderaw_testing_letters_ts["meanderaw/testing/letters.ts"]
@@ -8008,6 +8011,7 @@ graph LR
   file_logger_src_modules_logger_logger_service_ts --> file_logger_src_modules_logger_logger_constants_ts
   file_logger_src_modules_logger_logger_service_ts --> file_logger_src_modules_logger_logger_types_ts
   file_logger_src_modules_logger_logger_service_unit_test_ts --> file_logger_src_modules_logger_logger_service_ts
+  file_meanderaw_src_constants_ts --> file_meanderaw_src_modules_database_database_constants_ts
   file_meanderaw_src_constants_ts --> file_meanderaw_src_modules_enumeration_enumeration_constants_ts
   file_meanderaw_src_main_end_to_end_test_ts --> file_meanderaw_src_constants_ts
   file_meanderaw_src_main_module_ts --> file_meanderaw_src_constants_ts
@@ -9536,13 +9540,21 @@ graph LR
   file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_7_constants_ts
   file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_8_constants_ts
   file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_9_constants_ts
-  file_meanderaw_src_modules_database_database_module_ts --> file_meanderaw_src_modules_database_database_constants_ts
+  file_meanderaw_src_modules_database_database_factories_ts --> file_meanderaw_src_modules_database_database_types_ts
+  file_meanderaw_src_modules_database_database_factories_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_src_constants_ts
+  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_src_modules_database_database_module_ts
+  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_src_modules_database_database_service_ts
+  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_testing_database_ts
+  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_testing_meanders_ts
+  file_meanderaw_src_modules_database_database_module_ts --> file_meanderaw_src_modules_database_database_factories_ts
   file_meanderaw_src_modules_database_database_module_ts --> file_meanderaw_src_modules_database_database_service_ts
   file_meanderaw_src_modules_database_database_module_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
   file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_src_modules_database_database_constants_ts
   file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_src_modules_database_database_service_ts
   file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_testing_meanders_ts
   file_meanderaw_src_modules_database_database_service_ts --> file_meanderaw_src_modules_database_database_constants_ts
   file_meanderaw_src_modules_database_database_service_ts --> file_meanderaw_src_modules_database_database_types_ts
@@ -9582,6 +9594,7 @@ graph LR
   file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_svg_svg_service_ts
   file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
   file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
+  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_src_modules_database_database_service_ts
   file_meanderaw_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_src_modules_database_database_types_ts
   file_meanderaw_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
@@ -9601,6 +9614,7 @@ graph LR
   file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_svg_svg_service_ts
   file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
   file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
+  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_testing_meanders_ts
   file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
   file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_code_code_service_ts
@@ -9633,13 +9647,16 @@ graph LR
   file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_drawing_drawing_module_ts
   file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
   file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
+  file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_testing_draw_sweep_ts
   file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_testing_meanders_ts
   file_meanderaw_src_modules_draw_draw_sweep_regeneration_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
+  file_meanderaw_src_modules_draw_draw_sweep_regeneration_command_integration_test_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_src_modules_draw_draw_sweep_regeneration_command_integration_test_ts --> file_meanderaw_testing_draw_sweep_ts
   file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_src_modules_classification_classification_constants_ts
   file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
   file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
+  file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_testing_draw_sweep_ts
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_classification_classification_module_ts
@@ -9658,6 +9675,7 @@ graph LR
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_svg_svg_service_ts
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
+  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_code_code_constants_ts
   file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
   file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
@@ -9777,6 +9795,7 @@ graph LR
   file_meanderaw_src_modules_tile_tile_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_types_ts
   file_meanderaw_src_modules_tile_tile_service_unit_test_ts --> file_meanderaw_testing_tiles_ts
   file_meanderaw_src_repl_ts --> file_meanderaw_src_main_module_ts
+  file_meanderaw_testing_database_ts --> file_meanderaw_src_modules_database_database_factories_ts
   file_meanderaw_testing_draw_sweep_ts --> file_meanderaw_src_constants_ts
   file_meanderaw_testing_draw_sweep_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
   file_meanderaw_testing_draw_sweep_ts --> file_meanderaw_src_modules_classification_classification_module_ts
@@ -9792,6 +9811,7 @@ graph LR
   file_meanderaw_testing_draw_sweep_ts --> file_meanderaw_src_modules_enumeration_enumeration_module_ts
   file_meanderaw_testing_draw_sweep_ts --> file_meanderaw_src_modules_enumeration_enumeration_service_ts
   file_meanderaw_testing_draw_sweep_ts --> file_meanderaw_src_modules_geometry_geometry_module_ts
+  file_meanderaw_testing_draw_sweep_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_testing_letters_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
   file_meanderaw_testing_letters_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
   file_meanderaw_testing_letters_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts

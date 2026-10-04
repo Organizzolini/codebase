@@ -141,7 +141,10 @@ export class DrawIndexService {
    * The tile is defined once and placed `BAND_REPEAT_COUNT` times rather than
    * copied: the page carries every row in the corpus, so six copies of every
    * row's markup would multiply an already large document by six for a
-   * drawing each copy is identical in.
+   * drawing each copy is identical in. It is defined under its Code rather
+   * than its row's `id`: the Code is as unique, and unlike a uuidv7 it is
+   * the same on every regeneration, so the committed pages only change when
+   * a drawing does.
    *
    * Each placement steps one tile width (`columns`) further along, which is
    * the distance that makes consecutive tiles meet: a tile's own drawing runs
@@ -159,7 +162,7 @@ export class DrawIndexService {
         meander.columns * geometry.unit +
         geometry.strokeWidth,
     );
-    const tile = `meander-${meander.id}`;
+    const tile = this.escape(`meander-${meander.code}`);
     const parsed = this.codeService.parse(
       meander.code,
       meander.rows,

@@ -1,11 +1,30 @@
 import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
+import {
+  PostgreSqlContainer,
+  type StartedPostgreSqlContainer,
+} from "@testcontainers/postgresql";
 import { DataSource, type Repository } from "typeorm";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
 import { LoggerService } from "@codebase/logger";
 
+import {
+  TEST_DATABASE_NAME,
+  TEST_POSTGRES_IMAGE,
+  TEST_SCHEMA_INITIALIZATION,
+  testDataSourceOptions,
+} from "../../../testing/database";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
 import { ClassificationModule } from "../classification/classification.module";
 import { CodeModule } from "../code/code.module";
@@ -27,30 +46,32 @@ import { DrawCommand } from "./draw.command";
 
 /**
  * Drives `DrawCommand`'s `--code` mode against a real TypeORM connection to
- * an in-memory `better-sqlite3` database, per spec #813's Testing
+ * a throwaway Postgres container, per spec #813's Testing
  * Decisions: this is the highest seam for the CLI's new single-drawing
  * path, and it asserts on persisted rows rather than on a mocked service
  * graph.
  *
  * The connection is assembled inline rather than through
- * `DatabaseModule`, which always opens the one committed database
- * file — this suite needs a fresh, isolated connection per test instead.
+ * `DatabaseModule`, which always connects to the local database — this
+ * suite needs a fresh, emptied schema per test instead.
  */
 describe("drawCommand --code mode", () => {
   let command: DrawCommand;
+  let container: StartedPostgreSqlContainer;
   let dataSource: DataSource;
   let repository: Repository<Meander>;
+
+  beforeAll(async () => {
+    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
+      .withDatabase(TEST_DATABASE_NAME)
+      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
+      .start();
+  });
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot({
-          database: ":memory:",
-          entities: [Meander],
-          logging: false,
-          synchronize: true,
-          type: "better-sqlite3",
-        }),
+        TypeOrmModule.forRoot(testDataSourceOptions(container)),
         TypeOrmModule.forFeature([Meander]),
         CharacteristicsModule,
         ClassificationModule,
@@ -95,6 +116,10 @@ describe("drawCommand --code mode", () => {
 
   afterEach(async () => {
     await dataSource.destroy();
+  });
+
+  afterAll(async () => {
+    await container.stop();
   });
 
   it("writes exactly one row, decoded and rendered by the generic pipeline", async () => {

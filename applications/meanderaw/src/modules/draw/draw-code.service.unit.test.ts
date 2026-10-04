@@ -26,7 +26,9 @@ describe(DrawCodeService, () => {
   let service: DrawCodeService;
 
   const record = createMock<MeanderRecord>({ code: "2" });
-  const savedMeander = createMock<Meander>({ id: 1 });
+  const savedMeander = createMock<Meander>({
+    id: "01a107d6-cff8-7238-8684-a2a863bc6928",
+  });
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({

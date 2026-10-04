@@ -1,9 +1,19 @@
 import { ConfigService } from "@nestjs/config";
 import { Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
+import {
+  PostgreSqlContainer,
+  type StartedPostgreSqlContainer,
+} from "@testcontainers/postgresql";
 import { DataSource, type Repository } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import {
+  TEST_DATABASE_NAME,
+  TEST_POSTGRES_IMAGE,
+  TEST_SCHEMA_INITIALIZATION,
+  testDataSourceOptions,
+} from "../../../testing/database";
 import { environmentSchema } from "../../constants";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
 import { ClassificationService } from "../classification/classification.service";
@@ -40,30 +50,30 @@ const SWEEP_TIMEOUT_MILLISECONDS = 300_000;
 
 /**
  * Drives the sweep's lattice-first half against a real TypeORM connection to
- * an in-memory `better-sqlite3` database, per spec #813's Testing Decisions:
+ * a throwaway Postgres container, per spec #813's Testing Decisions:
  * this is the highest seam, and it asserts on persisted rows rather than on
  * a mocked service graph.
  *
  * The connection is assembled inline rather than through
- * `DatabaseModule`, which always opens the one committed database
- * file — this suite needs a fresh, isolated connection instead.
+ * `DatabaseModule`, which always connects to the local database — this
+ * suite needs a fresh, isolated database instead.
  */
 describe(DrawEnumerationService, () => {
+  let container: StartedPostgreSqlContainer;
   let dataSource: DataSource;
   let repository: Repository<Meander>;
   let service: DrawEnumerationService;
 
   beforeAll(async () => {
+    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
+      .withDatabase(TEST_DATABASE_NAME)
+      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
+      .start();
+
     const environment = environmentSchema.parse({});
     const module = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot({
-          database: ":memory:",
-          entities: [Meander],
-          logging: false,
-          synchronize: true,
-          type: "better-sqlite3",
-        }),
+        TypeOrmModule.forRoot(testDataSourceOptions(container)),
         TypeOrmModule.forFeature([Meander]),
         CharacteristicsModule,
       ],
@@ -101,6 +111,7 @@ describe(DrawEnumerationService, () => {
 
   afterAll(async () => {
     await dataSource.destroy();
+    await container.stop();
   });
 
   it("is defined", () => {
@@ -159,7 +170,7 @@ describe(DrawEnumerationService, () => {
       const counted = await repository
         .createQueryBuilder("meander")
         .select("meander.family", "family")
-        .addSelect("COUNT(*)", "count")
+        .addSelect("COUNT(*)::int", "count")
         .groupBy("meander.family")
         .getRawMany<{ count: number; family: string }>();
 

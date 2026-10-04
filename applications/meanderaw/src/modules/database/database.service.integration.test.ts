@@ -1,8 +1,18 @@
 import { Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
+import {
+  PostgreSqlContainer,
+  type StartedPostgreSqlContainer,
+} from "@testcontainers/postgresql";
 import { DataSource, Like, type Repository } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import {
+  TEST_DATABASE_NAME,
+  TEST_POSTGRES_IMAGE,
+  TEST_SCHEMA_INITIALIZATION,
+  testDataSourceOptions,
+} from "../../../testing/database";
 import { meanderRecord } from "../../../testing/meanders";
 import { CHARACTERISTIC_KEYS } from "../characteristics/characteristics.constants";
 
@@ -13,30 +23,29 @@ import { Meander } from "./entities/Meander.entity";
 // 🧪 Tests
 
 /**
- * Drives `DatabaseService` against a real TypeORM connection to an
- * in-memory `better-sqlite3` database, per spec #813's Testing Decisions:
- * this is the highest seam, and it asserts on persisted rows rather than on
- * a mocked repository.
+ * Drives `DatabaseService` against a real TypeORM connection to a throwaway
+ * Postgres container, per spec #813's Testing Decisions: this is the highest
+ * seam, and it asserts on persisted rows rather than on a mocked repository.
  *
- * The connection is assembled inline rather than through
- * `DatabaseModule`, which always opens the one committed database
- * file — a test needs a fresh, isolated connection of its own instead.
+ * The connection is assembled inline rather than through `DatabaseModule`,
+ * which reads the local database's address from configuration — a test
+ * needs a fresh, isolated database of its own instead.
  */
 describe(DatabaseService, () => {
+  let container: StartedPostgreSqlContainer;
   let dataSource: DataSource;
   let repository: Repository<Meander>;
   let service: DatabaseService;
 
   beforeAll(async () => {
+    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
+      .withDatabase(TEST_DATABASE_NAME)
+      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
+      .start();
+
     const module = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot({
-          database: ":memory:",
-          entities: [Meander],
-          logging: false,
-          synchronize: true,
-          type: "better-sqlite3",
-        }),
+        TypeOrmModule.forRoot(testDataSourceOptions(container)),
         TypeOrmModule.forFeature([Meander]),
       ],
       providers: [DatabaseService],
@@ -49,6 +58,7 @@ describe(DatabaseService, () => {
 
   afterAll(async () => {
     await dataSource.destroy();
+    await container.stop();
   });
 
   it("is defined", () => {
@@ -110,11 +120,17 @@ describe(DatabaseService, () => {
       });
     });
 
-    it("assigns each saved row its own auto-generated id", async () => {
+    it("assigns each saved row its own uuidv7 id, ordered by when it was written", async () => {
       const first = await service.save(meanderRecord({ code: "0" }));
       const second = await service.save(meanderRecord({ code: "f" }));
 
-      expect(second.id).not.toBe(first.id);
+      expect(first.id).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u,
+      );
+      expect([second.id, first.id].toSorted()).toStrictEqual([
+        first.id,
+        second.id,
+      ]);
     });
 
     it("refuses a second row with a code already committed, since code is the meander's whole identity", async () => {
@@ -140,7 +156,7 @@ describe(DatabaseService, () => {
       expect(columns.has("characteristics")).toBe(true);
     });
 
-    it("round-trips a meander's numbers, letter counts, and true booleans through save and a lattice lookup", async () => {
+    it("round-trips a meander's numbers, letter counts, and true booleans through save and a Code lookup", async () => {
       await service.save(
         meanderRecord({
           characteristics: {
@@ -156,7 +172,7 @@ describe(DatabaseService, () => {
         }),
       );
 
-      const found = await service.findOneByLattice("map-round-trip", 2, 1);
+      const found = await service.findOneByCode("map-round-trip");
 
       expect(found?.characteristics).toStrictEqual({
         aSoutheastLatinCount: 2,
@@ -173,7 +189,7 @@ describe(DatabaseService, () => {
         meanderRecord({ code: "map-empty", lattice: "map-empty" }),
       );
 
-      const found = await service.findOneByLattice("map-empty", 2, 1);
+      const found = await service.findOneByCode("map-empty");
 
       expect(found?.characteristics).toStrictEqual({});
     });
@@ -220,8 +236,8 @@ describe(DatabaseService, () => {
 
       const hits = await repository
         .createQueryBuilder("meander")
-        .where("json_extract(meander.characteristics, :path) > 0", {
-          path: "$.northForkCount",
+        .where("(meander.characteristics ->> :key)::numeric > 0", {
+          key: "northForkCount",
         })
         .getMany();
 
@@ -240,16 +256,16 @@ describe(DatabaseService, () => {
       const bare = await repository
         .createQueryBuilder("meander")
         .where("meander.code = :code", { code: "map-coalesce" })
-        .andWhere("json_extract(meander.characteristics, :path) = 0", {
-          path: "$.crossCount",
+        .andWhere("(meander.characteristics ->> :key)::numeric = 0", {
+          key: "crossCount",
         })
         .getMany();
       const coalesced = await repository
         .createQueryBuilder("meander")
         .where("meander.code = :code", { code: "map-coalesce" })
         .andWhere(
-          "COALESCE(json_extract(meander.characteristics, :path), 0) = 0",
-          { path: "$.crossCount" },
+          "COALESCE((meander.characteristics ->> :key)::numeric, 0) = 0",
+          { key: "crossCount" },
         )
         .getMany();
 
@@ -304,19 +320,16 @@ describe(DatabaseService, () => {
   });
 
   describe("clear", () => {
-    it("deletes every meander row and restarts id assignment, so a regenerated sweep numbers its rows as a fresh one would", async () => {
+    it("deletes every meander row, so a regenerated sweep writes the same codes again rather than colliding with them", async () => {
       await service.save(meanderRecord({ code: "clear-first-row" }));
       await service.save(meanderRecord({ code: "clear-second-row" }));
 
       await service.clear();
 
       await expect(service.findAll()).resolves.toStrictEqual([]);
-
-      const saved = await service.save(
-        meanderRecord({ code: "clear-first-row" }),
-      );
-
-      expect(saved.id).toBe(1);
+      await expect(
+        service.save(meanderRecord({ code: "clear-first-row" })),
+      ).resolves.toMatchObject({ code: "clear-first-row" });
     });
   });
 });
