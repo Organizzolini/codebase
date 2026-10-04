@@ -158,7 +158,7 @@ export type StoredBooleanKey = (typeof STORED_BOOLEAN_KEYS)[number];
  * not zero under its key, and `true` under every {@link StoredBooleanKey} that
  * holds. A zero or `false` is left out, so a reader takes a missing key as
  * zero or `false`; raw SQL reads one as
- * `COALESCE(json_extract(characteristics, '$.key'), 0)` for the same reason.
+ * `COALESCE((characteristics ->> 'key')::numeric, 0)` for the same reason.
  */
 export type StoredCharacteristics = Readonly<
   Partial<Record<NumericCharacteristicKey, number>> &

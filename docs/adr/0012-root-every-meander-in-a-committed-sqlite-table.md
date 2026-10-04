@@ -1,5 +1,7 @@
 # Root every meander in a committed sqlite table
 
+Superseded in part by [ADR 0020](0020-store-meanders-in-postgres.md), which moves the rows from the committed `output/meanders.sqlite` into Postgres. The pipeline and the two halves of the corpus below still stand.
+
 The nine per-family procedural motif services, and the `output/<family>/*.svg`
 tree they wrote, are retired. Every meander now decodes from a Code through
 one generic pipeline — decode, render, compute Characteristics, classify —

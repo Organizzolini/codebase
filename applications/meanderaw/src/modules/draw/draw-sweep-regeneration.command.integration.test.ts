@@ -1,9 +1,27 @@
 import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  PostgreSqlContainer,
+  type StartedPostgreSqlContainer,
+} from "@testcontainers/postgresql";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
 import { LoggerService } from "@codebase/logging";
 
+import {
+  TEST_DATABASE_NAME,
+  TEST_POSTGRES_IMAGE,
+  TEST_SCHEMA_INITIALIZATION,
+} from "../../../testing/database";
 import {
   SWEEP_TIMEOUT_MILLISECONDS,
   type SweepFixture,
@@ -18,10 +36,12 @@ vi.mock("node:fs/promises", () => ({
   writeFile: vi.fn<(path: string, data: string) => Promise<void>>(),
 }));
 
-/** Compiles a fresh sweep with `--code` and logging mocked out. */
-async function compileSweep(): Promise<SweepFixture> {
+/** Compiles a fresh sweep, over an emptied schema in `container`, with `--code` and logging mocked out. */
+async function compileSweep(
+  container: StartedPostgreSqlContainer,
+): Promise<SweepFixture> {
   const module = await Test.createTestingModule(
-    sweepModuleMetadata([
+    sweepModuleMetadata(container, [
       { provide: DrawCodeService, useValue: createMock<DrawCodeService>() },
       { provide: LoggerService, useValue: createMock<LoggerService>() },
     ]),
@@ -39,11 +59,24 @@ async function compileSweep(): Promise<SweepFixture> {
  * reason it is there: the committed `output/index.html` is not disposable.
  */
 describe("drawCommand sweep mode", () => {
+  let container: StartedPostgreSqlContainer;
+
+  beforeAll(async () => {
+    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
+      .withDatabase(TEST_DATABASE_NAME)
+      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
+      .start();
+  });
+
+  afterAll(async () => {
+    await container.stop();
+  });
+
   describe("over an already-populated database", () => {
     let sweep: SweepFixture;
 
     beforeEach(async () => {
-      sweep = await compileSweep();
+      sweep = await compileSweep(container);
     });
 
     afterEach(async () => {
@@ -51,20 +84,22 @@ describe("drawCommand sweep mode", () => {
     });
 
     it(
-      "regenerates an already-populated database into exactly the rows a fresh sweep writes",
+      "regenerates an already-populated database into exactly the rows a fresh sweep writes, each under a new id",
       async () => {
         await sweep.command.run([], {});
 
-        const fresh = await sweep.repository.find({ order: { id: "ASC" } });
+        const fresh = await sweep.repository.find({ order: { code: "ASC" } });
 
         await expect(sweep.command.run([], {})).resolves.not.toThrow();
 
         const regenerated = await sweep.repository.find({
-          order: { id: "ASC" },
+          order: { code: "ASC" },
         });
 
         expect(regenerated).toHaveLength(fresh.length);
-        expect(regenerated).toStrictEqual(fresh);
+        expect(regenerated.map(({ id: _id, ...row }) => row)).toStrictEqual(
+          fresh.map(({ id: _id, ...row }) => row),
+        );
       },
       SWEEP_TIMEOUT_MILLISECONDS,
     );

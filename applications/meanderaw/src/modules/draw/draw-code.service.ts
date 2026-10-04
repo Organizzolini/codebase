@@ -8,8 +8,8 @@ import type { Meander } from "../database/entities/Meander.entity";
 import type { CodeDrawingOptions } from "./draw.types";
 
 /**
- * Persists the meander a `--code` drawing names, as one row in the committed
- * sqlite database.
+ * Persists the meander a `--code` drawing names, as one row in the meander
+ * database.
  *
  * The row itself is built by `DrawRecordService`, the one place a meander
  * row is built — decoded once, then measured and classified from that same

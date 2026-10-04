@@ -265,8 +265,9 @@ Five workflows run on every pull request. Each maps to targets you can run local
 | Secure Code   | Secrets, Python AST, dependency vulnerabilities, licenses, infrastructure misconfiguration                               | `nx affected --target=secure-code`                |
 | Make Projects | Builds every buildable project and gates its declared bundle size                                                        | `nx affected --target=build-projects`             |
 | Comply Code   | Branch name, pull request title, body, labels, assignees, and release significance                                       | See [Pull Request Process](#pull-request-process) |
+| Enforce Code  | CODEOWNERS rules and workflow security                                                                                   | `tools/validation/src/main.ts audit-governance`   |
 
-🚀 Continuous Deployment runs post-merge on `main` to build and verify workspace projects and the dev container image.
+🚀 Continuous Deployment runs post-merge on `main` to release the workspace and to build and verify the dev container image. Builds are verified before merge, in the merge queue, and a pull request that changes the dev container builds and tests it there too.
 
 ## Code Standards
 

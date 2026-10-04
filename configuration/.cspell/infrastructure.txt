@@ -87,6 +87,7 @@ upsert
 upserted
 upserting
 upserts
+uuidv
 Virtio
 vonage
 workos

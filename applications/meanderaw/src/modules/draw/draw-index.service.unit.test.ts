@@ -24,9 +24,10 @@ describe(DrawIndexService, () => {
 
   /** Every field a fixture row does not care about, defaulted so a case only spells out what it means to test. */
   const meander = (
-    overrides: Partial<Meander> & Pick<Meander, "code" | "id">,
+    overrides: Partial<Meander> & Pick<Meander, "code">,
   ): Meander => ({
     ...meanderRecord({ code: overrides.code, lattice: "3c9a" }),
+    id: "01a107d6-cff8-7238-8684-a2a863bc6928",
     ...overrides,
   });
 
@@ -71,9 +72,7 @@ describe(DrawIndexService, () => {
     });
 
     it("embeds every meander's own SVG rather than linking to a file", () => {
-      const pages = service.render([
-        meander({ code: "a", family: "snake", id: 1 }),
-      ]);
+      const pages = service.render([meander({ code: "a", family: "snake" })]);
       const page = pages["families/snake.html"] ?? "";
 
       expect(page).toContain('<path d="M1 1"/>');
@@ -86,7 +85,6 @@ describe(DrawIndexService, () => {
           code: "abc",
           columns: 2,
           family: "snake",
-          id: 1,
           rows: 3,
         }),
       ]);
@@ -102,7 +100,6 @@ describe(DrawIndexService, () => {
           code: "abc",
           columns: 1,
           family: "boxes",
-          id: 1,
           rows: 3,
         }),
       ]);
@@ -115,9 +112,9 @@ describe(DrawIndexService, () => {
 
     it("lays the families out according to their declared sort key", () => {
       const pages = service.render([
-        meander({ code: "a", family: "parallel", id: 1 }),
-        meander({ code: "b", family: "boxes", id: 2 }),
-        meander({ code: "c", family: "snake", id: 3 }),
+        meander({ code: "a", family: "parallel" }),
+        meander({ code: "b", family: "boxes" }),
+        meander({ code: "c", family: "snake" }),
       ]);
 
       const indexPage = pages["index.html"] ?? "";
@@ -132,8 +129,8 @@ describe(DrawIndexService, () => {
 
     it("groups a null-family row into a dedicated unclassified section, sorted after every named family", () => {
       const pages = service.render([
-        meander({ code: "a", family: "unclassified", id: 1 }),
-        meander({ code: "b", family: "snake", id: 2 }),
+        meander({ code: "a", family: "unclassified" }),
+        meander({ code: "b", family: "snake" }),
       ]);
 
       expect(pages["families/unclassified.html"]).toContain(
@@ -149,10 +146,10 @@ describe(DrawIndexService, () => {
 
     it("orders rows within a family by rows, then columns, then code", () => {
       const pages = service.render([
-        meander({ code: "z", columns: 5, family: "snake", id: 1, rows: 3 }),
-        meander({ code: "b", columns: 2, family: "snake", id: 2, rows: 4 }),
-        meander({ code: "a", columns: 1, family: "snake", id: 3, rows: 4 }),
-        meander({ code: "b", columns: 1, family: "snake", id: 4, rows: 4 }), // Same rows and columns, different code
+        meander({ code: "z", columns: 5, family: "snake", rows: 3 }),
+        meander({ code: "b", columns: 2, family: "snake", rows: 4 }),
+        meander({ code: "a", columns: 1, family: "snake", rows: 4 }),
+        meander({ code: "b", columns: 1, family: "snake", rows: 4 }), // Same rows and columns, different code
       ]);
       const page = pages["families/snake.html"] ?? "";
 
@@ -172,21 +169,18 @@ describe(DrawIndexService, () => {
           code: "a",
           columns: 2,
           family: "unclassified",
-          id: 1,
           rows: 2,
         }),
         meander({
           code: "b",
           columns: 1,
           family: "unclassified",
-          id: 2,
           rows: 3,
         }),
         meander({
           code: "c",
           columns: 1,
           family: "unclassified",
-          id: 3,
           rows: 2,
         }),
       ]);
@@ -209,14 +203,12 @@ describe(DrawIndexService, () => {
           code: "a",
           columns: 2,
           family: "unclassified",
-          id: 1,
           rows: 2,
         }),
         meander({
           code: "b",
           columns: 2,
           family: "unclassified",
-          id: 2,
           rows: 2,
         }),
       ]);
@@ -226,10 +218,10 @@ describe(DrawIndexService, () => {
 
     it("sorts unrecognized families alphabetically when missing from FAMILY_SORT_KEYS", () => {
       const pages = service.render([
-        meander({ code: "a", family: "zeta" as MeanderFamily, id: 1 }),
-        meander({ code: "b", family: "alpha" as MeanderFamily, id: 2 }),
-        meander({ code: "c", family: "zeta" as MeanderFamily, id: 3 }),
-        meander({ code: "d", family: "unclassified", id: 4 }),
+        meander({ code: "a", family: "zeta" as MeanderFamily }),
+        meander({ code: "b", family: "alpha" as MeanderFamily }),
+        meander({ code: "c", family: "zeta" as MeanderFamily }),
+        meander({ code: "d", family: "unclassified" }),
       ]);
 
       const indexPage = pages["index.html"] ?? "";
@@ -243,9 +235,9 @@ describe(DrawIndexService, () => {
 
     it("counts meanders in a section's own heading and in the page summary", () => {
       const pages = service.render([
-        meander({ code: "a", family: "snake", id: 1 }),
-        meander({ code: "b", family: "snake", id: 2 }),
-        meander({ code: "c", family: "boxes", id: 3 }),
+        meander({ code: "a", family: "snake" }),
+        meander({ code: "b", family: "snake" }),
+        meander({ code: "c", family: "boxes" }),
       ]);
 
       expect(pages["families/snake.html"]).toContain("2 meanders");
@@ -254,9 +246,7 @@ describe(DrawIndexService, () => {
     });
 
     it("links each family section from a jump list", () => {
-      const pages = service.render([
-        meander({ code: "a", family: "snake", id: 1 }),
-      ]);
+      const pages = service.render([meander({ code: "a", family: "snake" })]);
 
       expect(pages["index.html"]).toContain(
         '<a href="families/snake.html">snake</a>',
@@ -265,7 +255,7 @@ describe(DrawIndexService, () => {
 
     it("escapes a lattice address that would otherwise close a tag or an attribute", () => {
       const pages = service.render([
-        meander({ code: '<script>&"', family: "snake", id: 1 }),
+        meander({ code: '<script>&"', family: "snake" }),
       ]);
 
       expect(pages["families/snake.html"]).toContain(
@@ -274,21 +264,20 @@ describe(DrawIndexService, () => {
       expect(pages["families/snake.html"]).not.toContain("<script>");
     });
 
-    it("defines each meander's own tile once and places it six times along a band", () => {
+    it("defines each meander's own tile once, under its Code, and places it six times along a band", () => {
       const pages = service.render([
         meander({
           code: "a",
           columns: 3,
           family: "snake",
-          id: 7,
           rows: 4,
         }),
       ]);
       const page = pages["families/snake.html"] ?? "";
 
       expect(page.split('<path d="M1 1"/>')).toHaveLength(2);
-      expect(page).toContain('<defs><g id="meander-7">');
-      expect(page.split('<use href="#meander-7"')).toHaveLength(7);
+      expect(page).toContain('<defs><g id="meander-a">');
+      expect(page.split('<use href="#meander-a"')).toHaveLength(7);
     });
 
     it("steps each repeat one tile width (its columns) further along the band, so the tiles meet rather than overlap or gap", () => {
@@ -297,16 +286,15 @@ describe(DrawIndexService, () => {
           code: "a",
           columns: 3,
           family: "snake",
-          id: 1,
           rows: 3,
         }),
       ]);
       const page = pages["families/snake.html"] ?? "";
 
-      expect(page).toContain('<use href="#meander-1" x="0"/>');
-      expect(page).toContain('<use href="#meander-1" x="45"/>');
-      expect(page).toContain('<use href="#meander-1" x="225"/>');
-      expect(page).not.toContain('<use href="#meander-1" x="270"/>');
+      expect(page).toContain('<use href="#meander-a" x="0"/>');
+      expect(page).toContain('<use href="#meander-a" x="45"/>');
+      expect(page).toContain('<use href="#meander-a" x="225"/>');
+      expect(page).not.toContain('<use href="#meander-a" x="270"/>');
     });
 
     it("sizes the band to hold every repeat at the tile's own height", () => {
@@ -315,7 +303,6 @@ describe(DrawIndexService, () => {
           code: "a",
           columns: 3,
           family: "snake",
-          id: 1,
           rows: 3,
         }),
       ]);

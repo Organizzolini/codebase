@@ -1,9 +1,18 @@
 import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
+import {
+  PostgreSqlContainer,
+  type StartedPostgreSqlContainer,
+} from "@testcontainers/postgresql";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { LoggerService } from "@codebase/logging";
 
+import {
+  TEST_DATABASE_NAME,
+  TEST_POSTGRES_IMAGE,
+  TEST_SCHEMA_INITIALIZATION,
+} from "../../../testing/database";
 import {
   SWEEP_TIMEOUT_MILLISECONDS,
   type SweepFixture,
@@ -37,10 +46,12 @@ vi.mock("node:fs/promises", () => ({
  */
 const HISTORICAL_CORPUS_BEYOND_ENUMERATION = 1026;
 
-/** Compiles a fresh sweep with `--code` and logging mocked out. */
-async function compileSweep(): Promise<SweepFixture> {
+/** Compiles a fresh sweep, over an emptied schema in `container`, with `--code` and logging mocked out. */
+async function compileSweep(
+  container: StartedPostgreSqlContainer,
+): Promise<SweepFixture> {
   const module = await Test.createTestingModule(
-    sweepModuleMetadata([
+    sweepModuleMetadata(container, [
       { provide: DrawCodeService, useValue: createMock<DrawCodeService>() },
       { provide: LoggerService, useValue: createMock<LoggerService>() },
     ]),
@@ -52,8 +63,8 @@ async function compileSweep(): Promise<SweepFixture> {
 /**
  * Drives the whole of `DrawCommand`'s sweep — the generalized enumeration,
  * the historical corpus's hardcoded ingestion, and the index page rebuilt
- * from both — against a real TypeORM connection to an in-memory
- * `better-sqlite3` database, and asserts on the rows it persists. It is spec
+ * from both — against a real TypeORM connection to a throwaway Postgres
+ * container, and asserts on the rows it persists. It is spec
  * #813's highest seam for this command, and the direct successor to the
  * file-tree assertions `draw.command.unit.test.ts` made by mocking
  * `node:fs/promises` while the per-family procedural pipeline still wrote
@@ -79,10 +90,23 @@ async function compileSweep(): Promise<SweepFixture> {
  * Characteristic computation, then through `DrawIndexService` itself. That
  * is real work rather than a hang, and the timeout is declared rather than
  * left to the default five seconds. `node:fs/promises` stays mocked even
- * here: this suite's own in-memory database is disposable, but the
+ * here: this suite's own container is disposable, but the
  * committed `output/index.html` a real write would land on is not.
  */
 describe("drawCommand sweep mode", () => {
+  let container: StartedPostgreSqlContainer;
+
+  beforeAll(async () => {
+    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
+      .withDatabase(TEST_DATABASE_NAME)
+      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
+      .start();
+  });
+
+  afterAll(async () => {
+    await container.stop();
+  });
+
   /**
    * One sweep, shared by every case that only reads what an empty database
    * ends up holding. Each sweep costs 45–90 seconds on a CI runner, and
@@ -97,7 +121,7 @@ describe("drawCommand sweep mode", () => {
 
     beforeAll(async () => {
       writeFileMock.mockClear();
-      sweep = await compileSweep();
+      sweep = await compileSweep(container);
       await sweep.command.run([], {});
       writes = [...writeFileMock.mock.calls];
     }, SWEEP_TIMEOUT_MILLISECONDS);

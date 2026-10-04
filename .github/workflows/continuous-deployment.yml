@@ -4,12 +4,17 @@ on:
   push:
     branches:
       - main
+  # Builds and tests the devcontainer before a change to it merges. Nothing is
+  # released or published from a pull request; the skip step below and the
+  # image push filters both hold to that.
+  pull_request:
+    paths:
+      - .devcontainer/**
+      - .env.default
+      - .github/workflows/continuous-deployment.yml
+      - infrastructure/docker/docker-compose.yml
+      - package.json
   workflow_dispatch:
-    inputs:
-      verbose:
-        description: Enable verbose Nx logging
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -18,10 +23,11 @@ permissions:
   pull-requests: write
 
 # Never cancel a deployment/release run. Concurrency is scoped per-ref so
-# releases on main queue sequentially without colliding.
+# releases on main queue sequentially without colliding. A pull request's run
+# only builds the devcontainer, so a newer push to it replaces the older run.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   continuous-deployment:
@@ -32,55 +38,80 @@ jobs:
       fail-fast: false
       matrix:
         target:
-          - id: build-projects
-            name: Projects
-            emoji: 👷
-            timeout: 12
           - id: build-devcontainer
             name: Devcontainer
             emoji: 🧑‍🏭
             timeout: 20
+          # v2.31.0 took 7m19s: 4 minutes to set up, build, trace, graph, and
+          # measure, and 3 for semantic-release, most of it the version
+          # commit's pre-commit hook. A cold Nx cache adds about 4 to the
+          # first part, and the hook checks only the projects the commit
+          # reaches. A timeout leaves no tag or version commit behind, and the
+          # next run retries.
           - id: push-releases
             name: Releases
             emoji: 🦸
-            timeout: 24
+            timeout: 12
 
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
+      # Decides from the GitHub API alone, before any checkout, so a run with
+      # nothing to do finishes in seconds. The devcontainer is built when the
+      # change touches a file the image or its test reads: its own
+      # configuration, the compose and environment files that configuration
+      # loads, this workflow, or the `packageManager` pin in `package.json`
+      # that the test checks pnpm against. Any other `package.json` edit, such
+      # as a release's version bump, does not rebuild it. When the change set
+      # cannot be read in full, it builds rather than guess.
       - name: 🚦 Skip Conditionally
         id: check-skip
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
           SHA: ${{ github.sha }}
+          TARGET_ID: ${{ matrix.target.id }}
+          EVENT_NAME: ${{ github.event_name }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PULL_REQUEST_BASE: ${{ github.event.pull_request.base.sha }}
+          PULL_REQUEST_HEAD: ${{ github.event.pull_request.head.sha }}
         run: |
-          TARGET_ID="${{ matrix.target.id }}"
-          EVENT_NAME="${{ github.event_name }}"
-
-          if [ "$TARGET_ID" = "build-devcontainer" ] && [ "$EVENT_NAME" = "push" ]; then
-            BEFORE_SHA="${{ github.event.before }}"
-            ZERO_SHA="0000000000000000000000000000000000000000"
-            if [ -n "$BEFORE_SHA" ] && [ "$BEFORE_SHA" != "$ZERO_SHA" ]; then
-              CHANGED_FILES=$(git diff --name-only "$BEFORE_SHA" \
-                "${{ github.sha }}" || true)
+          if [ "$TARGET_ID" = "build-devcontainer" ] && [ "$EVENT_NAME" != "workflow_dispatch" ]; then
+            if [ "$EVENT_NAME" = "pull_request" ]; then
+              BASE="$PULL_REQUEST_BASE"
+              HEAD="$PULL_REQUEST_HEAD"
             else
-              CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD || true)
+              BASE="$PUSH_BEFORE"
+              HEAD="$SHA"
             fi
 
-            MATCH_PATTERN='^(\.devcontainer/|\.github/workflows/continuous-deployment\.yml)'
-            if ! echo "$CHANGED_FILES" | grep -qE "$MATCH_PATTERN"; then
-              echo "⏭️ No devcontainer changes detected; skipping devcontainer build."
-              echo "skip=true" >> "$GITHUB_OUTPUT"
-              exit 0
+            if [ -z "$BASE" ] || [[ "$BASE" =~ ^0+$ ]]; then
+              echo "🧑‍🏭 No previous revision to compare against; building the devcontainer."
+            else
+              COMPARISON="$(gh api "repos/$REPOSITORY/compare/${BASE}...${HEAD}")"
+              FILE_COUNT="$(jq '.files | length' <<< "$COMPARISON")"
+              MATCH_PATTERN='^(\.devcontainer/|\.env\.default$|\.github/workflows/continuous-deployment\.yml$|infrastructure/docker/docker-compose\.yml$)'
+              PACKAGE_MANAGER_PATTERN='^[-+][[:space:]]*"packageManager"'
+
+              if [ "$FILE_COUNT" -ge 300 ]; then
+                echo "🧑‍🏭 ${FILE_COUNT} changed files may be truncated; building the devcontainer."
+              elif jq -r '.files[].filename' <<< "$COMPARISON" | grep -qE "$MATCH_PATTERN"; then
+                echo "🧑‍🏭 Devcontainer files changed; building the devcontainer."
+              elif jq -r '.files[] | select(.filename == "package.json") | .patch // ""' \
+                <<< "$COMPARISON" | grep -qE "$PACKAGE_MANAGER_PATTERN"; then
+                echo "🧑‍🏭 The packageManager pin changed; building the devcontainer."
+              else
+                echo "⏭️ No devcontainer changes detected; skipping devcontainer build."
+                echo "skip=true" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
             fi
           fi
 
           if [ "$TARGET_ID" = "push-releases" ]; then
+            if [ "$EVENT_NAME" = "pull_request" ]; then
+              echo "⏭️ Pull requests never release"
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
             tip="$(gh api "repos/$REPOSITORY/commits/main" --jq .sha)"
             if [ "$tip" != "$SHA" ]; then
               echo "⏭️ $SHA superseded by $tip, whose run releases instead"
@@ -93,34 +124,12 @@ jobs:
 
           echo "skip=false" >> "$GITHUB_OUTPUT"
 
-      # Projects Build Steps
-      - name: 🕋 Setup Codebase
-        id: setup
-        if: >-
-          steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'build-projects'
-        uses: ./.github/actions/setup-codebase
+      - name: 📥 Checkout Repository
+        if: steps.check-skip.outputs.skip != 'true'
+        uses: actions/checkout@v7
         with:
-          python-dependencies: "false"
-
-      - name: 👷 Build Projects
-        if: >-
-          steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'build-projects'
-        env:
-          NX_VERBOSE_LOGGING: ${{ inputs.verbose || false }}
-        uses: ./.github/actions/run-affected
-        with:
-          target: build-projects
-
-      - name: 🧹 Cleanup Codebase
-        if: >-
-          always() &&
-          steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'build-projects'
-        uses: ./.github/actions/cleanup-codebase
-        with:
-          nx-cache-primary-key: ${{ steps.setup.outputs.nx-cache-primary-key }}
+          fetch-depth: 0
+          persist-credentials: false
 
       # Devcontainer Build & Publish Steps
       - name: 🗂️ Setup Environment File
@@ -188,6 +197,7 @@ jobs:
 
       # Release Steps
       - name: 🕋 Setup Codebase for Release
+        id: setup
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
           matrix.target.id == 'push-releases'
@@ -269,3 +279,14 @@ jobs:
           GIT_COMMITTER_EMAIL: jimmypaolini@gmail.com
           GIT_COMMITTER_NAME: Jimmy Paolini
         run: pnpm semantic-release
+
+      # The only save of this workflow's Nx cache, which the next release
+      # restores. Every project is built above, so it covers the whole graph.
+      - name: 🧹 Cleanup Codebase
+        if: >-
+          always() &&
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases'
+        uses: ./.github/actions/cleanup-codebase
+        with:
+          nx-cache-primary-key: ${{ steps.setup.outputs.nx-cache-primary-key }}

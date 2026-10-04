@@ -4,6 +4,7 @@
 [![Continuous Integration](https://github.com/Organizzolini/codebase/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/Organizzolini/codebase/actions/workflows/continuous-integration.yml)
 [![Continuous Deployment](https://github.com/Organizzolini/codebase/actions/workflows/continuous-deployment.yml/badge.svg)](https://github.com/Organizzolini/codebase/actions/workflows/continuous-deployment.yml)
 [![Continuous Compliance](https://github.com/Organizzolini/codebase/actions/workflows/continuous-compliance.yml/badge.svg)](https://github.com/Organizzolini/codebase/actions/workflows/continuous-compliance.yml)
+[![License](https://img.shields.io/github/license/Organizzolini/codebase?label=License)](LICENSE)
 
 [![Nx](https://img.shields.io/badge/Nx-Codebase-143055?logo=nx)](https://nx.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?logo=typescript)](https://www.typescriptlang.org/)
@@ -11,7 +12,9 @@
 [![Node.js](https://img.shields.io/badge/Node.js-24-5FA04E?logo=nodedotjs)](https://nodejs.org/)
 [![Python](https://img.shields.io/badge/Python-3.14-3776AB?logo=python)](https://www.python.org/)
 [![uv](https://img.shields.io/badge/uv-Python%20Packages-DE5FE9?logo=uv)](https://docs.astral.sh/uv/)
+[![Hatchling](https://img.shields.io/badge/Hatchling-Python%20Build-4051B5)](https://hatch.pypa.io/)
 [![Jupyter](https://img.shields.io/badge/Jupyter-1.1-F37626?logo=jupyter&logoColor=white)](https://jupyter.org/)
+[![pandas](https://img.shields.io/badge/pandas-Data-150458?logo=pandas)](https://pandas.pydata.org/)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
 [![TanStack](https://img.shields.io/badge/TanStack-Start-FF4154?logo=tanstack)](https://tanstack.com/start)
 [![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-Components-000000?logo=shadcnui)](https://ui.shadcn.com/)
@@ -19,28 +22,77 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
 [![Lucide](https://img.shields.io/badge/Lucide-Icons-f67373?logo=lucide)](https://lucide.dev/)
 [![Recharts](https://img.shields.io/badge/Recharts-Charts-22b5bf)](https://recharts.org/)
-[![Zod](https://img.shields.io/badge/Zod-Validation-3E67B1)](https://zod.dev/)
+[![Zod](https://img.shields.io/badge/Zod-Validation-3E67B1?logo=zod)](https://zod.dev/)
 [![Vite](https://img.shields.io/badge/Vite-Bundler-646CFF?logo=vite)](https://vitejs.dev/)
 [![SWC](https://img.shields.io/badge/SWC-Compiler-F9BC00?logo=swc)](https://swc.rs/)
 [![Vitest](https://img.shields.io/badge/Vitest-Testing-6E9F18?logo=vitest)](https://vitest.dev/)
+[![Testing Library](https://img.shields.io/badge/Testing%20Library-React-E33332?logo=testinglibrary)](https://testing-library.com/)
+[![Faker](https://img.shields.io/badge/Faker-Fixtures-00D8B4?logo=faker)](https://fakerjs.dev/)
 [![NestJS](https://img.shields.io/badge/NestJS-Framework-E0234E?logo=nestjs)](https://nestjs.com/)
+[![nest-commander](https://img.shields.io/badge/nest--commander-CLI-E0234E?logo=nestjs)](https://nest-commander.jaymcdoniel.dev/)
+[![Express](https://img.shields.io/badge/Express-HTTP-000000?logo=express)](https://expressjs.com/)
 [![GraphQL](https://img.shields.io/badge/GraphQL-API-E10098?logo=graphql)](https://graphql.org/)
-[![TypeORM](https://img.shields.io/badge/TypeORM-ORM-E83524)](https://typeorm.io/)
+[![Apollo](https://img.shields.io/badge/Apollo-GraphQL%20Server-311C87?logo=apollographql)](https://www.apollographql.com/docs/apollo-server)
+[![TypeORM](https://img.shields.io/badge/TypeORM-ORM-E83524?logo=typeorm)](https://typeorm.io/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql)](https://www.postgresql.org/)
+[![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?logo=sqlite)](https://www.sqlite.org/)
+[![Testcontainers](https://img.shields.io/badge/Testcontainers-Integration-291A3F)](https://testcontainers.com/)
+[![Pino](https://img.shields.io/badge/Pino-Logging-687634?logo=pino)](https://getpino.io/)
+[![Cheerio](https://img.shields.io/badge/Cheerio-HTML%20Parsing-E88C1F?logo=cheerio)](https://cheerio.js.org/)
+[![remark](https://img.shields.io/badge/remark-Markdown-000000?logo=remark)](https://remark.js.org/)
+[![Swiss Ephemeris](https://img.shields.io/badge/Swiss%20Ephemeris-Astronomy-1F3A93)](https://www.astro.com/swisseph/)
+[![Mermaid](https://img.shields.io/badge/Mermaid-Diagrams-FF3670?logo=mermaid)](https://mermaid.js.org/)
+[![API Extractor](https://img.shields.io/badge/API%20Extractor-API%20Reports-0078D4)](https://api-extractor.com/)
 [![LangChain](https://img.shields.io/badge/LangChain-AI-1C3C3C?logo=langchain)](https://python.langchain.com/)
 [![LangGraph](https://img.shields.io/badge/LangGraph-Agents-1C3C3C?logo=langchain)](https://langchain-ai.github.io/langgraph/)
 [![Ollama](https://img.shields.io/badge/Ollama-Local%20LLM-000000?logo=ollama)](https://ollama.com/)
+[![Open WebUI](https://img.shields.io/badge/Open%20WebUI-Chat-000000)](https://openwebui.com/)
+[![SearXNG](https://img.shields.io/badge/SearXNG-Search-3050FF?logo=searxng)](https://docs.searxng.org/)
 [![Pydantic](https://img.shields.io/badge/Pydantic-Validation-E92063?logo=pydantic)](https://docs.pydantic.dev/)
+[![pytest](https://img.shields.io/badge/pytest-Testing-0A9EDC?logo=pytest)](https://docs.pytest.org/)
+[![Pyright](https://img.shields.io/badge/Pyright-Type%20Checking-2C4F7C)](https://microsoft.github.io/pyright/)
+[![ty](https://img.shields.io/badge/ty-Type%20Checking-261230?logo=astral)](https://docs.astral.sh/ty/)
 [![ESLint](https://img.shields.io/badge/ESLint-Linting-4B32C3?logo=eslint)](https://eslint.org/)
 [![Oxlint](https://img.shields.io/badge/Oxlint-Linting-8A2BE2)](https://oxc.rs/docs/guide/usage/linter)
 [![Prettier](https://img.shields.io/badge/Prettier-Formatter-F7B93E?logo=prettier)](https://prettier.io/)
+[![Oxfmt](https://img.shields.io/badge/Oxfmt-Formatter-8A2BE2?logo=oxc)](https://oxc.rs/docs/guide/usage/formatter)
 [![Stylelint](https://img.shields.io/badge/Stylelint-CSS-263238?logo=stylelint)](https://stylelint.io/)
 [![Ruff](https://img.shields.io/badge/Ruff-Linting-D7FF64?logo=ruff)](https://docs.astral.sh/ruff/)
+[![markdownlint](https://img.shields.io/badge/markdownlint-Markdown-000000?logo=markdown)](https://github.com/DavidAnson/markdownlint-cli2)
+[![CSpell](https://img.shields.io/badge/CSpell-Spelling-2D7BB6)](https://cspell.org/)
+[![ShellCheck](https://img.shields.io/badge/ShellCheck-Shell-4EAA25?logo=gnubash&logoColor=white)](https://www.shellcheck.net/)
+[![SQLFluff](https://img.shields.io/badge/SQLFluff-SQL-2B3A55)](https://sqlfluff.com/)
+[![Squawk](https://img.shields.io/badge/Squawk-Migrations-4169E1?logo=postgresql&logoColor=white)](https://squawkhq.com/)
+[![yamllint](https://img.shields.io/badge/yamllint-YAML-CB171E?logo=yaml)](https://yamllint.readthedocs.io/)
+[![nbstripout](https://img.shields.io/badge/nbstripout-Notebooks-F37626?logo=jupyter&logoColor=white)](https://github.com/kynan/nbstripout)
+[![Knip](https://img.shields.io/badge/Knip-Unused%20Code-F56E0F?logo=knip)](https://knip.dev/)
+[![Vulture](https://img.shields.io/badge/Vulture-Dead%20Code-3776AB?logo=python&logoColor=white)](https://github.com/jendrikseipp/vulture)
+[![Fallow](https://img.shields.io/badge/Fallow-Code%20Health-5A6B3C)](https://docs.fallow.tools)
+[![jscpd](https://img.shields.io/badge/jscpd-Duplication-C21325)](https://github.com/kucherenko/jscpd)
+[![dependency-cruiser](https://img.shields.io/badge/dependency--cruiser-Dependencies-1E3A5F)](https://github.com/sverweij/dependency-cruiser)
+[![syncpack](https://img.shields.io/badge/syncpack-Versions-6B46C1)](https://syncpack.dev/)
+[![Sherif](https://img.shields.io/badge/Sherif-Monorepo-1A1A1A)](https://github.com/QuiiBz/sherif)
+[![type-coverage](https://img.shields.io/badge/type--coverage-TypeScript-3178C6?logo=typescript&logoColor=white)](https://github.com/plantain-00/type-coverage)
+[![Gitleaks](https://img.shields.io/badge/Gitleaks-Secrets-B22222)](https://gitleaks.io/)
+[![Trivy](https://img.shields.io/badge/Trivy-Security-1904DA?logo=trivy)](https://trivy.dev/)
+[![Bandit](https://img.shields.io/badge/Bandit-Python%20Security-FFD43B)](https://bandit.readthedocs.io/)
+[![license-checker](https://img.shields.io/badge/license--checker-Licenses-3DA639)](https://github.com/davglass/license-checker)
+[![Husky](https://img.shields.io/badge/Husky-Git%20Hooks-42B983)](https://typicode.github.io/husky/)
+[![lint-staged](https://img.shields.io/badge/lint--staged-Staged%20Files-4B32C3)](https://github.com/lint-staged/lint-staged)
+[![Commitlint](https://img.shields.io/badge/Commitlint-Commits-000000?logo=commitlint)](https://commitlint.js.org/)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-FE5196?logo=conventionalcommits&logoColor=white)](https://www.conventionalcommits.org/)
+[![Gitmoji](https://img.shields.io/badge/Gitmoji-Emoji%20Commits-FFDD67)](https://gitmoji.dev/)
 [![Semantic Release](https://img.shields.io/badge/Semantic%20Release-Versioning-494949?logo=semantic-release)](https://semantic-release.gitbook.io/)
+[![GitHub Actions](https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?logo=githubactions&logoColor=white)](https://github.com/features/actions)
+[![Dependabot](https://img.shields.io/badge/Dependabot-Updates-025E8C?logo=dependabot)](https://docs.github.com/en/code-security/dependabot)
 [![Docker](https://img.shields.io/badge/Docker-Container-2496ED?logo=docker)](https://www.docker.com/)
+[![Dev Containers](https://img.shields.io/badge/Dev%20Containers-Environment-007ACC?logo=visualstudiocode)](https://containers.dev/)
 [![Helm](https://img.shields.io/badge/Helm-Charts-0F1689?logo=helm)](https://helm.sh/)
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-K8s-326CE5?logo=kubernetes)](https://kubernetes.io/)
 [![Terraform](https://img.shields.io/badge/Terraform-IaC-844FBA?logo=terraform)](https://www.terraform.io/)
+[![Linode](https://img.shields.io/badge/Linode-LKE-00A95C?logo=linode)](https://www.linode.com/products/kubernetes/)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Agents-D97757?logo=claude&logoColor=white)](https://claude.com/claude-code)
+[![GitHub Copilot](https://img.shields.io/badge/GitHub%20Copilot-Agents-000000?logo=githubcopilot)](https://github.com/features/copilot)
 
 ## 💽 Projects
 
@@ -118,7 +170,7 @@
 </details>
 
 **🪵 [logging](packages/logging)** - Shared pino-backed NestJS `LoggerService` and `LoggerModule`\
-**🏺 [meanderaw](applications/meanderaw)** - CLI that enumerates Greek meander (key/fret) patterns into a committed SQLite database, measuring and classifying each by its Code
+**🏺 [meanderaw](applications/meanderaw)** - CLI that enumerates Greek meander (key/fret) patterns into a Postgres database, measuring and classifying each by its Code
 
 **🧑‍💻 [JimmyPaolini](applications/JimmyPaolini)** - GitHub profile site\
 **↔️ [synchronization](tools/synchronization)** - NestJS CLI that regenerates the workspace's derived configuration and documentation, and fails CI when they drift\
@@ -827,7 +879,6 @@ graph LR
   module_synchronization_PackageManifestsModule["synchronization/PackageManifestsModule"]
   module_synchronization_PullRequestLabelsModule["synchronization/PullRequestLabelsModule"]
   module_synchronization_PullRequestTemplateModule["synchronization/PullRequestTemplateModule"]
-  module_synchronization_ReadmeVersionModule["synchronization/ReadmeVersionModule"]
   module_synchronization_RenderingModule["synchronization/RenderingModule"]
   module_synchronization_SkillExclusionsModule["synchronization/SkillExclusionsModule"]
   module_synchronization_SynchronizationModule["synchronization/SynchronizationModule"]
@@ -1601,7 +1652,6 @@ graph LR
   module_synchronization_SynchronizationModule --> module_synchronization_PackageManifestsModule
   module_synchronization_SynchronizationModule --> module_synchronization_PullRequestLabelsModule
   module_synchronization_SynchronizationModule --> module_synchronization_PullRequestTemplateModule
-  module_synchronization_SynchronizationModule --> module_synchronization_ReadmeVersionModule
   module_synchronization_SynchronizationModule --> module_synchronization_SkillExclusionsModule
   module_synchronization_TemplateDiscoveryModule --> module_synchronization_RenderingModule
   module_validation_MainModule --> module_validation_AuditGovernanceModule
@@ -3117,6 +3167,8 @@ graph LR
   file_conformetry_nx_src_index_ts["conformetry-nx/src/index.ts"]
   file_conformetry_nx_src_index_unit_test_ts["conformetry-nx/src/index.unit.test.ts"]
   file_conformetry_nx_src_main_module_ts["conformetry-nx/src/main.module.ts"]
+  file_conformetry_nx_src_main_ts["conformetry-nx/src/main.ts"]
+  file_conformetry_nx_src_main_unit_test_ts["conformetry-nx/src/main.unit.test.ts"]
   file_conformetry_nx_src_modules_adapter_adapter_constants_ts["conformetry-nx/src/modules/adapter/adapter.constants.ts"]
   file_conformetry_nx_src_modules_adapter_adapter_module_ts["conformetry-nx/src/modules/adapter/adapter.module.ts"]
   file_conformetry_nx_src_modules_adapter_adapter_service_ts["conformetry-nx/src/modules/adapter/adapter.service.ts"]
@@ -3998,6 +4050,8 @@ graph LR
   file_meanderaw_src_modules_corpus_historical_corpus_9_constants_ts["meanderaw/src/modules/corpus/historical-corpus-9.constants.ts"]
   file_meanderaw_src_modules_corpus_historical_corpus_constants_ts["meanderaw/src/modules/corpus/historical-corpus.constants.ts"]
   file_meanderaw_src_modules_database_database_constants_ts["meanderaw/src/modules/database/database.constants.ts"]
+  file_meanderaw_src_modules_database_database_factories_ts["meanderaw/src/modules/database/database.factories.ts"]
+  file_meanderaw_src_modules_database_database_module_integration_test_ts["meanderaw/src/modules/database/database.module.integration.test.ts"]
   file_meanderaw_src_modules_database_database_module_ts["meanderaw/src/modules/database/database.module.ts"]
   file_meanderaw_src_modules_database_database_service_integration_test_ts["meanderaw/src/modules/database/database.service.integration.test.ts"]
   file_meanderaw_src_modules_database_database_service_ts["meanderaw/src/modules/database/database.service.ts"]
@@ -4068,6 +4122,7 @@ graph LR
   file_meanderaw_src_modules_tile_tile_service_unit_test_ts["meanderaw/src/modules/tile/tile.service.unit.test.ts"]
   file_meanderaw_src_modules_tile_tile_types_ts["meanderaw/src/modules/tile/tile.types.ts"]
   file_meanderaw_src_repl_ts["meanderaw/src/repl.ts"]
+  file_meanderaw_testing_database_ts["meanderaw/testing/database.ts"]
   file_meanderaw_testing_draw_sweep_ts["meanderaw/testing/draw-sweep.ts"]
   file_meanderaw_testing_legacy_characteristics_ts["meanderaw/testing/legacy-characteristics.ts"]
   file_meanderaw_testing_letters_ts["meanderaw/testing/letters.ts"]
@@ -4139,13 +4194,6 @@ graph LR
   file_synchronization_src_modules_pull_request_template_pull_request_template_constants_ts["synchronization/src/modules/pull-request-template/pull-request-template.constants.ts"]
   file_synchronization_src_modules_pull_request_template_pull_request_template_module_ts["synchronization/src/modules/pull-request-template/pull-request-template.module.ts"]
   file_synchronization_src_modules_pull_request_template_pull_request_template_types_ts["synchronization/src/modules/pull-request-template/pull-request-template.types.ts"]
-  file_synchronization_src_modules_readme_version_readme_version_command_ts["synchronization/src/modules/readme-version/readme-version.command.ts"]
-  file_synchronization_src_modules_readme_version_readme_version_command_unit_test_ts["synchronization/src/modules/readme-version/readme-version.command.unit.test.ts"]
-  file_synchronization_src_modules_readme_version_readme_version_constants_ts["synchronization/src/modules/readme-version/readme-version.constants.ts"]
-  file_synchronization_src_modules_readme_version_readme_version_module_ts["synchronization/src/modules/readme-version/readme-version.module.ts"]
-  file_synchronization_src_modules_readme_version_readme_version_service_ts["synchronization/src/modules/readme-version/readme-version.service.ts"]
-  file_synchronization_src_modules_readme_version_readme_version_service_unit_test_ts["synchronization/src/modules/readme-version/readme-version.service.unit.test.ts"]
-  file_synchronization_src_modules_readme_version_readme_version_types_ts["synchronization/src/modules/readme-version/readme-version.types.ts"]
   file_synchronization_src_modules_skill_exclusions_skill_exclusions_command_ts["synchronization/src/modules/skill-exclusions/skill-exclusions.command.ts"]
   file_synchronization_src_modules_skill_exclusions_skill_exclusions_command_unit_test_ts["synchronization/src/modules/skill-exclusions/skill-exclusions.command.unit.test.ts"]
   file_synchronization_src_modules_skill_exclusions_skill_exclusions_constants_ts["synchronization/src/modules/skill-exclusions/skill-exclusions.constants.ts"]
@@ -7119,6 +7167,8 @@ graph LR
   file_conformetry_nx_src_index_unit_test_ts --> file_conformetry_nx_src_modules_plugin_plugin_context_utilities_ts
   file_conformetry_nx_src_main_module_ts --> file_conformetry_nx_src_modules_generator_generator_module_ts
   file_conformetry_nx_src_main_module_ts --> file_conformetry_nx_src_modules_plugin_plugin_module_ts
+  file_conformetry_nx_src_main_ts --> file_conformetry_nx_src_modules_generator_bootstrap_utilities_ts
+  file_conformetry_nx_src_main_unit_test_ts --> file_conformetry_nx_src_modules_generator_bootstrap_utilities_ts
   file_conformetry_nx_src_modules_adapter_adapter_module_ts --> file_conformetry_nx_src_modules_adapter_adapter_service_ts
   file_conformetry_nx_src_modules_adapter_adapter_service_ts --> file_conformetry_nx_src_modules_adapter_adapter_constants_ts
   file_conformetry_nx_src_modules_adapter_adapter_service_ts --> file_conformetry_nx_src_modules_adapter_adapter_types_ts
@@ -7961,6 +8011,7 @@ graph LR
   file_logging_src_modules_logger_logger_service_ts --> file_logging_src_modules_logger_logger_constants_ts
   file_logging_src_modules_logger_logger_service_ts --> file_logging_src_modules_logger_logger_types_ts
   file_logging_src_modules_logger_logger_service_unit_test_ts --> file_logging_src_modules_logger_logger_service_ts
+  file_meanderaw_src_constants_ts --> file_meanderaw_src_modules_database_database_constants_ts
   file_meanderaw_src_constants_ts --> file_meanderaw_src_modules_enumeration_enumeration_constants_ts
   file_meanderaw_src_main_end_to_end_test_ts --> file_meanderaw_src_constants_ts
   file_meanderaw_src_main_module_ts --> file_meanderaw_src_constants_ts
@@ -9489,13 +9540,21 @@ graph LR
   file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_7_constants_ts
   file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_8_constants_ts
   file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_9_constants_ts
-  file_meanderaw_src_modules_database_database_module_ts --> file_meanderaw_src_modules_database_database_constants_ts
+  file_meanderaw_src_modules_database_database_factories_ts --> file_meanderaw_src_modules_database_database_types_ts
+  file_meanderaw_src_modules_database_database_factories_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_src_constants_ts
+  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_src_modules_database_database_module_ts
+  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_src_modules_database_database_service_ts
+  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_testing_database_ts
+  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_testing_meanders_ts
+  file_meanderaw_src_modules_database_database_module_ts --> file_meanderaw_src_modules_database_database_factories_ts
   file_meanderaw_src_modules_database_database_module_ts --> file_meanderaw_src_modules_database_database_service_ts
   file_meanderaw_src_modules_database_database_module_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
   file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_src_modules_database_database_constants_ts
   file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_src_modules_database_database_service_ts
   file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_testing_meanders_ts
   file_meanderaw_src_modules_database_database_service_ts --> file_meanderaw_src_modules_database_database_constants_ts
   file_meanderaw_src_modules_database_database_service_ts --> file_meanderaw_src_modules_database_database_types_ts
@@ -9535,6 +9594,7 @@ graph LR
   file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_svg_svg_service_ts
   file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
   file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
+  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_src_modules_database_database_service_ts
   file_meanderaw_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_src_modules_database_database_types_ts
   file_meanderaw_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
@@ -9554,6 +9614,7 @@ graph LR
   file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_svg_svg_service_ts
   file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
   file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
+  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_testing_meanders_ts
   file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
   file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_code_code_service_ts
@@ -9586,13 +9647,16 @@ graph LR
   file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_drawing_drawing_module_ts
   file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
   file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
+  file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_testing_draw_sweep_ts
   file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_testing_meanders_ts
   file_meanderaw_src_modules_draw_draw_sweep_regeneration_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
+  file_meanderaw_src_modules_draw_draw_sweep_regeneration_command_integration_test_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_src_modules_draw_draw_sweep_regeneration_command_integration_test_ts --> file_meanderaw_testing_draw_sweep_ts
   file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_src_modules_classification_classification_constants_ts
   file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
   file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
+  file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_testing_draw_sweep_ts
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_classification_classification_module_ts
@@ -9611,6 +9675,7 @@ graph LR
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_svg_svg_service_ts
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
+  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_code_code_constants_ts
   file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
   file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
@@ -9730,6 +9795,7 @@ graph LR
   file_meanderaw_src_modules_tile_tile_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_types_ts
   file_meanderaw_src_modules_tile_tile_service_unit_test_ts --> file_meanderaw_testing_tiles_ts
   file_meanderaw_src_repl_ts --> file_meanderaw_src_main_module_ts
+  file_meanderaw_testing_database_ts --> file_meanderaw_src_modules_database_database_factories_ts
   file_meanderaw_testing_draw_sweep_ts --> file_meanderaw_src_constants_ts
   file_meanderaw_testing_draw_sweep_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
   file_meanderaw_testing_draw_sweep_ts --> file_meanderaw_src_modules_classification_classification_module_ts
@@ -9745,6 +9811,7 @@ graph LR
   file_meanderaw_testing_draw_sweep_ts --> file_meanderaw_src_modules_enumeration_enumeration_module_ts
   file_meanderaw_testing_draw_sweep_ts --> file_meanderaw_src_modules_enumeration_enumeration_service_ts
   file_meanderaw_testing_draw_sweep_ts --> file_meanderaw_src_modules_geometry_geometry_module_ts
+  file_meanderaw_testing_draw_sweep_ts --> file_meanderaw_testing_database_ts
   file_meanderaw_testing_letters_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
   file_meanderaw_testing_letters_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
   file_meanderaw_testing_letters_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
@@ -9887,20 +9954,6 @@ graph LR
   file_synchronization_src_modules_pull_request_template_pull_request_template_command_unit_test_ts --> file_synchronization_testing_mocks_ts
   file_synchronization_src_modules_pull_request_template_pull_request_template_module_ts --> file_synchronization_src_modules_pull_request_template_pull_request_template_command_ts
   file_synchronization_src_modules_pull_request_template_pull_request_template_module_ts --> file_synchronization_src_modules_synchronization_synchronization_service_ts
-  file_synchronization_src_modules_readme_version_readme_version_command_ts --> file_synchronization_src_modules_readme_version_readme_version_service_ts
-  file_synchronization_src_modules_readme_version_readme_version_command_ts --> file_synchronization_src_modules_synchronization_synchronization_service_ts
-  file_synchronization_src_modules_readme_version_readme_version_command_ts --> file_synchronization_src_modules_synchronization_synchronization_types_ts
-  file_synchronization_src_modules_readme_version_readme_version_command_unit_test_ts --> file_synchronization_src_modules_readme_version_readme_version_command_ts
-  file_synchronization_src_modules_readme_version_readme_version_command_unit_test_ts --> file_synchronization_src_modules_readme_version_readme_version_constants_ts
-  file_synchronization_src_modules_readme_version_readme_version_command_unit_test_ts --> file_synchronization_src_modules_readme_version_readme_version_service_ts
-  file_synchronization_src_modules_readme_version_readme_version_command_unit_test_ts --> file_synchronization_src_modules_synchronization_synchronization_service_ts
-  file_synchronization_src_modules_readme_version_readme_version_command_unit_test_ts --> file_synchronization_testing_mocks_ts
-  file_synchronization_src_modules_readme_version_readme_version_module_ts --> file_synchronization_src_modules_readme_version_readme_version_command_ts
-  file_synchronization_src_modules_readme_version_readme_version_module_ts --> file_synchronization_src_modules_readme_version_readme_version_service_ts
-  file_synchronization_src_modules_readme_version_readme_version_module_ts --> file_synchronization_src_modules_synchronization_synchronization_service_ts
-  file_synchronization_src_modules_readme_version_readme_version_service_ts --> file_synchronization_src_modules_readme_version_readme_version_constants_ts
-  file_synchronization_src_modules_readme_version_readme_version_service_unit_test_ts --> file_synchronization_src_modules_readme_version_readme_version_constants_ts
-  file_synchronization_src_modules_readme_version_readme_version_service_unit_test_ts --> file_synchronization_src_modules_readme_version_readme_version_service_ts
   file_synchronization_src_modules_skill_exclusions_skill_exclusions_command_ts --> file_synchronization_src_modules_skill_exclusions_skill_exclusions_constants_ts
   file_synchronization_src_modules_skill_exclusions_skill_exclusions_command_ts --> file_synchronization_src_modules_skill_exclusions_skill_exclusions_types_ts
   file_synchronization_src_modules_skill_exclusions_skill_exclusions_command_ts --> file_synchronization_src_modules_synchronization_synchronization_service_ts
@@ -9920,7 +9973,6 @@ graph LR
   file_synchronization_src_modules_synchronization_synchronization_command_ts --> file_synchronization_src_modules_package_manifests_package_manifests_command_ts
   file_synchronization_src_modules_synchronization_synchronization_command_ts --> file_synchronization_src_modules_pull_request_labels_pull_request_labels_command_ts
   file_synchronization_src_modules_synchronization_synchronization_command_ts --> file_synchronization_src_modules_pull_request_template_pull_request_template_command_ts
-  file_synchronization_src_modules_synchronization_synchronization_command_ts --> file_synchronization_src_modules_readme_version_readme_version_command_ts
   file_synchronization_src_modules_synchronization_synchronization_command_ts --> file_synchronization_src_modules_skill_exclusions_skill_exclusions_command_ts
   file_synchronization_src_modules_synchronization_synchronization_command_ts --> file_synchronization_src_modules_synchronization_synchronization_service_ts
   file_synchronization_src_modules_synchronization_synchronization_command_ts --> file_synchronization_src_modules_synchronization_synchronization_types_ts
@@ -9930,7 +9982,6 @@ graph LR
   file_synchronization_src_modules_synchronization_synchronization_command_unit_test_ts --> file_synchronization_src_modules_package_manifests_package_manifests_command_ts
   file_synchronization_src_modules_synchronization_synchronization_command_unit_test_ts --> file_synchronization_src_modules_pull_request_labels_pull_request_labels_command_ts
   file_synchronization_src_modules_synchronization_synchronization_command_unit_test_ts --> file_synchronization_src_modules_pull_request_template_pull_request_template_command_ts
-  file_synchronization_src_modules_synchronization_synchronization_command_unit_test_ts --> file_synchronization_src_modules_readme_version_readme_version_command_ts
   file_synchronization_src_modules_synchronization_synchronization_command_unit_test_ts --> file_synchronization_src_modules_skill_exclusions_skill_exclusions_command_ts
   file_synchronization_src_modules_synchronization_synchronization_command_unit_test_ts --> file_synchronization_src_modules_synchronization_synchronization_command_ts
   file_synchronization_src_modules_synchronization_synchronization_command_unit_test_ts --> file_synchronization_src_modules_synchronization_synchronization_service_ts
@@ -9942,7 +9993,6 @@ graph LR
   file_synchronization_src_modules_synchronization_synchronization_module_ts --> file_synchronization_src_modules_package_manifests_package_manifests_module_ts
   file_synchronization_src_modules_synchronization_synchronization_module_ts --> file_synchronization_src_modules_pull_request_labels_pull_request_labels_module_ts
   file_synchronization_src_modules_synchronization_synchronization_module_ts --> file_synchronization_src_modules_pull_request_template_pull_request_template_module_ts
-  file_synchronization_src_modules_synchronization_synchronization_module_ts --> file_synchronization_src_modules_readme_version_readme_version_module_ts
   file_synchronization_src_modules_synchronization_synchronization_module_ts --> file_synchronization_src_modules_skill_exclusions_skill_exclusions_module_ts
   file_synchronization_src_modules_synchronization_synchronization_module_ts --> file_synchronization_src_modules_synchronization_synchronization_command_ts
   file_synchronization_src_modules_synchronization_synchronization_module_ts --> file_synchronization_src_modules_synchronization_synchronization_service_ts
@@ -10148,8 +10198,8 @@ Repository statistics measured by [codometer](packages/ic-suite/codometer/codome
 
 ### Repository
 
-![Lines of Code](https://img.shields.io/badge/Lines_of_Code-6047-22c55e?style=flat-square)
-![Repository Size](https://img.shields.io/badge/Repository_Size-2.09_MB-6b7280?style=flat-square)
+![Lines of Code](https://img.shields.io/badge/Lines_of_Code-6068-22c55e?style=flat-square)
+![Repository Size](https://img.shields.io/badge/Repository_Size-2.12_MB-6b7280?style=flat-square)
 ![Folders](https://img.shields.io/badge/Folders-76-4a4a4a?style=flat-square)
 ![Source Files](https://img.shields.io/badge/Source_Files-24-3178c6?style=flat-square)
 
@@ -10176,8 +10226,8 @@ Repository statistics measured by [codometer](packages/ic-suite/codometer/codome
 ![Constants](https://img.shields.io/badge/Constants-87-dc2626?style=flat-square)
 ![Imports](https://img.shields.io/badge/Imports-50-0284c7?style=flat-square)
 ![Exported Symbols](https://img.shields.io/badge/Exported_Symbols-12-ea580c?style=flat-square)
-![Comments](https://img.shields.io/badge/Comments-671-64748b?style=flat-square)
-![Comment Lines](https://img.shields.io/badge/Comment_Lines-1386-475569?style=flat-square)
+![Comments](https://img.shields.io/badge/Comments-669-64748b?style=flat-square)
+![Comment Lines](https://img.shields.io/badge/Comment_Lines-1384-475569?style=flat-square)
 ![TODO Comments](https://img.shields.io/badge/TODO_Comments-0-ca8a04?style=flat-square)
 
 ### Python
@@ -10198,55 +10248,55 @@ Repository statistics measured by [codometer](packages/ic-suite/codometer/codome
 ### JSON
 
 ![JSON Files](https://img.shields.io/badge/JSON_Files-23-a16207?style=flat-square)
-![JSON Lines](https://img.shields.io/badge/JSON_Lines-5691-ca8a04?style=flat-square)
-![JSON Objects](https://img.shields.io/badge/JSON_Objects-719-7c3aed?style=flat-square)
-![JSON Arrays](https://img.shields.io/badge/JSON_Arrays-264-8b5cf6?style=flat-square)
-![JSON Properties](https://img.shields.io/badge/JSON_Properties-1821-0284c7?style=flat-square)
-![JSON Strings](https://img.shields.io/badge/JSON_Strings-1858-16a34a?style=flat-square)
+![JSON Lines](https://img.shields.io/badge/JSON_Lines-5877-ca8a04?style=flat-square)
+![JSON Objects](https://img.shields.io/badge/JSON_Objects-756-7c3aed?style=flat-square)
+![JSON Arrays](https://img.shields.io/badge/JSON_Arrays-307-8b5cf6?style=flat-square)
+![JSON Properties](https://img.shields.io/badge/JSON_Properties-1882-0284c7?style=flat-square)
+![JSON Strings](https://img.shields.io/badge/JSON_Strings-1934-16a34a?style=flat-square)
 ![JSON Numbers](https://img.shields.io/badge/JSON_Numbers-37-059669?style=flat-square)
-![JSON Booleans](https://img.shields.io/badge/JSON_Booleans-125-0ea5e9?style=flat-square)
+![JSON Booleans](https://img.shields.io/badge/JSON_Booleans-130-0ea5e9?style=flat-square)
 ![JSON Nulls](https://img.shields.io/badge/JSON_Nulls-0-64748b?style=flat-square)
-![JSON Items](https://img.shields.io/badge/JSON_Items-1166-475569?style=flat-square)
-![JSON Nodes](https://img.shields.io/badge/JSON_Nodes-3003-dc2626?style=flat-square)
+![JSON Items](https://img.shields.io/badge/JSON_Items-1266-475569?style=flat-square)
+![JSON Nodes](https://img.shields.io/badge/JSON_Nodes-3164-dc2626?style=flat-square)
 ![JSON Max Depth](https://img.shields.io/badge/JSON_Max_Depth-11-ea580c?style=flat-square)
 
 ### YAML
 
 ![YAML Files](https://img.shields.io/badge/YAML_Files-22-cb171e?style=flat-square)
-![YAML Lines](https://img.shields.io/badge/YAML_Lines-2921-e34c26?style=flat-square)
+![YAML Lines](https://img.shields.io/badge/YAML_Lines-2981-e34c26?style=flat-square)
 ![YAML Documents](https://img.shields.io/badge/YAML_Documents-22-f97316?style=flat-square)
 ![YAML Mappings](https://img.shields.io/badge/YAML_Mappings-424-7c3aed?style=flat-square)
-![YAML Sequences](https://img.shields.io/badge/YAML_Sequences-89-8b5cf6?style=flat-square)
-![YAML Keys](https://img.shields.io/badge/YAML_Keys-1452-0284c7?style=flat-square)
-![YAML Scalars](https://img.shields.io/badge/YAML_Scalars-2902-16a34a?style=flat-square)
+![YAML Sequences](https://img.shields.io/badge/YAML_Sequences-90-8b5cf6?style=flat-square)
+![YAML Keys](https://img.shields.io/badge/YAML_Keys-1468-0284c7?style=flat-square)
+![YAML Scalars](https://img.shields.io/badge/YAML_Scalars-2937-16a34a?style=flat-square)
 ![YAML Anchors](https://img.shields.io/badge/YAML_Anchors-0-059669?style=flat-square)
 ![YAML Aliases](https://img.shields.io/badge/YAML_Aliases-0-10b981?style=flat-square)
-![YAML Comments](https://img.shields.io/badge/YAML_Comments-404-64748b?style=flat-square)
+![YAML Comments](https://img.shields.io/badge/YAML_Comments-445-64748b?style=flat-square)
 ![YAML Max Depth](https://img.shields.io/badge/YAML_Max_Depth-8-ea580c?style=flat-square)
 
 ### TOML
 
 ![TOML Files](https://img.shields.io/badge/TOML_Files-3-9c4221?style=flat-square)
-![TOML Lines](https://img.shields.io/badge/TOML_Lines-140-b45309?style=flat-square)
+![TOML Lines](https://img.shields.io/badge/TOML_Lines-145-b45309?style=flat-square)
 ![TOML Tables](https://img.shields.io/badge/TOML_Tables-12-7c3aed?style=flat-square)
 ![TOML Array Tables](https://img.shields.io/badge/TOML_Array_Tables-6-8b5cf6?style=flat-square)
-![TOML Keys](https://img.shields.io/badge/TOML_Keys-58-0284c7?style=flat-square)
+![TOML Keys](https://img.shields.io/badge/TOML_Keys-62-0284c7?style=flat-square)
 ![TOML Arrays](https://img.shields.io/badge/TOML_Arrays-15-16a34a?style=flat-square)
 ![TOML Comments](https://img.shields.io/badge/TOML_Comments-31-64748b?style=flat-square)
 
 ### Shell
 
-![Shell Files](https://img.shields.io/badge/Shell_Files-39-89e051?style=flat-square)
-![Shell Lines](https://img.shields.io/badge/Shell_Lines-2678-4eaa25?style=flat-square)
+![Shell Files](https://img.shields.io/badge/Shell_Files-41-89e051?style=flat-square)
+![Shell Lines](https://img.shields.io/badge/Shell_Lines-2832-4eaa25?style=flat-square)
 ![Shell Functions](https://img.shields.io/badge/Shell_Functions-28-16a34a?style=flat-square)
-![Shell Variables](https://img.shields.io/badge/Shell_Variables-238-0284c7?style=flat-square)
-![Shell Exports](https://img.shields.io/badge/Shell_Exports-12-ea580c?style=flat-square)
-![Shell Conditionals](https://img.shields.io/badge/Shell_Conditionals-184-7c3aed?style=flat-square)
-![Shell Loops](https://img.shields.io/badge/Shell_Loops-24-8b5cf6?style=flat-square)
-![Shell Pipelines](https://img.shields.io/badge/Shell_Pipelines-104-059669?style=flat-square)
-![Shebangs](https://img.shields.io/badge/Shebangs-39-6b7280?style=flat-square)
-![Shell Comments](https://img.shields.io/badge/Shell_Comments-599-64748b?style=flat-square)
-![Shell Comment Lines](https://img.shields.io/badge/Shell_Comment_Lines-599-475569?style=flat-square)
+![Shell Variables](https://img.shields.io/badge/Shell_Variables-250-0284c7?style=flat-square)
+![Shell Exports](https://img.shields.io/badge/Shell_Exports-11-ea580c?style=flat-square)
+![Shell Conditionals](https://img.shields.io/badge/Shell_Conditionals-193-7c3aed?style=flat-square)
+![Shell Loops](https://img.shields.io/badge/Shell_Loops-26-8b5cf6?style=flat-square)
+![Shell Pipelines](https://img.shields.io/badge/Shell_Pipelines-107-059669?style=flat-square)
+![Shebangs](https://img.shields.io/badge/Shebangs-41-6b7280?style=flat-square)
+![Shell Comments](https://img.shields.io/badge/Shell_Comments-654-64748b?style=flat-square)
+![Shell Comment Lines](https://img.shields.io/badge/Shell_Comment_Lines-654-475569?style=flat-square)
 
 ### SQL
 
@@ -10332,24 +10382,24 @@ Repository statistics measured by [codometer](packages/ic-suite/codometer/codome
 
 ### Markdown
 
-![Markdown Files](https://img.shields.io/badge/Markdown_Files-106-083fa1?style=flat-square)
-![Markdown Lines](https://img.shields.io/badge/Markdown_Lines-18541-1f6feb?style=flat-square)
-![H1](https://img.shields.io/badge/H1-105-7c3aed?style=flat-square)
-![H2](https://img.shields.io/badge/H2-638-8b5cf6?style=flat-square)
-![H3](https://img.shields.io/badge/H3-524-a78bfa?style=flat-square)
+![Markdown Files](https://img.shields.io/badge/Markdown_Files-108-083fa1?style=flat-square)
+![Markdown Lines](https://img.shields.io/badge/Markdown_Lines-18632-1f6feb?style=flat-square)
+![H1](https://img.shields.io/badge/H1-107-7c3aed?style=flat-square)
+![H2](https://img.shields.io/badge/H2-644-8b5cf6?style=flat-square)
+![H3](https://img.shields.io/badge/H3-526-a78bfa?style=flat-square)
 ![H4](https://img.shields.io/badge/H4-78-c4b5fd?style=flat-square)
 ![H5](https://img.shields.io/badge/H5-0-ddd6fe?style=flat-square)
 ![H6](https://img.shields.io/badge/H6-0-ede9fe?style=flat-square)
-![Paragraphs](https://img.shields.io/badge/Paragraphs-5286-64748b?style=flat-square)
-![Lists](https://img.shields.io/badge/Lists-841-16a34a?style=flat-square)
-![List Items](https://img.shields.io/badge/List_Items-4086-22c55e?style=flat-square)
+![Paragraphs](https://img.shields.io/badge/Paragraphs-5309-64748b?style=flat-square)
+![Lists](https://img.shields.io/badge/Lists-843-16a34a?style=flat-square)
+![List Items](https://img.shields.io/badge/List_Items-4094-22c55e?style=flat-square)
 ![Task List Items](https://img.shields.io/badge/Task_List_Items-57-4ade80?style=flat-square)
-![Tables](https://img.shields.io/badge/Tables-220-0284c7?style=flat-square)
-![Table Rows](https://img.shields.io/badge/Table_Rows-1898-0ea5e9?style=flat-square)
-![Links](https://img.shields.io/badge/Links-665-059669?style=flat-square)
+![Tables](https://img.shields.io/badge/Tables-222-0284c7?style=flat-square)
+![Table Rows](https://img.shields.io/badge/Table_Rows-1906-0ea5e9?style=flat-square)
+![Links](https://img.shields.io/badge/Links-671-059669?style=flat-square)
 ![Images](https://img.shields.io/badge/Images-22-10b981?style=flat-square)
-![Code Blocks](https://img.shields.io/badge/Code_Blocks-398-dc2626?style=flat-square)
-![Inline Code](https://img.shields.io/badge/Inline_Code-10245-ef4444?style=flat-square)
+![Code Blocks](https://img.shields.io/badge/Code_Blocks-399-dc2626?style=flat-square)
+![Inline Code](https://img.shields.io/badge/Inline_Code-10332-ef4444?style=flat-square)
 ![Block Quotes](https://img.shields.io/badge/Block_Quotes-21-ca8a04?style=flat-square)
 ![Thematic Breaks](https://img.shields.io/badge/Thematic_Breaks-28-a16207?style=flat-square)
 <!-- codometer:end -->

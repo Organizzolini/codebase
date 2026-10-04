@@ -13,7 +13,7 @@ import type { Meander } from "../database/entities/Meander.entity";
 import type { CorpusEntry, CorpusFamily } from "./corpus.types";
 
 /**
- * Ingests the historical corpus into the committed sqlite database, through
+ * Ingests the historical corpus into the meander database, through
  * the same generic reader and Characteristic computation
  * `DrawCodeService` draws a `--code` meander through — so an Enumerated row
  * and a Hardcoded row are produced by the exact same pipeline, and only ever
@@ -92,13 +92,10 @@ export class CorpusService {
 
     const characteristics = this.characteristicsService.compute(canonical);
     const isReducible = this.characteristicsService.isReducible(canonical);
+    const formatted = this.codeService.format(canonical);
 
     try {
-      const existing = await this.databaseService.findOneByLattice(
-        canonical.digits,
-        rows,
-        columns,
-      );
+      const existing = await this.databaseService.findOneByCode(formatted);
       if (existing) {
         return existing;
       }
@@ -119,7 +116,7 @@ export class CorpusService {
           characteristics,
           isReducible,
         ),
-        code: this.codeService.format(canonical),
+        code: formatted,
         columns,
         family: entityFamily,
         isHardcoded: true,
@@ -128,11 +125,7 @@ export class CorpusService {
         rows,
       });
     } catch (error) {
-      throw new DuplicateCorpusCodeError(
-        this.codeService.format(canonical),
-        family,
-        error,
-      );
+      throw new DuplicateCorpusCodeError(formatted, family, error);
     }
   }
 
@@ -145,8 +138,8 @@ export class CorpusService {
    *
    * Ingestion is sequential rather than run in parallel across entries: a
    * failure has to name the one entry that caused it, which a `Promise.all`
-   * racing every `save` at once cannot promise given `better-sqlite3`'s own
-   * synchronous, single-connection writes.
+   * racing every `save` at once cannot promise, since concurrent writes
+   * would reach the database in whatever order their connections won.
    */
   async ingest(corpus: readonly CorpusEntry[]): Promise<Meander[]> {
     const beyond = corpus.filter((entry) => this.isBeyondEnumeration(entry));

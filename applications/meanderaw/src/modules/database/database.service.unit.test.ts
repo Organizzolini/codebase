@@ -23,7 +23,10 @@ describe(DatabaseService, () => {
     lattice: "3c9a",
     rows: 3,
   });
-  const savedMeander = createMock<Meander>({ id: 1, ...record });
+  const savedMeander = createMock<Meander>({
+    id: "01a107d6-cff8-7238-8684-a2a863bc6928",
+    ...record,
+  });
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -67,17 +70,15 @@ describe(DatabaseService, () => {
     });
   });
 
-  describe("findOneByLattice", () => {
-    it("delegates findOneBy with columns, lattice, and rows", async () => {
+  describe("findOneByCode", () => {
+    it("delegates findOneBy with the Code alone", async () => {
       vi.mocked(meanderRepository.findOneBy).mockResolvedValue(savedMeander);
 
-      await expect(
-        service.findOneByLattice("3c9a", 3, 2),
-      ).resolves.toStrictEqual(savedMeander);
+      await expect(service.findOneByCode("02x03y3c9a")).resolves.toStrictEqual(
+        savedMeander,
+      );
       expect(meanderRepository.findOneBy).toHaveBeenCalledWith({
-        columns: 2,
-        lattice: "3c9a",
-        rows: 3,
+        code: "02x03y3c9a",
       });
     });
   });

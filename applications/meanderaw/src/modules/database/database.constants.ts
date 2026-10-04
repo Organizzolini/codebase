@@ -1,12 +1,18 @@
 // ♟️ Constants
 
 /**
- * The path the committed database opens at when the CLI runs for real,
- * relative to the project root every Nx target already runs from — the same
- * convention `DEFAULT_OUTPUT_DIRECTORY` follows for the SVG tree it sits
- * beside.
+ * The Postgres database, and the schema inside it, every meander is
+ * persisted to unless `MEANDERAW_POSTGRES_DB` and `MEANDERAW_POSTGRES_SCHEMA`
+ * say otherwise: the application's name and its environment, joined.
+ * Development is the only environment so far; the local Docker init creates
+ * both.
+ *
+ * Every variable carries the `MEANDERAW_` prefix so none can collide with
+ * another project's: Nx loads the workspace root's `.env` into every task,
+ * and that file's unprefixed `POSTGRES_DB` names lexico's shared `postgres`
+ * database.
  */
-export const DEFAULT_DATABASE_PATH = "output/meanders.sqlite";
+export const DEFAULT_DATABASE_NAME = "meanderaw_development";
 
 /**
  * How many rows `DatabaseService.saveAll` writes per statement.
@@ -14,10 +20,9 @@ export const DEFAULT_DATABASE_PATH = "output/meanders.sqlite";
  * A bound rather than a tuning knob. One statement's parameter count is
  * limited, so a whole shape's worth of rows in one statement would be
  * reaching a limit nobody declared — the sweep's widest shape alone holds
- * 16,512 of them. A row carries nine columns, every Characteristic sharing
- * the one `characteristics` map, so five hundred rows bind about five
- * thousand parameters, well under what the `better-sqlite3` driver admits;
- * `DatabaseService`'s integration test writes more than two chunks to hold
- * that true.
+ * 16,512 of them. A row binds eight parameters, its `id` defaulting in the
+ * database, so five hundred rows bind about four thousand, well under the
+ * 65,535 one Postgres statement admits; `DatabaseService`'s integration test
+ * writes more than two chunks to hold that true.
  */
 export const MEANDER_INSERT_CHUNK_SIZE = 500;

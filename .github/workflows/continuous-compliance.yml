@@ -2,7 +2,8 @@ name: 🦹 Continuous Compliance
 
 # External and repository compliance checks:
 # 1. 🧑‍💼 Issue: Issue metadata, hierarchy, and release significance.
-# 2. 👮 Enforce: Repository governance and workflow security.
+# 2. 👮 Enforce: Repository governance and workflow security, on pull requests,
+#    the merge queue, and main.
 # 3. 🧑‍⚖️ Comply: Pull request metadata and commit message conventions, on
 #    pull requests and again on the merge queue group that will land them.
 #
@@ -28,7 +29,8 @@ on:
       - unassigned
       - ready_for_review
   # The merge queue waits for every required check on the group's commit, and
-  # 🧑‍⚖️ Comply is one of them.
+  # 🧑‍⚖️ Comply is one of them. 👮 Enforce reports there too, so it can be made
+  # required without stalling the queue.
   merge_group:
     types: [checks_requested]
   schedule:
@@ -148,11 +150,18 @@ jobs:
     name: 👮 Enforce
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Runs before a change lands, not only after, so a governance break shows
+    # on its pull request instead of first on main. Dependabot's pull requests
+    # are audited too, since the action bumps it opens are workflow edits, and
+    # the audit reads only checked-out files, so it needs no secret. Every
+    # non-draft pull request event runs it, edits and labels included: a run
+    # skipped on a later event would replace an earlier failure on that commit.
     if: >-
-      github.actor != 'dependabot[bot]' &&
-      (github.event_name == 'push' ||
+      github.event_name == 'push' ||
+      github.event_name == 'merge_group' ||
       github.event_name == 'schedule' ||
-      github.event_name == 'workflow_dispatch')
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && !github.event.pull_request.draft)
 
     steps:
       - name: 📥 Checkout Repository

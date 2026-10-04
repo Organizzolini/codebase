@@ -1,8 +1,18 @@
 import { Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
+import {
+  PostgreSqlContainer,
+  type StartedPostgreSqlContainer,
+} from "@testcontainers/postgresql";
 import { DataSource, type Repository } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import {
+  TEST_DATABASE_NAME,
+  TEST_POSTGRES_IMAGE,
+  TEST_SCHEMA_INITIALIZATION,
+  testDataSourceOptions,
+} from "../../../testing/database";
 import { meanderRecord } from "../../../testing/meanders";
 import { CodeService } from "../code/code.service";
 import { DatabaseService } from "../database/database.service";
@@ -18,30 +28,30 @@ import { DrawIndexService } from "./draw-index.service";
 import type { MeanderRecord } from "../database/database.types";
 
 /**
- * Drives `DrawIndexService.build` against a real TypeORM connection to an
- * in-memory `better-sqlite3` database seeded with a small, deliberately
+ * Drives `DrawIndexService.build` against a real TypeORM connection to a
+ * throwaway Postgres container seeded with a small, deliberately
  * constructed set of rows, per spec #813's Testing Decisions for this seam.
  *
  * The connection is assembled inline rather than through
- * `DatabaseModule`, which always opens the one committed database
- * file — this suite needs a fresh, isolated connection instead, the same way
+ * `DatabaseModule`, which always connects to the local database — this
+ * suite needs a fresh, isolated database instead, the same way
  * `database.service.integration.test.ts` does.
  */
 describe(DrawIndexService, () => {
+  let container: StartedPostgreSqlContainer;
   let dataSource: DataSource;
   let repository: Repository<Meander>;
   let service: DrawIndexService;
 
   beforeAll(async () => {
+    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
+      .withDatabase(TEST_DATABASE_NAME)
+      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
+      .start();
+
     const module = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot({
-          database: ":memory:",
-          entities: [Meander],
-          logging: false,
-          synchronize: true,
-          type: "better-sqlite3",
-        }),
+        TypeOrmModule.forRoot(testDataSourceOptions(container)),
         TypeOrmModule.forFeature([Meander]),
       ],
       providers: [
@@ -63,6 +73,7 @@ describe(DrawIndexService, () => {
 
   afterAll(async () => {
     await dataSource.destroy();
+    await container.stop();
   });
 
   /** Every field besides `code` a fixture row does not care about, defaulted so a case only spells out what it means to test. */
