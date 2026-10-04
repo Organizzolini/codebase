@@ -66,7 +66,6 @@ const config: KnipConfig = {
     "@semantic-release/github", // semantic-release plugin
     "@semantic-release/release-notes-generator", // semantic-release plugin
     "@semantic-release/changelog", // semantic-release plugin
-    "@semantic-release/exec", // semantic-release plugin
     "@semantic-release/git", // semantic-release plugin
     "@swc/helpers", // SWC runtime helpers, required by @swc-node/register for compiled TS
     "commitlint-plugin-gitmoji", // commitlint plugin, referenced as string in plugins array

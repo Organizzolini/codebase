@@ -16,7 +16,7 @@ if ! docker info &>/dev/null 2>&1; then
   echo "🚀 Starting Docker Desktop..."
   open -a Docker
   echo "⏳ Waiting for Docker daemon to be ready..."
-  for i in {1..30}; do
+  for _ in {1..30}; do
     if docker info &>/dev/null 2>&1; then
       break
     fi

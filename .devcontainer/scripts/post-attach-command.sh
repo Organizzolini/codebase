@@ -3,10 +3,11 @@
 set -euo pipefail
 
 if ! grep -q 'GPG_TTY' /root/.bashrc 2>/dev/null; then
-  echo 'export GPG_TTY=$(tty)' >> /root/.bashrc
+  echo "export GPG_TTY=\$(tty)" >> /root/.bashrc
   echo "✅ GPG_TTY configured in .bashrc"
 fi
-export GPG_TTY=$(tty) 2>/dev/null || true
+GPG_TTY=$(tty 2>/dev/null) || true
+export GPG_TTY
 
 echo "🟢 Node: $(node --version)"
 echo "📦 pnpm: $(pnpm --version)"

@@ -534,6 +534,7 @@
         "eslint",
         "oxlint",
         "ruff-lint",
+        "shellcheck",
         "sqlfluff-lint",
         "stylelint"
       ],

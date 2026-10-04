@@ -29,7 +29,6 @@
     "@nx/web": "catalog:",
     "@semantic-release/changelog": "catalog:",
     "@semantic-release/commit-analyzer": "catalog:",
-    "@semantic-release/exec": "catalog:",
     "@semantic-release/git": "catalog:",
     "@semantic-release/github": "catalog:",
     "@semantic-release/release-notes-generator": "catalog:",

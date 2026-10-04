@@ -144,14 +144,6 @@ module.exports = {
     // `main` moved underneath it and the push was rejected. The tag is the
     // version.
 
-    // Synchronizes the version in root README.md title right after package.json is bumped
-    [
-      "@semantic-release/exec",
-      {
-        prepareCmd: "pnpm exec nx run synchronization:readme-version:write",
-      },
-    ],
-
     // Commits version-bumped files back to the repository
     [
       "@semantic-release/git",

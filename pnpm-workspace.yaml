@@ -44,9 +44,9 @@ catalog:
   "@microsoft/api-extractor": ^7.52.1
   "@golevelup/ts-vitest": ^4.0.0
   "@nestjs/apollo": ^14.0.2
-  "@nestjs/common": ^12.0.1
+  "@nestjs/common": ^11.1.21 || ^12.0.1
   "@nestjs/config": ^12.0.0
-  "@nestjs/core": ^12.0.1
+  "@nestjs/core": ^11.1.21 || ^12.0.1
   "@nestjs/graphql": ^14.0.0
   "@nestjs/platform-express": ^12.0.1
   "@nestjs/testing": ^12.0.1
@@ -87,7 +87,6 @@ catalog:
   "@radix-ui/react-tooltip": ^1.2.8
   "@semantic-release/changelog": ^7.0.0
   "@semantic-release/commit-analyzer": ^13.0.1
-  "@semantic-release/exec": ^7.1.0
   "@semantic-release/git": ^11.0.1
   "@semantic-release/github": ^12.0.8
   "@semantic-release/release-notes-generator": ^14.1.1
@@ -167,7 +166,7 @@ catalog:
   next-themes: ^0.4.6
   number-to-words: ^1.2.4
   nx: ^23.0.0
-  oxfmt: ^0.70.0
+  oxfmt: ^0.71.0
   oxlint: ^1.66.0
   pg: ^8.21.0
   pino: ^10.3.1
@@ -205,14 +204,14 @@ catalog:
   typescript-eslint: ^8.59.4
   validate-branch-name: ^1.3.2
   vaul: ^1.1.2
-  vite: 8.3.1
+  vite: 8.3.2
   vite-plugin-dts: ^5.0.1
   vite-plugin-static-copy: ^4.1.1
   vite-tsconfig-paths: ^6.1.1
   vitest: ^5.0.0
   yaml: ^2.9.0
   zod: ^4.4.3
-  openwiki: ^0.6.0
+  openwiki: ^0.7.0
   skills: ^1.5.20
   typescript-7: npm:typescript@7.0.2
   '@types/better-sqlite3': ^9.6.0

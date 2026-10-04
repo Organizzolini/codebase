@@ -75,6 +75,7 @@ glab
 golevelup
 gpgsign
 gradlew
+gsub
 hackathon
 hatchling
 hotspot
