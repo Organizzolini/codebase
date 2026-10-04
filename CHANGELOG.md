@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.31.0](https://github.com/Organizzolini/codebase/compare/v2.30.2...v2.31.0) (2026-10-04)
+
+### ✨ Features
+
+* **conformetry,lexico:** ✨ add resolver file template, require all tags, and conform lexico-api modules ([#1234](https://github.com/Organizzolini/codebase/issues/1234)) ([513b440](https://github.com/Organizzolini/codebase/commit/513b44089955acdeadda607757bc947b85bca964))
+
+### 🐛 Bug Fixes
+
+* **conformetry,lexico:** 🐛 emit the lexico-api graphql schema beside its root module ([#1241](https://github.com/Organizzolini/codebase/issues/1241)) ([3e743d3](https://github.com/Organizzolini/codebase/commit/3e743d31f6f83d43e0a3dba36496b994c0a03a9d))
+* **conformetry:** 🐛 publish a built conformetry-nx-bootstrap-generators command ([#1245](https://github.com/Organizzolini/codebase/issues/1245)) ([7677716](https://github.com/Organizzolini/codebase/commit/767771666463147d90e05bba085c23479e958d36))
+* **dependencies,validation:** 🐛 accept nestjs 11 in the published ic-suite packages ([#1244](https://github.com/Organizzolini/codebase/issues/1244)) ([abc135a](https://github.com/Organizzolini/codebase/commit/abc135a6f661dc65a6f0ce6319d8ecc42c0ab283))
+* **lexico:** 🐛 resolve the graphql schema path from the module, not the working directory ([#1246](https://github.com/Organizzolini/codebase/issues/1246)) ([a9e57a1](https://github.com/Organizzolini/codebase/commit/a9e57a1c9fc963771cb92dd4a8bbb575f0efa6c8))
+
+### ⚡ Performance Improvements
+
+* **configuration,documentation:** ⚡️ cache the root checks and hash only the packages each task runs ([#1250](https://github.com/Organizzolini/codebase/issues/1250)) ([e4b2d6b](https://github.com/Organizzolini/codebase/commit/e4b2d6b9987382a20bd53bf4c95f2124311fac6b)), closes [#381](https://github.com/Organizzolini/codebase/issues/381) [#381](https://github.com/Organizzolini/codebase/issues/381)
+
+### ♻️ Code Refactoring
+
+* **meanderaw:** ♻️ fold characteristics into one json map and drop the drift check ([#1248](https://github.com/Organizzolini/codebase/issues/1248)) ([a10f00a](https://github.com/Organizzolini/codebase/commit/a10f00a4d201e1914c7629cbb2f4d139ba184fcf))
+* **synchronization,documentation:** ♻️ replace the readme title version with a release badge ([#1249](https://github.com/Organizzolini/codebase/issues/1249)) ([8883439](https://github.com/Organizzolini/codebase/commit/8883439f547c3c67d49abfc5f39de40dbf47ad48))
+
+### 📦 Build System
+
+* **configuration,deployments,scripts:** 📦️ gate the workspace shell scripts with shellcheck ([#1235](https://github.com/Organizzolini/codebase/issues/1235)) ([c43278b](https://github.com/Organizzolini/codebase/commit/c43278b540213cf756f39922e64c73c264dedc13))
+
 ## [2.30.2](https://github.com/Organizzolini/codebase/compare/v2.30.1...v2.30.2) (2026-09-30)
 
 ### 🐛 Bug Fixes
