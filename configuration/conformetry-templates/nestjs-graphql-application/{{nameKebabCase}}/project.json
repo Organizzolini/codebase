@@ -3,8 +3,9 @@
   "projectType": "application",
   "sourceRoot": "applications/{{nameKebabCase}}",
   "tags": [
-    "framework:nestjs-graphql-api",
+    "framework:nestjs",
     "generator:nestjs-graphql-application",
+    "language:graphql",
     "language:typescript"
   ],
   "targets": {

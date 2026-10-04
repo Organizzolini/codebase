@@ -975,13 +975,13 @@ export default [
   },
 
   // 🧭 Nest Class File Shape
-  // Command, service, resolver, and dataloader files should expose only
+  // Command, service, resolver, and loader files should expose only
   // their class at the top level.
   // Move top-level helpers to *.constants.ts or *.types.ts, or into class members.
   {
     files: [
       "**/*.command.ts",
-      "**/*.dataloader.ts",
+      "**/*.loader.ts",
       "**/*.module.ts",
       "**/*.resolver.ts",
       "**/*.service.ts",

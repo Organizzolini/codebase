@@ -1,8 +1,8 @@
 {
   "dependencies": {
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "@nestjs/config": "catalog:",
-    "@nestjs/core": "catalog:",
+    "@nestjs/core": "catalog:ic-suite",
     "nest-commander": "catalog:",
     "reflect-metadata": "catalog:",
     "zod": "catalog:"

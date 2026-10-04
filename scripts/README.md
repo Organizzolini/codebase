@@ -8,7 +8,7 @@ This directory contains shell scripts for:
 
 - **Local setup** - macOS-specific initial codebase configuration (in `local/`)
 - **Shell utilities** - Common terminal operations
-- **Nx cache** - Maintenance of the Nx task-result database that CI caches (in `nx/`)
+- **Nx** - The CI steps around Nx: its affected runs and the task-result database CI caches (in `nx/`)
 
 ## Quick Start
 
@@ -385,11 +385,16 @@ See script for specific netstat usage patterns.
 
 See script for specific sed usage patterns and examples.
 
-## Nx Cache Scripts
+## Nx Scripts
 
-These scripts live in `scripts/nx/`. The `setup-codebase` and
-`cleanup-codebase` actions run them around CI's Nx cache restore and save. Each
-script is its own command, and all of them source `task-database.sh` for the
+These scripts live in `scripts/nx/`, and the composite actions in
+`.github/actions/` run them. Each script is its own command. Helpers shared
+between commands live in a sourced file beside them.
+
+### Task-Result Database
+
+The `setup-codebase` and `cleanup-codebase` actions run these around CI's Nx
+cache restore and save, and all of them source `task-database.sh` for the
 shared helpers.
 
 Nx decides a cache hit only from its task-result database,
@@ -402,6 +407,7 @@ unread unless it is adopted under the current machine's id.
 | `verify-task-database.sh` | setup and cleanup | Discards any database that fails `PRAGMA integrity_check` |
 | `adopt-task-database.sh` | setup, after the restore | Renames the newest restored database to this machine's id and discards the rest |
 | `keep-task-database.sh` | cleanup, before the save | Keeps only the newest database, and warns if there was more than one |
+| `report-task-database.sh` | setup and cleanup (diagnostic) | Logs row counts, tasks that ran without a cached result, and probe tasks' recent hashes; with `--inputs`, digests of their resolved inputs |
 | `task-database.sh` | sourced by the above | Lists, picks, and discards databases along with their `-wal`, `-shm`, and `-journal` files |
 
 All of them honour `NX_WORKSPACE_DATA_DIRECTORY`. `adopt-task-database.sh`
@@ -412,6 +418,25 @@ scratch directory and a fake id:
 ```bash
 NX_WORKSPACE_DATA_DIRECTORY=/tmp/nx-data MACHINE_ID_FILES=/tmp/machine-id \
   bash scripts/nx/adopt-task-database.sh
+```
+
+### Affected Runs
+
+| Script | Runs in | What it does |
+| ------ | ------- | ------------ |
+| `bound-base-to-push.sh` | setup, after `nx-set-shas`, on a CI push with `nx-base: push-before` | Moves `NX_BASE` to the push's previous tip (`BEFORE`), keeping it when that is empty, all zeros, or not an ancestor of `NX_HEAD` |
+| `run-affected.sh` | `run-affected` | Runs `nx affected` for `TARGET` over `--base`/`--head`, or over `--stdin` with spelling files dropped when the change set has any and `INCLUDE_SPELLING` is not `true` |
+
+Both read everything from the environment, so either can be run locally. With
+`pnpm` stubbed to print what it would have run:
+
+```bash
+mkdir -p /tmp/stub && printf '#!/bin/sh\necho "pnpm $*"; [ -t 0 ] || cat\n' >/tmp/stub/pnpm
+chmod +x /tmp/stub/pnpm
+PATH="/tmp/stub:$PATH" TARGET=test-code ARGUMENTS="--parallel=4" \
+  NX_BASE=004d1f58c^ NX_HEAD=004d1f58c bash scripts/nx/run-affected.sh
+BEFORE=c160aad5f NX_BASE=HEAD~5 NX_HEAD=007edad2e GITHUB_ENV=/tmp/github-env \
+  bash scripts/nx/bound-base-to-push.sh
 ```
 
 ## Notepads

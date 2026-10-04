@@ -10,7 +10,7 @@
     "@codependix/file-imports": "workspace:*",
     "@codependix/nestjs-modules": "workspace:*",
     "@codependix/nx-projects": "workspace:*",
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "pino": "catalog:",
     "pino-pretty": "catalog:",
     "reflect-metadata": "catalog:"

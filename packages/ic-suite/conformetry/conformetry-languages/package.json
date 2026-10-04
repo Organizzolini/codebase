@@ -6,7 +6,7 @@
   "dependencies": {
     "@conformetry/configuration": "workspace:*",
     "@conformetry/core": "workspace:*",
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "jsonc-parser": "catalog:",
     "mdast-util-to-string": "catalog:",
     "reflect-metadata": "catalog:",

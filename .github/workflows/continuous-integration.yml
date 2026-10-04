@@ -107,6 +107,7 @@ jobs:
           nx-cache-scope: ${{ github.job }}-${{ matrix.check.target }}
           nx-graph-cache: "true"
           nx-shas: "true"
+          nx-base: push-before
           eslint-cache: ${{ matrix.check.target == 'lint-code' && 'true' || 'false' }}
 
       - name: ${{ matrix.check.emoji }} ${{ matrix.check.name }}

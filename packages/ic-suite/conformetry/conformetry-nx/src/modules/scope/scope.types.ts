@@ -45,7 +45,7 @@ export interface ConformetryNxProjectInstanceGroup extends ConformetryInstanceGr
    * the projects the template suits.
    */
   patterns?: string[] | undefined;
-  /** Nx project tags a project must carry. Any one of them is enough. */
+  /** Nx project tags a project must carry. A project must carry all of them. */
   tags: string[];
 }
 

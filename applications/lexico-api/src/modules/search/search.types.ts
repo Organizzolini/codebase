@@ -1,3 +1,5 @@
+// 🏷️ Types
+
 /**
  * Result of Latin enclitic decomposition.
  */

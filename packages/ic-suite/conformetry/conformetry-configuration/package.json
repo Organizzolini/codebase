@@ -5,7 +5,7 @@
   },
   "dependencies": {
     "@conformetry/core": "workspace:*",
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "jiti": "catalog:",
     "jsonc-parser": "catalog:",
     "lodash": "catalog:",

@@ -8,9 +8,13 @@ import { HealthService } from "./health.service";
  */
 @Resolver()
 export class HealthResolver {
+  // 🏗 Dependency Injection
+
   public constructor(
     @Inject(HealthService) private readonly healthService: HealthService,
   ) {}
+
+  // 🔎 Queries
 
   /**
    * Health check query.
@@ -23,4 +27,8 @@ export class HealthResolver {
   public health(): boolean {
     return this.healthService.isHealthy();
   }
+
+  // 🖋️ Mutations
+
+  // 🔗 Relations
 }

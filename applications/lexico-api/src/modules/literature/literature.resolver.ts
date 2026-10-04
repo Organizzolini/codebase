@@ -10,10 +10,14 @@ import { SearchLiteratureArguments } from "./search-literature-arguments.entitie
  */
 @Resolver()
 export class LiteratureResolver {
+  // 🏗 Dependency Injection
+
   public constructor(
     @Inject(LiteratureService)
     private readonly literatureService: LiteratureService,
   ) {}
+
+  // 🔎 Queries
 
   /** Searches authors, texts, and lines together. */
   @Query(() => LiteratureSearchResult, { name: "searchLiterature" })
@@ -30,4 +34,8 @@ export class LiteratureResolver {
       texts: results.texts,
     };
   }
+
+  // 🖋️ Mutations
+
+  // 🔗 Relations
 }

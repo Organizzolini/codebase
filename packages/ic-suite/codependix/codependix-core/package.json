@@ -4,7 +4,7 @@
     "url": "https://github.com/Organizzolini/codebase/issues"
   },
   "dependencies": {
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "reflect-metadata": "catalog:"
   },
   "description": "Graph models, boundary rule definitions, and traversal contracts for the Codependix toolchain",

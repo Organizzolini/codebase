@@ -16,6 +16,7 @@ export default createViteLibraryConfig({
       "src/generators/sync/generator.ts",
     ),
     "src/index": path.resolve(packageDirectory, "src/index.ts"),
+    "src/main": path.resolve(packageDirectory, "src/main.ts"),
   },
   packageDirectory,
 });

@@ -9,7 +9,7 @@
     "@codependix/file-imports": "workspace:*",
     "@codependix/nestjs-modules": "workspace:*",
     "@codependix/nx-projects": "workspace:*",
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "reflect-metadata": "catalog:"
   },
   "description": "Boundary rule validation, forbid/allow rule enforcement, and cycle detection for Codependix graphs",

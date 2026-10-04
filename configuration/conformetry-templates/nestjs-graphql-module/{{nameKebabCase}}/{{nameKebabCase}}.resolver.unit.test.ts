@@ -19,6 +19,6 @@ describe({{namePascalCase}}Resolver, () => {
   });
 
   it("is defined", () => {
-    expect(command).toBeDefined();
+    expect(resolver).toBeDefined();
   });
 });

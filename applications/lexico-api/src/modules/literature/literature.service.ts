@@ -25,6 +25,8 @@ import type { PaginationArguments } from "../search/pagination-arguments.entitie
  */
 @Injectable()
 export class LiteratureService {
+  // 🏗 Dependency Injection
+
   public constructor(
     @InjectRepository(Author)
     private readonly authorRepository: Repository<Author>,
@@ -37,6 +39,12 @@ export class LiteratureService {
     @InjectRepository(Word)
     private readonly wordRepository: Repository<Word>,
   ) {}
+
+  // 🔐 Private Fields
+
+  // 🔑 Public Fields
+
+  // 🔏 Private Methods
 
   /**
    * Paginates ordered entities into a structured Relay connection.
@@ -61,6 +69,8 @@ export class LiteratureService {
       totalCount: items.length,
     });
   }
+
+  // 🌎 Public Methods
 
   /** Finds an author by id or slug. */
   public async findAuthorByLookup(

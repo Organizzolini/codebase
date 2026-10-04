@@ -1,3 +1,5 @@
+// ♟️ Constants
+
 /* cspell:words absque atque cumque denique FULLTEXT itaque neque neve paene pleraque plerique plerumque quaeque qualiscumque quandocumque quantuscumque quicque quidque quilibet quinque quisque quivis quodque quoque sive ubique undique unusquisque uterque utrimque */
 
 /**

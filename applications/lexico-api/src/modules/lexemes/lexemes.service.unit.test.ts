@@ -1,4 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
+import { Test } from "@nestjs/testing";
+import { getRepositoryToken } from "@nestjs/typeorm";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { In, Lexeme } from "@codebase/lexico-entities";
 
@@ -6,7 +8,27 @@ import { createRepositoryMock } from "../../../testing/mocks";
 
 import { LexemesService } from "./lexemes.service";
 
-describe("lexemes service suite", () => {
+describe(LexemesService, () => {
+  let service: LexemesService;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        LexemesService,
+        {
+          provide: getRepositoryToken(Lexeme),
+          useValue: createRepositoryMock<Lexeme>(),
+        },
+      ],
+    }).compile();
+
+    service = await module.resolve(LexemesService);
+  });
+
+  it("is defined", () => {
+    expect(service).toBeDefined();
+  });
+
   it("finds a single lexeme by id with relations", async () => {
     expect.hasAssertions();
 
@@ -17,8 +39,8 @@ describe("lexemes service suite", () => {
     const mockRepo = createRepositoryMock<Lexeme>();
     vi.spyOn(mockRepo, "findOne").mockResolvedValue(mockLexeme);
 
-    const service = new LexemesService(mockRepo);
-    const result = await service.findById("lex-1");
+    const lexemesService = new LexemesService(mockRepo);
+    const result = await lexemesService.findById("lex-1");
 
     expect(mockRepo.findOne).toHaveBeenCalledWith({
       relations: {
@@ -39,8 +61,8 @@ describe("lexemes service suite", () => {
     const mockRepo = createRepositoryMock<Lexeme>();
     vi.spyOn(mockRepo, "findOne").mockResolvedValue(null);
 
-    const service = new LexemesService(mockRepo);
-    const result = await service.findById("missing-id");
+    const lexemesService = new LexemesService(mockRepo);
+    const result = await lexemesService.findById("missing-id");
 
     expect(result).toBeNull();
   });
@@ -56,8 +78,8 @@ describe("lexemes service suite", () => {
     const mockRepo = createRepositoryMock<Lexeme>();
     vi.spyOn(mockRepo, "find").mockResolvedValue([mockLexeme1, mockLexeme2]);
 
-    const service = new LexemesService(mockRepo);
-    const result = await service.findByIds(["lex-1", "lex-2"]);
+    const lexemesService = new LexemesService(mockRepo);
+    const result = await lexemesService.findByIds(["lex-1", "lex-2"]);
 
     expect(mockRepo.find).toHaveBeenCalledWith({
       relations: {
@@ -78,8 +100,8 @@ describe("lexemes service suite", () => {
     const mockRepo = createRepositoryMock<Lexeme>();
     const findSpy = vi.spyOn(mockRepo, "find");
 
-    const service = new LexemesService(mockRepo);
-    const result = await service.findByIds([]);
+    const lexemesService = new LexemesService(mockRepo);
+    const result = await lexemesService.findByIds([]);
 
     expect(findSpy).not.toHaveBeenCalled();
     expect(result).toStrictEqual([]);

@@ -19,6 +19,7 @@
   "devDependencies": {
     "@golevelup/ts-vitest": "catalog:",
     "@nestjs/testing": "catalog:",
+    "@nestjs/typeorm": "catalog:",
     "@swc-node/register": "catalog:",
     "@swc/core": "catalog:",
     "@swc/helpers": "catalog:",

@@ -42,6 +42,8 @@ import type {
  */
 @Injectable()
 export class SearchService {
+  // 🏗 Dependency Injection
+
   public constructor(
     @InjectRepository(Lexeme)
     private readonly lexemeRepository: Repository<Lexeme>,
@@ -50,6 +52,12 @@ export class SearchService {
     @InjectRepository(Translation)
     private readonly translationRepository: Repository<Translation>,
   ) {}
+
+  // 🔐 Private Fields
+
+  // 🔑 Public Fields
+
+  // 🔏 Private Methods
 
   /**
    * Queries exact matching dictionary headwords.
@@ -221,6 +229,8 @@ export class SearchService {
       totalCount: allResults.length,
     });
   }
+
+  // 🌎 Public Methods
 
   /**
    * Searches English translations and definitions using full-text and substring matching.

@@ -35,11 +35,26 @@ describe(ScopeService, () => {
   });
 
   describe("matchesProject", () => {
-    it("matches a project carrying one of the group's tags", () => {
+    it("matches a project carrying the group's tag", () => {
       expect(
         service.matchesProject({
           group: { patterns: ["src/modules/*"], tags: ["framework:nestjs"] },
           project: NESTJS,
+        }),
+      ).toBe(true);
+    });
+
+    it("requires a project to carry every one of the group's tags", () => {
+      const group = {
+        patterns: ["src/modules/*"],
+        tags: ["framework:nestjs", "language:graphql"],
+      };
+
+      expect(service.matchesProject({ group, project: NESTJS })).toBe(false);
+      expect(
+        service.matchesProject({
+          group,
+          project: { ...NESTJS, tags: [...NESTJS.tags, "language:graphql"] },
         }),
       ).toBe(true);
     });

@@ -5,7 +5,7 @@
   },
   "dependencies": {
     "@conformetry/configuration": "workspace:*",
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "reflect-metadata": "catalog:"
   },
   "description": "Template rendering and file generation runtime for Conformetry",

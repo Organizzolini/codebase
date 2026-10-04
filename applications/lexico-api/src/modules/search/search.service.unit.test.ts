@@ -1,17 +1,12 @@
 /* cspell:words atque bonis bonisve denique diligo FULLTEXT neque puella puellam puellamque quinque vides videsne */
 
-import { describe, expect, it, vi } from "vitest";
+import { Test } from "@nestjs/testing";
+import { getRepositoryToken } from "@nestjs/typeorm";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import {
-  AdjectivalForm,
-  AdverbForm,
-  FiniteVerbForm,
-  GerundForm,
-  InfinitiveForm,
   Lexeme,
   NominalForm,
-  ParticipleForm,
-  SupineForm,
   Translation,
   Word,
   WordForm,
@@ -22,9 +17,31 @@ import { createRepositoryMock } from "../../../testing/mocks";
 
 import { SearchMatchSource } from "./search.entities";
 import { SearchService } from "./search.service";
-import { decomposeEnclitic, formatFormIdentifier } from "./search.utilities";
+import { decomposeEnclitic } from "./search.utilities";
 
-describe("search service suite", () => {
+describe(SearchService, () => {
+  let service: SearchService;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        SearchService,
+        ...[Lexeme, Word, Translation].map((entity) => ({
+          provide: getRepositoryToken(entity),
+          useValue: createRepositoryMock(),
+        })),
+      ],
+    }).compile();
+
+    service = await module.resolve(SearchService);
+  });
+
+  it("is defined", () => {
+    expect.hasAssertions();
+
+    expect(service).toBeDefined();
+  });
+
   describe(decomposeEnclitic, () => {
     it("decomposes -que enclitic when stem is sufficiently long", () => {
       expect.hasAssertions();
@@ -87,91 +104,6 @@ describe("search service suite", () => {
         enclitic: null,
         stem: "amare",
       });
-    });
-  });
-
-  describe(formatFormIdentifier, () => {
-    it("formats finite verb form", () => {
-      expect.hasAssertions();
-
-      const form = new FiniteVerbForm();
-      form.person = "first";
-      form.number = "singular";
-      form.tense = "present";
-      form.voice = "active";
-      form.mood = "indicative";
-
-      expect(formatFormIdentifier(form)).toBe(
-        "first person singular present active indicative",
-      );
-    });
-
-    it("formats nominal form", () => {
-      expect.hasAssertions();
-
-      const form = new NominalForm();
-      form.case = "nominative";
-      form.number = "singular";
-
-      expect(formatFormIdentifier(form)).toBe("nominative singular");
-    });
-
-    it("formats adjectival form", () => {
-      expect.hasAssertions();
-
-      const form = new AdjectivalForm();
-      form.case = "accusative";
-      form.number = "plural";
-      form.gender = "feminine";
-
-      expect(formatFormIdentifier(form)).toBe("accusative plural feminine");
-    });
-
-    it("formats participle form", () => {
-      expect.hasAssertions();
-
-      const form = new ParticipleForm();
-      form.tense = "perfect";
-      form.voice = "passive";
-
-      expect(formatFormIdentifier(form)).toBe("perfect passive participle");
-    });
-
-    it("formats infinitive form", () => {
-      expect.hasAssertions();
-
-      const form = new InfinitiveForm();
-      form.tense = "present";
-      form.voice = "active";
-
-      expect(formatFormIdentifier(form)).toBe("present active infinitive");
-    });
-
-    it("formats gerund form", () => {
-      expect.hasAssertions();
-
-      const form = new GerundForm();
-      form.case = "genitive";
-
-      expect(formatFormIdentifier(form)).toBe("genitive gerund");
-    });
-
-    it("formats supine form", () => {
-      expect.hasAssertions();
-
-      const form = new SupineForm();
-      form.case = "accusative";
-
-      expect(formatFormIdentifier(form)).toBe("accusative supine");
-    });
-
-    it("formats adverb form", () => {
-      expect.hasAssertions();
-
-      const form = new AdverbForm();
-      form.degree = "comparative";
-
-      expect(formatFormIdentifier(form)).toBe("comparative adverb");
     });
   });
 
