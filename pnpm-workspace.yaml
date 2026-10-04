@@ -44,9 +44,13 @@ catalog:
   "@microsoft/api-extractor": ^7.52.1
   "@golevelup/ts-vitest": ^4.0.0
   "@nestjs/apollo": ^14.0.2
-  "@nestjs/common": ^12.0.1
+  # Published ic-suite packages carry these ranges. nest-commander pins
+  # @golevelup/nestjs-discovery 7.0.3, whose peers accept only NestJS 11, so npm
+  # needs NestJS 11 in range to install one shared copy; a second copy breaks
+  # every CLI's dependency injection. The lockfile still resolves NestJS 12.
+  "@nestjs/common": ^11.1.21 || ^12.0.1
   "@nestjs/config": ^12.0.0
-  "@nestjs/core": ^12.0.1
+  "@nestjs/core": ^11.1.21 || ^12.0.1
   "@nestjs/graphql": ^14.0.0
   "@nestjs/platform-express": ^12.0.1
   "@nestjs/testing": ^12.0.1
