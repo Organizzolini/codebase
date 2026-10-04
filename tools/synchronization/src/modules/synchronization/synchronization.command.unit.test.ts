@@ -11,7 +11,6 @@ import { DevcontainerConfigurationCommand } from "../devcontainer-configuration/
 import { PackageManifestsCommand } from "../package-manifests/package-manifests.command";
 import { PullRequestLabelsCommand } from "../pull-request-labels/pull-request-labels.command";
 import { PullRequestTemplateCommand } from "../pull-request-template/pull-request-template.command";
-import { ReadmeVersionCommand } from "../readme-version/readme-version.command";
 import { SkillExclusionsCommand } from "../skill-exclusions/skill-exclusions.command";
 
 import { SynchronizationCommand } from "./synchronization.command";
@@ -27,7 +26,6 @@ describe(SynchronizationCommand, () => {
   let logger: LoggerService;
   let pullRequestLabels: PullRequestLabelsCommand;
   let pullRequestTemplate: PullRequestTemplateCommand;
-  let readmeVersion: ReadmeVersionCommand;
   let skillExclusions: SkillExclusionsCommand;
 
   /** The delegates in the order the aggregate reports them. */
@@ -38,7 +36,6 @@ describe(SynchronizationCommand, () => {
       devcontainerConfiguration,
       pullRequestLabels,
       pullRequestTemplate,
-      readmeVersion,
       skillExclusions,
     ];
   }
@@ -96,12 +93,6 @@ describe(SynchronizationCommand, () => {
           }),
         },
         {
-          provide: ReadmeVersionCommand,
-          useValue: createMock<ReadmeVersionCommand>({
-            synchronizationLabel: "readme-version",
-          }),
-        },
-        {
           provide: SkillExclusionsCommand,
           useValue: createMock<SkillExclusionsCommand>({
             synchronizationLabel: "skill-exclusions",
@@ -119,7 +110,6 @@ describe(SynchronizationCommand, () => {
     logger = await module.resolve(LoggerService);
     pullRequestLabels = await module.resolve(PullRequestLabelsCommand);
     pullRequestTemplate = await module.resolve(PullRequestTemplateCommand);
-    readmeVersion = await module.resolve(ReadmeVersionCommand);
     skillExclusions = await module.resolve(SkillExclusionsCommand);
   });
 
@@ -163,10 +153,6 @@ describe(SynchronizationCommand, () => {
         {
           provide: PullRequestTemplateCommand,
           useValue: createMock<PullRequestTemplateCommand>(),
-        },
-        {
-          provide: ReadmeVersionCommand,
-          useValue: createMock<ReadmeVersionCommand>(),
         },
         {
           provide: SkillExclusionsCommand,

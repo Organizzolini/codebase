@@ -31,6 +31,7 @@ EXPECTED_JQ_VERSION="$(jq -r '.features["ghcr.io/eitsupi/devcontainer-features/j
 EXPECTED_SQLITE_VERSION="$(jq -r '.features["ghcr.io/warrenbuckley/codespace-features/sqlite:1"].version' "${LOCAL_DEVCONTAINER_JSON}")"
 EXPECTED_GITLEAKS_VERSION="$(jq -r '.remoteEnv.GITLEAKS_VERSION' "${LOCAL_DEVCONTAINER_JSON}")"
 EXPECTED_TRIVY_VERSION="$(jq -r '.remoteEnv.TRIVY_VERSION' "${LOCAL_DEVCONTAINER_JSON}")"
+EXPECTED_UV_VERSION="$(jq -r '.remoteEnv.UV_VERSION' "${LOCAL_DEVCONTAINER_JSON}")"
 
 # 🛠️ Assertion helpers
 PASS=0
@@ -52,11 +53,11 @@ assert_available() {
   local label="$1"
   local cmd="$2"
   local all_output first_line
-  if all_output=$(eval "$cmd" 2>&1); then
-    first_line=$(echo "$all_output" | head -1)
-    pass "$label available: $first_line"
+  if all_output=$(eval "${cmd}" 2>&1); then
+    first_line=$(echo "${all_output}" | head -1)
+    pass "${label} available: ${first_line}"
   else
-    fail "$label not found (command: $cmd)"
+    fail "${label} not found (command: ${cmd})"
   fi
 }
 
@@ -67,15 +68,15 @@ assert_version_contains() {
   local expected="$2"
   local cmd="$3"
   local all_output
-  all_output=$(eval "$cmd" 2>&1) || true
-  if echo "$all_output" | grep -qF "$expected"; then
+  all_output=$(eval "${cmd}" 2>&1) || true
+  if echo "${all_output}" | grep -qF "${expected}"; then
     local match_line
-    match_line=$(echo "$all_output" | grep -F "$expected" | head -1 | xargs)
-    pass "$label version matches ($match_line)"
+    match_line=$(echo "${all_output}" | grep -F "${expected}" | head -1 | xargs)
+    pass "${label} version matches (${match_line})"
   else
     local first_line
-    first_line=$(echo "$all_output" | head -1)
-    fail "$label version mismatch: expected '$expected', got '$first_line'"
+    first_line=$(echo "${all_output}" | head -1)
+    fail "${label} version mismatch: expected '${expected}', got '${first_line}'"
   fi
 }
 
@@ -136,6 +137,10 @@ echo ""
 echo "🏗 Trivy — must be ${EXPECTED_TRIVY_VERSION}"
 assert_version_contains "trivy" "${EXPECTED_TRIVY_VERSION}" "trivy --version"
 
+echo ""
+echo "🌌 uv — must be ${EXPECTED_UV_VERSION}"
+assert_version_contains "uv" "${EXPECTED_UV_VERSION}" "uv --version"
+
 # 🐳 Docker
 echo ""
 echo "🐳 Docker (DinD inside container / DooD on local machine)"
@@ -153,7 +158,7 @@ echo ""
 echo "🔒 Container user (must be 'root')"
 CURRENT_USER="$(whoami)"
 CURRENT_UID="$(id -u)"
-if [ "${CURRENT_USER}" = "root" ]; then
+if [[ "${CURRENT_USER}" = "root" ]]; then
   pass "running as user '${CURRENT_USER}' (uid=${CURRENT_UID})"
 else
   fail "expected user 'root', got '${CURRENT_USER}' (uid=${CURRENT_UID})"
@@ -163,7 +168,7 @@ fi
 echo ""
 echo "🌍 Environment variables (remoteEnv)"
 for ENV_VAR in KUBECONFIG NODE_OPTIONS UV_THREADPOOL_SIZE; do
-  if [ -n "${!ENV_VAR+x}" ]; then
+  if [[ -n "${!ENV_VAR+x}" ]]; then
     pass "${ENV_VAR} is set (${!ENV_VAR})"
   else
     fail "${ENV_VAR} is not set"
@@ -191,12 +196,12 @@ assert_available "npx" "npx --version"
 # 📂 Post-create artifacts
 echo ""
 echo "📂 Post-create artifacts"
-if [ -d "${WORKSPACE_ROOT}/node_modules" ]; then
+if [[ -d "${WORKSPACE_ROOT}/node_modules" ]]; then
   pass "node_modules/ exists"
 else
   fail "node_modules/ not found (postCreateCommand may not have run)"
 fi
-if [ -f "${WORKSPACE_ROOT}/.nx/graph.json" ]; then
+if [[ -f "${WORKSPACE_ROOT}/.nx/graph.json" ]]; then
   pass ".nx/graph.json exists"
 else
   fail ".nx/graph.json not found (nx graph may not have run)"
@@ -208,7 +213,7 @@ echo "🔑 Script permissions"
 SCRIPTS_DIR="${WORKSPACE_ROOT}/.devcontainer/scripts"
 for SCRIPT in "${SCRIPTS_DIR}"/*.sh; do
   SCRIPT_NAME="$(basename "${SCRIPT}")"
-  if [ -x "${SCRIPT}" ]; then
+  if [[ -x "${SCRIPT}" ]]; then
     pass "${SCRIPT_NAME} is executable"
   else
     fail "${SCRIPT_NAME} is not executable"
@@ -219,7 +224,7 @@ done
 echo ""
 echo "🗂️  Workspace structure (mount sanity check)"
 for DIR in applications packages infrastructure tools; do
-  if [ -d "${WORKSPACE_ROOT}/${DIR}" ]; then
+  if [[ -d "${WORKSPACE_ROOT}/${DIR}" ]]; then
     pass "${DIR}/ exists"
   else
     fail "${DIR}/ not found (workspace mount may be incorrect)"
@@ -233,6 +238,7 @@ if SYNC_OUTPUT=$(cd "${WORKSPACE_ROOT}" && pnpm exec nx run codebase:sync-vscode
   pass "VS Code extensions are in sync"
 else
   fail "VS Code extensions are out of sync — run: pnpm exec nx run codebase:sync-vscode-extensions:write"
+  printf '%s\n' "${SYNC_OUTPUT}" | sed 's/^/    /'
 fi
 
 # ⚙️ Devcontainer configuration structure
@@ -296,6 +302,7 @@ if SYNC_OUTPUT=$(cd "${WORKSPACE_ROOT}" && pnpm exec nx run codebase:sync-vscode
   pass "VS Code Machine settings are in sync"
 else
   fail "VS Code Machine settings are out of sync — run: pnpm exec nx run codebase:sync-vscode-settings:write"
+  printf '%s\n' "${SYNC_OUTPUT}" | sed 's/^/    /'
 fi
 
 # 🔐 GPG commit signing configuration
@@ -314,7 +321,7 @@ else
   echo "  ⚠️  commit.gpgsign not set globally — skipping (depends on host GPG forwarding)"
 fi
 
-if [ -n "$(git config --global user.signingkey 2>/dev/null)" ]; then
+if [[ -n "$(git config --global user.signingkey 2>/dev/null)" ]]; then
   SIGNING_KEY="$(git config --global user.signingkey)"
   pass "git user.signingkey is set (${SIGNING_KEY})"
 else
@@ -328,7 +335,7 @@ TOTAL=$((PASS + FAIL))
 echo "Results: ${PASS}/${TOTAL} passed"
 echo ""
 
-if [ "${FAIL}" -gt 0 ]; then
+if [[ "${FAIL}" -gt 0 ]]; then
   echo "❌ ${FAIL} test(s) failed"
   exit 1
 fi

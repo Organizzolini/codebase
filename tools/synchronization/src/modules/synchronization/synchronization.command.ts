@@ -9,7 +9,6 @@ import { DevcontainerConfigurationCommand } from "../devcontainer-configuration/
 import { PackageManifestsCommand } from "../package-manifests/package-manifests.command";
 import { PullRequestLabelsCommand } from "../pull-request-labels/pull-request-labels.command";
 import { PullRequestTemplateCommand } from "../pull-request-template/pull-request-template.command";
-import { ReadmeVersionCommand } from "../readme-version/readme-version.command";
 import { SkillExclusionsCommand } from "../skill-exclusions/skill-exclusions.command";
 
 import { SynchronizationService } from "./synchronization.service";
@@ -54,7 +53,6 @@ export class SynchronizationCommand extends CommandRunner {
     private readonly packageManifestsCommand: PackageManifestsCommand,
     private readonly pullRequestLabelsCommand: PullRequestLabelsCommand,
     private readonly pullRequestTemplateCommand: PullRequestTemplateCommand,
-    private readonly readmeVersionCommand: ReadmeVersionCommand,
     private readonly skillExclusionsCommand: SkillExclusionsCommand,
     private readonly synchronizationModeService: SynchronizationService,
   ) {
@@ -83,7 +81,6 @@ export class SynchronizationCommand extends CommandRunner {
       this.packageManifestsCommand,
       this.pullRequestLabelsCommand,
       this.pullRequestTemplateCommand,
-      this.readmeVersionCommand,
       this.skillExclusionsCommand,
     ];
   }

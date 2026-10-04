@@ -1,4 +1,4 @@
-# 🧑‍⚖️ Validation
+# ✅ Validation
 
 **Answer whether something conforms, and say what to do when it does not.**
 
