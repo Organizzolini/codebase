@@ -74,11 +74,14 @@ alias. It connects through `DatabaseModule.forRoot`, beside a global
 export class MeanderawDatabaseModule {}
 ```
 
-And export the command-line data source from the same options, at
-`src/modules/database/data-source.constants.ts`:
+`forRoot` takes no migrations: the runtime never runs them. Beside the
+module, at `src/modules/<project>-database/data-source.constants.ts`, export
+the command-line data source from the same options, with the migrations. A
+constants file allows no default export, so name it after the project; the
+TypeORM command line finds the file's one `DataSource` export by itself:
 
 ```ts
-export default createDataSource({
+export const meanderawDataSource = createDataSource({
   entities: [Meander],
   migrations: ["src/modules/meanderaw-database/migrations/*.ts"],
   project: "meanderaw",
@@ -106,6 +109,55 @@ GraphQL adds its `@Field` decorators in a thin layer of its own. Nothing
 fills the `*By` columns but the application, so a command-line writer with
 no user identity leaves them empty. No entity names a schema: it comes from
 `<PROJECT>_POSTGRES_SCHEMA`.
+
+### Migrations
+
+The `migration` target is defined once, in the root `nx.json` target
+defaults. A database project opts in with one option, `module`, naming its
+own database module's folder, which every configuration reads its two
+conventional paths from:
+
+```jsonc
+// project.json
+"migration": {
+  "options": { "module": "src/modules/meanderaw-database" }
+}
+```
+
+| Path                                | Holds                                                      |
+| ----------------------------------- | ---------------------------------------------------------- |
+| `<module>/data-source.constants.ts` | The `createDataSource(...)` the TypeORM command line reads |
+| `<module>/migrations/`              | Each generated migration, and its extracted `.sql`         |
+
+| Command                                         | Does                                                            |
+| ----------------------------------------------- | --------------------------------------------------------------- |
+| `nx run <project>:migration:generate`           | Generates a migration from the entities, extracts it, and lints |
+| `nx run <project>:migration:run`                | Applies every pending migration                                 |
+| `nx run <project>:migration:revert`             | Reverts the latest migration                                    |
+| `nx run <project>:migration:show`               | Lists applied and pending migrations                            |
+| `nx run <project>:migration:extract-sql-latest` | Extracts the latest migration's SQL for sqlfluff and squawk     |
+| `nx run <project>:migration:extract-sql-all`    | Extracts every migration's SQL                                  |
+
+Migrations never run on application start; running them is its own step.
+The extraction script is `scripts/extract-migration-sql.ts`.
+
+The extracted SQL is linted only once the project opts in to it as well: a
+`framework:typeorm` tag, and three more empty entries beside `migration`:
+
+```jsonc
+// project.json
+"tags": ["framework:typeorm"],
+"targets": {
+  "migration": { "options": { "module": "src/modules/meanderaw-database" } },
+  "sqlfluff-format": {},
+  "sqlfluff-lint": {},
+  "squawk": {}
+}
+```
+
+`migration:generate` ends by running `lint-code:write`, which fails on the
+empty JSDoc blocks TypeORM writes into a new migration. Describe the class
+and its `up` and `down` methods, then run `lint-code:write` again.
 
 ### Integration tests
 
@@ -223,6 +275,7 @@ graph LR
   file_codependix_config_ts["codependix.config.ts"]
   file_codometer_config_ts["codometer.config.ts"]
   file_eslint_config_ts["eslint.config.ts"]
+  file_scripts_extract_migration_sql_ts["scripts/extract-migration-sql.ts"]
   file_src_index_ts["src/index.ts"]
   file_src_modules_database_database_constants_ts["src/modules/database/database.constants.ts"]
   file_src_modules_database_database_factories_ts["src/modules/database/database.utilities.ts"]

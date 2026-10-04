@@ -59,7 +59,7 @@ export function assertPostgresEnvironmentKeys<Project extends string>(
  *
  * ```ts
  * // src/modules/database/data-source.constants.ts
- * export default createDataSource({
+ * export const meanderawDataSource = createDataSource({
  *   entities: [Meander],
  *   migrations: ["src/modules/database/migrations/*.ts"],
  *   project: "meanderaw",

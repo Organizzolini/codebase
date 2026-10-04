@@ -35,6 +35,8 @@ src/
       database.utilities.ts         # postgresEnvironmentSchema, postgresDataSourceOptions, createDataSource, variable names
       entities/                     # identifiable → creatable → updatable → deletable
       postgres-container.*.ts       # startPostgresContainer, the testing entry's harness
+scripts/
+  extract-migration-sql.ts          # Run by every project's migration:extract-sql-* target
 testing/
   index.ts                          # The @codebase/database/testing entry
   database-testing.*.ts             # startDatabaseTestingModule, the entry's Nest helper

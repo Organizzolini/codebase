@@ -10,6 +10,7 @@
     "tslib": "catalog:",
     "typeorm": "catalog:",
     "typeorm-naming-strategies": "catalog:",
+    "typescript": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

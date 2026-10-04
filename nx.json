@@ -642,6 +642,43 @@
         }
       }
     ],
+    "migration": {
+      "cache": false,
+      "configurations": {
+        "extract-sql-all": {
+          "command": "test -n \"{args.module}\" || { echo 'migration: set options.module to the project database module folder, for example src/modules/<project>-database' >&2; exit 1; } && pnpm exec tsx packages/database/scripts/extract-migration-sql.ts --directory={projectRoot}/{args.module}/migrations --mode=all",
+          "cwd": "{workspaceRoot}"
+        },
+        "extract-sql-latest": {
+          "command": "test -n \"{args.module}\" || { echo 'migration: set options.module to the project database module folder, for example src/modules/<project>-database' >&2; exit 1; } && pnpm exec tsx packages/database/scripts/extract-migration-sql.ts --directory={projectRoot}/{args.module}/migrations --mode=latest",
+          "cwd": "{workspaceRoot}"
+        },
+        "generate": {
+          "commands": [
+            "test -n \"{args.module}\" || { echo 'migration: set options.module to the project database module folder, for example src/modules/<project>-database' >&2; exit 1; } && node --import @swc-node/register/esm-register node_modules/typeorm/cli.js migration:generate {args.module}/migrations/migration -d {args.module}/data-source.constants.ts",
+            "nx run {projectName}:migration:extract-sql-latest",
+            "nx run {projectName}:lint-code:write",
+            "nx run {projectName}:format-code:write"
+          ],
+          "parallel": false
+        },
+        "revert": {
+          "command": "test -n \"{args.module}\" || { echo 'migration: set options.module to the project database module folder, for example src/modules/<project>-database' >&2; exit 1; } && node --import @swc-node/register/esm-register node_modules/typeorm/cli.js migration:revert -d {args.module}/data-source.constants.ts"
+        },
+        "run": {
+          "command": "test -n \"{args.module}\" || { echo 'migration: set options.module to the project database module folder, for example src/modules/<project>-database' >&2; exit 1; } && node --import @swc-node/register/esm-register node_modules/typeorm/cli.js migration:run -d {args.module}/data-source.constants.ts"
+        },
+        "show": {
+          "command": "test -n \"{args.module}\" || { echo 'migration: set options.module to the project database module folder, for example src/modules/<project>-database' >&2; exit 1; } && node --import @swc-node/register/esm-register node_modules/typeorm/cli.js migration:show -d {args.module}/data-source.constants.ts"
+        }
+      },
+      "description": "Generate, run, revert, or show a database project's TypeORM migrations, or extract their SQL for sqlfluff and squawk. A project opts in with `\"migration\": { \"options\": { \"module\": \"src/modules/<project>-database\" } }`, naming the folder of its own database module, which holds the command-line data source at `data-source.constants.ts` and the migrations under `migrations/`; every configuration fails with a message when it is unset. Extra command-line flags are not forwarded to the commands. Never cached: every configuration reads or changes a live database.",
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "forwardAllArgs": false
+      }
+    },
     "nbstripout": [
       {
         "cache": true,
