@@ -109,7 +109,7 @@
   "release": {
     "extends": "./configuration/release.config.cjs"
   },
-  "repository": "Organizzolini/codebase.git",
+  "repository": "organizzolini/codebase.git",
   "scripts": {
     "postinstall": "conformetry-nx-bootstrap-generators && bash scripts/install-skills.sh",
     "prepare": "husky configuration/.husky",

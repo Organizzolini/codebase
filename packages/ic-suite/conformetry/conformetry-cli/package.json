@@ -4,7 +4,7 @@
     "conformetry": "./dist/src/main.js"
   },
   "bugs": {
-    "url": "https://github.com/Organizzolini/codebase/issues"
+    "url": "https://github.com/organizzolini/codebase/issues"
   },
   "dependencies": {
     "@conformetry/configuration": "workspace:*",
@@ -44,7 +44,7 @@
     "LICENSE",
     "README.md"
   ],
-  "homepage": "https://github.com/Organizzolini/codebase/tree/main/packages/ic-suite/conformetry/conformetry-cli#readme",
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/packages/ic-suite/conformetry/conformetry-cli#readme",
   "keywords": [
     "cli",
     "code-generator",
@@ -72,7 +72,7 @@
   "repository": {
     "directory": "packages/ic-suite/conformetry/conformetry-cli",
     "type": "git",
-    "url": "git+https://github.com/Organizzolini/codebase.git"
+    "url": "git+https://github.com/organizzolini/codebase.git"
   },
   "type": "module",
   "typeCoverage": {
