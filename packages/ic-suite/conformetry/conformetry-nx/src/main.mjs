@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// The `conformetry-nx-bootstrap` command, wired into a consumer's postinstall.
+// The `conformetry-nx-bootstrap-generators` command, wired into a consumer's
+// postinstall.
 
 // Named `main.mjs` rather than for what it does because a `src/` root only
 // admits entry-point names. It runs `main.ts`, which the build also emits as
