@@ -21,6 +21,9 @@ permissions:
   packages: write
   issues: write
   pull-requests: write
+  # The identity token pnpm signs each package's npm provenance attestation
+  # with; without it, `pnpm publish --provenance` refuses to publish.
+  id-token: write
 
 # Never cancel a deployment/release run. Concurrency is scoped per-ref so
 # releases on main queue sequentially without colliding. A pull request's run
@@ -275,30 +278,89 @@ jobs:
             --exclude=codebase
           pnpm exec nx run codebase:codometer:write
 
+      # Versions the ic-suite packages from their conventional commits, commits
+      # and tags `<project>@<version>`. Checkout persists no credentials, so
+      # the remote carries the release token for this push and
+      # semantic-release's. Nx's own `--git-push` would add `--no-verify` and
+      # skip the pre-push hook, so the push is made here instead.
+      - name: 🏷️ Version Packages
+        if: >-
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases'
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GIT_COMMITTER_EMAIL: jimmypaolini@gmail.com
+          GIT_COMMITTER_NAME: Jimmy Paolini
+        run: |
+          git remote set-url origin \
+            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          pnpm exec nx release version --git-commit --git-tag
+          git push --follow-tags --atomic origin HEAD:refs/heads/main
+
+      # Publishes every package in the Nx release group, read from nx.json,
+      # whose version is not on npm yet, so a re-run sends only what is
+      # missing. pnpm rather than `nx release publish`, because pnpm honors
+      # provenance only as the `--provenance` flag, which Nx cannot pass:
+      # NPM_CONFIG_PROVENANCE and `publishConfig.provenance` are ignored.
+      # `setup-node` writes no registry `.npmrc`, so the token goes in the user
+      # config.
+      - name: 📦 Publish Packages
+        if: >-
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
+          filters=()
+          release_projects="$(jq -r '.release.projects | join(",")' nx.json)"
+          for project in $(pnpm exec nx show projects --projects "${release_projects}" --json | jq -r '.[]'); do
+            filters+=(--filter "./$(pnpm exec nx show project "${project}" --json | jq -r .root)")
+          done
+          pnpm -r "${filters[@]}" publish --provenance --no-git-checks \
+            --tag latest --registry https://registry.npmjs.org
+
+      # One GitHub release per package tag that has none yet, so a run that
+      # stopped after the push is completed by the next. `--latest=false`
+      # keeps the codebase's `v*` release as Latest for the README badge.
+      - name: 🗒️ Create Package Releases
+        if: >-
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases'
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          released="$(gh release list --limit 1000 --json tagName --jq '.[].tagName')"
+          for tag in $(git tag --list '*@*'); do
+            if grep -qxF "${tag}" <<< "${released}"; then continue; fi
+            project="${tag%@*}"
+            version="${tag##*@}"
+            root="$(pnpm exec nx show project "${project}" --json | jq -r .root)"
+            name="$(jq -r .name "${root}/package.json")"
+            previous="$(git tag --list "${project}@*" --sort=-v:refname --merged "${tag}^" | head -1)"
+            {
+              echo "Published to npm as [\`${name}@${version}\`](https://www.npmjs.com/package/${name}/v/${version})."
+              if [[ -n "${previous}" ]]; then
+                echo
+                echo "Changes since \`${previous}\`:"
+                echo
+                git log --no-merges --invert-grep --grep='^chore(release):' \
+                  --format='- %s (%h)' "${previous}..${tag}" -- "${root}"
+              fi
+            } > "${RUNNER_TEMP}/release-notes.md"
+            gh release create "${tag}" --verify-tag --latest=false \
+              --title "${name} ${version}" --notes-file "${RUNNER_TEMP}/release-notes.md"
+          done
+
       - name: 🦸 Push Releases
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
           matrix.target.id == 'push-releases'
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           GIT_COMMITTER_EMAIL: jimmypaolini@gmail.com
           GIT_COMMITTER_NAME: Jimmy Paolini
-        # Checkout persists no credentials, and semantic-release authenticates
-        # its own push, so the version commit's push needs the remote to carry
-        # the release token. It is pushed here rather than by Nx's
-        # `--git-push`, which adds `--no-verify` and would skip the pre-push
-        # hook; the push is otherwise the same. `setup-node` writes no registry
-        # `.npmrc`, so the npm token is written to the user config that pnpm
-        # and npm read.
-        run: |
-          git remote set-url origin \
-            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
-          pnpm exec nx release version --git-commit --git-tag
-          git push --follow-tags --atomic origin HEAD:refs/heads/main
-          pnpm exec nx release publish --registry=https://registry.npmjs.org
-          pnpm semantic-release
+        run: pnpm semantic-release
 
       # The only save of this workflow's Nx cache, which the next release
       # restores. Every project is built above, so it covers the whole graph.
