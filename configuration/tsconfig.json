@@ -41,6 +41,9 @@
       ]
     },
     "resolveJsonModule": true,
+    // Lets Vite configs import shared configs as `./x.ts`, which Vite's
+    // native config loader requires, while still allowing declaration emit.
+    "rewriteRelativeImportExtensions": true,
     "rootDir": "..",
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
