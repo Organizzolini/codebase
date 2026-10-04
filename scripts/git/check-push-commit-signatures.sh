@@ -14,8 +14,12 @@ while read -r local_ref local_sha remote_ref remote_sha; do
     continue
   fi
 
+  # A remote tip this clone never fetched cannot bound a range: `git rev-list`
+  # exits 128 on it, which masked the remote's own rejection of a push that
+  # `main` had moved underneath. Falling back to the remote-tracking refs still
+  # checks every commit new to the remote, and lets git report the real reason.
   commit_range=''
-  if [[ "${remote_sha}" == "${zero_sha}" ]]; then
+  if [[ "${remote_sha}" == "${zero_sha}" ]] || ! git cat-file -e "${remote_sha}^{commit}" 2>/dev/null; then
     commit_range="$(git rev-list "${local_sha}" --not --remotes)"
   else
     commit_range="$(git rev-list "${remote_sha}..${local_sha}" --not --remotes)"

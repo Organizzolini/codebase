@@ -40,12 +40,19 @@ Almost every check reaches the staged files through one `nx affected` run over t
 `lint-code` target:
 
 ```bash
-nx affected --target=lint-code --configuration=check --parallel=8 --outputStyle=static --files=<path> --files=<path> …
+nx affected --target=lint-code --configuration=check --parallel=4 --outputStyle=static --base=HEAD --head=<staged-commit>
 ```
 
-One `--files=` flag per staged path, never one comma-separated value: Node is
-killed by the operating system on a single argument past 1011 bytes, and
-lint-staged reports that as `Task failed to spawn: undefined` with no output.
+`<staged-commit>` is a throwaway commit of the index on top of `HEAD`, so Nx
+diffs `package.json` and `pnpm-lock.yaml` field by field the way CI does: a
+version bump or one dependency bump selects only the projects it reaches, not
+the whole workspace. To reproduce a hook run by hand, stage the files and pass
+`--head=$(git commit-tree "$(git write-tree)" -p HEAD --no-gpg-sign -m staged)`.
+
+A repository with no `HEAD` falls back to one `--files=` flag per staged path,
+never one comma-separated value: Node is killed by the operating system on a
+single argument past 1011 bytes, and lint-staged reports that as
+`Task failed to spawn: undefined` with no output.
 
 ### commit-msg hook
 
@@ -75,11 +82,11 @@ Config: [validate-branch-name.config.cjs](../../../validate-branch-name.config.c
 `configuration/lint-staged.config.ts` declares three patterns, in this order. A
 staged `package.json` matches all three, so all four commands run.
 
-| Staged file pattern                     | Commands lint-staged runs                                                                                                                                                                                                                                                                                            |
-| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `{**/package.json,pnpm-workspace.yaml}` | `validation lockfile`, run as the CLI directly rather than through its Nx target                                                                                                                                                                                                                                     |
-| `**/package.json`                       | `nx run-many --projects=codebase --targets=check-catalog-manifests,sherif,syncpack`                                                                                                                                                                                                                                  |
-| `*` (every staged path)                 | `nx affected --target=typecheck-code,lint-code,format-code,deprecate-code,guard-code --configuration=check --parallel=… --files=…`, then `nx run-many --targets=conformetry-validate`                                                                                                                                |
+| Staged file pattern                     | Commands lint-staged runs                                                                                                                                                                                      |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `{**/package.json,pnpm-workspace.yaml}` | `validation lockfile`, run as the CLI directly rather than through its Nx target                                                                                                                               |
+| `**/package.json`                       | `nx run-many --projects=codebase --targets=check-catalog-manifests,sherif,syncpack`                                                                                                                            |
+| `*` (every staged path)                 | `nx affected --target=typecheck-code,lint-code,format-code,deprecate-code,guard-code --configuration=check --parallel=… --base=HEAD --head=<staged-commit>`, then `nx run-many --targets=conformetry-validate` |
 
 There is deliberately no per-file-type row any more. `lint-code` is an
 `nx:noop` aggregator whose `dependsOn` list holds every static check, and each
