@@ -43,6 +43,7 @@ graph LR
   file_codometer_config_ts["codometer.config.ts"]
   file_eslint_config_ts["eslint.config.ts"]
   file_src_lexico_api_constants_ts["src/lexico-api.constants.ts"]
+  file_src_lexico_api_constants_unit_test_ts["src/lexico-api.constants.unit.test.ts"]
   file_src_lexico_api_end_to_end_test_ts["src/lexico-api.end-to-end.test.ts"]
   file_src_lexico_api_entities_ts["src/lexico-api.entities.ts"]
   file_src_lexico_api_module_ts["src/lexico-api.module.ts"]
