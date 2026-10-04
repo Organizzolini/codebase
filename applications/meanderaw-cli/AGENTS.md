@@ -10,7 +10,7 @@
 
 ```bash
 cp .env.default .env  # Fill in required environment variables
-nx run meanderaw:start
+nx run meanderaw-cli:start
 ```
 
 ## 🏛️ Before You Change a Meander
@@ -210,10 +210,10 @@ Always prefer running tasks through Nx rather than calling the underlying tools 
 
 ```bash
 nx run codebase:postgres-container:up     # The local Postgres the database lives in
-nx run meanderaw:start                    # Clear the meander rows, then draw every meander back into them
-nx run meanderaw:typecheck-code,lint-code,format-code,deprecate-code,guard-code   # Every static check, in one graph
-nx run meanderaw:typecheck       # tsc --noEmit
-nx run meanderaw:oxfmt           # Formatting
+nx run meanderaw-cli:start                    # Clear the meander rows, then draw every meander back into them
+nx run meanderaw-cli:typecheck-code,lint-code,format-code,deprecate-code,guard-code   # Every static check, in one graph
+nx run meanderaw-cli:typecheck       # tsc --noEmit
+nx run meanderaw-cli:oxfmt           # Formatting
 ```
 
 This application has **one command, `draw`**, and it is the default — so `start` runs it,
@@ -223,7 +223,7 @@ and classified, then the historical corpus's hardcoded Codes beyond that budget.
 `--rows`, `--columns`, and `--code` it decodes, measures, and persists that one:
 
 ```bash
-nx run meanderaw:start --args="--rows 3 --columns 2 --code 3c9a"
+nx run meanderaw-cli:start --args="--rows 3 --columns 2 --code 3c9a"
 ```
 
 **Nothing but `start` runs the command**, so no aggregate target — `guard-code`, `lint-code`,
@@ -249,9 +249,9 @@ There is deliberately no second command, and no other flag — see "One Command"
 Follow the codebase's strict three-tier testing strategy. Co-locate test files with the source they test.
 
 ```bash
-nx run meanderaw:vitest:unit          # Fast (<100ms) — pure logic, mocked DI
-nx run meanderaw:vitest:integration   # Moderate (1-2s) — real database/API I/O
-nx run meanderaw:vitest:end-to-end    # Slow (30-60s) — full CLI execution
+nx run meanderaw-cli:vitest:unit          # Fast (<100ms) — pure logic, mocked DI
+nx run meanderaw-cli:vitest:integration   # Moderate (1-2s) — real database/API I/O
+nx run meanderaw-cli:vitest:end-to-end    # Slow (30-60s) — full CLI execution
 ```
 
 | Tier | File pattern | What to test |

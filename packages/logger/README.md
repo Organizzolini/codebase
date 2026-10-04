@@ -153,7 +153,7 @@ graph LR
   lexico_api["lexico-api"]
   lexico_ingestion["lexico-ingestion"]
   logger["logger"]
-  meanderaw["meanderaw"]
+  meanderaw_cli["meanderaw-cli"]
   synchronization["synchronization"]
   validation["validation"]
   caelundas --> logger
@@ -173,7 +173,7 @@ graph LR
   conformetry_nx --> logger
   lexico_api --> logger
   lexico_ingestion --> logger
-  meanderaw --> logger
+  meanderaw_cli --> logger
   synchronization --> logger
   validation --> logger
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px

@@ -1364,7 +1364,7 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
 
-  applications/meanderaw:
+  applications/meanderaw-cli:
     dependencies:
       '@codebase/logger':
         specifier: workspace:*

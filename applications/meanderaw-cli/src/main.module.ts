@@ -29,7 +29,7 @@ import { MatrixModule } from "./modules/matrix/matrix.module";
     // needs, so that the *other* direction — the parser that reduces a
     // finished document to its ink, the window of it an address names, and
     // the measurement over that same lattice — stays resolvable in
-    // `nx run meanderaw:repl`.
+    // `nx run meanderaw-cli:repl`.
     //
     // Nothing in the draw run reads a drawing: a meander is a Code, and every row
     // is built by reading one. That half is kept because the historical
