@@ -8,10 +8,10 @@ import { Meander } from "./entities/Meander.entity";
 import type { MeanderRecord } from "./database.types";
 
 /**
- * Persists meanders to the `meanderaw_development` Postgres database. Holds no decoding or
- * rendering logic of its own — every field it writes arrives already
- * computed, so this is the one seam between the generic rendering pipeline
- * and TypeORM.
+ * Persists meanders to the Postgres database `POSTGRES_DB` names. Holds no
+ * decoding or rendering logic of its own — every field it writes arrives
+ * already computed, so this is the one seam between the generic rendering
+ * pipeline and TypeORM.
  */
 @Injectable()
 export class DatabaseService {

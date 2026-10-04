@@ -17,12 +17,12 @@ database, and this project's file is what overrides it.
 ## 🖌️ One Command
 
 Meanderaw has one command, `draw`, and it is the default — so `nx run meanderaw:start` runs it.
-Both of its modes write the `meanderaw_development` Postgres database, and which one runs is
+Both of its modes write the Postgres database `POSTGRES_DB` names, and which one runs is
 decided by whether a Code was named:
 
 | Invocation | What it does |
 | ---------- | ------------ |
-| `nx run meanderaw:start` | Regenerates every meander the application can draw, as rows in the `meanderaw_development` database — clearing the rows already there first, so it runs against the database as-is |
+| `nx run meanderaw:start` | Regenerates every meander the application can draw, as rows in that database — clearing the rows already there first, so it runs against the database as-is |
 | `nx run meanderaw:start --args="--rows <n> --columns <n> --code <code>"` | That one, as a single row in the same database |
 
 The three flags of the single-drawing mode go together: `--code` is what
@@ -101,7 +101,7 @@ SQL — a bare `->>` is `NULL` for a missing key, and silently drops that row fr
 on zero or less-than:
 
 ```sql
-SELECT code FROM meanderaw_development.meanders
+SELECT code FROM meanderaw_development.meanders -- the default POSTGRES_SCHEMA
 WHERE COALESCE((characteristics ->> 'crossCount')::numeric, 0) = 0
   AND characteristics @> '{"isBars": true}';
 ```

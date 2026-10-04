@@ -15,8 +15,8 @@ nx run meanderaw:start
 
 ## 🏛️ Before You Change a Meander
 
-**A meander is a row in the `meanderaw_development` Postgres database, addressed by its
-lattice address — its Code, its rows, and its columns — and nothing else.** The formatted
+**A meander is a row in the Postgres database `POSTGRES_DB` names (`meanderaw_development`
+by default), addressed by its lattice address — its Code, its rows, and its columns — and nothing else.** The formatted
 Code spells out all three, so `code` alone is its identity; the row's `id` is a uuidv7
 the database assigns, which changes on every sweep and must never reach committed output. There is no `output/<family>/*.svg`
 tree, no per-family procedural motif service, and no `--type`/`--modifier` command line.
@@ -195,7 +195,7 @@ nx run meanderaw:oxfmt           # Formatting
 ```
 
 This application has **one command, `draw`**, and it is the default — so `start` runs it,
-and it always writes the `meanderaw_development` database. With no arguments it clears that
+and it always writes the database `POSTGRES_DB` names. With no arguments it clears that
 database's meander rows and sweeps every meander the application can draw back into it: the whole lattice's unit space, enumerated
 and classified, then the historical corpus's hardcoded Codes beyond that budget. With
 `--rows`, `--columns`, and `--code` it decodes, measures, and persists that one:

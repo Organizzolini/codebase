@@ -540,8 +540,6 @@ graph LR
   file_src_index_ts["src/index.ts"]
   file_src_index_unit_test_ts["src/index.unit.test.ts"]
   file_src_main_module_ts["src/main.module.ts"]
-  file_src_main_ts["src/main.ts"]
-  file_src_main_unit_test_ts["src/main.unit.test.ts"]
   file_src_modules_adapter_adapter_constants_ts["src/modules/adapter/adapter.constants.ts"]
   file_src_modules_adapter_adapter_module_ts["src/modules/adapter/adapter.module.ts"]
   file_src_modules_adapter_adapter_service_ts["src/modules/adapter/adapter.service.ts"]
@@ -606,8 +604,6 @@ graph LR
   file_src_index_unit_test_ts --> file_src_modules_plugin_plugin_context_utilities_ts
   file_src_main_module_ts --> file_src_modules_generator_generator_module_ts
   file_src_main_module_ts --> file_src_modules_plugin_plugin_module_ts
-  file_src_main_ts --> file_src_modules_generator_bootstrap_utilities_ts
-  file_src_main_unit_test_ts --> file_src_modules_generator_bootstrap_utilities_ts
   file_src_modules_adapter_adapter_module_ts --> file_src_modules_adapter_adapter_service_ts
   file_src_modules_adapter_adapter_service_ts --> file_src_modules_adapter_adapter_constants_ts
   file_src_modules_adapter_adapter_service_ts --> file_src_modules_adapter_adapter_types_ts

@@ -19,7 +19,7 @@ import { IncompleteCodeDrawingError } from "./draw.constants";
 import type { DrawCommandOptions } from "./draw.types";
 
 /**
- * Draws meanders into the `meanderaw_development` Postgres database. It is the
+ * Draws meanders into the Postgres database `POSTGRES_DB` names. It is the
  * application's only command, and its default, so running it with no
  * arguments at all runs this.
  *
@@ -55,7 +55,7 @@ import type { DrawCommandOptions } from "./draw.types";
  */
 @Command({
   description:
-    "Draw meanders into the meanderaw_development Postgres database: with no flag, sweep every meander the application can draw into it (the whole lattice's unit space, enumerated and classified into a family by each meander's own structure, plus the historical corpus's hardcoded constants beyond the enumeration's budget); with --rows, --columns, and --code, draw that one",
+    "Draw meanders into the Postgres database POSTGRES_DB names: with no flag, sweep every meander the application can draw into it (the whole lattice's unit space, enumerated and classified into a family by each meander's own structure, plus the historical corpus's hardcoded constants beyond the enumeration's budget); with --rows, --columns, and --code, draw that one",
   name: "draw",
   options: { isDefault: true },
 })
