@@ -163,19 +163,12 @@ runs:
     # Exact match only, and no restore-keys: a partially stale project graph
     # is worse than rebuilding one. `nx reset` clears it if it ever misbehaves.
     #
-    # The task-result database is cached with `.nx/cache` below, never here:
-    # this key is shared by every job and matched on `project.json` content
-    # alone, exactly the sharing the database must not have. What this cache
-    # saves lives in `project-graph.json` and `file-map.json`.
-    #
-    # `path` lists the directory's entries rather than the directory itself,
-    # because an exclusion only drops files the inclusion enumerates: naming
-    # `.nx/workspace-data` archived it whole, database included, despite the
-    # `!` line. Every graph hit then overwrote the adopted database with that
-    # stale copy, deleting this job's restored results before a task ran. `v3`
-    # retires the tarballs that carry one. The step also runs before the task
-    # cache is restored, so even a database that slips into this tarball is
-    # overwritten by the real one rather than the other way round.
+    # The task-result database travels with `.nx/cache` below, never here: this
+    # key is shared by every job. `path` lists the directory's entries because
+    # an exclusion only drops files the inclusion enumerates; naming the
+    # directory archived the database too, and each graph hit overwrote the
+    # adopted one before any task ran. `v3` retires those tarballs, and running
+    # before the task cache restore means the real database always lands last.
     - name: 🕸️ Sync Nx Graph
       if: inputs.nx-graph-cache == 'true'
       uses: actions/cache@v6
