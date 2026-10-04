@@ -45,13 +45,18 @@ jobs:
           # v2.31.0 took 7m19s: 4 minutes to set up, build, trace, graph, and
           # measure, and 3 for semantic-release, most of it the version
           # commit's pre-commit hook. A cold Nx cache adds about 4 to the
-          # first part, and the hook checks only the projects the commit
-          # reaches. A timeout leaves no tag or version commit behind, and the
-          # next run retries.
+          # first part. `nx release version` makes a second version commit
+          # whose hook checks every bumped ic-suite package and its
+          # dependents (25 projects on the first release), none of them
+          # cached because each bump changes a manifest, so this leaves room
+          # for that hook and the npm publish. Re-size it from the first real
+          # release run. A timeout before the push leaves nothing behind; a
+          # later one is finished by the next run, whose publish skips
+          # versions already on npm.
           - id: push-releases
             name: Releases
             emoji: 🦸
-            timeout: 12
+            timeout: 24
 
     steps:
       # Decides from the GitHub API alone, before any checkout, so a run with
@@ -280,14 +285,18 @@ jobs:
           GIT_COMMITTER_EMAIL: jimmypaolini@gmail.com
           GIT_COMMITTER_NAME: Jimmy Paolini
         # Checkout persists no credentials, and semantic-release authenticates
-        # its own push, so `nx release version --git-push` needs the remote to
-        # carry the release token. `setup-node` writes no registry `.npmrc`, so
-        # the npm token is written to the user config that pnpm and npm read.
+        # its own push, so the version commit's push needs the remote to carry
+        # the release token. It is pushed here rather than by Nx's
+        # `--git-push`, which adds `--no-verify` and would skip the pre-push
+        # hook; the push is otherwise the same. `setup-node` writes no registry
+        # `.npmrc`, so the npm token is written to the user config that pnpm
+        # and npm read.
         run: |
           git remote set-url origin \
             "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
-          pnpm exec nx release version --git-commit --git-tag --git-push
+          pnpm exec nx release version --git-commit --git-tag
+          git push --follow-tags --atomic origin HEAD:refs/heads/main
           pnpm exec nx release publish --registry=https://registry.npmjs.org
           pnpm semantic-release
 
