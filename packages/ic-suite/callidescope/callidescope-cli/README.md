@@ -1308,12 +1308,12 @@ graph LR
   callidescope_graph["callidescope-graph"]
   callidescope_nx["callidescope-nx"]
   callidescope_output["callidescope-output"]
-  logger["logger"]
+  logging["logging"]
   callidescope_cli --> callidescope_configuration
   callidescope_cli --> callidescope_core
   callidescope_cli --> callidescope_graph
   callidescope_cli --> callidescope_output
-  callidescope_cli --> logger
+  callidescope_cli --> logging
   callidescope_examples -.-> callidescope_cli
   callidescope_nx --> callidescope_cli
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px

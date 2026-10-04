@@ -25,9 +25,9 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 graph LR
   lexico_api["lexico-api"]
   lexico_entities["lexico-entities"]
-  logger["logger"]
+  logging["logging"]
   lexico_api --> lexico_entities
-  lexico_api --> logger
+  lexico_api --> logging
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class lexico_api subject
 ```

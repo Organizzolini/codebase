@@ -1,12 +1,12 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "name": "logger",
+  "name": "logging",
   "projectType": "library",
   "sourceRoot": "packages/logging",
   "tags": [
     "framework:nestjs",
     "language:typescript",
-    "name:logger",
+    "name:logging",
     "type:package"
   ],
   "targets": {

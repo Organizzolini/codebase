@@ -6,7 +6,7 @@ The shared NestJS logging package.
 
 The one `LoggerService` every NestJS project in the codebase injects. Before
 this package, seventeen projects each carried an identical copy of the same
-`src/modules/logging` directory, so a fix to log formatting had to be applied
+`src/modules/logger` directory, so a fix to log formatting had to be applied
 seventeen times.
 
 It exports two things:
@@ -71,7 +71,7 @@ re-deriving timestamps and output paths:
 ## Development
 
 ```bash
-nx run logger:vitest
+nx run logging:vitest
 ```
 
 ## License
@@ -152,32 +152,32 @@ graph LR
   conformetry_nx["conformetry-nx"]
   lexico_api["lexico-api"]
   lexico_ingestion["lexico-ingestion"]
-  logger["logger"]
+  logging["logging"]
   meanderaw["meanderaw"]
   synchronization["synchronization"]
   validation["validation"]
-  caelundas --> logger
-  callidescope_cli --> logger
-  callidescope_graph --> logger
-  callidescope_nx --> logger
-  callidescope_output --> logger
-  codependix_cli --> logger
-  codependix_examples --> logger
-  codependix_nestjs_modules --> logger
-  codependix_output --> logger
-  codometer_cli --> logger
-  codometer_languages --> logger
-  codometer_measurement --> logger
-  codometer_output --> logger
-  conformetry_cli --> logger
-  conformetry_nx --> logger
-  lexico_api --> logger
-  lexico_ingestion --> logger
-  meanderaw --> logger
-  synchronization --> logger
-  validation --> logger
+  caelundas --> logging
+  callidescope_cli --> logging
+  callidescope_graph --> logging
+  callidescope_nx --> logging
+  callidescope_output --> logging
+  codependix_cli --> logging
+  codependix_examples --> logging
+  codependix_nestjs_modules --> logging
+  codependix_output --> logging
+  codometer_cli --> logging
+  codometer_languages --> logging
+  codometer_measurement --> logging
+  codometer_output --> logging
+  conformetry_cli --> logging
+  conformetry_nx --> logging
+  lexico_api --> logging
+  lexico_ingestion --> logging
+  meanderaw --> logging
+  synchronization --> logging
+  validation --> logging
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
-  class logger subject
+  class logging subject
 ```
 <!-- codependix:end name="codependix-nx-projects" -->
 
@@ -202,12 +202,12 @@ graph LR
   file_src_index_ts["src/index.ts"]
   file_src_lib_conventional_log_message_eslint_rule_ts["src/lib/conventional-log-message.eslint-rule.ts"]
   file_src_lib_conventional_log_message_eslint_rule_unit_test_ts["src/lib/conventional-log-message.eslint-rule.unit.test.ts"]
-  file_src_modules_logger_logger_constants_ts["src/modules/logging/logging.constants.ts"]
-  file_src_modules_logger_logger_module_ts["src/modules/logging/logging.module.ts"]
-  file_src_modules_logger_logger_module_unit_test_ts["src/modules/logging/logging.module.unit.test.ts"]
-  file_src_modules_logger_logger_service_ts["src/modules/logging/logging.service.ts"]
-  file_src_modules_logger_logger_service_unit_test_ts["src/modules/logging/logging.service.unit.test.ts"]
-  file_src_modules_logger_logger_types_ts["src/modules/logging/logging.types.ts"]
+  file_src_modules_logger_logger_constants_ts["src/modules/logger/logger.constants.ts"]
+  file_src_modules_logger_logger_module_ts["src/modules/logger/logger.module.ts"]
+  file_src_modules_logger_logger_module_unit_test_ts["src/modules/logger/logger.module.unit.test.ts"]
+  file_src_modules_logger_logger_service_ts["src/modules/logger/logger.service.ts"]
+  file_src_modules_logger_logger_service_unit_test_ts["src/modules/logger/logger.service.unit.test.ts"]
+  file_src_modules_logger_logger_types_ts["src/modules/logger/logger.types.ts"]
   file_testing_mocks_ts["testing/mocks.ts"]
   file_testing_setup_ts["testing/setup.ts"]
   file_vitest_config_ts["vitest.config.ts"]

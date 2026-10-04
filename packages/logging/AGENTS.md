@@ -100,11 +100,11 @@ re-deriving timestamps and output paths:
 Always prefer running tasks through Nx rather than calling the underlying tools directly.
 
 ```bash
-nx run logger:lint           # ESLint
-nx run logger:typecheck      # tsc --noEmit
-nx run logger:format         # oxfmt formatting
-nx run logger:build          # Compile for production
-nx run logger:test           # Vitest
+nx run logging:lint           # ESLint
+nx run logging:typecheck      # tsc --noEmit
+nx run logging:format         # oxfmt formatting
+nx run logging:build          # Compile for production
+nx run logging:test           # Vitest
 ```
 
 ### Testing
@@ -116,7 +116,7 @@ mock; the `NODE_ENV` branches are covered by re-importing the module under a
 mutated environment with `vi.resetModules()`.
 
 ```bash
-nx run logger:vitest:unit
+nx run logging:vitest:unit
 ```
 
 ## Best Practices
@@ -143,6 +143,6 @@ See the [triage-integration skill](../../.agents/skills/triage-integration/SKILL
 ## Key Files
 
 - [src/index.ts](src/index.ts): Public API
-- [src/modules/logging/logging.service.ts](src/modules/logging/logging.service.ts): pino-backed logger
-- [src/modules/logging/logging.module.ts](src/modules/logging/logging.module.ts): `@Global()` `LoggerModule`
+- [src/modules/logger/logger.service.ts](src/modules/logger/logger.service.ts): pino-backed logger
+- [src/modules/logger/logger.module.ts](src/modules/logger/logger.module.ts): `@Global()` `LoggerModule`
 - [project.json](project.json): Nx targets (`build`, `test`, `lint`, `typecheck`, `format`)

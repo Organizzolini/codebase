@@ -118,7 +118,7 @@ A modern TypeScript codebase with Nx, featuring automated releases, comprehensiv
 
 </details>
 
-**🪵 [logger](packages/logging)** - Shared pino-backed NestJS `LoggerService` and `LoggerModule`\
+**🪵 [logging](packages/logging)** - Shared pino-backed NestJS `LoggerService` and `LoggerModule`\
 **🏺 [meanderaw](applications/meanderaw)** - CLI that enumerates Greek meander (key/fret) patterns into a committed SQLite database, measuring and classifying each by its Code
 
 **[JimmyPaolini](applications/JimmyPaolini)** - GitHub profile site\
@@ -225,33 +225,33 @@ graph LR
   lexico_components["lexico-components"]
   lexico_entities["lexico-entities"]
   lexico_ingestion["lexico-ingestion"]
-  logger["logger"]
+  logging["logging"]
   meanderaw["meanderaw"]
   synchronization["synchronization"]
   validation["validation"]
-  caelundas --> logger
+  caelundas --> logging
   callidescope_cli --> callidescope_configuration
   callidescope_cli --> callidescope_core
   callidescope_cli --> callidescope_graph
   callidescope_cli --> callidescope_output
-  callidescope_cli --> logger
+  callidescope_cli --> logging
   callidescope_configuration --> callidescope_core
   callidescope_examples -.-> callidescope_cli
   callidescope_examples --> callidescope_configuration
   callidescope_examples --> callidescope_core
   callidescope_graph --> callidescope_configuration
   callidescope_graph --> callidescope_core
-  callidescope_graph --> logger
+  callidescope_graph --> logging
   callidescope_nx --> callidescope_cli
   callidescope_nx --> callidescope_configuration
   callidescope_nx --> callidescope_core
   callidescope_nx --> callidescope_graph
   callidescope_nx --> callidescope_output
-  callidescope_nx --> logger
+  callidescope_nx --> logging
   callidescope_output --> callidescope_configuration
   callidescope_output --> callidescope_core
   callidescope_output --> callidescope_graph
-  callidescope_output --> logger
+  callidescope_output --> logging
   codependix_boundaries --> codependix_configuration
   codependix_boundaries --> codependix_core
   codependix_boundaries --> codependix_file_imports
@@ -261,7 +261,7 @@ graph LR
   codependix_cli --> codependix_configuration
   codependix_cli --> codependix_core
   codependix_cli --> codependix_output
-  codependix_cli --> logger
+  codependix_cli --> logging
   codependix_configuration --> codependix_core
   codependix_examples --> codependix_boundaries
   codependix_examples -.-> codependix_cli
@@ -271,41 +271,41 @@ graph LR
   codependix_examples --> codependix_nestjs_modules
   codependix_examples --> codependix_nx_projects
   codependix_examples --> codependix_output
-  codependix_examples --> logger
-  codependix_nestjs_modules --> logger
+  codependix_examples --> logging
+  codependix_nestjs_modules --> logging
   codependix_output --> codependix_boundaries
   codependix_output --> codependix_configuration
   codependix_output --> codependix_core
   codependix_output --> codependix_file_imports
   codependix_output --> codependix_nestjs_modules
   codependix_output --> codependix_nx_projects
-  codependix_output --> logger
+  codependix_output --> logging
   codometer_cli --> codometer_configuration
   codometer_cli --> codometer_core
   codometer_cli --> codometer_measurement
   codometer_cli --> codometer_output
-  codometer_cli --> logger
+  codometer_cli --> logging
   codometer_configuration --> codometer_core
   codometer_examples -.-> codometer_cli
   codometer_examples --> codometer_configuration
   codometer_examples --> codometer_core
   codometer_languages --> codometer_configuration
   codometer_languages --> codometer_core
-  codometer_languages --> logger
+  codometer_languages --> logging
   codometer_measurement --> codometer_configuration
   codometer_measurement --> codometer_core
   codometer_measurement --> codometer_languages
-  codometer_measurement --> logger
+  codometer_measurement --> logging
   codometer_output --> codometer_configuration
   codometer_output --> codometer_core
   codometer_output --> codometer_measurement
-  codometer_output --> logger
+  codometer_output --> logging
   conformetry_cli --> conformetry_configuration
   conformetry_cli --> conformetry_core
   conformetry_cli --> conformetry_generation
   conformetry_cli --> conformetry_output
   conformetry_cli --> conformetry_validation
-  conformetry_cli --> logger
+  conformetry_cli --> logging
   conformetry_configuration --> conformetry_core
   conformetry_examples -.-> conformetry_cli
   conformetry_examples --> conformetry_configuration
@@ -320,7 +320,7 @@ graph LR
   conformetry_nx --> conformetry_generation
   conformetry_nx --> conformetry_output
   conformetry_nx --> conformetry_validation
-  conformetry_nx --> logger
+  conformetry_nx --> logging
   conformetry_output --> conformetry_core
   conformetry_output --> conformetry_languages
   conformetry_validation --> conformetry_configuration
@@ -328,13 +328,13 @@ graph LR
   conformetry_validation --> conformetry_languages
   lexico --> lexico_components
   lexico_api --> lexico_entities
-  lexico_api --> logger
+  lexico_api --> logging
   lexico_ingestion --> lexico_entities
-  lexico_ingestion --> logger
-  meanderaw --> logger
+  lexico_ingestion --> logging
+  meanderaw --> logging
   synchronization --> conformetry_configuration
-  synchronization --> logger
-  validation --> logger
+  synchronization --> logging
+  validation --> logging
 ```
 
 _Dashed edges are dependencies Nx inferred from configuration rather than from code._
@@ -775,7 +775,7 @@ graph LR
   module_lexico_ingestion_TypeOrmModule["lexico-ingestion/TypeOrmModule"]
   module_lexico_ingestion_WiktionaryModule["lexico-ingestion/WiktionaryModule"]
   module_lexico_ingestion_WordsModule["lexico-ingestion/WordsModule"]
-  module_logger_LoggerModule["logger/LoggerModule"]
+  module_logging_LoggerModule["logging/LoggerModule"]
   module_meanderaw_CharacteristicsModule["meanderaw/CharacteristicsModule"]
   module_meanderaw_ClassificationModule["meanderaw/ClassificationModule"]
   module_meanderaw_CodeModule["meanderaw/CodeModule"]
@@ -3626,22 +3626,22 @@ graph LR
   file_lexico_src_routes_word__id_tsx["lexico/src/routes/word.$id.tsx"]
   file_lexico_vite_config_mts["lexico/vite.config.mts"]
   file_lexico_vitest_config_ts["lexico/vitest.config.ts"]
-  file_logger_callidescope_config_ts["logger/callidescope.config.ts"]
-  file_logger_codependix_config_ts["logger/codependix.config.ts"]
-  file_logger_codometer_config_ts["logger/codometer.config.ts"]
-  file_logger_eslint_config_ts["logger/eslint.config.ts"]
-  file_logger_src_index_ts["logger/src/index.ts"]
-  file_logger_src_lib_conventional_log_message_eslint_rule_ts["logger/src/lib/conventional-log-message.eslint-rule.ts"]
-  file_logger_src_lib_conventional_log_message_eslint_rule_unit_test_ts["logger/src/lib/conventional-log-message.eslint-rule.unit.test.ts"]
-  file_logger_src_modules_logger_logger_constants_ts["logger/src/modules/logger/logger.constants.ts"]
-  file_logger_src_modules_logger_logger_module_ts["logger/src/modules/logger/logger.module.ts"]
-  file_logger_src_modules_logger_logger_module_unit_test_ts["logger/src/modules/logger/logger.module.unit.test.ts"]
-  file_logger_src_modules_logger_logger_service_ts["logger/src/modules/logger/logger.service.ts"]
-  file_logger_src_modules_logger_logger_service_unit_test_ts["logger/src/modules/logger/logger.service.unit.test.ts"]
-  file_logger_src_modules_logger_logger_types_ts["logger/src/modules/logger/logger.types.ts"]
-  file_logger_testing_mocks_ts["logger/testing/mocks.ts"]
-  file_logger_testing_setup_ts["logger/testing/setup.ts"]
-  file_logger_vitest_config_ts["logger/vitest.config.ts"]
+  file_logging_callidescope_config_ts["logging/callidescope.config.ts"]
+  file_logging_codependix_config_ts["logging/codependix.config.ts"]
+  file_logging_codometer_config_ts["logging/codometer.config.ts"]
+  file_logging_eslint_config_ts["logging/eslint.config.ts"]
+  file_logging_src_index_ts["logging/src/index.ts"]
+  file_logging_src_lib_conventional_log_message_eslint_rule_ts["logging/src/lib/conventional-log-message.eslint-rule.ts"]
+  file_logging_src_lib_conventional_log_message_eslint_rule_unit_test_ts["logging/src/lib/conventional-log-message.eslint-rule.unit.test.ts"]
+  file_logging_src_modules_logger_logger_constants_ts["logging/src/modules/logger/logger.constants.ts"]
+  file_logging_src_modules_logger_logger_module_ts["logging/src/modules/logger/logger.module.ts"]
+  file_logging_src_modules_logger_logger_module_unit_test_ts["logging/src/modules/logger/logger.module.unit.test.ts"]
+  file_logging_src_modules_logger_logger_service_ts["logging/src/modules/logger/logger.service.ts"]
+  file_logging_src_modules_logger_logger_service_unit_test_ts["logging/src/modules/logger/logger.service.unit.test.ts"]
+  file_logging_src_modules_logger_logger_types_ts["logging/src/modules/logger/logger.types.ts"]
+  file_logging_testing_mocks_ts["logging/testing/mocks.ts"]
+  file_logging_testing_setup_ts["logging/testing/setup.ts"]
+  file_logging_vitest_config_ts["logging/vitest.config.ts"]
   file_meanderaw_callidescope_config_ts["meanderaw/callidescope.config.ts"]
   file_meanderaw_codependix_config_ts["meanderaw/codependix.config.ts"]
   file_meanderaw_codometer_config_ts["meanderaw/codometer.config.ts"]
@@ -7954,14 +7954,14 @@ graph LR
   file_lexico_src_routes_word__id_tsx --> file_lexico_src_lib_search_ts
   file_lexico_src_routes_word__id_tsx --> file_lexico_src_lib_types_ts
   file_lexico_vitest_config_ts --> file_lexico_vite_config_mts
-  file_logger_src_lib_conventional_log_message_eslint_rule_ts --> file_logger_src_modules_logger_logger_constants_ts
-  file_logger_src_lib_conventional_log_message_eslint_rule_unit_test_ts --> file_logger_src_lib_conventional_log_message_eslint_rule_ts
-  file_logger_src_modules_logger_logger_module_ts --> file_logger_src_modules_logger_logger_service_ts
-  file_logger_src_modules_logger_logger_module_unit_test_ts --> file_logger_src_modules_logger_logger_module_ts
-  file_logger_src_modules_logger_logger_module_unit_test_ts --> file_logger_src_modules_logger_logger_service_ts
-  file_logger_src_modules_logger_logger_service_ts --> file_logger_src_modules_logger_logger_constants_ts
-  file_logger_src_modules_logger_logger_service_ts --> file_logger_src_modules_logger_logger_types_ts
-  file_logger_src_modules_logger_logger_service_unit_test_ts --> file_logger_src_modules_logger_logger_service_ts
+  file_logging_src_lib_conventional_log_message_eslint_rule_ts --> file_logging_src_modules_logger_logger_constants_ts
+  file_logging_src_lib_conventional_log_message_eslint_rule_unit_test_ts --> file_logging_src_lib_conventional_log_message_eslint_rule_ts
+  file_logging_src_modules_logger_logger_module_ts --> file_logging_src_modules_logger_logger_service_ts
+  file_logging_src_modules_logger_logger_module_unit_test_ts --> file_logging_src_modules_logger_logger_module_ts
+  file_logging_src_modules_logger_logger_module_unit_test_ts --> file_logging_src_modules_logger_logger_service_ts
+  file_logging_src_modules_logger_logger_service_ts --> file_logging_src_modules_logger_logger_constants_ts
+  file_logging_src_modules_logger_logger_service_ts --> file_logging_src_modules_logger_logger_types_ts
+  file_logging_src_modules_logger_logger_service_unit_test_ts --> file_logging_src_modules_logger_logger_service_ts
   file_meanderaw_src_constants_ts --> file_meanderaw_src_modules_enumeration_enumeration_constants_ts
   file_meanderaw_src_main_end_to_end_test_ts --> file_meanderaw_src_constants_ts
   file_meanderaw_src_main_module_ts --> file_meanderaw_src_constants_ts

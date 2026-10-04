@@ -879,12 +879,12 @@ graph LR
   codometer_examples["codometer-examples"]
   codometer_measurement["codometer-measurement"]
   codometer_output["codometer-output"]
-  logger["logger"]
+  logging["logging"]
   codometer_cli --> codometer_configuration
   codometer_cli --> codometer_core
   codometer_cli --> codometer_measurement
   codometer_cli --> codometer_output
-  codometer_cli --> logger
+  codometer_cli --> logging
   codometer_examples -.-> codometer_cli
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class codometer_cli subject

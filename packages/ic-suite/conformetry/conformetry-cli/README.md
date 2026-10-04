@@ -907,13 +907,13 @@ graph LR
   conformetry_generation["conformetry-generation"]
   conformetry_output["conformetry-output"]
   conformetry_validation["conformetry-validation"]
-  logger["logger"]
+  logging["logging"]
   conformetry_cli --> conformetry_configuration
   conformetry_cli --> conformetry_core
   conformetry_cli --> conformetry_generation
   conformetry_cli --> conformetry_output
   conformetry_cli --> conformetry_validation
-  conformetry_cli --> logger
+  conformetry_cli --> logging
   conformetry_examples -.-> conformetry_cli
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class conformetry_cli subject

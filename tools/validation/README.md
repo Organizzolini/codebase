@@ -407,9 +407,9 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 <!-- codependix:start name="codependix-nx-projects" -->
 ```mermaid
 graph LR
-  logger["logger"]
+  logging["logging"]
   validation["validation"]
-  validation --> logger
+  validation --> logging
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class validation subject
 ```

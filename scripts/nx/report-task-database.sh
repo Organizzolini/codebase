@@ -20,7 +20,7 @@ set -uo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/task-database.sh"
 
-probe_tasks="${PROBE_TASKS:-logger:typecheck logger:vitest codometer-core:typecheck}"
+probe_tasks="${PROBE_TASKS:-logging:typecheck logging:vitest codometer-core:typecheck}"
 
 datastore="$(list_task_databases | head -n 1)"
 if [[ -z "${datastore}" ]]; then

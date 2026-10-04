@@ -17,10 +17,10 @@ graph LR
   codependix_examples["codependix-examples"]
   codependix_nestjs_modules["codependix-nestjs-modules"]
   codependix_output["codependix-output"]
-  logger["logger"]
+  logging["logging"]
   codependix_boundaries --> codependix_nestjs_modules
   codependix_examples --> codependix_nestjs_modules
-  codependix_nestjs_modules --> logger
+  codependix_nestjs_modules --> logging
   codependix_output --> codependix_nestjs_modules
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class codependix_nestjs_modules subject

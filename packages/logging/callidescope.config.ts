@@ -1,7 +1,7 @@
 import { projectDefaults } from "../../configuration/callidescope.config.js";
 
 /**
- * What logger is held to, measured rather than assumed.
+ * What logging is held to, measured rather than assumed.
  *
  * Four frames, which is this package reaching its own transport. Every other
  * project's calls into it are excluded by the run — `excludeCallees` in

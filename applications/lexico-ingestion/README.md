@@ -835,9 +835,9 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 graph LR
   lexico_entities["lexico-entities"]
   lexico_ingestion["lexico-ingestion"]
-  logger["logger"]
+  logging["logging"]
   lexico_ingestion --> lexico_entities
-  lexico_ingestion --> logger
+  lexico_ingestion --> logging
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class lexico_ingestion subject
 ```
