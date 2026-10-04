@@ -44,7 +44,7 @@ jobs:
           nx-graph-cache: "false"
           nx-shas: "false"
           python-dependencies: "false"
-          uv: "false"
+          uv: "true"
 
       # The Copilot coding agent reads its skills from `.github/skills`, which
       # symlinks the installed set. Restoring from `skills-lock.json` gives the

@@ -32,9 +32,19 @@ discard_task_database() {
 
 # Prints the most recently modified of the given databases. `actions/cache`
 # preserves modification times, so after a restore this is the one the last
-# job wrote.
+# job wrote. Compared with the shell's own `-nt` rather than parsed out of
+# `ls -t`, so no file name can be misread.
 newest_task_database() {
-  ls -t "$@" | head -n 1
+  local newest="$1"
+  shift
+
+  local datastore
+  for datastore in "$@"; do
+    if [[ "${datastore}" -nt "${newest}" ]]; then
+      newest="${datastore}"
+    fi
+  done
+  printf '%s\n' "${newest}"
 }
 
 # Discards every given database except the first argument.

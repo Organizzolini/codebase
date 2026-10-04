@@ -21,9 +21,9 @@
 # both simpler and the same number of sessions.
 
 SCRIPT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPOSITORY_ROOT="$(cd "$SCRIPT_DIRECTORY/../.." && pwd)"
+REPOSITORY_ROOT="$(cd "${SCRIPT_DIRECTORY}/../.." && pwd)"
 
-[ -f "$REPOSITORY_ROOT/skills-lock.json" ] || exit 0
+[[ -f "${REPOSITORY_ROOT}/skills-lock.json" ]] || exit 0
 
 # ✅ Validation
 
@@ -37,9 +37,9 @@ const absent = Object.keys(skills).filter(
   (name) => !fs.existsSync(root + "/.agents/skills/" + name + "/SKILL.md"),
 );
 process.stdout.write(absent.join(", "));
-' "$REPOSITORY_ROOT" 2>/dev/null)
+' "${REPOSITORY_ROOT}" 2>/dev/null)
 
-[ -z "$MISSING" ] && exit 0
+[[ -z "${MISSING}" ]] && exit 0
 
 # 📋 Context
 
@@ -56,10 +56,10 @@ else
 3. Re-run \"bash scripts/git/validate-session-skills.sh\" to confirm."
 fi
 
-CONTEXT="⚠️  Skills declared in skills-lock.json are not installed: $MISSING
+CONTEXT="⚠️  Skills declared in skills-lock.json are not installed: ${MISSING}
 🚨 The agent workflow in AGENTS.md links to these skills. Until they are restored those links dangle, and user-invoked skills such as \"/grill-with-docs\" are unavailable.
 
 Action required:
-$REMEDIATION"
+${REMEDIATION}"
 
-printf '%s' "$CONTEXT" | bash "$SCRIPT_DIRECTORY/emit-session-hook-context.sh"
+printf '%s' "${CONTEXT}" | bash "${SCRIPT_DIRECTORY}/emit-session-hook-context.sh"

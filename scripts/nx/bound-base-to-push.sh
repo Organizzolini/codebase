@@ -7,8 +7,8 @@
 # turn, and widens the one after: 19 of 40 main runs covered the whole
 # workspace. Continuous Integration does not need that retry, because each
 # commit reaching main already passed the merge queue against main's tip, so it
-# asks for the push's own previous tip. Continuous Deployment keeps the
-# default, so a failed build is rebuilt by the next deploy.
+# asks for the push's own previous tip. Continuous Deployment needs no retry
+# either: its release job builds every project, affected or not.
 #
 # `NX_BASE` is kept when there is no previous tip (an empty or all-zero
 # `BEFORE`, as on a new branch) or when `BEFORE` is not an ancestor of

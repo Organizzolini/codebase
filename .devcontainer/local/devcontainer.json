@@ -291,6 +291,7 @@
     "OLLAMA_HOST": "http://host.docker.internal:11434",
     "SEARXNG_HOST": "http://searxng:8080",
     "TRIVY_VERSION": "0.74.0",
+    "UV_VERSION": "0.12.3",
     "UV_THREADPOOL_SIZE": "4",
     "VSCODE_EXTENSION_HOST_WORKER_CONCURRENCY": "4"
   },

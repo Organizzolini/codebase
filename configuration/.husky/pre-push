@@ -1,8 +1,11 @@
+# shellcheck shell=sh
+# Husky runs hooks with sh, so there is no shebang.
+
 set -e
 
 # ⏱️ Log timestamp
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S %z')
-printf '[%s] pre-push\n' "$TIMESTAMP"
+printf '[%s] pre-push\n' "${TIMESTAMP}"
 
 # 🪾 Validate branch name
 # Invoked directly rather than through `nx run codebase:validate-branch-name`.
@@ -13,4 +16,4 @@ validate-branch-name
 
 # 🔐 Check GPG git signing configuration
 REPOSITORY_ROOT="$(git rev-parse --show-toplevel)"
-"$REPOSITORY_ROOT/scripts/git/check-push-commit-signatures.sh"
+"${REPOSITORY_ROOT}/scripts/git/check-push-commit-signatures.sh"

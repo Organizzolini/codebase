@@ -12,11 +12,11 @@ SCRIPT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # ✅ Validation
 
 if [[ -n "${GITHUB_ACTIONS:-}" || -n "${CI:-}" ]]; then
-	ERROR=$(SKIP_GPG_SIGNING_SMOKE_TEST=true bash "$SCRIPT_DIRECTORY/check-commit-signing-configuration.sh" 2>&1 || true)
+	ERROR=$(SKIP_GPG_SIGNING_SMOKE_TEST=true bash "${SCRIPT_DIRECTORY}/check-commit-signing-configuration.sh" 2>&1 || true)
 else
-	ERROR=$(bash "$SCRIPT_DIRECTORY/check-commit-signing-configuration.sh" 2>&1 || true)
+	ERROR=$(bash "${SCRIPT_DIRECTORY}/check-commit-signing-configuration.sh" 2>&1 || true)
 fi
-[ -z "$ERROR" ] && exit 0
+[[ -z "${ERROR}" ]] && exit 0
 
 # 📋 Context
 
@@ -38,10 +38,10 @@ else
 6. If signatures still are not verified, add the matching public key to GitHub: Settings -> SSH and GPG keys."
 fi
 
-CONTEXT="$ERROR
+CONTEXT="${ERROR}
 🚨 Git commit signing is required in this repository.
 
 Action required:
-$REMEDIATION"
+${REMEDIATION}"
 
-printf '%s' "$CONTEXT" | bash "$SCRIPT_DIRECTORY/emit-session-hook-context.sh"
+printf '%s' "${CONTEXT}" | bash "${SCRIPT_DIRECTORY}/emit-session-hook-context.sh"

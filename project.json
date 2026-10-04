@@ -44,7 +44,6 @@
       "!{projectRoot}/.agents/skills/receiving-code-review/**",
       "!{projectRoot}/.agents/skills/requesting-code-review/**",
       "!{projectRoot}/.agents/skills/research/**",
-      "!{projectRoot}/.agents/skills/resolving-merge-conflicts/**",
       "!{projectRoot}/.agents/skills/setup-matt-pocock-skills/**",
       "!{projectRoot}/.agents/skills/subagent-driven-development/**",
       "!{projectRoot}/.agents/skills/systematic-debugging/**",
@@ -729,6 +728,25 @@
       "options": {
         "command": "pnpm exec nx affected --target=secure-code --parallel=4 && if [ \"$GITHUB_EVENT_NAME\" = \"schedule\" ] || [ \"$GITHUB_EVENT_NAME\" = \"workflow_dispatch\" ]; then pnpm exec nx run codebase:gitleaks:ci; else pnpm exec nx run codebase:gitleaks:ci-incremental; fi",
         "cwd": "{projectRoot}"
+      }
+    },
+    "shellcheck": {
+      "cache": true,
+      "description": "Lint the workspace's own shell: every script under scripts/ and .devcontainer/, and the three husky hooks, which carry no extension and so are named one by one. The file list comes from `git ls-files`, whose `*` crosses directories, so a new script is linted without editing this target. Two shell files stay out on purpose: notepads/notepad.sh is a scratch list of commands rather than a script, and the codometer-examples corpus is a measurement fixture whose content its tests count. The installed skills under .agents/ are owned upstream and stay out too. configuration/.shellcheckrc is passed explicitly, since shellcheck only searches each script's own directory and its parents, and the minimum severity is set here because an rc file cannot set it: `style` is the lowest, so nothing is filtered out. pyproject.toml and uv.lock are inputs because they pin shellcheck itself: without them, an upgrade replays a cached pass and stops linting. Defined here rather than in nx.json targetDefaults because no other project owns shell scripts.",
+      "executor": "nx:run-commands",
+      "inputs": [
+        "{workspaceRoot}/.devcontainer/**/*.sh",
+        "{workspaceRoot}/configuration/.husky/commit-msg",
+        "{workspaceRoot}/configuration/.husky/pre-commit",
+        "{workspaceRoot}/configuration/.husky/pre-push",
+        "{workspaceRoot}/configuration/.shellcheckrc",
+        "{workspaceRoot}/pyproject.toml",
+        "{workspaceRoot}/scripts/**/*.sh",
+        "{workspaceRoot}/uv.lock"
+      ],
+      "options": {
+        "command": "uv run shellcheck --rcfile configuration/.shellcheckrc --severity=style $(git ls-files -- '.devcontainer/*.sh' 'scripts/*.sh' configuration/.husky/commit-msg configuration/.husky/pre-commit configuration/.husky/pre-push)",
+        "cwd": "{workspaceRoot}"
       }
     },
     "sherif": {

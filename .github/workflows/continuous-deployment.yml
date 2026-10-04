@@ -5,11 +5,6 @@ on:
     branches:
       - main
   workflow_dispatch:
-    inputs:
-      verbose:
-        description: Enable verbose Nx logging
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -32,10 +27,6 @@ jobs:
       fail-fast: false
       matrix:
         target:
-          - id: build-projects
-            name: Projects
-            emoji: 👷
-            timeout: 12
           - id: build-devcontainer
             name: Devcontainer
             emoji: 🧑‍🏭
@@ -92,35 +83,6 @@ jobs:
           fi
 
           echo "skip=false" >> "$GITHUB_OUTPUT"
-
-      # Projects Build Steps
-      - name: 🕋 Setup Codebase
-        id: setup
-        if: >-
-          steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'build-projects'
-        uses: ./.github/actions/setup-codebase
-        with:
-          python-dependencies: "false"
-
-      - name: 👷 Build Projects
-        if: >-
-          steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'build-projects'
-        env:
-          NX_VERBOSE_LOGGING: ${{ inputs.verbose || false }}
-        uses: ./.github/actions/run-affected
-        with:
-          target: build-projects
-
-      - name: 🧹 Cleanup Codebase
-        if: >-
-          always() &&
-          steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'build-projects'
-        uses: ./.github/actions/cleanup-codebase
-        with:
-          nx-cache-primary-key: ${{ steps.setup.outputs.nx-cache-primary-key }}
 
       # Devcontainer Build & Publish Steps
       - name: 🗂️ Setup Environment File
@@ -188,6 +150,7 @@ jobs:
 
       # Release Steps
       - name: 🕋 Setup Codebase for Release
+        id: setup
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
           matrix.target.id == 'push-releases'
@@ -280,3 +243,14 @@ jobs:
           pnpm exec nx release version --git-commit --git-tag --git-push
           pnpm exec nx release publish --registry=https://registry.npmjs.org
           pnpm semantic-release
+
+      # The only save of this workflow's Nx cache, which the next release
+      # restores. Every project is built above, so it covers the whole graph.
+      - name: 🧹 Cleanup Codebase
+        if: >-
+          always() &&
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases'
+        uses: ./.github/actions/cleanup-codebase
+        with:
+          nx-cache-primary-key: ${{ steps.setup.outputs.nx-cache-primary-key }}
