@@ -13,7 +13,6 @@ import {
 import { meanderRecord } from "../../../testing/meanders";
 import { HISTORICAL_CORPUS } from "../corpus/historical-corpus.constants";
 
-import { DrawCheckService } from "./draw-check.service";
 import { DrawCodeService } from "./draw-code.service";
 
 vi.mock("node:fs/promises", () => ({
@@ -21,11 +20,10 @@ vi.mock("node:fs/promises", () => ({
   writeFile: vi.fn<(path: string, data: string) => Promise<void>>(),
 }));
 
-/** Compiles a fresh sweep with `--check`, `--code`, and logging mocked out. */
+/** Compiles a fresh sweep with `--code` and logging mocked out. */
 async function compileSweep(): Promise<SweepFixture> {
   const module = await Test.createTestingModule(
     sweepModuleMetadata([
-      { provide: DrawCheckService, useValue: createMock<DrawCheckService>() },
       { provide: DrawCodeService, useValue: createMock<DrawCodeService>() },
       { provide: LoggerService, useValue: createMock<LoggerService>() },
     ]),
@@ -70,19 +68,16 @@ describe("drawCommand sweep mode", () => {
 
         await sweep.repository.save(
           meanderRecord({
-            bettiNumber0Count: 1,
+            characteristics: { bettiNumber0Count: 1, freeEndCount: 2 },
             code: `${String(duplicated.columns).padStart(2, "0")}x${String(duplicated.rows).padStart(2, "0")}y${duplicated.code}`,
             columns: duplicated.columns,
-            freeEndCount: 2,
+            isHardcoded: false,
             lattice: duplicated.code,
-            provenance: "enumerated",
             rows: duplicated.rows,
           }),
         );
 
-        await expect(
-          sweep.command.run([], { write: true }),
-        ).resolves.not.toThrow();
+        await expect(sweep.command.run([], {})).resolves.not.toThrow();
       },
       SWEEP_TIMEOUT_MILLISECONDS,
     );

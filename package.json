@@ -111,7 +111,7 @@
   },
   "repository": "Organizzolini/codebase.git",
   "scripts": {
-    "postinstall": "conformetry-nx-bootstrap && bash scripts/install-skills.sh",
+    "postinstall": "conformetry-nx-bootstrap-generators && bash scripts/install-skills.sh",
     "prepare": "husky configuration/.husky",
     "semantic-release": "semantic-release",
     "semantic-release:dry-run": "semantic-release --dry-run"

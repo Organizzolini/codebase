@@ -4,10 +4,7 @@ import { DataSource, Like, type Repository } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { meanderRecord } from "../../../testing/meanders";
-import {
-  COLUMN_CHARACTERISTIC_KEYS,
-  NUMERIC_CHARACTERISTIC_KEYS,
-} from "../characteristics/characteristics.constants";
+import { CHARACTERISTIC_KEYS } from "../characteristics/characteristics.constants";
 
 import { MEANDER_INSERT_CHUNK_SIZE } from "./database.constants";
 import { DatabaseService } from "./database.service";
@@ -79,13 +76,15 @@ describe(DatabaseService, () => {
     it("persists a meander row with every field it was given", async () => {
       const saved = await service.save(
         meanderRecord({
-          bettiNumber0Count: 1,
-          characteristics: ["zigzag"],
+          characteristics: {
+            bettiNumber0Count: 1,
+            density: 0.5,
+            forkCount: 1,
+            isSnake: true,
+          },
           code: "3c9a",
           columns: 2,
-          density: 0.5,
           family: "snake",
-          forkCount: 1,
           lattice: "3c9a",
           rows: 3,
         }),
@@ -95,13 +94,15 @@ describe(DatabaseService, () => {
 
       expect(row).toMatchObject({
         ...meanderRecord({
-          bettiNumber0Count: 1,
-          characteristics: ["zigzag"],
+          characteristics: {
+            bettiNumber0Count: 1,
+            density: 0.5,
+            forkCount: 1,
+            isSnake: true,
+          },
           code: "3c9a",
           columns: 2,
-          density: 0.5,
           family: "snake",
-          forkCount: 1,
           lattice: "3c9a",
           rows: 3,
         }),
@@ -125,25 +126,8 @@ describe(DatabaseService, () => {
     });
   });
 
-  describe("characteristic numeric columns", () => {
-    it("is queryable by a numeric Characteristic column, per spec #813's acceptance criteria", async () => {
-      await service.save(
-        meanderRecord({ code: "crossing-row", crossCount: 1 }),
-      );
-      await service.save(
-        meanderRecord({ bettiNumber0Count: 2, code: "plain-row" }),
-      );
-
-      const crossingRows = await repository.findBy({ crossCount: 1 });
-
-      expect(crossingRows.map((row) => row.code)).toStrictEqual([
-        "crossing-row",
-      ]);
-    });
-  });
-
-  describe("glyphs", () => {
-    it("stores every numeric characteristic but a letter under a column of its own, and no letter in one", () => {
+  describe("characteristics", () => {
+    it("stores no Characteristic under a column of its own, only in the one characteristics map", () => {
       const columns = new Set(
         dataSource
           .getMetadata(Meander)
@@ -151,86 +135,126 @@ describe(DatabaseService, () => {
       );
 
       expect(
-        NUMERIC_CHARACTERISTIC_KEYS.filter((key) => columns.has(key)),
-      ).toStrictEqual([...COLUMN_CHARACTERISTIC_KEYS]);
-      expect(columns.has("glyphs")).toBe(true);
+        CHARACTERISTIC_KEYS.filter((key) => columns.has(key)),
+      ).toStrictEqual([]);
+      expect(columns.has("characteristics")).toBe(true);
     });
 
-    it("round-trips a meander's letter counts through save and a lattice lookup", async () => {
+    it("round-trips a meander's numbers, letter counts, and true booleans through save and a lattice lookup", async () => {
       await service.save(
         meanderRecord({
-          code: "glyph-round-trip",
-          glyphs: { aSoutheastLatinCount: 2, yuSoutheastHangulCount: 1 },
-          lattice: "glyph-round-trip",
+          characteristics: {
+            aSoutheastLatinCount: 2,
+            crossCount: 1,
+            density: 0.25,
+            isReducible: true,
+            isSnake: true,
+            yuSoutheastHangulCount: 1,
+          },
+          code: "map-round-trip",
+          lattice: "map-round-trip",
         }),
       );
 
-      const found = await service.findOneByLattice("glyph-round-trip", 2, 1);
+      const found = await service.findOneByLattice("map-round-trip", 2, 1);
 
-      expect(found?.glyphs).toStrictEqual({
+      expect(found?.characteristics).toStrictEqual({
         aSoutheastLatinCount: 2,
+        crossCount: 1,
+        density: 0.25,
+        isReducible: true,
+        isSnake: true,
         yuSoutheastHangulCount: 1,
       });
     });
 
-    it("round-trips an empty glyph map as empty", async () => {
+    it("round-trips an empty map as empty", async () => {
       await service.save(
-        meanderRecord({ code: "glyph-empty", lattice: "glyph-empty" }),
+        meanderRecord({ code: "map-empty", lattice: "map-empty" }),
       );
 
-      const found = await service.findOneByLattice("glyph-empty", 2, 1);
+      const found = await service.findOneByLattice("map-empty", 2, 1);
 
-      expect(found?.glyphs).toStrictEqual({});
+      expect(found?.characteristics).toStrictEqual({});
     });
 
-    it("round-trips letter counts written in chunks, every row keeping its own", async () => {
+    it("round-trips maps written in chunks, every row keeping its own", async () => {
       const records = Array.from(
         { length: MEANDER_INSERT_CHUNK_SIZE + 1 },
         (_row, index) =>
           meanderRecord({
-            code: `glyph-chunk-${index}`,
-            glyphs: { oSoutheastLatinCount: index + 1 },
-            lattice: `glyph-chunk-${index}`,
+            characteristics: { oSoutheastLatinCount: index + 1 },
+            code: `map-chunk-${index}`,
+            lattice: `map-chunk-${index}`,
           }),
       );
 
       await service.saveAll(records);
-      const rows = await repository.findBy({ code: Like("glyph-chunk-%") });
+      const rows = await repository.findBy({ code: Like("map-chunk-%") });
 
       expect(
         rows.every(
           (row) =>
-            row.glyphs.oSoutheastLatinCount ===
+            row.characteristics.oSoutheastLatinCount ===
             Number(row.lattice.split("-")[2]) + 1,
         ),
       ).toBe(true);
       expect(rows).toHaveLength(records.length);
     });
 
-    it("is queryable by one letter's count, which a missing letter never matches", async () => {
+    it("is queryable by one numeric Characteristic, per spec #813's acceptance criteria, which a missing key never matches", async () => {
       await service.save(
         meanderRecord({
-          code: "glyph-query-hit",
-          glyphs: { tSoutheastLatinCount: 3 },
-          lattice: "glyph-query-hit",
+          characteristics: { northForkCount: 1 },
+          code: "map-query-hit",
+          lattice: "map-query-hit",
         }),
       );
       await service.save(
         meanderRecord({
-          code: "glyph-query-miss",
-          glyphs: { uSoutheastLatinCount: 1 },
-          lattice: "glyph-query-miss",
+          characteristics: { bettiNumber0Count: 2 },
+          code: "map-query-miss",
+          lattice: "map-query-miss",
         }),
       );
 
       const hits = await repository
         .createQueryBuilder("meander")
-        .where("json_extract(meander.glyphs, :path) > 0", {
-          path: "$.tSoutheastLatinCount",
+        .where("json_extract(meander.characteristics, :path) > 0", {
+          path: "$.northForkCount",
         })
         .getMany();
 
-      expect(hits.map((row) => row.code)).toStrictEqual(["glyph-query-hit"]);
+      expect(hits.map((row) => row.code)).toStrictEqual(["map-query-hit"]);
+    });
+
+    it("reads a missing key as zero only through COALESCE", async () => {
+      await service.save(
+        meanderRecord({
+          characteristics: { isDots: true },
+          code: "map-coalesce",
+          lattice: "map-coalesce",
+        }),
+      );
+
+      const bare = await repository
+        .createQueryBuilder("meander")
+        .where("meander.code = :code", { code: "map-coalesce" })
+        .andWhere("json_extract(meander.characteristics, :path) = 0", {
+          path: "$.crossCount",
+        })
+        .getMany();
+      const coalesced = await repository
+        .createQueryBuilder("meander")
+        .where("meander.code = :code", { code: "map-coalesce" })
+        .andWhere(
+          "COALESCE(json_extract(meander.characteristics, :path), 0) = 0",
+          { path: "$.crossCount" },
+        )
+        .getMany();
+
+      expect(bare).toStrictEqual([]);
+      expect(coalesced.map((row) => row.code)).toStrictEqual(["map-coalesce"]);
     });
   });
 
@@ -253,7 +277,7 @@ describe(DatabaseService, () => {
     it("persists a trusted family and subFamily alongside a row", async () => {
       const saved = await service.save(
         meanderRecord({
-          characteristics: ["dots"],
+          characteristics: { isDots: true },
           code: "trusted-row",
           family: "boxes",
         }),
@@ -262,7 +286,7 @@ describe(DatabaseService, () => {
       const row = await repository.findOneByOrFail({ id: saved.id });
 
       expect(row).toMatchObject({
-        characteristics: ["dots"],
+        characteristics: { isDots: true },
         family: "boxes",
       });
     });
@@ -275,7 +299,7 @@ describe(DatabaseService, () => {
       const row = await repository.findOneByOrFail({ id: saved.id });
 
       expect(row.family).toBe("unclassified");
-      expect(row.characteristics).toStrictEqual([]);
+      expect(row.characteristics).toStrictEqual({});
     });
   });
 

@@ -119,7 +119,7 @@ A modern TypeScript codebase with Nx, featuring automated releases, comprehensiv
 </details>
 
 **🪵 [logger](packages/logging)** - Shared pino-backed NestJS `LoggerService` and `LoggerModule`\
-**🏺 [meanderaw](applications/meanderaw)** - CLI that generates Greek meander (key/fret) SVG patterns programmatically from a type, row count, and repeat count
+**🏺 [meanderaw](applications/meanderaw)** - CLI that enumerates Greek meander (key/fret) patterns into a committed SQLite database, measuring and classifying each by its Code
 
 **[JimmyPaolini](applications/JimmyPaolini)** - GitHub profile site\
 **↔️ [synchronization](tools/synchronization)** - NestJS CLI that regenerates the workspace's derived configuration and documentation, and fails CI when they drift\
@@ -735,6 +735,17 @@ graph LR
   module_conformetry_validation_TextModule["conformetry-validation/TextModule"]
   module_conformetry_validation_TypescriptModule["conformetry-validation/TypescriptModule"]
   module_conformetry_validation_ValidationModule["conformetry-validation/ValidationModule"]
+  module_lexico_api_DatabaseModule["lexico-api/DatabaseModule"]
+  module_lexico_api_GraphQLModule["lexico-api/GraphQLModule"]
+  module_lexico_api_GraphQLSchemaBuilderModule["lexico-api/GraphQLSchemaBuilderModule"]
+  module_lexico_api_HealthModule["lexico-api/HealthModule"]
+  module_lexico_api_LexemesModule["lexico-api/LexemesModule"]
+  module_lexico_api_LexicoApiModule["lexico-api/LexicoApiModule"]
+  module_lexico_api_LiteratureModule["lexico-api/LiteratureModule"]
+  module_lexico_api_LoggerModule["lexico-api/LoggerModule"]
+  module_lexico_api_SearchModule["lexico-api/SearchModule"]
+  module_lexico_api_TypeOrmModule["lexico-api/TypeOrmModule"]
+  module_lexico_api_WordsModule["lexico-api/WordsModule"]
   module_lexico_entities_DatabaseModule["lexico-entities/DatabaseModule"]
   module_lexico_entities_EntitiesModule["lexico-entities/EntitiesModule"]
   module_lexico_entities_TypeOrmModule["lexico-entities/TypeOrmModule"]
@@ -1439,6 +1450,19 @@ graph LR
   module_conformetry_validation_ValidationModule --> module_conformetry_validation_LanguagesModule
   module_conformetry_validation_ValidationModule --> module_conformetry_validation_RunnerModule
   module_conformetry_validation_ValidationModule --> module_conformetry_validation_ScoringModule
+  module_lexico_api_DatabaseModule --> module_lexico_api_TypeOrmModule
+  module_lexico_api_GraphQLModule --> module_lexico_api_GraphQLSchemaBuilderModule
+  module_lexico_api_LexemesModule --> module_lexico_api_TypeOrmModule
+  module_lexico_api_LexicoApiModule --> module_lexico_api_DatabaseModule
+  module_lexico_api_LexicoApiModule --> module_lexico_api_GraphQLModule
+  module_lexico_api_LexicoApiModule --> module_lexico_api_HealthModule
+  module_lexico_api_LexicoApiModule --> module_lexico_api_LexemesModule
+  module_lexico_api_LexicoApiModule --> module_lexico_api_LiteratureModule
+  module_lexico_api_LexicoApiModule --> module_lexico_api_SearchModule
+  module_lexico_api_LexicoApiModule --> module_lexico_api_WordsModule
+  module_lexico_api_LiteratureModule --> module_lexico_api_TypeOrmModule
+  module_lexico_api_SearchModule --> module_lexico_api_TypeOrmModule
+  module_lexico_api_WordsModule --> module_lexico_api_TypeOrmModule
   module_lexico_entities_DatabaseModule --> module_lexico_entities_TypeOrmModule
   module_lexico_ingestion_ClearModule --> module_lexico_ingestion_DatabaseModule
   module_lexico_ingestion_ClearModule --> module_lexico_ingestion_TypeOrmModule
@@ -1511,7 +1535,6 @@ graph LR
   module_meanderaw_CorpusModule --> module_meanderaw_ClassificationModule
   module_meanderaw_CorpusModule --> module_meanderaw_CodeModule
   module_meanderaw_CorpusModule --> module_meanderaw_DatabaseModule
-  module_meanderaw_CorpusModule --> module_meanderaw_DrawingModule
   module_meanderaw_CorpusModule --> module_meanderaw_EnumerationModule
   module_meanderaw_CrossCharacteristicsModule --> module_meanderaw_SubmatrixUtilitiesModule
   module_meanderaw_DatabaseModule --> module_meanderaw_TypeOrmModule
@@ -3195,6 +3218,7 @@ graph LR
   file_lexico_api_codometer_config_ts["lexico-api/codometer.config.ts"]
   file_lexico_api_eslint_config_ts["lexico-api/eslint.config.ts"]
   file_lexico_api_src_lexico_api_constants_ts["lexico-api/src/lexico-api.constants.ts"]
+  file_lexico_api_src_lexico_api_constants_unit_test_ts["lexico-api/src/lexico-api.constants.unit.test.ts"]
   file_lexico_api_src_lexico_api_end_to_end_test_ts["lexico-api/src/lexico-api.end-to-end.test.ts"]
   file_lexico_api_src_lexico_api_entities_ts["lexico-api/src/lexico-api.entities.ts"]
   file_lexico_api_src_lexico_api_module_ts["lexico-api/src/lexico-api.module.ts"]
@@ -3204,14 +3228,17 @@ graph LR
   file_lexico_api_src_lexico_api_unit_test_ts["lexico-api/src/lexico-api.unit.test.ts"]
   file_lexico_api_src_lexico_api_utilities_ts["lexico-api/src/lexico-api.utilities.ts"]
   file_lexico_api_src_lexico_api_utilities_unit_test_ts["lexico-api/src/lexico-api.utilities.unit.test.ts"]
+  file_lexico_api_src_modules_health_health_constants_ts["lexico-api/src/modules/health/health.constants.ts"]
   file_lexico_api_src_modules_health_health_module_ts["lexico-api/src/modules/health/health.module.ts"]
   file_lexico_api_src_modules_health_health_module_unit_test_ts["lexico-api/src/modules/health/health.module.unit.test.ts"]
   file_lexico_api_src_modules_health_health_resolver_ts["lexico-api/src/modules/health/health.resolver.ts"]
   file_lexico_api_src_modules_health_health_resolver_unit_test_ts["lexico-api/src/modules/health/health.resolver.unit.test.ts"]
   file_lexico_api_src_modules_health_health_service_ts["lexico-api/src/modules/health/health.service.ts"]
   file_lexico_api_src_modules_health_health_service_unit_test_ts["lexico-api/src/modules/health/health.service.unit.test.ts"]
+  file_lexico_api_src_modules_health_health_types_ts["lexico-api/src/modules/health/health.types.ts"]
   file_lexico_api_src_modules_lexemes_lexeme_arguments_entities_ts["lexico-api/src/modules/lexemes/lexeme-arguments.entities.ts"]
   file_lexico_api_src_modules_lexemes_lexemes_arguments_entities_ts["lexico-api/src/modules/lexemes/lexemes-arguments.entities.ts"]
+  file_lexico_api_src_modules_lexemes_lexemes_constants_ts["lexico-api/src/modules/lexemes/lexemes.constants.ts"]
   file_lexico_api_src_modules_lexemes_lexemes_module_ts["lexico-api/src/modules/lexemes/lexemes.module.ts"]
   file_lexico_api_src_modules_lexemes_lexemes_module_unit_test_ts["lexico-api/src/modules/lexemes/lexemes.module.unit.test.ts"]
   file_lexico_api_src_modules_lexemes_lexemes_resolver_ts["lexico-api/src/modules/lexemes/lexemes.resolver.ts"]
@@ -3219,6 +3246,7 @@ graph LR
   file_lexico_api_src_modules_lexemes_lexemes_service_integration_test_ts["lexico-api/src/modules/lexemes/lexemes.service.integration.test.ts"]
   file_lexico_api_src_modules_lexemes_lexemes_service_ts["lexico-api/src/modules/lexemes/lexemes.service.ts"]
   file_lexico_api_src_modules_lexemes_lexemes_service_unit_test_ts["lexico-api/src/modules/lexemes/lexemes.service.unit.test.ts"]
+  file_lexico_api_src_modules_lexemes_lexemes_types_ts["lexico-api/src/modules/lexemes/lexemes.types.ts"]
   file_lexico_api_src_modules_literature_author_argument_entities_ts["lexico-api/src/modules/literature/author-argument.entities.ts"]
   file_lexico_api_src_modules_literature_author_lookup_input_entities_ts["lexico-api/src/modules/literature/author-lookup-input.entities.ts"]
   file_lexico_api_src_modules_literature_authors_resolver_ts["lexico-api/src/modules/literature/authors.resolver.ts"]
@@ -3226,14 +3254,17 @@ graph LR
   file_lexico_api_src_modules_literature_line_arguments_entities_ts["lexico-api/src/modules/literature/line-arguments.entities.ts"]
   file_lexico_api_src_modules_literature_lines_range_input_entities_ts["lexico-api/src/modules/literature/lines-range-input.entities.ts"]
   file_lexico_api_src_modules_literature_lines_resolver_ts["lexico-api/src/modules/literature/lines.resolver.ts"]
+  file_lexico_api_src_modules_literature_lines_resolver_unit_test_ts["lexico-api/src/modules/literature/lines.resolver.unit.test.ts"]
   file_lexico_api_src_modules_literature_literature_arguments_entities_unit_test_ts["lexico-api/src/modules/literature/literature-arguments.entities.unit.test.ts"]
   file_lexico_api_src_modules_literature_literature_connection_entities_ts["lexico-api/src/modules/literature/literature-connection.entities.ts"]
   file_lexico_api_src_modules_literature_literature_search_result_entities_ts["lexico-api/src/modules/literature/literature-search-result.entities.ts"]
+  file_lexico_api_src_modules_literature_literature_constants_ts["lexico-api/src/modules/literature/literature.constants.ts"]
   file_lexico_api_src_modules_literature_literature_module_ts["lexico-api/src/modules/literature/literature.module.ts"]
   file_lexico_api_src_modules_literature_literature_resolver_ts["lexico-api/src/modules/literature/literature.resolver.ts"]
   file_lexico_api_src_modules_literature_literature_resolver_unit_test_ts["lexico-api/src/modules/literature/literature.resolver.unit.test.ts"]
   file_lexico_api_src_modules_literature_literature_service_ts["lexico-api/src/modules/literature/literature.service.ts"]
   file_lexico_api_src_modules_literature_literature_service_unit_test_ts["lexico-api/src/modules/literature/literature.service.unit.test.ts"]
+  file_lexico_api_src_modules_literature_literature_types_ts["lexico-api/src/modules/literature/literature.types.ts"]
   file_lexico_api_src_modules_literature_search_authors_arguments_entities_ts["lexico-api/src/modules/literature/search-authors-arguments.entities.ts"]
   file_lexico_api_src_modules_literature_search_lines_arguments_entities_ts["lexico-api/src/modules/literature/search-lines-arguments.entities.ts"]
   file_lexico_api_src_modules_literature_search_literature_arguments_entities_ts["lexico-api/src/modules/literature/search-literature-arguments.entities.ts"]
@@ -3243,10 +3274,11 @@ graph LR
   file_lexico_api_src_modules_literature_texts_arguments_entities_ts["lexico-api/src/modules/literature/texts-arguments.entities.ts"]
   file_lexico_api_src_modules_literature_texts_resolver_ts["lexico-api/src/modules/literature/texts.resolver.ts"]
   file_lexico_api_src_modules_literature_texts_resolver_unit_test_ts["lexico-api/src/modules/literature/texts.resolver.unit.test.ts"]
-  file_lexico_api_src_modules_literature_token_word_loader_service_ts["lexico-api/src/modules/literature/token-word-loader.service.ts"]
-  file_lexico_api_src_modules_literature_token_word_loader_service_unit_test_ts["lexico-api/src/modules/literature/token-word-loader.service.unit.test.ts"]
+  file_lexico_api_src_modules_literature_token_word_loader_ts["lexico-api/src/modules/literature/token-word.loader.ts"]
+  file_lexico_api_src_modules_literature_token_word_loader_unit_test_ts["lexico-api/src/modules/literature/token-word.loader.unit.test.ts"]
   file_lexico_api_src_modules_literature_tokens_arguments_entities_ts["lexico-api/src/modules/literature/tokens-arguments.entities.ts"]
   file_lexico_api_src_modules_literature_tokens_resolver_ts["lexico-api/src/modules/literature/tokens.resolver.ts"]
+  file_lexico_api_src_modules_literature_tokens_resolver_unit_test_ts["lexico-api/src/modules/literature/tokens.resolver.unit.test.ts"]
   file_lexico_api_src_modules_search_pagination_arguments_entities_ts["lexico-api/src/modules/search/pagination-arguments.entities.ts"]
   file_lexico_api_src_modules_search_pagination_arguments_entities_unit_test_ts["lexico-api/src/modules/search/pagination-arguments.entities.unit.test.ts"]
   file_lexico_api_src_modules_search_search_english_arguments_entities_ts["lexico-api/src/modules/search/search-english-arguments.entities.ts"]
@@ -3266,11 +3298,13 @@ graph LR
   file_lexico_api_src_modules_search_search_utilities_unit_test_ts["lexico-api/src/modules/search/search.utilities.unit.test.ts"]
   file_lexico_api_src_modules_words_word_arguments_entities_ts["lexico-api/src/modules/words/word-arguments.entities.ts"]
   file_lexico_api_src_modules_words_words_arguments_entities_ts["lexico-api/src/modules/words/words-arguments.entities.ts"]
+  file_lexico_api_src_modules_words_words_constants_ts["lexico-api/src/modules/words/words.constants.ts"]
   file_lexico_api_src_modules_words_words_module_ts["lexico-api/src/modules/words/words.module.ts"]
   file_lexico_api_src_modules_words_words_resolver_ts["lexico-api/src/modules/words/words.resolver.ts"]
   file_lexico_api_src_modules_words_words_resolver_unit_test_ts["lexico-api/src/modules/words/words.resolver.unit.test.ts"]
   file_lexico_api_src_modules_words_words_service_ts["lexico-api/src/modules/words/words.service.ts"]
   file_lexico_api_src_modules_words_words_service_unit_test_ts["lexico-api/src/modules/words/words.service.unit.test.ts"]
+  file_lexico_api_src_modules_words_words_types_ts["lexico-api/src/modules/words/words.types.ts"]
   file_lexico_api_testing_mocks_ts["lexico-api/testing/mocks.ts"]
   file_lexico_api_testing_setup_ts["lexico-api/testing/setup.ts"]
   file_lexico_api_vitest_config_ts["lexico-api/vitest.config.ts"]
@@ -3971,12 +4005,6 @@ graph LR
   file_meanderaw_src_modules_database_database_service_unit_test_ts["meanderaw/src/modules/database/database.service.unit.test.ts"]
   file_meanderaw_src_modules_database_database_types_ts["meanderaw/src/modules/database/database.types.ts"]
   file_meanderaw_src_modules_database_entities_Meander_entity_ts["meanderaw/src/modules/database/entities/Meander.entity.ts"]
-  file_meanderaw_src_modules_draw_draw_check_sweep_module_ts["meanderaw/src/modules/draw/draw-check-sweep.module.ts"]
-  file_meanderaw_src_modules_draw_draw_check_command_integration_test_ts["meanderaw/src/modules/draw/draw-check.command.integration.test.ts"]
-  file_meanderaw_src_modules_draw_draw_check_constants_ts["meanderaw/src/modules/draw/draw-check.constants.ts"]
-  file_meanderaw_src_modules_draw_draw_check_service_ts["meanderaw/src/modules/draw/draw-check.service.ts"]
-  file_meanderaw_src_modules_draw_draw_check_service_unit_test_ts["meanderaw/src/modules/draw/draw-check.service.unit.test.ts"]
-  file_meanderaw_src_modules_draw_draw_check_types_ts["meanderaw/src/modules/draw/draw-check.types.ts"]
   file_meanderaw_src_modules_draw_draw_code_service_ts["meanderaw/src/modules/draw/draw-code.service.ts"]
   file_meanderaw_src_modules_draw_draw_code_service_unit_test_ts["meanderaw/src/modules/draw/draw-code.service.unit.test.ts"]
   file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts["meanderaw/src/modules/draw/draw-enumeration.service.integration.test.ts"]
@@ -7273,6 +7301,8 @@ graph LR
   file_lexico_api_src_modules_literature_lines_resolver_ts --> file_lexico_api_src_modules_literature_literature_connection_entities_ts
   file_lexico_api_src_modules_literature_lines_resolver_ts --> file_lexico_api_src_modules_literature_literature_service_ts
   file_lexico_api_src_modules_literature_lines_resolver_ts --> file_lexico_api_src_modules_literature_search_lines_arguments_entities_ts
+  file_lexico_api_src_modules_literature_lines_resolver_unit_test_ts --> file_lexico_api_src_modules_literature_lines_resolver_ts
+  file_lexico_api_src_modules_literature_lines_resolver_unit_test_ts --> file_lexico_api_src_modules_literature_literature_service_ts
   file_lexico_api_src_modules_literature_literature_arguments_entities_unit_test_ts --> file_lexico_api_src_modules_literature_author_argument_entities_ts
   file_lexico_api_src_modules_literature_literature_arguments_entities_unit_test_ts --> file_lexico_api_src_modules_literature_author_lookup_input_entities_ts
   file_lexico_api_src_modules_literature_literature_arguments_entities_unit_test_ts --> file_lexico_api_src_modules_literature_line_arguments_entities_ts
@@ -7293,7 +7323,7 @@ graph LR
   file_lexico_api_src_modules_literature_literature_module_ts --> file_lexico_api_src_modules_literature_literature_resolver_ts
   file_lexico_api_src_modules_literature_literature_module_ts --> file_lexico_api_src_modules_literature_literature_service_ts
   file_lexico_api_src_modules_literature_literature_module_ts --> file_lexico_api_src_modules_literature_texts_resolver_ts
-  file_lexico_api_src_modules_literature_literature_module_ts --> file_lexico_api_src_modules_literature_token_word_loader_service_ts
+  file_lexico_api_src_modules_literature_literature_module_ts --> file_lexico_api_src_modules_literature_token_word_loader_ts
   file_lexico_api_src_modules_literature_literature_module_ts --> file_lexico_api_src_modules_literature_tokens_resolver_ts
   file_lexico_api_src_modules_literature_literature_resolver_ts --> file_lexico_api_src_modules_literature_literature_search_result_entities_ts
   file_lexico_api_src_modules_literature_literature_resolver_ts --> file_lexico_api_src_modules_literature_literature_service_ts
@@ -7303,7 +7333,7 @@ graph LR
   file_lexico_api_src_modules_literature_literature_resolver_unit_test_ts --> file_lexico_api_src_modules_literature_literature_resolver_ts
   file_lexico_api_src_modules_literature_literature_resolver_unit_test_ts --> file_lexico_api_src_modules_literature_literature_service_ts
   file_lexico_api_src_modules_literature_literature_resolver_unit_test_ts --> file_lexico_api_src_modules_literature_texts_resolver_ts
-  file_lexico_api_src_modules_literature_literature_resolver_unit_test_ts --> file_lexico_api_src_modules_literature_token_word_loader_service_ts
+  file_lexico_api_src_modules_literature_literature_resolver_unit_test_ts --> file_lexico_api_src_modules_literature_token_word_loader_ts
   file_lexico_api_src_modules_literature_literature_resolver_unit_test_ts --> file_lexico_api_src_modules_literature_tokens_resolver_ts
   file_lexico_api_src_modules_literature_literature_service_ts --> file_lexico_api_src_lexico_api_types_ts
   file_lexico_api_src_modules_literature_literature_service_ts --> file_lexico_api_src_lexico_api_utilities_ts
@@ -7319,14 +7349,17 @@ graph LR
   file_lexico_api_src_modules_literature_texts_resolver_ts --> file_lexico_api_src_modules_literature_texts_arguments_entities_ts
   file_lexico_api_src_modules_literature_texts_resolver_unit_test_ts --> file_lexico_api_src_modules_literature_literature_service_ts
   file_lexico_api_src_modules_literature_texts_resolver_unit_test_ts --> file_lexico_api_src_modules_literature_texts_resolver_ts
-  file_lexico_api_src_modules_literature_token_word_loader_service_ts --> file_lexico_api_src_modules_literature_literature_service_ts
-  file_lexico_api_src_modules_literature_token_word_loader_service_unit_test_ts --> file_lexico_api_src_modules_literature_literature_service_ts
-  file_lexico_api_src_modules_literature_token_word_loader_service_unit_test_ts --> file_lexico_api_src_modules_literature_token_word_loader_service_ts
+  file_lexico_api_src_modules_literature_token_word_loader_ts --> file_lexico_api_src_modules_literature_literature_service_ts
+  file_lexico_api_src_modules_literature_token_word_loader_unit_test_ts --> file_lexico_api_src_modules_literature_literature_service_ts
+  file_lexico_api_src_modules_literature_token_word_loader_unit_test_ts --> file_lexico_api_src_modules_literature_token_word_loader_ts
   file_lexico_api_src_modules_literature_tokens_resolver_ts --> file_lexico_api_src_lexico_api_types_ts
   file_lexico_api_src_modules_literature_tokens_resolver_ts --> file_lexico_api_src_modules_literature_literature_connection_entities_ts
   file_lexico_api_src_modules_literature_tokens_resolver_ts --> file_lexico_api_src_modules_literature_literature_service_ts
-  file_lexico_api_src_modules_literature_tokens_resolver_ts --> file_lexico_api_src_modules_literature_token_word_loader_service_ts
+  file_lexico_api_src_modules_literature_tokens_resolver_ts --> file_lexico_api_src_modules_literature_token_word_loader_ts
   file_lexico_api_src_modules_literature_tokens_resolver_ts --> file_lexico_api_src_modules_literature_tokens_arguments_entities_ts
+  file_lexico_api_src_modules_literature_tokens_resolver_unit_test_ts --> file_lexico_api_src_modules_literature_literature_service_ts
+  file_lexico_api_src_modules_literature_tokens_resolver_unit_test_ts --> file_lexico_api_src_modules_literature_token_word_loader_ts
+  file_lexico_api_src_modules_literature_tokens_resolver_unit_test_ts --> file_lexico_api_src_modules_literature_tokens_resolver_ts
   file_lexico_api_src_modules_search_pagination_arguments_entities_unit_test_ts --> file_lexico_api_src_modules_search_pagination_arguments_entities_ts
   file_lexico_api_src_modules_search_pagination_arguments_entities_unit_test_ts --> file_lexico_api_src_modules_search_search_english_arguments_entities_ts
   file_lexico_api_src_modules_search_pagination_arguments_entities_unit_test_ts --> file_lexico_api_src_modules_search_search_latin_arguments_entities_ts
@@ -9413,7 +9446,6 @@ graph LR
   file_meanderaw_src_modules_corpus_corpus_module_ts --> file_meanderaw_src_modules_code_code_module_ts
   file_meanderaw_src_modules_corpus_corpus_module_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
   file_meanderaw_src_modules_corpus_corpus_module_ts --> file_meanderaw_src_modules_database_database_module_ts
-  file_meanderaw_src_modules_corpus_corpus_module_ts --> file_meanderaw_src_modules_drawing_drawing_module_ts
   file_meanderaw_src_modules_corpus_corpus_module_ts --> file_meanderaw_src_modules_enumeration_enumeration_module_ts
   file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_service_ts
   file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_classification_classification_service_ts
@@ -9422,7 +9454,6 @@ graph LR
   file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
   file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_database_database_service_ts
   file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_drawing_drawing_service_ts
   file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_enumeration_enumeration_constants_ts
   file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_enumeration_enumeration_service_ts
   file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_service_ts
@@ -9433,7 +9464,6 @@ graph LR
   file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
   file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_database_database_service_ts
   file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_drawing_drawing_service_ts
   file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_enumeration_enumeration_service_ts
   file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_types_ts
   file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_testing_meanders_ts
@@ -9475,53 +9505,10 @@ graph LR
   file_meanderaw_src_modules_database_database_service_unit_test_ts --> file_meanderaw_src_modules_database_database_types_ts
   file_meanderaw_src_modules_database_database_service_unit_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_src_modules_database_database_service_unit_test_ts --> file_meanderaw_testing_meanders_ts
-  file_meanderaw_src_modules_database_database_types_ts --> file_meanderaw_src_modules_database_database_constants_ts
   file_meanderaw_src_modules_database_database_types_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_src_modules_database_entities_Meander_entity_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
   file_meanderaw_src_modules_database_entities_Meander_entity_ts --> file_meanderaw_src_modules_classification_classification_constants_ts
   file_meanderaw_src_modules_database_entities_Meander_entity_ts --> file_meanderaw_src_modules_classification_classification_types_ts
-  file_meanderaw_src_modules_database_entities_Meander_entity_ts --> file_meanderaw_src_modules_database_database_constants_ts
-  file_meanderaw_src_modules_draw_draw_check_sweep_module_ts --> file_meanderaw_src_constants_ts
-  file_meanderaw_src_modules_draw_draw_check_sweep_module_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_draw_draw_check_sweep_module_ts --> file_meanderaw_src_modules_classification_classification_module_ts
-  file_meanderaw_src_modules_draw_draw_check_sweep_module_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_draw_draw_check_sweep_module_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
-  file_meanderaw_src_modules_draw_draw_check_sweep_module_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_draw_draw_check_sweep_module_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_check_sweep_module_ts --> file_meanderaw_src_modules_draw_draw_check_constants_ts
-  file_meanderaw_src_modules_draw_draw_check_sweep_module_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_check_sweep_module_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
-  file_meanderaw_src_modules_draw_draw_check_sweep_module_ts --> file_meanderaw_src_modules_drawing_drawing_module_ts
-  file_meanderaw_src_modules_draw_draw_check_sweep_module_ts --> file_meanderaw_src_modules_enumeration_enumeration_module_ts
-  file_meanderaw_src_modules_draw_draw_check_command_integration_test_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
-  file_meanderaw_src_modules_draw_draw_check_command_integration_test_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
-  file_meanderaw_src_modules_draw_draw_check_command_integration_test_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_draw_draw_check_command_integration_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_check_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_check_service_ts
-  file_meanderaw_src_modules_draw_draw_check_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
-  file_meanderaw_src_modules_draw_draw_check_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_check_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_index_service_ts
-  file_meanderaw_src_modules_draw_draw_check_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_command_ts
-  file_meanderaw_src_modules_draw_draw_check_command_integration_test_ts --> file_meanderaw_src_modules_enumeration_enumeration_constants_ts
-  file_meanderaw_src_modules_draw_draw_check_command_integration_test_ts --> file_meanderaw_testing_meanders_ts
-  file_meanderaw_src_modules_draw_draw_check_constants_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
-  file_meanderaw_src_modules_draw_draw_check_constants_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_draw_draw_check_constants_ts --> file_meanderaw_src_modules_draw_draw_check_types_ts
-  file_meanderaw_src_modules_draw_draw_check_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_draw_draw_check_service_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
-  file_meanderaw_src_modules_draw_draw_check_service_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
-  file_meanderaw_src_modules_draw_draw_check_service_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_check_service_ts --> file_meanderaw_src_modules_draw_draw_check_sweep_module_ts
-  file_meanderaw_src_modules_draw_draw_check_service_ts --> file_meanderaw_src_modules_draw_draw_check_constants_ts
-  file_meanderaw_src_modules_draw_draw_check_service_ts --> file_meanderaw_src_modules_draw_draw_check_types_ts
-  file_meanderaw_src_modules_draw_draw_check_service_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_check_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
-  file_meanderaw_src_modules_draw_draw_check_service_unit_test_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
-  file_meanderaw_src_modules_draw_draw_check_service_unit_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_check_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_check_constants_ts
-  file_meanderaw_src_modules_draw_draw_check_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_check_service_ts
-  file_meanderaw_src_modules_draw_draw_check_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_check_service_unit_test_ts --> file_meanderaw_testing_meanders_ts
   file_meanderaw_src_modules_draw_draw_code_service_ts --> file_meanderaw_src_modules_database_database_service_ts
   file_meanderaw_src_modules_draw_draw_code_service_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_src_modules_draw_draw_code_service_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
@@ -9569,6 +9556,7 @@ graph LR
   file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
   file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
   file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_testing_meanders_ts
+  file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
   file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_code_code_service_ts
   file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_database_database_service_ts
   file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
@@ -9589,7 +9577,6 @@ graph LR
   file_meanderaw_src_modules_draw_draw_record_service_ts --> file_meanderaw_src_modules_classification_classification_service_ts
   file_meanderaw_src_modules_draw_draw_record_service_ts --> file_meanderaw_src_modules_code_code_service_ts
   file_meanderaw_src_modules_draw_draw_record_service_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_draw_draw_record_service_ts --> file_meanderaw_src_modules_drawing_drawing_service_ts
   file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
   file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
   file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_service_ts
@@ -9599,16 +9586,13 @@ graph LR
   file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
   file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_drawing_drawing_module_ts
   file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
-  file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_check_service_ts
   file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
   file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_testing_draw_sweep_ts
   file_meanderaw_src_modules_draw_draw_sweep_collision_command_integration_test_ts --> file_meanderaw_testing_meanders_ts
-  file_meanderaw_src_modules_draw_draw_sweep_regeneration_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_check_service_ts
   file_meanderaw_src_modules_draw_draw_sweep_regeneration_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
   file_meanderaw_src_modules_draw_draw_sweep_regeneration_command_integration_test_ts --> file_meanderaw_testing_draw_sweep_ts
   file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_src_modules_classification_classification_constants_ts
   file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
-  file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_check_service_ts
   file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
   file_meanderaw_src_modules_draw_draw_sweep_command_integration_test_ts --> file_meanderaw_testing_draw_sweep_ts
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
@@ -9617,7 +9601,6 @@ graph LR
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_database_database_service_ts
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_check_service_ts
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
   file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_index_service_ts
@@ -9633,7 +9616,6 @@ graph LR
   file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
   file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
   file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_draw_draw_check_service_ts
   file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
   file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
   file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_draw_draw_index_service_ts
@@ -9642,8 +9624,6 @@ graph LR
   file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
   file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_database_database_service_ts
   file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_draw_draw_check_service_ts
-  file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_draw_draw_check_types_ts
   file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
   file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
   file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_draw_draw_index_service_ts
@@ -9653,7 +9633,6 @@ graph LR
   file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_code_code_module_ts
   file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_corpus_corpus_module_ts
   file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_database_database_module_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_draw_draw_check_service_ts
   file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
   file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
   file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_draw_draw_index_service_ts
@@ -10384,13 +10363,13 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 
 | Measure | Value |
 | --- | --- |
-| Callables | 5878 |
-| Files | 1681 |
-| Calls traced | 6184 |
-| Call stacks | 1855 |
+| Callables | 5840 |
+| Files | 1685 |
+| Calls traced | 6132 |
+| Call stacks | 1853 |
 | Deepest stack | 17 |
 | Stacks through recursion | 12 |
-| Unfollowable calls | 354 |
+| Unfollowable calls | 352 |
 
 ### Projects
 
@@ -10399,7 +10378,7 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 | `applications/caelundas` | 16 | 16 | 0 | 12 |
 | `applications/lexico` | 9 | 9 | 0 | 9 |
 | `applications/lexico-ingestion` | 17 | 17 | 0 | 8 |
-| `applications/meanderaw` | 16 | 16 | 0 | 14 |
+| `applications/meanderaw` | 16 | 16 | 0 | 11 |
 | `packages/ic-suite/callidescope/callidescope-cli` | 15 | 15 | 0 | 10 |
 | `packages/ic-suite/callidescope/callidescope-nx` | 17 | 17 | 0 | 7 |
 | `packages/ic-suite/codependix/codependix-boundaries` | 12 | 12 | 0 | 7 |

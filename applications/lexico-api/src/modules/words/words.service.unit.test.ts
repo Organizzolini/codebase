@@ -1,4 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
+import { Test } from "@nestjs/testing";
+import { getRepositoryToken } from "@nestjs/typeorm";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { In, Word, WordForm, WordLexeme } from "@codebase/lexico-entities";
 
@@ -6,7 +8,29 @@ import { createRepositoryMock } from "../../../testing/mocks";
 
 import { WordsService } from "./words.service";
 
-describe("words service suite", () => {
+describe(WordsService, () => {
+  let service: WordsService;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        WordsService,
+        ...[Word, WordForm, WordLexeme].map((entity) => ({
+          provide: getRepositoryToken(entity),
+          useValue: createRepositoryMock(),
+        })),
+      ],
+    }).compile();
+
+    service = await module.resolve(WordsService);
+  });
+
+  it("is defined", () => {
+    expect.hasAssertions();
+
+    expect(service).toBeDefined();
+  });
+
   it("finds a single word by surface data with all relations", async () => {
     expect.hasAssertions();
 

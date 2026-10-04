@@ -11,15 +11,10 @@ import { CorpusService } from "../corpus/corpus.service";
 import { HISTORICAL_CORPUS } from "../corpus/historical-corpus.constants";
 import { DatabaseService } from "../database/database.service";
 
-import { DrawCheckService } from "./draw-check.service";
 import { DrawCodeService } from "./draw-code.service";
 import { DrawEnumerationService } from "./draw-enumeration.service";
 import { DrawIndexService } from "./draw-index.service";
-import {
-  CodeDrawingNeedsWriteError,
-  ConflictingDrawModeError,
-  IncompleteCodeDrawingError,
-} from "./draw.constants";
+import { IncompleteCodeDrawingError } from "./draw.constants";
 
 import type { DrawCommandOptions } from "./draw.types";
 
@@ -28,18 +23,10 @@ import type { DrawCommandOptions } from "./draw.types";
  * application's only command, and its default, so running it with no
  * arguments at all runs this.
  *
- * What it does is decided by which flags were given, and **nothing writes
- * the committed database without `--write`**:
+ * Both of its modes write the committed database, and which one runs is
+ * decided by whether a Code was named:
  *
- * - **`draw`** (or **`draw --check`**, its explicit alias) runs the sweep
- *   into a throwaway database instead of the committed one, diffs the result
- *   against the committed database, and fails loudly on any new, missing, or
- *   changed row — see {@link DrawCheckService}. This is what CI and the
- *   pre-commit hook run to catch drift in the generic renderer, the
- *   enumerator, or a Characteristic's own logic before it reaches the
- *   committed corpus, and being the default is what keeps a bare
- *   invocation from rewriting the database as a side effect.
- * - **`draw --write`** sweeps everything, in two halves that between them are the
+ * - **`draw`** sweeps everything, in two halves that between them are the
  *   whole corpus. {@link DrawEnumerationService} walks the lattice's unit
  *   space — every shape the edge budget admits, every structurally distinct
  *   repeat within each — and writes a row per meander found, its family read
@@ -48,10 +35,9 @@ import type { DrawCommandOptions } from "./draw.types";
  *   hardcoded Code constants, which are exactly the meanders that lie
  *   *beyond* that budget — see `corpus.constants.ts` for how that
  *   boundary is drawn and why it has to be.
- * - **`draw --write --rows <n> --columns <n> --code <code>`** decodes,
- *   renders, and persists that one meander, through the same generic
- *   pipeline both halves of the sweep use. A Code named without `--write` is
- *   refused, and so is `--check` with `--write`.
+ * - **`draw --rows <n> --columns <n> --code <code>`** decodes,
+ *   measures, and persists that one meander, through the same generic
+ *   pipeline both halves of the sweep use.
  *
  * **The per-family SVG tree is gone for good.** The nine per-family
  * procedural motif services, the `output/<family>/*.svg` tree they wrote,
@@ -62,14 +48,14 @@ import type { DrawCommandOptions } from "./draw.types";
  * database's own rows rather than from a tree of files — see
  * {@link DrawIndexService}.
  *
- * The enumerated half runs first, so a sweep that cannot decode or render
- * something it found fails before the corpus is ingested behind it — and so
+ * The enumerated half runs first, so a sweep that cannot decode something
+ * it found fails before the corpus is ingested behind it — and so
  * that a hardcoded entry claiming an address the enumeration already holds
  * fails loudly rather than silently replacing it.
  */
 @Command({
   description:
-    "Check or draw meanders in the committed sqlite database: by default (or with --check), regenerate the whole sweep into a throwaway database and fail if it disagrees with the committed one, writing nothing; with --write, sweep every meander the application can draw into it (the whole lattice's unit space, enumerated and classified into a family by each meander's own structure, plus the historical corpus's hardcoded constants beyond the enumeration's budget); with --write, --rows, --columns, and --code, draw that one",
+    "Draw meanders into the committed sqlite database: with no flag, sweep every meander the application can draw into it (the whole lattice's unit space, enumerated and classified into a family by each meander's own structure, plus the historical corpus's hardcoded constants beyond the enumeration's budget); with --rows, --columns, and --code, draw that one",
   name: "draw",
   options: { isDefault: true },
 })
@@ -79,8 +65,6 @@ export class DrawCommand extends CommandRunner {
 
   constructor(
     private readonly logger: LoggerService,
-    @Inject(DrawCheckService)
-    private readonly drawCheckService: DrawCheckService,
     @Inject(DrawCodeService)
     private readonly drawCodeService: DrawCodeService,
     @Inject(DrawEnumerationService)
@@ -103,7 +87,7 @@ export class DrawCommand extends CommandRunner {
   // 🔏 Private Methods
 
   /**
-   * Decodes, renders, and persists the one meander `--rows`, `--columns`,
+   * Decodes, measures, and persists the one meander `--rows`, `--columns`,
    * and `--code` name, refusing the request when `--rows` or `--columns` is
    * missing.
    *
@@ -135,7 +119,7 @@ export class DrawCommand extends CommandRunner {
    * Draws every meander the application can draw, as rows in the committed
    * database, then rebuilds `output/index.html` from those same rows.
    *
-   * Two provenances, one corpus and one unique index over a meander's
+   * Two halves, one corpus and one unique index over a meander's
    * lattice address. The enumerated half is written first and the hardcoded
    * half second, so the two are ordered rather than racing: an entry that
    * claimed an address the enumeration already holds is refused by the index
@@ -146,7 +130,7 @@ export class DrawCommand extends CommandRunner {
    * committed — a page built from a partial sweep would tell a reader the
    * corpus stopped short of where it actually did.
    *
-   * The committed rows are cleared first, so `--write` regenerates the
+   * The committed rows are cleared first, so a sweep regenerates the
    * database in place: every row is insert-only, and sweeping over the rows
    * a previous sweep left would collide with each one.
    */
@@ -181,21 +165,6 @@ export class DrawCommand extends CommandRunner {
   // 🌎 Public Methods
 
   /**
-   * Parses `--check`; returns true/false. The drift check is the default
-   * already, so the flag only names it explicitly — and lets `run` refuse
-   * it alongside `--write`.
-   */
-  @Option({
-    description:
-      "Regenerate the whole sweep into a throwaway database and fail if it disagrees with the committed one, writing nothing — the default, named explicitly",
-    flags: "--check [boolean]",
-  })
-  parseCheck(value: string | undefined): boolean {
-    if (value === undefined) return true;
-    return value !== "false" && value !== "0";
-  }
-
-  /**
    * Parses `--code`, passed through unchanged: the hexadecimal digits a
    * a meander's own points are read from, one character per interior
    * lattice point. `CodeService.parse` is what refuses a
@@ -204,7 +173,7 @@ export class DrawCommand extends CommandRunner {
    */
   @Option({
     description:
-      "Hexadecimal Code a meander's per-point direction bits are decoded from, one character per interior lattice point — with --write, draws that one meander and writes it to the database",
+      "Hexadecimal Code a meander's per-point direction bits are decoded from, one character per interior lattice point — draws that one meander and writes it to the database",
     flags: "--code <code>",
   })
   parseCode(value: string): string {
@@ -229,62 +198,11 @@ export class DrawCommand extends CommandRunner {
     return Number.parseInt(value, 10);
   }
 
-  /**
-   * Parses `--write`; returns true/false. Absent no different from
-   * `--write=false`: only `options.write === true` lets `run` write the
-   * committed database.
-   */
-  @Option({
-    description:
-      "Write the committed database: sweep every meander into it, or with --rows, --columns, and --code draw that one",
-    flags: "--write [boolean]",
-  })
-  parseWrite(value: string | undefined): boolean {
-    if (value === undefined) return true;
-    return value !== "false" && value !== "0";
-  }
-
-  /**
-   * Checks for drift unless `--write` is given; with `--write`, sweeps every
-   * meander into the database when no Code is named, or draws the one
-   * `--code` names. `--check` with `--write`, or `--code` without it, is
-   * refused before anything runs.
-   *
-   * The check branch calls `DrawCheckService.check` directly rather than
-   * through a private wrapper of its own — unlike the other two branches —
-   * because `check` already sits on this project's deepest traced stack, and
-   * a forwarding-only method here would push it past `callidescope`'s own
-   * `maximumDepth` gate for nothing a reader could not already see at the
-   * call site. `MeanderDriftDetectedError` propagates uncaught when the two
-   * databases disagree, the same way a hardcoded Code colliding with an
-   * enumerated one already fails a real sweep loudly rather than being
-   * swallowed here.
-   */
+  /** Sweeps every meander into the database when no Code is named, or draws the one `--code` names. */
   async run(
     _passedParameters: string[],
     options: DrawCommandOptions,
   ): Promise<void> {
-    if (options.check === true && options.write === true) {
-      throw new ConflictingDrawModeError();
-    }
-
-    if (options.write !== true) {
-      if (options.code !== undefined) throw new CodeDrawingNeedsWriteError();
-
-      const report = await this.drawCheckService.check();
-
-      this.logger.log(
-        "✅ Regenerated sweep matches the committed database",
-        undefined,
-        {
-          committed: report.committedCount,
-          regenerated: report.regeneratedCount,
-        },
-      );
-
-      return;
-    }
-
     if (options.code === undefined) {
       await this.sweep();
 

@@ -6,7 +6,7 @@
   "dependencies": {
     "@callidescope/configuration": "workspace:*",
     "@callidescope/core": "workspace:*",
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "pino": "catalog:",
     "pino-pretty": "catalog:",
     "reflect-metadata": "catalog:"

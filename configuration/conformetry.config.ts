@@ -153,7 +153,12 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
       name: z.string().describe("Module name in kebab-case"),
       project: z.string().describe("Parent project name in kebab-case"),
     }),
-    instances: [{ patterns: ["src/modules/*"], tags: ["framework:nestjs"] }],
+    instances: [
+      {
+        patterns: ["src/modules/*"],
+        tags: ["framework:nestjs", "language:graphql"],
+      },
+    ],
     name: "nestjs-dataloader-module",
     templatePath:
       "configuration/conformetry-templates/nestjs-dataloader-module",
@@ -165,7 +170,12 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
       name: z.string().describe("Module name in kebab-case"),
       project: z.string().describe("Parent project name in kebab-case"),
     }),
-    instances: [{ patterns: ["src/modules/*"], tags: ["framework:nestjs"] }],
+    instances: [
+      {
+        patterns: ["src/modules/*"],
+        tags: ["framework:nestjs", "language:graphql"],
+      },
+    ],
     name: "nestjs-graphql-module",
     templatePath: "configuration/conformetry-templates/nestjs-graphql-module",
   },
@@ -188,6 +198,26 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
     ],
     name: "nestjs-service-file",
     templatePath: "configuration/conformetry-templates/nestjs-service-file",
+  },
+  {
+    description:
+      "A resolver and unit test file template for an existing NestJS module, without the surrounding module files",
+    inputs: defineInputs({
+      module: z.string().describe("Target module name in kebab-case"),
+      name: z.string().describe("Resolver name in kebab-case"),
+      project: z.string().describe("Parent project name in kebab-case"),
+    }),
+    instances: [
+      {
+        patterns: [
+          "src/modules/*/*.resolver.ts",
+          "src/modules/*/*.resolver.unit.test.ts",
+        ],
+        tags: ["framework:nestjs", "language:graphql"],
+      },
+    ],
+    name: "nestjs-resolver-file",
+    templatePath: "configuration/conformetry-templates/nestjs-resolver-file",
   },
   {
     description:

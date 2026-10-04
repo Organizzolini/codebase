@@ -1,13 +1,13 @@
 import { Module } from "@nestjs/common";
 
-import { {{namePascalCase}}DataLoader } from "./{{nameKebabCase}}.dataloader";
+import { {{namePascalCase}}Loader } from "./{{nameKebabCase}}.loader";
 
 /**
  * TODO: Document the {{nameCamelCase}} dataloader module.
  */
 @Module({
-  exports: [{{namePascalCase}}DataLoader],
+  exports: [{{namePascalCase}}Loader],
   imports: [],
-  providers: [{{namePascalCase}}DataLoader],
+  providers: [{{namePascalCase}}Loader],
 })
 export class {{namePascalCase}}Module {}

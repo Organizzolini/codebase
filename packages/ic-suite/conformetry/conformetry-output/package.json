@@ -6,7 +6,7 @@
   "dependencies": {
     "@conformetry/core": "workspace:*",
     "@conformetry/languages": "workspace:*",
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "reflect-metadata": "catalog:"
   },
   "description": "Console rendering, JSON reporting, and formatting for Conformetry conformance results",

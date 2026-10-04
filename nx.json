@@ -91,6 +91,11 @@
       "plugin": "@callidescope/nx"
     }
   ],
+  "pluginsConfig": {
+    "@nx/js": {
+      "projectsAffectedByDependencyUpdates": "auto"
+    }
+  },
   "projects": {
     "caelundas": {
       "tags": ["domain:caelundas", "language:typescript", "type:application"]

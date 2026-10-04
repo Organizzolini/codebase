@@ -21,10 +21,14 @@ import type { Connection } from "../../lexico-api.types";
  */
 @Resolver(() => Line)
 export class LinesResolver {
+  // 🏗 Dependency Injection
+
   public constructor(
     @Inject(LiteratureService)
     private readonly literatureService: LiteratureService,
   ) {}
+
+  // 🔎 Queries
 
   /**
    * Lists lines with optional range bounds.
@@ -54,6 +58,10 @@ export class LinesResolver {
       arguments_,
     );
   }
+
+  // 🖋️ Mutations
+
+  // 🔗 Relations
 
   /** Resolves every token attached to a line. */
   @ResolveField(() => [Token], { name: "tokens" })

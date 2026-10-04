@@ -9,6 +9,7 @@ import { LexemesService } from "./lexemes.service";
  * Module providing dictionary lexeme lookup services and resolvers.
  */
 @Module({
+  controllers: [],
   exports: [LexemesService],
   imports: [TypeOrmModule.forFeature([Lexeme])],
   providers: [LexemesResolver, LexemesService],

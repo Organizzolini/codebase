@@ -48,12 +48,9 @@ describe(MuHanziLetterCharacteristicsService, () => {
     await letter.compile();
   });
 
-  it("keys all sixteen orientations, each marked a letter", () => {
+  it("keys all sixteen orientations", () => {
     expect(letter.keys()).toStrictEqual(
       LETTER_ORIENTATION_NAMES.map((name) => `mu${name}HanziCount`),
-    );
-    expect(letter.marks()).toStrictEqual(
-      LETTER_ORIENTATION_NAMES.map(() => true),
     );
   });
 

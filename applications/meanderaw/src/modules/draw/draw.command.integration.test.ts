@@ -19,7 +19,6 @@ import { MatrixModule } from "../matrix/matrix.module";
 import { SvgService } from "../svg/svg.service";
 import { TileService } from "../tile/tile.service";
 
-import { DrawCheckService } from "./draw-check.service";
 import { DrawCodeService } from "./draw-code.service";
 import { DrawEnumerationService } from "./draw-enumeration.service";
 import { DrawIndexService } from "./draw-index.service";
@@ -63,10 +62,6 @@ describe("drawCommand --code mode", () => {
         DrawCommand,
         DrawCodeService,
         DrawRecordService,
-        {
-          provide: DrawCheckService,
-          useValue: createMock<DrawCheckService>(),
-        },
         GeometryService,
         DatabaseService,
         GraphService,
@@ -107,7 +102,6 @@ describe("drawCommand --code mode", () => {
       code: "3c9a",
       columns: 2,
       rows: 2,
-      write: true,
     });
 
     const rows = await repository.find();
@@ -116,21 +110,19 @@ describe("drawCommand --code mode", () => {
     expect(rows[0]).toMatchObject({
       code: "02x02y3c9a",
       columns: 2,
-      crossCount: 0,
-      forkCount: 0,
+      isHardcoded: true,
       lattice: "3c9a",
-      provenance: "hardcoded",
       repeats: 1,
       rows: 2,
     });
-    expect(rows[0]?.drawingHash).toBeDefined();
+    expect(rows[0]?.characteristics).not.toHaveProperty("crossCount");
+    expect(rows[0]?.characteristics).not.toHaveProperty("forkCount");
     expect(rows[0]).not.toHaveProperty("pitch");
   });
 
   it("writes a self-contained formatted code directly without requiring --rows and --columns", async () => {
     await command.run([], {
       code: "02x02y3c9a",
-      write: true,
     });
 
     const rows = await repository.find();
@@ -150,31 +142,18 @@ describe("drawCommand --code mode", () => {
       code: "e",
       columns: 1,
       rows: 1,
-      write: true,
     });
 
     const rows = await repository.find();
 
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({
+      characteristics: { forkCount: 1 },
       code: "01x01ye",
-      crossCount: 0,
-      forkCount: 1,
       lattice: "e",
       repeats: 1,
     });
-  });
-
-  it("refuses a --code drawing without --write, writing no row", async () => {
-    await expect(
-      command.run([], {
-        code: "3c9a",
-        columns: 2,
-        rows: 2,
-      }),
-    ).rejects.toThrow(/needs --write/);
-
-    await expect(repository.find()).resolves.toHaveLength(0);
+    expect(rows[0]?.characteristics).not.toHaveProperty("crossCount");
   });
 
   it("refuses a --code drawing missing --columns", async () => {
@@ -182,7 +161,6 @@ describe("drawCommand --code mode", () => {
       command.run([], {
         code: "0",
         rows: 2,
-        write: true,
       }),
     ).rejects.toThrow(/needs both --rows and --columns/);
 
@@ -194,7 +172,6 @@ describe("drawCommand --code mode", () => {
       command.run([], {
         code: "0",
         columns: 1,
-        write: true,
       }),
     ).rejects.toThrow(/needs both --rows and --columns/);
 

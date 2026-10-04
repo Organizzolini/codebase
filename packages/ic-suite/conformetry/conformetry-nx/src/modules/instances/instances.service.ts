@@ -97,10 +97,17 @@ export class InstancesService {
         return this.isInsideProject({ instance, projectRootPath });
       });
 
-    // First-match-wins logic: deduplicate instances by path so earlier generators override later ones.
+    // First-match-wins: an instance two generators both locate is kept once.
+    // The file scope is part of the identity, because a service and a resolver
+    // share a name stem yet are different instances of different templates —
+    // keyed by name alone, whichever generator came first hid the other.
     const seenInstances = new Set<string>();
     return instances.filter((instance) => {
-      const key = `${instance.path}:${instance.nameStem}`;
+      const key = [
+        instance.path,
+        instance.nameStem,
+        (instance.fileScope ?? []).join(","),
+      ].join(":");
       if (seenInstances.has(key)) {
         return false;
       }

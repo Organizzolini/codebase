@@ -1,4 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
+import { Test } from "@nestjs/testing";
+import { getRepositoryToken } from "@nestjs/typeorm";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { Author, In, Line, Text, Token, Word } from "@codebase/lexico-entities";
 
@@ -6,7 +8,43 @@ import { createRepositoryMock } from "../../../testing/mocks";
 
 import { LiteratureService } from "./literature.service";
 
-describe("literature service suite", () => {
+describe(LiteratureService, () => {
+  let service: LiteratureService;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        LiteratureService,
+        {
+          provide: getRepositoryToken(Author),
+          useValue: createRepositoryMock<Author>(),
+        },
+        {
+          provide: getRepositoryToken(Line),
+          useValue: createRepositoryMock<Line>(),
+        },
+        {
+          provide: getRepositoryToken(Text),
+          useValue: createRepositoryMock<Text>(),
+        },
+        {
+          provide: getRepositoryToken(Token),
+          useValue: createRepositoryMock<Token>(),
+        },
+        {
+          provide: getRepositoryToken(Word),
+          useValue: createRepositoryMock<Word>(),
+        },
+      ],
+    }).compile();
+
+    service = await module.resolve(LiteratureService);
+  });
+
+  it("is defined", () => {
+    expect(service).toBeDefined();
+  });
+
   it("finds an author by id and slug with related text rows", async () => {
     expect.hasAssertions();
 

@@ -1,12 +1,33 @@
 import { createMock } from "@golevelup/ts-vitest";
-import { describe, expect, it, vi } from "vitest";
+import { Test } from "@nestjs/testing";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
-import { TokenWordDataLoader } from "./token-word-loader.service";
+import { LiteratureService } from "./literature.service";
+import { TokenWordLoader } from "./token-word.loader";
 
-import type { LiteratureService } from "./literature.service";
 import type { Token, Word } from "@codebase/lexico-entities";
 
-describe("token word data loader suite", () => {
+describe(TokenWordLoader, () => {
+  let service: TokenWordLoader;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        TokenWordLoader,
+        {
+          provide: LiteratureService,
+          useValue: createMock<LiteratureService>(),
+        },
+      ],
+    }).compile();
+
+    service = await module.resolve(TokenWordLoader);
+  });
+
+  it("is defined", () => {
+    expect(service).toBeDefined();
+  });
+
   it("loads a single token word mapping", async () => {
     expect.hasAssertions();
 
@@ -41,7 +62,7 @@ describe("token word data loader suite", () => {
         }),
     });
 
-    const loader = new TokenWordDataLoader(mockLiteratureService);
+    const loader = new TokenWordLoader(mockLiteratureService);
 
     await expect(loader.loadTokenWord("token-1")).resolves.toBe(word);
     await expect(loader.loadTokenWord("token-2")).resolves.toBeNull();
@@ -84,7 +105,7 @@ describe("token word data loader suite", () => {
         ]),
     });
 
-    const loader = new TokenWordDataLoader(mockLiteratureService);
+    const loader = new TokenWordLoader(mockLiteratureService);
 
     await expect(loader.loadTokenWords([])).resolves.toStrictEqual([]);
     await expect(

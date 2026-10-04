@@ -84,7 +84,7 @@ describe(DrawIndexService, () => {
     );
     await repository.save(
       record({
-        characteristics: ["dots"],
+        characteristics: { isDots: true },
         code: "01x01y1",
         family: "whirl",
         lattice: "1",
@@ -104,7 +104,7 @@ describe(DrawIndexService, () => {
     expect(pages["families/snake.html"]).toContain(
       "<figcaption>1×1 · 01x01y0</figcaption>",
     );
-    expect(pages["families/whirl.html"]).toContain("(dots)");
+    expect(pages["families/whirl.html"]).toContain("(isDots)");
 
     const indexPage = pages["index.html"] ?? "";
 

@@ -14,6 +14,8 @@ import {
  */
 @Injectable()
 export class WordsService {
+  // 🏗 Dependency Injection
+
   public constructor(
     @InjectRepository(Word)
     private readonly wordRepository: Repository<Word>,
@@ -22,6 +24,14 @@ export class WordsService {
     @InjectRepository(WordLexeme)
     private readonly wordLexemeRepository: Repository<WordLexeme>,
   ) {}
+
+  // 🔐 Private Fields
+
+  // 🔑 Public Fields
+
+  // 🔏 Private Methods
+
+  // 🌎 Public Methods
 
   /**
    * Returns a single surface word and all of its morphological and lexical links.

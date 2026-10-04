@@ -1,5 +1,3 @@
-import path from "node:path";
-
 import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
 import { ApolloDriver, type ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
@@ -8,7 +6,10 @@ import { GraphQLModule } from "@nestjs/graphql";
 
 import { LoggerModule } from "@codebase/logging";
 
-import { environmentSchema } from "./{{nameKebabCase}}.constants";
+import {
+  environmentSchema,
+  GRAPHQL_SCHEMA_FILE,
+} from "./{{nameKebabCase}}.constants";
 
 /**
  * Root NestJS application module for the {{namePascalCase}} GraphQL API.
@@ -22,7 +23,7 @@ import { environmentSchema } from "./{{nameKebabCase}}.constants";
         environmentSchema.parse(config),
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
-      autoSchemaFile: path.join(process.cwd(), "src/schema.gql"),
+      autoSchemaFile: GRAPHQL_SCHEMA_FILE,
       driver: ApolloDriver,
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],

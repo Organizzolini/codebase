@@ -11,7 +11,7 @@ import { {{namePascalCase}}Service } from "./{{nameKebabCase}}.service";
  * a single GraphQL request, preventing data leakage across requests.
  */
 @Injectable({ scope: Scope.REQUEST })
-export class {{namePascalCase}}DataLoader {
+export class {{namePascalCase}}Loader {
   // 🏗 Dependency Injection
 
   constructor(private readonly {{nameCamelCase}}Service: {{namePascalCase}}Service) {}

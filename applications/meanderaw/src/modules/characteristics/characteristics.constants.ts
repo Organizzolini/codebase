@@ -3,60 +3,6 @@ import { LETTER_ORIENTATION_NAMES } from "./submatrix/letter/letter.constants";
 // ♟️ Constants
 
 /**
- * The key of every numeric characteristic stored under a column of its own
- * on a meander row, in alphabetical order: every numeric key but a letter's.
- *
- * A letter glyph count — any script, hanzi and hangul included — is instead
- * marked `letter: true` in its evaluator's metadata and stored in the row's
- * `glyphs` map, because the letters alone outnumber the columns one table
- * holds. `CharacteristicsService` refuses to boot unless the two agree: a
- * numeric evaluator is marked a letter exactly when its key is missing here.
- * So a new letter needs keys in `LETTER_CHARACTERISTIC_KEYS` and no storage
- * change, and a new non-letter numeric characteristic needs an entry here and a `Meander`
- * column, which the entity's `implements` clause holds complete.
- */
-export const COLUMN_CHARACTERISTIC_KEYS = [
-  "bettiNumber0Count",
-  "bettiNumber1Count",
-  "bottomBorderTouchCount",
-  "cornerCount",
-  "crossCount",
-  "density",
-  "dotCount",
-  "doubleHorizontalEdgeCount",
-  "doubleVerticalEdgeCount",
-  "eastEdgeCount",
-  "eastForkCount",
-  "edgeCount",
-  "embeddedUCount",
-  "forkCount",
-  "freeEndCount",
-  "horizontalRectangleCount",
-  "inflectionCount",
-  "inkPointCount",
-  "longestHorizontalRunLength",
-  "longestVerticalRunLength",
-  "maxMonotonicTurnLength",
-  "northEastCornerCount",
-  "northEdgeCount",
-  "northForkCount",
-  "northWestCornerCount",
-  "southEastCornerCount",
-  "southEdgeCount",
-  "southForkCount",
-  "southWestCornerCount",
-  "tightestTurnCount",
-  "tileCrossingComponentDeltaCount",
-  "tileCrossingCount",
-  "tileCrossingCycleCount",
-  "topBorderTouchCount",
-  "totalTurnCount",
-  "verticalRectangleCount",
-  "westEdgeCount",
-  "westForkCount",
-] as const;
-
-/**
  * The key of every letter glyph count, sixteen per letter: the letter's
  * transliteration, its positional form for an Arabic letter, one of its
  * sixteen orientation names, and its script —
@@ -284,15 +230,55 @@ export const LETTER_CHARACTERISTIC_KEYS = [
 
 /**
  * The key of every numeric characteristic an evaluator under `submatrix/`,
- * `path/`, or `compound/` fills — every column key and every letter key — in
- * alphabetical order. Each is the `metadata.key` of exactly one registered
- * evaluator whose `valueType` is `"number"`, and `CharacteristicsModule`'s
- * own test holds the two sets equal in both directions.
+ * `path/`, or `compound/` fills — each structural count listed here and every
+ * letter key — in alphabetical order. Each is the `metadata.key` of exactly
+ * one registered evaluator whose `valueType` is `"number"`, and
+ * `CharacteristicsModule`'s own test holds the two sets equal in both
+ * directions.
  */
-export const NUMERIC_CHARACTERISTIC_KEYS = [
-  ...COLUMN_CHARACTERISTIC_KEYS,
-  ...LETTER_CHARACTERISTIC_KEYS,
-].toSorted();
+export const NUMERIC_CHARACTERISTIC_KEYS = (
+  [
+    "bettiNumber0Count",
+    "bettiNumber1Count",
+    "bottomBorderTouchCount",
+    "cornerCount",
+    "crossCount",
+    "density",
+    "dotCount",
+    "doubleHorizontalEdgeCount",
+    "doubleVerticalEdgeCount",
+    "eastEdgeCount",
+    "eastForkCount",
+    "edgeCount",
+    "embeddedUCount",
+    "forkCount",
+    "freeEndCount",
+    "horizontalRectangleCount",
+    "inflectionCount",
+    "inkPointCount",
+    "longestHorizontalRunLength",
+    "longestVerticalRunLength",
+    "maxMonotonicTurnLength",
+    "northEastCornerCount",
+    "northEdgeCount",
+    "northForkCount",
+    "northWestCornerCount",
+    "southEastCornerCount",
+    "southEdgeCount",
+    "southForkCount",
+    "southWestCornerCount",
+    "tightestTurnCount",
+    "tileCrossingComponentDeltaCount",
+    "tileCrossingCount",
+    "tileCrossingCycleCount",
+    "topBorderTouchCount",
+    "totalTurnCount",
+    "verticalRectangleCount",
+    "westEdgeCount",
+    "westForkCount",
+    ...LETTER_CHARACTERISTIC_KEYS,
+  ] as const
+).toSorted();
 
 /**
  * The key of every boolean characteristic, in alphabetical order — the
@@ -337,17 +323,23 @@ export const CHARACTERISTIC_KEYS = [
 ] as const;
 
 /**
+ * Every key a meander row's `characteristics` map may hold `true` under, in
+ * the order a caption lists them: each boolean characteristic, then
+ * `isReducible`, which is a fact about the Code as filed rather than any
+ * evaluator's value.
+ */
+export const STORED_BOOLEAN_KEYS = [
+  ...BOOLEAN_CHARACTERISTIC_KEYS,
+  "isReducible",
+] as const;
+
+/**
  * {@link BOOLEAN_CHARACTERISTIC_KEYS} as a set of plain strings, so an
  * unchecked key read off a discovered provider can be looked up without
  * first being narrowed to the key union it is being checked against.
  */
 export const BOOLEAN_CHARACTERISTIC_KEY_SET: ReadonlySet<string> = new Set(
   BOOLEAN_CHARACTERISTIC_KEYS,
-);
-
-/** {@link COLUMN_CHARACTERISTIC_KEYS} as a set of plain strings, for the same reason as {@link BOOLEAN_CHARACTERISTIC_KEY_SET}. */
-export const COLUMN_CHARACTERISTIC_KEY_SET: ReadonlySet<string> = new Set(
-  COLUMN_CHARACTERISTIC_KEYS,
 );
 
 /** {@link CHARACTERISTIC_KEYS} as a set of plain strings, for the same reason. */

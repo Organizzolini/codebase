@@ -119,6 +119,22 @@ describe(CatalogManifestsService, () => {
       ).toStrictEqual([]);
     });
 
+    it("passes an external dependency pinned to a named catalog", () => {
+      expect.hasAssertions();
+      expect(
+        validate({ dependencies: { "@nestjs/core": "catalog:ic-suite" } }),
+      ).toStrictEqual([]);
+    });
+
+    it("names an external dependency pinned to a range after catalog:", () => {
+      expect.hasAssertions();
+      expect(
+        validate({ dependencies: { zod: "catalog:^3.0.0" } }),
+      ).toStrictEqual([
+        "packages/logging/package.json -> dependencies.zod must use catalog: (found catalog:^3.0.0)",
+      ]);
+    });
+
     it("names an external dependency pinned to a range", () => {
       expect.hasAssertions();
       expect(validate({ dependencies: { zod: "^3.0.0" } })).toStrictEqual([

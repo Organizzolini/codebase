@@ -261,7 +261,7 @@
       "name": "^(?!(dir|err|req|res|utils|ctx|app)$)[a-z0-9-]+$"
     },
     "module-file": {
-      "name": "^[a-z0-9-]+.(command|constants|entities|factories|module|resolver|service|types|utilities)(.(unit|integration|end-to-end).test)?.(ts|tsx|mts|cts|js|jsx|mjs|cjs)$"
+      "name": "^[a-z0-9-]+.(command|constants|entities|factories|loader|module|resolver|service|types|utilities)(.(unit|integration|end-to-end).test)?.(ts|tsx|mts|cts|js|jsx|mjs|cjs)$"
     },
     "module-folder": {
       "children": [
@@ -278,7 +278,7 @@
       "name": "^(constants|index|main|repl|router|types|utilities|{templatePlaceholder}|[a-z0-9-]+)(.(unit|integration|end-to-end).test)?.(ts|tsx|mts|cts|js|jsx|mjs|cjs)$"
     },
     "source-entry-support-file": {
-      "name": "^(main|{templatePlaceholder}|[a-z0-9-]+).(command|constants|entities|factories|module|resolver|service|types|utilities)(.(unit|integration|end-to-end).test)?.(ts|tsx|mts|cts|js|jsx|mjs|cjs)$"
+      "name": "^(main|{templatePlaceholder}|[a-z0-9-]+).(command|constants|entities|factories|loader|module|resolver|service|types|utilities)(.(unit|integration|end-to-end).test)?.(ts|tsx|mts|cts|js|jsx|mjs|cjs)$"
     },
     "source-python-file": {
       "name": "^(py.typed|[a-z0-9_]+.(ipynb|py))$"

@@ -4,6 +4,7 @@
 
 import { Inject, Injectable } from "@nestjs/common";
 
+import { STORED_BOOLEAN_KEYS } from "../characteristics/characteristics.constants";
 import { CodeService } from "../code/code.service";
 import { DatabaseService } from "../database/database.service";
 import { DrawingService } from "../drawing/drawing.service";
@@ -74,11 +75,12 @@ export class DrawIndexService {
   private caption(meander: Meander): string {
     const { characteristics, code, columns, rows } = meander;
     const address = `${rows}×${columns} · ${code}`;
+    const holding = STORED_BOOLEAN_KEYS.filter(
+      (key) => characteristics[key] === true,
+    );
 
     return this.escape(
-      characteristics.length === 0
-        ? address
-        : `${address} (${characteristics.join(", ")})`,
+      holding.length === 0 ? address : `${address} (${holding.join(", ")})`,
     );
   }
 

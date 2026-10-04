@@ -8,10 +8,9 @@ import { MatrixModule } from "../matrix/matrix.module";
 import { CharacteristicContextService } from "./characteristic-context.service";
 import {
   BOOLEAN_CHARACTERISTIC_KEY_SET,
+  BOOLEAN_CHARACTERISTIC_KEYS,
   CHARACTERISTIC_KEYS,
   CharacteristicRegistryError,
-  COLUMN_CHARACTERISTIC_KEY_SET,
-  COLUMN_CHARACTERISTIC_KEYS,
   NUMERIC_CHARACTERISTIC_KEYS,
 } from "./characteristics.constants";
 import { CharacteristicsService } from "./characteristics.service";
@@ -42,22 +41,17 @@ function collaborators(
   ];
 }
 
-/** A well-formed stand-in for every key: `false` under each boolean key, the key's index under each numeric one, and marked a letter wherever a numeric key has no column. */
+/** A well-formed stand-in for every key: `false` under each boolean key and the key's index under each numeric one. */
 function completeRegistry(): Provider[] {
   return CHARACTERISTIC_KEYS.map((key, index) =>
     isBooleanKey(key)
       ? fake(key, "boolean", false)
-      : fake(key, "number", index, !COLUMN_CHARACTERISTIC_KEY_SET.has(key)),
+      : fake(key, "number", index),
   );
 }
 
-/** A stand-in evaluator for `key`, claiming `valueType` and yielding `value`, marked a letter when `letter` is set. */
-function fake(
-  key: string,
-  valueType: string,
-  value: unknown,
-  letter = false,
-): Provider {
+/** A stand-in evaluator for `key`, claiming `valueType` and yielding `value`. */
+function fake(key: string, valueType: string, value: unknown): Provider {
   return {
     instance: {
       compute: (): unknown => value,
@@ -65,7 +59,6 @@ function fake(
         category: "submatrix",
         description: `Stands in for ${key}.`,
         key,
-        ...(letter ? { letter: true } : {}),
         name: key,
         submatrix: { columns: 1, rows: 1 },
         valueType,
@@ -290,78 +283,36 @@ describe(CharacteristicsService, () => {
     ).toBe(false);
   });
 
-  it("keeps only the column keys of a computed record, leaving every letter and boolean key out", () => {
+  it("stores every nonzero numeric value in key-list order, and no zero or false one", () => {
     const characteristics = service.compute("02x01y2c");
 
-    const columns = service.columnRecord(characteristics);
+    const stored = service.stored(characteristics, false);
 
-    expect(Object.keys(columns)).toStrictEqual([...COLUMN_CHARACTERISTIC_KEYS]);
-    expect(columns).not.toHaveProperty("isDots");
-    expect(columns).not.toHaveProperty("aSoutheastLatinCount");
-    expect(columns.dotCount).toBe(characteristics.dotCount);
-  });
-
-  it("keeps every nonzero letter count in the glyph map, in key-list order, and no zero one", () => {
-    const characteristics = service.compute("02x01y2c");
-    const letterKeys = NUMERIC_CHARACTERISTIC_KEYS.filter(
-      (key) => !COLUMN_CHARACTERISTIC_KEY_SET.has(key),
-    );
-
-    const glyphs = service.glyphCounts(characteristics);
-
-    expect(letterKeys[0]).toBe("aNortheastHalfLatinCount");
+    expect(NUMERIC_CHARACTERISTIC_KEYS[0]).toBe("aNortheastHalfLatinCount");
     expect(characteristics.aNortheastHalfLatinCount).toBe(0);
-    expect(Object.keys(glyphs)).toStrictEqual(letterKeys.slice(1));
-    expect(glyphs.aSoutheastLatinCount).toBe(
+    expect(Object.keys(stored)).toStrictEqual(
+      NUMERIC_CHARACTERISTIC_KEYS.slice(1),
+    );
+    expect(stored.dotCount).toBe(characteristics.dotCount);
+    expect(stored.aSoutheastLatinCount).toBe(
       characteristics.aSoutheastLatinCount,
     );
-    expect(glyphs).not.toHaveProperty("dotCount");
   });
 
-  it("throws when an evaluator marked a letter has a column of its own", async () => {
-    providers = providers.map((provider, index) =>
-      CHARACTERISTIC_KEYS[index] === "dotCount"
-        ? fake("dotCount", "number", 0, true)
-        : provider,
-    );
-    const fresh = await registry();
-
-    expect(() => fresh.metadata()).toThrow(CharacteristicRegistryError);
-    expect(() => fresh.metadata()).toThrow(/dotCount/u);
-  });
-
-  it("throws when a numeric evaluator with no column is not marked a letter", async () => {
-    providers = providers.map((provider, index) =>
-      CHARACTERISTIC_KEYS[index] === "aSoutheastLatinCount"
-        ? fake("aSoutheastLatinCount", "number", 0)
-        : provider,
-    );
-    const fresh = await registry();
-
-    expect(() => fresh.metadata()).toThrow(/aSoutheastLatinCount/u);
-  });
-
-  it("throws when a boolean evaluator is marked a letter", async () => {
-    providers = providers.map((provider, index) =>
-      CHARACTERISTIC_KEYS[index] === "isDots"
-        ? fake("isDots", "boolean", false, true)
-        : provider,
-    );
-    const fresh = await registry();
-
-    expect(() => fresh.metadata()).toThrow(/isDots/u);
-  });
-
-  it("lists no boolean key when none of them hold and the Code is not reducible", () => {
+  it("stores no boolean key when none of them hold, and isReducible only when the Code is reducible", () => {
     const characteristics = service.compute("02x01y2c");
 
-    expect(service.trueBooleanKeys(characteristics, false)).toStrictEqual([]);
-    expect(service.trueBooleanKeys(characteristics, true)).toStrictEqual([
-      "isReducible",
-    ]);
+    const irreducible = service.stored(characteristics, false);
+    const reducible = service.stored(characteristics, true);
+
+    expect(
+      BOOLEAN_CHARACTERISTIC_KEYS.filter((key) => key in irreducible),
+    ).toStrictEqual([]);
+    expect(irreducible).not.toHaveProperty("isReducible");
+    expect(reducible.isReducible).toBe(true);
   });
 
-  it("lists every true boolean key, then isReducible last when the Code is wider than its unit", async () => {
+  it("stores true under every boolean key that holds, after every number, then isReducible last", async () => {
     providers = providers.map((provider, index) =>
       CHARACTERISTIC_KEYS[index] === "isDots"
         ? fake("isDots", "boolean", true)
@@ -370,12 +321,12 @@ describe(CharacteristicsService, () => {
     const fresh = await registry();
     const characteristics = fresh.compute("02x01y2c");
 
-    expect(fresh.trueBooleanKeys(characteristics, false)).toStrictEqual([
-      "isDots",
-    ]);
-    expect(fresh.trueBooleanKeys(characteristics, true)).toStrictEqual([
+    const stored = fresh.stored(characteristics, true);
+
+    expect(Object.keys(stored).slice(-2)).toStrictEqual([
       "isDots",
       "isReducible",
     ]);
+    expect(stored.isDots).toBe(true);
   });
 });

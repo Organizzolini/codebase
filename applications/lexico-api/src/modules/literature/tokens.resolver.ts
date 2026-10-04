@@ -11,7 +11,7 @@ import { Token, Word } from "@codebase/lexico-entities";
 
 import { TokenConnectionType } from "./literature-connection.entities";
 import { LiteratureService } from "./literature.service";
-import { TokenWordDataLoader } from "./token-word-loader.service";
+import { TokenWordLoader } from "./token-word.loader";
 import { TokensArguments } from "./tokens-arguments.entities";
 
 import type { Connection } from "../../lexico-api.types";
@@ -21,18 +21,26 @@ import type { Connection } from "../../lexico-api.types";
  */
 @Resolver(() => Token)
 export class TokensResolver {
+  // 🏗 Dependency Injection
+
   public constructor(
     @Inject(LiteratureService)
     private readonly literatureService: LiteratureService,
-    @Inject(TokenWordDataLoader)
-    private readonly tokenWordDataLoader: TokenWordDataLoader,
+    @Inject(TokenWordLoader)
+    private readonly tokenWordLoader: TokenWordLoader,
   ) {}
+
+  // 🔎 Queries
 
   /** Resolves a token to the matching dictionary word. */
   @ResolveField(() => Word, { name: "word", nullable: true })
   public async resolveTokenWord(@Parent() token: Token): Promise<null | Word> {
-    return this.tokenWordDataLoader.byTokenId.load(token.id);
+    return this.tokenWordLoader.byTokenId.load(token.id);
   }
+
+  // 🖋️ Mutations
+
+  // 🔗 Relations
 
   /** Lists tokens for a line. */
   @Query(() => TokenConnectionType, { name: "tokens" })

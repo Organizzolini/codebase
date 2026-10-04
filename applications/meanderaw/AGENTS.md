@@ -23,9 +23,9 @@ structurally distinct repeat within reach, one generic family-agnostic renderer 
 one from its decoded Code, and a family is _read off_ the result rather than chosen before
 it. See "One Command" and "Output Layout" in [README.md](./README.md).
 
-**The corpus is two provenances that partition it, and the partition is load-bearing.**
-`enumerated` holds the 30,279 meanders `MeanderEnumerationService` walks — the fourteen
-shapes the edge budget admits. `hardcoded` holds the 965 meanders of the historical corpus
+**The corpus is two halves that partition it, and the partition is load-bearing.**
+Rows with `isHardcoded` false hold the 30,279 meanders `MeanderEnumerationService`
+walks — the fourteen shapes the edge budget admits. Rows with it true hold the 965 meanders of the historical corpus
 that lie beyond that budget, extracted once as Codes from the retired file tree.
 `HARDCODED_MEANDERS_BY_FAMILY` carries the filter and why it is by shape rather than by
 Code: the enumeration applies no degree ceiling and no family filter, so at an admitted
@@ -63,9 +63,10 @@ reclassifying the historical corpus through the new predicates explicitly out of
 first so the refusal names the hardcoded entry that caused it. Do not soften that into an
 upsert.
 
-**Every row's `svg` is a cache of a pure function** of its Code, rows, and columns. If a
-renderer change makes a committed row's SVG wrong, the fix is to regenerate the database,
-never to hand-edit a row.
+**No row stores its drawing.** The renderer draws each meander from its Code, rows, and
+columns when the index pages are built, so a renderer change needs no database change at
+all. Nothing currently checks the committed database against a fresh sweep, either; a
+Code's uniqueness is the one property the schema enforces.
 
 ### The charter, and what became of its gate
 
@@ -76,9 +77,16 @@ measurements behind it, is in [README.md](./README.md), under "Meander Charter".
 
 **The property test that gated them is gone with the corpus it swept.** It measured every
 drawing the per-family sweep produced, and that sweep no longer exists; the structural
-facts it asserted are now computed per row by `CharacteristicsService` and stored as
-columns, so they are queryable rather than gated. Rebuilding a gate over the database is
-open work, not something this project claims to have.
+facts it asserted are now computed per row by `CharacteristicsService` and stored in the
+row's one sparse `characteristics` JSON map, so they are queryable rather than gated.
+Rebuilding a gate over the database is open work, not something this project claims to
+have.
+
+**Every Characteristic lives in that one map, and a missing key means zero or `false`.**
+No Characteristic has a column of its own, so adding one needs no schema change — see
+[ADR 0018](../../docs/adr/0018-store-every-characteristic-in-one-sparse-json-map.md). Raw
+SQL reads one as `COALESCE(json_extract(characteristics, '$.key'), 0)`; a bare
+`json_extract` is NULL for a missing key and silently drops it from a zero filter.
 
 The three invariants that most often catch a change:
 
@@ -89,7 +97,8 @@ The three invariants that most often catch a change:
   the lattice-first corpus relaxes both wholesale: the enumerated space is every subset of
   a repeat's edges, junctions and crossings included. `forkCount` and `crossCount`, and the
   four directional fork counts behind them (`northForkCount`/`southForkCount`/
-  `eastForkCount`/`westForkCount`), are recorded per row rather than forbidden.
+  `eastForkCount`/`westForkCount`), are recorded in each row's `characteristics` map
+  rather than forbidden.
 - **Band, not field.** Canvas height is fixed and `rows` sets density, not size. These
   patterns are meant for borders.
 
@@ -176,26 +185,25 @@ Outputs structured JSON in production (`NODE_ENV=production`) and pretty-printed
 Always prefer running tasks through Nx rather than calling the underlying tools directly.
 
 ```bash
-nx run meanderaw:start                    # Read-only: regenerate the sweep into a throwaway database and fail on drift from the committed one; `guard-code` runs this on every commit
-nx run meanderaw:start --args="--write"   # Clear output/meanders.sqlite's meander rows, then regenerate the sweep into it
+nx run meanderaw:start                    # Clear output/meanders.sqlite's meander rows, then regenerate the sweep into it
 nx run meanderaw:typecheck-code,lint-code,format-code,deprecate-code,guard-code   # Every static check, in one graph
 nx run meanderaw:typecheck       # tsc --noEmit
 nx run meanderaw:oxfmt           # Formatting
 ```
 
-This application has **one command, `draw`**, and it is the default — so `start` runs it.
-With no arguments (or `--check`) it is a read-only drift check: it regenerates the sweep
-into a throwaway database and fails if it disagrees with the committed one. **Nothing
-writes `output/meanders.sqlite` without `--write`.** With `--write` it clears that
+This application has **one command, `draw`**, and it is the default — so `start` runs it,
+and it always writes `output/meanders.sqlite`. With no arguments it clears that
 database's meander rows and sweeps every meander the application can draw back into it: the whole lattice's unit space, enumerated
 and classified, then the historical corpus's hardcoded Codes beyond that budget. With
-`--write`, `--rows`, `--columns`, and `--code` it decodes, renders, and persists that one:
+`--rows`, `--columns`, and `--code` it decodes, measures, and persists that one:
 
 ```bash
-nx run meanderaw:start --args="--write --rows 3 --columns 2 --code 3c9a"
+nx run meanderaw:start --args="--rows 3 --columns 2 --code 3c9a"
 ```
 
-`--check` with `--write`, or `--code` without `--write`, exits non-zero.
+**Nothing but `start` runs the command**, so no aggregate target — `guard-code`, `lint-code`,
+or any other — rewrites the committed database as a side effect. Keep it that way: a
+`dependsOn` on `start` would rewrite `output/meanders.sqlite` on every run.
 
 There is deliberately no second command, and no other flag — see "One Command" and
 "Output Layout" in [README.md](./README.md).

@@ -68,8 +68,6 @@ export interface LetterReadings {
   inkedWindow(fixture: string): SubmatrixWindow;
   /** Every evaluator's metadata key, in evaluator order. */
   keys(): readonly string[];
-  /** Every evaluator's `letter` mark, in evaluator order. */
-  marks(): readonly (true | undefined)[];
   /** The orientation names whose descriptions mention `text`, in orientation-name order. */
   namesDescribing(text: string): readonly LetterOrientationName[];
   /** The declared window of each named orientation. */
@@ -153,7 +151,6 @@ export function letterHarness(
         };
       },
       keys: () => select().map(({ metadata }) => metadata.key),
-      marks: () => select().map(({ metadata }) => metadata.letter),
       namesDescribing: (text) =>
         LETTER_ORIENTATION_NAMES.filter(
           (name) => named(name)?.metadata.description.includes(text) === true,

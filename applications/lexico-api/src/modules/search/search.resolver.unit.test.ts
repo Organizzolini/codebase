@@ -6,7 +6,7 @@ import {
   GraphQLSchemaFactory,
 } from "@nestjs/graphql";
 import { Test } from "@nestjs/testing";
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import {
   AdjectivalForm,
@@ -36,7 +36,26 @@ import {
 import { SearchResolver } from "./search.resolver";
 import { SearchService } from "./search.service";
 
-describe("search resolver suite", () => {
+describe(SearchResolver, () => {
+  let resolver: SearchResolver;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        SearchResolver,
+        { provide: SearchService, useValue: createMock<SearchService>() },
+      ],
+    }).compile();
+
+    resolver = await module.resolve(SearchResolver);
+  });
+
+  it("is defined", () => {
+    expect.hasAssertions();
+
+    expect(resolver).toBeDefined();
+  });
+
   it("resolves searchLatin query with pagination parameters", async () => {
     expect.hasAssertions();
 

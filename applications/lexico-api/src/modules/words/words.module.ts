@@ -14,6 +14,7 @@ import { WordsService } from "./words.service";
  * Module exposing surface-word lookups and morphologically-linked dictionary data.
  */
 @Module({
+  controllers: [],
   exports: [WordsService],
   imports: [TypeOrmModule.forFeature([Word, WordForm, WordLexeme])],
   providers: [WordsResolver, WordsService],

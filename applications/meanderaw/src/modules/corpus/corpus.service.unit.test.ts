@@ -2,15 +2,11 @@ import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
-  characteristicRecord,
-  ZERO_COLUMN_CHARACTERISTICS,
-} from "../../../testing/meanders";
+import { characteristicRecord } from "../../../testing/meanders";
 import { CharacteristicsService } from "../characteristics/characteristics.service";
 import { ClassificationService } from "../classification/classification.service";
 import { CodeService } from "../code/code.service";
 import { DatabaseService } from "../database/database.service";
-import { DrawingService } from "../drawing/drawing.service";
 import { EnumerationService } from "../enumeration/enumeration.service";
 
 import { DuplicateCorpusCodeError } from "./corpus.constants";
@@ -28,7 +24,6 @@ describe(CorpusService, () => {
   let classificationService: ClassificationService;
   let databaseService: DatabaseService;
   let codeService: CodeService;
-  let drawingService: DrawingService;
   let enumerationService: EnumerationService;
 
   const tile = createMock<Tile>({ columns: 1, rows: 2 });
@@ -38,13 +33,13 @@ describe(CorpusService, () => {
     freeEndCount: 2,
     isSingleArc: true,
   });
-  const columnRecord = {
-    ...ZERO_COLUMN_CHARACTERISTICS,
+  const stored = {
+    aSoutheastLatinCount: 2,
     bettiNumber0Count: 1,
     forkCount: 1,
     freeEndCount: 2,
-  };
-  const glyphs = { aSoutheastLatinCount: 2 };
+    isSingleArc: true,
+  } as const;
   const savedMeander = createMock<Meander>({ id: 1 });
 
   beforeAll(async () => {
@@ -68,10 +63,6 @@ describe(CorpusService, () => {
           useValue: createMock<CodeService>(),
         },
         {
-          provide: DrawingService,
-          useValue: createMock<DrawingService>(),
-        },
-        {
           provide: EnumerationService,
           useValue: createMock<EnumerationService>(),
         },
@@ -83,7 +74,6 @@ describe(CorpusService, () => {
     classificationService = await module.resolve(ClassificationService);
     databaseService = await module.resolve(DatabaseService);
     codeService = await module.resolve(CodeService);
-    drawingService = await module.resolve(DrawingService);
     enumerationService = await module.resolve(EnumerationService);
   });
 
@@ -102,16 +92,11 @@ describe(CorpusService, () => {
       (parsed) => parsed,
     );
     vi.mocked(codeService.tile).mockReturnValue(tile);
-    vi.mocked(drawingService.render).mockReturnValue("<svg>fixture</svg>\n");
     vi.mocked(characteristicsService.compute).mockReturnValue(record);
     vi.mocked(characteristicsService.isReducible).mockReturnValue(false);
-    vi.mocked(characteristicsService.columnRecord).mockReturnValue(
-      columnRecord,
-    );
-    vi.mocked(characteristicsService.glyphCounts).mockReturnValue(glyphs);
-    vi.mocked(characteristicsService.trueBooleanKeys).mockImplementation(
+    vi.mocked(characteristicsService.stored).mockImplementation(
       (_characteristics, isReducible) =>
-        isReducible ? ["isSingleArc", "isReducible"] : ["isSingleArc"],
+        isReducible ? { ...stored, isReducible: true } : stored,
     );
     vi.mocked(classificationService.classify).mockReturnValue("snake");
     vi.mocked(enumerationService.isAdmitted).mockReturnValue(false);
@@ -135,14 +120,6 @@ describe(CorpusService, () => {
       await service.ingest([entry]);
 
       expect(codeService.parse).toHaveBeenCalledWith("2", 4, 1);
-    });
-
-    it("renders the Code it read, which already carries the entry's rows and columns", async () => {
-      await service.ingest([entry]);
-
-      expect(drawingService.render).toHaveBeenCalledWith(
-        expect.objectContaining({ columns: 1, digits: "2", rows: 4 }),
-      );
     });
 
     it("computes the characteristic record of the Code it read", async () => {
@@ -170,34 +147,26 @@ describe(CorpusService, () => {
       );
     });
 
-    it("persists each entry's non-letter numeric characteristics under their own columns, its letter counts in glyphs, its true booleans, hardcoded provenance, and the first family it was filed under", async () => {
+    it("persists each entry's stored characteristics, as hardcoded, under the first family it was filed under", async () => {
       await service.ingest([
         { code: "3", columns: 3, filedUnder: ["boxes", "parallel"], rows: 4 },
       ]);
 
       expect(databaseService.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          bettiNumber0Count: 1,
-          bettiNumber1Count: 0,
-          characteristics: ["isSingleArc"],
+          characteristics: stored,
           code: "03x04y3",
           columns: 3,
-          crossCount: 0,
-          drawingHash:
-            "8fa0825a9fafc5c9cc0fa1377d44f9c63d0113001d1fe09388da64ebb410dd7d",
           family: "boxes",
-          forkCount: 1,
-          freeEndCount: 2,
-          glyphs: { aSoutheastLatinCount: 2 },
+          isHardcoded: true,
           lattice: "3",
-          provenance: "hardcoded",
           repeats: 1,
           rows: 4,
         }),
       );
     });
 
-    it("does not spread boolean characteristics into the saved row", async () => {
+    it("does not spread any characteristic into the saved row's own columns", async () => {
       await service.ingest([entry]);
 
       const [saved] = vi
@@ -205,7 +174,7 @@ describe(CorpusService, () => {
         .mock.calls.map(([row]) => row);
 
       expect(saved).not.toHaveProperty("isSingleArc");
-      expect(saved).not.toHaveProperty("isBars");
+      expect(saved).not.toHaveProperty("bettiNumber0Count");
     });
 
     it("tells the classifier an entry filed under branch reduces when its Code is wider than its unit", async () => {
@@ -221,14 +190,15 @@ describe(CorpusService, () => {
       });
     });
 
-    it("lists isReducible after the true booleans when the filed Code reduces to a narrower unit", async () => {
+    it("stores isReducible when the filed Code reduces to a narrower unit", async () => {
       vi.mocked(characteristicsService.isReducible).mockReturnValue(true);
 
       await service.ingest([entry]);
 
+      expect(characteristicsService.stored).toHaveBeenCalledWith(record, true);
       expect(databaseService.save).toHaveBeenCalledWith(
         expect.objectContaining({
-          characteristics: ["isSingleArc", "isReducible"],
+          characteristics: { ...stored, isReducible: true },
         }),
       );
     });

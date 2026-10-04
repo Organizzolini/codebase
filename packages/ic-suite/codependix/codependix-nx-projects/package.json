@@ -4,7 +4,7 @@
     "url": "https://github.com/Organizzolini/codebase/issues"
   },
   "dependencies": {
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "@nx/devkit": "catalog:",
     "reflect-metadata": "catalog:"
   },

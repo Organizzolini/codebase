@@ -42,12 +42,9 @@ describe(DaletHebrewLetterCharacteristicsService, () => {
     await letter.compile();
   });
 
-  it("keys all sixteen orientations, each marked a letter", () => {
+  it("keys all sixteen orientations", () => {
     expect(letter.keys()).toStrictEqual(
       LETTER_ORIENTATION_NAMES.map((name) => `dalet${name}HebrewCount`),
-    );
-    expect(letter.marks()).toStrictEqual(
-      LETTER_ORIENTATION_NAMES.map(() => true),
     );
   });
 

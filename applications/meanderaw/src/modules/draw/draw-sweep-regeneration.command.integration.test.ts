@@ -11,7 +11,6 @@ import {
   sweepModuleMetadata,
 } from "../../../testing/draw-sweep";
 
-import { DrawCheckService } from "./draw-check.service";
 import { DrawCodeService } from "./draw-code.service";
 
 vi.mock("node:fs/promises", () => ({
@@ -19,11 +18,10 @@ vi.mock("node:fs/promises", () => ({
   writeFile: vi.fn<(path: string, data: string) => Promise<void>>(),
 }));
 
-/** Compiles a fresh sweep with `--check`, `--code`, and logging mocked out. */
+/** Compiles a fresh sweep with `--code` and logging mocked out. */
 async function compileSweep(): Promise<SweepFixture> {
   const module = await Test.createTestingModule(
     sweepModuleMetadata([
-      { provide: DrawCheckService, useValue: createMock<DrawCheckService>() },
       { provide: DrawCodeService, useValue: createMock<DrawCodeService>() },
       { provide: LoggerService, useValue: createMock<LoggerService>() },
     ]),
@@ -33,7 +31,7 @@ async function compileSweep(): Promise<SweepFixture> {
 }
 
 /**
- * `DrawCommand`'s `--write` sweep over a database an earlier `--write` already
+ * `DrawCommand`'s sweep over a database an earlier sweep already
  * filled, split from `draw-sweep.command.integration.test.ts` only for time.
  * This case sweeps twice and compares the rows, so it cannot share that
  * file's sweep over an empty database; in its own file vitest runs it in
@@ -55,13 +53,11 @@ describe("drawCommand sweep mode", () => {
     it(
       "regenerates an already-populated database into exactly the rows a fresh sweep writes",
       async () => {
-        await sweep.command.run([], { write: true });
+        await sweep.command.run([], {});
 
         const fresh = await sweep.repository.find({ order: { id: "ASC" } });
 
-        await expect(
-          sweep.command.run([], { write: true }),
-        ).resolves.not.toThrow();
+        await expect(sweep.command.run([], {})).resolves.not.toThrow();
 
         const regenerated = await sweep.repository.find({
           order: { id: "ASC" },

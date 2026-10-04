@@ -16,8 +16,8 @@ import type { MeanderRecord, MeanderShape } from "../database/database.types";
  * them is issue #819's work, after the hardcoded corpus has been ingested —
  * so for now the sweep does both and the two corpora sit side by side.
  *
- * Every row it writes is `provenance: "enumerated"`: found by a search over
- * the space rather than named by a person, which is the whole of what that
+ * Every row it writes is `isHardcoded: false`: found by a search over the
+ * space rather than named by a person, which is the whole of what that
  * column distinguishes.
  *
  * Nothing here filters. A meander whose structure satisfies no family's
@@ -71,9 +71,7 @@ export class DrawEnumerationService {
   records(shape: MeanderShape): MeanderRecord[] {
     return this.enumerationService
       .enumerate(shape)
-      .map(({ code }) =>
-        this.drawRecordService.record(code, shape, "enumerated"),
-      );
+      .map(({ code }) => this.drawRecordService.record(code, shape, false));
   }
 
   /** Every shape the budget admits, swept and written — which is what `draw` with no drawing named now does. */

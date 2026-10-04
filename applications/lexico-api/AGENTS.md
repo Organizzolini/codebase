@@ -19,7 +19,7 @@ nx run lexico-api:start
 
 - **Framework**: NestJS (modules, dependency injection, providers)
 - **GraphQL server**: Apollo Server via `@nestjs/apollo` (`ApolloDriver`)
-- **Schema strategy**: Code-first (`autoSchemaFile: true`)
+- **Schema strategy**: Code-first, emitted to `src/schema.gql` beside the root module (`GRAPHQL_SCHEMA_FILE`), whatever the working directory; the file is gitignored
 - **Pagination**: Relay connections via `nestjs-graphql-connection`
 - **Dataloaders**: `dataloader` (request-scoped, prevents N+1 queries)
 - **Env validation**: `@nestjs/config` + `zod` (`environmentSchema` in `.constants.ts`)
@@ -33,7 +33,7 @@ src/main.ts
   └─ NestFactory.create(LexicoApiModule)
        └─ GraphQLModule.forRoot(ApolloDriver)
             └─ Feature modules (SampleModule, ...)
-                 └─ Resolvers → Services → DataLoaders
+                 └─ Resolvers → Services → Loaders
 ```
 
 ### Directory Layout
@@ -50,7 +50,7 @@ src/
       sample.module.ts
       sample.resolver.ts
       sample.service.ts
-      sample.dataloader.ts
+      sample.loader.ts
       sample.entities.ts
       sample.inputs.ts
       sample.args.ts
@@ -62,7 +62,7 @@ src/
       <domain>.module.ts
       <domain>.resolver.ts
       <domain>.service.ts
-      <domain>.dataloader.ts
+      <domain>.loader.ts
       <domain>.entities.ts
       <domain>.inputs.ts
       <domain>.args.ts
@@ -101,7 +101,7 @@ This creates 13 files in `src/modules/<domain>/`. After generation:
 
 2. **Implement the resolver** — add queries and mutations in `<domain>.resolver.ts`.
 3. **Implement the service** — add business logic in `<domain>.service.ts`.
-4. **Implement the dataloader** — add batch loading in `<domain>.dataloader.ts`.
+4. **Implement the dataloader** — add batch loading in `<domain>.loader.ts`.
 5. **Define entities** — add GraphQL object types in `<domain>.entities.ts`.
 
 ### Logging
@@ -164,7 +164,7 @@ Use section comments to keep resolvers scannable:
 export class MyResolver {
   // 🏗 Dependency Injection
   constructor(
-    private readonly myDataLoader: MyDataLoader,
+    private readonly myLoader: MyLoader,
     private readonly myService: MyService,
   ) {}
 
@@ -195,7 +195,7 @@ Use DataLoaders for all relation fields to avoid N+1 queries:
 async relatedEntity(
   @Parent() parent: MyEntity,
 ): Promise<RelatedEntity | null> {
-  return this.relatedDataLoader.byId.load(parent.relatedId);
+  return this.relatedLoader.byId.load(parent.relatedId);
 }
 ```
 
@@ -218,9 +218,9 @@ Register the resolver, service, and dataloader in both `providers` and `exports`
 
 ```ts
 @Module({
-  exports: [MyDataLoader, MyService],
+  exports: [MyLoader, MyService],
   imports: [],
-  providers: [MyDataLoader, MyResolver, MyService],
+  providers: [MyLoader, MyResolver, MyService],
 })
 export class MyModule {}
 ```
@@ -271,7 +271,7 @@ See the [write-typescript skill](../../.agents/skills/write-typescript/SKILL.md)
 
 - **Resolver not found at runtime** — ensure the resolver class is listed in `providers` of its module and the module is imported by the root module.
 - **Dependency injection failure** — verify the service is `@Injectable()`, exported from its module, and that module is imported by the consuming module.
-- **GraphQL schema not generating** — ensure `autoSchemaFile: true` is set in `GraphQLModule.forRoot()` and all types use `@ObjectType()`, `@Field()`, etc.
+- **GraphQL schema not generating** — ensure `autoSchemaFile` is set to `GRAPHQL_SCHEMA_FILE` in `GraphQLModule.forRoot()` and all types use `@ObjectType()`, `@Field()`, etc.
 - **N+1 query problem** — use DataLoaders for all relation fields in resolvers.
 - **Env var validation error on startup** — add the missing variable to `environmentSchema` in `.constants.ts` and to `.env.default`.
 

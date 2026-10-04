@@ -15,14 +15,12 @@ import { LoggerService } from "@codebase/logging";
 import { CorpusService } from "../corpus/corpus.service";
 import { DatabaseService } from "../database/database.service";
 
-import { DrawCheckService } from "./draw-check.service";
 import { DrawCodeService } from "./draw-code.service";
 import { DrawEnumerationService } from "./draw-enumeration.service";
 import { DrawIndexService } from "./draw-index.service";
 import { DrawCommand } from "./draw.command";
 
 import type { Meander } from "../database/entities/Meander.entity";
-import type { MeanderDriftReport } from "./draw-check.types";
 
 const { mkdirMock, writeFileMock } = vi.hoisted(() => ({
   mkdirMock: vi.fn<() => Promise<void>>(),
@@ -36,8 +34,8 @@ vi.mock("node:fs/promises", () => ({
 
 /**
  * Covers what `DrawCommand` decides rather than what it produces: which of
- * its modes an option set selects — the read-only drift check by default,
- * and a write only when `--write` asks for one — how each flag is parsed, and — since
+ * its modes an option set selects — the sweep, or one `--code` drawing —
+ * how each flag is parsed, and — since
  * the sweep writes `output/index.html` again — that it does so with
  * `DrawIndexService`'s own built page, once, at the path spec #813's
  * committed artifact lives at.
@@ -52,7 +50,6 @@ vi.mock("node:fs/promises", () => ({
  */
 describe(DrawCommand, () => {
   let build: Mock<() => Promise<Record<string, string>>>;
-  let check: Mock<() => Promise<MeanderDriftReport>>;
   let clear: Mock<() => Promise<void>>;
   let command: DrawCommand;
   let draw: Mock<() => Promise<Meander>>;
@@ -64,11 +61,6 @@ describe(DrawCommand, () => {
       "families/snake.html": "<section></section>",
       "index.html": "<!doctype html>",
     });
-    check = vi
-      .fn<() => Promise<MeanderDriftReport>>()
-      .mockResolvedValue(
-        createMock<MeanderDriftReport>({ changed: [], missing: [], new: [] }),
-      );
     clear = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
     draw = vi
       .fn<() => Promise<Meander>>()
@@ -79,10 +71,6 @@ describe(DrawCommand, () => {
     const module = await Test.createTestingModule({
       providers: [
         DrawCommand,
-        {
-          provide: DrawCheckService,
-          useValue: createMock<DrawCheckService>({ check }),
-        },
         {
           provide: DrawCodeService,
           useValue: createMock<DrawCodeService>({ draw }),
@@ -115,7 +103,6 @@ describe(DrawCommand, () => {
 
   beforeEach(() => {
     build.mockClear();
-    check.mockClear();
     clear.mockClear();
     draw.mockClear();
     ingest.mockClear();
@@ -132,10 +119,6 @@ describe(DrawCommand, () => {
     const module = await Test.createTestingModule({
       providers: [
         DrawCommand,
-        {
-          provide: DrawCheckService,
-          useValue: createMock<DrawCheckService>(),
-        },
         {
           provide: DrawCodeService,
           useValue: createMock<DrawCodeService>(),
@@ -170,20 +153,8 @@ describe(DrawCommand, () => {
     expect(logger.setContext).toHaveBeenCalledWith("DrawCommand");
   });
 
-  it("checks for drift, writing nothing, when no flag is given at all", async () => {
+  it("clears the committed rows before sweeping, so a sweep regenerates rather than colliding with them", async () => {
     await command.run([], {});
-
-    expect(check).toHaveBeenCalledTimes(1);
-    expect(sweep).not.toHaveBeenCalled();
-    expect(ingest).not.toHaveBeenCalled();
-    expect(draw).not.toHaveBeenCalled();
-    expect(build).not.toHaveBeenCalled();
-    expect(clear).not.toHaveBeenCalled();
-    expect(writeFileMock).not.toHaveBeenCalled();
-  });
-
-  it("clears the committed rows before sweeping, so --write regenerates rather than colliding with them", async () => {
-    await command.run([], { write: true });
 
     const [cleared] = clear.mock.invocationCallOrder;
     const [enumerated] = sweep.mock.invocationCallOrder;
@@ -192,8 +163,8 @@ describe(DrawCommand, () => {
     expect(cleared ?? Infinity).toBeLessThan(enumerated ?? 0);
   });
 
-  it("sweeps both halves of the corpus when --write is given and no Code is named", async () => {
-    await command.run([], { write: true });
+  it("sweeps both halves of the corpus when no Code is named", async () => {
+    await command.run([], {});
 
     expect(sweep).toHaveBeenCalledTimes(1);
     expect(ingest).toHaveBeenCalledTimes(1);
@@ -201,7 +172,7 @@ describe(DrawCommand, () => {
   });
 
   it("enumerates before ingesting, so a hardcoded collision is refused rather than overwriting", async () => {
-    await command.run([], { write: true });
+    await command.run([], {});
 
     const [enumerated] = sweep.mock.invocationCallOrder;
     const [hardcoded] = ingest.mock.invocationCallOrder;
@@ -210,7 +181,7 @@ describe(DrawCommand, () => {
   });
 
   it("rebuilds the index page from the sweep's own rows, once both halves have committed", async () => {
-    await command.run([], { write: true });
+    await command.run([], {});
 
     expect(build).toHaveBeenCalledTimes(1);
     expect(writeFileMock).toHaveBeenCalledWith(
@@ -229,7 +200,7 @@ describe(DrawCommand, () => {
   });
 
   it("draws the one meander a Code names, sweeping nothing and never rebuilding the index page", async () => {
-    await command.run([], { code: "3c9a", columns: 2, rows: 3, write: true });
+    await command.run([], { code: "3c9a", columns: 2, rows: 3 });
 
     expect(draw).toHaveBeenCalledWith({ code: "3c9a", columns: 2, rows: 3 });
     expect(clear).not.toHaveBeenCalled();
@@ -239,7 +210,7 @@ describe(DrawCommand, () => {
   });
 
   it("draws a self-contained formatted Code without requiring --rows and --columns", async () => {
-    await command.run([], { code: "02x03y3c9a", write: true });
+    await command.run([], { code: "02x03y3c9a" });
 
     expect(draw).toHaveBeenCalledWith({
       code: "02x03y3c9a",
@@ -250,66 +221,18 @@ describe(DrawCommand, () => {
   });
 
   it("refuses a Code given without both --rows and --columns", async () => {
-    await expect(
-      command.run([], { code: "0", rows: 2, write: true }),
-    ).rejects.toThrow(/needs both --rows and --columns/);
-    await expect(
-      command.run([], { code: "0", columns: 1, write: true }),
-    ).rejects.toThrow(/needs both --rows and --columns/);
-    expect(draw).not.toHaveBeenCalled();
-  });
-
-  it("refuses a Code given without --write, drawing and checking nothing", async () => {
-    await expect(
-      command.run([], { code: "3c9a", columns: 2, rows: 3 }),
-    ).rejects.toThrow(/needs --write/);
-    await expect(
-      command.run([], { check: true, code: "02x03y3c9a" }),
-    ).rejects.toThrow(/needs --write/);
-    expect(draw).not.toHaveBeenCalled();
-    expect(check).not.toHaveBeenCalled();
-    expect(sweep).not.toHaveBeenCalled();
-  });
-
-  it("refuses --check and --write together, checking and writing nothing", async () => {
-    await expect(command.run([], { check: true, write: true })).rejects.toThrow(
-      /--check and --write/,
+    await expect(command.run([], { code: "0", rows: 2 })).rejects.toThrow(
+      /needs both --rows and --columns/,
     );
-    expect(check).not.toHaveBeenCalled();
-    expect(sweep).not.toHaveBeenCalled();
-    expect(ingest).not.toHaveBeenCalled();
-    expect(draw).not.toHaveBeenCalled();
-    expect(writeFileMock).not.toHaveBeenCalled();
-  });
-
-  it("checks for drift instead of sweeping or drawing when --check is given explicitly", async () => {
-    await command.run([], { check: true });
-
-    expect(check).toHaveBeenCalledTimes(1);
-    expect(sweep).not.toHaveBeenCalled();
-    expect(ingest).not.toHaveBeenCalled();
-    expect(draw).not.toHaveBeenCalled();
-  });
-
-  it("propagates drift detected by --check rather than swallowing it", async () => {
-    check.mockRejectedValueOnce(new Error("meander drift detected"));
-
-    await expect(command.run([], { check: true })).rejects.toThrow(
-      /meander drift detected/,
+    await expect(command.run([], { code: "0", columns: 1 })).rejects.toThrow(
+      /needs both --rows and --columns/,
     );
+    expect(draw).not.toHaveBeenCalled();
   });
 
   it("parses each option the command still takes", () => {
     expect(command.parseCode("3c9a")).toBe("3c9a");
     expect(command.parseColumns("2")).toBe(2);
     expect(command.parseRows("3")).toBe(3);
-    expect(command.parseCheck(undefined)).toBe(true);
-    expect(command.parseCheck("false")).toBe(false);
-    expect(command.parseCheck("0")).toBe(false);
-    expect(command.parseCheck("true")).toBe(true);
-    expect(command.parseWrite(undefined)).toBe(true);
-    expect(command.parseWrite("false")).toBe(false);
-    expect(command.parseWrite("0")).toBe(false);
-    expect(command.parseWrite("true")).toBe(true);
   });
 });
