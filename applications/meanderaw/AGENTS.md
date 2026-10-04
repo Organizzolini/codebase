@@ -15,7 +15,7 @@ nx run meanderaw:start
 
 ## 🏛️ Before You Change a Meander
 
-**A meander is a row in the Postgres database `POSTGRES_DB` names (`meanderaw_development`
+**A meander is a row in the Postgres database `MEANDERAW_POSTGRES_DB` names (`meanderaw_development`
 by default), addressed by its lattice address — its Code, its rows, and its columns — and nothing else.** The formatted
 Code spells out all three, so `code` alone is its identity; the row's `id` is a uuidv7
 the database assigns, which changes on every sweep and must never reach committed output. There is no `output/<family>/*.svg`
@@ -195,7 +195,7 @@ nx run meanderaw:oxfmt           # Formatting
 ```
 
 This application has **one command, `draw`**, and it is the default — so `start` runs it,
-and it always writes the database `POSTGRES_DB` names. With no arguments it clears that
+and it always writes the database `MEANDERAW_POSTGRES_DB` names. With no arguments it clears that
 database's meander rows and sweeps every meander the application can draw back into it: the whole lattice's unit space, enumerated
 and classified, then the historical corpus's hardcoded Codes beyond that budget. With
 `--rows`, `--columns`, and `--code` it decodes, measures, and persists that one:
@@ -209,9 +209,10 @@ or any other — rewrites the database and the committed pages as a side effect.
 that way: a `dependsOn` on `start` would rewrite them on every run.
 
 **The database lives in Postgres, not in the repository.** The local Docker init creates
-the `meanderaw_development` database and the schema of the same name, which `POSTGRES_DB`
-and `POSTGRES_SCHEMA` in this project's `.env` name — that file must exist, since it is
-what overrides the root `.env`'s `POSTGRES_DB="postgres"`, lexico's database. The committed
+the `meanderaw_development` database and the schema of the same name, the defaults of
+`MEANDERAW_POSTGRES_DB` and `MEANDERAW_POSTGRES_SCHEMA`. Every meanderaw variable carries the
+`MEANDERAW_` prefix, so the unprefixed `MEANDERAW_POSTGRES_*` the root `.env` sets for lexico — which
+Nx loads into every task — never reaches it. The committed
 `output/*.html` pages are the only artifact a sweep commits — see
 [ADR 0020](../../docs/adr/0020-store-meanders-in-postgres.md). Integration suites start
 their own throwaway `postgres:18-alpine` container through `@testcontainers/postgresql`

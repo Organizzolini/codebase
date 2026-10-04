@@ -26,9 +26,10 @@ import type { TestingModule } from "@nestjs/testing";
  * Boots the real `DatabaseModule` from configuration alone, the way the CLI
  * does, against a throwaway Postgres container standing in for the local
  * one: the server's address, credentials, database, and schema all arrive
- * as `POSTGRES_*` variables. The test names a database and schema other
- * than the `meanderaw_development` default, so it passes only by reading
- * them.
+ * as `MEANDERAW_POSTGRES_*` variables, while the unprefixed `POSTGRES_DB`
+ * the workspace root's `.env` sets for lexico is ignored. The test names a
+ * database and schema other than the `meanderaw_development` default, so it
+ * passes only by reading them.
  */
 describe(DatabaseModule, () => {
   let container: StartedPostgreSqlContainer;
@@ -40,12 +41,15 @@ describe(DatabaseModule, () => {
       .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
       .start();
 
-    vi.stubEnv("POSTGRES_DB", TEST_DATABASE_NAME);
-    vi.stubEnv("POSTGRES_HOST", container.getHost());
-    vi.stubEnv("POSTGRES_PASSWORD", container.getPassword());
-    vi.stubEnv("POSTGRES_PORT", String(container.getPort()));
-    vi.stubEnv("POSTGRES_SCHEMA", TEST_DATABASE_NAME);
-    vi.stubEnv("POSTGRES_USER", container.getUsername());
+    // 🎯 The workspace root's `.env`, which Nx loads into every task, names
+    // lexico's database under the unprefixed variable; it must be ignored.
+    vi.stubEnv("POSTGRES_DB", "postgres");
+    vi.stubEnv("MEANDERAW_POSTGRES_DB", TEST_DATABASE_NAME);
+    vi.stubEnv("MEANDERAW_POSTGRES_HOST", container.getHost());
+    vi.stubEnv("MEANDERAW_POSTGRES_PASSWORD", container.getPassword());
+    vi.stubEnv("MEANDERAW_POSTGRES_PORT", String(container.getPort()));
+    vi.stubEnv("MEANDERAW_POSTGRES_SCHEMA", TEST_DATABASE_NAME);
+    vi.stubEnv("MEANDERAW_POSTGRES_USER", container.getUsername());
 
     module = await Test.createTestingModule({
       imports: [
@@ -66,7 +70,7 @@ describe(DatabaseModule, () => {
     vi.unstubAllEnvs();
   });
 
-  it("writes rows into the schema POSTGRES_SCHEMA names, every column in snake case", async () => {
+  it("writes rows into the schema MEANDERAW_POSTGRES_SCHEMA names, every column in snake case", async () => {
     await module.get(DatabaseService).save(meanderRecord({ code: "01x02y0" }));
 
     const columns: { column_name: string }[] = await module

@@ -6,9 +6,9 @@ import type { StoredCharacteristics } from "../../characteristics/characteristic
 import type { MeanderFamily } from "../../classification/classification.types";
 
 /**
- * One row of the `meanders` table, in the schema `POSTGRES_SCHEMA` names:
- * a single meander addressed by its Code, decoded and rendered by
- * the generic, family-agnostic pipeline.
+ * One row of the `meanders` table, in the schema
+ * `MEANDERAW_POSTGRES_SCHEMA` names: a single meander addressed by its Code,
+ * decoded and rendered by the generic, family-agnostic pipeline.
  *
  * `code` is unbounded text, because several families' full Codes outgrow
  * the 255-byte filesystem path component a file per Code once needed.

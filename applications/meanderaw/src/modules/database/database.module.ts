@@ -7,9 +7,10 @@ import { DatabaseService } from "./database.service";
 import { Meander } from "./entities/Meander.entity";
 
 /**
- * Wires up the Postgres database every meander is persisted to: the server,
- * credentials, database, and schema the `POSTGRES_*` variables name, by
- * default `meanderaw_development` for both of the last two.
+ * Wires up the Postgres database every meander is persisted to: the
+ * server, credentials, database, and schema the `MEANDERAW_POSTGRES_*`
+ * variables name, by default `meanderaw_development` for both of the last
+ * two.
  *
  * A test exercising `DatabaseService` builds its own `TestingModule`
  * against a throwaway Postgres container instead of importing this module,
@@ -26,13 +27,24 @@ import { Meander } from "./entities/Meander.entity";
       inject: [ConfigService],
       useFactory: (configurationService: ConfigService) =>
         meanderDataSourceOptions({
-          database: configurationService.getOrThrow<string>("POSTGRES_DB"),
-          host: configurationService.getOrThrow<string>("POSTGRES_HOST"),
-          password:
-            configurationService.getOrThrow<string>("POSTGRES_PASSWORD"),
-          port: configurationService.getOrThrow<number>("POSTGRES_PORT"),
-          schema: configurationService.getOrThrow<string>("POSTGRES_SCHEMA"),
-          username: configurationService.getOrThrow<string>("POSTGRES_USER"),
+          database: configurationService.getOrThrow<string>(
+            "MEANDERAW_POSTGRES_DB",
+          ),
+          host: configurationService.getOrThrow<string>(
+            "MEANDERAW_POSTGRES_HOST",
+          ),
+          password: configurationService.getOrThrow<string>(
+            "MEANDERAW_POSTGRES_PASSWORD",
+          ),
+          port: configurationService.getOrThrow<number>(
+            "MEANDERAW_POSTGRES_PORT",
+          ),
+          schema: configurationService.getOrThrow<string>(
+            "MEANDERAW_POSTGRES_SCHEMA",
+          ),
+          username: configurationService.getOrThrow<string>(
+            "MEANDERAW_POSTGRES_USER",
+          ),
         }),
     }),
     TypeOrmModule.forFeature([Meander]),

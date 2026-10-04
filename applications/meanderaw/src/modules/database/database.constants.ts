@@ -2,15 +2,15 @@
 
 /**
  * The Postgres database, and the schema inside it, every meander is
- * persisted to unless `POSTGRES_DB` and `POSTGRES_SCHEMA` say otherwise: the
- * application's name and its environment, joined. Development is the only
- * environment so far; the local Docker init creates both.
+ * persisted to unless `MEANDERAW_POSTGRES_DB` and `MEANDERAW_POSTGRES_SCHEMA`
+ * say otherwise: the application's name and its environment, joined.
+ * Development is the only environment so far; the local Docker init creates
+ * both.
  *
- * This project's own `.env` sets `POSTGRES_DB` too, and must: Nx loads the
- * workspace root's `.env` into every task as well, and that file names
- * lexico's shared `postgres` database, which this project's file overrides.
- * Without it the connection would reach `postgres` and fail there rather
- * than write, since no `meanderaw_development` schema exists in it.
+ * Every variable carries the `MEANDERAW_` prefix so none can collide with
+ * another project's: Nx loads the workspace root's `.env` into every task,
+ * and that file's unprefixed `POSTGRES_DB` names lexico's shared `postgres`
+ * database.
  */
 export const DEFAULT_DATABASE_NAME = "meanderaw_development";
 

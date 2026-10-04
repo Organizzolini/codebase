@@ -8,16 +8,17 @@ nx run meanderaw:start
 The local Postgres container creates the `meanderaw_development` database, and the schema of
 the same name inside it, the first time its volume starts empty; on a volume that predates
 that, `nx run codebase:postgres-container:recreate` builds it, discarding what the volume
-held. The connection is the `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`,
-`POSTGRES_PASSWORD`, `POSTGRES_DB`, and `POSTGRES_SCHEMA` variables in this project's `.env`,
-copied from `.env.default`; the last two default to `meanderaw_development`. Keep that file:
-Nx also loads the workspace root's `.env`, whose `POSTGRES_DB` names lexico's `postgres`
-database, and this project's file is what overrides it.
+held. The connection is the `MEANDERAW_POSTGRES_HOST`, `MEANDERAW_POSTGRES_PORT`,
+`MEANDERAW_POSTGRES_USER`, `MEANDERAW_POSTGRES_PASSWORD`, `MEANDERAW_POSTGRES_DB`, and
+`MEANDERAW_POSTGRES_SCHEMA` variables, set in this project's `.env` (copied from
+`.env.default`) and defaulting to the local container — `meanderaw_development` for the last
+two. The `MEANDERAW_` prefix keeps them apart from the unprefixed `MEANDERAW_POSTGRES_*` variables the
+workspace root's `.env` sets for lexico, which Nx also loads into every task.
 
 ## 🖌️ One Command
 
 Meanderaw has one command, `draw`, and it is the default — so `nx run meanderaw:start` runs it.
-Both of its modes write the Postgres database `POSTGRES_DB` names, and which one runs is
+Both of its modes write the Postgres database `MEANDERAW_POSTGRES_DB` names, and which one runs is
 decided by whether a Code was named:
 
 | Invocation | What it does |
@@ -101,7 +102,7 @@ SQL — a bare `->>` is `NULL` for a missing key, and silently drops that row fr
 on zero or less-than:
 
 ```sql
-SELECT code FROM meanderaw_development.meanders -- the default POSTGRES_SCHEMA
+SELECT code FROM meanderaw_development.meanders -- the default MEANDERAW_POSTGRES_SCHEMA
 WHERE COALESCE((characteristics ->> 'crossCount')::numeric, 0) = 0
   AND characteristics @> '{"isBars": true}';
 ```

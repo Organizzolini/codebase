@@ -35,7 +35,7 @@ import { DrawCommand } from "./draw.command";
  * one service `DrawCommand` calls once per sweep with the historical corpus,
  * trusting its family/subFamily rather than classifying them.
  *
- * `DatabaseModule` always connects to the database the `POSTGRES_*`
+ * `DatabaseModule` always connects to the database the `MEANDERAW_POSTGRES_*`
  * variables name — a test exercising `DrawCommand`, `DrawCodeService`,
  * `DrawEnumerationService`, `DrawIndexService`, or `CorpusService` builds
  * its own `TestingModule` against a throwaway Postgres container instead of
