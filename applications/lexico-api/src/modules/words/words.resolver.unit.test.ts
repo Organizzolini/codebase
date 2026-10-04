@@ -4,14 +4,33 @@ import {
   GraphQLSchemaFactory,
 } from "@nestjs/graphql";
 import { Test } from "@nestjs/testing";
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { Word } from "@codebase/lexico-entities";
 
 import { WordsResolver } from "./words.resolver";
 import { WordsService } from "./words.service";
 
-describe("words resolver suite", () => {
+describe(WordsResolver, () => {
+  let resolver: WordsResolver;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        WordsResolver,
+        { provide: WordsService, useValue: createMock<WordsService>() },
+      ],
+    }).compile();
+
+    resolver = await module.resolve(WordsResolver);
+  });
+
+  it("is defined", () => {
+    expect.hasAssertions();
+
+    expect(resolver).toBeDefined();
+  });
+
   it("resolves a single word by data using the words service", async () => {
     expect.hasAssertions();
 

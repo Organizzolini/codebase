@@ -33,7 +33,7 @@ src/main.ts
   └─ NestFactory.create({{namePascalCase}}Module)
        └─ GraphQLModule.forRoot(ApolloDriver)
             └─ Feature modules (SampleModule, ...)
-                 └─ Resolvers → Services → DataLoaders
+                 └─ Resolvers → Services → Loaders
 ```
 
 ### Directory Layout
@@ -50,7 +50,7 @@ src/
       sample.module.ts
       sample.resolver.ts
       sample.service.ts
-      sample.dataloader.ts
+      sample.loader.ts
       sample.entities.ts
       sample.inputs.ts
       sample.args.ts
@@ -62,7 +62,7 @@ src/
       <domain>.module.ts
       <domain>.resolver.ts
       <domain>.service.ts
-      <domain>.dataloader.ts
+      <domain>.loader.ts
       <domain>.entities.ts
       <domain>.inputs.ts
       <domain>.args.ts
@@ -101,7 +101,7 @@ This creates 13 files in `src/modules/<domain>/`. After generation:
 
 2. **Implement the resolver** — add queries and mutations in `<domain>.resolver.ts`.
 3. **Implement the service** — add business logic in `<domain>.service.ts`.
-4. **Implement the dataloader** — add batch loading in `<domain>.dataloader.ts`.
+4. **Implement the dataloader** — add batch loading in `<domain>.loader.ts`.
 5. **Define entities** — add GraphQL object types in `<domain>.entities.ts`.
 
 ### Logging
@@ -164,7 +164,7 @@ Use section comments to keep resolvers scannable:
 export class MyResolver {
   // 🏗 Dependency Injection
   constructor(
-    private readonly myDataLoader: MyDataLoader,
+    private readonly myLoader: MyLoader,
     private readonly myService: MyService,
   ) {}
 
@@ -195,7 +195,7 @@ Use DataLoaders for all relation fields to avoid N+1 queries:
 async relatedEntity(
   @Parent() parent: MyEntity,
 ): Promise<RelatedEntity | null> {
-  return this.relatedDataLoader.byId.load(parent.relatedId);
+  return this.relatedLoader.byId.load(parent.relatedId);
 }
 ```
 
@@ -218,9 +218,9 @@ Register the resolver, service, and dataloader in both `providers` and `exports`
 
 ```ts
 @Module({
-  exports: [MyDataLoader, MyService],
+  exports: [MyLoader, MyService],
   imports: [],
-  providers: [MyDataLoader, MyResolver, MyService],
+  providers: [MyLoader, MyResolver, MyService],
 })
 export class MyModule {}
 ```

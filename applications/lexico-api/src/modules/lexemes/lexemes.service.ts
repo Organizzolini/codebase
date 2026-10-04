@@ -12,10 +12,20 @@ import {
  */
 @Injectable()
 export class LexemesService {
+  // 🏗 Dependency Injection
+
   public constructor(
     @InjectRepository(Lexeme)
     private readonly lexemeRepository: Repository<Lexeme>,
   ) {}
+
+  // 🔐 Private Fields
+
+  // 🔑 Public Fields
+
+  // 🔏 Private Methods
+
+  // 🌎 Public Methods
 
   /**
    * Finds a single lexeme by its unique identifier, with relations eagerly joined.

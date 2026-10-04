@@ -3,12 +3,28 @@ import {
   GraphQLSchemaFactory,
 } from "@nestjs/graphql";
 import { Test } from "@nestjs/testing";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 
 import { HealthResolver } from "./health.resolver";
 import { HealthService } from "./health.service";
 
-describe("health resolver suite", () => {
+describe(HealthResolver, () => {
+  let resolver: HealthResolver;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [HealthResolver, HealthService],
+    }).compile();
+
+    resolver = await module.resolve(HealthResolver);
+  });
+
+  it("is defined", () => {
+    expect.hasAssertions();
+
+    expect(resolver).toBeDefined();
+  });
+
   it("builds health resolver schema definition", async () => {
     expect.hasAssertions();
 

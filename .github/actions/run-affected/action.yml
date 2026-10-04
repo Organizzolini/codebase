@@ -1,19 +1,11 @@
 name: 🎯 Run Affected
 description: |
-  Run `nx affected` for one target, computing the changed files itself and
-  piping them in over `--stdin` (requires `setup-codebase` with `nx-shas`).
+  Run `nx affected` for one target between `NX_BASE` and `NX_HEAD` (requires
+  `setup-codebase` with `nx-shas`), dropping spelling files from the change
+  set unless `include-spelling` is set.
 
-  Spelling files are dropped from that list unless `include-spelling` is set.
-  `spell-check` lists the shared dictionaries among its `{workspaceRoot}`
-  inputs, and Nx decides affected per project, not per target: one new word
-  in a dictionary marks every project affected for every target, so a word
-  list edit ran the whole workspace's tests and timed the job out. Only the
-  target that runs `spell-check` should see those files.
-
-  The list is built the way Nx builds its own from `NX_BASE` and `NX_HEAD`
-  (their merge base, then `git diff --name-only --no-renames --relative`), so
-  a change set with no spelling files is affected exactly as before. An empty
-  list affects nothing and exits cleanly; it never falls back to everything.
+  The logic, and why `--stdin` is only its fallback, lives in
+  `scripts/nx/run-affected.sh`.
 
 inputs:
   target:
@@ -37,26 +29,5 @@ runs:
         ARGUMENTS: ${{ inputs.arguments }}
         INCLUDE_SPELLING: ${{ inputs.include-spelling }}
         SPELLING_PATHS: ^configuration/\.cspell/|(^|/)cspell\.config\.yaml$
-      run: |
-        if [[ -z "${NX_BASE:-}" || -z "${NX_HEAD:-}" ]]; then
-          echo "❌ NX_BASE and NX_HEAD are unset; run setup-codebase first"
-          exit 1
-        fi
-
-        base="$(git merge-base "${NX_BASE}" "${NX_HEAD}" || echo "${NX_BASE}")"
-        changed="$(git diff --name-only --no-renames --relative \
-          "${base}" "${NX_HEAD}")"
-
-        if [[ "${INCLUDE_SPELLING}" != "true" ]]; then
-          spelling="$(grep -E "${SPELLING_PATHS}" <<<"${changed}" || true)"
-          if [[ -n "${spelling}" ]]; then
-            echo "✂️ Not affecting ${TARGET} with spelling files:"
-            sed 's/^/  /' <<<"${spelling}"
-          fi
-          changed="$(grep -Ev "${SPELLING_PATHS}" <<<"${changed}" || true)"
-        fi
-
-        read -ra arguments <<<"${ARGUMENTS}"
-        printf '%s\n' "${changed}" \
-          | pnpm exec nx affected --stdin --target="${TARGET}" "${arguments[@]}"
+      run: bash scripts/nx/run-affected.sh
       shell: bash

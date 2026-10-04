@@ -16,6 +16,7 @@ import { SearchService } from "./search.service";
  * Search module providing dictionary search services and GraphQL resolvers.
  */
 @Module({
+  controllers: [],
   exports: [SearchService],
   imports: [
     TypeOrmModule.forFeature([Lexeme, Word, Translation, WordLexeme, WordForm]),

@@ -47,7 +47,8 @@ export class ScopeService {
    *
    * A group with no tags applies everywhere — tags narrow a group, they do not
    * opt it in, so a configuration that never mentions them still reaches every
-   * project.
+   * project. A project must carry every tag the group names, so a second tag
+   * narrows the group further rather than widening it.
    */
   public matchesProject(args: {
     group: ConformetryInstanceGroup;
@@ -57,7 +58,7 @@ export class ScopeService {
       return true;
     }
 
-    return (args.group.tags ?? []).some((tag) => {
+    return (args.group.tags ?? []).every((tag) => {
       return args.project.tags.includes(tag);
     });
   }

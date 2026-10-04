@@ -32,6 +32,15 @@ inputs:
   nx-shas:
     description: Resolve NX_BASE and NX_HEAD, required by `nx affected`
     default: "true"
+  nx-base:
+    description: |
+      Where a push's NX_BASE comes from. `last-successful`, the default, keeps
+      `nx-set-shas`' answer: the last commit whose whole workflow succeeded,
+      so a failed run is retried in full by the next one. `push-before` uses
+      the push's own previous tip instead, falling back to `last-successful`
+      when that is all zeros or not an ancestor of the head (a new branch, a
+      force-push). Pull request and merge queue runs ignore this input.
+    default: last-successful
   python-dependencies:
     description: |
       Sync the uv workspace into the shared root `.venv`. Defaults on because
@@ -76,6 +85,18 @@ runs:
     - name: 🎯 Set Nx SHAs
       if: inputs.nx-shas == 'true'
       uses: nrwl/nx-set-shas@v5
+
+    # CI only (`nx-base: push-before`): bases a push on its own previous tip
+    # rather than the last green commit, so one red main run cannot widen the
+    # next. `scripts/nx/bound-base-to-push.sh` explains why, and its fallbacks.
+    - name: 🎯 Bound Nx Base To The Push
+      if: |
+        inputs.nx-shas == 'true' && inputs.nx-base == 'push-before'
+        && github.event_name == 'push'
+      env:
+        BEFORE: ${{ github.event.before }}
+      run: bash scripts/nx/bound-base-to-push.sh
+      shell: bash
 
     - name: 🗃️ Configure Nx Cache
       run: echo "NX_DEFAULT_OUTPUT_STYLE=static" >> "$GITHUB_ENV"

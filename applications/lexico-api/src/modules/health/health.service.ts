@@ -5,6 +5,18 @@ import { Injectable } from "@nestjs/common";
  */
 @Injectable()
 export class HealthService {
+  // 🏗 Dependency Injection
+
+  public constructor() {}
+
+  // 🔐 Private Fields
+
+  // 🔑 Public Fields
+
+  // 🔏 Private Methods
+
+  // 🌎 Public Methods
+
   /**
    * Returns true if the service is operational.
    */

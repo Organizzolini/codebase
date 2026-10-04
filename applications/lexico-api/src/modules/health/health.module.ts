@@ -7,7 +7,9 @@ import { HealthService } from "./health.service";
  * Health check module providing health query resolver.
  */
 @Module({
+  controllers: [],
   exports: [HealthService],
+  imports: [],
   providers: [HealthResolver, HealthService],
 })
 export class HealthModule {}

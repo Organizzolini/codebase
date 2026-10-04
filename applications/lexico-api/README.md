@@ -52,14 +52,17 @@ graph LR
   file_src_lexico_api_unit_test_ts["src/lexico-api.unit.test.ts"]
   file_src_lexico_api_utilities_ts["src/lexico-api.utilities.ts"]
   file_src_lexico_api_utilities_unit_test_ts["src/lexico-api.utilities.unit.test.ts"]
+  file_src_modules_health_health_constants_ts["src/modules/health/health.constants.ts"]
   file_src_modules_health_health_module_ts["src/modules/health/health.module.ts"]
   file_src_modules_health_health_module_unit_test_ts["src/modules/health/health.module.unit.test.ts"]
   file_src_modules_health_health_resolver_ts["src/modules/health/health.resolver.ts"]
   file_src_modules_health_health_resolver_unit_test_ts["src/modules/health/health.resolver.unit.test.ts"]
   file_src_modules_health_health_service_ts["src/modules/health/health.service.ts"]
   file_src_modules_health_health_service_unit_test_ts["src/modules/health/health.service.unit.test.ts"]
+  file_src_modules_health_health_types_ts["src/modules/health/health.types.ts"]
   file_src_modules_lexemes_lexeme_arguments_entities_ts["src/modules/lexemes/lexeme-arguments.entities.ts"]
   file_src_modules_lexemes_lexemes_arguments_entities_ts["src/modules/lexemes/lexemes-arguments.entities.ts"]
+  file_src_modules_lexemes_lexemes_constants_ts["src/modules/lexemes/lexemes.constants.ts"]
   file_src_modules_lexemes_lexemes_module_ts["src/modules/lexemes/lexemes.module.ts"]
   file_src_modules_lexemes_lexemes_module_unit_test_ts["src/modules/lexemes/lexemes.module.unit.test.ts"]
   file_src_modules_lexemes_lexemes_resolver_ts["src/modules/lexemes/lexemes.resolver.ts"]
@@ -67,6 +70,7 @@ graph LR
   file_src_modules_lexemes_lexemes_service_integration_test_ts["src/modules/lexemes/lexemes.service.integration.test.ts"]
   file_src_modules_lexemes_lexemes_service_ts["src/modules/lexemes/lexemes.service.ts"]
   file_src_modules_lexemes_lexemes_service_unit_test_ts["src/modules/lexemes/lexemes.service.unit.test.ts"]
+  file_src_modules_lexemes_lexemes_types_ts["src/modules/lexemes/lexemes.types.ts"]
   file_src_modules_literature_author_argument_entities_ts["src/modules/literature/author-argument.entities.ts"]
   file_src_modules_literature_author_lookup_input_entities_ts["src/modules/literature/author-lookup-input.entities.ts"]
   file_src_modules_literature_authors_resolver_ts["src/modules/literature/authors.resolver.ts"]
@@ -74,14 +78,17 @@ graph LR
   file_src_modules_literature_line_arguments_entities_ts["src/modules/literature/line-arguments.entities.ts"]
   file_src_modules_literature_lines_range_input_entities_ts["src/modules/literature/lines-range-input.entities.ts"]
   file_src_modules_literature_lines_resolver_ts["src/modules/literature/lines.resolver.ts"]
+  file_src_modules_literature_lines_resolver_unit_test_ts["src/modules/literature/lines.resolver.unit.test.ts"]
   file_src_modules_literature_literature_arguments_entities_unit_test_ts["src/modules/literature/literature-arguments.entities.unit.test.ts"]
   file_src_modules_literature_literature_connection_entities_ts["src/modules/literature/literature-connection.entities.ts"]
   file_src_modules_literature_literature_search_result_entities_ts["src/modules/literature/literature-search-result.entities.ts"]
+  file_src_modules_literature_literature_constants_ts["src/modules/literature/literature.constants.ts"]
   file_src_modules_literature_literature_module_ts["src/modules/literature/literature.module.ts"]
   file_src_modules_literature_literature_resolver_ts["src/modules/literature/literature.resolver.ts"]
   file_src_modules_literature_literature_resolver_unit_test_ts["src/modules/literature/literature.resolver.unit.test.ts"]
   file_src_modules_literature_literature_service_ts["src/modules/literature/literature.service.ts"]
   file_src_modules_literature_literature_service_unit_test_ts["src/modules/literature/literature.service.unit.test.ts"]
+  file_src_modules_literature_literature_types_ts["src/modules/literature/literature.types.ts"]
   file_src_modules_literature_search_authors_arguments_entities_ts["src/modules/literature/search-authors-arguments.entities.ts"]
   file_src_modules_literature_search_lines_arguments_entities_ts["src/modules/literature/search-lines-arguments.entities.ts"]
   file_src_modules_literature_search_literature_arguments_entities_ts["src/modules/literature/search-literature-arguments.entities.ts"]
@@ -91,10 +98,11 @@ graph LR
   file_src_modules_literature_texts_arguments_entities_ts["src/modules/literature/texts-arguments.entities.ts"]
   file_src_modules_literature_texts_resolver_ts["src/modules/literature/texts.resolver.ts"]
   file_src_modules_literature_texts_resolver_unit_test_ts["src/modules/literature/texts.resolver.unit.test.ts"]
-  file_src_modules_literature_token_word_loader_service_ts["src/modules/literature/token-word-loader.service.ts"]
-  file_src_modules_literature_token_word_loader_service_unit_test_ts["src/modules/literature/token-word-loader.service.unit.test.ts"]
+  file_src_modules_literature_token_word_loader_ts["src/modules/literature/token-word.loader.ts"]
+  file_src_modules_literature_token_word_loader_unit_test_ts["src/modules/literature/token-word.loader.unit.test.ts"]
   file_src_modules_literature_tokens_arguments_entities_ts["src/modules/literature/tokens-arguments.entities.ts"]
   file_src_modules_literature_tokens_resolver_ts["src/modules/literature/tokens.resolver.ts"]
+  file_src_modules_literature_tokens_resolver_unit_test_ts["src/modules/literature/tokens.resolver.unit.test.ts"]
   file_src_modules_search_pagination_arguments_entities_ts["src/modules/search/pagination-arguments.entities.ts"]
   file_src_modules_search_pagination_arguments_entities_unit_test_ts["src/modules/search/pagination-arguments.entities.unit.test.ts"]
   file_src_modules_search_search_english_arguments_entities_ts["src/modules/search/search-english-arguments.entities.ts"]
@@ -114,11 +122,13 @@ graph LR
   file_src_modules_search_search_utilities_unit_test_ts["src/modules/search/search.utilities.unit.test.ts"]
   file_src_modules_words_word_arguments_entities_ts["src/modules/words/word-arguments.entities.ts"]
   file_src_modules_words_words_arguments_entities_ts["src/modules/words/words-arguments.entities.ts"]
+  file_src_modules_words_words_constants_ts["src/modules/words/words.constants.ts"]
   file_src_modules_words_words_module_ts["src/modules/words/words.module.ts"]
   file_src_modules_words_words_resolver_ts["src/modules/words/words.resolver.ts"]
   file_src_modules_words_words_resolver_unit_test_ts["src/modules/words/words.resolver.unit.test.ts"]
   file_src_modules_words_words_service_ts["src/modules/words/words.service.ts"]
   file_src_modules_words_words_service_unit_test_ts["src/modules/words/words.service.unit.test.ts"]
+  file_src_modules_words_words_types_ts["src/modules/words/words.types.ts"]
   file_testing_mocks_ts["testing/mocks.ts"]
   file_testing_setup_ts["testing/setup.ts"]
   file_vitest_config_ts["vitest.config.ts"]
@@ -173,6 +183,8 @@ graph LR
   file_src_modules_literature_lines_resolver_ts --> file_src_modules_literature_literature_connection_entities_ts
   file_src_modules_literature_lines_resolver_ts --> file_src_modules_literature_literature_service_ts
   file_src_modules_literature_lines_resolver_ts --> file_src_modules_literature_search_lines_arguments_entities_ts
+  file_src_modules_literature_lines_resolver_unit_test_ts --> file_src_modules_literature_lines_resolver_ts
+  file_src_modules_literature_lines_resolver_unit_test_ts --> file_src_modules_literature_literature_service_ts
   file_src_modules_literature_literature_arguments_entities_unit_test_ts --> file_src_modules_literature_author_argument_entities_ts
   file_src_modules_literature_literature_arguments_entities_unit_test_ts --> file_src_modules_literature_author_lookup_input_entities_ts
   file_src_modules_literature_literature_arguments_entities_unit_test_ts --> file_src_modules_literature_line_arguments_entities_ts
@@ -193,7 +205,7 @@ graph LR
   file_src_modules_literature_literature_module_ts --> file_src_modules_literature_literature_resolver_ts
   file_src_modules_literature_literature_module_ts --> file_src_modules_literature_literature_service_ts
   file_src_modules_literature_literature_module_ts --> file_src_modules_literature_texts_resolver_ts
-  file_src_modules_literature_literature_module_ts --> file_src_modules_literature_token_word_loader_service_ts
+  file_src_modules_literature_literature_module_ts --> file_src_modules_literature_token_word_loader_ts
   file_src_modules_literature_literature_module_ts --> file_src_modules_literature_tokens_resolver_ts
   file_src_modules_literature_literature_resolver_ts --> file_src_modules_literature_literature_search_result_entities_ts
   file_src_modules_literature_literature_resolver_ts --> file_src_modules_literature_literature_service_ts
@@ -203,7 +215,7 @@ graph LR
   file_src_modules_literature_literature_resolver_unit_test_ts --> file_src_modules_literature_literature_resolver_ts
   file_src_modules_literature_literature_resolver_unit_test_ts --> file_src_modules_literature_literature_service_ts
   file_src_modules_literature_literature_resolver_unit_test_ts --> file_src_modules_literature_texts_resolver_ts
-  file_src_modules_literature_literature_resolver_unit_test_ts --> file_src_modules_literature_token_word_loader_service_ts
+  file_src_modules_literature_literature_resolver_unit_test_ts --> file_src_modules_literature_token_word_loader_ts
   file_src_modules_literature_literature_resolver_unit_test_ts --> file_src_modules_literature_tokens_resolver_ts
   file_src_modules_literature_literature_service_ts --> file_src_lexico_api_types_ts
   file_src_modules_literature_literature_service_ts --> file_src_lexico_api_utilities_ts
@@ -219,14 +231,17 @@ graph LR
   file_src_modules_literature_texts_resolver_ts --> file_src_modules_literature_texts_arguments_entities_ts
   file_src_modules_literature_texts_resolver_unit_test_ts --> file_src_modules_literature_literature_service_ts
   file_src_modules_literature_texts_resolver_unit_test_ts --> file_src_modules_literature_texts_resolver_ts
-  file_src_modules_literature_token_word_loader_service_ts --> file_src_modules_literature_literature_service_ts
-  file_src_modules_literature_token_word_loader_service_unit_test_ts --> file_src_modules_literature_literature_service_ts
-  file_src_modules_literature_token_word_loader_service_unit_test_ts --> file_src_modules_literature_token_word_loader_service_ts
+  file_src_modules_literature_token_word_loader_ts --> file_src_modules_literature_literature_service_ts
+  file_src_modules_literature_token_word_loader_unit_test_ts --> file_src_modules_literature_literature_service_ts
+  file_src_modules_literature_token_word_loader_unit_test_ts --> file_src_modules_literature_token_word_loader_ts
   file_src_modules_literature_tokens_resolver_ts --> file_src_lexico_api_types_ts
   file_src_modules_literature_tokens_resolver_ts --> file_src_modules_literature_literature_connection_entities_ts
   file_src_modules_literature_tokens_resolver_ts --> file_src_modules_literature_literature_service_ts
-  file_src_modules_literature_tokens_resolver_ts --> file_src_modules_literature_token_word_loader_service_ts
+  file_src_modules_literature_tokens_resolver_ts --> file_src_modules_literature_token_word_loader_ts
   file_src_modules_literature_tokens_resolver_ts --> file_src_modules_literature_tokens_arguments_entities_ts
+  file_src_modules_literature_tokens_resolver_unit_test_ts --> file_src_modules_literature_literature_service_ts
+  file_src_modules_literature_tokens_resolver_unit_test_ts --> file_src_modules_literature_token_word_loader_ts
+  file_src_modules_literature_tokens_resolver_unit_test_ts --> file_src_modules_literature_tokens_resolver_ts
   file_src_modules_search_pagination_arguments_entities_unit_test_ts --> file_src_modules_search_pagination_arguments_entities_ts
   file_src_modules_search_pagination_arguments_entities_unit_test_ts --> file_src_modules_search_search_english_arguments_entities_ts
   file_src_modules_search_pagination_arguments_entities_unit_test_ts --> file_src_modules_search_search_latin_arguments_entities_ts
@@ -278,6 +293,40 @@ graph LR
 <!-- codependix:end name="codependix-file-imports" -->
 
 <!-- callidescope:start -->
+
+### NestJS Module Graph
+
+<!-- codependix:start name="codependix-nestjs-modules" -->
+```mermaid
+flowchart LR
+  DatabaseModule
+  GraphQLModule
+  GraphQLSchemaBuilderModule
+  HealthModule
+  LexemesModule
+  LexicoApiModule
+  LiteratureModule
+  LoggerModule([LoggerModule])
+  SearchModule
+  TypeOrmModule
+  WordsModule
+  DatabaseModule --> TypeOrmModule
+  GraphQLModule --> GraphQLSchemaBuilderModule
+  LexemesModule --> TypeOrmModule
+  LexicoApiModule --> DatabaseModule
+  LexicoApiModule --> GraphQLModule
+  LexicoApiModule --> HealthModule
+  LexicoApiModule --> LexemesModule
+  LexicoApiModule --> LiteratureModule
+  LexicoApiModule --> SearchModule
+  LexicoApiModule --> WordsModule
+  LiteratureModule --> TypeOrmModule
+  SearchModule --> TypeOrmModule
+  WordsModule --> TypeOrmModule
+```
+
+_Rounded modules are global: every module can inject them, so their edges are left out._
+<!-- codependix:end name="codependix-nestjs-modules" -->
 
 ## 🔭 Callidescope
 

@@ -13,9 +13,13 @@ import type { Connection } from "../../lexico-api.types";
  */
 @Resolver()
 export class SearchResolver {
+  // 🏗 Dependency Injection
+
   public constructor(
     @Inject(SearchService) private readonly searchService: SearchService,
   ) {}
+
+  // 🔎 Queries
 
   /**
    * Searches English definitions and translations using full-text and substring matching.
@@ -44,4 +48,8 @@ export class SearchResolver {
   ): Promise<Connection<LexemeSearchResult>> {
     return this.searchService.searchLatin(arguments_.query, arguments_);
   }
+
+  // 🖋️ Mutations
+
+  // 🔗 Relations
 }

@@ -157,6 +157,52 @@ describe(InstancesService, () => {
       expect(instances[0]?.threshold).toBeUndefined();
     });
 
+    it("keeps two file instances that share a name but not their files", async () => {
+      const root = await mkdtemp(path.join(tmpdir(), "conformetry-nx-shared-"));
+      const modulePath = path.join(root, "packages/widgets/src/modules/orders");
+
+      await mkdir(modulePath, { recursive: true });
+      await writeFile(path.join(modulePath, "orders.service.ts"), "", "utf8");
+      await writeFile(path.join(modulePath, "orders.resolver.ts"), "", "utf8");
+      await writeFile(
+        path.join(root, "conformetry.config.json"),
+        JSON.stringify([
+          {
+            instances: [
+              {
+                patterns: ["src/modules/*/*.service.ts"],
+                tags: ["type:package"],
+              },
+            ],
+            name: "service-file",
+            templatePath: "templates/service-file",
+          },
+          {
+            instances: [
+              {
+                patterns: ["src/modules/*/*.resolver.ts"],
+                tags: ["type:package"],
+              },
+            ],
+            name: "resolver-file",
+            templatePath: "templates/resolver-file",
+          },
+        ]),
+        "utf8",
+      );
+
+      const instances = await service.findProjectInstances({
+        configurationPath: path.join(root, "conformetry.config.json"),
+        project: PROJECT,
+        workspaceRoot: root,
+      });
+
+      expect(instances.map((instance) => instance.fileScope)).toStrictEqual([
+        [path.join(modulePath, "orders.service.ts")],
+        [path.join(modulePath, "orders.resolver.ts")],
+      ]);
+    });
+
     it("skips groups whose tags the project does not carry", async () => {
       const instances = await service.findProjectInstances({
         configurationPath: path.join(workspaceRoot, "conformetry.config.json"),

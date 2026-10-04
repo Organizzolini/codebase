@@ -104,6 +104,10 @@ stated exactly once:
 instances: [{ patterns: ["src/modules/*"], tags: ["framework:nestjs"] }];
 ```
 
+A project must carry **every** tag a group names, so a second tag narrows the
+group further — `tags: ["framework:nestjs", "language:graphql"]` reaches only
+NestJS projects that are also GraphQL.
+
 The two group forms are told apart by `tags` alone. There is no second field
 that could disagree with it: a separate scope that excluded a project the globs
 reached narrowed validation silently, and validation cannot notice instances

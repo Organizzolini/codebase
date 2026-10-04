@@ -4,7 +4,7 @@ import {
   GraphQLSchemaFactory,
 } from "@nestjs/graphql";
 import { Test } from "@nestjs/testing";
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import {
   AdjectivalForm,
@@ -27,7 +27,24 @@ import {
 import { LexemesResolver } from "./lexemes.resolver";
 import { LexemesService } from "./lexemes.service";
 
-describe("lexemes resolver suite", () => {
+describe(LexemesResolver, () => {
+  let resolver: LexemesResolver;
+
+  beforeAll(async () => {
+    const module = await Test.createTestingModule({
+      providers: [
+        LexemesResolver,
+        { provide: LexemesService, useValue: createMock<LexemesService>() },
+      ],
+    }).compile();
+
+    resolver = await module.resolve(LexemesResolver);
+  });
+
+  it("is defined", () => {
+    expect(resolver).toBeDefined();
+  });
+
   it("resolves single lexeme by id using lexemes service", async () => {
     expect.hasAssertions();
 

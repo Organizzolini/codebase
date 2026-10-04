@@ -53,5 +53,5 @@ pnpm exec nx run <project>:lint-code --configuration=check
 
 - Keep this `SKILL.md` concise and discovery-focused.
 - Add detailed examples and larger workflows to files under `references/`.
-- > ✅ **Best practice:** In NestJS class files such as `*.service.ts`, `*.command.ts`, `*.resolver.ts`, `*.dataloader.ts`, and `*.module.ts`, keep only imports and the class at top level. Move helper types and interfaces to `*.types.ts`, constants to `*.constants.ts`, and shared initialization logic into class members or dedicated modules.
+- > ✅ **Best practice:** In NestJS class files such as `*.service.ts`, `*.command.ts`, `*.resolver.ts`, `*.loader.ts`, and `*.module.ts`, keep only imports and the class at top level. Move helper types and interfaces to `*.types.ts`, constants to `*.constants.ts`, and shared initialization logic into class members or dedicated modules.
 - > ⚠️ **Warning:** Do not use top-level alias exports or type re-exports from NestJS class files. Import supporting symbols from their source `*.types.ts` or `*.constants.ts` file instead of re-exporting them through the class file.

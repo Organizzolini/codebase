@@ -12,9 +12,13 @@ import { LexemesService } from "./lexemes.service";
  */
 @Resolver(() => Lexeme)
 export class LexemesResolver {
+  // 🏗 Dependency Injection
+
   public constructor(
     @Inject(LexemesService) private readonly lexemesService: LexemesService,
   ) {}
+
+  // 🔎 Queries
 
   /**
    * Retrieves a single dictionary lexeme by ID.
@@ -42,4 +46,8 @@ export class LexemesResolver {
   ): Promise<Lexeme[]> {
     return this.lexemesService.findByIds(arguments_.ids);
   }
+
+  // 🖋️ Mutations
+
+  // 🔗 Relations
 }

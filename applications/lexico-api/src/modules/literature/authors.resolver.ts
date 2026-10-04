@@ -23,10 +23,14 @@ import type { Connection } from "../../lexico-api.types";
  */
 @Resolver(() => Author)
 export class AuthorsResolver {
+  // 🏗 Dependency Injection
+
   public constructor(
     @Inject(LiteratureService)
     private readonly literatureService: LiteratureService,
   ) {}
+
+  // 🔎 Queries
 
   /**
    * Finds an author by ID or slug.
@@ -60,6 +64,10 @@ export class AuthorsResolver {
   public async resolveAuthorTexts(@Parent() author: Author): Promise<Text[]> {
     return this.literatureService.listTexts(author.id);
   }
+
+  // 🖋️ Mutations
+
+  // 🔗 Relations
 
   /** Searches authors by name or slug. */
   @Query(() => AuthorConnectionType, { name: "searchAuthors" })

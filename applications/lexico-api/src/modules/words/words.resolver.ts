@@ -12,9 +12,13 @@ import { WordsService } from "./words.service";
  */
 @Resolver(() => Word)
 export class WordsResolver {
+  // 🏗 Dependency Injection
+
   public constructor(
     @Inject(WordsService) private readonly wordsService: WordsService,
   ) {}
+
+  // 🔎 Queries
 
   /**
    * Retrieves a single surface word by normalized input string.
@@ -40,4 +44,8 @@ export class WordsResolver {
   public async words(@Arguments() arguments_: WordsArguments): Promise<Word[]> {
     return this.wordsService.findByDataList(arguments_.data);
   }
+
+  // 🖋️ Mutations
+
+  // 🔗 Relations
 }

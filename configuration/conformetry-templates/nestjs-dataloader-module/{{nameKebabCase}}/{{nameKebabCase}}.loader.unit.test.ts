@@ -1,16 +1,16 @@
 import { Test } from "@nestjs/testing";
 import { beforeAll, describe, expect, it } from "vitest";
 
-import { {{namePascalCase}}DataLoader } from "./{{nameKebabCase}}.dataloader";
+import { {{namePascalCase}}Loader } from "./{{nameKebabCase}}.loader";
 import { {{namePascalCase}}Service } from "./{{nameKebabCase}}.service";
 
-describe({{namePascalCase}}DataLoader, () => {
-  let dataloader: {{namePascalCase}}DataLoader;
+describe({{namePascalCase}}Loader, () => {
+  let dataloader: {{namePascalCase}}Loader;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       providers: [
-        {{namePascalCase}}DataLoader,
+        {{namePascalCase}}Loader,
         {
           provide: {{namePascalCase}}Service,
           useValue: {},
@@ -18,10 +18,10 @@ describe({{namePascalCase}}DataLoader, () => {
       ],
     }).compile();
 
-    dataloader = await module.resolve({{namePascalCase}}DataLoader);
+    dataloader = await module.resolve({{namePascalCase}}Loader);
   });
 
   it("is defined", () => {
-    expect(command).toBeDefined();
+    expect(dataloader).toBeDefined();
   });
 });

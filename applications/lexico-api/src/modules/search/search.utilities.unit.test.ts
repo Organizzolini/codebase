@@ -192,6 +192,89 @@ describe("search utilities suite", () => {
 
       expect(formatFormIdentifier({} as unknown as NominalForm)).toBeNull();
     });
+
+    it("formats finite verb form", () => {
+      expect.hasAssertions();
+
+      const form = new FiniteVerbForm();
+      form.person = "first";
+      form.number = "singular";
+      form.tense = "present";
+      form.voice = "active";
+      form.mood = "indicative";
+
+      expect(formatFormIdentifier(form)).toBe(
+        "first person singular present active indicative",
+      );
+    });
+
+    it("formats nominal form", () => {
+      expect.hasAssertions();
+
+      const form = new NominalForm();
+      form.case = "nominative";
+      form.number = "singular";
+
+      expect(formatFormIdentifier(form)).toBe("nominative singular");
+    });
+
+    it("formats adjectival form", () => {
+      expect.hasAssertions();
+
+      const form = new AdjectivalForm();
+      form.case = "accusative";
+      form.number = "plural";
+      form.gender = "feminine";
+
+      expect(formatFormIdentifier(form)).toBe("accusative plural feminine");
+    });
+
+    it("formats participle form", () => {
+      expect.hasAssertions();
+
+      const form = new ParticipleForm();
+      form.tense = "perfect";
+      form.voice = "passive";
+
+      expect(formatFormIdentifier(form)).toBe("perfect passive participle");
+    });
+
+    it("formats infinitive form", () => {
+      expect.hasAssertions();
+
+      const form = new InfinitiveForm();
+      form.tense = "present";
+      form.voice = "active";
+
+      expect(formatFormIdentifier(form)).toBe("present active infinitive");
+    });
+
+    it("formats gerund form", () => {
+      expect.hasAssertions();
+
+      const form = new GerundForm();
+      form.case = "genitive";
+
+      expect(formatFormIdentifier(form)).toBe("genitive gerund");
+    });
+
+    it("formats supine form", () => {
+      expect.hasAssertions();
+
+      const form = new SupineForm();
+      form.case = "accusative";
+
+      expect(formatFormIdentifier(form)).toBe("accusative supine");
+    });
+
+    it("formats adverb form", () => {
+      expect.hasAssertions();
+
+      const form = new AdverbForm();
+      form.degree = "comparative";
+
+      expect(formatFormIdentifier(form)).toBe("comparative adverb");
+    });
   });
 
   describe(mergeSearchResult, () => {
