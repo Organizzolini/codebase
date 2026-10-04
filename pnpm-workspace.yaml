@@ -206,6 +206,7 @@ catalog:
   typescript-eslint: ^8.59.4
   validate-branch-name: ^1.3.2
   vaul: ^1.1.2
+  verdaccio: ^6.3.2
   vite: 8.3.1
   vite-plugin-dts: ^5.0.1
   vite-plugin-static-copy: ^4.1.1

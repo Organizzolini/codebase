@@ -161,6 +161,10 @@
     "license-checker",
     // Invoked by the openwiki target rather than imported.
     "openwiki",
+    // Started by the `@nx/js:verdaccio` executor behind the root
+    // `local-registry` target, which resolves it by name rather than importing
+    // it. Knip's Nx plugin reads that executor, so knip needs no entry.
+    "verdaccio",
     // Apollo 5's Express integration, which @nestjs/apollo resolves by name
     // when lexico-api's GraphQLModule starts. lexico-api's eslint.config.ts
     // and knip workspace carve it out for the same reason.
