@@ -27,3 +27,7 @@ export {
   postgresEnvironmentKeys,
   postgresEnvironmentSchema,
 } from "./modules/database/database.utilities";
+export { CreatableEntity } from "./modules/database/entities/creatable.entity";
+export { DeletableEntity } from "./modules/database/entities/deletable.entity";
+export { IdentifiableEntity } from "./modules/database/entities/identifiable.entity";
+export { UpdatableEntity } from "./modules/database/entities/updatable.entity";

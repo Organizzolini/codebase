@@ -35,6 +35,7 @@ src/
       database.service.ts           # The TypeORM options factory forRoot hands TypeORM
       database.types.ts
       database.utilities.ts         # postgresEnvironmentSchema, postgresConnection
+      entities/                     # Identifiable → Creatable → Updatable → Deletable
 testing/                            # Vitest setup
 ```
 
@@ -47,6 +48,12 @@ testing/                            # Vitest setup
 - **Never let `synchronize` or `migrationsRun` be configured on.** The schema
   changes only through reviewed migrations, run as their own step.
 - **Never name a schema in code.** It comes from `<PROJECT>_POSTGRES_SCHEMA`.
+- **Never run migrations from `DatabaseModule.forRoot`.** It takes none;
+  `createDataSource` and `startPostgresContainer` do.
+- **Never name a real project in this package's tests.** Use `fixture`, and
+  `sample` where a second is needed.
+- **Never import GraphQL into the base entities.** Meanderaw and caelundas
+  must not depend on it; lexico layers its `@Field` decorators on top.
 
 ### Key Commands
 

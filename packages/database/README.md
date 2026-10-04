@@ -17,13 +17,14 @@ role are written once:
 The schema carries no environment, so a migration generated locally applies
 anywhere unchanged.
 
-| Export                      | Responsibility                                                                                |
-| --------------------------- | --------------------------------------------------------------------------------------------- |
-| `postgresEnvironmentSchema` | The zod fragment for a project's six `<PROJECT>_POSTGRES_*` variables, with defaults          |
-| `postgresConnection`        | The connection those variables describe, read from any environment record                     |
-| `postgresDataSourceOptions` | TypeORM options: snake case, connection-level schema, `synchronize` and `migrationsRun` off   |
-| `DatabaseModule.forRoot`    | The NestJS module wiring TypeORM from those variables through `ConfigService`                 |
-| `createDataSource`          | The `DataSource` a project's TypeORM command-line entry exports, from the same options        |
+| Export                      | Responsibility                                                                              |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| `postgresEnvironmentSchema` | The zod fragment for a project's six `<PROJECT>_POSTGRES_*` variables, with defaults        |
+| `postgresConnection`        | The connection those variables describe, read from any environment record                   |
+| `postgresDataSourceOptions` | TypeORM options: snake case, connection-level schema, `synchronize` and `migrationsRun` off |
+| `DatabaseModule.forRoot`    | The NestJS module wiring TypeORM from those variables through `ConfigService`               |
+| `createDataSource`          | The `DataSource` a project's TypeORM command-line entry exports, from the same options      |
+| `IdentifiableEntity` …      | Base entities: a `uuidv7()` id, then created, updated, and soft-deleted columns             |
 
 ## Usage
 
@@ -85,6 +86,24 @@ export default createDataSource({
 Neither ever synchronizes or runs migrations on start: the schema changes
 only through migrations, run on their own. Pass `namingStrategy` to replace
 snake case, as lexico does with its pluralizing strategy.
+
+### Base entities
+
+Each table's entity extends the narrowest base it needs, so a table without
+soft deletion carries no `deletedAt`:
+
+| Base                 | Adds                                                                |
+| -------------------- | ------------------------------------------------------------------- |
+| `IdentifiableEntity` | `id`, a `uuid` the database assigns with Postgres 18's `uuidv7()`   |
+| `CreatableEntity`    | `createdAt` (`timestamptz`) and a nullable `createdBy` (`uuid`)     |
+| `UpdatableEntity`    | `updatedAt` (`timestamptz`) and a nullable `updatedBy` (`uuid`)     |
+| `DeletableEntity`    | `deletedAt` (`timestamptz`, soft delete) and a nullable `deletedBy` |
+
+They are plain TypeORM, with no GraphQL; a project that exposes them over
+GraphQL adds its `@Field` decorators in a thin layer of its own. Nothing
+fills the `*By` columns but the application, so a command-line writer with
+no user identity leaves them empty. No entity names a schema: it comes from
+`<PROJECT>_POSTGRES_SCHEMA`.
 
 A project name must be lowercase letters, digits, and underscores, starting
 with a letter, so it can prefix a variable and name a database unquoted.
