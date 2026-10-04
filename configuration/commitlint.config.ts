@@ -4,7 +4,8 @@
  * Commit format: `<type>(<scope>): <gitmoji> <subject>`
  *
  * - Header max: 128 characters (aim for &lt;72 for readability)
- * - Body: forbidden unless every line is a `Co-authored-by:` trailer, in any casing
+ * - Body: forbidden unless every line is a `Co-authored-by:` trailer, in any
+ *   casing, or (in a `chore(release)` commit) an Nx release project line
  * - Footer: forbidden unless every line is a `Co-authored-by:` trailer, in any casing
  * - Subject: lowercase, imperative mood, no trailing period
  * - Gitmoji required at start of subject
@@ -17,6 +18,13 @@ import { scopes, types } from "./conventional.config.cjs";
 import type { Plugin, Rule, RuleOutcome, UserConfig } from "@commitlint/types";
 
 /**
+ * A line `nx release version` adds to its commit for each independently
+ * versioned project it bumps, e.g. `- project: codometer-cli 0.0.1`.
+ */
+const NX_RELEASE_PROJECT_LINE =
+  /^- project: [\w.@/-]+ \d+\.\d+\.\d+(?:-[\da-z.-]+)?$/i;
+
+/**
  * Every non-empty body line must be a `Co-authored-by:` trailer.
  *
  * Matched case-insensitively. Git trailer keys are case-insensitive, and the
@@ -24,17 +32,25 @@ import type { Plugin, Rule, RuleOutcome, UserConfig } from "@commitlint/types";
  * `Co-authored-by:` and Claude Code emits `Co-Authored-By:`. Both are the same
  * trailer to git and to GitHub, so rejecting either would fail a valid commit
  * over a detail no downstream consumer distinguishes.
+ *
+ * A `chore(release)` commit may also list Nx's per-project release lines. Nx
+ * always appends them when one commit releases several independent projects,
+ * and no option turns them off.
  */
 const bodyCoAuthoredOnly: Rule = (parsed): RuleOutcome => {
   const body: null | string = parsed.body;
   if (!body) return [true];
+  const isReleaseCommit =
+    parsed["type"] === "chore" && parsed["scope"] === "release";
   const lines = body.split("\n").filter((line: string) => line.trim() !== "");
-  const allCoAuthored = lines.every((line: string) =>
-    /^Co-authored-by: \S+/i.test(line),
+  const allAllowed = lines.every(
+    (line: string) =>
+      /^Co-authored-by: \S+/i.test(line) ||
+      (isReleaseCommit && NX_RELEASE_PROJECT_LINE.test(line)),
   );
   return [
-    allCoAuthored,
-    "Body must be empty or contain only Co-authored-by trailers",
+    allAllowed,
+    "Body must be empty or contain only Co-authored-by trailers (or, in a chore(release) commit, Nx release project lines)",
   ];
 };
 
@@ -95,6 +111,7 @@ const configuration: UserConfig = {
     "header-max-length": [2, "always", 128],
 
     // 🚫 Forbid arbitrary body/footer content; allow only Co-authored-by trailers
+    // (and Nx's per-project lines in a release commit)
     "body-co-authored-only": [2, "always"],
     "footer-co-authored-only": [2, "always"],
 

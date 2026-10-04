@@ -571,6 +571,14 @@
         "cwd": "{projectRoot}"
       }
     },
+    "local-registry": {
+      "executor": "@nx/js:verdaccio",
+      "options": {
+        "config": ".verdaccio/config.yml",
+        "port": 4873,
+        "storage": "tmp/local-registry/storage"
+      }
+    },
     "markdown-lint": {
       "cache": true,
       "configurations": {

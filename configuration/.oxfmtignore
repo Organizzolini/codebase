@@ -5,6 +5,7 @@
 **/*.mdx
 **/.next
 **/.nx
+**/.claude/worktrees/**
 **/.terraform/**
 **/build
 **/coverage
