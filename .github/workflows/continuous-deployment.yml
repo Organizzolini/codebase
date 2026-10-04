@@ -42,10 +42,16 @@ jobs:
             name: Devcontainer
             emoji: 🧑‍🏭
             timeout: 20
+          # v2.31.0 took 7m19s: 4 minutes to set up, build, trace, graph, and
+          # measure, and 3 for semantic-release, most of it the version
+          # commit's pre-commit hook. A cold Nx cache adds about 4 to the
+          # first part, and the hook checks only the projects the commit
+          # reaches. A timeout leaves no tag or version commit behind, and the
+          # next run retries.
           - id: push-releases
             name: Releases
             emoji: 🦸
-            timeout: 24
+            timeout: 12
 
     steps:
       # Decides from the GitHub API alone, before any checkout, so a run with
