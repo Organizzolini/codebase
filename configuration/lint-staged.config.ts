@@ -7,6 +7,7 @@
  *
  * Invoked by Husky's pre-commit hook via `npx lint-staged`.
  */
+import { execFileSync } from "node:child_process";
 import path from "node:path";
 
 /**
@@ -48,6 +49,51 @@ function getStagedFilesFlags(files: string[]): string {
     .join(" ");
 }
 
+/**
+ * Hands `nx affected` the staged changes as two revisions, so it selects
+ * projects the way CI's `scripts/nx/run-affected.sh` does.
+ *
+ * Given `--files`, Nx counts a file as changed in full. Given a base and a
+ * head, it diffs `package.json` and `pnpm-lock.yaml` field by field. The
+ * 2.31.0 release commit, a version bump plus regenerated markdown, selects 6
+ * projects that way rather than 48, and a dependency bump selects only the
+ * projects that use it.
+ *
+ * The head is a throwaway commit of the index on top of `HEAD`: lint-staged
+ * stashes unstaged edits first, so the files the tasks read match it. It
+ * stays unreferenced and is collected with other loose objects. A repository
+ * with no `HEAD` yet falls back to `--files`.
+ */
+function getStagedRevisionFlags(files: string[]): string {
+  try {
+    const tree = runGit(["write-tree"]);
+    const head = runGit([
+      "commit-tree",
+      tree,
+      "-p",
+      "HEAD",
+      "--no-gpg-sign",
+      "-m",
+      "lint-staged: staged changes",
+    ]);
+    return `--base=HEAD --head=${head}`;
+  } catch {
+    return getStagedFilesFlags(files);
+  }
+}
+
+/**
+ * Runs one git command and returns its trimmed standard output. Its standard
+ * error is captured rather than shown, so the expected failure with no `HEAD`
+ * does not print a `fatal:` line into the hook's output.
+ */
+function runGit(gitArguments: string[]): string {
+  return execFileSync("git", gitArguments, {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "pipe"],
+  }).trim();
+}
+
 const config = {
   // 🔒 Lockfile integrity
   // Run as the `validation` CLI rather than through its Nx target, which would
@@ -73,8 +119,9 @@ const config = {
   ],
 
   // 🔬 Static analysis and conformetry validation
-  // One `nx affected` run over every staged path, on the same `lint-code`
-  // target the Lint Codebase workflow runs, so what passes here passes there.
+  // One `nx affected` run over the staged changes, on the same `lint-code`
+  // target the Lint Codebase workflow runs and selecting projects the same
+  // way it does, so what passes here passes there.
 
   // This replaces a table of per-path entries that mapped a changed file to
   // the target that cared about it. Nx already does that mapping: each leaf
@@ -115,7 +162,7 @@ const config = {
   // without a shell, so `NX_DAEMON=false nx ...` would be parsed as the
   // executable name.
   "*": (files: string[]): string[] => [
-    `pnpm exec nx affected --target=typecheck-code,lint-code,format-code,deprecate-code,guard-code --configuration=check --parallel=${String(ANALYSIS_PARALLELISM)} --outputStyle=static ${getStagedFilesFlags(files)}`,
+    `pnpm exec nx affected --target=typecheck-code,lint-code,format-code,deprecate-code,guard-code --configuration=check --parallel=${String(ANALYSIS_PARALLELISM)} --outputStyle=static ${getStagedRevisionFlags(files)}`,
     "pnpm exec nx run-many --targets=conformetry-validate --outputStyle=static",
   ],
 };

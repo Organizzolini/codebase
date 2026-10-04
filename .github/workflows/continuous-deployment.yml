@@ -42,11 +42,12 @@ jobs:
             name: Devcontainer
             emoji: 🧑‍🏭
             timeout: 20
-          # Setup, build, trace, graph, and measure take about 3.5 minutes when
-          # the Nx cache this job saves is warm and about 7.5 when it is cold.
-          # The version commit's pre-commit hook adds about 3–4 more, led by
-          # `codebase:codependix:check`. A timeout leaves no tag or version
-          # commit behind, and the next run retries.
+          # v2.31.0 took 7m19s: 4 minutes to set up, build, trace, graph, and
+          # measure, and 3 for semantic-release, most of it the version
+          # commit's pre-commit hook. A cold Nx cache adds about 4 to the
+          # first part, and the hook checks only the projects the commit
+          # reaches. A timeout leaves no tag or version commit behind, and the
+          # next run retries.
           - id: push-releases
             name: Releases
             emoji: 🦸
