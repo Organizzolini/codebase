@@ -33,6 +33,6 @@ export {
 export { NestjsProjectModule } from "./modules/nestjs-project/nestjs-project.module";
 export { NestjsProjectService } from "./modules/nestjs-project/nestjs-project.service";
 export type {
+  NestjsExploredModule,
   NestjsProject,
-  NestjsSpelunkedTree,
 } from "./modules/nestjs-project/nestjs-project.types";
