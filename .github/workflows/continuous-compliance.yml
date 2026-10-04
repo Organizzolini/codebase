@@ -183,8 +183,10 @@ jobs:
     name: 🧑‍⚖️ Comply
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Runs on Dependabot's pull requests too, so a title, label, or release
+    # significance failure shows on the pull request rather than first in the
+    # merge queue. Only the body check below exempts them.
     if: >-
-      github.actor != 'dependabot[bot]' &&
       (github.event_name == 'push' ||
       github.event_name == 'merge_group' ||
       (github.event_name == 'pull_request' && !github.event.pull_request.draft))
@@ -194,10 +196,13 @@ jobs:
       # `gh-readonly-queue/<base>/pr-<number>-<sha>` ref. Every pull request
       # check below reads the queued pull request live through this number, so
       # an edit made after the pull request entered the queue is caught here.
+      # The author is read too, since `github.actor` here is whoever queued the
+      # pull request, never the bot that opened it.
       - name: 🚂 Resolve Merge Group Pull Request
         id: merge-group
         if: github.event_name == 'merge_group'
         env:
+          GH_TOKEN: ${{ github.token }}
           HEAD_REF: ${{ github.event.merge_group.head_ref }}
         run: |
           PULL_REQUEST_NUMBER="$(sed -nE 's#^.*/pr-([0-9]+)-[0-9a-f]+$#\1#p' <<< "$HEAD_REF")"
@@ -205,8 +210,11 @@ jobs:
             echo "::error::Unable to parse a pull request number from ${HEAD_REF}"
             exit 1
           fi
-          echo "🚂 Merge group ${HEAD_REF} queues pull request #${PULL_REQUEST_NUMBER}."
+          PULL_REQUEST_AUTHOR="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PULL_REQUEST_NUMBER}" \
+            --jq .user.login)"
+          echo "🚂 Merge group ${HEAD_REF} queues pull request #${PULL_REQUEST_NUMBER} by ${PULL_REQUEST_AUTHOR}."
           echo "pull-request-number=${PULL_REQUEST_NUMBER}" >> "$GITHUB_OUTPUT"
+          echo "pull-request-author=${PULL_REQUEST_AUTHOR}" >> "$GITHUB_OUTPUT"
 
       - name: 📥 Checkout Repository
         uses: actions/checkout@v7
@@ -263,11 +271,15 @@ jobs:
           echo "$PULL_REQUEST_TITLE" | \
             npx commitlint --config configuration/commitlint.config.ts
 
-      # Validates pull request body against required template sections.
+      # Validates pull request body against required template sections. Skipped
+      # for a pull request Dependabot authored, whose body it writes itself;
+      # keyed off the author, not `github.actor`, which is whoever last labeled,
+      # edited, or queued it.
       - name: 📝 Validate Pull Request Body
         if: >-
           (github.event_name == 'pull_request' || github.event_name == 'merge_group') &&
-          github.actor != 'dependabot[bot]'
+          (github.event.pull_request.user.login ||
+          steps.merge-group.outputs.pull-request-author) != 'dependabot[bot]'
         env:
           GH_TOKEN: ${{ github.token }}
           PULL_REQUEST_NUMBER: >-

@@ -12,7 +12,7 @@
 # request means a breaking major fails that pull request's own checks,
 # visibly, instead of taking every other update down with it.
 
-# judge-conventions.yml no longer exempts dependabot from title, label, or
+# continuous-compliance.yml no longer exempts dependabot from title, label, or
 # release-significance checks — only its pull request body check still does,
 # since there is no dependabot.yml field for body content. Every entry below
 # therefore carries the `type:`, `scope:`, and `source:agent` labels its

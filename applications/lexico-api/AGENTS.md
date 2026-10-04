@@ -19,7 +19,7 @@ nx run lexico-api:start
 
 - **Framework**: NestJS (modules, dependency injection, providers)
 - **GraphQL server**: Apollo Server via `@nestjs/apollo` (`ApolloDriver`)
-- **Schema strategy**: Code-first (`autoSchemaFile: true`)
+- **Schema strategy**: Code-first, emitted to `src/schema.gql` beside the root module (`GRAPHQL_SCHEMA_FILE`), whatever the working directory; the file is gitignored
 - **Pagination**: Relay connections via `nestjs-graphql-connection`
 - **Dataloaders**: `dataloader` (request-scoped, prevents N+1 queries)
 - **Env validation**: `@nestjs/config` + `zod` (`environmentSchema` in `.constants.ts`)
@@ -271,7 +271,7 @@ See the [write-typescript skill](../../.agents/skills/write-typescript/SKILL.md)
 
 - **Resolver not found at runtime** — ensure the resolver class is listed in `providers` of its module and the module is imported by the root module.
 - **Dependency injection failure** — verify the service is `@Injectable()`, exported from its module, and that module is imported by the consuming module.
-- **GraphQL schema not generating** — ensure `autoSchemaFile: true` is set in `GraphQLModule.forRoot()` and all types use `@ObjectType()`, `@Field()`, etc.
+- **GraphQL schema not generating** — ensure `autoSchemaFile` is set to `GRAPHQL_SCHEMA_FILE` in `GraphQLModule.forRoot()` and all types use `@ObjectType()`, `@Field()`, etc.
 - **N+1 query problem** — use DataLoaders for all relation fields in resolvers.
 - **Env var validation error on startup** — add the missing variable to `environmentSchema` in `.constants.ts` and to `.env.default`.
 

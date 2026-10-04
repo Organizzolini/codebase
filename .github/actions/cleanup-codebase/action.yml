@@ -40,6 +40,14 @@ runs:
       shell: bash
       run: bash scripts/nx/keep-task-database.sh
 
+    # Diagnostic: what this job stored, and the probe tasks' hashes and input
+    # digests, so two runs of one commit show whether a hash moved.
+    - name: 🔬 Report Nx Cache Database
+      if: always() && inputs.nx-cache == 'true'
+      continue-on-error: true
+      shell: bash
+      run: bash scripts/nx/report-task-database.sh --inputs
+
     # `.nx/cache` and `.nx/workspace-data/*.db*` hold a result for every task
     # that finished before a job was cut off, whether by a failure or a
     # `timeout-minutes` cancellation — Nx writes each task's result as it
