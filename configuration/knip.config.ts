@@ -134,7 +134,6 @@ const config: KnipConfig = {
         // Skill scripts are invoked by the skill framework, not imported in code
         "**/.agents/skills/**",
         "**/.claude/skills/**",
-        "**/.claude/worktrees/**",
         "**/.github/skills/**",
       ],
       ignoreBinaries: [

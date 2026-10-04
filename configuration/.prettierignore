@@ -14,7 +14,6 @@ yarn.lock
 # 💾 Nx cache
 **/.conformetry
 **/.nx
-**/.claude/worktrees/**
 
 # 🏗 Build outputs
 **/dist

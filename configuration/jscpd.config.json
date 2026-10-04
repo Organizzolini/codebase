@@ -3,7 +3,6 @@
   "ignore": [
     "**/.agents/skills/**",
     "**/.claude/skills/**",
-    "**/.claude/worktrees/**",
     "**/.conformetry/**",
     "**/.git/**",
     "**/.github/skills/**",

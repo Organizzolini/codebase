@@ -5,7 +5,6 @@
 **/*.min.js
 **/.conformetry
 **/.nx
-**/.claude/worktrees/**
 **/.venv
 **/build
 **/coverage

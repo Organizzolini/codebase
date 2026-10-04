@@ -19,7 +19,6 @@ ignorePaths:
   - "*.woff"
   - "*.woff2"
   - "**/.terraform/**"
-  - "**/.claude/worktrees/**"
   - "**/*.gen.ts"
   - "**/*.min.css"
   - "**/*.min.js"
