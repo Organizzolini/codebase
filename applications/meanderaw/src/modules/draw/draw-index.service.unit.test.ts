@@ -371,5 +371,42 @@ describe(DrawIndexService, () => {
         page.indexOf('<section id="shape-3×1">'),
       );
     });
+
+    it("counts a shape the grouped query missed as zero rather than failing the page", async () => {
+      vi.mocked(databaseService.familyShapeCounts).mockResolvedValue([
+        { columns: 1, count: 1, family: "unclassified", rows: 2 },
+      ]);
+      vi.mocked(databaseService.familyRows).mockImplementation(
+        async function* familyRows() {
+          yield await Promise.resolve([
+            meander({ code: "a", columns: 1, family: "unclassified", rows: 3 }),
+          ]);
+        },
+      );
+
+      const pages = await read(await service.build());
+
+      expect(pages["families/unclassified.html"]).toContain(
+        '<section id="shape-3×1">\n<h2>3×1</h2>\n<p class="count">0 meanders</p>',
+      );
+    });
+
+    it("closes a family's page even when none of its rows arrive", async () => {
+      vi.mocked(databaseService.familyShapeCounts).mockResolvedValue([
+        { columns: 1, count: 1, family: "unclassified", rows: 2 },
+      ]);
+      vi.mocked(databaseService.familyRows).mockImplementation(
+        async function* familyRows() {
+          yield await Promise.resolve([]);
+        },
+      );
+
+      const pages = await read(await service.build());
+      const page = pages["families/unclassified.html"] ?? "";
+
+      expect(page).not.toContain('<section id="shape-');
+      expect(page).not.toContain("</div>");
+      expect(page).toMatch(/<\/section>\n<\/body>\n<\/html>\n$/u);
+    });
   });
 });

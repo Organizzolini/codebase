@@ -50,7 +50,7 @@ export class DrawPoolService implements OnModuleDestroy {
     @Inject(ConfigService)
     configService: ConfigService<Environment>,
   ) {
-    this.workerCount = configService.get<number>("DRAW_WORKERS") ?? 0;
+    this.workerCount = configService.get<number>("DRAW_WORKERS", 0);
   }
 
   // 🔐 Private Fields
@@ -125,20 +125,21 @@ export class DrawPoolService implements OnModuleDestroy {
     return this.workers;
   }
 
-  /** Draws a wave of batches, one per thread, starting at batch `start`. */
+  /**
+   * Draws a wave of batches, one per thread, starting at batch `start`; a
+   * shape's last wave can hold fewer batches than there are threads.
+   */
   private async wave(
     shape: MeanderShape,
     batches: readonly (readonly number[])[],
     start: number,
   ): Promise<(readonly MeanderRecord[])[]> {
-    const workers = this.spawn();
-
     return Promise.all(
-      workers
-        .slice(0, batches.length - start)
-        .map(async (worker, index) =>
-          this.draw(worker, { masks: batches[start + index] ?? [], shape }),
-        ),
+      this.spawn().flatMap((worker, index) => {
+        const masks = batches[start + index];
+
+        return masks === undefined ? [] : [this.draw(worker, { masks, shape })];
+      }),
     );
   }
 

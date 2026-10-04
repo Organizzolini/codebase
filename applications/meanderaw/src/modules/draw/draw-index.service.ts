@@ -246,10 +246,10 @@ ${contents}
   /** Every page `source`'s rows make, each produced lazily as it is read. */
   private pages(source: MeanderPageSource): Record<string, MeanderPageContent> {
     const byFamily = this.group(source.counts, ({ family }) => family);
-    const families = [...byFamily.keys()]
-      .toSorted((left, right) => this.compareFamilies(left, right))
-      .map((family) => ({
-        counts: byFamily.get(family) ?? [],
+    const families = [...byFamily]
+      .toSorted(([left], [right]) => this.compareFamilies(left, right))
+      .map(([family, counts]) => ({
+        counts,
         family,
         label: this.label(family),
       }));

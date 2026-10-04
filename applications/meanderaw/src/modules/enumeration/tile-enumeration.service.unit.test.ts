@@ -159,6 +159,13 @@ describe(TileEnumerationService, () => {
       expect(configured.maximumColumns(2)).toBe(3);
     });
 
+    it("refuses to walk a shape whose edges outgrow a 32-bit mask, however large the budget", async () => {
+      const configured = await createService({ DRAW_EDGE_BUDGET: 40 });
+
+      expect(configured.isAdmitted({ columns: 3, rows: 6 })).toBe(true);
+      expect(() => configured.orbitMinima(6, 3)).toThrow(OversizedTileError);
+    });
+
     it("names the configured budget rather than today's default in a refusal", async () => {
       const configured = await createService({ DRAW_EDGE_BUDGET: 10 });
 
