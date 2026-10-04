@@ -1,3 +1,10 @@
+# No `.claude/worktrees` entry, unlike the other tools' ignore files.
+# Inside a linked worktree, oxlint resolves a relative --ignore-path
+# against the main checkout's copy of this file, and patterns resolve
+# from that file's directory, so `**/.claude/worktrees/**` matched every
+# file in the worktree and oxlint linted nothing. The root .gitignore
+# already keeps nested worktrees out of a main-checkout run.
+
 # Terraform state and generated files
 **/.terraform/**
 
@@ -5,7 +12,6 @@
 **/*.min.js
 **/.conformetry
 **/.nx
-**/.claude/worktrees/**
 **/.venv
 **/build
 **/coverage
