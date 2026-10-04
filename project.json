@@ -794,10 +794,10 @@
       "cache": true,
       "configurations": {
         "check": {
-          "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path configuration/.prettierignore --ignore-path .gitignore --check --ignore-unknown ."
+          "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path .gitignore --ignore-path configuration/.prettierignore --check --ignore-unknown ."
         },
         "write": {
-          "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path configuration/.prettierignore --ignore-path .gitignore --write --ignore-unknown ."
+          "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path .gitignore --ignore-path configuration/.prettierignore --write --ignore-unknown ."
         }
       },
       "defaultConfiguration": "write",
@@ -810,7 +810,7 @@
         }
       ],
       "options": {
-        "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path configuration/.prettierignore --ignore-path .gitignore --ignore-unknown .",
+        "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path .gitignore --ignore-path configuration/.prettierignore --ignore-unknown .",
         "cwd": "{projectRoot}"
       }
     },

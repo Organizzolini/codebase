@@ -1,10 +1,9 @@
 // 🏷️ Types
 
 import type { environmentSchema } from "../../constants";
-import type { EdgesDraft, Tile, TileShape } from "../tile/tile.types";
 import type { z } from "zod";
 
-/** Where one edge sits in an {@link EdgesDraft}: the grid that holds it, and its row and column within that grid. */
+/** Where one edge sits in an `EdgesDraft`: the grid that holds it, and its row and column within that grid. */
 export interface EdgeAddress {
   readonly column: number;
   readonly grid: readonly boolean[][];
@@ -12,7 +11,7 @@ export interface EdgeAddress {
 }
 
 /**
- * One meander the sweep found: the Code that is its whole identity, and the
+ * One meander the draw run found: the Code that is its whole identity, and the
  * shape that Code is read at.
  *
  * The tile it was spelled from is deliberately not carried alongside. A
@@ -29,17 +28,6 @@ export interface EnumeratedMeander {
 
 /**
  * Inferred type of the validated environment variables, read to bound a
- * sweep by edge budget, rows, and columns.
+ * draw run by edge budget, rows, and columns.
  */
 export type Environment = z.infer<typeof environmentSchema>;
-
-/**
- * The bookkeeping `TileEnumerationService.enumerate` carries through its walk:
- * the edges decided so far, the shape being enumerated, and the distinct
- * tiles found, keyed by their class's canonical edge key.
- */
-export interface TileEnumerationState {
-  readonly edges: EdgesDraft;
-  readonly shape: TileShape;
-  readonly tilesByKey: Map<string, Tile>;
-}

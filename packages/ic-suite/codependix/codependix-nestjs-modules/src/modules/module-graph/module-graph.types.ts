@@ -3,7 +3,7 @@
 /**
  * A NestJS project's module import graph, reduced to what an export needs.
  *
- * Built from `nestjs-spelunker`'s exploration of a project's container in
+ * Built from the exploration of a project's container in
  * preview mode — see `NestjsProjectService.exploreProject` — and kept to the
  * plain module-name and edge shape a diagram or a JSON export can render
  * directly, without carrying the container's own provider or controller

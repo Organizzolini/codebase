@@ -1,1 +1,6 @@
 # 🙈 Ignore
+
+# Nothing a sweep writes is committed: the meanders live in Postgres, and the
+# index and family pages rebuilt from them run to gigabytes at the default edge
+# budget, so they are regenerated where they are read.
+output/

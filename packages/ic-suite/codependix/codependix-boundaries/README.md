@@ -22,9 +22,9 @@ Three facts it structurally cannot see:
    already carries `implicit`, so codependix holds a fact the lint rule has no
    way to reach.
 2. **A NestJS module edge is a container fact, not a source fact.**
-   `SpelunkerModule.explore` reports what the container resolved, so a dynamic
-   module, a `forRootAsync`, or a conditionally composed import produces an
-   edge no `import` statement expresses.
+   `NestjsProjectService.exploreProject` reports what the container resolved,
+   so a dynamic module, a `forRootAsync`, or a conditionally composed import
+   produces an edge no `import` statement expresses.
 3. **A rule can be about the graph rather than the edge.** A cycle, or a
    project's dependents, is a statement about a shape, and a rule that sees
    one file at a time cannot make one.
@@ -112,7 +112,7 @@ like a typo.
 `BoundaryGraph` is the seam, and it is deliberately not any of the four real
 graph types. Each adapter flattens a `Neighborhood`, a `NestjsModuleGraph`, or
 an import graph into it, so rule evaluation never sees `@nx/devkit`,
-`nestjs-spelunker`, or `typescript` and could be lifted out again without
+`@nestjs/core`, or `typescript` and could be lifted out again without
 touching a rule.
 
 `BoundaryCheckService.run` walks the four levels in `BOUNDARY_LEVEL_ORDER` —

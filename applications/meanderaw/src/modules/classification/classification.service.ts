@@ -9,7 +9,7 @@ import type {
 import type {
   MeanderFamily,
   MeanderFamilyRule,
-  MeanderShape,
+  MeanderFiledShape,
   MeanderStructure,
 } from "./classification.types";
 
@@ -85,7 +85,7 @@ export class ClassificationService {
    */
   classify(
     characteristics: Characteristics,
-    shape: MeanderShape,
+    shape: MeanderFiledShape,
   ): MeanderFamily {
     const structure: MeanderStructure = {
       ...shape,

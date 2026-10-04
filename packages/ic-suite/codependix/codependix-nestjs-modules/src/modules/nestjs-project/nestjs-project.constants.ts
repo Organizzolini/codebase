@@ -24,10 +24,13 @@ export const NESTJS_PROJECT_ROOT_MODULE_EXPORT = "MainModule";
  * anything a project declares — `TypeOrmModule` is in a project's design and
  * stays in the graph, while the `TypeOrmCoreModule` it builds underneath is
  * not. The synthetic root belongs here for the same reason: this package
- * created it, so it is not part of the project.
+ * created it, so it is not part of the project. So does `InternalCoreModule`,
+ * which NestJS adds to every container and imports into every module. It is
+ * matched by name because NestJS 11 and 12 export it from different paths.
  */
 export const NESTJS_PROJECT_IGNORED_MODULES: RegExp[] = [
   /^ConfigHostModule$/,
+  /^InternalCoreModule$/,
   /^SyntheticRootModule$/,
   /^TypeOrmCoreModule$/,
 ];

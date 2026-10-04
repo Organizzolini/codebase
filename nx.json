@@ -109,7 +109,8 @@
       "packages/ic-suite/*/*",
       "!callidescope-agents",
       "!callidescope-examples",
-      "!codependix-*",
+      "!codependix-agents",
+      "!codependix-examples",
       "!codometer-agents",
       "!codometer-examples",
       "!conformetry-agents",
@@ -703,7 +704,7 @@
           }
         ],
         "options": {
-          "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path configuration/.prettierignore --ignore-path .gitignore {projectRoot}"
+          "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path configuration/.prettierignore {projectRoot}"
         }
       }
     ],

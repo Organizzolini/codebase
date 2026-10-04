@@ -67,12 +67,13 @@ describe(EnumerationService, () => {
   });
 
   describe("shapes", () => {
-    // 🎯 The whole sweep, as the two numbers that decide it: the edge budget,
-    // and the shallowest repeat worth walking. Eleven of these fourteen
+    // 🎯 The whole draw run, as the two numbers that decide it: the edge budget,
+    // and the shallowest repeat worth walking. Eleven of these twenty-five
     // shapes are the ones the `mosaic` half of the corpus already commits;
-    // the three deeper single-column ones are what the budget admits past
-    // that family's own row ceiling, and are new to this sweep.
-    it("sweeps every shape the edge budget admits, from the shallowest repeat upward", () => {
+    // the rest are what a budget of twenty-four admits past that family's own
+    // row and column ceilings — eight columns at two rows, and single
+    // columns down to twelve rows.
+    it("draws every shape the edge budget admits, from the shallowest repeat upward", () => {
       expect(
         service.shapes().map(({ columns, rows }) => `${rows}r${columns}c`),
       ).toStrictEqual([
@@ -81,19 +82,30 @@ describe(EnumerationService, () => {
         "2r3c",
         "2r4c",
         "2r5c",
+        "2r6c",
+        "2r7c",
+        "2r8c",
         "3r1c",
         "3r2c",
         "3r3c",
+        "3r4c",
         "4r1c",
         "4r2c",
+        "4r3c",
         "5r1c",
+        "5r2c",
         "6r1c",
+        "6r2c",
         "7r1c",
         "8r1c",
+        "9r1c",
+        "10r1c",
+        "11r1c",
+        "12r1c",
       ]);
     });
 
-    it("admits every shape it sweeps, so no shape is refused for want of budget once the sweep has begun", () => {
+    it("admits every shape it draws, so no shape is refused for want of budget once the draw run has begun", () => {
       expect(service.shapes().every((shape) => service.isAdmitted(shape))).toBe(
         true,
       );
@@ -101,8 +113,8 @@ describe(EnumerationService, () => {
   });
 
   describe("bounded by configured rows and columns", () => {
-    it("stops the sweep at the configured maximum rows, layered on top of the edge budget", async () => {
-      const bounded = await createService({ SWEEP_MAXIMUM_ROWS: 3 });
+    it("stops the draw run at the configured maximum rows, layered on top of the edge budget", async () => {
+      const bounded = await createService({ DRAW_MAXIMUM_ROWS: 3 });
 
       expect(
         bounded.shapes().map(({ columns, rows }) => `${rows}r${columns}c`),
@@ -112,14 +124,18 @@ describe(EnumerationService, () => {
         "2r3c",
         "2r4c",
         "2r5c",
+        "2r6c",
+        "2r7c",
+        "2r8c",
         "3r1c",
         "3r2c",
         "3r3c",
+        "3r4c",
       ]);
     });
 
     it("narrows the widest column span at each row to the configured maximum columns", async () => {
-      const bounded = await createService({ SWEEP_MAXIMUM_COLUMNS: 2 });
+      const bounded = await createService({ DRAW_MAXIMUM_COLUMNS: 2 });
 
       expect(
         bounded.shapes().map(({ columns, rows }) => `${rows}r${columns}c`),
@@ -131,13 +147,19 @@ describe(EnumerationService, () => {
         "4r1c",
         "4r2c",
         "5r1c",
+        "5r2c",
         "6r1c",
+        "6r2c",
         "7r1c",
         "8r1c",
+        "9r1c",
+        "10r1c",
+        "11r1c",
+        "12r1c",
       ]);
     });
 
-    it("leaves the sweep exactly as it is today when both bounds are left unconfigured", async () => {
+    it("leaves the draw run exactly as it is today when both bounds are left unconfigured", async () => {
       const unconfigured = await createService();
 
       expect(unconfigured.shapes()).toStrictEqual(service.shapes());
@@ -190,7 +212,7 @@ describe(EnumerationService, () => {
     // one vertical bar, one wrapped rule, a bar beside a rule, two rules —
     // which is the `lines` region — and every edge there is, which is
     // `mesh`. The order is the canonical edge key's, which is what makes the
-    // sweep stable across runs rather than dependent on which member of a
+    // draw run stable across runs rather than dependent on which member of a
     // symmetry class the walk happened to reach first.
     it("spells each one by its Code, at the shape it was enumerated at", () => {
       expect(service.enumerate({ columns: 1, rows: 2 })).toStrictEqual([
@@ -212,7 +234,7 @@ describe(EnumerationService, () => {
     });
 
     it("refuses a shape the budget does not admit, rather than walking it slowly", () => {
-      expect(() => service.enumerate({ columns: 2, rows: 5 })).toThrow(
+      expect(() => service.enumerate({ columns: 3, rows: 5 })).toThrow(
         /past the budget/u,
       );
     });

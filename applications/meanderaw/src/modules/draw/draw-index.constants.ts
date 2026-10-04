@@ -31,7 +31,7 @@ export const BAND_REPEAT_COUNT = 6;
  *
  * Roughly a ninth of the enumerated corpus matches no family's defining
  * combination — spec #813 asks for that to be a real, expected outcome shown
- * on the page rather than a row the sweep excludes, so it earns a section of
+ * on the page rather than a row the draw run excludes, so it earns a section of
  * its own rather than being folded into whichever family sorts last.
  */
 export const UNCLASSIFIED_FAMILY_LABEL = "unclassified";

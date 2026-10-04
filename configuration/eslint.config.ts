@@ -84,6 +84,10 @@ export default [
       // Agent scratch space — gitignored (`.superpowers/sdd/.gitignore` is a
       // bare `*`) and never source, the same reason as the Python caches above
       "**/.superpowers/**",
+      // meanderaw's draw run writes its index and family pages here — gitignored,
+      // never source, and gigabytes at the default edge budget, past the 2 GiB a
+      // single file read can hold, so reading one would crash the whole run
+      "**/applications/meanderaw/output/**",
       // Nested agent worktrees — full copies of this repository, gitignored,
       // which ESLint does not read. Anchored to the root: a `**/` prefix would
       // also match the path of a checkout that is itself one of them.

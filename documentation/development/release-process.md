@@ -2,7 +2,7 @@
 
 Releases are fully automated on merge to `main`:
 
-1. `nx release version` determines and writes each ic-suite package's version from conventional commits, commits it, and tags each bumped package `<project>@<version>`. The workflow pushes the commit and tags itself, so the pre-push hook runs.
+1. `nx release version` determines and writes each ic-suite package's version from conventional commits, commits it, and tags each bumped package `<project>@<version>`. The workflow pushes the commit and tags itself, so the pre-push hook runs: the commit first, then its tags six at a time, because GitHub rejects a push to this repository that updates more than six refs.
 2. `pnpm -r publish --provenance` publishes every package in the Nx release group whose version is not on npm yet, each with an npm [provenance attestation](https://docs.npmjs.com/generating-provenance-statements) linking it to the commit and workflow run that built it. pnpm honors provenance only as that flag, which is why this step uses pnpm rather than `nx release publish`.
 3. Each package tag without a GitHub release gets one, linking to the npm version and listing that package's commits since its previous tag. These are never marked Latest.
 4. [semantic-release](https://semantic-release.gitbook.io/) bumps the root `package.json` version, generates GitHub release notes, and updates `CHANGELOG.md`.

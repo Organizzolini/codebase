@@ -10,7 +10,7 @@ import {
 import { ClassificationService } from "./classification.service";
 
 import type { BooleanCharacteristicKey } from "../characteristics/characteristics.types";
-import type { MeanderFamily, MeanderShape } from "./classification.types";
+import type { MeanderFamily, MeanderFiledShape } from "./classification.types";
 
 /** One family rule as this test states it: the family and the compound characteristic that decides it. */
 interface FamilyRule {
@@ -58,8 +58,8 @@ const OUTRANKING_PAIRS = FAMILY_RULES.flatMap((higher, index) =>
 /** A shape `rows` deep and not reducible, except where `overrides` says otherwise. */
 function shape(
   rows: number,
-  overrides: Partial<MeanderShape> = {},
-): MeanderShape {
+  overrides: Partial<MeanderFiledShape> = {},
+): MeanderFiledShape {
   return { isReducible: false, rows, ...overrides };
 }
 

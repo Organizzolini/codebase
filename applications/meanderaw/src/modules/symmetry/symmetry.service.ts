@@ -2,7 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 
 import { TileService } from "../tile/tile.service";
 
-import type { Directions, Tile } from "../tile/tile.types";
+import type { Directions, Tile, TileShape } from "../tile/tile.types";
 import type { PointRank, Transform, TransformChoice } from "./symmetry.types";
 
 /**
@@ -44,6 +44,48 @@ export class SymmetryService {
 
   // 🔏 Private Methods
 
+  /** Where one group element sends each of a shape's edges, in {@link edgeKey} order. */
+  private edgePermutation(
+    shape: TileShape,
+    element: TransformChoice,
+  ): number[] {
+    const { columns, rows } = shape;
+    const horizontalCount = columns * rows;
+    const transform = { ...element, columns, rows };
+    const image = (ordinal: number, isHorizontal: boolean): number => {
+      const row = Math.floor(ordinal / columns);
+      const lastRow = isHorizontal ? rows - 1 : rows - 2;
+      const target = element.flip ? lastRow - row : row;
+      const column = this.mapColumn(ordinal % columns, {
+        ...transform,
+        isHorizontal,
+      });
+
+      return (isHorizontal ? 0 : horizontalCount) + target * columns + column;
+    };
+
+    return [
+      ...Array.from({ length: horizontalCount }, (_edge, ordinal) =>
+        image(ordinal, true),
+      ),
+      ...Array.from({ length: (rows - 1) * columns }, (_edge, ordinal) =>
+        image(ordinal, false),
+      ),
+    ];
+  }
+
+  /**
+   * Every element of the group at a column count, identity first: each
+   * shift, plain then mirrored, each upright then flipped.
+   */
+  private elements(columns: number): TransformChoice[] {
+    return Array.from({ length: columns }, (_element, shift) =>
+      [false, true].flatMap((mirror) =>
+        [false, true].map((flip) => ({ flip, mirror, shift })),
+      ),
+    ).flat();
+  }
+
   /**
    * Where an edge's column lands under one group element. A horizontal
    * mirror reflects the lattice about a vertical line, so a southward edge
@@ -62,17 +104,9 @@ export class SymmetryService {
 
   /** Every tile the symmetry group maps `tile` to, itself included, with duplicates left in. */
   private orbit(tile: Tile): Tile[] {
-    const variants: Tile[] = [];
-
-    for (let shift = 0; shift < tile.columns; shift += 1) {
-      for (const mirror of [false, true]) {
-        for (const flip of [false, true]) {
-          variants.push(this.transform(tile, { flip, mirror, shift }));
-        }
-      }
-    }
-
-    return variants;
+    return this.elements(tile.columns).map((element) =>
+      this.transform(tile, element),
+    );
   }
 
   /**
@@ -203,6 +237,42 @@ export class SymmetryService {
     return [...horizontal, ...vertical]
       .flatMap((row) => row.map((isSet) => (isSet ? "1" : "0")))
       .join("");
+  }
+
+  /**
+   * Every element of the group as a permutation of a shape's edges: entry
+   * `ordinal` of one is the ordinal that element sends edge `ordinal` to,
+   * counted in {@link edgeKey} order — every eastward edge in reading order,
+   * then every southward one.
+   *
+   * This is {@link transform} with the tile taken out. A walk that only needs
+   * to know where each edge lands can apply it to a bitmask without
+   * building a tile per element, which is what lets
+   * `TileEnumerationService` keep one assignment per class without
+   * building every member of it. The order is {@link orbit}'s, identity
+   * first.
+   */
+  edgePermutations(shape: TileShape): number[][] {
+    return this.elements(shape.columns).map((element) =>
+      this.edgePermutation(shape, element),
+    );
+  }
+
+  /**
+   * The tiles a mirror, a flip, and both at once map `tile` to, with no
+   * shift and with duplicates left in.
+   *
+   * These are the members of a symmetry class a Code's own column phase
+   * cannot reach: every shift of a repeat is one rotation of its Code away,
+   * and `CodeService.canonicalPhase` already folds rotations, so a shift
+   * names no Code a reflection does not.
+   */
+  reflections(tile: Tile): Tile[] {
+    return [
+      this.transform(tile, { flip: false, mirror: true, shift: 0 }),
+      this.transform(tile, { flip: true, mirror: false, shift: 0 }),
+      this.transform(tile, { flip: true, mirror: true, shift: 0 }),
+    ];
   }
 
   /**

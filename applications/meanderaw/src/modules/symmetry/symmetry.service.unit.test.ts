@@ -73,4 +73,62 @@ describe(SymmetryService, () => {
       ).toBeGreaterThan(1);
     });
   });
+
+  describe("reflections", () => {
+    it("holds the tile's mirror, its flip, and both at once, each a member of its symmetry class", () => {
+      const tile = buildTile(["s.", ".e", ".."]);
+      const members = new Set(
+        service.variants(tile).map((variant) => service.edgeKey(variant)),
+      );
+      const reflections = service.reflections(tile);
+
+      expect(reflections).toHaveLength(3);
+      expect(
+        reflections.every((reflection) =>
+          members.has(service.edgeKey(reflection)),
+        ),
+      ).toBe(true);
+    });
+
+    it("turns a single column upside down, which no shift of it reaches", () => {
+      expect(service.reflections(singleColumn)).toContainEqual(
+        buildTile([".", "e", ".", "s", "."]),
+      );
+    });
+
+    it("leaves a tile every mirror and flip fixes unchanged", () => {
+      const bare = buildTile(["..", ".."]);
+
+      expect(service.reflections(bare)).toStrictEqual([bare, bare, bare]);
+    });
+  });
+
+  describe("edgePermutations", () => {
+    it("is the whole group as permutations of a shape's edges, one per element, each drawing a variant", () => {
+      const tile = buildTile(["s.", ".e", ".."]);
+      const key = service.edgeKey(tile);
+      const permutations = service.edgePermutations({ columns: 2, rows: 3 });
+      const permuted = permutations.map((permutation) => {
+        const bits = Array.from(key, () => "0");
+
+        for (const [ordinal, image] of permutation.entries()) {
+          bits[image] = key.charAt(ordinal);
+        }
+
+        return bits.join("");
+      });
+
+      expect(permutations).toHaveLength(8);
+      expect(
+        permutations.every(
+          (permutation) => new Set(permutation).size === key.length,
+        ),
+      ).toBe(true);
+      expect(new Set(permuted)).toStrictEqual(
+        new Set(
+          service.variants(tile).map((variant) => service.edgeKey(variant)),
+        ),
+      );
+    });
+  });
 });
