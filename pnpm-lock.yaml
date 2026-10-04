@@ -338,6 +338,9 @@ catalogs:
     '@semantic-release/github':
       specifier: ^12.0.8
       version: 12.0.10
+    '@semantic-release/npm':
+      specifier: ^13.1.5
+      version: 13.2.0
     '@semantic-release/release-notes-generator':
       specifier: ^14.1.1
       version: 14.1.1
@@ -823,6 +826,9 @@ importers:
       '@semantic-release/github':
         specifier: 'catalog:'
         version: 12.0.10(semantic-release@25.0.9(supports-color@10.2.2)(typescript@6.0.3))(supports-color@10.2.2)
+      '@semantic-release/npm':
+        specifier: 'catalog:'
+        version: 13.2.0(semantic-release@25.0.9(supports-color@10.2.2)(typescript@6.0.3))
       '@semantic-release/release-notes-generator':
         specifier: 'catalog:'
         version: 14.1.1(semantic-release@25.0.9(supports-color@10.2.2)(typescript@6.0.3))(supports-color@10.2.2)

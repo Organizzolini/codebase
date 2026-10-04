@@ -31,6 +31,7 @@
     "@semantic-release/commit-analyzer": "catalog:",
     "@semantic-release/git": "catalog:",
     "@semantic-release/github": "catalog:",
+    "@semantic-release/npm": "catalog:",
     "@semantic-release/release-notes-generator": "catalog:",
     "@swc-node/register": "catalog:",
     "@swc/core": "catalog:",

@@ -64,6 +64,7 @@ const config: KnipConfig = {
     "@nestjs/platform-express",
     "@semantic-release/commit-analyzer", // semantic-release plugin, referenced in release.config.cjs
     "@semantic-release/github", // semantic-release plugin
+    "@semantic-release/npm", // semantic-release plugin
     "@semantic-release/release-notes-generator", // semantic-release plugin
     "@semantic-release/changelog", // semantic-release plugin
     "@semantic-release/git", // semantic-release plugin
