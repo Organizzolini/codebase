@@ -13,12 +13,12 @@
  * a piece, and a band with no vertical ink can close nothing and fork
  * nowhere — so a sweep that included one row would be spending its widest
  * shape on the corner of the space no family lives in. The budget alone
- * admits sixteen columns there, which is 2 ** 16 assignments folded through
- * a symmetry group of 64 elements, and the largest single cost in the sweep
- * by some distance.
+ * admits twenty-two columns there, which is 2 ** 22 assignments folded
+ * through a symmetry group of 88 elements, and the largest single cost in the
+ * sweep by some distance.
  *
  * There is deliberately no maximum here to match it. The budget decides the
- * deepest band, which is eight rows at one column — see
+ * deepest band, which is eleven rows at one column — see
  * `EnumerationService.shapes` — and a second number saying so would
  * be a number that could disagree with it.
  */
@@ -34,11 +34,16 @@ export const SWEEP_MINIMUM_ROWS = 2;
  * Capping each alone caps neither: 5 rows is fine, 5 columns is fine, and a
  * 5 by 5 tile is 2 ** 45 of them.
  *
- * Sixteen admits eleven shapes and 2,406 distinct tiles, which is a corpus
- * a person can look through. Twenty admits about 116,000, which is not.
- * Raising it is a one-line change with a visible effect on the counts
- * `tile-enumeration.service.unit.test.ts` asserts, which is the point of making
- * it one number.
+ * Twenty-two admits twenty-three shapes and 2,331,597 distinct meanders —
+ * eleven rows deep at one column, seven columns wide at two rows — swept in
+ * about fourteen minutes across worker threads. Sixteen admitted fourteen
+ * shapes and 30,279 in about thirty seconds, and twenty-four would admit
+ * about 7 million: each edge added roughly doubles both the walk and the
+ * corpus. Raising it is a one-line
+ * change with a visible effect on the shapes `enumeration.service.unit.test.ts`
+ * asserts, which is the point of making it one number. The suites that run a
+ * whole sweep pin their own budget instead, so raising this does not slow
+ * them.
  *
  * It replaces a maximum column span, which was the knob while a degree
  * ceiling was doing most of the clamping. There is no degree ceiling now —
@@ -52,7 +57,7 @@ export const SWEEP_MINIMUM_ROWS = 2;
  * environment variable defaults to, so a bare invocation walks exactly the
  * space it walks today.
  */
-export const EDGE_BUDGET = 16;
+export const EDGE_BUDGET = 22;
 
 /**
  * Thrown when a tile shape holds more edges than the configured budget

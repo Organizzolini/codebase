@@ -3,9 +3,9 @@ import { Inject, Injectable } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { EnumerationService } from "../enumeration/enumeration.service";
 
-import { DrawRecordService } from "./draw-record.service";
+import { DrawPoolService } from "./draw-pool.service";
 
-import type { MeanderRecord, MeanderShape } from "../database/database.types";
+import type { MeanderShape } from "../database/database.types";
 
 /**
  * The sweep's lattice-first half: it enumerates the whole unit space, builds
@@ -23,16 +23,16 @@ import type { MeanderRecord, MeanderShape } from "../database/database.types";
  * Nothing here filters. A meander whose structure satisfies no family's
  * defining combination is written with a null family, exactly as spec #813
  * asks — enumeration produces every structurally distinct repeat within
- * budget, and membership is decided afterwards by
- * `DrawIndexService` rather than before by a generator.
+ * budget, and membership is read off each meander's own structure
+ * afterwards rather than decided before by a generator.
  */
 @Injectable()
 export class DrawEnumerationService {
   // 🏗 Dependency Injection
 
   constructor(
-    @Inject(DrawRecordService)
-    private readonly drawRecordService: DrawRecordService,
+    @Inject(DrawPoolService)
+    private readonly drawPoolService: DrawPoolService,
     @Inject(DatabaseService)
     private readonly databaseService: DatabaseService,
     @Inject(EnumerationService)
@@ -48,30 +48,29 @@ export class DrawEnumerationService {
   // 🌎 Public Methods
 
   /**
-   * Enumerates the shapes named and writes every meander they hold, one
-   * shape's rows at a time, answering with how many were written.
+   * Draws the shapes named and writes every meander they hold, one shape's
+   * rows at a time, answering with how many were written.
    *
-   * A shape at a time rather than the whole sweep at once, for the reason
-   * the old file-writing half already writes a row count at a time: the
-   * widest shape alone holds 16,512 meanders, each carrying its own rendered
-   * SVG, and holding every shape's rows in memory before writing any of them
-   * buys nothing.
+   * A shape at a time rather than the whole sweep at once: the largest
+   * shape alone holds 1,049,600 meanders, and holding every shape's rows in
+   * memory before writing any of them buys nothing. Each shape is drawn
+   * across `DrawPoolService`'s worker threads, which are ended once the last
+   * shape is written — or the sweep fails — so none outlives it.
    */
   async persist(shapes: readonly MeanderShape[]): Promise<number> {
     let written = 0;
 
-    for (const shape of shapes) {
-      written += await this.databaseService.saveAll(this.records(shape));
+    try {
+      for (const shape of shapes) {
+        written += await this.databaseService.saveAll(
+          await this.drawPoolService.records(shape),
+        );
+      }
+    } finally {
+      await this.drawPoolService.close();
     }
 
     return written;
-  }
-
-  /** Every meander of one shape, as the rows the database holds for them. */
-  records(shape: MeanderShape): MeanderRecord[] {
-    return this.enumerationService
-      .enumerate(shape)
-      .map(({ code }) => this.drawRecordService.record(code, shape, false));
   }
 
   /** Every shape the budget admits, swept and written — which is what `draw` with no drawing named now does. */

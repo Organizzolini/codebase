@@ -2,6 +2,8 @@
 
 Supersedes the storage half of [ADR 0012](0012-root-every-meander-in-a-committed-sqlite-table.md). The pipeline, the two halves of the corpus, and the index pages it describes stand.
 
+Superseded in part by [ADR 0021](0021-retire-the-meander-pages.md), which retires the committed index pages.
+
 ## Context
 
 [ADR 0012](0012-root-every-meander-in-a-committed-sqlite-table.md) persisted every meander as a row in `output/meanders.sqlite`, a better-sqlite3 file committed to git. By the time of this decision the file was 21 MB and had been rewritten in 21 commits. Every rewrite added another copy of a binary that no pull request could review. [ADR 0017](0017-store-letter-counts-as-a-sparse-json-map.md) had already counted the file's size against git as a design constraint.

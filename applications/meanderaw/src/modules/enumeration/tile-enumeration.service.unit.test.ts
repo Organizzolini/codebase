@@ -38,9 +38,11 @@ async function createService(
 // 🔧 Configuration
 
 /**
- * Every shape the edge budget admits, with the tile counts each holds: how
- * many the family enumerates now, and how many of those the original
- * exact-cover rule would have found.
+ * The eleven shapes the `mosaic` half of the corpus commits — every shape a
+ * budget of sixteen admitted up to five rows — with the tile counts each
+ * holds: how many the family enumerates now, and how many of those the
+ * original exact-cover rule would have found. Today's budget admits all of
+ * them and more; `enumeration.service.unit.test.ts` lists the rest.
  *
  * Written out rather than derived, because these numbers are the thing being
  * asserted. A change to the enumeration rule that resized the space would
@@ -101,7 +103,7 @@ describe(TileEnumerationService, () => {
   });
 
   describe("the edge budget", () => {
-    it("admits exactly eleven shapes, none of them above five rows", () => {
+    it("pins the eleven `mosaic` shapes, none of them above five rows", () => {
       expect(
         ADMITTED_SHAPES.map(({ columns, rows }) => `${rows}x${columns}`),
       ).toStrictEqual([
@@ -120,10 +122,11 @@ describe(TileEnumerationService, () => {
     });
 
     it("gives a shallower band more columns, since a tile's edge count grows in both dimensions at once", () => {
-      expect(service.maximumColumns(2)).toBe(5);
-      expect(service.maximumColumns(3)).toBe(3);
-      expect(service.maximumColumns(4)).toBe(2);
-      expect(service.maximumColumns(5)).toBe(1);
+      expect(service.maximumColumns(2)).toBe(7);
+      expect(service.maximumColumns(3)).toBe(4);
+      expect(service.maximumColumns(4)).toBe(3);
+      expect(service.maximumColumns(5)).toBe(2);
+      expect(service.maximumColumns(7)).toBe(1);
     });
 
     it("counts a shape's edges as columns times two rows less one", () => {
@@ -183,8 +186,8 @@ describe(TileEnumerationService, () => {
       }).compile();
       const unset = await module.resolve(TileEnumerationService);
 
-      expect(unset.isAdmitted({ columns: 5, rows: 2 })).toBe(true);
-      expect(unset.isAdmitted({ columns: 6, rows: 2 })).toBe(false);
+      expect(unset.isAdmitted({ columns: 7, rows: 2 })).toBe(true);
+      expect(unset.isAdmitted({ columns: 8, rows: 2 })).toBe(false);
     });
   });
 
@@ -275,6 +278,54 @@ describe(TileEnumerationService, () => {
       expect(identifiers).toContain("01x03y000");
       expect(identifiers).toContain("01x03y333");
       expect(identifiers).toContain("01x03y048");
+    });
+
+    // 🎯 The walk keeps one assignment per symmetry class without building
+    // the rest, so it is checked against the walk it replaced: build every
+    // assignment, fold each to its class's representative, keep the
+    // distinct ones. The two must name exactly the same tiles.
+    it.each(
+      ADMITTED_SHAPES.filter(
+        ({ columns, rows }) => columns * (2 * rows - 1) <= 12,
+      ),
+    )(
+      "keeps exactly the classes a walk over every assignment finds, at $rows rows and $columns columns",
+      ({ columns, rows }) => {
+        const shape = { columns, rows };
+        const everyClass = new Set<string>();
+
+        for (let mask = 0; mask < 2 ** service.edges(shape); mask += 1) {
+          everyClass.add(
+            symmetryService.edgeKey(
+              symmetryService.canonicalTile(service.tile(shape, mask)),
+            ),
+          );
+        }
+
+        expect(
+          service
+            .enumerate(rows, columns)
+            .map((tile) => symmetryService.edgeKey(tile)),
+        ).toStrictEqual(
+          [...everyClass].toSorted((first, second) =>
+            first.localeCompare(second),
+          ),
+        );
+      },
+    );
+
+    it("keeps one bitmask per symmetry class, which is how many tiles a shape enumerates", () => {
+      expect(service.orbitMinima(3, 3)).toHaveLength(
+        service.enumerate(3, 3).length,
+      );
+    });
+
+    it("reads a bitmask's set bits as the edges of a tile, in edge-key order", () => {
+      expect(
+        symmetryService.edgeKey(
+          service.tile({ columns: 2, rows: 2 }, 0b100101),
+        ),
+      ).toBe("101001");
     });
 
     it.each(ADMITTED_SHAPES)(

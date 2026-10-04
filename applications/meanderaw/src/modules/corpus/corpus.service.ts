@@ -37,7 +37,7 @@ import type { CorpusEntry, CorpusFamily } from "./corpus.types";
  * in places — see
  * `docs/adr/0013-hold-the-historical-corpus-as-a-test-set.md`. Ingesting
  * family by family in `CORPUS_FAMILIES` order is that same tree order, kept
- * so the committed database's own row order is a fact about the tree rather
+ * so the local database's own row order is a fact about the tree rather
  * than about whatever order a constant happens to be written in.
  *
  * A sub-family, by contrast, is **named rather than carried**:
@@ -123,6 +123,11 @@ export class CorpusService {
         lattice: canonical.digits,
         repeats: canonical.repeats,
         rows,
+        symmetricalCodes: this.codeService.symmetricalCodes(
+          canonical,
+          (phase) =>
+            this.characteristicsService.tileCrossingComponentDeltaCount(phase),
+        ),
       });
     } catch (error) {
       throw new DuplicateCorpusCodeError(formatted, family, error);

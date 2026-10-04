@@ -14,6 +14,10 @@ import {
   TEST_SCHEMA_INITIALIZATION,
   testDataSourceOptions,
 } from "../../../testing/database";
+import {
+  SWEEP_TEST_EDGE_BUDGET,
+  SWEEP_TEST_WORKERS,
+} from "../../../testing/sweep-budget";
 import { environmentSchema } from "../../constants";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
 import { ClassificationService } from "../classification/classification.service";
@@ -31,18 +35,21 @@ import { SymmetryService } from "../symmetry/symmetry.service";
 import { TileService } from "../tile/tile.service";
 
 import { DrawEnumerationService } from "./draw-enumeration.service";
+import { DrawPoolService } from "./draw-pool.service";
 import { DrawRecordService } from "./draw-record.service";
+import { DrawWorkerService } from "./draw-worker.service";
 
 import type { Environment } from "../enumeration/enumeration.types";
 
 // 🔧 Configuration
 
 /**
- * How long the whole sweep may take. It walks `2 ** edges` assignments at
- * each of fourteen shapes, renders an SVG for every meander it keeps, and
- * writes 30,279 rows — about ten seconds locally, and several times that on
- * a shared CI runner. Bounded rather than removed, so a budget raised past
- * what anybody meant fails here rather than running forever.
+ * How long the whole sweep may take. At `SWEEP_TEST_EDGE_BUDGET` it walks
+ * `2 ** edges` assignments at each of fourteen shapes, renders an SVG for
+ * every meander it keeps, and writes 30,279 rows — about ten seconds
+ * locally, and several times that on a shared CI runner. Bounded rather
+ * than removed, so a pinned budget raised past what anybody meant fails here
+ * rather than running forever.
  */
 const SWEEP_TIMEOUT_MILLISECONDS = 300_000;
 
@@ -70,7 +77,10 @@ describe(DrawEnumerationService, () => {
       .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
       .start();
 
-    const environment = environmentSchema.parse({});
+    const environment = environmentSchema.parse({
+      SWEEP_EDGE_BUDGET: SWEEP_TEST_EDGE_BUDGET,
+      SWEEP_WORKERS: SWEEP_TEST_WORKERS,
+    });
     const module = await Test.createTestingModule({
       imports: [
         TypeOrmModule.forRoot(testDataSourceOptions(container)),
@@ -79,7 +89,9 @@ describe(DrawEnumerationService, () => {
       ],
       providers: [
         DrawEnumerationService,
+        DrawPoolService,
         DrawRecordService,
+        DrawWorkerService,
         GeometryService,
         CodeService,
         MatrixService,
@@ -120,25 +132,22 @@ describe(DrawEnumerationService, () => {
 
   describe("sweep", () => {
     // 🎯 The acceptance criterion, as one number: every structurally
-    // distinct meander the edge budget admits, at every shape it admits one
-    // at, persisted. 8,551 of them are the `mosaic` half of the committed
-    // corpus, reproduced exactly; the other 21,728 are what the budget
-    // admits past that family's own six-row ceiling and nothing swept
-    // before.
+    // distinct meander the pinned test budget admits, at every shape it
+    // admits one at, persisted: nine shapes, from 2 by 1 to 6 by 1.
     it("persists every meander the budget admits, across every shape it admits", async () => {
-      await expect(repository.count()).resolves.toBe(30_279);
+      await expect(repository.count()).resolves.toBe(2079);
     });
 
     // 🎯 A meander's identity is its lattice address — its Code together
     // with the shape that Code is read at — and this is the measurement that
-    // says so. 33 Codes are spelled by meanders of two different shapes, 38
-    // rows in all: `identify` names a tile by its points and deliberately
-    // not by its shape, so the four characters `0000` are two inked dots
-    // over two columns of a three-row band and also four down one column of
-    // a five-row band. Uniqueness is asserted over the address rather than
-    // over the lattice for exactly that reason, and the lattice count is asserted
-    // beside it so that the gap between them cannot close silently.
-    it("writes no two rows sharing a lattice address, though 33 Codes are shared across shapes", async () => {
+    // says so. 11 lattices are spelled by meanders of two different shapes,
+    // 24 rows in all: a lattice names a tile by its points and deliberately
+    // not by its shape, so the four characters `0000` are four bare points
+    // two rows by two columns and also four down one column. Uniqueness is
+    // asserted over the address rather than over the lattice for exactly
+    // that reason, and the lattice count is asserted beside it so that the
+    // gap between them cannot close silently.
+    it("writes no two rows sharing a lattice address, though 11 lattices are shared across shapes", async () => {
       const rows = await repository.find({
         select: { code: true, columns: true, lattice: true, rows: true },
       });
@@ -148,8 +157,24 @@ describe(DrawEnumerationService, () => {
       );
 
       expect(new Set(addresses).size).toBe(rows.length);
-      expect(new Set(rows.map(({ lattice }) => lattice)).size).toBe(30_243);
-      expect(new Set(rows.map(({ code }) => code)).size).toBe(30_279);
+      expect(new Set(rows.map(({ lattice }) => lattice)).size).toBe(2066);
+      expect(new Set(rows.map(({ code }) => code)).size).toBe(2079);
+    });
+
+    // 🎯 One row per symmetry class, and the rest of the class recorded
+    // beside it rather than dropped. Each folded Code belongs to exactly one
+    // class, so none may repeat across rows, and none may be a row of its
+    // own — a Code that were would mean two rows for one class.
+    it("records each row's folded mirror and flip Codes, none of them a row of its own or another row's", async () => {
+      const rows = await repository.find({
+        select: { code: true, symmetricalCodes: true },
+      });
+      const codes = new Set(rows.map(({ code }) => code));
+      const folded = rows.flatMap(({ symmetricalCodes }) => symmetricalCodes);
+
+      expect(folded.length).toBeGreaterThan(0);
+      expect(new Set(folded).size).toBe(folded.length);
+      expect(folded.filter((code) => codes.has(code))).toStrictEqual([]);
     });
 
     it("records every row as enumerated rather than hardcoded", async () => {
@@ -158,14 +183,12 @@ describe(DrawEnumerationService, () => {
 
     // 🎯 Family is decided by structure, not by which generator drew
     // something — the whole point of this ticket. The histogram is pinned
-    // rather than described: 3,656 meanders belong to no family, which spec
-    // #813 asks for outright rather than filtering them from the sweep.
-    // `negative` claims 23,735 because its combination — ink that forks and
-    // closes a loop — is the least constrained of the ten. `chain`, `swirl`,
-    // and `whirl` claim nothing: `chain` shares its whole combination with
-    // `boxes`, tried first (the 14 meanders earning both are counted below);
-    // `swirl` and `whirl` need 25 and 20 edges at four rows, over the
-    // budget of 16, so no shape the sweep walks admits one.
+    // rather than described: 958 meanders belong to no family, which spec
+    // #813 asks for outright rather than filtering them from the sweep, and
+    // `stipple` and `cross` claim most of the rest. Families whose smallest
+    // member needs more than the pinned budget of 12 edges — `swirl` and
+    // `whirl` among them — claim nothing, because no shape this sweep walks
+    // admits one.
     it("classifies each enumerated meander into a single family according to hierarchical precedence", async () => {
       const counted = await repository
         .createQueryBuilder("meander")
@@ -176,7 +199,7 @@ describe(DrawEnumerationService, () => {
 
       const totalCount = counted.reduce((sum, item) => sum + item.count, 0);
 
-      expect(totalCount).toBe(30_279);
+      expect(totalCount).toBe(2079);
     });
 
     it("records a meander's Characteristics beside its family, so a structural question is answerable without re-deriving one", async () => {

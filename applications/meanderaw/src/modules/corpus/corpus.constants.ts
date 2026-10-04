@@ -5,7 +5,7 @@ import type { CorpusFamily } from "./corpus.types";
 /**
  * Every name the retired file tree filed a drawing under, in that tree's own
  * order — which is the order `CorpusService.ingest` ingests in, so the
- * committed database's row order is a fact about the tree rather than about
+ * local database's row order is a fact about the tree rather than about
  * whatever order a generated constant happens to be written in.
  *
  * `mosaic` is absent: it named no family, only the enumerated unit space

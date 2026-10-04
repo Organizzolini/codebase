@@ -12,6 +12,8 @@ import {
 } from "./code.constants";
 import { CodeService } from "./code.service";
 
+import type { Tile } from "../tile/tile.types";
+
 // 🔧 Configuration
 
 /** The point that carries no ink at all, which is what a position off the Code reads as. */
@@ -423,6 +425,53 @@ describe(CodeService, () => {
         repeats: 1,
         rows: 2,
       });
+    });
+  });
+
+  describe("symmetricalCodes", () => {
+    /** Ranks every phase alike, so a phase is chosen by its digits alone. */
+    const rankedAlike = (): number => 0;
+
+    /** A tile's Code at its own canonical phase, as a row would store it. */
+    const storedCode = (tile: Tile): string =>
+      service.format(
+        service.canonicalPhase(service.parse(service.spell(tile)), rankedAlike),
+      );
+
+    it("is empty for a meander every mirror and flip maps onto itself", () => {
+      const bare = service.parse(service.spell(buildTile(["..", ".."])));
+
+      expect(service.symmetricalCodes(bare, rankedAlike)).toStrictEqual([]);
+    });
+
+    it("names the flip a meander's own Code cannot reach, and never the meander itself", () => {
+      const own = service.canonicalPhase(
+        service.parse(service.spell(singleColumn)),
+        rankedAlike,
+      );
+
+      expect(service.symmetricalCodes(own, rankedAlike)).toStrictEqual([
+        storedCode(buildTile([".", "e", ".", "s", "."])),
+      ]);
+    });
+
+    it("names every member of the symmetry class a shift alone cannot reach, so no member is lost to the fold", () => {
+      const tile = buildTile(["s.", ".e", ".."]);
+      const own = service.canonicalPhase(
+        service.parse(service.spell(tile)),
+        rankedAlike,
+      );
+
+      expect(
+        new Set([
+          service.format(own),
+          ...service.symmetricalCodes(own, rankedAlike),
+        ]),
+      ).toStrictEqual(
+        new Set(
+          symmetryService.variants(tile).map((variant) => storedCode(variant)),
+        ),
+      );
     });
   });
 });

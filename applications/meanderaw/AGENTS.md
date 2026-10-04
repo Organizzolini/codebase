@@ -26,25 +26,44 @@ one from its decoded Code, and a family is _read off_ the result rather than cho
 it. See "One Command" and "Output Layout" in [README.md](./README.md).
 
 **The corpus is two halves that partition it, and the partition is load-bearing.**
-Rows with `isHardcoded` false hold the 30,279 meanders `MeanderEnumerationService`
-walks — the fourteen shapes the edge budget admits. Rows with it true hold the 965 meanders of the historical corpus
-that lie beyond that budget, extracted once as Codes from the retired file tree.
-`HARDCODED_MEANDERS_BY_FAMILY` carries the filter and why it is by shape rather than by
-Code: the enumeration applies no degree ceiling and no family filter, so at an admitted
-shape _every_ structurally distinct meander is already a row before ingestion begins.
-**Raising `MOSAIC_TILE_EDGE_BUDGET` without re-filtering that corpus is how the two halves
-collide** — `draw-sweep.command.integration.test.ts` is what catches it.
+Rows with `isHardcoded` false hold the 2,331,597 meanders `EnumerationService` walks — the
+twenty-three shapes the edge budget admits. Rows with it true hold the meanders of the
+historical corpus that lie beyond that budget, extracted once as Codes from the retired
+file tree. `CorpusService.isBeyondEnumeration` is the filter, and it is by shape rather
+than by Code: the enumeration applies no degree ceiling and no family filter, so at an
+admitted shape _every_ structurally distinct meander is already a row before ingestion
+begins. The filter asks the budget rather than restating it, so raising `EDGE_BUDGET`
+moves the boundary with it — `draw-sweep.command.integration.test.ts` pins how many
+entries lie beyond it.
 
-**What bounds the enumeration is one edge budget, not a column cap.** A repeat is a
-`columns` by `rows - 1` grid of lattice points, each carrying four direction bits, and its
-edges are its only degrees of freedom — so a shape holds `2 ** (columns * (2 * rows - 3))`
-repeats and rows and columns are not independent knobs.
-`MOSAIC_TILE_EDGE_BUDGET` caps that edge count at 16, and
-`MEANDER_ENUMERATION_MINIMUM_ROWS` sets the floor at 3, which between them admit fourteen
-shapes: 3×1 through 3×5, 4×1 through 4×3, 5×1, 5×2, and 6×1 through 9×1. A shape past the
-budget is refused rather than enumerated slowly. Raising it is a one-line change with a
-visible effect on counts `mosaic-tiles.service.unit.test.ts` asserts — which is the point
-of it being one number.
+**What bounds the enumeration is one edge budget, not a column cap.** A repeat of `rows` by
+`columns` holds `columns * (2 * rows - 1)` edges, its only degrees of freedom — so a shape
+holds `2 ** edges` repeats and rows and columns are not independent knobs. `EDGE_BUDGET`
+caps that edge count at 22, overridable through `SWEEP_EDGE_BUDGET`, and
+`SWEEP_MINIMUM_ROWS` sets the floor at 2, which between them admit twenty-three shapes: 2×1
+through 2×7, 3×1 through 3×4, 4×1 through 4×3, 5×1, 5×2, 6×1, 6×2, and 7×1 through 11×1. A
+shape past the budget is refused rather than enumerated slowly. Raising it is a one-line
+change with a visible effect on the shapes `enumeration.service.unit.test.ts` asserts — which
+is the point of it being one number. The suites that run a whole sweep pin their own budget
+of 12 through `SWEEP_TEST_EDGE_BUDGET` in `testing/draw-sweep.ts`, so raising the default
+does not slow them.
+
+**A sweep keeps one meander per symmetry class, and draws them across threads.**
+`TileEnumerationService.orbitMinima` walks every edge assignment as a bitmask and keeps
+only those no element of the symmetry group sends lower — one per class, without building
+the rest — and `canonicalTile` folds each to the representative the corpus stores. The
+rest of the class is recorded, not lost: `symmetricalCodes` holds the Codes of its mirror,
+flip, and both, each at its own canonical phase (a column shift is already folded by
+`canonicalPhase`). Drawing a row is the expensive part, so `DrawPoolService` deals each
+shape's minima in batches to `SWEEP_WORKERS` threads booted from `src/worker.ts`, sorts
+the rows back into edge-key order, and the main thread inserts them with one prepared
+multi-row `INSERT` per chunk. `SWEEP_WORKERS=0` draws in-process, which every suite pins
+through `SWEEP_TEST_WORKERS`; `draw-pool.service.integration.test.ts` is the one that
+drives real threads.
+
+**The database is the sweep's only output.** The HTML pages are retired — at the default
+budget a family page outgrows a JavaScript string — and nothing under `output/` is
+committed.
 
 **A family is a combination of Characteristics, not a label a generator attached.**
 `MeanderClassificationService` holds one predicate per family, read off a decoded grid's
@@ -66,9 +85,9 @@ first so the refusal names the hardcoded entry that caused it. Do not soften tha
 upsert.
 
 **No row stores its drawing.** The renderer draws each meander from its Code, rows, and
-columns when the index pages are built, so a renderer change needs no database change at
-all. Nothing currently checks the database against a fresh sweep, either; a
-Code's uniqueness is the one property the schema enforces.
+columns whenever a drawing is needed, so a renderer change needs no database change at
+all. Nothing currently checks the database against a fresh sweep, either; a Code's
+uniqueness is the one property the schema enforces.
 
 ### The charter, and what became of its gate
 
@@ -205,18 +224,19 @@ nx run meanderaw:start --args="--rows 3 --columns 2 --code 3c9a"
 ```
 
 **Nothing but `start` runs the command**, so no aggregate target — `guard-code`, `lint-code`,
-or any other — rewrites the database and the committed pages as a side effect. Keep it
-that way: a `dependsOn` on `start` would rewrite them on every run.
+or any other — rewrites the database as a side effect. Keep it that way: a `dependsOn` on
+`start` would run a full sweep on every check.
 
 **The database lives in Postgres, not in the repository.** The local Docker init creates
 the `meanderaw_development` database and the schema of the same name, the defaults of
 `MEANDERAW_POSTGRES_DB` and `MEANDERAW_POSTGRES_SCHEMA`. Every meanderaw variable carries the
-`MEANDERAW_` prefix, so the unprefixed `MEANDERAW_POSTGRES_*` the root `.env` sets for lexico — which
-Nx loads into every task — never reaches it. The committed
-`output/*.html` pages are the only artifact a sweep commits — see
-[ADR 0020](../../docs/adr/0020-store-meanders-in-postgres.md). Integration suites start
-their own throwaway `postgres:18-alpine` container through `@testcontainers/postgresql`
-and hand it to `testing/database.ts`, so Docker must be running to test them.
+`MEANDERAW_` prefix, so the unprefixed `POSTGRES_*` the root `.env` sets for lexico — which
+Nx loads into every task — never reaches it — see
+[ADR 0020](../../docs/adr/0020-store-meanders-in-postgres.md). A sweep commits nothing: the
+HTML pages are retired, and `output/` is gitignored — see
+[ADR 0021](../../docs/adr/0021-retire-the-meander-pages.md). Integration suites start their
+own throwaway `postgres:18-alpine` container through `@testcontainers/postgresql` and hand
+it to `testing/database.ts`, so Docker must be running to test them.
 
 There is deliberately no second command, and no other flag — see "One Command" and
 "Output Layout" in [README.md](./README.md).

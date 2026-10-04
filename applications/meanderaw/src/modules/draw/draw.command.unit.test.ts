@@ -17,7 +17,6 @@ import { DatabaseService } from "../database/database.service";
 
 import { DrawCodeService } from "./draw-code.service";
 import { DrawEnumerationService } from "./draw-enumeration.service";
-import { DrawIndexService } from "./draw-index.service";
 import { DrawCommand } from "./draw.command";
 
 import type { Meander } from "../database/entities/Meander.entity";
@@ -34,11 +33,10 @@ vi.mock("node:fs/promises", () => ({
 
 /**
  * Covers what `DrawCommand` decides rather than what it produces: which of
- * its modes an option set selects — the sweep, or one `--code` drawing —
- * how each flag is parsed, and — since
- * the sweep writes `output/index.html` again — that it does so with
- * `DrawIndexService`'s own built page, once, at the path spec #813's
- * committed artifact lives at.
+ * its modes an option set selects — a sweep by default, and one drawing when
+ * `--code` names it — how each flag is parsed, and
+ * that no mode writes a file now that the database is the sweep's only
+ * output.
  *
  * Everything else the command produces is asserted against a real database
  * instead — `draw-sweep.command.integration.test.ts` for the sweep and
@@ -46,10 +44,9 @@ vi.mock("node:fs/promises", () => ({
  * Testing Decisions. `node:fs/promises` is mocked here rather than left real,
  * the same way this file used to mock it while the per-family procedural
  * pipeline still wrote a whole tree through it: a unit test has no business
- * touching the committed `output/index.html` a real write would clobber.
+ * touching a real file, and it is what says no file is written.
  */
 describe(DrawCommand, () => {
-  let build: Mock<() => Promise<Record<string, string>>>;
   let clear: Mock<() => Promise<void>>;
   let command: DrawCommand;
   let draw: Mock<() => Promise<Meander>>;
@@ -57,10 +54,6 @@ describe(DrawCommand, () => {
   let sweep: Mock<() => Promise<number>>;
 
   beforeAll(async () => {
-    build = vi.fn<() => Promise<Record<string, string>>>().mockResolvedValue({
-      "families/snake.html": "<section></section>",
-      "index.html": "<!doctype html>",
-    });
     clear = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
     draw = vi
       .fn<() => Promise<Meander>>()
@@ -82,10 +75,6 @@ describe(DrawCommand, () => {
           useValue: createMock<DrawEnumerationService>({ sweep }),
         },
         {
-          provide: DrawIndexService,
-          useValue: createMock<DrawIndexService>({ build }),
-        },
-        {
           provide: CorpusService,
           useValue: createMock<CorpusService>({ ingest }),
         },
@@ -104,7 +93,6 @@ describe(DrawCommand, () => {
   });
 
   beforeEach(() => {
-    build.mockClear();
     clear.mockClear();
     draw.mockClear();
     ingest.mockClear();
@@ -130,10 +118,6 @@ describe(DrawCommand, () => {
           useValue: createMock<DrawEnumerationService>(),
         },
         {
-          provide: DrawIndexService,
-          useValue: createMock<DrawIndexService>(),
-        },
-        {
           provide: CorpusService,
           useValue: createMock<CorpusService>(),
         },
@@ -155,7 +139,7 @@ describe(DrawCommand, () => {
     expect(logger.setContext).toHaveBeenCalledWith("DrawCommand");
   });
 
-  it("clears the committed rows before sweeping, so a sweep regenerates rather than colliding with them", async () => {
+  it("clears the existing rows before sweeping, so a sweep regenerates rather than colliding with them", async () => {
     await command.run([], {});
 
     const [cleared] = clear.mock.invocationCallOrder;
@@ -165,7 +149,7 @@ describe(DrawCommand, () => {
     expect(cleared ?? Infinity).toBeLessThan(enumerated ?? 0);
   });
 
-  it("sweeps both halves of the corpus when no Code is named", async () => {
+  it("sweeps both halves of the corpus when no Code is named, with no flag at all", async () => {
     await command.run([], {});
 
     expect(sweep).toHaveBeenCalledTimes(1);
@@ -182,32 +166,19 @@ describe(DrawCommand, () => {
     expect(enumerated).toBeLessThan(hardcoded ?? 0);
   });
 
-  it("rebuilds the index page from the sweep's own rows, once both halves have committed", async () => {
+  it("writes no file when it sweeps, the database being its only output", async () => {
     await command.run([], {});
 
-    expect(build).toHaveBeenCalledTimes(1);
-    expect(writeFileMock).toHaveBeenCalledWith(
-      expect.stringMatching(/output\/index\.html$/),
-      "<!doctype html>",
-    );
-    expect(writeFileMock).toHaveBeenCalledWith(
-      expect.stringMatching(/output\/families\/snake\.html$/),
-      "<section></section>",
-    );
-
-    const [hardcoded] = ingest.mock.invocationCallOrder;
-    const [written] = writeFileMock.mock.invocationCallOrder;
-
-    expect(hardcoded ?? 0).toBeLessThan(written ?? 0);
+    expect(mkdirMock).not.toHaveBeenCalled();
+    expect(writeFileMock).not.toHaveBeenCalled();
   });
 
-  it("draws the one meander a Code names, sweeping nothing and never rebuilding the index page", async () => {
+  it("draws the one meander a Code names, sweeping nothing and writing no file", async () => {
     await command.run([], { code: "3c9a", columns: 2, rows: 3 });
 
     expect(draw).toHaveBeenCalledWith({ code: "3c9a", columns: 2, rows: 3 });
     expect(clear).not.toHaveBeenCalled();
     expect(sweep).not.toHaveBeenCalled();
-    expect(build).not.toHaveBeenCalled();
     expect(writeFileMock).not.toHaveBeenCalled();
   });
 

@@ -20,6 +20,8 @@ import { MEANDER_INSERT_CHUNK_SIZE } from "./database.constants";
 import { DatabaseService } from "./database.service";
 import { Meander } from "./entities/Meander.entity";
 
+import type { MeanderRecord } from "./database.types";
+
 // 🧪 Tests
 
 /**
@@ -63,23 +65,6 @@ describe(DatabaseService, () => {
 
   it("is defined", () => {
     expect(service).toBeDefined();
-  });
-
-  describe("findAll", () => {
-    it("resolves with an empty array before anything is committed", async () => {
-      await expect(service.findAll()).resolves.toStrictEqual([]);
-    });
-
-    it("reads every committed row", async () => {
-      await service.save(meanderRecord({ code: "findAll-first-row" }));
-      await service.save(meanderRecord({ code: "findAll-second-row" }));
-
-      const rows = await service.findAll();
-
-      expect(rows.map((row) => row.code)).toStrictEqual(
-        expect.arrayContaining(["findAll-first-row", "findAll-second-row"]),
-      );
-    });
   });
 
   describe("save", () => {
@@ -287,6 +272,49 @@ describe(DatabaseService, () => {
         repository.countBy({ code: Like("save-all-%") }),
       ).resolves.toBe(records.length);
     });
+
+    it("stores every column exactly as save would, the JSON map and array columns included", async () => {
+      const fields: Partial<MeanderRecord> = {
+        characteristics: { aSoutheastLatinCount: 2, crossCount: 1 },
+        family: "boxes",
+        symmetricalCodes: ["01x02y12", "01x02y21"],
+      };
+
+      await service.save(meanderRecord({ ...fields, code: "saved-one" }));
+      await service.saveAll([
+        meanderRecord({ ...fields, code: "saved-all", lattice: "saved-all" }),
+      ]);
+
+      const {
+        code: _one,
+        id: _oneId,
+        ...one
+      } = await repository.findOneByOrFail({ code: "saved-one" });
+      const {
+        code: _all,
+        id: _allId,
+        lattice: _lattice,
+        ...all
+      } = await repository.findOneByOrFail({ code: "saved-all" });
+      const { lattice: _oneLattice, ...comparable } = one;
+
+      expect(all).toStrictEqual(comparable);
+    });
+
+    it("refuses a batch holding a duplicate code and writes none of it", async () => {
+      const records = [
+        meanderRecord({ code: "batch-first", lattice: "batch-first" }),
+        meanderRecord({ code: "batch-second", lattice: "batch-second" }),
+        meanderRecord({ code: "batch-first", lattice: "batch-third" }),
+      ];
+
+      await expect(service.saveAll(records)).rejects.toThrow(
+        /UNIQUE constraint/i,
+      );
+      await expect(repository.countBy({ code: Like("batch-%") })).resolves.toBe(
+        0,
+      );
+    });
   });
 
   describe("family and subFamily columns", () => {
@@ -326,7 +354,7 @@ describe(DatabaseService, () => {
 
       await service.clear();
 
-      await expect(service.findAll()).resolves.toStrictEqual([]);
+      await expect(repository.find()).resolves.toStrictEqual([]);
       await expect(
         service.save(meanderRecord({ code: "clear-first-row" })),
       ).resolves.toMatchObject({ code: "clear-first-row" });

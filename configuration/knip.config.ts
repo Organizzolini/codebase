@@ -242,6 +242,9 @@ const config: KnipConfig = {
 
     // meanderaw: Greek meander (key/fret) SVG generator CLI
     "applications/meanderaw": {
+      // The CLI, the REPL its own target runs, and the sweep's worker
+      // thread — spawned by URL, so nothing imports it.
+      entry: ["src/main.ts", "src/repl.ts", "src/worker.ts"],
       project: "src/**/*.ts",
     },
 

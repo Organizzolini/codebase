@@ -1,5 +1,7 @@
 // 🏷️ Types
 
+import type { MeanderRecord, MeanderShape } from "../database/database.types";
+
 /**
  * What `DrawCodeService.draw` needs to decode, render, and persist one
  * meander: `--rows`, `--columns`, and `--code` all present together, which
@@ -34,4 +36,26 @@ export interface DrawCommandOptions {
   code?: string;
   columns?: number;
   rows?: number;
+}
+
+/** A worker thread's answer to one {@link DrawWorkerTask}: its records, or why it could not draw them. */
+export type DrawWorkerReply =
+  | { readonly error: string }
+  | { readonly records: readonly KeyedMeanderRecord[] };
+
+/** A batch of one shape's orbit minima, sent to a worker thread to draw. */
+export interface DrawWorkerTask {
+  readonly masks: readonly number[];
+  readonly shape: MeanderShape;
+}
+
+/**
+ * One drawn meander and the key the sweep orders it by: its
+ * representative's edge key, which is the order `TileEnumerationService`
+ * enumerates in. Workers finish batches in any order, so the key is what
+ * puts a shape's rows back in one stable order before they are written.
+ */
+export interface KeyedMeanderRecord {
+  readonly key: string;
+  readonly record: MeanderRecord;
 }

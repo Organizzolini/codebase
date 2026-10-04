@@ -6,6 +6,7 @@ import { MEANDER_INSERT_CHUNK_SIZE } from "./database.constants";
 import { Meander } from "./entities/Meander.entity";
 
 import type { MeanderRecord } from "./database.types";
+import type { ColumnMetadata } from "typeorm/metadata/ColumnMetadata.js";
 
 /**
  * Persists meanders to the Postgres database `MEANDERAW_POSTGRES_DB` names.
@@ -28,6 +29,29 @@ export class DatabaseService {
 
   // 🔏 Private Methods
 
+  /**
+   * One record's value for one column, in the form the database stores it:
+   * a `simple-array` joined, a `simple-json` serialized, exactly as
+   * TypeORM's own `insert` would write it. A column the record leaves out
+   * takes its declared default, which is what an `insert` naming no value
+   * for it would have stored.
+   */
+  private persistentValue(
+    record: MeanderRecord,
+    column: ColumnMetadata,
+  ): unknown {
+    const value: unknown = column.getEntityValue(record);
+
+    if (value === undefined) {
+      return column.default;
+    }
+
+    return this.meanderRepository.manager.dataSource.driver.preparePersistentValue(
+      value,
+      column,
+    );
+  }
+
   // 🌎 Public Methods
 
   /**
@@ -41,18 +65,6 @@ export class DatabaseService {
    */
   async clear(): Promise<void> {
     await this.meanderRepository.clear();
-  }
-
-  /**
-   * Reads every meander row committed so far, for `DrawIndexService` to build
-   * the static index page from.
-   *
-   * Whole-table rather than paged: the page it feeds is itself unpaged, per
-   * spec #813's own "Out of Scope" section, so reading it in one pass is no
-   * more than the page already has to hold in memory to render.
-   */
-  async findAll(): Promise<Meander[]> {
-    return this.meanderRepository.find();
   }
 
   /**
@@ -79,21 +91,29 @@ export class DatabaseService {
    * Writes many meander rows, in chunks, and answers with how many were
    * written.
    *
-   * `insert` rather than `save`, because these rows are new by
-   * construction — the sweep walks a space, it does not revisit one — and
-   * `save` would issue a lookup per row to decide whether it was updating.
-   * The sweep writes 30,279 of them.
+   * One prepared multi-row `INSERT` per chunk rather than `insert` or
+   * `save`. These rows are new by construction — the sweep walks a space, it
+   * does not revisit one — so `save`'s lookup per row is wasted, and
+   * `insert` still spends about 100 µs a row building its statement and
+   * reading back generated ids nobody uses. The sweep writes 2,331,597 rows,
+   * so that bookkeeping alone was minutes. Each value is still converted by
+   * the driver's own `preparePersistentValue`, so a row reads back exactly
+   * as `save` would have stored it. Placeholders are Postgres's numbered
+   * `$n`, and the table is named by its schema-qualified path, because a raw
+   * statement resolves an unqualified name through the connection's search
+   * path rather than through the entity's schema.
    *
    * One transaction around the whole batch rather than one per chunk. The
    * driver would otherwise commit each statement on its own, and a commit is
-   * the expensive part of a write — the sweep's 30,279 rows take about a
-   * fifth as long this way. It also makes the refusal below whole: a batch
-   * that hits a duplicate leaves no half-written shape behind.
+   * the expensive part of a write — the sweep's rows took about a fifth as
+   * long this way, measured when it wrote 30,279. It also makes the refusal
+   * below whole: a batch that hits a duplicate leaves no half-written shape
+   * behind.
    *
    * Chunked because a single statement's parameter count is bounded, so a
    * whole shape's worth of rows in one statement is a limit nobody declared
-   * being reached at some row count nobody chose. The chunk size is a size, not a tuning knob: what
-   * matters is that it is bounded.
+   * being reached at some row count nobody chose. The chunk size is a size,
+   * not a tuning knob: what matters is that it is bounded.
    *
    * A duplicate Code is refused by the unique index over `code`, exactly as
    * {@link save} is, which is spec #813's
@@ -103,15 +123,36 @@ export class DatabaseService {
    * would commit a database missing rows nobody counted.
    */
   async saveAll(records: readonly MeanderRecord[]): Promise<number> {
+    const { columns, tablePath } = this.meanderRepository.metadata;
+    // A generated column, or one whose default is a SQL expression such as
+    // `id`'s `uuidv7()`, is the database's to fill rather than the row's.
+    const written = columns.filter(
+      (column) => !column.isGenerated && typeof column.default !== "function",
+    );
+    const table = tablePath
+      .split(".")
+      .map((part) => `"${part}"`)
+      .join(".");
+    const names = written.map(({ databaseName }) => `"${databaseName}"`);
+
     await this.meanderRepository.manager.transaction(async (manager) => {
       for (
         let start = 0;
         start < records.length;
         start += MEANDER_INSERT_CHUNK_SIZE
       ) {
-        await manager.insert(
-          Meander,
-          records.slice(start, start + MEANDER_INSERT_CHUNK_SIZE),
+        const chunk = records.slice(start, start + MEANDER_INSERT_CHUNK_SIZE);
+        const parameters = chunk.flatMap((record) =>
+          written.map((column) => this.persistentValue(record, column)),
+        );
+        const rows = chunk.map(
+          (_record, row) =>
+            `(${written.map((_column, column) => `$${row * written.length + column + 1}`).join(", ")})`,
+        );
+
+        await manager.query(
+          `INSERT INTO ${table} (${names.join(", ")}) VALUES ${rows.join(", ")}`,
+          parameters,
         );
       }
     });

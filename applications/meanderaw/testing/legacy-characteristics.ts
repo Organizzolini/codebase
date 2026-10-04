@@ -5,7 +5,7 @@
  * reading of themselves.
  *
  * The fixtures are the first, middle, and last enumerated Code of each
- * family in the committed database, the smallest filed Code of each strand
+ * family in the local database, the smallest filed Code of each strand
  * family the enumeration never reaches, and three Codes whose repeating
  * unit is narrower than the Code as filed, so the unreduced tile-crossing
  * reading is exercised across every column rotation of a real tiling.

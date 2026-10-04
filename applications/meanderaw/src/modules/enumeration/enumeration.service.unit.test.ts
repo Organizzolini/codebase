@@ -68,10 +68,11 @@ describe(EnumerationService, () => {
 
   describe("shapes", () => {
     // 🎯 The whole sweep, as the two numbers that decide it: the edge budget,
-    // and the shallowest repeat worth walking. Eleven of these fourteen
+    // and the shallowest repeat worth walking. Eleven of these twenty-three
     // shapes are the ones the `mosaic` half of the corpus already commits;
-    // the three deeper single-column ones are what the budget admits past
-    // that family's own row ceiling, and are new to this sweep.
+    // the rest are what a budget of twenty-two admits past that family's own
+    // row and column ceilings — seven columns at two rows, and single
+    // columns down to eleven rows.
     it("sweeps every shape the edge budget admits, from the shallowest repeat upward", () => {
       expect(
         service.shapes().map(({ columns, rows }) => `${rows}r${columns}c`),
@@ -81,15 +82,24 @@ describe(EnumerationService, () => {
         "2r3c",
         "2r4c",
         "2r5c",
+        "2r6c",
+        "2r7c",
         "3r1c",
         "3r2c",
         "3r3c",
+        "3r4c",
         "4r1c",
         "4r2c",
+        "4r3c",
         "5r1c",
+        "5r2c",
         "6r1c",
+        "6r2c",
         "7r1c",
         "8r1c",
+        "9r1c",
+        "10r1c",
+        "11r1c",
       ]);
     });
 
@@ -112,9 +122,12 @@ describe(EnumerationService, () => {
         "2r3c",
         "2r4c",
         "2r5c",
+        "2r6c",
+        "2r7c",
         "3r1c",
         "3r2c",
         "3r3c",
+        "3r4c",
       ]);
     });
 
@@ -131,9 +144,14 @@ describe(EnumerationService, () => {
         "4r1c",
         "4r2c",
         "5r1c",
+        "5r2c",
         "6r1c",
+        "6r2c",
         "7r1c",
         "8r1c",
+        "9r1c",
+        "10r1c",
+        "11r1c",
       ]);
     });
 
@@ -212,7 +230,7 @@ describe(EnumerationService, () => {
     });
 
     it("refuses a shape the budget does not admit, rather than walking it slowly", () => {
-      expect(() => service.enumerate({ columns: 2, rows: 5 })).toThrow(
+      expect(() => service.enumerate({ columns: 3, rows: 5 })).toThrow(
         /past the budget/u,
       );
     });

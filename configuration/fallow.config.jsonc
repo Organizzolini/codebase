@@ -38,6 +38,8 @@
     "{applications,packages,tools}/**/src/generators/**/generator.ts",
     "{applications,packages,tools}/**/src/generators.ts",
     "{applications,packages,tools}/**/src/repl.ts",
+    // A worker thread's entry point is spawned by URL, never imported.
+    "{applications,packages,tools}/**/src/worker.ts",
     "{applications,packages,tools}/**/testing/**/*.ts",
     // conformetry-examples: every example is read and run rather than imported,
     // so nothing in the module graph reaches one. knip names the same paths in

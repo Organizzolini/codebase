@@ -1,1 +1,5 @@
 # 🙈 Ignore
+
+# Nothing a sweep writes is committed: the meanders live in Postgres and the HTML
+# pages are retired, so anything an older sweep left here is stale.
+output/

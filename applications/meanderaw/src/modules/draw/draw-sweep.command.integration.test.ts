@@ -4,7 +4,7 @@ import {
   PostgreSqlContainer,
   type StartedPostgreSqlContainer,
 } from "@testcontainers/postgresql";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { LoggerService } from "@codebase/logger";
 
@@ -24,27 +24,19 @@ import { HISTORICAL_CORPUS } from "../corpus/historical-corpus.constants";
 
 import { DrawCodeService } from "./draw-code.service";
 
-const { writeFileMock } = vi.hoisted(() => ({
-  writeFileMock: vi.fn<(path: string, data: string) => Promise<void>>(),
-}));
-
-vi.mock("node:fs/promises", () => ({
-  mkdir: vi.fn<() => Promise<void>>(),
-  writeFile: writeFileMock,
-}));
-
 /**
  * How many of the historical corpus's entries lie beyond the sweep's reach,
  * and so are ingested rather than enumerated.
  *
- * Written down rather than computed, because it is the check that the one
- * extraction lost nothing: it is exactly the number of entries the fourteen
- * hand-maintained constants files held before they were deleted, and the
- * boundary is now computed from the edge budget and the sweep's row floor
- * rather than hand-listed. A budget raised in `EDGE_BUDGET` moves this
- * number, and should fail here rather than pass quietly.
+ * Written down rather than computed, because the boundary is computed from
+ * the edge budget and the sweep's row floor rather than hand-listed, and a
+ * number written down is what catches that computation drifting. This suite
+ * sweeps at `SWEEP_TEST_EDGE_BUDGET` rather than `EDGE_BUDGET`, so it is the
+ * count beyond twelve edges: the 1,026 entries the retired constants files
+ * held beyond sixteen, plus the 40 between the two. A pinned budget moved
+ * there moves this number, and should fail here rather than pass quietly.
  */
-const HISTORICAL_CORPUS_BEYOND_ENUMERATION = 1026;
+const HISTORICAL_CORPUS_BEYOND_ENUMERATION = 1066;
 
 /** Compiles a fresh sweep, over an emptied schema in `container`, with `--code` and logging mocked out. */
 async function compileSweep(
@@ -61,10 +53,10 @@ async function compileSweep(
 }
 
 /**
- * Drives the whole of `DrawCommand`'s sweep — the generalized enumeration,
- * the historical corpus's hardcoded ingestion, and the index page rebuilt
- * from both — against a real TypeORM connection to a throwaway Postgres
- * container, and asserts on the rows it persists. It is spec
+ * Drives the whole of `DrawCommand`'s sweep — the generalized enumeration
+ * and the historical corpus's hardcoded ingestion — against a real TypeORM
+ * connection to a throwaway Postgres container, and asserts on the rows it
+ * persists. It is spec
  * #813's highest seam for this command, and the direct successor to the
  * file-tree assertions `draw.command.unit.test.ts` made by mocking
  * `node:fs/promises` while the per-family procedural pipeline still wrote
@@ -86,12 +78,9 @@ async function compileSweep(
  * `HISTORICAL_CORPUS` is the real, committed corpus rather than a
  * fixture — `DrawCommand.run` reads it directly rather than through an
  * overridable dependency — and the enumeration is the real budgeted walk, so
- * this drives tens of thousands of rows through the decoder, renderer, and
- * Characteristic computation, then through `DrawIndexService` itself. That
- * is real work rather than a hang, and the timeout is declared rather than
- * left to the default five seconds. `node:fs/promises` stays mocked even
- * here: this suite's own container is disposable, but the
- * committed `output/index.html` a real write would land on is not.
+ * this drives thousands of rows through the decoder, renderer, and
+ * Characteristic computation. That is real work rather than a hang, and the
+ * timeout is declared rather than left to the default five seconds.
  */
 describe("drawCommand sweep mode", () => {
   let container: StartedPostgreSqlContainer;
@@ -111,19 +100,15 @@ describe("drawCommand sweep mode", () => {
    * One sweep, shared by every case that only reads what an empty database
    * ends up holding. Each sweep costs 45–90 seconds on a CI runner, and
    * running it once per case made this file the whole of 🧑‍🔬 Test's critical
-   * path. None of these cases writes to the database, and the `writeFile`
-   * calls are copied out before `testing/setup.ts` clears every mock, so
-   * sharing the run changes no assertion.
+   * path. None of these cases writes to the database, so sharing the run
+   * changes no assertion.
    */
   describe("over an empty database", () => {
     let sweep: SweepFixture;
-    let writes: [path: string, data: string][];
 
     beforeAll(async () => {
-      writeFileMock.mockClear();
       sweep = await compileSweep(container);
       await sweep.command.run([], {});
-      writes = [...writeFileMock.mock.calls];
     }, SWEEP_TIMEOUT_MILLISECONDS);
 
     afterAll(async () => {
@@ -137,7 +122,7 @@ describe("drawCommand sweep mode", () => {
           (total, shape) => total + sweep.enumeration.enumerate(shape).length,
           0,
         );
-      const expectedHardcoded = 963;
+      const expectedHardcoded = 999;
 
       await expect(
         sweep.repository.countBy({ isHardcoded: false }),
@@ -147,24 +132,7 @@ describe("drawCommand sweep mode", () => {
       ).resolves.toBe(expectedHardcoded);
     });
 
-    it("rebuilds output/index.html and family pages from the sweep's own rows once both halves have committed", async () => {
-      const total = await sweep.repository.count();
-
-      expect(writes.length).toBeGreaterThan(1);
-
-      const indexCall = writes.find((c) => c[0] === "output/index.html");
-
-      if (indexCall === undefined) {
-        throw new Error("expected the index page to have been written");
-      }
-
-      const [indexPath, page] = indexCall;
-
-      expect(indexPath).toBe("output/index.html");
-      expect(page).toContain(`${total} meanders across`);
-    });
-
-    it("ingests exactly the 1026 entries the retired constants files held, computed from the sweep's own reach rather than listed", () => {
+    it("ingests exactly the 1066 entries beyond the pinned budget, computed from the sweep's own reach rather than listed", () => {
       expect(
         HISTORICAL_CORPUS.filter((entry) =>
           sweep.corpus.isBeyondEnumeration(entry),

@@ -7,12 +7,13 @@ import { CorpusModule } from "../corpus/corpus.module";
 import { DatabaseModule } from "../database/database.module";
 import { DrawingModule } from "../drawing/drawing.module";
 import { EnumerationModule } from "../enumeration/enumeration.module";
-import { GeometryModule } from "../geometry/geometry.module";
+import { SymmetryModule } from "../symmetry/symmetry.module";
 
 import { DrawCodeService } from "./draw-code.service";
 import { DrawEnumerationService } from "./draw-enumeration.service";
-import { DrawIndexService } from "./draw-index.service";
+import { DrawPoolService } from "./draw-pool.service";
 import { DrawRecordService } from "./draw-record.service";
+import { DrawWorkerService } from "./draw-worker.service";
 import { DrawCommand } from "./draw.command";
 
 /**
@@ -28,16 +29,15 @@ import { DrawCommand } from "./draw.command";
  * `CharacteristicsModule` measures that same Code,
  * `EnumerationModule` walks the space the sweep covers, and
  * `DatabaseModule` is the Postgres database all of it
- * persists to and `DrawIndexService` reads back from, and `GeometryModule`
- * is the same scaling rule the renderer drew against, which the index page
- * reads back to place each repeat of a tile one step along its band. `CorpusModule`
+ * persists to, and `SymmetryModule` folds each symmetry class the sweep's
+ * worker threads draw to its representative. `CorpusModule`
  * wraps the same decoder, renderer, and Characteristic computation beneath
  * one service `DrawCommand` calls once per sweep with the historical corpus,
  * trusting its family/subFamily rather than classifying them.
  *
  * `DatabaseModule` always connects to the database the `MEANDERAW_POSTGRES_*`
  * variables name — a test exercising `DrawCommand`, `DrawCodeService`,
- * `DrawEnumerationService`, `DrawIndexService`, or `CorpusService` builds
+ * `DrawEnumerationService`, or `CorpusService` builds
  * its own `TestingModule` against a throwaway Postgres container instead of
  * importing this module.
  */
@@ -45,7 +45,6 @@ import { DrawCommand } from "./draw.command";
   controllers: [],
   exports: [DrawCommand],
   imports: [
-    GeometryModule,
     CorpusModule,
     CharacteristicsModule,
     ClassificationModule,
@@ -53,13 +52,15 @@ import { DrawCommand } from "./draw.command";
     CodeModule,
     EnumerationModule,
     DrawingModule,
+    SymmetryModule,
   ],
   providers: [
     DrawCodeService,
     DrawCommand,
     DrawEnumerationService,
-    DrawIndexService,
+    DrawPoolService,
     DrawRecordService,
+    DrawWorkerService,
   ],
 })
 export class DrawModule {}

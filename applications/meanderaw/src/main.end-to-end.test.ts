@@ -19,6 +19,7 @@ describe("main end-to-end suite", () => {
         SWEEP_EDGE_BUDGET: parsed.SWEEP_EDGE_BUDGET,
         SWEEP_MAXIMUM_COLUMNS: parsed.SWEEP_MAXIMUM_COLUMNS,
         SWEEP_MAXIMUM_ROWS: parsed.SWEEP_MAXIMUM_ROWS,
+        SWEEP_WORKERS: parsed.SWEEP_WORKERS,
       });
     });
   });

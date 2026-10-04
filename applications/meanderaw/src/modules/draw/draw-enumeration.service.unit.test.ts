@@ -6,7 +6,7 @@ import { DatabaseService } from "../database/database.service";
 import { EnumerationService } from "../enumeration/enumeration.service";
 
 import { DrawEnumerationService } from "./draw-enumeration.service";
-import { DrawRecordService } from "./draw-record.service";
+import { DrawPoolService } from "./draw-pool.service";
 
 import type { MeanderRecord } from "../database/database.types";
 
@@ -20,7 +20,7 @@ import type { MeanderRecord } from "../database/database.types";
  * `draw-enumeration.service.integration.test.ts`.
  */
 describe(DrawEnumerationService, () => {
-  let drawRecordService: DrawRecordService;
+  let drawPoolService: DrawPoolService;
   let databaseService: DatabaseService;
   let enumerationService: EnumerationService;
   let service: DrawEnumerationService;
@@ -32,8 +32,8 @@ describe(DrawEnumerationService, () => {
       providers: [
         DrawEnumerationService,
         {
-          provide: DrawRecordService,
-          useValue: createMock<DrawRecordService>(),
+          provide: DrawPoolService,
+          useValue: createMock<DrawPoolService>(),
         },
         {
           provide: DatabaseService,
@@ -47,7 +47,7 @@ describe(DrawEnumerationService, () => {
     }).compile();
 
     service = await module.resolve(DrawEnumerationService);
-    drawRecordService = await module.resolve(DrawRecordService);
+    drawPoolService = await module.resolve(DrawPoolService);
     databaseService = await module.resolve(DatabaseService);
     enumerationService = await module.resolve(EnumerationService);
   });
@@ -58,31 +58,12 @@ describe(DrawEnumerationService, () => {
       { columns: 1, rows: 3 },
       { columns: 2, rows: 3 },
     ]);
-    vi.mocked(enumerationService.enumerate).mockReturnValue([
-      { code: "00", columns: 1, rows: 3 },
-    ]);
-    vi.mocked(drawRecordService.record).mockReturnValue(record);
+    vi.mocked(drawPoolService.records).mockResolvedValue([record]);
     vi.mocked(databaseService.saveAll).mockResolvedValue(1);
   });
 
   it("is defined", () => {
     expect(service).toBeDefined();
-  });
-
-  describe("records", () => {
-    it("records a meander a search found as enumerated rather than hardcoded", () => {
-      service.records({ columns: 1, rows: 3 });
-
-      expect(drawRecordService.record).toHaveBeenCalledWith(
-        "00",
-        { columns: 1, rows: 3 },
-        false,
-      );
-    });
-
-    it("builds one row per meander the shape holds", () => {
-      expect(service.records({ columns: 1, rows: 3 })).toStrictEqual([record]);
-    });
   });
 
   describe("persist", () => {
@@ -98,13 +79,34 @@ describe(DrawEnumerationService, () => {
     it("answers with how many rows were written", async () => {
       await expect(service.persist([{ columns: 1, rows: 3 }])).resolves.toBe(1);
     });
+
+    it("writes the rows the pool draws for each shape", async () => {
+      await service.persist([{ columns: 1, rows: 3 }]);
+
+      expect(drawPoolService.records).toHaveBeenCalledWith({
+        columns: 1,
+        rows: 3,
+      });
+      expect(databaseService.saveAll).toHaveBeenCalledWith([record]);
+    });
+
+    it("ends the pool's threads once the sweep is written, or fails", async () => {
+      vi.mocked(databaseService.saveAll).mockRejectedValueOnce(
+        new Error("UNIQUE constraint failed"),
+      );
+
+      await expect(service.persist([{ columns: 1, rows: 3 }])).rejects.toThrow(
+        /UNIQUE/u,
+      );
+      expect(drawPoolService.close).toHaveBeenCalledExactlyOnceWith();
+    });
   });
 
   describe("sweep", () => {
     it("walks every shape the budget admits, rather than a range of its own", async () => {
       await service.sweep();
 
-      expect(vi.mocked(enumerationService.enumerate).mock.calls).toStrictEqual([
+      expect(vi.mocked(drawPoolService.records).mock.calls).toStrictEqual([
         [{ columns: 1, rows: 3 }],
         [{ columns: 2, rows: 3 }],
       ]);

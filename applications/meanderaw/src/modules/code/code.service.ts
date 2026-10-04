@@ -326,6 +326,40 @@ export class CodeService {
   }
 
   /**
+   * The Codes of every other member of `code`'s symmetry class — its mirror,
+   * its flip, and both — each at its own canonical phase, sorted.
+   *
+   * These are the meanders the sweep folds into this one row, so they are
+   * recorded beside it rather than lost: a Code that names a member of the
+   * class names this row. A meander a reflection maps onto itself names
+   * nothing, and `code` itself is never listed. `scoreTileCrossing` is the
+   * score {@link canonicalPhase} ranks phases by, so each Code is the one a
+   * row of its own would have stored.
+   */
+  symmetricalCodes(
+    code: CodeObject,
+    scoreTileCrossing: (phase: CodeObject) => number,
+  ): string[] {
+    const own = this.format(code);
+    const codes = new Set(
+      this.symmetryService
+        .reflections(this.tile(code))
+        .map((reflection) =>
+          this.format(
+            this.canonicalPhase(
+              { ...code, digits: this.spellDigits(reflection) },
+              scoreTileCrossing,
+            ),
+          ),
+        ),
+    );
+
+    codes.delete(own);
+
+    return [...codes].toSorted();
+  }
+
+  /**
    * The tile a Code names, as the tile vocabulary rather than a point at a
    * time — {@link spell} read backwards.
    *

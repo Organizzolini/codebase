@@ -16,9 +16,8 @@ import { CorpusService } from "./corpus.service";
  * the same "decode, measure, persist" pipeline
  * run over extracted constants instead of one command-line Code — plus the
  * enumeration, which decides which entries are beyond the sweep's reach and
- * so have to be preserved at all, and the classification, whose
- * `DrawIndexService` names an ingested tile exactly as it names an
- * enumerated one.
+ * so have to be preserved at all, and the classification, which names an
+ * ingested tile's family exactly as it names an enumerated one's.
  */
 @Module({
   controllers: [],

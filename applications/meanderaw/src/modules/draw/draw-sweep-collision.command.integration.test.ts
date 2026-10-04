@@ -12,7 +12,6 @@ import {
   describe,
   expect,
   it,
-  vi,
 } from "vitest";
 
 import { LoggerService } from "@codebase/logger";
@@ -32,11 +31,6 @@ import { meanderRecord } from "../../../testing/meanders";
 import { HISTORICAL_CORPUS } from "../corpus/historical-corpus.constants";
 
 import { DrawCodeService } from "./draw-code.service";
-
-vi.mock("node:fs/promises", () => ({
-  mkdir: vi.fn<() => Promise<void>>(),
-  writeFile: vi.fn<(path: string, data: string) => Promise<void>>(),
-}));
 
 /** Compiles a fresh sweep, over an emptied schema in `container`, with `--code` and logging mocked out. */
 async function compileSweep(
@@ -58,8 +52,7 @@ async function compileSweep(
  * `draw-sweep.command.integration.test.ts` only for time. This case writes
  * before it sweeps, so it cannot share that file's sweep over an empty
  * database; in its own file vitest runs the two sweeps in parallel rather
- * than one after the other. `node:fs/promises` stays mocked for the same
- * reason it is there: the committed `output/index.html` is not disposable.
+ * than one after the other.
  */
 describe("drawCommand sweep mode", () => {
   let container: StartedPostgreSqlContainer;

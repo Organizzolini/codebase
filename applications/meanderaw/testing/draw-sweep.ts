@@ -10,13 +10,17 @@ import { CorpusService } from "../src/modules/corpus/corpus.service";
 import { DatabaseService } from "../src/modules/database/database.service";
 import { Meander } from "../src/modules/database/entities/Meander.entity";
 import { DrawEnumerationService } from "../src/modules/draw/draw-enumeration.service";
-import { DrawIndexService } from "../src/modules/draw/draw-index.service";
+import { DrawPoolService } from "../src/modules/draw/draw-pool.service";
 import { DrawRecordService } from "../src/modules/draw/draw-record.service";
+import { DrawWorkerService } from "../src/modules/draw/draw-worker.service";
 import { DrawCommand } from "../src/modules/draw/draw.command";
 import { DrawingModule } from "../src/modules/drawing/drawing.module";
 import { EnumerationModule } from "../src/modules/enumeration/enumeration.module";
 import { EnumerationService } from "../src/modules/enumeration/enumeration.service";
 import { GeometryModule } from "../src/modules/geometry/geometry.module";
+import { SymmetryModule } from "../src/modules/symmetry/symmetry.module";
+
+import { SWEEP_TEST_EDGE_BUDGET, SWEEP_TEST_WORKERS } from "./sweep-budget";
 
 import { testDataSourceOptions } from "./database";
 
@@ -57,10 +61,10 @@ export async function sweepFixture(
 }
 
 /**
- * The module `DrawCommand`'s sweep compiles into: the real enumeration,
- * ingestion, and index services over an emptied schema in `container`'s
- * Postgres database, plus whatever `mocks` the caller stands in for `--code`
- * and logging.
+ * The module `DrawCommand`'s sweep compiles into: the real enumeration and
+ * ingestion services over an emptied schema in `container`'s Postgres
+ * database, plus whatever `mocks` the caller stands in for `--code` and
+ * logging.
  *
  * Shared by the sweep-mode suites, which are split across files so vitest
  * runs their sweeps in parallel rather than one after another. Each caller
@@ -78,7 +82,11 @@ export function sweepModuleMetadata(
       ConfigModule.forRoot({
         isGlobal: true,
         validate: (config: Record<string, unknown>) =>
-          environmentSchema.parse(config),
+          environmentSchema.parse({
+            ...config,
+            SWEEP_EDGE_BUDGET: SWEEP_TEST_EDGE_BUDGET,
+            SWEEP_WORKERS: SWEEP_TEST_WORKERS,
+          }),
       }),
       TypeOrmModule.forRoot(testDataSourceOptions(container)),
       TypeOrmModule.forFeature([Meander]),
@@ -87,13 +95,15 @@ export function sweepModuleMetadata(
       ClassificationModule,
       CodeModule,
       EnumerationModule,
+      SymmetryModule,
       DrawingModule,
     ],
     providers: [
       DrawCommand,
       DrawEnumerationService,
-      DrawIndexService,
+      DrawPoolService,
       DrawRecordService,
+      DrawWorkerService,
       CorpusService,
       DatabaseService,
       ...mocks,

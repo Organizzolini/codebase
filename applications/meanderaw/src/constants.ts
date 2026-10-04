@@ -1,3 +1,5 @@
+import { availableParallelism } from "node:os";
+
 import { z } from "zod";
 
 import { DEFAULT_DATABASE_NAME } from "./modules/database/database.constants";
@@ -22,4 +24,11 @@ export const environmentSchema = z.object({
     .int()
     .positive()
     .default(Number.MAX_SAFE_INTEGER),
+  // How many worker threads draw a sweep's meanders: every core but the one
+  // the main thread inserts rows on. Zero draws them in-process instead.
+  SWEEP_WORKERS: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .default(Math.max(availableParallelism() - 1, 0)),
 });
