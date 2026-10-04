@@ -40,13 +40,15 @@ jobs:
             name: Devcontainer
             emoji: 🧑‍🏭
             timeout: 20
-          # About 8–9 minutes of build, trace, graph, and measure precede
+          # About 7.5–9 minutes of build, trace, graph, and measure precede
           # semantic-release, and its version commit's pre-commit hook takes
-          # about 3–4 more, led by `codebase:codependix:check`.
+          # about 3–4 more, led by `codebase:codependix:check`. A run whose
+          # build misses the Nx cache can therefore reach this limit; a timeout
+          # leaves no tag or version commit behind, and the next run retries.
           - id: push-releases
             name: Releases
             emoji: 🦸
-            timeout: 15
+            timeout: 12
 
     steps:
       - name: 📥 Checkout Repository
