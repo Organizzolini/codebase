@@ -183,8 +183,10 @@ jobs:
     name: 🧑‍⚖️ Comply
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Runs on Dependabot's pull requests too, so a title, label, or release
+    # significance failure shows on the pull request rather than first in the
+    # merge queue. Only the body check below exempts them.
     if: >-
-      github.actor != 'dependabot[bot]' &&
       (github.event_name == 'push' ||
       github.event_name == 'merge_group' ||
       (github.event_name == 'pull_request' && !github.event.pull_request.draft))
