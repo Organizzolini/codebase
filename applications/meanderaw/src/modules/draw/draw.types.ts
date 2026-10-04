@@ -17,11 +17,8 @@ export interface CodeDrawingOptions {
  * Parsed `draw` options, in the shape nest-commander leaves them.
  *
  * Every field is optional, and that is the command's whole contract: `draw`
- * with no flag (or with `--check`) regenerates the whole corpus into a
- * throwaway database and fails loudly if it disagrees with the committed
- * one — see `DrawCheckService`. Nothing writes the committed database
- * without `--write`: `draw --write` sweeps every meander the application can
- * draw into it, and `draw --write --rows <n> --columns <n> --code <code>`
+ * with no flag sweeps every meander the application can draw into the
+ * committed database, and `draw --rows <n> --columns <n> --code <code>`
  * draws that one. `--rows`, `--columns`, and `--code` are checked together
  * rather than declared `required`, because passing none of them is how the
  * sweep is asked for — see `IncompleteCodeDrawingError`.
@@ -34,9 +31,7 @@ export interface CodeDrawingOptions {
  * is `DEFAULT_DATABASE_PATH` rather than somewhere a flag points.
  */
 export interface DrawCommandOptions {
-  check?: boolean;
   code?: string;
   columns?: number;
   rows?: number;
-  write?: boolean;
 }

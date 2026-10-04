@@ -12,13 +12,13 @@ import type { CodeDrawingOptions } from "./draw.types";
  * sqlite database.
  *
  * The row itself is built by `DrawRecordService`, the one place a meander
- * row is built — decoded once, then rendered, measured, and classified from
- * that same grid — so this mode and the sweep's enumerated half record the
+ * row is built — decoded once, then measured and classified from that same
+ * grid — so this mode and the sweep's enumerated half record the
  * same facts about a Code rather than each deriving their own.
  *
- * The row is recorded `provenance: "hardcoded"` — see `MEANDER_PROVENANCES`
- * — since a Code typed at the command line is authored the same way a
- * corpus constant is, named by a person rather than found by a search.
+ * The row is recorded `isHardcoded: true`, since a Code typed at the command
+ * line is authored the same way a corpus constant is, named by a person
+ * rather than found by a search.
  */
 @Injectable()
 export class DrawCodeService {
@@ -39,16 +39,12 @@ export class DrawCodeService {
 
   // 🌎 Public Methods
 
-  /** Decodes, renders, measures, classifies, and persists the one meander `options` names. */
+  /** Decodes, measures, classifies, and persists the one meander `options` names. */
   async draw(options: CodeDrawingOptions): Promise<Meander> {
     const { code, columns, repeats, rows } = options;
 
     return this.databaseService.save(
-      this.drawRecordService.record(
-        code,
-        { columns, repeats, rows },
-        "hardcoded",
-      ),
+      this.drawRecordService.record(code, { columns, repeats, rows }, true),
     );
   }
 }

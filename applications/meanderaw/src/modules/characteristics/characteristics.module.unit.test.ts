@@ -391,9 +391,10 @@ describe(CharacteristicsModule, () => {
   });
 
   it("declares the window each non-letter submatrix evaluator reads", () => {
+    const letterKeys: ReadonlySet<string> = new Set(LETTER_CHARACTERISTIC_KEYS);
     const declared = Object.fromEntries(
       evaluators
-        .filter(({ metadata }) => metadata.letter !== true)
+        .filter(({ metadata }) => !letterKeys.has(metadata.key))
         .flatMap(({ metadata }) =>
           metadata.submatrix === undefined
             ? []

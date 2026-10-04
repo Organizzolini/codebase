@@ -244,13 +244,12 @@ describe(FehArabicLetterCharacteristicsService, () => {
     await letter.compile();
   });
 
-  it("keys all sixteen orientations of every form, each marked a letter", () => {
+  it("keys all sixteen orientations of every form", () => {
     expect(letter.keys()).toStrictEqual(
       FORMS.flatMap(({ prefix }) =>
         LETTER_ORIENTATION_NAMES.map((name) => `${prefix}${name}ArabicCount`),
       ),
     );
-    expect(letter.marks()).toStrictEqual(letter.keys().map(() => true));
   });
 
   describe.each(FORMS)("$prefix", ({ aliases, orientations, prefix }) => {

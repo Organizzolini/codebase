@@ -72,7 +72,7 @@ describe(DrawIndexService, () => {
 
     it("embeds every meander's own SVG rather than linking to a file", () => {
       const pages = service.render([
-        meander({ code: "a", drawingHash: "hash", family: "snake", id: 1 }),
+        meander({ code: "a", family: "snake", id: 1 }),
       ]);
       const page = pages["families/snake.html"] ?? "";
 
@@ -95,10 +95,10 @@ describe(DrawIndexService, () => {
       expect(page).toContain("<figcaption>3×2 · abc</figcaption>");
     });
 
-    it("appends a subFamily to the caption where the row earned one", () => {
+    it("appends every true boolean to the caption, in key-list order with isReducible last, and no number", () => {
       const pages = service.render([
         meander({
-          characteristics: ["dots"],
+          characteristics: { crossCount: 3, isDots: true, isReducible: true },
           code: "abc",
           columns: 1,
           family: "boxes",
@@ -108,7 +108,9 @@ describe(DrawIndexService, () => {
       ]);
       const page = pages["families/boxes.html"] ?? "";
 
-      expect(page).toContain("<figcaption>3×1 · abc (dots)</figcaption>");
+      expect(page).toContain(
+        "<figcaption>3×1 · abc (isDots, isReducible)</figcaption>",
+      );
     });
 
     it("lays the families out according to their declared sort key", () => {
@@ -277,7 +279,6 @@ describe(DrawIndexService, () => {
         meander({
           code: "a",
           columns: 3,
-          drawingHash: "hash",
           family: "snake",
           id: 7,
           rows: 4,

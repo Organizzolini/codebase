@@ -234,14 +234,6 @@ runs:
       shell: bash
       run: bash scripts/nx/adopt-task-database.sh
 
-    # Diagnostic: what the adopted database holds before any task runs, to
-    # compare with the report `cleanup-codebase` prints after them.
-    - name: 🔬 Report Nx Cache Database
-      if: inputs.nx-cache == 'true'
-      continue-on-error: true
-      shell: bash
-      run: bash scripts/nx/report-task-database.sh
-
     - name: 🌌 Setup uv
       if: inputs.uv == 'true'
       uses: astral-sh/setup-uv@v10.2.0

@@ -56,8 +56,8 @@ export async function sweepFixture(
 /**
  * The module `DrawCommand`'s sweep compiles into: the real enumeration,
  * ingestion, and index services over a fresh in-memory `better-sqlite3`
- * connection, plus whatever `mocks` the caller stands in for `--check`,
- * `--code`, and logging.
+ * connection, plus whatever `mocks` the caller stands in for `--code` and
+ * logging.
  *
  * Shared by the sweep-mode suites, which are split across files so vitest
  * runs their sweeps in parallel rather than one after another. Each caller

@@ -62,7 +62,7 @@ describe(DrawCodeService, () => {
       expect(drawRecordService.record).toHaveBeenCalledWith(
         "2",
         { columns: 3, repeats: undefined, rows: 4 },
-        "hardcoded",
+        true,
       );
     });
 
@@ -72,7 +72,7 @@ describe(DrawCodeService, () => {
       expect(drawRecordService.record).toHaveBeenCalledWith(
         "03x04y2",
         { columns: undefined, repeats: undefined, rows: undefined },
-        "hardcoded",
+        true,
       );
     });
 

@@ -1,5 +1,7 @@
 # 0017: Store Letter Counts as a Sparse JSON Map
 
+Superseded by [ADR 0018](0018-store-every-characteristic-in-one-sparse-json-map.md), which folds every other Characteristic into the same map.
+
 ## Context
 
 `meanderaw` counts every letter glyph it recognizes in every meander, and each letter is counted in all sixteen orientations. The letter set grows script by script, so the count of letter keys runs from about 700 today to about 2,700 once Arabic's positional forms land. One SQLite table holds at most 2,000 columns, so letter counts could not stay a column each on `meanders`.

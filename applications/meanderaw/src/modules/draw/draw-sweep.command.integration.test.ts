@@ -13,7 +13,6 @@ import {
 import { MEANDER_FAMILIES } from "../classification/classification.constants";
 import { HISTORICAL_CORPUS } from "../corpus/historical-corpus.constants";
 
-import { DrawCheckService } from "./draw-check.service";
 import { DrawCodeService } from "./draw-code.service";
 
 const { writeFileMock } = vi.hoisted(() => ({
@@ -38,11 +37,10 @@ vi.mock("node:fs/promises", () => ({
  */
 const HISTORICAL_CORPUS_BEYOND_ENUMERATION = 1026;
 
-/** Compiles a fresh sweep with `--check`, `--code`, and logging mocked out. */
+/** Compiles a fresh sweep with `--code` and logging mocked out. */
 async function compileSweep(): Promise<SweepFixture> {
   const module = await Test.createTestingModule(
     sweepModuleMetadata([
-      { provide: DrawCheckService, useValue: createMock<DrawCheckService>() },
       { provide: DrawCodeService, useValue: createMock<DrawCodeService>() },
       { provide: LoggerService, useValue: createMock<LoggerService>() },
     ]),
@@ -67,7 +65,7 @@ async function compileSweep(): Promise<SweepFixture> {
  * `draw-sweep-regeneration.command.integration.test.ts`, where vitest runs
  * them beside this file's shared sweep rather than after it.
  *
- * **This is what proves the two provenances do not collide.** Both halves
+ * **This is what proves the two halves do not collide.** Both halves
  * write through the same unique index over a meander's lattice address, and
  * the enumerated half runs first, so an entry the hardcoded corpus still
  * claims inside the enumerated space fails the second insert rather than
@@ -100,7 +98,7 @@ describe("drawCommand sweep mode", () => {
     beforeAll(async () => {
       writeFileMock.mockClear();
       sweep = await compileSweep();
-      await sweep.command.run([], { write: true });
+      await sweep.command.run([], {});
       writes = [...writeFileMock.mock.calls];
     }, SWEEP_TIMEOUT_MILLISECONDS);
 
@@ -108,7 +106,7 @@ describe("drawCommand sweep mode", () => {
       await sweep.dataSource.destroy();
     });
 
-    it("persists both halves of the corpus, with neither provenance colliding with the other", async () => {
+    it("persists both halves of the corpus, with neither colliding with the other", async () => {
       const expectedEnumerated = sweep.enumeration
         .shapes()
         .reduce(
@@ -118,10 +116,10 @@ describe("drawCommand sweep mode", () => {
       const expectedHardcoded = 963;
 
       await expect(
-        sweep.repository.countBy({ provenance: "enumerated" }),
+        sweep.repository.countBy({ isHardcoded: false }),
       ).resolves.toBe(expectedEnumerated);
       await expect(
-        sweep.repository.countBy({ provenance: "hardcoded" }),
+        sweep.repository.countBy({ isHardcoded: true }),
       ).resolves.toBe(expectedHardcoded);
     });
 
@@ -165,8 +163,8 @@ describe("drawCommand sweep mode", () => {
       expect(covered).toStrictEqual([]);
     });
 
-    it("carries the family it was filed under, and a hardcoded provenance, on every ingested corpus entry", async () => {
-      const rows = await sweep.repository.findBy({ provenance: "hardcoded" });
+    it("carries the family it was filed under, and isHardcoded, on every ingested corpus entry", async () => {
+      const rows = await sweep.repository.findBy({ isHardcoded: true });
 
       const filed = new Set<string>(MEANDER_FAMILIES);
 
