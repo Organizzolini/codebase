@@ -44,7 +44,6 @@
       "!{projectRoot}/.agents/skills/receiving-code-review/**",
       "!{projectRoot}/.agents/skills/requesting-code-review/**",
       "!{projectRoot}/.agents/skills/research/**",
-      "!{projectRoot}/.agents/skills/resolving-merge-conflicts/**",
       "!{projectRoot}/.agents/skills/setup-matt-pocock-skills/**",
       "!{projectRoot}/.agents/skills/subagent-driven-development/**",
       "!{projectRoot}/.agents/skills/systematic-debugging/**",

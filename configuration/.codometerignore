@@ -102,7 +102,6 @@ packages/ic-suite/codometer/codometer-examples/examples/corpus/
 .agents/skills/receiving-code-review/
 .agents/skills/requesting-code-review/
 .agents/skills/research/
-.agents/skills/resolving-merge-conflicts/
 .agents/skills/setup-matt-pocock-skills/
 .agents/skills/subagent-driven-development/
 .agents/skills/systematic-debugging/
