@@ -8,7 +8,6 @@ import { DevcontainerConfigurationModule } from "../devcontainer-configuration/d
 import { PackageManifestsModule } from "../package-manifests/package-manifests.module";
 import { PullRequestLabelsModule } from "../pull-request-labels/pull-request-labels.module";
 import { PullRequestTemplateModule } from "../pull-request-template/pull-request-template.module";
-import { ReadmeVersionModule } from "../readme-version/readme-version.module";
 import { SkillExclusionsModule } from "../skill-exclusions/skill-exclusions.module";
 
 import { SynchronizationCommand } from "./synchronization.command";
@@ -34,7 +33,6 @@ import { SynchronizationService } from "./synchronization.service";
     PackageManifestsModule,
     PullRequestLabelsModule,
     PullRequestTemplateModule,
-    ReadmeVersionModule,
     SkillExclusionsModule,
   ],
   providers: [SynchronizationCommand, SynchronizationService],

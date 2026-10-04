@@ -44,7 +44,7 @@ nx run synchronization:start:write    # write every synchronization
 ## Where each synchronization's drift is answered
 
 Which runs check which synchronization is a property of the caller, not a
-taxonomy the commands declare about themselves. Six of the seven — every one
+taxonomy the commands declare about themselves. Five of the six — every one
 except `pull-request-labels` — are **derivations**: committed files derived
 from configuration a pull request can also change, so `check` runs on a pull
 request and `write` runs on the default branch's release. The
@@ -75,7 +75,6 @@ target, on `opened`/`reopened`, and nothing else names it.
 | `devcontainer-configuration` | `.devcontainer/local/devcontainer.json`  | The shared fields of `.devcontainer/cloud/devcontainer.json`                                          |
 | `pull-request-labels`        | `configuration/conventional.config.cjs`  | This repository's `type:`, `scope:`, and `source:` labels on GitHub. Needs credentials                |
 | `pull-request-template`      | `.github/PULL_REQUEST_TEMPLATE.md`       | The template embedded in the PR skill files                                                           |
-| `readme-version`             | `package.json`                           | The root `README.md` title (`# Codebase v<version>`)                                                  |
 | `skill-exclusions`           | `skills-lock.json`                       | The installed-skill exclusion lists in five ignore files                                              |
 
 ### Pull request labels
