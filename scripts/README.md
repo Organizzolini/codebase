@@ -9,6 +9,7 @@ This directory contains shell scripts for:
 - **Local setup** - macOS-specific initial codebase configuration (in `local/`)
 - **Shell utilities** - Common terminal operations
 - **Nx** - The CI steps around Nx: its affected runs and the task-result database CI caches (in `nx/`)
+- **Release** - The CI steps that version and publish the ic-suite packages (in `release/`)
 
 ## Quick Start
 
@@ -696,6 +697,21 @@ Verify sync:
 ```bash
 pnpm exec nx run codebase:check-lockfile
 ```
+
+## Release Scripts
+
+These scripts live in `scripts/release/`, and the release job of
+`.github/workflows/continuous-deployment.yml` runs them in order, before
+semantic-release releases the codebase itself.
+
+| Script | Step | What it does |
+| ------ | ---- | ------------ |
+| `version-packages.sh` | 🏷️ Version Packages | Runs `nx release version`, then pushes the release commit to `main` and its `<project>@<version>` tags 6 at a time, since GitHub rejects a push that updates more than 6 refs |
+| `publish-packages.sh` | 📦 Publish Packages | Publishes every release-group package not yet on npm, with provenance, then creates a GitHub release for every package tag that has none |
+
+Both read everything from the environment, and both are safe to re-run: Nx
+versions only what has changed since each package's last tag, pnpm skips a
+version npm already has, and a tag that already has a release is skipped.
 
 ## Contributing
 
