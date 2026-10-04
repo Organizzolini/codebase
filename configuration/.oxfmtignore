@@ -57,9 +57,9 @@ tmp
 # `callidescope-examples:callidescope` report it stale the moment `format` runs
 # — the same failure mode as the emitted conformetry plugin above.
 **/packages/ic-suite/callidescope/callidescope-examples/output/**
-# The meander sweep's output directory is local and gitignored — its sqlite
-# database, and any HTML pages an older sweep left — and nothing in it is this
-# formatter's to rewrite. `.prettierignore` excludes it for its own formatter.
+# The meander sweep writes its index and family pages here, gitignored and
+# gigabytes at the default edge budget, and nothing in it is this formatter's
+# to rewrite. `.prettierignore` excludes it for its own formatter.
 **/applications/meanderaw/output/**
 **/data/wikipedia
 **/data/wiktionary

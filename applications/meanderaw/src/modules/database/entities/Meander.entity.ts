@@ -30,6 +30,7 @@ import type { MeanderFamily } from "../../classification/classification.types";
  */
 @Entity({ name: "meanders" })
 @Index(["code"], { unique: true })
+@Index(["family", "rows", "columns", "code"])
 export class Meander {
   /**
    * Every Characteristic the meander has, as one sparse JSON object: see

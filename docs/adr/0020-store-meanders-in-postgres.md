@@ -2,7 +2,7 @@
 
 Supersedes the storage half of [ADR 0012](0012-root-every-meander-in-a-committed-sqlite-table.md). The pipeline, the two halves of the corpus, and the index pages it describes stand.
 
-Superseded in part by [ADR 0021](0021-retire-the-meander-pages.md), which retires the committed index pages.
+Superseded in part by [ADR 0021](0021-stop-committing-the-meander-pages.md), which keeps writing the index pages but stops committing them.
 
 ## Context
 

@@ -12,6 +12,7 @@ import {
   describe,
   expect,
   it,
+  vi,
 } from "vitest";
 
 import { LoggerService } from "@codebase/logger";
@@ -31,6 +32,11 @@ import { meanderRecord } from "../../../testing/meanders";
 import { HISTORICAL_CORPUS } from "../corpus/historical-corpus.constants";
 
 import { DrawCodeService } from "./draw-code.service";
+
+vi.mock("node:fs/promises", () => ({
+  mkdir: vi.fn<() => Promise<void>>(),
+  writeFile: vi.fn<(path: string, data: unknown) => Promise<void>>(),
+}));
 
 /** Compiles a fresh sweep, over an emptied schema in `container`, with `--code` and logging mocked out. */
 async function compileSweep(

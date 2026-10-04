@@ -2,10 +2,18 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-import { MEANDER_INSERT_CHUNK_SIZE } from "./database.constants";
+import {
+  MEANDER_INSERT_CHUNK_SIZE,
+  MEANDER_READ_BATCH_SIZE,
+} from "./database.constants";
 import { Meander } from "./entities/Meander.entity";
 
-import type { MeanderRecord, MeanderShape } from "./database.types";
+import type { MeanderFamily } from "../classification/classification.types";
+import type {
+  MeanderFamilyShapeCount,
+  MeanderRecord,
+  MeanderShape,
+} from "./database.types";
 import type { ColumnMetadata } from "typeorm/metadata/ColumnMetadata.js";
 
 /**
@@ -79,6 +87,76 @@ export class DatabaseService {
     });
 
     return new Set(rows.map(({ code }) => code));
+  }
+
+  /**
+   * One family's rows in batches of `batchSize`, ordered by rows, then
+   * columns, then Code — the order its page lists them in.
+   *
+   * Each batch resumes after the last row of the one before, through the
+   * index over `(family, rows, columns, code)`, so reading a family of a
+   * million rows never holds more than one batch in memory or reads a row
+   * twice.
+   */
+  async *familyRows(
+    family: MeanderFamily,
+    batchSize = MEANDER_READ_BATCH_SIZE,
+  ): AsyncGenerator<Meander[]> {
+    let after: Meander | undefined;
+
+    do {
+      const query = this.meanderRepository
+        .createQueryBuilder("meander")
+        .where("meander.family = :family", { family })
+        .orderBy("meander.rows")
+        .addOrderBy("meander.columns")
+        .addOrderBy("meander.code")
+        .limit(batchSize);
+
+      if (after !== undefined) {
+        query.andWhere(
+          "(meander.rows, meander.columns, meander.code) > (:rows, :columns, :code)",
+          { code: after.code, columns: after.columns, rows: after.rows },
+        );
+      }
+
+      const batch = await query.getMany();
+
+      after = batch.at(-1);
+
+      if (after !== undefined) {
+        yield batch;
+      }
+    } while (after !== undefined);
+  }
+
+  /**
+   * How many rows each family holds at each shape, so a page can print every
+   * count before it reads a row.
+   */
+  async familyShapeCounts(): Promise<MeanderFamilyShapeCount[]> {
+    const counted = await this.meanderRepository
+      .createQueryBuilder("meander")
+      .select("meander.family", "family")
+      .addSelect("meander.rows", "rows")
+      .addSelect("meander.columns", "columns")
+      .addSelect("COUNT(*)", "count")
+      .groupBy("meander.family")
+      .addGroupBy("meander.rows")
+      .addGroupBy("meander.columns")
+      .getRawMany<{
+        columns: number;
+        count: string;
+        family: MeanderFamily;
+        rows: number;
+      }>();
+
+    return counted.map(({ columns, count, family, rows }) => ({
+      columns,
+      count: Number(count),
+      family,
+      rows,
+    }));
   }
 
   /**

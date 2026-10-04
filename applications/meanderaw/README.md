@@ -44,11 +44,18 @@ nx run meanderaw:vitest
 
 ## 🗂️ Output Layout
 
+```text
+output/
+  index.html        the jump list, one link per family page
+  families/*.html   every meander of one family, drawn
+```
+
 A sweep commits nothing. The rows live in Postgres rather than in the repository — see
-[ADR 0020](../../docs/adr/0020-store-meanders-in-postgres.md) — and the HTML pages that
-once listed them are retired: at the default edge budget's millions of rows a single family
-page outgrew what one string, or a browser, can hold — see
-[ADR 0021](../../docs/adr/0021-retire-the-meander-pages.md). `output/` is gitignored.
+[ADR 0020](../../docs/adr/0020-store-meanders-in-postgres.md) — and the pages are written on
+every sweep but gitignored: at the default edge budget's millions of rows they are gigabytes
+of HTML, each page streamed to disk a batch of rows at a time because one family's page
+outgrows a JavaScript string — see
+[ADR 0021](../../docs/adr/0021-stop-committing-the-meander-pages.md).
 
 That is the whole of it, and the shrinking is the point of this design rather than a side
 effect of it. `output/` used to hold 9,877 committed SVG files under ten family
@@ -60,8 +67,8 @@ left the address table as the only place it survived. A database row has no such
 so the constraint is gone rather than worked around.
 
 **Every row is reproducible from its own Code.** No drawing is stored: the generic,
-family-agnostic renderer draws a meander from its `code`, `rows`, and `columns` whenever a
-drawing is needed, so a row holds the Code and what was measured off it.
+family-agnostic renderer draws a meander from its `code`, `rows`, and `columns` whenever
+the index pages are built, so a row holds the Code and what was measured off it.
 
 ### What a row holds
 
@@ -133,11 +140,10 @@ index over `code` refuses the second insert. Across the two, the hardcoded corpu
 ingested first and the sweep skips any Code a hardcoded row already holds, so a hardcoded
 meander keeps its row and hand-filed family.
 
-The sweep writes no HTML page. At an edge budget of twenty-two the corpus is millions of
-rows, and a single family's page outgrew what one string — or a browser — can hold, so
-the Postgres database is the only output, and nothing checks a sweep against a committed
-copy. `output/` is gitignored, for anything an older sweep left there, and
-`.codometerignore`, `.prettierignore`, and `cspell` all leave the directory alone.
+`output/index.html` and the family pages beside it are rebuilt from the database at the
+end of every sweep, and are gitignored rather than committed; nothing checks a sweep
+against a committed copy. `.codometerignore`, `.prettierignore`, and `cspell` all leave
+the directory alone.
 
 ## 🏛️ Meander Charter
 

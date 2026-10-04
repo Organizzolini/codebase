@@ -4,7 +4,7 @@ import {
   PostgreSqlContainer,
   type StartedPostgreSqlContainer,
 } from "@testcontainers/postgresql";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { LoggerService } from "@codebase/logger";
 
@@ -23,6 +23,28 @@ import { MEANDER_FAMILIES } from "../classification/classification.constants";
 import { HISTORICAL_CORPUS } from "../corpus/historical-corpus.constants";
 
 import { DrawCodeService } from "./draw-code.service";
+
+const { writes } = vi.hoisted(() => ({ writes: new Map<string, string>() }));
+
+/**
+ * The page writes stay off disk, and each page's pieces are read into the
+ * one string it would have written, so a case can assert on what a sweep
+ * writes without a sweep writing a real file.
+ */
+vi.mock("node:fs/promises", () => ({
+  mkdir: vi.fn<() => Promise<void>>(),
+  writeFile: vi.fn<
+    (path: string, data: AsyncIterable<string>) => Promise<void>
+  >(async (path, data) => {
+    let page = "";
+
+    for await (const piece of data) {
+      page += piece;
+    }
+
+    writes.set(path, page);
+  }),
+}));
 
 /**
  * How many of the historical corpus's entries are preserved as hardcoded
@@ -131,6 +153,17 @@ describe("drawCommand sweep mode", () => {
       await expect(
         sweep.repository.countBy({ isHardcoded: true }),
       ).resolves.toBe(expectedHardcoded);
+    });
+
+    it("rebuilds output/index.html and a page per family from the sweep's own rows once both halves have committed", async () => {
+      const total = await sweep.repository.count();
+
+      expect(writes.get("output/index.html")).toContain(
+        `${total} meanders across`,
+      );
+      expect(writes.get("output/families/unclassified.html")).toContain(
+        '<section id="unclassified">',
+      );
     });
 
     it("preserves exactly the 1026 entries the retired constants files held, whatever the sweep's budget", () => {

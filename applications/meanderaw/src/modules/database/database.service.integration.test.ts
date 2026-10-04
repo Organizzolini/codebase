@@ -259,6 +259,88 @@ describe(DatabaseService, () => {
     });
   });
 
+  describe("familyShapeCounts", () => {
+    it("counts each family's rows at each shape, without reading a row", async () => {
+      await service.saveAll([
+        meanderRecord({
+          code: "count-a",
+          columns: 1,
+          family: "whirl",
+          rows: 40,
+        }),
+        meanderRecord({
+          code: "count-b",
+          columns: 1,
+          family: "whirl",
+          rows: 40,
+        }),
+        meanderRecord({
+          code: "count-c",
+          columns: 2,
+          family: "whirl",
+          rows: 40,
+        }),
+      ]);
+
+      const counts = await service.familyShapeCounts();
+
+      expect(counts.filter(({ rows }) => rows === 40)).toStrictEqual(
+        expect.arrayContaining([
+          { columns: 1, count: 2, family: "whirl", rows: 40 },
+          { columns: 2, count: 1, family: "whirl", rows: 40 },
+        ]),
+      );
+    });
+  });
+
+  describe("familyRows", () => {
+    it("reads one family's rows in batches, ordered by rows, then columns, then code", async () => {
+      await service.saveAll([
+        meanderRecord({
+          code: "family-rows-c",
+          columns: 1,
+          family: "swirl",
+          rows: 41,
+        }),
+        meanderRecord({
+          code: "family-rows-a",
+          columns: 2,
+          family: "swirl",
+          rows: 41,
+        }),
+        meanderRecord({
+          code: "family-rows-b",
+          columns: 1,
+          family: "swirl",
+          rows: 41,
+        }),
+        meanderRecord({
+          code: "family-rows-d",
+          columns: 1,
+          family: "swirl",
+          rows: 42,
+        }),
+        meanderRecord({
+          code: "family-rows-e",
+          columns: 1,
+          family: "clasps",
+          rows: 41,
+        }),
+      ]);
+
+      const batches: string[][] = [];
+
+      for await (const batch of service.familyRows("swirl", 2)) {
+        batches.push(batch.map(({ code }) => code));
+      }
+
+      expect(batches).toStrictEqual([
+        ["family-rows-b", "family-rows-c"],
+        ["family-rows-a", "family-rows-d"],
+      ]);
+    });
+  });
+
   describe("codes", () => {
     it("reads the Codes one shape's rows hold, and no other shape's", async () => {
       await service.saveAll([

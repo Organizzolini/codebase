@@ -7,10 +7,12 @@ import { CorpusModule } from "../corpus/corpus.module";
 import { DatabaseModule } from "../database/database.module";
 import { DrawingModule } from "../drawing/drawing.module";
 import { EnumerationModule } from "../enumeration/enumeration.module";
+import { GeometryModule } from "../geometry/geometry.module";
 import { SymmetryModule } from "../symmetry/symmetry.module";
 
 import { DrawCodeService } from "./draw-code.service";
 import { DrawEnumerationService } from "./draw-enumeration.service";
+import { DrawIndexService } from "./draw-index.service";
 import { DrawPoolService } from "./draw-pool.service";
 import { DrawRecordService } from "./draw-record.service";
 import { DrawWorkerService } from "./draw-worker.service";
@@ -29,15 +31,17 @@ import { DrawCommand } from "./draw.command";
  * `CharacteristicsModule` measures that same Code,
  * `EnumerationModule` walks the space the sweep covers, and
  * `DatabaseModule` is the Postgres database all of it
- * persists to, and `SymmetryModule` folds each symmetry class the sweep's
- * worker threads draw to its representative. `CorpusModule`
+ * persists to and `DrawIndexService` reads back from, `GeometryModule` is
+ * the scaling rule the index pages place each repeat of a tile by, and
+ * `SymmetryModule` folds each symmetry class the sweep's worker threads draw
+ * to its representative. `CorpusModule`
  * wraps the same decoder, renderer, and Characteristic computation beneath
  * one service `DrawCommand` calls once per sweep with the historical corpus,
  * trusting its family/subFamily rather than classifying them.
  *
  * `DatabaseModule` always connects to the database the `MEANDERAW_POSTGRES_*`
  * variables name — a test exercising `DrawCommand`, `DrawCodeService`,
- * `DrawEnumerationService`, or `CorpusService` builds
+ * `DrawEnumerationService`, `DrawIndexService`, or `CorpusService` builds
  * its own `TestingModule` against a throwaway Postgres container instead of
  * importing this module.
  */
@@ -53,11 +57,13 @@ import { DrawCommand } from "./draw.command";
     EnumerationModule,
     DrawingModule,
     SymmetryModule,
+    GeometryModule,
   ],
   providers: [
     DrawCodeService,
     DrawCommand,
     DrawEnumerationService,
+    DrawIndexService,
     DrawPoolService,
     DrawRecordService,
     DrawWorkerService,

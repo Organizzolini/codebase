@@ -62,9 +62,11 @@ multi-row `INSERT` per chunk. `SWEEP_WORKERS=0` draws in-process, which every su
 through `SWEEP_TEST_WORKERS`; `draw-pool.service.integration.test.ts` is the one that
 drives real threads.
 
-**The database is the sweep's only output.** The HTML pages are retired — at the default
-budget a family page outgrows a JavaScript string — and nothing under `output/` is
-committed.
+**A sweep commits nothing.** The rows live in Postgres, and `output/index.html` and a page
+per family are written on every sweep but gitignored — at the default budget they are
+gigabytes of HTML. `DrawIndexService.build` hands each page over as an async iterable of
+pieces, read from `DatabaseService.familyRows` a batch at a time, because a family page
+outgrows a JavaScript string; never build one as a single string or read every row first.
 
 **A family is a combination of Characteristics, not a label a generator attached.**
 `MeanderClassificationService` holds one predicate per family, read off a decoded grid's
@@ -86,7 +88,7 @@ corpus is ingested first and the sweep skips the Codes it already holds, which i
 rather than an upsert — an enumerated meander never overwrites a row.
 
 **No row stores its drawing.** The renderer draws each meander from its Code, rows, and
-columns whenever a drawing is needed, so a renderer change needs no database change at
+columns when the index pages are built, so a renderer change needs no database change at
 all. Nothing currently checks the database against a fresh sweep, either; a Code's
 uniqueness is the one property the schema enforces.
 
@@ -234,8 +236,8 @@ the `meanderaw_development` database and the schema of the same name, the defaul
 `MEANDERAW_` prefix, so the unprefixed `POSTGRES_*` the root `.env` sets for lexico — which
 Nx loads into every task — never reaches it — see
 [ADR 0020](../../docs/adr/0020-store-meanders-in-postgres.md). A sweep commits nothing: the
-HTML pages are retired, and `output/` is gitignored — see
-[ADR 0021](../../docs/adr/0021-retire-the-meander-pages.md). Integration suites start their
+HTML pages it writes stay in the gitignored `output/` — see
+[ADR 0021](../../docs/adr/0021-stop-committing-the-meander-pages.md). Integration suites start their
 own throwaway `postgres:18-alpine` container through `@testcontainers/postgresql` and hand
 it to `testing/database.ts`, so Docker must be running to test them.
 

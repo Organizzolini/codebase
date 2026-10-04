@@ -40,6 +40,7 @@ import { TileService } from "../tile/tile.service";
 
 import { DrawCodeService } from "./draw-code.service";
 import { DrawEnumerationService } from "./draw-enumeration.service";
+import { DrawIndexService } from "./draw-index.service";
 import { DrawRecordService } from "./draw-record.service";
 import { DrawCommand } from "./draw.command";
 
@@ -90,6 +91,10 @@ describe("drawCommand --code mode", () => {
         {
           provide: DrawEnumerationService,
           useValue: createMock<DrawEnumerationService>(),
+        },
+        {
+          provide: DrawIndexService,
+          useValue: createMock<DrawIndexService>(),
         },
         {
           provide: LoggerService,

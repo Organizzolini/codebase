@@ -1,5 +1,6 @@
 // 🏷️ Types
 
+import type { MeanderFamily } from "../classification/classification.types";
 import type { Meander } from "./entities/Meander.entity";
 
 /** Where the meander database is, who to sign in as, and which schema holds its table. */
@@ -10,6 +11,14 @@ export interface MeanderDatabaseConnection {
   readonly port: number;
   readonly schema: string;
   readonly username: string;
+}
+
+/** How many rows one family holds at one shape. */
+export interface MeanderFamilyShapeCount {
+  readonly columns: number;
+  readonly count: number;
+  readonly family: MeanderFamily;
+  readonly rows: number;
 }
 
 /**

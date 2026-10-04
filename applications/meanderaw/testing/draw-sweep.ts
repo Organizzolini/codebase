@@ -10,6 +10,7 @@ import { CorpusService } from "../src/modules/corpus/corpus.service";
 import { DatabaseService } from "../src/modules/database/database.service";
 import { Meander } from "../src/modules/database/entities/Meander.entity";
 import { DrawEnumerationService } from "../src/modules/draw/draw-enumeration.service";
+import { DrawIndexService } from "../src/modules/draw/draw-index.service";
 import { DrawPoolService } from "../src/modules/draw/draw-pool.service";
 import { DrawRecordService } from "../src/modules/draw/draw-record.service";
 import { DrawWorkerService } from "../src/modules/draw/draw-worker.service";
@@ -60,8 +61,8 @@ export async function sweepFixture(
 }
 
 /**
- * The module `DrawCommand`'s sweep compiles into: the real enumeration and
- * ingestion services over an emptied schema in `container`'s Postgres
+ * The module `DrawCommand`'s sweep compiles into: the real enumeration,
+ * ingestion, and index services over an emptied schema in `container`'s Postgres
  * database, plus whatever `mocks` the caller stands in for `--code` and
  * logging.
  *
@@ -100,6 +101,7 @@ export function sweepModuleMetadata(
     providers: [
       DrawCommand,
       DrawEnumerationService,
+      DrawIndexService,
       DrawPoolService,
       DrawRecordService,
       DrawWorkerService,

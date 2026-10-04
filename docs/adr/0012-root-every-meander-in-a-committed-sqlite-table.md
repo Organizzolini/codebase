@@ -1,6 +1,6 @@
 # Root every meander in a committed sqlite table
 
-Superseded in part by [ADR 0020](0020-store-meanders-in-postgres.md), which moves the rows from the committed `output/meanders.sqlite` into Postgres, and by [ADR 0021](0021-retire-the-meander-pages.md), which retires the HTML pages built from them. The pipeline and the two halves of the corpus below still stand.
+Superseded in part by [ADR 0020](0020-store-meanders-in-postgres.md), which moves the rows from the committed `output/meanders.sqlite` into Postgres, and by [ADR 0021](0021-stop-committing-the-meander-pages.md), which stops committing the HTML pages built from them. The pipeline and the two halves of the corpus below still stand.
 
 The nine per-family procedural motif services, and the `output/<family>/*.svg`
 tree they wrote, are retired. Every meander now decodes from a Code through

@@ -1,3 +1,6 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
+
 import { Inject, Injectable } from "@nestjs/common";
 import { Command, CommandRunner, Option } from "nest-commander";
 
@@ -10,6 +13,7 @@ import { DatabaseService } from "../database/database.service";
 
 import { DrawCodeService } from "./draw-code.service";
 import { DrawEnumerationService } from "./draw-enumeration.service";
+import { DrawIndexService } from "./draw-index.service";
 import { IncompleteCodeDrawingError } from "./draw.constants";
 
 import type { DrawCommandOptions } from "./draw.types";
@@ -43,9 +47,11 @@ import type { DrawCommandOptions } from "./draw.types";
  * procedural motif services, the `output/<family>/*.svg` tree they wrote,
  * and the `--type`/`--modifier` flags that named one are all retired: a
  * meander is a database row, and a row has no path-length limit for a Code
- * to outgrow. The HTML pages that once listed every row are retired too:
- * at the edge budget's millions of rows a family page outgrew what a string
- * — or a browser — can hold, so the database is the sweep's only output.
+ * to outgrow. One file write survives the retirement: `output/index.html`
+ * and a page per family, rebuilt at the end of every sweep from the
+ * database's own rows — see {@link DrawIndexService}. They are gitignored
+ * rather than committed: at the default edge budget they are gigabytes of
+ * HTML, written a batch of rows at a time.
  *
  * The hardcoded half runs first, so a hardcoded meander keeps its row: the
  * sweep skips any Code a hardcoded row already holds rather than writing an
@@ -67,6 +73,8 @@ export class DrawCommand extends CommandRunner {
     private readonly drawCodeService: DrawCodeService,
     @Inject(DrawEnumerationService)
     private readonly drawEnumerationService: DrawEnumerationService,
+    @Inject(DrawIndexService)
+    private readonly drawIndexService: DrawIndexService,
     @Inject(CorpusService)
     private readonly corpusService: CorpusService,
     @Inject(DatabaseService)
@@ -143,6 +151,28 @@ export class DrawCommand extends CommandRunner {
       hardcoded: hardcoded.length,
       total: enumerated + hardcoded.length,
     });
+
+    await this.writePages();
+  }
+
+  /**
+   * Writes `output/index.html` and every family's page from the rows both
+   * halves committed, each streamed to disk a batch of rows at a time.
+   *
+   * Last, once both halves have committed — a page built from a partial
+   * sweep would tell a reader the corpus stopped short of where it did.
+   */
+  private async writePages(): Promise<void> {
+    const pages = await this.drawIndexService.build();
+
+    for (const [relativePath, content] of Object.entries(pages)) {
+      const fullPath = path.join("output", relativePath);
+
+      await mkdir(path.dirname(fullPath), { recursive: true });
+      await writeFile(fullPath, content);
+    }
+
+    this.logger.log("✨ Rebuilt the index pages");
   }
 
   // 🌎 Public Methods
