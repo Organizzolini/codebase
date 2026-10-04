@@ -1,7 +1,7 @@
 {
   "author": "Jimmy Paolini",
   "bin": {
-    "conformetry-nx-bootstrap": "./src/main.mjs"
+    "conformetry-nx-bootstrap-generators": "./src/main.mjs"
   },
   "bugs": {
     "url": "https://github.com/Organizzolini/codebase/issues"
@@ -68,6 +68,9 @@
   },
   "publishConfig": {
     "access": "public",
+    "bin": {
+      "conformetry-nx-bootstrap-generators": "./dist/src/main.js"
+    },
     "exports": {
       ".": {
         "types": "./dist/src/index.d.ts",

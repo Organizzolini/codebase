@@ -86,15 +86,15 @@ Two things differ from every other example here:
 ```
 
 ```json
-{ "scripts": { "postinstall": "conformetry-nx-bootstrap" } }
+{ "scripts": { "postinstall": "conformetry-nx-bootstrap-generators" } }
 ```
 
 Which generators a workspace has is a property of _its_ configuration rather
 than of the package, so the plugin exposing them is **emitted rather than
-shipped**. `conformetry-nx-bootstrap` derives it from the configuration, writes
-it to `.conformetry/nx-generators` — a build artifact, so git-ignore it — and
-links it into the root `node_modules` so `nx g conformetry:<generator>`
-resolves. Nx resolves a generator's package prefix by requiring it by name, not
+shipped**. `conformetry-nx-bootstrap-generators` derives it from the
+configuration, writes it to `.conformetry/nx-generators` — a build artifact, so
+git-ignore it — and links it into the root `node_modules` so
+`nx g conformetry:<generator>` resolves. Nx resolves a generator's package prefix by requiring it by name, not
 by matching an Nx project, which is why the link is what makes it addressable.
 
 The bootstrap warns rather than exiting non-zero when the configuration cannot

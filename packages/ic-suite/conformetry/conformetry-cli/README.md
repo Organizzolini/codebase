@@ -429,7 +429,7 @@ than of the package, the plugin exposing them is emitted at install time rather
 than shipped:
 
 ```json
-{ "scripts": { "postinstall": "conformetry-nx-bootstrap" } }
+{ "scripts": { "postinstall": "conformetry-nx-bootstrap-generators" } }
 ```
 
 Instance groups may additionally select projects by Nx tag, with their globs
