@@ -4,9 +4,9 @@
     "url": "https://github.com/Organizzolini/codebase/issues"
   },
   "dependencies": {
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "@nestjs/config": "catalog:",
-    "@nestjs/core": "catalog:",
+    "@nestjs/core": "catalog:ic-suite",
     "nestjs-spelunker": "catalog:",
     "pino": "catalog:",
     "pino-pretty": "catalog:",

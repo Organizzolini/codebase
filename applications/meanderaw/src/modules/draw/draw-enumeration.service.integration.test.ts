@@ -142,9 +142,7 @@ describe(DrawEnumerationService, () => {
     });
 
     it("records every row as enumerated rather than hardcoded", async () => {
-      await expect(
-        repository.countBy({ provenance: "hardcoded" }),
-      ).resolves.toBe(0);
+      await expect(repository.countBy({ isHardcoded: true })).resolves.toBe(0);
     });
 
     // 🎯 Family is decided by structure, not by which generator drew
@@ -174,27 +172,23 @@ describe(DrawEnumerationService, () => {
       const row = await repository.findOneByOrFail({ lattice: "4488" });
 
       expect(row).toMatchObject({
-        bettiNumber0Count: 1,
-        bettiNumber1Count: 0,
-        characteristics: [
-          "endsAreLatticeNeighbors",
-          "endsOnBorderRules",
-          "isBars",
-          "isSingleArc",
-          "isReducible",
-        ],
+        characteristics: {
+          bettiNumber0Count: 1,
+          endsAreLatticeNeighbors: true,
+          endsOnBorderRules: true,
+          freeEndCount: 2,
+          isBars: true,
+          isReducible: true,
+          isSingleArc: true,
+        },
         code: "02x02y4488",
         columns: 2,
-        crossCount: 0,
         family: "bars",
-        forkCount: 0,
-        freeEndCount: 2,
+        isHardcoded: false,
         lattice: "4488",
-        provenance: "enumerated",
         repeats: 1,
         rows: 2,
       });
-      expect(row.drawingHash).toBeDefined();
     });
   });
 });

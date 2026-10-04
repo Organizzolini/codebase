@@ -31,7 +31,7 @@ Register the plugin in `nx.json` and wire the bootstrap into `postinstall`:
 ```
 
 ```json
-{ "scripts": { "postinstall": "conformetry-nx-bootstrap" } }
+{ "scripts": { "postinstall": "conformetry-nx-bootstrap-generators" } }
 ```
 
 Then type your configuration as `ConformetryNxConfiguration` rather than
@@ -46,9 +46,9 @@ import { type ConformetryNxConfiguration } from "@conformetry/nx";
 
 Which generators a workspace has is a property of its conformetry
 configuration, so the plugin exposing them is **emitted rather than written**.
-`conformetry-nx-bootstrap` derives it from your configuration, writes it to
-`.conformetry/nx-generators` (gitignore that directory — it is a build
-artifact), and links it into the root `node_modules` so
+`conformetry-nx-bootstrap-generators` derives it from your configuration,
+writes it to `.conformetry/nx-generators` (gitignore that directory — it is a
+build artifact), and links it into the root `node_modules` so
 `nx g conformetry:<generator>` resolves. The link is what makes the plugin
 addressable, since Nx resolves a generator's package prefix by requiring it by
 name rather than by matching an Nx project.

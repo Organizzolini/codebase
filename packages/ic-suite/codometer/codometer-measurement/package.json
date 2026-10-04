@@ -7,8 +7,8 @@
     "@codometer/configuration": "workspace:*",
     "@codometer/core": "workspace:*",
     "@codometer/languages": "workspace:*",
-    "@nestjs/common": "catalog:",
-    "ignore": "7.0.10",
+    "@nestjs/common": "catalog:ic-suite",
+    "ignore": "7.0.12",
     "pino": "catalog:",
     "pino-pretty": "catalog:",
     "reflect-metadata": "catalog:"

@@ -4,6 +4,7 @@ import path from "node:path";
 import { Injectable } from "@nestjs/common";
 
 import {
+  CATALOG_PIN_PATTERN,
   CATALOG_PROTOCOL,
   DEPENDENCY_SECTION_NAMES,
   INTERNAL_PACKAGE_SCOPES,
@@ -17,7 +18,8 @@ import type { PackageManifest } from "./catalog-manifests.types";
  * Reads every workspace manifest and says which dependencies are mis-pinned.
  *
  * The policy is one rule in two directions: a package this workspace publishes
- * is pinned `workspace:*`, and everything else is pinned `catalog:`. A version
+ * is pinned `workspace:*`, and everything else is pinned to a catalog, the
+ * default `catalog:` or a named one such as `catalog:ic-suite`. A version
  * range written out in a manifest is the thing being prevented — it puts two
  * projects on two versions of the same dependency with nothing to notice.
  */
@@ -104,9 +106,9 @@ export class CatalogManifestsService {
           continue;
         }
 
-        if (dependencyVersion !== CATALOG_PROTOCOL) {
+        if (!CATALOG_PIN_PATTERN.test(dependencyVersion)) {
           violations.push(
-            `${location} must use catalog: (found ${dependencyVersion})`,
+            `${location} must use ${CATALOG_PROTOCOL} (found ${dependencyVersion})`,
           );
         }
       }

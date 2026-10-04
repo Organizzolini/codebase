@@ -1,7 +1,7 @@
 {
   "author": "Jimmy Paolini",
   "bin": {
-    "conformetry-nx-bootstrap": "./src/main.mjs"
+    "conformetry-nx-bootstrap-generators": "./src/main.mjs"
   },
   "bugs": {
     "url": "https://github.com/Organizzolini/codebase/issues"
@@ -11,8 +11,8 @@
     "@conformetry/generation": "workspace:*",
     "@conformetry/output": "workspace:*",
     "@conformetry/validation": "workspace:*",
-    "@nestjs/common": "catalog:",
-    "@nestjs/core": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
+    "@nestjs/core": "catalog:ic-suite",
     "@nx/devkit": "catalog:",
     "pino": "catalog:",
     "pino-pretty": "catalog:",
@@ -68,6 +68,9 @@
   },
   "publishConfig": {
     "access": "public",
+    "bin": {
+      "conformetry-nx-bootstrap-generators": "./dist/src/main.js"
+    },
     "exports": {
       ".": {
         "types": "./dist/src/index.d.ts",

@@ -32,7 +32,7 @@ export class DatabaseService {
 
   /**
    * Deletes every meander row and restarts the table's id sequence, so a
-   * `--write` sweep regenerates the committed database rather than colliding
+   * sweep regenerates the committed database rather than colliding
    * with the rows it already holds.
    *
    * Only the `meanders` table the sweep writes is touched — any other table
@@ -104,10 +104,9 @@ export class DatabaseService {
    * fifth as long this way. It also makes the refusal below whole: a batch
    * that hits a duplicate leaves no half-written shape behind.
    *
-   * Chunked because a single statement's parameter count is bounded and a
-   * row here carries about fifty columns, so a whole shape's worth of rows in
-   * one statement is a limit nobody declared being reached at some column
-   * count nobody chose. The chunk size is a size, not a tuning knob: what
+   * Chunked because a single statement's parameter count is bounded, so a
+   * whole shape's worth of rows in one statement is a limit nobody declared
+   * being reached at some row count nobody chose. The chunk size is a size, not a tuning knob: what
    * matters is that it is bounded.
    *
    * A duplicate lattice address is refused by the unique index over `code`,

@@ -3,8 +3,8 @@ import { LETTER_CHARACTERISTIC_KEYS } from "../src/modules/characteristics/chara
 import type {
   BooleanCharacteristicKey,
   Characteristics,
-  ColumnCharacteristicRecord,
   LetterCharacteristicKey,
+  NumericCharacteristicKey,
   NumericCharacteristicRecord,
 } from "../src/modules/characteristics/characteristics.types";
 import type { CodeObject } from "../src/modules/code/code.types";
@@ -14,7 +14,7 @@ import type { MeanderRecord } from "../src/modules/database/database.types";
  * Builds characteristic records and meander rows for the tests that need a
  * whole one written out, so a case spells out only the fields it is about.
  *
- * Each column and boolean list is written out in full rather than derived
+ * Each structural count and boolean list is written out in full rather than derived
  * from the key lists, so the compiler checks it against the record types:
  * adding a characteristic key fails here until its default is added. The
  * letter zeros are derived from `LETTER_CHARACTERISTIC_KEYS` instead, since
@@ -24,8 +24,10 @@ import type { MeanderRecord } from "../src/modules/database/database.types";
 
 // 🔧 Configuration
 
-/** Every numeric characteristic stored under a column of its own at zero. */
-export const ZERO_COLUMN_CHARACTERISTICS: ColumnCharacteristicRecord = {
+/** Every numeric characteristic but a letter at zero. */
+const ZERO_STRUCTURAL_CHARACTERISTICS: Readonly<
+  Record<Exclude<NumericCharacteristicKey, LetterCharacteristicKey>, number>
+> = {
   bettiNumber0Count: 0,
   bettiNumber1Count: 0,
   bottomBorderTouchCount: 0,
@@ -68,7 +70,7 @@ export const ZERO_COLUMN_CHARACTERISTICS: ColumnCharacteristicRecord = {
 
 /** Every numeric characteristic at zero, letters included. */
 export const ZERO_NUMERIC_CHARACTERISTICS: NumericCharacteristicRecord = {
-  ...ZERO_COLUMN_CHARACTERISTICS,
+  ...ZERO_STRUCTURAL_CHARACTERISTICS,
   ...zeroLetterCounts(),
 };
 
@@ -115,19 +117,16 @@ export function characteristicRecord(
   };
 }
 
-/** A whole meander row at a one-column, two-row shape with every characteristic zero and no letter, except the fields `overrides` names. */
+/** A whole meander row at a one-column, two-row shape with every characteristic zero or false, except the fields `overrides` names. */
 export function meanderRecord(
   overrides: Partial<MeanderRecord> & Pick<MeanderRecord, "code">,
 ): MeanderRecord {
   return {
-    ...ZERO_COLUMN_CHARACTERISTICS,
-    characteristics: [],
+    characteristics: {},
     columns: 1,
-    drawingHash: "hash",
     family: "unclassified",
-    glyphs: {},
+    isHardcoded: true,
     lattice: "0",
-    provenance: "hardcoded",
     repeats: 1,
     rows: 2,
     ...overrides,

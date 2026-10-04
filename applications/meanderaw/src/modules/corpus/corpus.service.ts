@@ -1,12 +1,9 @@
-import * as crypto from "node:crypto";
-
 import { Inject, Injectable } from "@nestjs/common";
 
 import { CharacteristicsService } from "../characteristics/characteristics.service";
 import { ClassificationService } from "../classification/classification.service";
 import { CodeService } from "../code/code.service";
 import { DatabaseService } from "../database/database.service";
-import { DrawingService } from "../drawing/drawing.service";
 import { SWEEP_MINIMUM_ROWS } from "../enumeration/enumeration.constants";
 import { EnumerationService } from "../enumeration/enumeration.service";
 
@@ -17,7 +14,7 @@ import type { CorpusEntry, CorpusFamily } from "./corpus.types";
 
 /**
  * Ingests the historical corpus into the committed sqlite database, through
- * the same generic reader, renderer, and Characteristic computation
+ * the same generic reader and Characteristic computation
  * `DrawCodeService` draws a `--code` meander through — so an Enumerated row
  * and a Hardcoded row are produced by the exact same pipeline, and only ever
  * differ in where their Code came from.
@@ -48,10 +45,9 @@ import type { CorpusEntry, CorpusFamily } from "./corpus.types";
  * an Enumerated row, so nothing derived is stored in the corpus alongside
  * what was extracted.
  *
- * The stored Characteristics are `DrawRecordService`'s: every numeric one
- * of `CharacteristicsService.compute` but a letter under its own column,
- * every nonzero letter count in `glyphs`, and every boolean one that holds
- * in `characteristics`, then `"isReducible"` when the filed Code is wider
+ * The stored Characteristics are `DrawRecordService`'s: every one of
+ * `CharacteristicsService.compute` that is nonzero or true, in the one
+ * `characteristics` map, with `isReducible` when the filed Code is wider
  * than its unit.
  *
  * A Code that collides with one already committed — an Enumerated row, or
@@ -73,8 +69,6 @@ export class CorpusService {
     private readonly databaseService: DatabaseService,
     @Inject(CodeService)
     private readonly codeService: CodeService,
-    @Inject(DrawingService)
-    private readonly drawingService: DrawingService,
     @Inject(EnumerationService)
     private readonly enumerationService: EnumerationService,
   ) {}
@@ -85,7 +79,7 @@ export class CorpusService {
 
   // 🔏 Private Methods
 
-  /** Reads, renders, measures, names, and persists one entry under the family it was filed as. */
+  /** Reads, measures, names, and persists one entry under the family it was filed as. */
   private async ingestOne(
     family: CorpusFamily,
     entry: CorpusEntry,
@@ -96,17 +90,8 @@ export class CorpusService {
       this.characteristicsService.tileCrossingComponentDeltaCount(phase),
     );
 
-    const svg = this.drawingService.render(canonical);
-    // Node crypto API requires "hex" string
-    // cspell:ignore hex
-    const drawingHash = crypto.createHash("sha256").update(svg).digest("hex");
-
     const characteristics = this.characteristicsService.compute(canonical);
     const isReducible = this.characteristicsService.isReducible(canonical);
-    const booleanKeys = this.characteristicsService.trueBooleanKeys(
-      characteristics,
-      isReducible,
-    );
 
     try {
       const existing = await this.databaseService.findOneByLattice(
@@ -130,15 +115,15 @@ export class CorpusService {
             : filedFamily;
 
       return await this.databaseService.save({
-        ...this.characteristicsService.columnRecord(characteristics),
-        characteristics: booleanKeys,
+        characteristics: this.characteristicsService.stored(
+          characteristics,
+          isReducible,
+        ),
         code: this.codeService.format(canonical),
         columns,
-        drawingHash,
         family: entityFamily,
-        glyphs: this.characteristicsService.glyphCounts(characteristics),
+        isHardcoded: true,
         lattice: canonical.digits,
-        provenance: "hardcoded" as const,
         repeats: canonical.repeats,
         rows,
       });

@@ -29,7 +29,6 @@
     "@nx/web": "catalog:",
     "@semantic-release/changelog": "catalog:",
     "@semantic-release/commit-analyzer": "catalog:",
-    "@semantic-release/exec": "catalog:",
     "@semantic-release/git": "catalog:",
     "@semantic-release/github": "catalog:",
     "@semantic-release/npm": "catalog:",
@@ -111,7 +110,7 @@
   },
   "repository": "Organizzolini/codebase.git",
   "scripts": {
-    "postinstall": "conformetry-nx-bootstrap && bash scripts/install-skills.sh",
+    "postinstall": "conformetry-nx-bootstrap-generators && bash scripts/install-skills.sh",
     "prepare": "husky configuration/.husky",
     "semantic-release": "semantic-release",
     "semantic-release:dry-run": "semantic-release --dry-run"

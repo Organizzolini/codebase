@@ -5,8 +5,9 @@ import type { Matrix } from "../matrix/matrix.types";
 import type {
   BOOLEAN_CHARACTERISTIC_KEYS,
   CHARACTERISTIC_KEYS,
-  COLUMN_CHARACTERISTIC_KEYS,
+  LETTER_CHARACTERISTIC_KEYS,
   NUMERIC_CHARACTERISTIC_KEYS,
+  STORED_BOOLEAN_KEYS,
 } from "./characteristics.constants";
 
 /** The key of a characteristic whose value is a boolean: see {@link BOOLEAN_CHARACTERISTIC_KEYS}. */
@@ -86,8 +87,8 @@ export type CharacteristicKeyOf<T extends CharacteristicValue> =
 
 /**
  * What a characteristic is, for people and catalogs rather than for the
- * computation: its camelCase `key` (the record field and database column it
- * fills), a display `name`, a one-sentence `description`, its tier, and the
+ * computation: its camelCase `key` (the record field, and the key of a
+ * stored row's `characteristics` map, it fills), a display `name`, a one-sentence `description`, its tier, and the
  * type of value it yields. `formula` is a LaTeX expression of the definition,
  * and `documentationUrl` links a fuller explanation where one exists.
  *
@@ -106,11 +107,7 @@ export type CharacteristicMetadata<
       readonly submatrix?: never;
     });
 
-/**
- * The {@link CharacteristicMetadata} fields every category shares. `letter`
- * marks a letter glyph count, which a meander row stores in its `glyphs` map
- * rather than a column of its own: see {@link COLUMN_CHARACTERISTIC_KEYS}.
- */
+/** The {@link CharacteristicMetadata} fields every category shares. */
 export interface CharacteristicMetadataFields<
   T extends CharacteristicValue = CharacteristicValue,
 > {
@@ -118,7 +115,6 @@ export interface CharacteristicMetadataFields<
   readonly documentationUrl?: string;
   readonly formula?: string;
   readonly key: CharacteristicKeyOf<T>;
-  readonly letter?: true;
   readonly name: string;
   readonly valueType: CharacteristicValueType<T>;
 }
@@ -138,30 +134,9 @@ export type CharacteristicValue = boolean | number;
 export type CharacteristicValueType<T extends CharacteristicValue> =
   T extends boolean ? "boolean" : "number";
 
-/** The key of a numeric characteristic stored under a column of its own: see {@link COLUMN_CHARACTERISTIC_KEYS}. */
-export type ColumnCharacteristicKey =
-  (typeof COLUMN_CHARACTERISTIC_KEYS)[number];
-
-/** A number under each {@link ColumnCharacteristicKey}: the characteristic columns a stored meander row carries. */
-export type ColumnCharacteristicRecord = Readonly<
-  Record<ColumnCharacteristicKey, number>
->;
-
-/**
- * A meander's letter glyph counts, holding only the letters it contains: a
- * count of zero is left out, so a reader takes a missing letter as zero.
- * This is the whole of a stored row's `glyphs` map; raw SQL reads a letter
- * as `COALESCE(json_extract(glyphs, '$.key'), 0)` for the same reason.
- */
-export type GlyphCounts = Readonly<
-  Partial<Record<LetterCharacteristicKey, number>>
->;
-
-/** The key of a letter glyph count: every numeric key without a column of its own. */
-export type LetterCharacteristicKey = Exclude<
-  NumericCharacteristicKey,
-  ColumnCharacteristicKey
->;
+/** The key of a letter glyph count: see {@link LETTER_CHARACTERISTIC_KEYS}. */
+export type LetterCharacteristicKey =
+  (typeof LETTER_CHARACTERISTIC_KEYS)[number];
 
 /** The key of a characteristic whose value is a number: see {@link NUMERIC_CHARACTERISTIC_KEYS}. */
 export type NumericCharacteristicKey =
@@ -173,6 +148,21 @@ export type NumericCharacteristicKey =
  */
 export type NumericCharacteristicRecord = Readonly<
   Record<NumericCharacteristicKey, number>
+>;
+
+/** A key a stored row's `characteristics` map may hold `true` under: see {@link STORED_BOOLEAN_KEYS}. */
+export type StoredBooleanKey = (typeof STORED_BOOLEAN_KEYS)[number];
+
+/**
+ * A meander row's `characteristics` map: every numeric characteristic that is
+ * not zero under its key, and `true` under every {@link StoredBooleanKey} that
+ * holds. A zero or `false` is left out, so a reader takes a missing key as
+ * zero or `false`; raw SQL reads one as
+ * `COALESCE(json_extract(characteristics, '$.key'), 0)` for the same reason.
+ */
+export type StoredCharacteristics = Readonly<
+  Partial<Record<NumericCharacteristicKey, number>> &
+    Partial<Record<StoredBooleanKey, true>>
 >;
 
 /**
