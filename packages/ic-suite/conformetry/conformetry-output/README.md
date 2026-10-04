@@ -1,5 +1,7 @@
 # 👔 Conformetry Output
 
+[![npm](https://img.shields.io/npm/v/@conformetry/output?logo=npm&label=npm)](https://www.npmjs.com/package/@conformetry/output)
+
 Every render target [Conformetry](../conformetry-cli/README.md) has. It sits at
 the output layer of the five-layer spine — `core <- configuration <- analysis
 <- output <- cli` — so it reads what analysis produced and turns it into text,

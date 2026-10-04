@@ -1,5 +1,7 @@
 # 🚧 Codependix Boundaries
 
+[![npm](https://img.shields.io/npm/v/@codependix/boundaries?logo=npm&label=npm)](https://www.npmjs.com/package/@codependix/boundaries)
+
 **Evaluates declared rules against a graph codependix already built, and reports the edges and cycles that break them.**
 
 Codependix draws graphs at three levels and says nothing about whether their
