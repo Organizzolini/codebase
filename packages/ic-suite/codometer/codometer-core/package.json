@@ -4,7 +4,7 @@
     "url": "https://github.com/Organizzolini/codebase/issues"
   },
   "dependencies": {
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "reflect-metadata": "catalog:"
   },
   "description": "Core domain models, metrics contracts, and report shapes for the Codometer measurement toolchain",

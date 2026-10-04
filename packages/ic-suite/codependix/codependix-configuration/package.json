@@ -5,7 +5,7 @@
   },
   "dependencies": {
     "@codependix/core": "workspace:*",
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "jiti": "catalog:",
     "prompts": "catalog:",
     "reflect-metadata": "catalog:",

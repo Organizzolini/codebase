@@ -5,7 +5,7 @@
   },
   "dependencies": {
     "@callidescope/core": "workspace:*",
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "jiti": "catalog:",
     "jsonc-parser": "catalog:",
     "prompts": "catalog:",

@@ -7,7 +7,7 @@
     "@conformetry/configuration": "workspace:*",
     "@conformetry/core": "workspace:*",
     "@conformetry/languages": "workspace:*",
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "reflect-metadata": "catalog:"
   },
   "description": "Template matching, existence verification, and conformance validation orchestrator for Conformetry",

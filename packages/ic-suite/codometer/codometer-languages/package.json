@@ -6,7 +6,7 @@
   "dependencies": {
     "@codometer/configuration": "workspace:*",
     "@codometer/core": "workspace:*",
-    "@nestjs/common": "catalog:",
+    "@nestjs/common": "catalog:ic-suite",
     "mdast": "catalog:",
     "pino": "catalog:",
     "pino-pretty": "catalog:",

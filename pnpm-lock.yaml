@@ -201,13 +201,13 @@ catalogs:
       specifier: ^14.0.2
       version: 14.0.2
     '@nestjs/common':
-      specifier: ^11.1.21 || ^12.0.1
+      specifier: ^12.0.1
       version: 12.1.0
     '@nestjs/config':
       specifier: ^12.0.0
       version: 12.0.1
     '@nestjs/core':
-      specifier: ^11.1.21 || ^12.0.1
+      specifier: ^12.0.1
       version: 12.1.0
     '@nestjs/graphql':
       specifier: ^14.0.0
@@ -722,6 +722,13 @@ catalogs:
     zod:
       specifier: ^4.4.3
       version: 4.6.5
+  ic-suite:
+    '@nestjs/common':
+      specifier: ^11.1.21 || ^12.0.1
+      version: 12.1.0
+    '@nestjs/core':
+      specifier: ^11.1.21 || ^12.0.1
+      version: 12.1.0
 
 overrides:
   axios@>=1.15.2 <1.18.0: ^1.18.0
@@ -1463,13 +1470,13 @@ importers:
         specifier: workspace:*
         version: link:../callidescope-output
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       '@nestjs/config':
         specifier: 'catalog:'
         version: 12.0.1(@nestjs/common@12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(rxjs@7.8.2)
       '@nestjs/core':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(@nestjs/common@12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(@nestjs/platform-express@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       nest-commander:
         specifier: 'catalog:'
@@ -1527,7 +1534,7 @@ importers:
         specifier: workspace:*
         version: link:../callidescope-core
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       jiti:
         specifier: 'catalog:'
@@ -1576,7 +1583,7 @@ importers:
   packages/ic-suite/callidescope/callidescope-core:
     dependencies:
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       reflect-metadata:
         specifier: 'catalog:'
@@ -1650,7 +1657,7 @@ importers:
         specifier: workspace:*
         version: link:../callidescope-core
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       pino:
         specifier: 'catalog:'
@@ -1708,10 +1715,10 @@ importers:
         specifier: workspace:*
         version: link:../callidescope-output
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       '@nestjs/core':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(@nestjs/common@12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(@nestjs/platform-express@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nx/devkit':
         specifier: 'catalog:'
@@ -1766,7 +1773,7 @@ importers:
         specifier: workspace:*
         version: link:../callidescope-graph
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       pino:
         specifier: 'catalog:'
@@ -1842,7 +1849,7 @@ importers:
         specifier: workspace:*
         version: link:../codependix-nx-projects
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       reflect-metadata:
         specifier: 'catalog:'
@@ -1888,13 +1895,13 @@ importers:
         specifier: workspace:*
         version: link:../codependix-output
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       '@nestjs/config':
         specifier: 'catalog:'
         version: 12.0.1(@nestjs/common@12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(rxjs@7.8.2)
       '@nestjs/core':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(@nestjs/common@12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(@nestjs/platform-express@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       nest-commander:
         specifier: 'catalog:'
@@ -1952,7 +1959,7 @@ importers:
         specifier: workspace:*
         version: link:../codependix-core
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       jiti:
         specifier: 'catalog:'
@@ -1998,7 +2005,7 @@ importers:
   packages/ic-suite/codependix/codependix-core:
     dependencies:
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       reflect-metadata:
         specifier: 'catalog:'
@@ -2084,7 +2091,7 @@ importers:
   packages/ic-suite/codependix/codependix-file-imports:
     dependencies:
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       reflect-metadata:
         specifier: 'catalog:'
@@ -2118,13 +2125,13 @@ importers:
   packages/ic-suite/codependix/codependix-nestjs-modules:
     dependencies:
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       '@nestjs/config':
         specifier: 'catalog:'
         version: 12.0.1(@nestjs/common@12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(rxjs@7.8.2)
       '@nestjs/core':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(@nestjs/common@12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(@nestjs/platform-express@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       nestjs-spelunker:
         specifier: 'catalog:'
@@ -2167,7 +2174,7 @@ importers:
   packages/ic-suite/codependix/codependix-nx-projects:
     dependencies:
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       '@nx/devkit':
         specifier: 'catalog:'
@@ -2222,7 +2229,7 @@ importers:
         specifier: workspace:*
         version: link:../codependix-nx-projects
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       pino:
         specifier: 'catalog:'
@@ -2298,13 +2305,13 @@ importers:
         specifier: workspace:*
         version: link:../codometer-output
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       '@nestjs/config':
         specifier: 'catalog:'
         version: 12.0.1(@nestjs/common@12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(rxjs@7.8.2)
       '@nestjs/core':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(@nestjs/common@12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(@nestjs/platform-express@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       nest-commander:
         specifier: 'catalog:'
@@ -2362,7 +2369,7 @@ importers:
         specifier: workspace:*
         version: link:../codometer-core
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       jiti:
         specifier: 'catalog:'
@@ -2405,7 +2412,7 @@ importers:
   packages/ic-suite/codometer/codometer-core:
     dependencies:
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       reflect-metadata:
         specifier: 'catalog:'
@@ -2470,7 +2477,7 @@ importers:
         specifier: workspace:*
         version: link:../codometer-core
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       mdast:
         specifier: 'catalog:'
@@ -2546,7 +2553,7 @@ importers:
         specifier: workspace:*
         version: link:../codometer-languages
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       ignore:
         specifier: 7.0.10
@@ -2598,7 +2605,7 @@ importers:
         specifier: workspace:*
         version: link:../codometer-measurement
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       pino:
         specifier: 'catalog:'
@@ -2674,13 +2681,13 @@ importers:
         specifier: workspace:*
         version: link:../conformetry-validation
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       '@nestjs/config':
         specifier: 'catalog:'
         version: 12.0.1(@nestjs/common@12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(rxjs@7.8.2)
       '@nestjs/core':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(@nestjs/common@12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(@nestjs/platform-express@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       nest-commander:
         specifier: 'catalog:'
@@ -2741,7 +2748,7 @@ importers:
         specifier: workspace:*
         version: link:../conformetry-core
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       jiti:
         specifier: 'catalog:'
@@ -2799,7 +2806,7 @@ importers:
   packages/ic-suite/conformetry/conformetry-core:
     dependencies:
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       reflect-metadata:
         specifier: 'catalog:'
@@ -2876,7 +2883,7 @@ importers:
         specifier: workspace:*
         version: link:../conformetry-configuration
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       reflect-metadata:
         specifier: 'catalog:'
@@ -2916,7 +2923,7 @@ importers:
         specifier: workspace:*
         version: link:../conformetry-core
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       jsonc-parser:
         specifier: 'catalog:'
@@ -2974,10 +2981,10 @@ importers:
         specifier: workspace:*
         version: link:../conformetry-validation
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       '@nestjs/core':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(@nestjs/common@12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(@nestjs/platform-express@12.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nx/devkit':
         specifier: 'catalog:'
@@ -3029,7 +3036,7 @@ importers:
         specifier: workspace:*
         version: link:../conformetry-languages
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       reflect-metadata:
         specifier: 'catalog:'
@@ -3069,7 +3076,7 @@ importers:
         specifier: workspace:*
         version: link:../conformetry-languages
       '@nestjs/common':
-        specifier: 'catalog:'
+        specifier: catalog:ic-suite
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
       reflect-metadata:
         specifier: 'catalog:'
