@@ -109,18 +109,21 @@ export class DrawCommand extends CommandRunner {
   private async drawAll(): Promise<void> {
     await this.databaseService.clear();
 
-    const hardcoded = await this.corpusService.ingest(HISTORICAL_CORPUS);
+    // `ingest` hands back one row per corpus entry, and entries that share a
+    // Code share a row, so the rows are counted by id rather than by entry.
+    const ingested = await this.corpusService.ingest(HISTORICAL_CORPUS);
+    const hardcoded = new Set(ingested.map(({ id }) => id)).size;
 
     this.logger.log("✨ Ingested the historical corpus", undefined, {
-      hardcoded: hardcoded.length,
+      hardcoded,
     });
 
     const enumerated = await this.drawEnumerationService.drawAll();
 
     this.logger.log("✨ Generated every meander", undefined, {
       enumerated,
-      hardcoded: hardcoded.length,
-      total: enumerated + hardcoded.length,
+      hardcoded,
+      total: enumerated + hardcoded,
     });
 
     await this.writePages();

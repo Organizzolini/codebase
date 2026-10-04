@@ -58,6 +58,7 @@ describe(DrawCommand, () => {
   let draw: Mock<() => Promise<Meander>>;
   let ingest: Mock<() => Promise<Meander[]>>;
   let drawAll: Mock<() => Promise<number>>;
+  let logger: LoggerService;
 
   beforeAll(async () => {
     build = vi
@@ -106,6 +107,7 @@ describe(DrawCommand, () => {
     }).compile();
 
     command = await module.resolve(DrawCommand);
+    logger = await module.resolve(LoggerService);
   });
 
   beforeEach(() => {
@@ -185,6 +187,29 @@ describe(DrawCommand, () => {
     const [hardcoded] = ingest.mock.invocationCallOrder;
 
     expect(hardcoded).toBeLessThan(enumerated ?? 0);
+  });
+
+  it("logs how many hardcoded rows the corpus wrote, counting entries that share a Code's row once", async () => {
+    const shared = createMock<Meander>({
+      id: "01a107d6-cff8-7238-8684-a2a863bc6928",
+    });
+    const single = createMock<Meander>({
+      id: "01a107d6-cff8-7238-8684-a2a863bc6929",
+    });
+
+    ingest.mockResolvedValueOnce([shared, single, shared]);
+    await command.run([], {});
+
+    expect(logger.log).toHaveBeenCalledWith(
+      "✨ Ingested the historical corpus",
+      undefined,
+      { hardcoded: 2 },
+    );
+    expect(logger.log).toHaveBeenCalledWith(
+      "✨ Generated every meander",
+      undefined,
+      { enumerated: 30_279, hardcoded: 2, total: 30_281 },
+    );
   });
 
   it("rebuilds the index pages from the draw run's own rows, once both halves have committed", async () => {
