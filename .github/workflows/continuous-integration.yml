@@ -54,9 +54,21 @@ jobs:
           - target: guard-code
             name: Guard
             emoji: 💂
+          # Meanderaw runs in a leg of its own. Uncached, it takes over seven
+          # minutes beside every other project's tests, and it waits for a
+          # free `--parallel` slot before starting, so a run that affects
+          # everything (an `nx.json` change) outlasted the 12-minute limit.
+          # Alone it takes about three. The other leg keeps the `Test` name
+          # that branch protection requires.
           - target: test-code
             name: Test
             emoji: 🧑‍🔬
+            exclude: meanderaw
+          - target: test-code
+            name: Test Meanderaw
+            emoji: 🧑‍🔬
+            exclude: "*,!meanderaw"
+            shard: meanderaw
           - target: secure-code
             name: Secure
             emoji: 🕵️
@@ -104,7 +116,9 @@ jobs:
             ${{ matrix.check.target != 'build-projects' && 'true' || 'false' }}
           uv: "true"
           nx-cache: "true"
-          nx-cache-scope: ${{ github.job }}-${{ matrix.check.target }}
+          nx-cache-scope: >-
+            ${{ github.job }}-${{ matrix.check.target }}${{ matrix.check.shard
+            && format('-{0}', matrix.check.shard) || '' }}
           nx-graph-cache: "true"
           nx-shas: "true"
           nx-base: push-before
@@ -133,7 +147,8 @@ jobs:
           arguments: >-
             ${{ matrix.check.target == 'test-code' && '--configuration=coverage'
             || matrix.check.target != 'build-projects' && '--configuration=check'
-            || '' }} --parallel=4
+            || '' }} --parallel=4 ${{ matrix.check.exclude
+            && format('--exclude={0}', matrix.check.exclude) || '' }}
 
       - name: 📊 Report Integration
         if: >-
@@ -150,6 +165,7 @@ jobs:
           run-outcome: ${{ steps.run-check.outcome }}
           pull-request-number: ${{ github.event.pull_request.number }}
           target: ${{ matrix.check.target }}
+          shard: ${{ matrix.check.shard }}
 
       - name: 🧹 Cleanup Codebase
         if: always() && steps.check-skip.outputs.skip != 'true'
