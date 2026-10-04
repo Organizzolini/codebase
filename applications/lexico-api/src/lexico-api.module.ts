@@ -1,5 +1,3 @@
-import { fileURLToPath } from "node:url";
-
 import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
 import { ApolloDriver, type ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
@@ -25,7 +23,7 @@ import {
 } from "@codebase/lexico-entities";
 import { LoggerModule } from "@codebase/logger";
 
-import { environmentSchema } from "./lexico-api.constants";
+import { environmentSchema, GRAPHQL_SCHEMA_FILE } from "./lexico-api.constants";
 import { HealthModule } from "./modules/health/health.module";
 import { LexemesModule } from "./modules/lexemes/lexemes.module";
 import { LiteratureModule } from "./modules/literature/literature.module";
@@ -44,7 +42,7 @@ import { WordsModule } from "./modules/words/words.module";
         environmentSchema.parse(config),
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
-      autoSchemaFile: fileURLToPath(new URL("schema.gql", import.meta.url)),
+      autoSchemaFile: GRAPHQL_SCHEMA_FILE,
       buildSchemaOptions: {
         orphanedTypes: [
           NominalForm,
