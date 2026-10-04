@@ -267,7 +267,7 @@ Five workflows run on every pull request. Each maps to targets you can run local
 | Comply Code   | Branch name, pull request title, body, labels, assignees, and release significance                                       | See [Pull Request Process](#pull-request-process) |
 | Enforce Code  | CODEOWNERS rules and workflow security                                                                                   | `tools/validation/src/main.ts audit-governance`   |
 
-🚀 Continuous Deployment runs post-merge on `main` to release the workspace and to build and verify the dev container image. Builds are verified before merge, in the merge queue.
+🚀 Continuous Deployment runs post-merge on `main` to release the workspace and to build and verify the dev container image. Builds are verified before merge, in the merge queue, and a pull request that changes the dev container builds and tests it there too.
 
 ## Code Standards
 
