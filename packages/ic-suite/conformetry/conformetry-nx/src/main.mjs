@@ -2,8 +2,8 @@
 // The `conformetry-nx-bootstrap` command, wired into a consumer's postinstall.
 
 // Named `main.mjs` rather than for what it does because a `src/` root only
-// admits entry-point names, and this is the package's one command entry point.
-// The work it runs lives in `modules/generator/bootstrap.utilities.ts`.
+// admits entry-point names. It runs `main.ts`, which the build also emits as
+// the published package's `bin`; this file is the workspace's way in.
 
 // This is the one entry point in the workspace that still runs TypeScript
 // sources through a loader, and deliberately so. Every other command-line
@@ -21,7 +21,4 @@ import { register } from "node:module";
 
 register("@swc-node/register/esm", import.meta.url);
 
-const { runBootstrapCli } =
-  await import("./modules/generator/bootstrap.utilities.ts");
-
-await runBootstrapCli(process.cwd());
+await import("./main.ts");

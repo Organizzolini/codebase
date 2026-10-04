@@ -68,6 +68,9 @@
   },
   "publishConfig": {
     "access": "public",
+    "bin": {
+      "conformetry-nx-bootstrap": "./dist/src/main.js"
+    },
     "exports": {
       ".": {
         "types": "./dist/src/index.d.ts",
