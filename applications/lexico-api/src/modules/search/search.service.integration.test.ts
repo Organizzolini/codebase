@@ -1,5 +1,6 @@
 /* cspell:words absque atque bonis bonisve denique diligo FULLTEXT neque puella puellam puellamque quinque vides videsne vocabant voco */
 
+import { createMock } from "@golevelup/ts-vitest";
 import { describe, expect, it, vi } from "vitest";
 
 import {
@@ -13,9 +14,12 @@ import {
 } from "@codebase/lexico-entities";
 
 import { createRepositoryMock } from "../../../testing/mocks";
+import { MacronsService } from "../macrons/macrons.service";
 
 import { SearchMatchSource } from "./search.entities";
 import { SearchService } from "./search.service";
+
+import type { LoggerService } from "@codebase/logger";
 
 describe("search service integration suite", () => {
   it("integrates Latin dictionary search across exact lemma, word forms, prefix, and enclitic parsing", async () => {
@@ -25,6 +29,7 @@ describe("search service integration suite", () => {
     puellaLexeme.id = "lex-puella";
     puellaLexeme.lemma = "puella";
     puellaLexeme.partOfSpeech = "noun";
+    puellaLexeme.translations = [new Translation("girl", puellaLexeme)];
 
     const amoLexeme = new Lexeme();
     amoLexeme.id = "lex-amo";
@@ -61,6 +66,8 @@ describe("search service integration suite", () => {
       mockLexemeRepo,
       mockWordRepo,
       mockTranslationRepo,
+      new MacronsService(),
+      createMock<LoggerService>(),
     );
 
     const result = await service.searchLatin("puellamque");
@@ -82,6 +89,7 @@ describe("search service integration suite", () => {
       lexeme.id = `lex-${index + 1}`;
       lexeme.lemma = `word${index + 1}`;
       lexeme.partOfSpeech = "noun";
+      lexeme.translations = [new Translation(`meaning ${index + 1}`, lexeme)];
       return lexeme;
     });
 
@@ -96,6 +104,8 @@ describe("search service integration suite", () => {
       mockLexemeRepo,
       mockWordRepo,
       mockTranslationRepo,
+      new MacronsService(),
+      createMock<LoggerService>(),
     );
 
     // Forward pagination: Page 1 (first: 2)
@@ -137,7 +147,7 @@ describe("search service integration suite", () => {
     );
   });
 
-  it("integrates English full-text search with deduplication and relevance ranking", async () => {
+  it("integrates English full-text search with database ranking and lexeme hydration", async () => {
     expect.hasAssertions();
 
     const lexemeAmo = new Lexeme();
@@ -148,25 +158,31 @@ describe("search service integration suite", () => {
     lexemeDiligo.id = "lex-diligo";
     lexemeDiligo.lemma = "diligo";
 
-    const translation1 = new Translation("love, to cherish", lexemeAmo);
-    const translation2 = new Translation("love", lexemeDiligo);
-    const translation3 = new Translation("beloved, dear", lexemeAmo);
+    lexemeAmo.translations = [
+      new Translation("love, to cherish", lexemeAmo),
+      new Translation("beloved, dear", lexemeAmo),
+    ];
+    lexemeDiligo.translations = [new Translation("love", lexemeDiligo)];
 
     const mockLexemeRepo = createRepositoryMock<Lexeme>();
     const mockWordRepo = createRepositoryMock<Word>();
     const mockTranslationRepo = createRepositoryMock<Translation>();
 
     const translationQb = mockTranslationRepo.createQueryBuilder();
-    vi.spyOn(translationQb, "getMany").mockResolvedValue([
-      translation1,
-      translation2,
-      translation3,
+    vi.spyOn(translationQb, "getRawMany").mockResolvedValue([
+      { lexemeId: "lex-diligo", score: "1" },
+      { lexemeId: "lex-amo", score: "0.8" },
     ]);
+
+    const lexemeQb = mockLexemeRepo.createQueryBuilder();
+    vi.spyOn(lexemeQb, "getMany").mockResolvedValue([lexemeAmo, lexemeDiligo]);
 
     const service = new SearchService(
       mockLexemeRepo,
       mockWordRepo,
       mockTranslationRepo,
+      new MacronsService(),
+      createMock<LoggerService>(),
     );
 
     const result = await service.searchEnglish("love");
@@ -189,6 +205,7 @@ describe("search service integration suite", () => {
     const lexeme = new Lexeme();
     lexeme.id = "lex-voco";
     lexeme.lemma = "voco";
+    lexeme.translations = [new Translation("call", lexeme)];
 
     const verbForm = new FiniteVerbForm();
     verbForm.person = "third";
@@ -220,6 +237,8 @@ describe("search service integration suite", () => {
       mockLexemeRepo,
       mockWordRepo,
       mockTranslationRepo,
+      new MacronsService(),
+      createMock<LoggerService>(),
     );
 
     const result = await service.searchLatin("vocabant");
