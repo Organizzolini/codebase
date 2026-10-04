@@ -6,7 +6,8 @@
 
 **Purpose**: The one way a database-backed project connects to Postgres:
 the `<PROJECT>_POSTGRES_*` environment fragment, the TypeORM options factory,
-and the naming convention behind them. See the [README](README.md) for the
+the NestJS module and command-line data source built from it, and the naming
+convention behind them. See the [README](README.md) for the
 exports and the naming table.
 
 This package must never import another workspace package, or every
@@ -29,7 +30,9 @@ src/
     database/
       database-testing.*.ts         # startDatabaseTestingModule, the testing entry's Nest helper
       database.constants.ts         # Variable suffixes and connection defaults
-      database.factories.ts         # postgresDataSourceOptions
+      database.factories.ts         # postgresDataSourceOptions, createDataSource
+      database.module.ts            # DatabaseModule.forRoot over TypeOrmModule.forRootAsync
+      database.service.ts           # The TypeORM options factory forRoot hands TypeORM
       database.types.ts
       database.utilities.ts         # postgresEnvironmentSchema, postgresConnection
 testing/                            # Vitest setup

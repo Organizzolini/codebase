@@ -1,3 +1,4 @@
+import { DataSource } from "typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { z } from "zod";
 
@@ -10,6 +11,7 @@ import {
 } from "./database.constants";
 
 import type {
+  DatabaseOptions,
   PostgresConnection,
   PostgresConnectionSource,
   PostgresDataSourceOptions,
@@ -22,25 +24,30 @@ import type {
 // 🌎 Utilities
 
 /**
- * Whether `shape` holds a schema under every one of the project's variable
- * names: what lets the computed keys keep their literal types.
+ * The `DataSource` a project's TypeORM command-line entry exports, built from
+ * the same options as `DatabaseModule.forRoot` so a generated migration
+ * matches what the application expects. It reads only the project's
+ * `<PROJECT>_POSTGRES_*` variables, from `process.env` unless given others:
+ *
+ * ```ts
+ * // src/modules/database/data-source.constants.ts
+ * export default createDataSource({
+ *   entities: [Meander],
+ *   migrations: ["src/modules/database/migrations/*.ts"],
+ *   project: "meanderaw",
+ * });
+ * ```
  */
-function isPostgresEnvironmentShape<Project extends string>(
-  shape: Readonly<Record<string, unknown>>,
-  project: Project,
-): shape is PostgresEnvironmentShape<Project> {
-  return postgresEnvironmentKeys(project).every((key) => key in shape);
-}
-
-/** `LEXICO_` for `lexico`, after checking the name can carry one. */
-function postgresEnvironmentPrefix(project: string): string {
-  if (!PROJECT_NAME_PATTERN.test(project)) {
-    throw new Error(
-      `Project name '${project}' must match ${String(PROJECT_NAME_PATTERN)} to name its Postgres variables, database, schema, and role.`,
-    );
-  }
-
-  return `${project.toUpperCase()}_`;
+export function createDataSource(
+  { project, ...settings }: DatabaseOptions,
+  environment: Readonly<Record<string, unknown>> = process.env,
+): DataSource {
+  return new DataSource(
+    postgresDataSourceOptions(
+      postgresConnection({ environment, project }),
+      settings,
+    ),
+  );
 }
 
 /**
@@ -153,4 +160,26 @@ export function postgresSettingsSchema(
     schema: z.string().min(1).default(project),
     username: z.string().min(1).default(`${project}_username`),
   });
+}
+
+/**
+ * Whether `shape` holds a schema under every one of the project's variable
+ * names: what lets the computed keys keep their literal types.
+ */
+function isPostgresEnvironmentShape<Project extends string>(
+  shape: Readonly<Record<string, unknown>>,
+  project: Project,
+): shape is PostgresEnvironmentShape<Project> {
+  return postgresEnvironmentKeys(project).every((key) => key in shape);
+}
+
+/** `LEXICO_` for `lexico`, after checking the name can carry one. */
+function postgresEnvironmentPrefix(project: string): string {
+  if (!PROJECT_NAME_PATTERN.test(project)) {
+    throw new Error(
+      `Project name '${project}' must match ${String(PROJECT_NAME_PATTERN)} to name its Postgres variables, database, schema, and role.`,
+    );
+  }
+
+  return `${project.toUpperCase()}_`;
 }

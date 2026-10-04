@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { z } from "zod";
 
 import {
+  createDataSource,
   postgresConnection,
   postgresDataSourceOptions,
   postgresEnvironmentSchema,
@@ -23,6 +24,33 @@ const connection: PostgresConnection = {
 };
 
 describe("database utilities", () => {
+  describe(createDataSource, () => {
+    it("builds the command-line data source from the project's prefixed variables alone", () => {
+      const dataSource = createDataSource(
+        {
+          entities: [],
+          migrations: ["src/modules/database/migrations/*.ts"],
+          project: "sample",
+        },
+        {
+          POSTGRES_DB: "postgres",
+          POSTGRES_USER: "postgres",
+          SAMPLE_POSTGRES_HOST: "database.internal",
+        },
+      );
+
+      expect(dataSource.options).toMatchObject({
+        database: "sample_development",
+        host: "database.internal",
+        migrations: ["src/modules/database/migrations/*.ts"],
+        migrationsRun: false,
+        schema: "sample",
+        synchronize: false,
+        username: "sample_username",
+      });
+    });
+  });
+
   describe(postgresConnection, () => {
     it("reads the connection from the project's prefixed variables", () => {
       expect(
@@ -90,11 +118,11 @@ describe("database utilities", () => {
       expect(
         postgresDataSourceOptions(connection, {
           entities: ["src/**/*.entity.ts"],
-          migrations: ["src/modules/fixture-database/migrations/*.ts"],
+          migrations: ["src/modules/database/migrations/*.ts"],
         }),
       ).toMatchObject({
         entities: ["src/**/*.entity.ts"],
-        migrations: ["src/modules/fixture-database/migrations/*.ts"],
+        migrations: ["src/modules/database/migrations/*.ts"],
       });
     });
   });

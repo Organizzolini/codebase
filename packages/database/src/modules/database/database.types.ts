@@ -4,6 +4,17 @@ import type { POSTGRES_ENVIRONMENT_SUFFIXES } from "./database.constants";
 import type { DataSourceOptions, NamingStrategyInterface } from "typeorm";
 import type { z } from "zod";
 
+/**
+ * What `DatabaseModule.forRoot` is given: the project, and its code's part
+ * of the connection. No migrations, which the runtime never runs.
+ */
+export interface DatabaseModuleOptions
+  extends Omit<PostgresDataSourceSettings, "migrations">, PostgresProject {}
+
+/** What `createDataSource` is given: the module's options, and the migrations the TypeORM command line runs. */
+export interface DatabaseOptions
+  extends DatabaseModuleOptions, PostgresDataSourceSettings {}
+
 /** Where a project's database is, who to sign in as, and which schema holds its tables. */
 export interface PostgresConnection {
   readonly database: string;

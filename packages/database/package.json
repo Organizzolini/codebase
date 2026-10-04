@@ -1,6 +1,9 @@
 {
   "dependencies": {
     "@nestjs/common": "catalog:",
+    "@nestjs/config": "catalog:",
+    "@nestjs/typeorm": "catalog:",
+    "pg": "catalog:",
     "reflect-metadata": "catalog:",
     "tslib": "catalog:",
     "typeorm": "catalog:",

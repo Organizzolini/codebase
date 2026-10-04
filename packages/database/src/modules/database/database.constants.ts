@@ -38,3 +38,9 @@ export const DEFAULT_POSTGRES_PORT = 5432;
  * a database, a schema, and a role without quoting.
  */
 export const PROJECT_NAME_PATTERN = /^[a-z][a-z0-9_]*$/;
+
+/**
+ * Injects the options `DatabaseModule.forRoot` was given into the
+ * `DatabaseService` that turns them into TypeORM's.
+ */
+export const DATABASE_OPTIONS = Symbol("DATABASE_OPTIONS");
