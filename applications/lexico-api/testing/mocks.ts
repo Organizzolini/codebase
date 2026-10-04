@@ -50,6 +50,8 @@ export const createRepositoryMock = <
       .fn<Repository<Entity>["createQueryBuilder"]>()
       .mockReturnValue(
         createMock<ReturnType<Repository<Entity>["createQueryBuilder"]>>({
+          addOrderBy: vi.fn<() => QueryBuilder<Entity>>().mockReturnThis(),
+          addSelect: vi.fn<() => QueryBuilder<Entity>>().mockReturnThis(),
           andWhere: vi.fn<() => QueryBuilder<Entity>>().mockReturnThis(),
           execute: vi.fn<never>(),
           from: vi.fn<() => QueryBuilder<Entity>>().mockReturnThis(),

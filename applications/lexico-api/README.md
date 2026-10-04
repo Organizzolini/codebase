@@ -104,6 +104,11 @@ graph LR
   file_src_modules_literature_tokens_arguments_entities_ts["src/modules/literature/tokens-arguments.entities.ts"]
   file_src_modules_literature_tokens_resolver_ts["src/modules/literature/tokens.resolver.ts"]
   file_src_modules_literature_tokens_resolver_unit_test_ts["src/modules/literature/tokens.resolver.unit.test.ts"]
+  file_src_modules_macrons_macrons_constants_ts["src/modules/macrons/macrons.constants.ts"]
+  file_src_modules_macrons_macrons_module_ts["src/modules/macrons/macrons.module.ts"]
+  file_src_modules_macrons_macrons_service_ts["src/modules/macrons/macrons.service.ts"]
+  file_src_modules_macrons_macrons_service_unit_test_ts["src/modules/macrons/macrons.service.unit.test.ts"]
+  file_src_modules_macrons_macrons_types_ts["src/modules/macrons/macrons.types.ts"]
   file_src_modules_search_pagination_arguments_entities_ts["src/modules/search/pagination-arguments.entities.ts"]
   file_src_modules_search_pagination_arguments_entities_unit_test_ts["src/modules/search/pagination-arguments.entities.unit.test.ts"]
   file_src_modules_search_search_english_arguments_entities_ts["src/modules/search/search-english-arguments.entities.ts"]
@@ -243,6 +248,9 @@ graph LR
   file_src_modules_literature_tokens_resolver_unit_test_ts --> file_src_modules_literature_literature_service_ts
   file_src_modules_literature_tokens_resolver_unit_test_ts --> file_src_modules_literature_token_word_loader_ts
   file_src_modules_literature_tokens_resolver_unit_test_ts --> file_src_modules_literature_tokens_resolver_ts
+  file_src_modules_macrons_macrons_module_ts --> file_src_modules_macrons_macrons_service_ts
+  file_src_modules_macrons_macrons_service_ts --> file_src_modules_macrons_macrons_constants_ts
+  file_src_modules_macrons_macrons_service_unit_test_ts --> file_src_modules_macrons_macrons_service_ts
   file_src_modules_search_pagination_arguments_entities_unit_test_ts --> file_src_modules_search_pagination_arguments_entities_ts
   file_src_modules_search_pagination_arguments_entities_unit_test_ts --> file_src_modules_search_search_english_arguments_entities_ts
   file_src_modules_search_pagination_arguments_entities_unit_test_ts --> file_src_modules_search_search_latin_arguments_entities_ts
@@ -250,31 +258,38 @@ graph LR
   file_src_modules_search_search_latin_arguments_entities_ts --> file_src_modules_search_pagination_arguments_entities_ts
   file_src_modules_search_search_entities_ts --> file_src_lexico_api_utilities_ts
   file_src_modules_search_search_entities_unit_test_ts --> file_src_modules_search_search_entities_ts
+  file_src_modules_search_search_module_ts --> file_src_modules_macrons_macrons_module_ts
   file_src_modules_search_search_module_ts --> file_src_modules_search_search_resolver_ts
   file_src_modules_search_search_module_ts --> file_src_modules_search_search_service_ts
   file_src_modules_search_search_module_unit_test_ts --> file_src_modules_search_search_module_ts
   file_src_modules_search_search_resolver_ts --> file_src_lexico_api_types_ts
   file_src_modules_search_search_resolver_ts --> file_src_modules_search_search_english_arguments_entities_ts
   file_src_modules_search_search_resolver_ts --> file_src_modules_search_search_latin_arguments_entities_ts
+  file_src_modules_search_search_resolver_ts --> file_src_modules_search_search_constants_ts
   file_src_modules_search_search_resolver_ts --> file_src_modules_search_search_entities_ts
   file_src_modules_search_search_resolver_ts --> file_src_modules_search_search_service_ts
   file_src_modules_search_search_resolver_unit_test_ts --> file_src_lexico_api_utilities_ts
   file_src_modules_search_search_resolver_unit_test_ts --> file_src_modules_search_search_entities_ts
   file_src_modules_search_search_resolver_unit_test_ts --> file_src_modules_search_search_resolver_ts
   file_src_modules_search_search_resolver_unit_test_ts --> file_src_modules_search_search_service_ts
+  file_src_modules_search_search_service_integration_test_ts --> file_src_modules_macrons_macrons_service_ts
   file_src_modules_search_search_service_integration_test_ts --> file_src_modules_search_search_entities_ts
   file_src_modules_search_search_service_integration_test_ts --> file_src_modules_search_search_service_ts
   file_src_modules_search_search_service_integration_test_ts --> file_testing_mocks_ts
   file_src_modules_search_search_service_ts --> file_src_lexico_api_types_ts
   file_src_modules_search_search_service_ts --> file_src_lexico_api_utilities_ts
+  file_src_modules_search_search_service_ts --> file_src_modules_macrons_macrons_service_ts
   file_src_modules_search_search_service_ts --> file_src_modules_search_search_constants_ts
   file_src_modules_search_search_service_ts --> file_src_modules_search_search_entities_ts
   file_src_modules_search_search_service_ts --> file_src_modules_search_search_types_ts
   file_src_modules_search_search_service_ts --> file_src_modules_search_search_utilities_ts
+  file_src_modules_search_search_service_unit_test_ts --> file_src_modules_macrons_macrons_service_ts
+  file_src_modules_search_search_service_unit_test_ts --> file_src_modules_search_search_constants_ts
   file_src_modules_search_search_service_unit_test_ts --> file_src_modules_search_search_entities_ts
   file_src_modules_search_search_service_unit_test_ts --> file_src_modules_search_search_service_ts
-  file_src_modules_search_search_service_unit_test_ts --> file_src_modules_search_search_utilities_ts
   file_src_modules_search_search_service_unit_test_ts --> file_testing_mocks_ts
+  file_src_modules_search_search_types_ts --> file_src_lexico_api_types_ts
+  file_src_modules_search_search_types_ts --> file_src_modules_search_search_entities_ts
   file_src_modules_search_search_utilities_ts --> file_src_modules_search_search_constants_ts
   file_src_modules_search_search_utilities_ts --> file_src_modules_search_search_entities_ts
   file_src_modules_search_search_utilities_ts --> file_src_modules_search_search_types_ts
@@ -308,6 +323,7 @@ flowchart LR
   LexicoApiModule
   LiteratureModule
   LoggerModule([LoggerModule])
+  MacronsModule
   SearchModule
   TypeOrmModule
   WordsModule
@@ -322,6 +338,7 @@ flowchart LR
   LexicoApiModule --> SearchModule
   LexicoApiModule --> WordsModule
   LiteratureModule --> TypeOrmModule
+  SearchModule --> MacronsModule
   SearchModule --> TypeOrmModule
   WordsModule --> TypeOrmModule
 ```
