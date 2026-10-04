@@ -37,6 +37,7 @@
     "**/.ruff_cache",
     "**/.terraform/**",
     "**/.venv/**",
+    "**/.claude/worktrees/**",
     "**/coverage/**",
     "**/dist/**",
     "**/node_modules/**",

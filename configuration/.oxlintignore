@@ -5,6 +5,12 @@
 **/*.min.js
 **/.conformetry
 **/.nx
+# Nested agent worktrees are not listed: this file's patterns match absolute
+# paths, so `**/.claude/worktrees/**` ignores every file of a checkout that is
+# itself a worktree, and no target here walks into `.claude/` anyway. The
+# targets pass this file by absolute path for the same reason: oxlint also
+# applies a relative ignore path's namesake in every ancestor directory, so a
+# worktree would inherit the enclosing checkout's copy of this file.
 **/.venv
 **/build
 **/coverage
@@ -41,4 +47,3 @@ lint-staged.config.ts
 **/.claude/skills/**
 **/.github/skills/**
 **/documentation/skills/**
-

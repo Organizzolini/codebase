@@ -89,6 +89,7 @@
     "typescript-7": "catalog:",
     "typescript-eslint": "catalog:",
     "validate-branch-name": "catalog:",
+    "verdaccio": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "catalog:",
     "vitest": "catalog:",
