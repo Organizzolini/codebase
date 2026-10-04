@@ -48,16 +48,6 @@ coverage/** linguist-generated
 .nx/** linguist-generated
 dist/** linguist-generated
 
-# Generated meanders, and the index page listing them. Unlike every other
-# application's output these are committed, so that a change to the generator
-# shows up as a reviewable diff of the drawings it produces — but they are
-# drawings, not authored source. Left unmarked, the mosaic tile sweep alone is
-# three thousand SVGs and would dominate the language bar, and the index page
-# would add most of a megabyte of HTML nobody wrote. Diffs stay collapsed by
-# default, which is what makes a three-thousand-file regeneration reviewable at
-# all.
-applications/meanderaw/output/** linguist-generated
-
 # Installed agent skills — vendored from other repositories and committed so a
 # fresh worktree has them, so Linguist should not count them as this
 # repository's code. One of them ships half a megabyte of bundled browser

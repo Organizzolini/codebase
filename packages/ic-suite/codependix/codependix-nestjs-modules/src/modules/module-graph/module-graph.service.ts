@@ -9,13 +9,12 @@ import {
   MODULE_GRAPH_UNCONNECTED,
 } from "./module-graph.constants";
 
-import type { NestjsSpelunkedTree } from "../nestjs-project/nestjs-project.types";
+import type { NestjsExploredModule } from "../nestjs-project/nestjs-project.types";
 import type {
   NestjsModuleGraph,
   NestjsModuleGraphEdge,
   NestjsModuleGraphNode,
 } from "./module-graph.types";
-import type { SpelunkedTree } from "nestjs-spelunker";
 
 /**
  * Reduces an explored NestJS container into a Graph and renders it.
@@ -28,7 +27,7 @@ import type { SpelunkedTree } from "nestjs-spelunker";
  * modules it touches. `NestjsProjectService.exploreProject` is what supplies
  * the explored tree this service turns into a Graph.
  *
- * `SpelunkerModule.explore` reports the container's view rather than the
+ * `NestjsProjectService.exploreProject` reports the container's view rather than the
  * decorators', which means every `@Global()` module is listed as an import of
  * every other module. Drawn literally, one global module contributes an edge
  * per module in the project and buries the structure worth reading, so those
@@ -48,7 +47,7 @@ export class ModuleGraphService {
 
   /** Walks the tree into the edges worth drawing and the nodes they touch. */
   private collectEdgesAndNodes(
-    tree: NestjsSpelunkedTree[],
+    tree: NestjsExploredModule[],
     ambientModuleNames: Set<string>,
   ): {
     connectedModuleNames: Set<string>;
@@ -114,7 +113,7 @@ export class ModuleGraphService {
   }
 
   /** Counts how many modules import each module. */
-  private countInboundEdges(tree: SpelunkedTree[]): Map<string, number> {
+  private countInboundEdges(tree: NestjsExploredModule[]): Map<string, number> {
     const inboundCounts = new Map<string, number>();
 
     for (const node of tree) {
@@ -135,7 +134,7 @@ export class ModuleGraphService {
    * A global module is registered into every module in the container, so it
    * arrives with one inbound edge short of the module count.
    */
-  private findAmbientModuleNames(tree: SpelunkedTree[]): Set<string> {
+  private findAmbientModuleNames(tree: NestjsExploredModule[]): Set<string> {
     const ambientModuleNames = new Set<string>();
 
     if (tree.length < MODULE_GRAPH_AMBIENT_MINIMUM_MODULES) {
@@ -167,7 +166,7 @@ export class ModuleGraphService {
 
   /** Reduces an explored container to a Graph of its module imports. */
   buildGraph(
-    tree: NestjsSpelunkedTree[],
+    tree: NestjsExploredModule[],
     projectName: string,
   ): NestjsModuleGraph {
     const ambientModuleNames = this.findAmbientModuleNames(tree);

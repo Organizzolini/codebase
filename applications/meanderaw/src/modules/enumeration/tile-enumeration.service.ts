@@ -7,11 +7,7 @@ import { TileService } from "../tile/tile.service";
 import { EDGE_BUDGET, OversizedTileError } from "./enumeration.constants";
 
 import type { EdgesDraft, Tile, TileShape } from "../tile/tile.types";
-import type {
-  EdgeAddress,
-  Environment,
-  TileEnumerationState,
-} from "./enumeration.types";
+import type { EdgeAddress, Environment } from "./enumeration.types";
 
 /**
  * Enumerates every distinct `mosaic` tile at a given size.
@@ -24,7 +20,7 @@ import type {
  * arrangement, which is what makes the walk indifferent to what the tiles
  * mean.
  *
- * One number bounds it. `SWEEP_EDGE_BUDGET` — read through
+ * One number bounds it. `DRAW_EDGE_BUDGET` — read through
  * {@link ConfigService}, defaulting to `EDGE_BUDGET` — is a ceiling on the
  * whole *tile*: how many edges it may hold, which is what keeps the space
  * small enough to look through, since the count is `2 ** edges` before
@@ -56,15 +52,15 @@ export class TileEnumerationService {
     configService: ConfigService<Environment>,
   ) {
     this.edgeBudget =
-      configService.get<number>("SWEEP_EDGE_BUDGET") ?? EDGE_BUDGET;
+      configService.get<number>("DRAW_EDGE_BUDGET") ?? EDGE_BUDGET;
   }
 
   // 🔐 Private Fields
 
   /**
-   * How many edges one tile may hold, read once from `SWEEP_EDGE_BUDGET` at
+   * How many edges one tile may hold, read once from `DRAW_EDGE_BUDGET` at
    * construction — startup validates the schema, so a malformed or
-   * out-of-range budget never reaches a running sweep.
+   * out-of-range budget never reaches a running draw run.
    */
   private readonly edgeBudget: number;
 
@@ -73,7 +69,7 @@ export class TileEnumerationService {
    *
    * Enumeration is a pure function of a shape and walks `2 ** edges`
    * assignments, so at the budget's largest shapes it is 32,768 of them —
-   * and the sweep, the charter measurement, and several tests each ask for
+   * and the draw run, the charter measurement, and several tests each ask for
    * the same shapes more than once. Keeping the answer is what makes asking
    * again free.
    */
@@ -102,58 +98,43 @@ export class TileEnumerationService {
   }
 
   /**
-   * Decides the `ordinal`-th edge both ways, recording a tile once every
-   * edge is decided.
+   * One permutation of a shape's edges as byte lookup tables: entry `value`
+   * of table `byte` is where the bits of `value`, read as edges `8 * byte`
+   * through `8 * byte + 7`, land under the permutation.
    *
-   * Nothing prunes, because nothing can: every assignment of every edge is a
-   * tile now, so a partial one is never doomed. What used to be a
-   * backtracking search over covers is counting in binary, and what keeps it
-   * finite is that the budget refused the shape before the walk began.
+   * A bitmask's image is then one lookup per byte rather than one move per
+   * edge, which is the difference between the walk costing a few
+   * nanoseconds per element of the group and costing a tile.
    */
-  private assign(ordinal: number, enumeration: TileEnumerationState): void {
-    const { edges, shape } = enumeration;
+  private byteTables(permutation: readonly number[]): Uint32Array[] {
+    return Array.from(
+      { length: Math.ceil(permutation.length / 8) },
+      (_table, byte) =>
+        Uint32Array.from({ length: 256 }, (_entry, value) => {
+          let image = 0;
 
-    if (ordinal === this.edges(shape)) {
-      this.record(enumeration);
+          for (let bit = 0; bit < 8; bit += 1) {
+            const target = permutation[byte * 8 + bit];
 
-      return;
-    }
+            if (target !== undefined && (value >>> bit) & 1) {
+              image |= 1 << target;
+            }
+          }
 
-    this.assign(ordinal + 1, enumeration);
-    this.set(edges, shape, ordinal);
-    this.assign(ordinal + 1, enumeration);
-    this.clear(edges, shape, ordinal);
+          return image >>> 0;
+        }),
+    );
   }
 
-  /** Clears the `ordinal`-th edge of a draft, undoing {@link set} on the way back out of the walk. */
-  private clear(edges: EdgesDraft, shape: TileShape, ordinal: number): void {
-    const { column, grid, row } = this.address(edges, shape, ordinal);
-    const targetRow = grid[row];
+  /** Where `mask` lands under the permutation `tables` were built from. */
+  private image(tables: readonly Uint32Array[], mask: number): number {
+    let image = 0;
 
-    if (targetRow !== undefined) {
-      targetRow[column] = false;
+    for (const [byte, table] of tables.entries()) {
+      image |= table[(mask >>> (byte * 8)) & 255] ?? 0;
     }
-  }
 
-  /**
-   * Keeps the tile the current assignment describes, unless a tile already
-   * found draws the same pattern.
-   *
-   * The key is the representative's own edge key rather than the name a
-   * drawing carries. Both are constant across a symmetry class and tell two
-   * classes of one shape apart, so either folds the walk identically — and
-   * the edge key is the one this module can read without depending on the
-   * spelling.
-   */
-  private record(enumeration: TileEnumerationState): void {
-    const { edges, shape, tilesByKey } = enumeration;
-    const tile = this.tileService.build(shape, edges);
-    const representative = this.symmetryService.canonicalTile(tile);
-    const key = this.symmetryService.edgeKey(representative);
-
-    if (!tilesByKey.has(key)) {
-      tilesByKey.set(key, representative);
-    }
+    return image >>> 0;
   }
 
   /** Sets the `ordinal`-th edge of a draft. */
@@ -175,7 +156,7 @@ export class TileEnumerationService {
 
   /**
    * Every distinct tile of the given size, one per symmetry class, ordered
-   * by canonical edge key so the sweep is stable across runs.
+   * by canonical edge key so the draw run is stable across runs.
    *
    * A shape the budget does not admit is refused rather than enumerated
    * slowly: the walk is `2 ** edges` wide, so one shape too many is not a
@@ -194,17 +175,14 @@ export class TileEnumerationService {
       return [...cached];
     }
 
-    const enumeration: TileEnumerationState = {
-      edges: this.tileService.blankEdges(shape),
-      shape,
-      tilesByKey: new Map<string, Tile>(),
-    };
+    const tiles = this.orbitMinima(rows, columns)
+      .map((mask) => {
+        const tile = this.symmetryService.canonicalTile(this.tile(shape, mask));
 
-    this.assign(0, enumeration);
-
-    const tiles = [...enumeration.tilesByKey.entries()]
-      .toSorted(([first], [second]) => first.localeCompare(second))
-      .map(([, tile]) => tile);
+        return { key: this.symmetryService.edgeKey(tile), tile };
+      })
+      .toSorted((first, second) => first.key.localeCompare(second.key))
+      .map(({ tile }) => tile);
 
     this.tilesByShape.set(`${rows}x${columns}`, tiles);
 
@@ -248,11 +226,68 @@ export class TileEnumerationService {
    * The widest column span the budget admits at a row count, which is at
    * least one at every row count the family draws in.
    *
-   * The sweep asks per row rather than reading a column cap, which is what
+   * The draw run asks per row rather than reading a column cap, which is what
    * makes the budget the single knob: five columns at two rows, one at
    * five, and the arithmetic between them says so rather than a table.
    */
   maximumColumns(rows: number): number {
     return Math.max(Math.floor(this.edgeBudget / (2 * rows - 1)), 1);
+  }
+
+  /**
+   * Every assignment of a shape's edges that no element of the symmetry
+   * group sends to a smaller one, as bitmasks — exactly one per symmetry
+   * class, in ascending order.
+   *
+   * Bit `ordinal` of a mask is edge `ordinal` in {@link edges} order. A
+   * class's smallest member is a choice rather than a fact, like its
+   * representative, but it is one a walk can make without building the
+   * class: each element of the group is applied to the mask as a few byte
+   * lookups, and the walk moves on at the first image smaller than the mask
+   * itself. Every other member of the class is never built, which is what
+   * the walk it replaced spent nearly all its time on.
+   *
+   * A shape the budget does not admit is refused, as {@link enumerate}
+   * refuses it. Bit operations are 32 bits wide, which no admitted shape
+   * comes near: a 32-edge walk is four billion assignments.
+   */
+  orbitMinima(rows: number, columns: number): number[] {
+    const shape: TileShape = { columns, rows };
+    const edges = this.edges(shape);
+
+    if (!this.isAdmitted(shape) || edges > 32) {
+      throw new OversizedTileError(shape, edges, this.edgeBudget);
+    }
+
+    const group = this.symmetryService
+      .edgePermutations(shape)
+      .slice(1)
+      .map((permutation) => this.byteTables(permutation));
+    const minima: number[] = [];
+
+    for (let mask = 0; mask < 2 ** edges; mask += 1) {
+      if (group.every((tables) => this.image(tables, mask) >= mask)) {
+        minima.push(mask);
+      }
+    }
+
+    return minima;
+  }
+
+  /**
+   * The tile a bitmask describes, edge `ordinal` set wherever bit `ordinal`
+   * is — not folded to its class's representative, which
+   * `SymmetryService.canonicalTile` does.
+   */
+  tile(shape: TileShape, mask: number): Tile {
+    const edges = this.tileService.blankEdges(shape);
+
+    for (let ordinal = 0; ordinal < this.edges(shape); ordinal += 1) {
+      if ((mask >>> ordinal) & 1) {
+        this.set(edges, shape, ordinal);
+      }
+    }
+
+    return this.tileService.build(shape, edges);
   }
 }

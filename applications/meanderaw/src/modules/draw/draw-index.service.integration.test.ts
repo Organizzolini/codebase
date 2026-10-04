@@ -105,7 +105,16 @@ describe(DrawIndexService, () => {
       record({ code: "01x01y2", family: "unclassified", lattice: "2" }),
     );
 
-    const pages = await service.build();
+    const built = await service.build();
+    const pages: Record<string, string> = {};
+
+    for (const [path, content] of Object.entries(built)) {
+      pages[path] = "";
+
+      for await (const piece of content) {
+        pages[path] += piece;
+      }
+    }
 
     expect(pages["families/snake.html"]).toContain('<section id="snake">');
     expect(pages["families/whirl.html"]).toContain('<section id="whirl">');

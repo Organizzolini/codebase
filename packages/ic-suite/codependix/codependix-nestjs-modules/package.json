@@ -7,7 +7,6 @@
     "@nestjs/common": "catalog:ic-suite",
     "@nestjs/config": "catalog:",
     "@nestjs/core": "catalog:ic-suite",
-    "nestjs-spelunker": "catalog:",
     "pino": "catalog:",
     "pino-pretty": "catalog:",
     "reflect-metadata": "catalog:"
@@ -67,5 +66,5 @@
     "strict": true
   },
   "types": "src/index.ts",
-  "version": "0.0.0"
+  "version": "0.0.1"
 }

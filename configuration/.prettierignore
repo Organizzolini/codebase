@@ -14,7 +14,10 @@ yarn.lock
 # 💾 Nx cache
 **/.conformetry
 **/.nx
-**/.claude/worktrees/**
+# Nested agent worktrees are skipped through `.gitignore`, which the root
+# target reads too, rather than here: this file resolves from `configuration/`,
+# so only an absolute-path pattern would match, and that ignores every file of
+# a checkout that is itself a worktree.
 
 # 🏗 Build outputs
 **/dist

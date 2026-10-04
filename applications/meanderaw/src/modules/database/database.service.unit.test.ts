@@ -10,6 +10,7 @@ import { Meander } from "./entities/Meander.entity";
 
 import type { MeanderRecord } from "./database.types";
 import type { EntityManager, Repository } from "typeorm";
+import type { ColumnMetadata } from "typeorm/metadata/ColumnMetadata.js";
 
 // 🧪 Tests
 
@@ -49,15 +50,6 @@ describe(DatabaseService, () => {
     expect(service).toBeDefined();
   });
 
-  describe("findAll", () => {
-    it("delegates to the repository's own find", async () => {
-      vi.mocked(meanderRepository.find).mockResolvedValue([savedMeander]);
-
-      await expect(service.findAll()).resolves.toStrictEqual([savedMeander]);
-      expect(meanderRepository.find).toHaveBeenCalledWith();
-    });
-  });
-
   describe("save", () => {
     it("delegates to the repository's own save", async () => {
       await service.save(record);
@@ -84,7 +76,7 @@ describe(DatabaseService, () => {
   });
 
   describe("saveAll", () => {
-    it("saves all records in chunks using a transaction", async () => {
+    it("writes every record through one multi-row INSERT per chunk into the schema-qualified table, leaving database-filled columns out", async () => {
       vi.mocked(meanderRepository.manager.transaction).mockImplementation(
         async (
           callbackOrLevel: unknown,
@@ -101,17 +93,41 @@ describe(DatabaseService, () => {
           }
         },
       );
-      vi.mocked(meanderRepository.manager.insert).mockResolvedValue(
-        undefined as never,
-      );
+      const column = (name: "code" | "lattice"): ColumnMetadata =>
+        createMock<ColumnMetadata>({
+          databaseName: name,
+          default: null,
+          getEntityValue: (entity: MeanderRecord) => entity[name],
+          isGenerated: false,
+        });
+
+      Object.defineProperty(meanderRepository, "metadata", {
+        value: {
+          columns: [
+            column("code"),
+            column("lattice"),
+            createMock<ColumnMetadata>({ isGenerated: true }),
+            createMock<ColumnMetadata>({
+              databaseName: "id",
+              default: () => "uuidv7()",
+              isGenerated: false,
+            }),
+          ],
+          tablePath: "meanderaw_development.meanders",
+        },
+      });
+      vi.mocked(
+        meanderRepository.manager.dataSource.driver.preparePersistentValue,
+      ).mockImplementation((value: unknown) => value);
+      vi.mocked(meanderRepository.manager.query).mockResolvedValue(undefined);
 
       const records = [record, { ...record, lattice: "3c9b" }];
       const count = await service.saveAll(records);
 
       expect(count).toBe(2);
-      expect(meanderRepository.manager.insert).toHaveBeenCalledWith(
-        Meander,
-        records,
+      expect(meanderRepository.manager.query).toHaveBeenCalledWith(
+        'INSERT INTO "meanderaw_development"."meanders" ("code", "lattice") VALUES ($1, $2), ($3, $4)',
+        ["3c9a", "3c9a", "3c9a", "3c9b"],
       );
     });
   });

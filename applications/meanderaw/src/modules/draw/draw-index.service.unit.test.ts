@@ -1,6 +1,6 @@
 import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { meanderRecord } from "../../../testing/meanders";
 import { CodeService } from "../code/code.service";
@@ -12,14 +12,17 @@ import { DrawIndexService } from "./draw-index.service";
 
 import type { MeanderFamily } from "../classification/classification.types";
 import type { Meander } from "../database/entities/Meander.entity";
+import type { MeanderPageContent } from "./draw-index.types";
 
 /**
  * Covers `DrawIndexService.render` in isolation, against a small, hand-built
  * set of rows rather than a real database round trip — the pure half of
- * spec #813's Testing Decisions for this seam. `draw-index.service.integration.test.ts`
- * covers `build`, which adds nothing over `render` beyond the query itself.
+ * spec #813's Testing Decisions for this seam, and `build` against a mocked
+ * database, for how a page is produced a batch of rows at a time.
+ * `draw-index.service.integration.test.ts` covers `build` against a real one.
  */
 describe(DrawIndexService, () => {
+  let databaseService: DatabaseService;
   let service: DrawIndexService;
 
   /** Every field a fixture row does not care about, defaulted so a case only spells out what it means to test. */
@@ -58,6 +61,7 @@ describe(DrawIndexService, () => {
     }).compile();
 
     service = await module.resolve(DrawIndexService);
+    databaseService = await module.resolve(DatabaseService);
   });
 
   it("is defined", () => {
@@ -65,22 +69,24 @@ describe(DrawIndexService, () => {
   });
 
   describe("render", () => {
-    it("handles an empty corpus", () => {
-      const pages = service.render([]);
+    it("handles an empty corpus", async () => {
+      const pages = await service.render([]);
 
       expect(pages["index.html"]).toContain("0 meanders across 0 families.");
     });
 
-    it("embeds every meander's own SVG rather than linking to a file", () => {
-      const pages = service.render([meander({ code: "a", family: "snake" })]);
+    it("embeds every meander's own SVG rather than linking to a file", async () => {
+      const pages = await service.render([
+        meander({ code: "a", family: "snake" }),
+      ]);
       const page = pages["families/snake.html"] ?? "";
 
       expect(page).toContain('<path d="M1 1"/>');
       expect(page).not.toContain("<img");
     });
 
-    it("captions each figure with its lattice address", () => {
-      const pages = service.render([
+    it("captions each figure with its lattice address", async () => {
+      const pages = await service.render([
         meander({
           code: "abc",
           columns: 2,
@@ -93,8 +99,8 @@ describe(DrawIndexService, () => {
       expect(page).toContain("<figcaption>3×2 · abc</figcaption>");
     });
 
-    it("appends every true boolean to the caption, in key-list order with isReducible last, and no number", () => {
-      const pages = service.render([
+    it("appends every true boolean to the caption, in key-list order with isReducible last, and no number", async () => {
+      const pages = await service.render([
         meander({
           characteristics: { crossCount: 3, isDots: true, isReducible: true },
           code: "abc",
@@ -110,8 +116,8 @@ describe(DrawIndexService, () => {
       );
     });
 
-    it("lays the families out according to their declared sort key", () => {
-      const pages = service.render([
+    it("lays the families out according to their declared sort key", async () => {
+      const pages = await service.render([
         meander({ code: "a", family: "parallel" }),
         meander({ code: "b", family: "boxes" }),
         meander({ code: "c", family: "snake" }),
@@ -127,8 +133,8 @@ describe(DrawIndexService, () => {
       );
     });
 
-    it("groups a null-family row into a dedicated unclassified section, sorted after every named family", () => {
-      const pages = service.render([
+    it("groups a null-family row into a dedicated unclassified section, sorted after every named family", async () => {
+      const pages = await service.render([
         meander({ code: "a", family: "unclassified" }),
         meander({ code: "b", family: "snake" }),
       ]);
@@ -144,8 +150,8 @@ describe(DrawIndexService, () => {
       );
     });
 
-    it("orders rows within a family by rows, then columns, then code", () => {
-      const pages = service.render([
+    it("orders rows within a family by rows, then columns, then code", async () => {
+      const pages = await service.render([
         meander({ code: "z", columns: 5, family: "snake", rows: 3 }),
         meander({ code: "b", columns: 2, family: "snake", rows: 4 }),
         meander({ code: "a", columns: 1, family: "snake", rows: 4 }),
@@ -163,8 +169,8 @@ describe(DrawIndexService, () => {
       expect(narrowB).toBeLessThan(wide);
     });
 
-    it("sorts multiple null families effectively", () => {
-      const pages = service.render([
+    it("sorts multiple null families effectively", async () => {
+      const pages = await service.render([
         meander({
           code: "a",
           columns: 2,
@@ -197,8 +203,8 @@ describe(DrawIndexService, () => {
       expect(shallowWide).toBeLessThan(deepNarrow);
     });
 
-    it("sorts null/null combinations", () => {
-      const pages = service.render([
+    it("sorts null/null combinations", async () => {
+      const pages = await service.render([
         meander({
           code: "a",
           columns: 2,
@@ -216,8 +222,8 @@ describe(DrawIndexService, () => {
       expect(pages["families/unclassified.html"]).toContain("2 meanders");
     });
 
-    it("sorts unrecognized families alphabetically when missing from FAMILY_SORT_KEYS", () => {
-      const pages = service.render([
+    it("sorts unrecognized families alphabetically when missing from FAMILY_SORT_KEYS", async () => {
+      const pages = await service.render([
         meander({ code: "a", family: "zeta" as MeanderFamily }),
         meander({ code: "b", family: "alpha" as MeanderFamily }),
         meander({ code: "c", family: "zeta" as MeanderFamily }),
@@ -233,8 +239,8 @@ describe(DrawIndexService, () => {
       );
     });
 
-    it("counts meanders in a section's own heading and in the page summary", () => {
-      const pages = service.render([
+    it("counts meanders in a section's own heading and in the page summary", async () => {
+      const pages = await service.render([
         meander({ code: "a", family: "snake" }),
         meander({ code: "b", family: "snake" }),
         meander({ code: "c", family: "boxes" }),
@@ -245,16 +251,18 @@ describe(DrawIndexService, () => {
       expect(pages["index.html"]).toContain("3 meanders across 2 families.");
     });
 
-    it("links each family section from a jump list", () => {
-      const pages = service.render([meander({ code: "a", family: "snake" })]);
+    it("links each family section from a jump list", async () => {
+      const pages = await service.render([
+        meander({ code: "a", family: "snake" }),
+      ]);
 
       expect(pages["index.html"]).toContain(
         '<a href="families/snake.html">snake</a>',
       );
     });
 
-    it("escapes a lattice address that would otherwise close a tag or an attribute", () => {
-      const pages = service.render([
+    it("escapes a lattice address that would otherwise close a tag or an attribute", async () => {
+      const pages = await service.render([
         meander({ code: '<script>&"', family: "snake" }),
       ]);
 
@@ -264,8 +272,8 @@ describe(DrawIndexService, () => {
       expect(pages["families/snake.html"]).not.toContain("<script>");
     });
 
-    it("defines each meander's own tile once, under its Code, and places it six times along a band", () => {
-      const pages = service.render([
+    it("defines each meander's own tile once, under its Code, and places it six times along a band", async () => {
+      const pages = await service.render([
         meander({
           code: "a",
           columns: 3,
@@ -280,8 +288,8 @@ describe(DrawIndexService, () => {
       expect(page.split('<use href="#meander-a"')).toHaveLength(7);
     });
 
-    it("steps each repeat one tile width (its columns) further along the band, so the tiles meet rather than overlap or gap", () => {
-      const pages = service.render([
+    it("steps each repeat one tile width (its columns) further along the band, so the tiles meet rather than overlap or gap", async () => {
+      const pages = await service.render([
         meander({
           code: "a",
           columns: 3,
@@ -297,8 +305,8 @@ describe(DrawIndexService, () => {
       expect(page).not.toContain('<use href="#meander-a" x="270"/>');
     });
 
-    it("sizes the band to hold every repeat at the tile's own height", () => {
-      const pages = service.render([
+    it("sizes the band to hold every repeat at the tile's own height", async () => {
+      const pages = await service.render([
         meander({
           code: "a",
           columns: 3,
@@ -311,6 +319,94 @@ describe(DrawIndexService, () => {
       expect(page).toContain(
         '<svg width="277.5" height="67.5" viewBox="0 0 277.5 67.5" fill="none"',
       );
+    });
+  });
+
+  describe("build", () => {
+    /** Reads every page `build` produces into the string it would write. */
+    const read = async (
+      pages: Record<string, MeanderPageContent>,
+    ): Promise<Record<string, string>> => {
+      const read: Record<string, string> = {};
+
+      for (const [path, content] of Object.entries(pages)) {
+        read[path] = "";
+
+        for await (const piece of content) {
+          read[path] += piece;
+        }
+      }
+
+      return read;
+    };
+
+    it("writes every count from the grouped query, before reading a row, and every row across the batches it arrives in", async () => {
+      vi.mocked(databaseService.familyShapeCounts).mockResolvedValue([
+        { columns: 1, count: 2, family: "unclassified", rows: 2 },
+        { columns: 1, count: 1, family: "unclassified", rows: 3 },
+      ]);
+      vi.mocked(databaseService.familyRows).mockImplementation(
+        // Each batch arrives the way a database read does: after an await.
+        async function* familyRows() {
+          yield await Promise.resolve([
+            meander({ code: "a", columns: 1, family: "unclassified", rows: 2 }),
+          ]);
+          yield await Promise.resolve([
+            meander({ code: "b", columns: 1, family: "unclassified", rows: 2 }),
+            meander({ code: "c", columns: 1, family: "unclassified", rows: 3 }),
+          ]);
+        },
+      );
+
+      const pages = await read(await service.build());
+      const page = pages["families/unclassified.html"] ?? "";
+
+      expect(pages["index.html"]).toContain("3 meanders across 1 families.");
+      expect(page).toContain('<p class="count">3 meanders</p>');
+      expect(page).toContain(
+        '<section id="shape-2×1">\n<h2>2×1</h2>\n<p class="count">2 meanders</p>',
+      );
+      expect(page.split('<use href="#meander-').length - 1).toBe(18);
+      expect(page.indexOf("meander-b")).toBeLessThan(
+        page.indexOf('<section id="shape-3×1">'),
+      );
+    });
+
+    it("counts a shape the grouped query missed as zero rather than failing the page", async () => {
+      vi.mocked(databaseService.familyShapeCounts).mockResolvedValue([
+        { columns: 1, count: 1, family: "unclassified", rows: 2 },
+      ]);
+      vi.mocked(databaseService.familyRows).mockImplementation(
+        async function* familyRows() {
+          yield await Promise.resolve([
+            meander({ code: "a", columns: 1, family: "unclassified", rows: 3 }),
+          ]);
+        },
+      );
+
+      const pages = await read(await service.build());
+
+      expect(pages["families/unclassified.html"]).toContain(
+        '<section id="shape-3×1">\n<h2>3×1</h2>\n<p class="count">0 meanders</p>',
+      );
+    });
+
+    it("closes a family's page even when none of its rows arrive", async () => {
+      vi.mocked(databaseService.familyShapeCounts).mockResolvedValue([
+        { columns: 1, count: 1, family: "unclassified", rows: 2 },
+      ]);
+      vi.mocked(databaseService.familyRows).mockImplementation(
+        async function* familyRows() {
+          yield await Promise.resolve([]);
+        },
+      );
+
+      const pages = await read(await service.build());
+      const page = pages["families/unclassified.html"] ?? "";
+
+      expect(page).not.toContain('<section id="shape-');
+      expect(page).not.toContain("</div>");
+      expect(page).toMatch(/<\/section>\n<\/body>\n<\/html>\n$/u);
     });
   });
 });

@@ -37,7 +37,7 @@ export interface BoundaryEdge {
  *
  * Deliberately not `Neighborhood`, `NestjsModuleGraph`, `TypescriptImportGraph`
  * or `PythonImportGraph`: reading any of those would drag `@nx/devkit`,
- * `nestjs-spelunker` and `typescript` behind anything that wants only rule
+ * `@nestjs/core` and `typescript` behind anything that wants only rule
  * evaluation. The four already share an identical `{ source, target }` edge
  * shape by construction, so the adapters that flatten them into this live in
  * the host that already builds all four — see `codependix-cli`.

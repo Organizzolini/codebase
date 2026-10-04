@@ -20,6 +20,8 @@ import { MEANDER_INSERT_CHUNK_SIZE } from "./database.constants";
 import { DatabaseService } from "./database.service";
 import { Meander } from "./entities/Meander.entity";
 
+import type { MeanderRecord } from "./database.types";
+
 // 🧪 Tests
 
 /**
@@ -63,23 +65,6 @@ describe(DatabaseService, () => {
 
   it("is defined", () => {
     expect(service).toBeDefined();
-  });
-
-  describe("findAll", () => {
-    it("resolves with an empty array before anything is committed", async () => {
-      await expect(service.findAll()).resolves.toStrictEqual([]);
-    });
-
-    it("reads every committed row", async () => {
-      await service.save(meanderRecord({ code: "findAll-first-row" }));
-      await service.save(meanderRecord({ code: "findAll-second-row" }));
-
-      const rows = await service.findAll();
-
-      expect(rows.map((row) => row.code)).toStrictEqual(
-        expect.arrayContaining(["findAll-first-row", "findAll-second-row"]),
-      );
-    });
   });
 
   describe("save", () => {
@@ -274,6 +259,102 @@ describe(DatabaseService, () => {
     });
   });
 
+  describe("familyShapeCounts", () => {
+    it("counts each family's rows at each shape, without reading a row", async () => {
+      await service.saveAll([
+        meanderRecord({
+          code: "count-a",
+          columns: 1,
+          family: "whirl",
+          rows: 40,
+        }),
+        meanderRecord({
+          code: "count-b",
+          columns: 1,
+          family: "whirl",
+          rows: 40,
+        }),
+        meanderRecord({
+          code: "count-c",
+          columns: 2,
+          family: "whirl",
+          rows: 40,
+        }),
+      ]);
+
+      const counts = await service.familyShapeCounts();
+
+      expect(counts.filter(({ rows }) => rows === 40)).toStrictEqual(
+        expect.arrayContaining([
+          { columns: 1, count: 2, family: "whirl", rows: 40 },
+          { columns: 2, count: 1, family: "whirl", rows: 40 },
+        ]),
+      );
+    });
+  });
+
+  describe("familyRows", () => {
+    it("reads one family's rows in batches, ordered by rows, then columns, then code", async () => {
+      await service.saveAll([
+        meanderRecord({
+          code: "family-rows-c",
+          columns: 1,
+          family: "swirl",
+          rows: 41,
+        }),
+        meanderRecord({
+          code: "family-rows-a",
+          columns: 2,
+          family: "swirl",
+          rows: 41,
+        }),
+        meanderRecord({
+          code: "family-rows-b",
+          columns: 1,
+          family: "swirl",
+          rows: 41,
+        }),
+        meanderRecord({
+          code: "family-rows-d",
+          columns: 1,
+          family: "swirl",
+          rows: 42,
+        }),
+        meanderRecord({
+          code: "family-rows-e",
+          columns: 1,
+          family: "clasps",
+          rows: 41,
+        }),
+      ]);
+
+      const batches: string[][] = [];
+
+      for await (const batch of service.familyRows("swirl", 2)) {
+        batches.push(batch.map(({ code }) => code));
+      }
+
+      expect(batches).toStrictEqual([
+        ["family-rows-b", "family-rows-c"],
+        ["family-rows-a", "family-rows-d"],
+      ]);
+    });
+  });
+
+  describe("codes", () => {
+    it("reads the Codes one shape's rows hold, and no other shape's", async () => {
+      await service.saveAll([
+        meanderRecord({ code: "codes-a", columns: 7, lattice: "a", rows: 9 }),
+        meanderRecord({ code: "codes-b", columns: 7, lattice: "b", rows: 9 }),
+        meanderRecord({ code: "codes-c", columns: 6, lattice: "c", rows: 9 }),
+      ]);
+
+      await expect(
+        service.codes({ columns: 7, rows: 9 }),
+      ).resolves.toStrictEqual(new Set(["codes-a", "codes-b"]));
+    });
+  });
+
   describe("saveAll", () => {
     it("writes more rows than one chunk holds, every column bound, without exceeding the driver's variable limit", async () => {
       const records = Array.from(
@@ -286,6 +367,49 @@ describe(DatabaseService, () => {
       await expect(
         repository.countBy({ code: Like("save-all-%") }),
       ).resolves.toBe(records.length);
+    });
+
+    it("stores every column exactly as save would, the JSON map and array columns included", async () => {
+      const fields: Partial<MeanderRecord> = {
+        characteristics: { aSoutheastLatinCount: 2, crossCount: 1 },
+        family: "boxes",
+        symmetricalCodes: ["01x02y12", "01x02y21"],
+      };
+
+      await service.save(meanderRecord({ ...fields, code: "saved-one" }));
+      await service.saveAll([
+        meanderRecord({ ...fields, code: "saved-all", lattice: "saved-all" }),
+      ]);
+
+      const {
+        code: _one,
+        id: _oneId,
+        ...one
+      } = await repository.findOneByOrFail({ code: "saved-one" });
+      const {
+        code: _all,
+        id: _allId,
+        lattice: _lattice,
+        ...all
+      } = await repository.findOneByOrFail({ code: "saved-all" });
+      const { lattice: _oneLattice, ...comparable } = one;
+
+      expect(all).toStrictEqual(comparable);
+    });
+
+    it("refuses a batch holding a duplicate code and writes none of it", async () => {
+      const records = [
+        meanderRecord({ code: "batch-first", lattice: "batch-first" }),
+        meanderRecord({ code: "batch-second", lattice: "batch-second" }),
+        meanderRecord({ code: "batch-first", lattice: "batch-third" }),
+      ];
+
+      await expect(service.saveAll(records)).rejects.toThrow(
+        /UNIQUE constraint/i,
+      );
+      await expect(repository.countBy({ code: Like("batch-%") })).resolves.toBe(
+        0,
+      );
     });
   });
 
@@ -320,13 +444,13 @@ describe(DatabaseService, () => {
   });
 
   describe("clear", () => {
-    it("deletes every meander row, so a regenerated sweep writes the same codes again rather than colliding with them", async () => {
+    it("deletes every meander row, so a regenerated draw run writes the same codes again rather than colliding with them", async () => {
       await service.save(meanderRecord({ code: "clear-first-row" }));
       await service.save(meanderRecord({ code: "clear-second-row" }));
 
       await service.clear();
 
-      await expect(service.findAll()).resolves.toStrictEqual([]);
+      await expect(repository.find()).resolves.toStrictEqual([]);
       await expect(
         service.save(meanderRecord({ code: "clear-first-row" })),
       ).resolves.toMatchObject({ code: "clear-first-row" });

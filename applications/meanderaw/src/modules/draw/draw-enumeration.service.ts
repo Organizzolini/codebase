@@ -3,18 +3,18 @@ import { Inject, Injectable } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { EnumerationService } from "../enumeration/enumeration.service";
 
-import { DrawRecordService } from "./draw-record.service";
+import { DrawPoolService } from "./draw-pool.service";
 
-import type { MeanderRecord, MeanderShape } from "../database/database.types";
+import type { MeanderShape } from "../database/database.types";
 
 /**
- * The sweep's lattice-first half: it enumerates the whole unit space, builds
+ * The draw run's lattice-first half: it enumerates the whole unit space, builds
  * one row per meander found, and writes them to the database.
  *
  * It runs beside the old file-writing halves rather than in place of them.
  * Those still draw the nine procedural families into `output/`, and retiring
  * them is issue #819's work, after the hardcoded corpus has been ingested —
- * so for now the sweep does both and the two corpora sit side by side.
+ * so for now the draw run does both and the two corpora sit side by side.
  *
  * Every row it writes is `isHardcoded: false`: found by a search over the
  * space rather than named by a person, which is the whole of what that
@@ -23,16 +23,16 @@ import type { MeanderRecord, MeanderShape } from "../database/database.types";
  * Nothing here filters. A meander whose structure satisfies no family's
  * defining combination is written with a null family, exactly as spec #813
  * asks — enumeration produces every structurally distinct repeat within
- * budget, and membership is decided afterwards by
- * `DrawIndexService` rather than before by a generator.
+ * budget, and membership is read off each meander's own structure
+ * afterwards rather than decided before by a generator.
  */
 @Injectable()
 export class DrawEnumerationService {
   // 🏗 Dependency Injection
 
   constructor(
-    @Inject(DrawRecordService)
-    private readonly drawRecordService: DrawRecordService,
+    @Inject(DrawPoolService)
+    private readonly drawPoolService: DrawPoolService,
     @Inject(DatabaseService)
     private readonly databaseService: DatabaseService,
     @Inject(EnumerationService)
@@ -47,35 +47,46 @@ export class DrawEnumerationService {
 
   // 🌎 Public Methods
 
+  /** Every shape the budget admits, drawn and written — which is what `draw` with no drawing named now does. */
+  async drawAll(): Promise<number> {
+    return this.persist(this.enumerationService.shapes());
+  }
+
   /**
-   * Enumerates the shapes named and writes every meander they hold, one
-   * shape's rows at a time, answering with how many were written.
+   * Draws the shapes named and writes every meander they hold, a batch of
+   * rows at a time as the pool hands them back, answering with how many were
+   * written.
    *
-   * A shape at a time rather than the whole sweep at once, for the reason
-   * the old file-writing half already writes a row count at a time: the
-   * widest shape alone holds 16,512 meanders, each carrying its own rendered
-   * SVG, and holding every shape's rows in memory before writing any of them
-   * buys nothing.
+   * A batch at a time rather than a shape at a time: the largest shape alone
+   * holds 4,196,352 meanders, and holding a shape's rows in memory before
+   * writing any of them is what bounds how far the budget can rise. Each
+   * shape is drawn across `DrawPoolService`'s worker threads, which are ended
+   * once the last shape is written — or the draw run fails — so none
+   * outlives it.
+   *
+   * A meander whose Code a row of its shape already holds is skipped rather
+   * than written: the hardcoded corpus is ingested first, and a hardcoded
+   * row keeps its Code and hand-filed family over the enumerated meander
+   * that shares it. Only enumerated meanders are folded by symmetry; a
+   * hardcoded mirror or flip of one stays a row of its own.
    */
   async persist(shapes: readonly MeanderShape[]): Promise<number> {
     let written = 0;
 
-    for (const shape of shapes) {
-      written += await this.databaseService.saveAll(this.records(shape));
+    try {
+      for (const shape of shapes) {
+        const held = await this.databaseService.codes(shape);
+
+        for await (const records of this.drawPoolService.batches(shape)) {
+          written += await this.databaseService.saveAll(
+            records.filter(({ code }) => !held.has(code)),
+          );
+        }
+      }
+    } finally {
+      await this.drawPoolService.close();
     }
 
     return written;
-  }
-
-  /** Every meander of one shape, as the rows the database holds for them. */
-  records(shape: MeanderShape): MeanderRecord[] {
-    return this.enumerationService
-      .enumerate(shape)
-      .map(({ code }) => this.drawRecordService.record(code, shape, false));
-  }
-
-  /** Every shape the budget admits, swept and written — which is what `draw` with no drawing named now does. */
-  async sweep(): Promise<number> {
-    return this.persist(this.enumerationService.shapes());
   }
 }

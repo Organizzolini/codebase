@@ -3,22 +3,15 @@ import { beforeAll, describe, expect, it } from "vitest";
 
 import { ModuleGraphService } from "./module-graph.service";
 
-import type { NestjsSpelunkedTree } from "../nestjs-project/nestjs-project.types";
+import type { NestjsExploredModule } from "../nestjs-project/nestjs-project.types";
 
-/** Builds a spelunked tree node with sensible defaults for a test. */
+/** Builds an explored module with sensible defaults for a test. */
 function buildNode(
   name: string,
   imports: string[] = [],
   declaringFile?: string,
-): NestjsSpelunkedTree {
-  return {
-    controllers: [],
-    declaringFile,
-    exports: [],
-    imports,
-    name,
-    providers: {},
-  };
+): NestjsExploredModule {
+  return { declaringFile, imports, name };
 }
 
 describe(ModuleGraphService, () => {
