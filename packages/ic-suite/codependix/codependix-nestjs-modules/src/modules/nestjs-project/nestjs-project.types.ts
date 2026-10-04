@@ -1,6 +1,17 @@
 // 🏷️ Types
 
-import type { SpelunkedTree } from "nestjs-spelunker";
+/** A module in an explored NestJS container. */
+export interface NestjsExploredModule {
+  /**
+   * Path to the file declaring the module class, relative to the project
+   * root. Undefined for a module the project imports rather than declares.
+   */
+  readonly declaringFile?: string | undefined;
+  /** Class names of the modules this one imports, in the container's order. */
+  readonly imports: string[];
+  /** The module class name. */
+  readonly name: string;
+}
 
 /** A workspace project tagged `framework:nestjs`. */
 export interface NestjsProject {
@@ -15,9 +26,4 @@ export interface NestjsProject {
    * synthetic module built from every module the package defines.
    */
   readonly rootModuleFile: string | undefined;
-}
-
-/** A node in an explored NestJS container, carrying its declaring file. */
-export interface NestjsSpelunkedTree extends SpelunkedTree {
-  readonly declaringFile?: string | undefined;
 }
