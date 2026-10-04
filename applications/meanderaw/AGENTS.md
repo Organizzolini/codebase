@@ -18,7 +18,7 @@ nx run meanderaw:start
 **A meander is a row in the Postgres database `MEANDERAW_POSTGRES_DB` names (`meanderaw_development`
 by default), addressed by its lattice address — its Code, its rows, and its columns — and nothing else.** The formatted
 Code spells out all three, so `code` alone is its identity; the row's `id` is a uuidv7
-the database assigns, which changes on every sweep and must never reach committed output. There is no `output/<family>/*.svg`
+the database assigns, which changes on every draw run and must never reach committed output. There is no `output/<family>/*.svg`
 tree, no per-family procedural motif service, and no `--type`/`--modifier` command line.
 Generation is lattice-first for every family: a budgeted enumeration produces every
 structurally distinct repeat within reach, one generic family-agnostic renderer draws each
@@ -29,41 +29,41 @@ it. See "One Command" and "Output Layout" in [README.md](./README.md).
 Rows with `isHardcoded` true hold the 963 meanders of the historical corpus past the sixteen
 edges it was extracted against, extracted once as Codes from the retired file tree;
 `CorpusService.isPreserved` is the filter, by shape against the fixed
-`HISTORICAL_CORPUS_EDGE_BUDGET` rather than the sweep's own budget, so raising
+`HISTORICAL_CORPUS_EDGE_BUDGET` rather than the draw run's own budget, so raising
 `EDGE_BUDGET` never drops one. Rows with it false hold what `EnumerationService` walks — the
 twenty-three shapes the edge budget admits, one meander per symmetry class. The corpus is
-ingested first, and the sweep skips any Code a hardcoded row already holds, so a hardcoded
+ingested first, and the draw run skips any Code a hardcoded row already holds, so a hardcoded
 row keeps its Code and hand-filed family. Only enumerated meanders are folded by
 symmetry: a hardcoded mirror or flip of an enumerated meander stays a row of its own.
-`draw-sweep.command.integration.test.ts` pins how many entries are preserved.
+`draw-run.command.integration.test.ts` pins how many entries are preserved.
 
 **What bounds the enumeration is one edge budget, not a column cap.** A repeat of `rows` by
 `columns` holds `columns * (2 * rows - 1)` edges, its only degrees of freedom — so a shape
 holds `2 ** edges` repeats and rows and columns are not independent knobs. `EDGE_BUDGET`
-caps that edge count at 22, overridable through `SWEEP_EDGE_BUDGET`, and
-`SWEEP_MINIMUM_ROWS` sets the floor at 2, which between them admit twenty-three shapes: 2×1
+caps that edge count at 22, overridable through `DRAW_EDGE_BUDGET`, and
+`DRAW_MINIMUM_ROWS` sets the floor at 2, which between them admit twenty-three shapes: 2×1
 through 2×7, 3×1 through 3×4, 4×1 through 4×3, 5×1, 5×2, 6×1, 6×2, and 7×1 through 11×1. A
 shape past the budget is refused rather than enumerated slowly. Raising it is a one-line
 change with a visible effect on the shapes `enumeration.service.unit.test.ts` asserts — which
-is the point of it being one number. The suites that run a whole sweep pin their own budget
-of 12 through `SWEEP_TEST_EDGE_BUDGET` in `testing/draw-sweep.ts`, so raising the default
+is the point of it being one number. The suites that run a whole draw run pin their own budget
+of 12 through `DRAW_TEST_EDGE_BUDGET` in `testing/draw-run.ts`, so raising the default
 does not slow them.
 
-**A sweep keeps one meander per symmetry class, and draws them across threads.**
+**A draw run keeps one meander per symmetry class, and draws them across threads.**
 `TileEnumerationService.orbitMinima` walks every edge assignment as a bitmask and keeps
 only those no element of the symmetry group sends lower — one per class, without building
 the rest — and `canonicalTile` folds each to the representative the corpus stores. The
 rest of the class is recorded, not lost: `symmetricalCodes` holds the Codes of its mirror,
 flip, and both, each at its own canonical phase (a column shift is already folded by
 `canonicalPhase`). Drawing a row is the expensive part, so `DrawPoolService` deals each
-shape's minima in batches to `SWEEP_WORKERS` threads booted from `src/worker.ts`, sorts
+shape's minima in batches to `DRAW_WORKERS` threads booted from `src/worker.ts`, sorts
 the rows back into edge-key order, and the main thread inserts them with one prepared
-multi-row `INSERT` per chunk. `SWEEP_WORKERS=0` draws in-process, which every suite pins
-through `SWEEP_TEST_WORKERS`; `draw-pool.service.integration.test.ts` is the one that
+multi-row `INSERT` per chunk. `DRAW_WORKERS=0` draws in-process, which every suite pins
+through `DRAW_TEST_WORKERS`; `draw-pool.service.integration.test.ts` is the one that
 drives real threads.
 
-**A sweep commits nothing.** The rows live in Postgres, and `output/index.html` and a page
-per family are written on every sweep but gitignored — at the default budget they are
+**A draw run commits nothing.** The rows live in Postgres, and `output/index.html` and a page
+per family are written on every draw run but gitignored — at the default budget they are
 gigabytes of HTML. `DrawIndexService.build` hands each page over as an async iterable of
 pieces, read from `DatabaseService.familyRows` a batch at a time, because a family page
 outgrows a JavaScript string; never build one as a single string or read every row first.
@@ -84,12 +84,12 @@ reclassifying the historical corpus through the new predicates explicitly out of
 
 **A duplicate lattice address within one half is a build failure.** The unique index over
 `code` refuses a second insert. Across the halves the hardcoded row wins by design: the
-corpus is ingested first and the sweep skips the Codes it already holds, which is a skip
+corpus is ingested first and the draw run skips the Codes it already holds, which is a skip
 rather than an upsert — an enumerated meander never overwrites a row.
 
 **No row stores its drawing.** The renderer draws each meander from its Code, rows, and
 columns when the index pages are built, so a renderer change needs no database change at
-all. Nothing currently checks the database against a fresh sweep, either; a Code's
+all. Nothing currently checks the database against a fresh draw run, either; a Code's
 uniqueness is the one property the schema enforces.
 
 ### The charter, and what became of its gate
@@ -99,8 +99,8 @@ They were extracted by measuring the 9,877 SVG files this repository used to com
 they are facts about output rather than intentions in source. The full charter, with the
 measurements behind it, is in [README.md](./README.md), under "Meander Charter".
 
-**The property test that gated them is gone with the corpus it swept.** It measured every
-drawing the per-family sweep produced, and that sweep no longer exists; the structural
+**The property test that gated them is gone with the corpus it drawn.** It measured every
+drawing the per-family draw run produced, and that draw run no longer exists; the structural
 facts it asserted are now computed per row by `CharacteristicsService` and stored in the
 row's one sparse `characteristics` JSON map, so they are queryable rather than gated.
 Rebuilding a gate over the database is open work, not something this project claims to
@@ -210,7 +210,7 @@ Always prefer running tasks through Nx rather than calling the underlying tools 
 
 ```bash
 nx run codebase:postgres-container:up     # The local Postgres the database lives in
-nx run meanderaw:start                    # Clear the meander rows, then regenerate the sweep into them
+nx run meanderaw:start                    # Clear the meander rows, then draw every meander back into them
 nx run meanderaw:typecheck-code,lint-code,format-code,deprecate-code,guard-code   # Every static check, in one graph
 nx run meanderaw:typecheck       # tsc --noEmit
 nx run meanderaw:oxfmt           # Formatting
@@ -218,7 +218,7 @@ nx run meanderaw:oxfmt           # Formatting
 
 This application has **one command, `draw`**, and it is the default — so `start` runs it,
 and it always writes the database `MEANDERAW_POSTGRES_DB` names. With no arguments it clears that
-database's meander rows and sweeps every meander the application can draw back into it: the whole lattice's unit space, enumerated
+database's meander rows and draws every meander the application can draw back into it: the whole lattice's unit space, enumerated
 and classified, then the historical corpus's hardcoded Codes beyond that budget. With
 `--rows`, `--columns`, and `--code` it decodes, measures, and persists that one:
 
@@ -228,14 +228,14 @@ nx run meanderaw:start --args="--rows 3 --columns 2 --code 3c9a"
 
 **Nothing but `start` runs the command**, so no aggregate target — `guard-code`, `lint-code`,
 or any other — rewrites the database as a side effect. Keep it that way: a `dependsOn` on
-`start` would run a full sweep on every check.
+`start` would run a full draw run on every check.
 
 **The database lives in Postgres, not in the repository.** The local Docker init creates
 the `meanderaw_development` database and the schema of the same name, the defaults of
 `MEANDERAW_POSTGRES_DB` and `MEANDERAW_POSTGRES_SCHEMA`. Every meanderaw variable carries the
 `MEANDERAW_` prefix, so the unprefixed `POSTGRES_*` the root `.env` sets for lexico — which
 Nx loads into every task — never reaches it — see
-[ADR 0020](../../docs/adr/0020-store-meanders-in-postgres.md). A sweep commits nothing: the
+[ADR 0020](../../docs/adr/0020-store-meanders-in-postgres.md). A draw run commits nothing: the
 HTML pages it writes stay in the gitignored `output/` — see
 [ADR 0021](../../docs/adr/0021-stop-committing-the-meander-pages.md). Integration suites start their
 own throwaway `postgres:18-alpine` container through `@testcontainers/postgresql` and hand

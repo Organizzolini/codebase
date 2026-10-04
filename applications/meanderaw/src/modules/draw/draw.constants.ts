@@ -14,14 +14,14 @@ export const DRAW_POOL_BATCH_SIZE = 1024;
 // 🚨 Errors
 
 /**
- * Thrown when a sweep worker thread could not draw a batch, naming the
+ * Thrown when a draw run worker thread could not draw a batch, naming the
  * worker's own message — the worker posts its failure back rather than
- * dying, so the sweep fails loudly instead of waiting on a reply that never
+ * dying, so the draw run fails loudly instead of waiting on a reply that never
  * comes.
  */
 export class DrawWorkerError extends Error {
   constructor(message: string) {
-    super(`a sweep worker could not draw its batch: ${message}`);
+    super(`a draw run worker could not draw its batch: ${message}`);
     this.name = "DrawWorkerError";
   }
 }
@@ -29,7 +29,7 @@ export class DrawWorkerError extends Error {
 /**
  * Thrown when `--code` is given without both `--rows` and `--columns`.
  *
- * `--code` alone is what selects the single-drawing mode over the sweep, so
+ * `--code` alone is what selects the single-drawing mode over the draw run, so
  * it cannot be `required` alongside the other two — the pair still has to be
  * checked once `--code` says which mode is meant.
  */

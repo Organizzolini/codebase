@@ -19,11 +19,11 @@ export interface CodeDrawingOptions {
  * Parsed `draw` options, in the shape nest-commander leaves them.
  *
  * Every field is optional, and that is the command's whole contract: `draw`
- * with no flag sweeps every meander the application can draw into the
+ * with no flag draws every meander the application can draw into the
  * meander database, and `draw --rows <n> --columns <n> --code <code>`
  * draws that one. `--rows`, `--columns`, and `--code` are checked together
  * rather than declared `required`, because passing none of them is how the
- * sweep is asked for — see `IncompleteCodeDrawingError`.
+ * draw run is asked for — see `IncompleteCodeDrawingError`.
  *
  * The `--type`, `--modifier`, `--sub-family`, `--strands`, `--branches`,
  * `--direction`, `--flip`, `--offset`, `--repeat-count`, and
@@ -50,7 +50,7 @@ export interface DrawWorkerTask {
 }
 
 /**
- * One drawn meander and the key the sweep orders it by: its
+ * One drawn meander and the key the draw run orders it by: its
  * representative's edge key, which is the order `TileEnumerationService`
  * enumerates in. Workers finish batches in any order, so the key is what
  * puts a shape's rows back in one stable order before they are written.

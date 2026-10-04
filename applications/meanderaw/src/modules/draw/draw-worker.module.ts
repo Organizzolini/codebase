@@ -13,7 +13,7 @@ import { DrawRecordService } from "./draw-record.service";
 import { DrawWorkerService } from "./draw-worker.service";
 
 /**
- * What one sweep worker thread boots: exactly the services that turn an
+ * What one draw run worker thread boots: exactly the services that turn an
  * orbit minimum into a row, and nothing that writes one.
  *
  * A worker thread shares no module graph with the main thread, so it boots

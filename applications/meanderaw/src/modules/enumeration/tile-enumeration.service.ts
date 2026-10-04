@@ -20,7 +20,7 @@ import type { EdgeAddress, Environment } from "./enumeration.types";
  * arrangement, which is what makes the walk indifferent to what the tiles
  * mean.
  *
- * One number bounds it. `SWEEP_EDGE_BUDGET` — read through
+ * One number bounds it. `DRAW_EDGE_BUDGET` — read through
  * {@link ConfigService}, defaulting to `EDGE_BUDGET` — is a ceiling on the
  * whole *tile*: how many edges it may hold, which is what keeps the space
  * small enough to look through, since the count is `2 ** edges` before
@@ -52,15 +52,15 @@ export class TileEnumerationService {
     configService: ConfigService<Environment>,
   ) {
     this.edgeBudget =
-      configService.get<number>("SWEEP_EDGE_BUDGET") ?? EDGE_BUDGET;
+      configService.get<number>("DRAW_EDGE_BUDGET") ?? EDGE_BUDGET;
   }
 
   // 🔐 Private Fields
 
   /**
-   * How many edges one tile may hold, read once from `SWEEP_EDGE_BUDGET` at
+   * How many edges one tile may hold, read once from `DRAW_EDGE_BUDGET` at
    * construction — startup validates the schema, so a malformed or
-   * out-of-range budget never reaches a running sweep.
+   * out-of-range budget never reaches a running draw run.
    */
   private readonly edgeBudget: number;
 
@@ -69,7 +69,7 @@ export class TileEnumerationService {
    *
    * Enumeration is a pure function of a shape and walks `2 ** edges`
    * assignments, so at the budget's largest shapes it is 32,768 of them —
-   * and the sweep, the charter measurement, and several tests each ask for
+   * and the draw run, the charter measurement, and several tests each ask for
    * the same shapes more than once. Keeping the answer is what makes asking
    * again free.
    */
@@ -156,7 +156,7 @@ export class TileEnumerationService {
 
   /**
    * Every distinct tile of the given size, one per symmetry class, ordered
-   * by canonical edge key so the sweep is stable across runs.
+   * by canonical edge key so the draw run is stable across runs.
    *
    * A shape the budget does not admit is refused rather than enumerated
    * slowly: the walk is `2 ** edges` wide, so one shape too many is not a
@@ -226,7 +226,7 @@ export class TileEnumerationService {
    * The widest column span the budget admits at a row count, which is at
    * least one at every row count the family draws in.
    *
-   * The sweep asks per row rather than reading a column cap, which is what
+   * The draw run asks per row rather than reading a column cap, which is what
    * makes the budget the single knob: five columns at two rows, one at
    * five, and the arithmetic between them says so rather than a table.
    */

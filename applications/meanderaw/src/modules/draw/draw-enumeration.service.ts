@@ -8,13 +8,13 @@ import { DrawPoolService } from "./draw-pool.service";
 import type { MeanderShape } from "../database/database.types";
 
 /**
- * The sweep's lattice-first half: it enumerates the whole unit space, builds
+ * The draw run's lattice-first half: it enumerates the whole unit space, builds
  * one row per meander found, and writes them to the database.
  *
  * It runs beside the old file-writing halves rather than in place of them.
  * Those still draw the nine procedural families into `output/`, and retiring
  * them is issue #819's work, after the hardcoded corpus has been ingested —
- * so for now the sweep does both and the two corpora sit side by side.
+ * so for now the draw run does both and the two corpora sit side by side.
  *
  * Every row it writes is `isHardcoded: false`: found by a search over the
  * space rather than named by a person, which is the whole of what that
@@ -47,15 +47,20 @@ export class DrawEnumerationService {
 
   // 🌎 Public Methods
 
+  /** Every shape the budget admits, drawn and written — which is what `draw` with no drawing named now does. */
+  async drawAll(): Promise<number> {
+    return this.persist(this.enumerationService.shapes());
+  }
+
   /**
    * Draws the shapes named and writes every meander they hold, one shape's
    * rows at a time, answering with how many were written.
    *
-   * A shape at a time rather than the whole sweep at once: the largest
+   * A shape at a time rather than the whole draw run at once: the largest
    * shape alone holds 1,049,600 meanders, and holding every shape's rows in
    * memory before writing any of them buys nothing. Each shape is drawn
    * across `DrawPoolService`'s worker threads, which are ended once the last
-   * shape is written — or the sweep fails — so none outlives it.
+   * shape is written — or the draw run fails — so none outlives it.
    *
    * A meander whose Code a row of its shape already holds is skipped rather
    * than written: the hardcoded corpus is ingested first, and a hardcoded
@@ -80,10 +85,5 @@ export class DrawEnumerationService {
     }
 
     return written;
-  }
-
-  /** Every shape the budget admits, swept and written — which is what `draw` with no drawing named now does. */
-  async sweep(): Promise<number> {
-    return this.persist(this.enumerationService.shapes());
   }
 }

@@ -49,7 +49,7 @@ import type {
  * meanders, and its page outgrows the longest string JavaScript can hold.
  * Counts come first, from one grouped query, so every heading is written
  * before any row is read. The pages are written under the gitignored
- * output directory — see `DrawCommand.sweep`, the only caller.
+ * output directory — see `DrawCommand.drawAll`, the only caller.
  */
 @Injectable()
 export class DrawIndexService {

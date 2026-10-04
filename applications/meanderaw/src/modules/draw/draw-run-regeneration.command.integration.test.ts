@@ -23,11 +23,11 @@ import {
   TEST_SCHEMA_INITIALIZATION,
 } from "../../../testing/database";
 import {
-  SWEEP_TIMEOUT_MILLISECONDS,
-  type SweepFixture,
-  sweepFixture,
-  sweepModuleMetadata,
-} from "../../../testing/draw-sweep";
+  DRAW_RUN_TIMEOUT_MILLISECONDS,
+  type DrawRunFixture,
+  drawRunFixture,
+  drawRunModuleMetadata,
+} from "../../../testing/draw-run";
 
 import { DrawCodeService } from "./draw-code.service";
 
@@ -36,28 +36,28 @@ vi.mock("node:fs/promises", () => ({
   writeFile: vi.fn<(path: string, data: unknown) => Promise<void>>(),
 }));
 
-/** Compiles a fresh sweep, over an emptied schema in `container`, with `--code` and logging mocked out. */
-async function compileSweep(
+/** Compiles a fresh draw run, over an emptied schema in `container`, with `--code` and logging mocked out. */
+async function compileDrawRun(
   container: StartedPostgreSqlContainer,
-): Promise<SweepFixture> {
+): Promise<DrawRunFixture> {
   const module = await Test.createTestingModule(
-    sweepModuleMetadata(container, [
+    drawRunModuleMetadata(container, [
       { provide: DrawCodeService, useValue: createMock<DrawCodeService>() },
       { provide: LoggerService, useValue: createMock<LoggerService>() },
     ]),
   ).compile();
 
-  return sweepFixture(module);
+  return drawRunFixture(module);
 }
 
 /**
- * `DrawCommand`'s sweep over a database an earlier sweep already
- * filled, split from `draw-sweep.command.integration.test.ts` only for time.
- * This case sweeps twice and compares the rows, so it cannot share that
- * file's sweep over an empty database; in its own file vitest runs it in
+ * `DrawCommand`'s draw run over a database an earlier draw run already
+ * filled, split from `draw-run.command.integration.test.ts` only for time.
+ * This case draws twice and compares the rows, so it cannot share that
+ * file's draw run over an empty database; in its own file vitest runs it in
  * parallel rather than after it.
  */
-describe("drawCommand sweep mode", () => {
+describe("drawCommand draw run", () => {
   let container: StartedPostgreSqlContainer;
 
   beforeAll(async () => {
@@ -72,26 +72,26 @@ describe("drawCommand sweep mode", () => {
   });
 
   describe("over an already-populated database", () => {
-    let sweep: SweepFixture;
+    let drawRun: DrawRunFixture;
 
     beforeEach(async () => {
-      sweep = await compileSweep(container);
+      drawRun = await compileDrawRun(container);
     });
 
     afterEach(async () => {
-      await sweep.dataSource.destroy();
+      await drawRun.dataSource.destroy();
     });
 
     it(
-      "regenerates an already-populated database into exactly the rows a fresh sweep writes, each under a new id",
+      "regenerates an already-populated database into exactly the rows a fresh draw run writes, each under a new id",
       async () => {
-        await sweep.command.run([], {});
+        await drawRun.command.run([], {});
 
-        const fresh = await sweep.repository.find({ order: { code: "ASC" } });
+        const fresh = await drawRun.repository.find({ order: { code: "ASC" } });
 
-        await expect(sweep.command.run([], {})).resolves.not.toThrow();
+        await expect(drawRun.command.run([], {})).resolves.not.toThrow();
 
-        const regenerated = await sweep.repository.find({
+        const regenerated = await drawRun.repository.find({
           order: { code: "ASC" },
         });
 
@@ -100,7 +100,7 @@ describe("drawCommand sweep mode", () => {
           fresh.map(({ id: _id, ...row }) => row),
         );
       },
-      SWEEP_TIMEOUT_MILLISECONDS,
+      DRAW_RUN_TIMEOUT_MILLISECONDS,
     );
   });
 });

@@ -329,7 +329,7 @@ export class CodeService {
    * The Codes of every other member of `code`'s symmetry class — its mirror,
    * its flip, and both — each at its own canonical phase, sorted.
    *
-   * These are the meanders the sweep folds into this one row, so they are
+   * These are the meanders the draw run folds into this one row, so they are
    * recorded beside it rather than lost: a Code that names a member of the
    * class names this row. A meander a reflection maps onto itself names
    * nothing, and `code` itself is never listed. `scoreTileCrossing` is the

@@ -21,7 +21,7 @@ async function compilePool(workers: number): Promise<DrawPoolService> {
       ConfigModule.forRoot({
         ignoreEnvFile: true,
         isGlobal: true,
-        validate: () => environmentSchema.parse({ SWEEP_WORKERS: workers }),
+        validate: () => environmentSchema.parse({ DRAW_WORKERS: workers }),
       }),
       CharacteristicsModule,
       ClassificationModule,

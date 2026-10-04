@@ -31,7 +31,7 @@ import { MatrixModule } from "./modules/matrix/matrix.module";
     // the measurement over that same lattice — stays resolvable in
     // `nx run meanderaw:repl`.
     //
-    // Nothing in the sweep reads a drawing: a meander is a Code, and every row
+    // Nothing in the draw run reads a drawing: a meander is a Code, and every row
     // is built by reading one. That half is kept because the historical
     // extraction is the one thing that still has to go the other way, from the
     // drawings this project started from to the Codes that name them.

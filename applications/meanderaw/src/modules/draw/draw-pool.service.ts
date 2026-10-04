@@ -26,13 +26,13 @@ import type {
  * nanoseconds an assignment, on this thread — but drawing each class's row
  * is about half a millisecond of decoding, rendering, and measuring, with
  * no meander depending on another. So the minima are cut into batches and
- * dealt to `SWEEP_WORKERS` threads, each running {@link DrawWorkerService}
+ * dealt to `DRAW_WORKERS` threads, each running {@link DrawWorkerService}
  * in its own context booted from `src/worker.ts`, while this thread only
  * deals batches and sorts what comes back. With no workers configured the
  * same service runs in-process, which is what the suites pin.
  *
- * Threads are spawned on first use and kept for the whole sweep, since
- * booting one costs about a second; {@link close} ends them, and the sweep
+ * Threads are spawned on first use and kept for the whole draw run, since
+ * booting one costs about a second; {@link close} ends them, and the draw run
  * calls it once its last shape is drawn.
  */
 @Injectable()
@@ -47,12 +47,12 @@ export class DrawPoolService implements OnModuleDestroy {
     @Inject(ConfigService)
     configService: ConfigService<Environment>,
   ) {
-    this.workerCount = configService.get<number>("SWEEP_WORKERS") ?? 0;
+    this.workerCount = configService.get<number>("DRAW_WORKERS") ?? 0;
   }
 
   // 🔐 Private Fields
 
-  /** How many threads draw a shape, read once from `SWEEP_WORKERS`; zero draws in-process. */
+  /** How many threads draw a shape, read once from `DRAW_WORKERS`; zero draws in-process. */
   private readonly workerCount: number;
 
   /** The live threads, spawned by the first shape that needs them. */

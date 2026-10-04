@@ -11,7 +11,7 @@ export interface EdgeAddress {
 }
 
 /**
- * One meander the sweep found: the Code that is its whole identity, and the
+ * One meander the draw run found: the Code that is its whole identity, and the
  * shape that Code is read at.
  *
  * The tile it was spelled from is deliberately not carried alongside. A
@@ -28,6 +28,6 @@ export interface EnumeratedMeander {
 
 /**
  * Inferred type of the validated environment variables, read to bound a
- * sweep by edge budget, rows, and columns.
+ * draw run by edge budget, rows, and columns.
  */
 export type Environment = z.infer<typeof environmentSchema>;

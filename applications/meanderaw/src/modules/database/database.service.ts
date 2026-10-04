@@ -63,10 +63,10 @@ export class DatabaseService {
   // 🌎 Public Methods
 
   /**
-   * Deletes every meander row, so a sweep regenerates the database rather
+   * Deletes every meander row, so a draw run regenerates the database rather
    * than colliding with the rows it already holds.
    *
-   * Only the `meanders` table the sweep writes is touched — any other table
+   * Only the `meanders` table the draw run writes is touched — any other table
    * survives. One `TRUNCATE`, which Postgres runs in its own transaction, so
    * a failure leaves the rows in place. Ids are uuidv7s rather than a
    * sequence, so there is no counter to restart.
@@ -76,7 +76,7 @@ export class DatabaseService {
   }
 
   /**
-   * Every Code the rows of one shape hold, for the sweep to skip: a
+   * Every Code the rows of one shape hold, for the draw run to skip: a
    * hardcoded row ingested first keeps its Code, and an enumerated meander
    * with the same Code is not written beside it.
    */
@@ -184,10 +184,10 @@ export class DatabaseService {
    * written.
    *
    * One prepared multi-row `INSERT` per chunk rather than `insert` or
-   * `save`. These rows are new by construction — the sweep walks a space, it
+   * `save`. These rows are new by construction — the draw run walks a space, it
    * does not revisit one — so `save`'s lookup per row is wasted, and
    * `insert` still spends about 100 µs a row building its statement and
-   * reading back generated ids nobody uses. The sweep writes 2,331,597 rows,
+   * reading back generated ids nobody uses. The draw run writes 2,331,597 rows,
    * so that bookkeeping alone was minutes. Each value is still converted by
    * the driver's own `preparePersistentValue`, so a row reads back exactly
    * as `save` would have stored it. Placeholders are Postgres's numbered
@@ -197,7 +197,7 @@ export class DatabaseService {
    *
    * One transaction around the whole batch rather than one per chunk. The
    * driver would otherwise commit each statement on its own, and a commit is
-   * the expensive part of a write — the sweep's rows took about a fifth as
+   * the expensive part of a write — the draw run's rows took about a fifth as
    * long this way, measured when it wrote 30,279. It also makes the refusal
    * below whole: a batch that hits a duplicate leaves no half-written shape
    * behind.
@@ -211,7 +211,7 @@ export class DatabaseService {
    * {@link save} is, which is spec #813's
    * thirty-second user story — a duplicate is a build failure rather than a
    * convention nobody checks. The refusal rejects the whole chunk rather
-   * than one row, since a sweep that carried on past a colliding address
+   * than one row, since a draw run that carried on past a colliding address
    * would commit a database missing rows nobody counted.
    */
   async saveAll(records: readonly MeanderRecord[]): Promise<number> {

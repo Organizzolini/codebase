@@ -15,7 +15,7 @@ import { CorpusService } from "./corpus.service";
  * reaches for a `--code` drawing, since ingesting the historical corpus is
  * the same "decode, measure, persist" pipeline
  * run over extracted constants instead of one command-line Code — plus the
- * enumeration, which decides which entries are beyond the sweep's reach and
+ * enumeration, which decides which entries are beyond the draw run's reach and
  * so have to be preserved at all, and the classification, which names an
  * ingested tile's family exactly as it names an enumerated one's.
  */

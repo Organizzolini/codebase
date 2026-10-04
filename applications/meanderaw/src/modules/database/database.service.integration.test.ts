@@ -444,7 +444,7 @@ describe(DatabaseService, () => {
   });
 
   describe("clear", () => {
-    it("deletes every meander row, so a regenerated sweep writes the same codes again rather than colliding with them", async () => {
+    it("deletes every meander row, so a regenerated draw run writes the same codes again rather than colliding with them", async () => {
       await service.save(meanderRecord({ code: "clear-first-row" }));
       await service.save(meanderRecord({ code: "clear-second-row" }));
 

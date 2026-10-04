@@ -12,7 +12,7 @@ import type {
 } from "./modules/draw/draw.types";
 
 /**
- * The entry point of one sweep worker thread, spawned by
+ * The entry point of one draw run worker thread, spawned by
  * `DrawPoolService`: boots `DrawWorkerModule` once, then draws every batch
  * of orbit minima it is sent and posts the rows back.
  *

@@ -249,7 +249,7 @@ describe(CorpusService, () => {
       expect(databaseService.save).not.toHaveBeenCalled();
     });
 
-    it("keeps an entry past sixteen edges even where a raised budget now enumerates it, so a hardcoded meander is never folded into the sweep", async () => {
+    it("keeps an entry past sixteen edges even where a raised budget now enumerates it, so a hardcoded meander is never folded into the draw run", async () => {
       vi.mocked(tileEnumerationService.edges).mockReturnValue(21);
 
       await expect(service.ingest([entry])).resolves.toStrictEqual([
@@ -257,7 +257,7 @@ describe(CorpusService, () => {
       ]);
     });
 
-    it("keeps an entry shallower than the sweep's own floor, which the edge boundary alone would skip", async () => {
+    it("keeps an entry shallower than the draw run's own floor, which the edge boundary alone would skip", async () => {
       vi.mocked(tileEnumerationService.edges).mockReturnValue(16);
 
       await expect(

@@ -14,11 +14,11 @@ import {
   TEST_SCHEMA_INITIALIZATION,
 } from "../../../testing/database";
 import {
-  SWEEP_TIMEOUT_MILLISECONDS,
-  type SweepFixture,
-  sweepFixture,
-  sweepModuleMetadata,
-} from "../../../testing/draw-sweep";
+  DRAW_RUN_TIMEOUT_MILLISECONDS,
+  type DrawRunFixture,
+  drawRunFixture,
+  drawRunModuleMetadata,
+} from "../../../testing/draw-run";
 import { MEANDER_FAMILIES } from "../classification/classification.constants";
 import { HISTORICAL_CORPUS } from "../corpus/historical-corpus.constants";
 
@@ -28,8 +28,8 @@ const { writes } = vi.hoisted(() => ({ writes: new Map<string, string>() }));
 
 /**
  * The page writes stay off disk, and each page's pieces are read into the
- * one string it would have written, so a case can assert on what a sweep
- * writes without a sweep writing a real file.
+ * one string it would have written, so a case can assert on what a draw run
+ * writes without a draw run writing a real file.
  */
 vi.mock("node:fs/promises", () => ({
   mkdir: vi.fn<() => Promise<void>>(),
@@ -49,33 +49,33 @@ vi.mock("node:fs/promises", () => ({
 /**
  * How many of the historical corpus's entries are preserved as hardcoded
  * rows: those past the sixteen edges the corpus was extracted against, or
- * shallower than the sweep's row floor.
+ * shallower than the draw run's row floor.
  *
  * Written down rather than computed, because the boundary is computed from
  * `HISTORICAL_CORPUS_EDGE_BUDGET` and the row floor rather than hand-listed,
  * and a number written down is what catches that computation drifting. It
  * is exactly the number of entries the retired constants files held, and it
- * does not move with `SWEEP_TEST_EDGE_BUDGET` or `EDGE_BUDGET`: raising the
- * sweep's budget never drops a hardcoded meander.
+ * does not move with `DRAW_TEST_EDGE_BUDGET` or `EDGE_BUDGET`: raising the
+ * draw run's budget never drops a hardcoded meander.
  */
 const HISTORICAL_CORPUS_PRESERVED = 1026;
 
-/** Compiles a fresh sweep, over an emptied schema in `container`, with `--code` and logging mocked out. */
-async function compileSweep(
+/** Compiles a fresh draw run, over an emptied schema in `container`, with `--code` and logging mocked out. */
+async function compileDrawRun(
   container: StartedPostgreSqlContainer,
-): Promise<SweepFixture> {
+): Promise<DrawRunFixture> {
   const module = await Test.createTestingModule(
-    sweepModuleMetadata(container, [
+    drawRunModuleMetadata(container, [
       { provide: DrawCodeService, useValue: createMock<DrawCodeService>() },
       { provide: LoggerService, useValue: createMock<LoggerService>() },
     ]),
   ).compile();
 
-  return sweepFixture(module);
+  return drawRunFixture(module);
 }
 
 /**
- * Drives the whole of `DrawCommand`'s sweep — the generalized enumeration
+ * Drives the whole of `DrawCommand`'s draw run — the generalized enumeration
  * and the historical corpus's hardcoded ingestion — against a real TypeORM
  * connection to a throwaway Postgres container, and asserts on the rows it
  * persists. It is spec
@@ -85,14 +85,14 @@ async function compileSweep(
  * one.
  *
  * The cases over a database already holding a hardcoded entry's address and
- * over an already-populated one run sweeps of their own, so they live in
- * `draw-sweep-collision.command.integration.test.ts` and
- * `draw-sweep-regeneration.command.integration.test.ts`, where vitest runs
- * them beside this file's shared sweep rather than after it.
+ * over an already-populated one run draw runs of their own, so they live in
+ * `draw-run-collision.command.integration.test.ts` and
+ * `draw-run-regeneration.command.integration.test.ts`, where vitest runs
+ * them beside this file's shared draw run rather than after it.
  *
  * **This is what proves the two halves do not collide.** Both halves
  * write through the same unique index over a meander's lattice address.
- * The hardcoded half is ingested first and the sweep skips any Code it
+ * The hardcoded half is ingested first and the draw run skips any Code it
  * already holds, so a collision across the halves resolves to the
  * hardcoded row, while one within either half still fails its insert.
  * Nothing short of running both halves for real catches a collision: each
@@ -105,7 +105,7 @@ async function compileSweep(
  * Characteristic computation. That is real work rather than a hang, and the
  * timeout is declared rather than left to the default five seconds.
  */
-describe("drawCommand sweep mode", () => {
+describe("drawCommand draw run", () => {
   let container: StartedPostgreSqlContainer;
 
   beforeAll(async () => {
@@ -120,43 +120,43 @@ describe("drawCommand sweep mode", () => {
   });
 
   /**
-   * One sweep, shared by every case that only reads what an empty database
-   * ends up holding. Each sweep costs 45–90 seconds on a CI runner, and
+   * One draw run, shared by every case that only reads what an empty database
+   * ends up holding. Each draw run costs 45–90 seconds on a CI runner, and
    * running it once per case made this file the whole of 🧑‍🔬 Test's critical
    * path. None of these cases writes to the database, so sharing the run
    * changes no assertion.
    */
   describe("over an empty database", () => {
-    let sweep: SweepFixture;
+    let drawRun: DrawRunFixture;
 
     beforeAll(async () => {
-      sweep = await compileSweep(container);
-      await sweep.command.run([], {});
-    }, SWEEP_TIMEOUT_MILLISECONDS);
+      drawRun = await compileDrawRun(container);
+      await drawRun.command.run([], {});
+    }, DRAW_RUN_TIMEOUT_MILLISECONDS);
 
     afterAll(async () => {
-      await sweep.dataSource.destroy();
+      await drawRun.dataSource.destroy();
     });
 
     it("persists both halves of the corpus, with neither colliding with the other", async () => {
-      const expectedEnumerated = sweep.enumeration
+      const expectedEnumerated = drawRun.enumeration
         .shapes()
         .reduce(
-          (total, shape) => total + sweep.enumeration.enumerate(shape).length,
+          (total, shape) => total + drawRun.enumeration.enumerate(shape).length,
           0,
         );
       const expectedHardcoded = 963;
 
       await expect(
-        sweep.repository.countBy({ isHardcoded: false }),
+        drawRun.repository.countBy({ isHardcoded: false }),
       ).resolves.toBe(expectedEnumerated);
       await expect(
-        sweep.repository.countBy({ isHardcoded: true }),
+        drawRun.repository.countBy({ isHardcoded: true }),
       ).resolves.toBe(expectedHardcoded);
     });
 
-    it("rebuilds output/index.html and a page per family from the sweep's own rows once both halves have committed", async () => {
-      const total = await sweep.repository.count();
+    it("rebuilds output/index.html and a page per family from the draw run's own rows once both halves have committed", async () => {
+      const total = await drawRun.repository.count();
 
       expect(writes.get("output/index.html")).toContain(
         `${total} meanders across`,
@@ -166,14 +166,14 @@ describe("drawCommand sweep mode", () => {
       );
     });
 
-    it("preserves exactly the 1026 entries the retired constants files held, whatever the sweep's budget", () => {
+    it("preserves exactly the 1026 entries the retired constants files held, whatever the draw run's budget", () => {
       expect(
-        HISTORICAL_CORPUS.filter((entry) => sweep.corpus.isPreserved(entry)),
+        HISTORICAL_CORPUS.filter((entry) => drawRun.corpus.isPreserved(entry)),
       ).toHaveLength(HISTORICAL_CORPUS_PRESERVED);
     });
 
     it("carries the family it was filed under, and isHardcoded, on every ingested corpus entry", async () => {
-      const rows = await sweep.repository.findBy({ isHardcoded: true });
+      const rows = await drawRun.repository.findBy({ isHardcoded: true });
 
       const filed = new Set<string>(MEANDER_FAMILIES);
 

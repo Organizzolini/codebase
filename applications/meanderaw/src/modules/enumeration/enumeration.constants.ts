@@ -1,7 +1,7 @@
 // ♟️ Constants
 
 /**
- * The shallowest band worth enumerating, and the one number this sweep adds
+ * The shallowest band worth enumerating, and the one number this draw run adds
  * to the edge budget it otherwise inherits whole.
  *
  * Two, where a tile's interior is two point rows — enough for a southward
@@ -11,18 +11,18 @@
  * one family's defining combination is about a repeat like that — every rule
  * `ClassificationService` states either counts a junction, a loop, or
  * a piece, and a band with no vertical ink can close nothing and fork
- * nowhere — so a sweep that included one row would be spending its widest
+ * nowhere — so a draw run that included one row would be spending its widest
  * shape on the corner of the space no family lives in. The budget alone
  * admits twenty-two columns there, which is 2 ** 22 assignments folded
  * through a symmetry group of 88 elements, and the largest single cost in the
- * sweep by some distance.
+ * draw run by some distance.
  *
  * There is deliberately no maximum here to match it. The budget decides the
  * deepest band, which is eleven rows at one column — see
  * `EnumerationService.shapes` — and a second number saying so would
  * be a number that could disagree with it.
  */
-export const SWEEP_MINIMUM_ROWS = 2;
+export const DRAW_MINIMUM_ROWS = 2;
 
 /**
  * How many edges one `mosaic` tile may hold, which is the one knob the size
@@ -35,14 +35,14 @@ export const SWEEP_MINIMUM_ROWS = 2;
  * 5 by 5 tile is 2 ** 45 of them.
  *
  * Twenty-two admits twenty-three shapes and 2,331,597 distinct meanders —
- * eleven rows deep at one column, seven columns wide at two rows — swept in
+ * eleven rows deep at one column, seven columns wide at two rows — drawn in
  * about nine minutes across worker threads. Sixteen admitted fourteen
  * shapes and 30,279 in about thirty seconds, and twenty-four would admit
  * about 7 million: each edge added roughly doubles both the walk and the
  * corpus. Raising it is a one-line
  * change with a visible effect on the shapes `enumeration.service.unit.test.ts`
  * asserts, which is the point of making it one number. The suites that run a
- * whole sweep pin their own budget instead, so raising this does not slow
+ * whole draw run pin their own budget instead, so raising this does not slow
  * them.
  *
  * It replaces a maximum column span, which was the knob while a degree
@@ -53,7 +53,7 @@ export const SWEEP_MINIMUM_ROWS = 2;
  * which is about what removing the degree ceiling costs in total.
  *
  * This is now only the *default*. `TileEnumerationService` reads the
- * effective budget from `SWEEP_EDGE_BUDGET`, and this constant is what that
+ * effective budget from `DRAW_EDGE_BUDGET`, and this constant is what that
  * environment variable defaults to, so a bare invocation walks exactly the
  * space it walks today.
  */

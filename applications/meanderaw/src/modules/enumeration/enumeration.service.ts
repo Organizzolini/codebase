@@ -3,7 +3,7 @@ import { ConfigService } from "@nestjs/config";
 
 import { CodeService } from "../code/code.service";
 
-import { SWEEP_MINIMUM_ROWS } from "./enumeration.constants";
+import { DRAW_MINIMUM_ROWS } from "./enumeration.constants";
 import { TileEnumerationService } from "./tile-enumeration.service";
 
 import type { MeanderShape } from "../database/database.types";
@@ -59,25 +59,24 @@ export class EnumerationService {
     configService: ConfigService<Environment>,
   ) {
     this.maximumColumns =
-      configService.get<number>("SWEEP_MAXIMUM_COLUMNS") ??
+      configService.get<number>("DRAW_MAXIMUM_COLUMNS") ??
       Number.MAX_SAFE_INTEGER;
     this.maximumRows =
-      configService.get<number>("SWEEP_MAXIMUM_ROWS") ??
-      Number.MAX_SAFE_INTEGER;
+      configService.get<number>("DRAW_MAXIMUM_ROWS") ?? Number.MAX_SAFE_INTEGER;
   }
 
   // 🔐 Private Fields
 
   /**
-   * The widest column count the sweep sweeps, read once from
-   * `SWEEP_MAXIMUM_COLUMNS` at construction and layered on top of the edge
+   * The widest column count the draw run draws, read once from
+   * `DRAW_MAXIMUM_COLUMNS` at construction and layered on top of the edge
    * budget as a review filter rather than replacing it.
    */
   private readonly maximumColumns: number;
 
   /**
-   * The deepest row count the sweep sweeps, read once from
-   * `SWEEP_MAXIMUM_ROWS` at construction and layered on top of the edge
+   * The deepest row count the draw run draws, read once from
+   * `DRAW_MAXIMUM_ROWS` at construction and layered on top of the edge
    * budget as a review filter rather than replacing it.
    */
   private readonly maximumRows: number;
@@ -107,33 +106,33 @@ export class EnumerationService {
     }));
   }
 
-  /** Whether the budget admits a shape, which is the only thing that decides whether the sweep walks it. */
+  /** Whether the budget admits a shape, which is the only thing that decides whether the draw run walks it. */
   isAdmitted(shape: MeanderShape): boolean {
     return this.tileEnumerationService.isAdmitted(shape);
   }
 
   /**
-   * Every shape the sweep covers, shallowest first and narrowest first
+   * Every shape the draw run covers, shallowest first and narrowest first
    * within a row count.
    *
-   * Both ends are the budget's rather than a table's, by default. The sweep
-   * starts at {@link SWEEP_MINIMUM_ROWS} and climbs while a single-column
+   * Both ends are the budget's rather than a table's, by default. The draw run
+   * starts at {@link DRAW_MINIMUM_ROWS} and climbs while a single-column
    * repeat is still admitted, which stops it at eleven rows unconfigured;
    * the column span at each row count is however many the budget leaves,
    * which is seven at two rows and one from seven rows down.
-   * `SWEEP_MAXIMUM_ROWS` and `SWEEP_MAXIMUM_COLUMNS` layer a further review
+   * `DRAW_MAXIMUM_ROWS` and `DRAW_MAXIMUM_COLUMNS` layer a further review
    * filter on top of those two ends — never past them, since a shape past
    * the budget is still refused — and default to unbounded, so an
-   * unconfigured sweep is
+   * unconfigured draw run is
    * exactly this. A family's own row range is not consulted here and could
-   * not be: enumeration applies no per-family filter, and a repeat is swept
+   * not be: enumeration applies no per-family filter, and a repeat is drawn
    * because it fits, not because some family was expecting it.
    */
   shapes(): MeanderShape[] {
     const shapes: MeanderShape[] = [];
 
     for (
-      let rows = SWEEP_MINIMUM_ROWS;
+      let rows = DRAW_MINIMUM_ROWS;
       rows <= this.maximumRows && this.isAdmitted({ columns: 1, rows });
       rows += 1
     ) {

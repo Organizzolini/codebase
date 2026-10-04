@@ -4,7 +4,7 @@ import { CharacteristicsService } from "../characteristics/characteristics.servi
 import { ClassificationService } from "../classification/classification.service";
 import { CodeService } from "../code/code.service";
 import { DatabaseService } from "../database/database.service";
-import { SWEEP_MINIMUM_ROWS } from "../enumeration/enumeration.constants";
+import { DRAW_MINIMUM_ROWS } from "../enumeration/enumeration.constants";
 import { TileEnumerationService } from "../enumeration/tile-enumeration.service";
 
 import {
@@ -28,13 +28,13 @@ import type { CorpusEntry, CorpusFamily } from "./corpus.types";
  * reproduced by `EnumerationService` rather than preserved, so only the
  * entries beyond it are ingested — and that reach is two bounds rather than
  * one. `HISTORICAL_CORPUS_EDGE_BUDGET` is the edge boundary, fixed at the
- * budget the corpus was drawn against rather than following the sweep's
- * own; and `SWEEP_MINIMUM_ROWS` is the floor the sweep starts at, because a
+ * budget the corpus was drawn against rather than following the draw run's
+ * own; and `DRAW_MINIMUM_ROWS` is the floor the draw run starts at, because a
  * single-row band's interior is a single row with no southward edge anywhere
  * in it. An entry is kept when either bound puts it outside, which is what
  * lets `parallel`'s five single-row entries stay in the corpus while sitting
- * comfortably inside the budget. A raised sweep budget moves nothing here:
- * every preserved entry stays a hardcoded row, and the sweep skips the
+ * comfortably inside the budget. A raised draw run budget moves nothing here:
+ * every preserved entry stays a hardcoded row, and the draw run skips the
  * Codes they hold rather than folding them.
  *
  * **A Hardcoded entry's family is provenance, not a verdict.** The
@@ -57,7 +57,7 @@ import type { CorpusEntry, CorpusFamily } from "./corpus.types";
  * than its unit.
  *
  * A Code that collides with one already committed — an Enumerated row, or
- * another entry ingested earlier in the same sweep — fails loudly through
+ * another entry ingested earlier in the same draw run — fails loudly through
  * {@link DuplicateCorpusCodeError} rather than silently overwriting, since
  * `DatabaseService.save` relies on the `code` column's own unique constraint
  * rather than checking beforehand.
@@ -169,15 +169,15 @@ export class CorpusService {
 
   /**
    * Whether an entry is preserved as a hardcoded row: past the sixteen edges
-   * the corpus was extracted against, or shallower than the sweep's row
-   * floor. Neither bound reads the sweep's own budget, so raising it never
+   * the corpus was extracted against, or shallower than the draw run's row
+   * floor. Neither bound reads the draw run's own budget, so raising it never
    * drops an entry.
    */
   isPreserved(entry: CorpusEntry): boolean {
     const { columns, rows } = entry;
 
     return (
-      rows < SWEEP_MINIMUM_ROWS ||
+      rows < DRAW_MINIMUM_ROWS ||
       this.tileEnumerationService.edges({ columns, rows }) >
         HISTORICAL_CORPUS_EDGE_BUDGET
     );

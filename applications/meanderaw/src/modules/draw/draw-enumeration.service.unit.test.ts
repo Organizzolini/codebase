@@ -68,7 +68,7 @@ describe(DrawEnumerationService, () => {
   });
 
   describe("persist", () => {
-    it("writes one shape's rows at a time rather than the whole sweep at once", async () => {
+    it("writes one shape's rows at a time rather than the whole draw run at once", async () => {
       await service.persist([
         { columns: 1, rows: 3 },
         { columns: 2, rows: 3 },
@@ -106,7 +106,7 @@ describe(DrawEnumerationService, () => {
       expect(databaseService.saveAll).toHaveBeenCalledWith([record]);
     });
 
-    it("ends the pool's threads once the sweep is written, or fails", async () => {
+    it("ends the pool's threads once the draw run is written, or fails", async () => {
       vi.mocked(databaseService.saveAll).mockRejectedValueOnce(
         new Error("UNIQUE constraint failed"),
       );
@@ -118,9 +118,9 @@ describe(DrawEnumerationService, () => {
     });
   });
 
-  describe("sweep", () => {
+  describe("drawAll", () => {
     it("walks every shape the budget admits, rather than a range of its own", async () => {
-      await service.sweep();
+      await service.drawAll();
 
       expect(vi.mocked(drawPoolService.records).mock.calls).toStrictEqual([
         [{ columns: 1, rows: 3 }],

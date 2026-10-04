@@ -152,7 +152,7 @@ describe(TileEnumerationService, () => {
 
   describe("the configured edge budget", () => {
     it("reads a smaller budget than today's default from the environment", async () => {
-      const configured = await createService({ SWEEP_EDGE_BUDGET: 10 });
+      const configured = await createService({ DRAW_EDGE_BUDGET: 10 });
 
       expect(configured.isAdmitted({ columns: 3, rows: 2 })).toBe(true);
       expect(configured.isAdmitted({ columns: 4, rows: 2 })).toBe(false);
@@ -160,7 +160,7 @@ describe(TileEnumerationService, () => {
     });
 
     it("names the configured budget rather than today's default in a refusal", async () => {
-      const configured = await createService({ SWEEP_EDGE_BUDGET: 10 });
+      const configured = await createService({ DRAW_EDGE_BUDGET: 10 });
 
       expect(() => configured.enumerate(2, 4)).toThrow(
         /past the budget of 10/u,
@@ -235,7 +235,7 @@ describe(TileEnumerationService, () => {
       expect(new Set(identifiers).size).toBe(tiles.length);
     });
 
-    it("orders tiles by the key it folds on, so a sweep is stable across runs", () => {
+    it("orders tiles by the key it folds on, so a draw run is stable across runs", () => {
       const keys = service
         .enumerate(4, 1)
         .map((tile) => symmetryService.edgeKey(tile));
@@ -352,7 +352,7 @@ describe(TileEnumerationService, () => {
      * cover of its cells. That is a region strictly inside a ceiling of two
      * direction bits, so filtering the wider enumeration down to it has to
      * return exactly the set the narrower rule returned, shape for shape.
-     * The five shapes the old sweep committed are the last five rows here,
+     * The five shapes the old draw run committed are the last five rows here,
      * and 8 / 15 / 18 / 50 / 40 are the file counts those directories held.
      */
     it.each(ADMITTED_SHAPES)(

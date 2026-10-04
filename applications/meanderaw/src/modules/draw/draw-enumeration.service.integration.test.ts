@@ -15,9 +15,9 @@ import {
   testDataSourceOptions,
 } from "../../../testing/database";
 import {
-  SWEEP_TEST_EDGE_BUDGET,
-  SWEEP_TEST_WORKERS,
-} from "../../../testing/sweep-budget";
+  DRAW_TEST_EDGE_BUDGET,
+  DRAW_TEST_WORKERS,
+} from "../../../testing/draw-run-budget";
 import { environmentSchema } from "../../constants";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
 import { ClassificationService } from "../classification/classification.service";
@@ -44,19 +44,19 @@ import type { Environment } from "../enumeration/enumeration.types";
 // 🔧 Configuration
 
 /**
- * How long the whole sweep may take. At `SWEEP_TEST_EDGE_BUDGET` it walks
+ * How long the whole draw run may take. At `DRAW_TEST_EDGE_BUDGET` it walks
  * `2 ** edges` assignments at each of fourteen shapes, renders an SVG for
  * every meander it keeps, and writes 30,279 rows — about ten seconds
  * locally, and several times that on a shared CI runner. Bounded rather
  * than removed, so a pinned budget raised past what anybody meant fails here
  * rather than running forever.
  */
-const SWEEP_TIMEOUT_MILLISECONDS = 300_000;
+const DRAW_RUN_TIMEOUT_MILLISECONDS = 300_000;
 
 // 🧪 Tests
 
 /**
- * Drives the sweep's lattice-first half against a real TypeORM connection to
+ * Drives the draw run's lattice-first half against a real TypeORM connection to
  * a throwaway Postgres container, per spec #813's Testing Decisions:
  * this is the highest seam, and it asserts on persisted rows rather than on
  * a mocked service graph.
@@ -78,8 +78,8 @@ describe(DrawEnumerationService, () => {
       .start();
 
     const environment = environmentSchema.parse({
-      SWEEP_EDGE_BUDGET: SWEEP_TEST_EDGE_BUDGET,
-      SWEEP_WORKERS: SWEEP_TEST_WORKERS,
+      DRAW_EDGE_BUDGET: DRAW_TEST_EDGE_BUDGET,
+      DRAW_WORKERS: DRAW_TEST_WORKERS,
     });
     const module = await Test.createTestingModule({
       imports: [
@@ -118,8 +118,8 @@ describe(DrawEnumerationService, () => {
     dataSource = module.get(DataSource);
     repository = module.get(getRepositoryToken(Meander));
 
-    await service.sweep();
-  }, SWEEP_TIMEOUT_MILLISECONDS);
+    await service.drawAll();
+  }, DRAW_RUN_TIMEOUT_MILLISECONDS);
 
   afterAll(async () => {
     await dataSource.destroy();
@@ -130,7 +130,7 @@ describe(DrawEnumerationService, () => {
     expect(service).toBeDefined();
   });
 
-  describe("sweep", () => {
+  describe("drawAll", () => {
     // 🎯 The acceptance criterion, as one number: every structurally
     // distinct meander the pinned test budget admits, at every shape it
     // admits one at, persisted: nine shapes, from 2 by 1 to 6 by 1.
@@ -177,7 +177,7 @@ describe(DrawEnumerationService, () => {
       expect(folded.filter((code) => codes.has(code))).toStrictEqual([]);
     });
 
-    // 🎯 The hardcoded corpus is ingested before the sweep, and a meander
+    // 🎯 The hardcoded corpus is ingested before the draw run, and a meander
     // whose Code a row already holds is skipped rather than refused — so a
     // second pass over a shape whose every Code is held writes nothing and
     // raises no unique-index error.
@@ -193,10 +193,10 @@ describe(DrawEnumerationService, () => {
     // 🎯 Family is decided by structure, not by which generator drew
     // something — the whole point of this ticket. The histogram is pinned
     // rather than described: 958 meanders belong to no family, which spec
-    // #813 asks for outright rather than filtering them from the sweep, and
+    // #813 asks for outright rather than filtering them from the draw run, and
     // `stipple` and `cross` claim most of the rest. Families whose smallest
     // member needs more than the pinned budget of 12 edges — `swirl` and
-    // `whirl` among them — claim nothing, because no shape this sweep walks
+    // `whirl` among them — claim nothing, because no shape this draw run walks
     // admits one.
     it("classifies each enumerated meander into a single family according to hierarchical precedence", async () => {
       const counted = await repository
