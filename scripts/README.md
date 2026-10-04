@@ -407,7 +407,6 @@ unread unless it is adopted under the current machine's id.
 | `verify-task-database.sh` | setup and cleanup | Discards any database that fails `PRAGMA integrity_check` |
 | `adopt-task-database.sh` | setup, after the restore | Renames the newest restored database to this machine's id and discards the rest |
 | `keep-task-database.sh` | cleanup, before the save | Keeps only the newest database, and warns if there was more than one |
-| `report-task-database.sh` | setup and cleanup (diagnostic) | Logs row counts, tasks that ran without a cached result, and probe tasks' recent hashes; with `--inputs`, digests of their resolved inputs |
 | `task-database.sh` | sourced by the above | Lists, picks, and discards databases along with their `-wal`, `-shm`, and `-journal` files |
 
 All of them honour `NX_WORKSPACE_DATA_DIRECTORY`. `adopt-task-database.sh`
