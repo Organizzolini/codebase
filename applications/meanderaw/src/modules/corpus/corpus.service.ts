@@ -4,10 +4,14 @@ import { CharacteristicsService } from "../characteristics/characteristics.servi
 import { ClassificationService } from "../classification/classification.service";
 import { CodeService } from "../code/code.service";
 import { DatabaseService } from "../database/database.service";
-import { SWEEP_MINIMUM_ROWS } from "../enumeration/enumeration.constants";
-import { EnumerationService } from "../enumeration/enumeration.service";
+import { DRAW_MINIMUM_ROWS } from "../enumeration/enumeration.constants";
+import { TileEnumerationService } from "../enumeration/tile-enumeration.service";
 
-import { CORPUS_FAMILIES, DuplicateCorpusCodeError } from "./corpus.constants";
+import {
+  CORPUS_FAMILIES,
+  DuplicateCorpusCodeError,
+  HISTORICAL_CORPUS_EDGE_BUDGET,
+} from "./corpus.constants";
 
 import type { Meander } from "../database/entities/Meander.entity";
 import type { CorpusEntry, CorpusFamily } from "./corpus.types";
@@ -19,17 +23,19 @@ import type { CorpusEntry, CorpusFamily } from "./corpus.types";
  * and a Hardcoded row are produced by the exact same pipeline, and only ever
  * differ in where their Code came from.
  *
- * **Which entries it ingests is computed, not listed.** A meander the sweep
- * already reaches is reproduced by `EnumerationService` rather than
- * preserved, so only the entries beyond that reach are ingested — and the
- * reach is two bounds rather than one. `EnumerationService.isAdmitted` is
- * the edge budget, which is what makes enumeration possible at all; and
- * `SWEEP_MINIMUM_ROWS` is the floor the sweep starts at, because a
+ * **Which entries it ingests is computed, not listed.** The corpus was
+ * extracted against a sixteen-edge budget, and an entry within it was
+ * reproduced by `EnumerationService` rather than preserved, so only the
+ * entries beyond it are ingested — and that reach is two bounds rather than
+ * one. `HISTORICAL_CORPUS_EDGE_BUDGET` is the edge boundary, fixed at the
+ * budget the corpus was drawn against rather than following the draw run's
+ * own; and `DRAW_MINIMUM_ROWS` is the floor the draw run starts at, because a
  * single-row band's interior is a single row with no southward edge anywhere
  * in it. An entry is kept when either bound puts it outside, which is what
  * lets `parallel`'s five single-row entries stay in the corpus while sitting
- * comfortably inside the budget. Nothing hand-lists the split, so raising
- * the budget moves the boundary here rather than leaving a stale list behind.
+ * comfortably inside the budget. A raised draw run budget moves nothing here:
+ * every preserved entry stays a hardcoded row, and the draw run skips the
+ * Codes they hold rather than folding them.
  *
  * **A Hardcoded entry's family is provenance, not a verdict.** The
  * `family` column records the first `output/<family>/` directory the
@@ -37,7 +43,7 @@ import type { CorpusEntry, CorpusFamily } from "./corpus.types";
  * in places — see
  * `docs/adr/0013-hold-the-historical-corpus-as-a-test-set.md`. Ingesting
  * family by family in `CORPUS_FAMILIES` order is that same tree order, kept
- * so the committed database's own row order is a fact about the tree rather
+ * so the local database's own row order is a fact about the tree rather
  * than about whatever order a constant happens to be written in.
  *
  * A sub-family, by contrast, is **named rather than carried**:
@@ -51,7 +57,7 @@ import type { CorpusEntry, CorpusFamily } from "./corpus.types";
  * than its unit.
  *
  * A Code that collides with one already committed — an Enumerated row, or
- * another entry ingested earlier in the same sweep — fails loudly through
+ * another entry ingested earlier in the same draw run — fails loudly through
  * {@link DuplicateCorpusCodeError} rather than silently overwriting, since
  * `DatabaseService.save` relies on the `code` column's own unique constraint
  * rather than checking beforehand.
@@ -69,8 +75,8 @@ export class CorpusService {
     private readonly databaseService: DatabaseService,
     @Inject(CodeService)
     private readonly codeService: CodeService,
-    @Inject(EnumerationService)
-    private readonly enumerationService: EnumerationService,
+    @Inject(TileEnumerationService)
+    private readonly tileEnumerationService: TileEnumerationService,
   ) {}
 
   // 🔐 Private Fields
@@ -123,6 +129,11 @@ export class CorpusService {
         lattice: canonical.digits,
         repeats: canonical.repeats,
         rows,
+        symmetricalCodes: this.codeService.symmetricalCodes(
+          canonical,
+          (phase) =>
+            this.characteristicsService.tileCrossingComponentDeltaCount(phase),
+        ),
       });
     } catch (error) {
       throw new DuplicateCorpusCodeError(formatted, family, error);
@@ -132,7 +143,7 @@ export class CorpusService {
   // 🌎 Public Methods
 
   /**
-   * Ingests every entry of `corpus` that {@link isBeyondEnumeration} keeps,
+   * Ingests every entry of `corpus` that {@link isPreserved} keeps,
    * family by family in `CORPUS_FAMILIES` order and in the corpus's own
    * order within a family, resolving with every row saved.
    *
@@ -142,7 +153,7 @@ export class CorpusService {
    * would reach the database in whatever order their connections won.
    */
   async ingest(corpus: readonly CorpusEntry[]): Promise<Meander[]> {
-    const beyond = corpus.filter((entry) => this.isBeyondEnumeration(entry));
+    const beyond = corpus.filter((entry) => this.isPreserved(entry));
     const saved: Meander[] = [];
 
     for (const family of CORPUS_FAMILIES) {
@@ -157,19 +168,18 @@ export class CorpusService {
   }
 
   /**
-   * Whether an entry lies beyond what the sweep enumerates, and so has to be
-   * preserved rather than rediscovered.
-   *
-   * Both bounds are asked rather than restated: the edge budget through
-   * `EnumerationService`, and the sweep's own row floor. A shape outside
-   * either one is outside the sweep.
+   * Whether an entry is preserved as a hardcoded row: past the sixteen edges
+   * the corpus was extracted against, or shallower than the draw run's row
+   * floor. Neither bound reads the draw run's own budget, so raising it never
+   * drops an entry.
    */
-  isBeyondEnumeration(entry: CorpusEntry): boolean {
+  isPreserved(entry: CorpusEntry): boolean {
     const { columns, rows } = entry;
 
     return (
-      rows < SWEEP_MINIMUM_ROWS ||
-      !this.enumerationService.isAdmitted({ columns, rows })
+      rows < DRAW_MINIMUM_ROWS ||
+      this.tileEnumerationService.edges({ columns, rows }) >
+        HISTORICAL_CORPUS_EDGE_BUDGET
     );
   }
 }

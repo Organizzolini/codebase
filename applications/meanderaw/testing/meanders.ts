@@ -129,6 +129,7 @@ export function meanderRecord(
     lattice: "0",
     repeats: 1,
     rows: 2,
+    symmetricalCodes: [],
     ...overrides,
   };
 }

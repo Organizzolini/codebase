@@ -28,7 +28,7 @@ import type { CorpusEntry } from "./corpus.types";
  * family rule that disagrees with one of these labels is a disagreement to
  * adjudicate by looking at the drawing, not a rule that has failed.
  *
- * **Which of these the sweep ingests is computed, not listed.** A meander
+ * **Which of these the draw run ingests is computed, not listed.** A meander
  * the enumeration already reaches is reproduced by `EnumerationService`
  * rather than preserved here, so `CorpusService.ingest` keeps only the
  * entries beyond that reach — see its own doc comment for the two bounds

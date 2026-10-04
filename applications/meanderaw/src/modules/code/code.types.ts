@@ -19,7 +19,7 @@ export type Code = string;
  * that every consumer built in order to walk. The array of arrays gave
  * nothing the string does not: the same points in the same order, at the
  * cost of allocating one object per lattice point of every one of the 31,244
- * meanders the sweep draws. What survives of it is the four-direction
+ * meanders the draw run draws. What survives of it is the four-direction
  * reading a caller gets back for one point, which is where the bit meanings
  * are written down — see `Directions`.
  *

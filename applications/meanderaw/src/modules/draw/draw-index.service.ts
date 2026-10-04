@@ -17,8 +17,14 @@ import {
   UNCLASSIFIED_FAMILY_LABEL,
 } from "./draw-index.constants";
 
+import type { MeanderFamily } from "../classification/classification.types";
+import type { MeanderFamilyShapeCount } from "../database/database.types";
 import type { Meander } from "../database/entities/Meander.entity";
-import type { MeanderIndexGroup } from "./draw-index.types";
+import type {
+  MeanderPageContent,
+  MeanderPageSource,
+  MeanderRowBatches,
+} from "./draw-index.types";
 
 /**
  * Renders the one page the whole committed corpus is looked through: every
@@ -38,8 +44,12 @@ import type { MeanderIndexGroup } from "./draw-index.types";
  * where the repeats sit, and `DrawingService` stays the only thing
  * that decides what one of them draws.
  *
- * The page is written at the root of the output directory, beside the
- * database it was built from — see `DrawCommand.sweep`, the only caller.
+ * Every page is produced a batch of rows at a time rather than as one
+ * string: at the default edge budget a family holds over a million
+ * meanders, and its page outgrows the longest string JavaScript can hold.
+ * Counts come first, from one grouped query, so every heading is written
+ * before any row is read. The pages are written under the gitignored
+ * output directory — see `DrawCommand.drawAll`, the only caller.
  */
 @Injectable()
 export class DrawIndexService {
@@ -58,19 +68,10 @@ export class DrawIndexService {
 
   // 🔐 Private Fields
 
-  /** Orders rows within a family the way a reader reads them: shallower repeats before deeper ones, narrower before wider, and numeric-aware within `code` itself. */
-
-  /**
-   * Where each family sits on the page, read off the order `SUPPORTED_TYPES`
-   * declares them in. A null family — the unclassified section — ranks one
-   * past the last of them, so it sorts after every named family rather than
-   * by the alphabetical accident of its own label.
-   */
   // 🔑 Public Fields
 
   // 🔏 Private Methods
 
-  /** Throws unless `svg` looks like a complete, well-formed inline SVG document. */
   /** One meander's own caption: its lattice address, and its subFamily where it earned one. */
   private caption(meander: Meander): string {
     const { characteristics, code, columns, rows } = meander;
@@ -84,6 +85,43 @@ export class DrawIndexService {
     );
   }
 
+  /** Reads one page's pieces into the one string a test asserts on. */
+  private async collect(content: MeanderPageContent): Promise<string> {
+    let page = "";
+
+    for await (const piece of content) {
+      page += piece;
+    }
+
+    return page;
+  }
+
+  /**
+   * Orders families the way the index lists them: by their declared sort
+   * key, then alphabetically, with `unclassified` last.
+   */
+  private compareFamilies(left: string, right: string): number {
+    return (
+      this.familyRank(left) - this.familyRank(right) ||
+      left.localeCompare(right)
+    );
+  }
+
+  /** The opening every page shares, through its own heading. */
+  private documentHead(title: string, heading: string): string {
+    return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${title}</title>
+<style>${PAGE_STYLES}</style>
+</head>
+<body>
+<h1>${heading}</h1>
+`;
+  }
+
   /** Escapes the few characters that would otherwise close a tag or an attribute. */
   private escape(value: string): string {
     return value
@@ -93,46 +131,145 @@ export class DrawIndexService {
       .replaceAll('"', "&quot;");
   }
 
-  /** Ranks a family by its declared order, so `null` — the unclassified section — sorts after every named one. */
+  /** One family's page, a batch of rows at a time. */
+  private async *familyPage(
+    family: MeanderFamily,
+    counts: readonly MeanderFamilyShapeCount[],
+    rows: MeanderRowBatches,
+  ): AsyncGenerator<string> {
+    const label = this.escape(this.label(family));
+    const total = counts.reduce((sum, { count }) => sum + count, 0);
+
+    yield this.documentHead(
+      `Meanderaw - ${label}`,
+      `<a href="../index.html">Meanderaw</a> / ${label}`,
+    );
+    yield* family === "unclassified"
+      ? this.unclassifiedSection(counts, total, rows)
+      : this.namedSection(label, total, rows);
+    yield "\n</body>\n</html>\n";
+  }
+
+  /** Where a family sits in the index: its declared sort key, unknown families after every known one, and `unclassified` last. */
+  private familyRank(family: string): number {
+    return family === "unclassified"
+      ? Number.POSITIVE_INFINITY
+      : (FAMILY_SORT_KEYS[family] ?? Number.MAX_SAFE_INTEGER);
+  }
 
   /** Rounds and trims one band coordinate the same way every drawn coordinate is. */
   private format(value: number): string {
     return this.geometryService.formatCoordinate(value);
   }
 
-  /** Collects the rows into their family groups, the groups in family order and the rows within each in reading order. */
-  private groupByFamily(meanders: readonly Meander[]): MeanderIndexGroup[] {
-    const groups = new Map<null | string, Meander[]>();
-    for (const meander of meanders) {
-      const family = meander.family === "unclassified" ? null : meander.family;
-      const members = groups.get(family) ?? [];
-      members.push(meander);
-      groups.set(family, members);
+  /** Groups items under the key each one names, in the order keys first appear. */
+  private group<Item, Key>(
+    items: readonly Item[],
+    key: (item: Item) => Key,
+  ): Map<Key, Item[]> {
+    const groups = new Map<Key, Item[]>();
+
+    for (const item of items) {
+      const members = groups.get(key(item)) ?? [];
+
+      members.push(item);
+      groups.set(key(item), members);
     }
-    return [...groups.entries()]
-      .toSorted(([a], [b]) => {
-        if (a === null && b === null) return 0;
-        if (a === null) return 1;
-        if (b === null) return -1;
-        const rankA = FAMILY_SORT_KEYS[a] ?? Number.MAX_SAFE_INTEGER;
-        const rankB = FAMILY_SORT_KEYS[b] ?? Number.MAX_SAFE_INTEGER;
-        if (rankA !== rankB) return rankA - rankB;
-        return a.localeCompare(b);
-      })
-      .map(([family, group]) => ({
-        family,
-        meanders: group.toSorted(
-          (left, right) =>
-            left.rows - right.rows ||
-            left.columns - right.columns ||
-            left.code.localeCompare(right.code),
-        ),
-      }));
+
+    return groups;
+  }
+
+  /** A family's rows already in memory, in the order its page lists them. */
+  private heldRows(
+    meanders: readonly Meander[],
+    family: MeanderFamily,
+  ): (readonly Meander[])[] {
+    const rows = meanders
+      .filter((meander) => meander.family === family)
+      .toSorted(
+        (left, right) =>
+          left.rows - right.rows ||
+          left.columns - right.columns ||
+          left.code.localeCompare(right.code),
+      );
+
+    return [rows];
+  }
+
+  /** The index page: every family, linked, with how many meanders it holds. */
+  private indexPage(
+    families: readonly { label: string; total: number }[],
+  ): string {
+    const total = families.reduce((sum, family) => sum + family.total, 0);
+    const contents = families
+      .map(
+        ({ label, total: count }) =>
+          `<li><a href="families/${label}.html">${label}</a> <span>${count}</span></li>`,
+      )
+      .join("\n");
+
+    return `${this.documentHead("Meanderaw Index", "Meanderaw")}<p class="count">${total} meanders across ${families.length} families.</p>
+<nav><ul>
+${contents}
+</ul></nav>
+</body>
+</html>
+`;
   }
 
   /** The heading and slug a family group is shown and linked under. */
-  private label(family: null | string): string {
-    return family ?? UNCLASSIFIED_FAMILY_LABEL;
+  private label(family: string): string {
+    return family === "unclassified" ? UNCLASSIFIED_FAMILY_LABEL : family;
+  }
+
+  /** A named family's one section: its count, then every figure in one grid. */
+  private async *namedSection(
+    label: string,
+    total: number,
+    rows: MeanderRowBatches,
+  ): AsyncGenerator<string> {
+    let separator = "";
+
+    yield `${this.sectionHead(label, label, total)}<div class="grid">\n`;
+
+    for await (const batch of rows) {
+      yield (
+        separator +
+          batch.map((meander) => this.renderFigure(meander)).join("\n")
+      );
+      separator = "\n";
+    }
+
+    yield "\n</div>\n</section>";
+  }
+
+  /** Every page `source`'s rows make, each produced lazily as it is read. */
+  private pages(source: MeanderPageSource): Record<string, MeanderPageContent> {
+    const byFamily = this.group(source.counts, ({ family }) => family);
+    const families = [...byFamily]
+      .toSorted(([left], [right]) => this.compareFamilies(left, right))
+      .map(([family, counts]) => ({
+        counts,
+        family,
+        label: this.label(family),
+      }));
+    const summaries = families.map(({ counts, label }) => ({
+      label: this.escape(label),
+      total: counts.reduce((sum, { count }) => sum + count, 0),
+    }));
+    const pages: Record<string, MeanderPageContent> = {
+      "index.html": [this.indexPage(summaries)],
+    };
+
+    for (const { counts, family, label } of families) {
+      pages[`families/${label}.html`] = this.familyPage(
+        family,
+        counts,
+        source.rows(family),
+      );
+    }
+
+    return pages;
   }
 
   /**
@@ -172,17 +309,6 @@ export class DrawIndexService {
     return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><g id="${tile}">${svg}</g></defs>${this.renderRepeats(tile, step)}</svg>`;
   }
 
-  /** Renders the jump list, so a family thousands of rows down the page is one click away. */
-  private renderContents(groups: readonly MeanderIndexGroup[]): string {
-    return groups
-      .map(({ family, meanders }) => {
-        const label = this.escape(this.label(family));
-
-        return `<li><a href="families/${label}.html">${label}</a> <span>${meanders.length}</span></li>`;
-      })
-      .join("\n");
-  }
-
   /** Renders one meander's own figure: the band its tile repeats into, and its caption. */
   private renderFigure(meander: Meander): string {
     return `<figure><div class="art">${this.renderBand(meander)}</div><figcaption>${this.caption(meander)}</figcaption></figure>`;
@@ -197,127 +323,114 @@ export class DrawIndexService {
     ).join("");
   }
 
-  /** Renders one family's own section: its heading, and every meander in it at its own size. */
-  private renderSection({ family, meanders }: MeanderIndexGroup): string {
-    const label = this.escape(this.label(family));
-
-    if (family === null) {
-      return this.renderUnclassifiedSection(meanders);
-    }
-
-    const figures = meanders
-      .map((meander) => this.renderFigure(meander))
-      .join("\n");
-
-    return `<section id="${label}">
-<h2>${label}</h2>
-<p class="count">${meanders.length} meander${meanders.length === 1 ? "" : "s"}</p>
-<div class="grid">
-${figures}
-</div>
-</section>`;
+  /** A section's heading and count, up to the content it counts. */
+  private sectionHead(id: string, heading: string, count: number): string {
+    return `<section id="${id}">
+<h2>${heading}</h2>
+<p class="count">${count} meander${count === 1 ? "" : "s"}</p>
+`;
   }
 
-  /** Renders the unclassified section, grouped by shape and ordered by motif pattern. */
-  private renderUnclassifiedSection(meanders: readonly Meander[]): string {
-    const byShape = new Map<string, Meander[]>();
-    for (const meander of meanders) {
-      const shape = `${meander.rows}×${meander.columns}`;
-      const list = byShape.get(shape) ?? [];
-      list.push(meander);
-      byShape.set(shape, list);
+  /** One shape's grid within the unclassified section, opened as its first row arrives. */
+  private shapeHead(
+    previous: string | undefined,
+    shape: string,
+    counts: ReadonlyMap<string, number>,
+  ): string {
+    const close = previous === undefined ? "" : "\n</div>\n</section>\n";
+
+    return `${close}${this.sectionHead(`shape-${shape}`, shape, counts.get(shape) ?? 0)}<div class="grid">\n`;
+  }
+
+  /**
+   * The unclassified section: one grid per shape, each with its own count,
+   * since a family of no shared structure reads best a shape at a time.
+   * Rows arrive ordered by shape, so each shape's grid opens as its first
+   * row arrives and closes as the next shape's does.
+   */
+  private async *unclassifiedSection(
+    counts: readonly MeanderFamilyShapeCount[],
+    total: number,
+    rows: MeanderRowBatches,
+  ): AsyncGenerator<string> {
+    const shapeCounts = new Map(
+      counts.map(({ columns, count, rows: band }) => [
+        `${band}×${columns}`,
+        count,
+      ]),
+    );
+    let shape: string | undefined;
+
+    yield this.sectionHead("unclassified", "unclassified", total);
+
+    for await (const batch of rows) {
+      const pieces: string[] = [];
+
+      for (const meander of batch) {
+        const next = `${meander.rows}×${meander.columns}`;
+
+        pieces.push(
+          next === shape
+            ? `\n${this.renderFigure(meander)}`
+            : this.shapeHead(shape, next, shapeCounts) +
+                this.renderFigure(meander),
+        );
+        shape = next;
+      }
+
+      yield pieces.join("");
     }
 
-    const sortedShapes = [...byShape.entries()].toSorted((a, b) => {
-      const partsA = a[0].split("×");
-      const rA = Number(partsA[0]);
-      const cA = Number(partsA[1]);
-
-      const partsB = b[0].split("×");
-      const rB = Number(partsB[0]);
-      const cB = Number(partsB[1]);
-
-      if (rA !== rB) return rA - rB;
-      return cA - cB;
-    });
-
-    const sections = sortedShapes
-      .map(([shape, group]) => {
-        const sorted = group.toSorted((a, b) => a.code.localeCompare(b.code));
-        const figures = sorted
-          .map((meander) => this.renderFigure(meander))
-          .join("\n");
-
-        return `<section id="shape-${shape}">
-<h2>${shape}</h2>
-<p class="count">${sorted.length} meander${sorted.length === 1 ? "" : "s"}</p>
-<div class="grid">
-${figures}
-</div>
-</section>`;
-      })
-      .join("\n");
-
-    return `<section id="unclassified">
-<h2>unclassified</h2>
-<p class="count">${meanders.length} meander${meanders.length === 1 ? "" : "s"}</p>
-${sections}
-</section>`;
+    yield shape === undefined
+      ? "</section>"
+      : "\n</div>\n</section>\n</section>";
   }
 
   // 🌎 Public Methods
 
-  /** Reads every committed meander and renders the pages they make, together. */
-  async build(): Promise<Record<string, string>> {
-    return this.render(await this.databaseService.findAll());
+  /**
+   * Every page the database's rows make, keyed by its path under the output
+   * directory. Each page is an async iterable of HTML pieces, read from the
+   * database a batch of rows at a time only as the page is written, so no
+   * page — however many rows its family holds — is ever one string.
+   */
+  async build(): Promise<Record<string, MeanderPageContent>> {
+    const counts = await this.databaseService.familyShapeCounts();
+
+    return this.pages({
+      counts,
+      rows: (family) => this.databaseService.familyRows(family),
+    });
   }
 
   /**
-   * Builds the index page and family pages as HTML documents from an already-loaded
-   * set of rows.
+   * The same pages from rows already in memory, each read into one string —
+   * the seam a test renders a handful of meanders through.
    */
-  render(meanders: readonly Meander[]): Record<string, string> {
-    const groups = this.groupByFamily(meanders);
-    const pages: Record<string, string> = {
-      "index.html": `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Meanderaw Index</title>
-<style>${PAGE_STYLES}</style>
-</head>
-<body>
-<h1>Meanderaw</h1>
-<p class="count">${meanders.length} meanders across ${groups.length} families.</p>
-<nav><ul>
-${this.renderContents(groups)}
-</ul></nav>
-</body>
-</html>
-`,
-    };
+  async render(meanders: readonly Meander[]): Promise<Record<string, string>> {
+    const counts = new Map<string, MeanderFamilyShapeCount>();
 
-    for (const group of groups) {
-      const label = this.label(group.family);
-      const filename = `families/${label}.html`;
+    for (const { columns, family, rows } of meanders) {
+      const key = `${family}|${rows}|${columns}`;
 
-      pages[filename] = `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Meanderaw - ${this.escape(label)}</title>
-<style>${PAGE_STYLES}</style>
-</head>
-<body>
-<h1><a href="../index.html">Meanderaw</a> / ${this.escape(label)}</h1>
-${this.renderSection(group)}
-</body>
-</html>
-`;
+      counts.set(key, {
+        columns,
+        count: (counts.get(key)?.count ?? 0) + 1,
+        family,
+        rows,
+      });
     }
 
-    return pages;
+    const pages = this.pages({
+      counts: [...counts.values()],
+      rows: (family) => this.heldRows(meanders, family),
+    });
+    const rendered: Record<string, string> = {};
+
+    for (const [path, content] of Object.entries(pages)) {
+      rendered[path] = await this.collect(content);
+    }
+
+    return rendered;
   }
 }

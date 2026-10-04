@@ -5,7 +5,9 @@
 **/*.mdx
 **/.next
 **/.nx
-**/.claude/worktrees/**
+# Nested agent worktrees are not listed: this file's patterns match absolute
+# paths, so `**/.claude/worktrees/**` ignores every file of a checkout that is
+# itself a worktree, and no target here walks into `.claude/` anyway.
 **/.terraform/**
 **/build
 **/coverage
@@ -58,13 +60,9 @@ tmp
 # `callidescope-examples:callidescope` report it stale the moment `format` runs
 # — the same failure mode as the emitted conformetry plugin above.
 **/packages/ic-suite/callidescope/callidescope-examples/output/**
-# The meander sweep writes `output/index.html`, and the page is committed the
-# way the drawings beside it are. `DrawIndexService` renders it compact — one
-# line per drawing — and oxfmt expands it to ten times the lines, so the very
-# next `meanderaw:start` writes the compact form back and
-# `oxfmt --check` fails against what that run just produced. The same
-# standoff as the two entries above, and `.prettierignore` already excludes
-# this directory for its own formatter.
+# The meander draw run writes its index and family pages here, gitignored and
+# gigabytes at the default edge budget, and nothing in it is this formatter's
+# to rewrite. `.prettierignore` excludes it for its own formatter.
 **/applications/meanderaw/output/**
 **/data/wikipedia
 **/data/wiktionary

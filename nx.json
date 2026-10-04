@@ -656,7 +656,7 @@
           }
         ],
         "options": {
-          "command": "oxlint --config configuration/oxlint.config.ts --ignore-path configuration/.oxlintignore {args} {projectRoot}/src",
+          "command": "oxlint --config configuration/oxlint.config.ts --ignore-path \"$PWD/configuration/.oxlintignore\" {args} {projectRoot}/src",
           "cwd": "{workspaceRoot}"
         }
       }

@@ -11,14 +11,18 @@ import { DatabaseService } from "../src/modules/database/database.service";
 import { Meander } from "../src/modules/database/entities/Meander.entity";
 import { DrawEnumerationService } from "../src/modules/draw/draw-enumeration.service";
 import { DrawIndexService } from "../src/modules/draw/draw-index.service";
+import { DrawPoolService } from "../src/modules/draw/draw-pool.service";
 import { DrawRecordService } from "../src/modules/draw/draw-record.service";
+import { DrawWorkerService } from "../src/modules/draw/draw-worker.service";
 import { DrawCommand } from "../src/modules/draw/draw.command";
 import { DrawingModule } from "../src/modules/drawing/drawing.module";
 import { EnumerationModule } from "../src/modules/enumeration/enumeration.module";
 import { EnumerationService } from "../src/modules/enumeration/enumeration.service";
 import { GeometryModule } from "../src/modules/geometry/geometry.module";
+import { SymmetryModule } from "../src/modules/symmetry/symmetry.module";
 
 import { testDataSourceOptions } from "./database";
+import { DRAW_TEST_EDGE_BUDGET, DRAW_TEST_WORKERS } from "./draw-run-budget";
 
 import type { TestDatabaseContainer } from "./database";
 import type {
@@ -28,14 +32,14 @@ import type {
 } from "@nestjs/common";
 
 /**
- * How long one whole `DrawCommand` sweep may take: tens of thousands of rows
+ * How long one whole `DrawCommand` draw run may take: tens of thousands of rows
  * decoded, rendered, measured, and indexed. Real work rather than a hang, so
  * it is declared rather than left to the default five seconds.
  */
-export const SWEEP_TIMEOUT_MILLISECONDS = 300_000;
+export const DRAW_RUN_TIMEOUT_MILLISECONDS = 300_000;
 
-/** Everything a sweep-mode case reads back from one compiled `DrawCommand`. */
-export interface SweepFixture {
+/** Everything a draw-run case reads back from one compiled `DrawCommand`. */
+export interface DrawRunFixture {
   command: DrawCommand;
   corpus: CorpusService;
   dataSource: DataSource;
@@ -43,10 +47,10 @@ export interface SweepFixture {
   repository: Repository<Meander>;
 }
 
-/** Reads a compiled sweep module back as the handles its cases assert through. */
-export async function sweepFixture(
+/** Reads a compiled draw run module back as the handles its cases assert through. */
+export async function drawRunFixture(
   module: INestApplicationContext,
-): Promise<SweepFixture> {
+): Promise<DrawRunFixture> {
   return {
     command: await module.resolve(DrawCommand),
     corpus: module.get(CorpusService),
@@ -57,19 +61,19 @@ export async function sweepFixture(
 }
 
 /**
- * The module `DrawCommand`'s sweep compiles into: the real enumeration,
- * ingestion, and index services over an emptied schema in `container`'s
- * Postgres database, plus whatever `mocks` the caller stands in for `--code`
- * and logging.
+ * The module `DrawCommand`'s draw run compiles into: the real enumeration,
+ * ingestion, and index services over an emptied schema in `container`'s Postgres
+ * database, plus whatever `mocks` the caller stands in for `--code` and
+ * logging.
  *
- * Shared by the sweep-mode suites, which are split across files so vitest
- * runs their sweeps in parallel rather than one after another. Each caller
+ * Shared by the draw-run suites, which are split across files so vitest
+ * runs their draw runs in parallel rather than one after another. Each caller
  * starts its own container, compiles this, and mocks `node:fs/promises`
  * itself: `vi.mock` is hoisted only within a test file, and the testing
  * packages are development dependencies this production-scoped folder
  * cannot import.
  */
-export function sweepModuleMetadata(
+export function drawRunModuleMetadata(
   container: TestDatabaseContainer,
   mocks: readonly Provider[],
 ): ModuleMetadata {
@@ -78,7 +82,11 @@ export function sweepModuleMetadata(
       ConfigModule.forRoot({
         isGlobal: true,
         validate: (config: Record<string, unknown>) =>
-          environmentSchema.parse(config),
+          environmentSchema.parse({
+            ...config,
+            DRAW_EDGE_BUDGET: DRAW_TEST_EDGE_BUDGET,
+            DRAW_WORKERS: DRAW_TEST_WORKERS,
+          }),
       }),
       TypeOrmModule.forRoot(testDataSourceOptions(container)),
       TypeOrmModule.forFeature([Meander]),
@@ -87,13 +95,16 @@ export function sweepModuleMetadata(
       ClassificationModule,
       CodeModule,
       EnumerationModule,
+      SymmetryModule,
       DrawingModule,
     ],
     providers: [
       DrawCommand,
       DrawEnumerationService,
       DrawIndexService,
+      DrawPoolService,
       DrawRecordService,
+      DrawWorkerService,
       CorpusService,
       DatabaseService,
       ...mocks,

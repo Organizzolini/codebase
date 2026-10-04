@@ -244,7 +244,7 @@ export class CharacteristicsService implements OnApplicationBootstrap {
    * Discovers and checks every evaluator as the application boots, so a key
    * with no evaluator, an unknown or doubly claimed key, or a mistyped
    * declaration stops the application before the first Code is measured
-   * rather than partway through a sweep. This is the path the real
+   * rather than partway through a draw run. This is the path the real
    * application always takes; {@link evaluators}'s lazy `??=` is not a
    * second production path, only what lets a test compile this module
    * without booting it.

@@ -90,6 +90,7 @@ describe(DatabaseModule, () => {
       "lattice",
       "repeats",
       "rows",
+      "symmetrical_codes",
     ]);
   });
 

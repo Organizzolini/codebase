@@ -30,6 +30,7 @@ import type { MeanderFamily } from "../../classification/classification.types";
  */
 @Entity({ name: "meanders" })
 @Index(["code"], { unique: true })
+@Index(["family", "rows", "columns", "code"])
 export class Meander {
   /**
    * Every Characteristic the meander has, as one sparse JSON object: see
@@ -75,4 +76,16 @@ export class Meander {
 
   @Column({ type: "int" })
   rows!: number;
+
+  /**
+   * The Codes of every other member of this meander's symmetry class — its
+   * mirror, its flip, and both — each at its own canonical phase, sorted.
+   * The draw run keeps one row per class, so these are the meanders folded
+   * into this one; empty when every reflection maps the meander onto
+   * itself. See `CodeService.symmetricalCodes`. Defaults to empty so a
+   * database written before the column existed gains it in place when the
+   * schema synchronizes, rather than refusing to open.
+   */
+  @Column({ default: "", type: "simple-array" })
+  symmetricalCodes!: string[];
 }

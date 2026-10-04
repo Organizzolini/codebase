@@ -19,7 +19,9 @@ ignorePaths:
   - "*.woff"
   - "*.woff2"
   - "**/.terraform/**"
-  - "**/.claude/worktrees/**"
+  # Nested agent worktrees are not listed: an ignore path matches absolute
+  # paths, so `**/.claude/worktrees/**` ignores every file of a checkout that
+  # is itself a worktree, and no target here walks into `.claude/` anyway.
   - "**/*.gen.ts"
   - "**/*.min.css"
   - "**/*.min.js"
