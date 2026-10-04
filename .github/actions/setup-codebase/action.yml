@@ -160,6 +160,35 @@ runs:
       run: echo "/home/linuxbrew/.linuxbrew/bin" >> "$GITHUB_PATH"
       shell: bash
 
+    # Exact match only, and no restore-keys: a partially stale project graph
+    # is worse than rebuilding one. `nx reset` clears it if it ever misbehaves.
+    #
+    # The task-result database is cached with `.nx/cache` below, never here:
+    # this key is shared by every job and matched on `project.json` content
+    # alone, exactly the sharing the database must not have. What this cache
+    # saves lives in `project-graph.json` and `file-map.json`.
+    #
+    # `path` lists the directory's entries rather than the directory itself,
+    # because an exclusion only drops files the inclusion enumerates: naming
+    # `.nx/workspace-data` archived it whole, database included, despite the
+    # `!` line. Every graph hit then overwrote the adopted database with that
+    # stale copy, deleting this job's restored results before a task ran. `v3`
+    # retires the tarballs that carry one. The step also runs before the task
+    # cache is restored, so even a database that slips into this tarball is
+    # overwritten by the real one rather than the other way round.
+    - name: 🕸️ Sync Nx Graph
+      if: inputs.nx-graph-cache == 'true'
+      uses: actions/cache@v6
+      with:
+        path: |
+          .nx/workspace-data/*
+          !.nx/workspace-data/*.db*
+        key: |
+          nx-graph-v3-${{ runner.os }}-${{ hashFiles(
+          'pnpm-lock.yaml', 'nx.json', 'project.json',
+          'applications/*/project.json', 'packages/*/project.json',
+          'tools/*/project.json') }}
+
     # Keyed per check via `nx-cache-scope`, not `github.job`, which every
     # matrix leg shares: under one key the first leg saved it and the Test
     # leg restored a tarball holding no test results.
@@ -219,33 +248,6 @@ runs:
       continue-on-error: true
       shell: bash
       run: bash scripts/nx/report-task-database.sh
-
-    # Exact match only, and no restore-keys: a partially stale project graph
-    # is worse than rebuilding one. `nx reset` clears it if it ever misbehaves.
-    #
-    # The task-result database is excluded and cached with `.nx/cache` above —
-    # see that step for what restoring the two from different tarballs does.
-    # This key is shared by every job and matched on `project.json` content
-    # alone, exactly the sharing the database must not have. Nothing is lost by
-    # leaving it out: what this cache saves lives in `project-graph.json` and
-    # `file-map.json`, and a data directory holding those builds the graph just
-    # as fast.
-    #
-    # `v2` retires every tarball written before the exclusion. `path` decides
-    # what is archived, not what is extracted, so an old-key entry would still
-    # deliver its database.
-    - name: 🕸️ Sync Nx Graph
-      if: inputs.nx-graph-cache == 'true'
-      uses: actions/cache@v6
-      with:
-        path: |
-          .nx/workspace-data
-          !.nx/workspace-data/*.db*
-        key: |
-          nx-graph-v2-${{ runner.os }}-${{ hashFiles(
-          'pnpm-lock.yaml', 'nx.json', 'project.json',
-          'applications/*/project.json', 'packages/*/project.json',
-          'tools/*/project.json') }}
 
     - name: 🌌 Setup uv
       if: inputs.uv == 'true'
