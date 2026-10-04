@@ -6,8 +6,9 @@
  *
  * Branch strategy: Only `main` triggers releases.
  * NPM publishing: Disabled — packages are not published to any registry.
- * Versioning: Fixed (entire codebase shares one version).
- * Auto-committed files: CHANGELOG.md, package.json, pnpm-lock.yaml
+ * Versioning: Fixed (entire codebase shares one version), recorded by the git
+ *   tag alone — the root package.json `version` field is never bumped.
+ * Auto-committed files: CHANGELOG.md and the regenerated report markdown
  *
  * Usage:
  *   pnpm semantic-release            # Manual release (requires GITHUB_TOKEN)
@@ -134,13 +135,14 @@ module.exports = {
       },
     ],
 
-    // Updates package.json version field without publishing to npm
-    [
-      "@semantic-release/npm",
-      {
-        npmPublish: false,
-      },
-    ],
+    // No `@semantic-release/npm`: bumping the root package.json `version` field
+    // made the version commit stage that file, and lint-staged hands Nx its
+    // staged paths with `--files`, which reads a file whole rather than field
+    // by field. A one-line version bump then marked 47 of 48 projects
+    // affected, so the pre-commit hook re-ran the entire lint sweep on every
+    // release — 12 to 15 minutes, long enough that the job timed out or that
+    // `main` moved underneath it and the push was rejected. The tag is the
+    // version.
 
     // Synchronizes the version in root README.md title right after package.json is bumped
     [
@@ -168,7 +170,6 @@ module.exports = {
           "README.md",
           "applications/*/AGENTS.md",
           "applications/*/README.md",
-          "package.json",
           "packages/*/AGENTS.md",
           "packages/*/README.md",
           "pnpm-lock.yaml",

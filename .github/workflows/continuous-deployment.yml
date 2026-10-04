@@ -40,10 +40,13 @@ jobs:
             name: Devcontainer
             emoji: 🧑‍🏭
             timeout: 20
+          # About 8–9 minutes of build, trace, graph, and measure precede
+          # semantic-release, and its version commit's pre-commit hook takes
+          # about 3–4 more, led by `codebase:codependix:check`.
           - id: push-releases
             name: Releases
             emoji: 🦸
-            timeout: 24
+            timeout: 15
 
     steps:
       - name: 📥 Checkout Repository
