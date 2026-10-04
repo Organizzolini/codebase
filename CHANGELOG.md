@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.32.0](https://github.com/Organizzolini/codebase/compare/v2.31.0...v2.32.0) (2026-10-04)
+
+### ✨ Features
+
+* **meanderaw,infrastructure:** ✨ store meanders in postgres instead of a committed sqlite file ([#1260](https://github.com/Organizzolini/codebase/issues/1260)) ([17c24a6](https://github.com/Organizzolini/codebase/commit/17c24a60b6186ac62ba8fe44d4829f1101f0b798))
+
+### 📝 Documentation
+
+* **documentation:** 📝 add badges for the tools the readme was missing ([#1262](https://github.com/Organizzolini/codebase/issues/1262)) ([dd69376](https://github.com/Organizzolini/codebase/commit/dd69376efad186d05096f1376aece9bf518350f8))
+
 ## [2.31.0](https://github.com/Organizzolini/codebase/compare/v2.30.2...v2.31.0) (2026-10-04)
 
 ### ✨ Features

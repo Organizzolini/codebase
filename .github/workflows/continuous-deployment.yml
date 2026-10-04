@@ -282,7 +282,12 @@ jobs:
       # and tags `<project>@<version>`. Checkout persists no credentials, so
       # the remote carries the release token for this push and
       # semantic-release's. Nx's own `--git-push` would add `--no-verify` and
-      # skip the pre-push hook, so the push is made here instead.
+      # skip the pre-push hook, so the push is made here instead. GitHub
+      # rejects any push to this repository that updates more than 6 refs, and
+      # a first release tags 20 or more packages, so the release commit goes
+      # first, on its own, and its tags follow 6 at a time. A batch that fails
+      # leaves `main` already carrying the versions, and the missing tags can
+      # be pushed from that commit without versioning again.
       - name: 🏷️ Version Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
@@ -295,7 +300,15 @@ jobs:
           git remote set-url origin \
             "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           pnpm exec nx release version --git-commit --git-tag
-          git push --follow-tags --atomic origin HEAD:refs/heads/main
+          git push origin HEAD:refs/heads/main
+          mapfile -t tags < <(git tag --points-at HEAD --list '*@*')
+          for ((start = 0; start < ${#tags[@]}; start += 6)); do
+            refs=()
+            for tag in "${tags[@]:start:6}"; do
+              refs+=("refs/tags/${tag}")
+            done
+            git push origin "${refs[@]}"
+          done
 
       # Publishes every package in the Nx release group, read from nx.json,
       # whose version is not on npm yet, so a re-run sends only what is
