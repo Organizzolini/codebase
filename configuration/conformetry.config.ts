@@ -54,12 +54,6 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
       "A standalone NestJS CLI application template built on nest-commander, for a new command-line tool in applications/, packages/, or tools/",
     inputs: defineInputs({
       name: z.string().describe("Project name (kebab-case)"),
-      packageVersion: z
-        .string()
-        .default("0.0.0")
-        .describe(
-          "Starting package version; nx release owns it after the first release, so validation leaves it free",
-        ),
       type: z
         .string()
         .describe(
@@ -71,14 +65,10 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
           "Relative climb from the project root back to the workspace root, e.g. ../.. two directories down or ../../../../ four directories down",
         ),
     }),
-    // Each instance answers `packageVersion` with "" so the template's version
-    // section renders out: nx release bumps every published package's version,
-    // and a version pinned here would fail conformance on every release.
     instances: [
       {
         patterns: ["packages/ic-suite/callidescope/callidescope-cli"],
         substitutions: {
-          packageVersion: "",
           type: "packages/ic-suite/callidescope",
           workspaceRelativePrefix: "../../../../",
         },
@@ -86,7 +76,6 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
       {
         patterns: ["packages/ic-suite/codependix/codependix-cli"],
         substitutions: {
-          packageVersion: "",
           type: "packages/ic-suite/codependix",
           workspaceRelativePrefix: "../../../../",
         },
@@ -94,7 +83,6 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
       {
         patterns: ["packages/ic-suite/codometer/codometer-cli"],
         substitutions: {
-          packageVersion: "",
           type: "packages/ic-suite/codometer",
           workspaceRelativePrefix: "../../../../",
         },
@@ -102,7 +90,6 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
       {
         patterns: ["packages/ic-suite/conformetry/conformetry-cli"],
         substitutions: {
-          packageVersion: "",
           type: "packages/ic-suite/conformetry",
           workspaceRelativePrefix: "../../../../",
         },
@@ -127,12 +114,6 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
       "A standalone NestJS library package template for internal workspace code shared across projects, with no CLI entry point or HTTP server",
     inputs: defineInputs({
       name: z.string().describe("Project name (kebab-case)"),
-      packageVersion: z
-        .string()
-        .default("0.0.0")
-        .describe(
-          "Starting package version; nx release owns it after the first release, so validation leaves it free",
-        ),
       type: z
         .string()
         .describe(
