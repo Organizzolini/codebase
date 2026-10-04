@@ -334,14 +334,13 @@ describe(LetterUtilitiesService, () => {
       );
     });
 
-    it("marks every evaluator a numeric letter submatrix count", () => {
+    it("makes every evaluator a numeric submatrix count", () => {
       expect(
         evaluators.map(({ metadata }) => [
           metadata.category,
-          metadata.letter,
           metadata.valueType,
         ]),
-      ).toStrictEqual(evaluators.map(() => ["submatrix", true, "number"]));
+      ).toStrictEqual(evaluators.map(() => ["submatrix", "number"]));
     });
 
     it("gives each evaluator its own orientation's window and formula", () => {

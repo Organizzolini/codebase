@@ -3,8 +3,8 @@ import { beforeAll, describe, expect, it } from "vitest";
 
 import {
   BOOLEAN_CHARACTERISTIC_KEYS,
-  COLUMN_CHARACTERISTIC_KEY_SET,
-  COLUMN_CHARACTERISTIC_KEYS,
+  CHARACTERISTIC_KEYS,
+  LETTER_CHARACTERISTIC_KEYS,
   NUMERIC_CHARACTERISTIC_KEYS,
 } from "../characteristics/characteristics.constants";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
@@ -50,123 +50,121 @@ describe(DrawRecordService, () => {
 
   describe("record", () => {
     it("derives every field of a row from the Code alone, the family and sub-family among them", () => {
-      const record = service.record(
-        "4488",
-        { columns: 2, rows: 2 },
-        "enumerated",
-      );
+      const record = service.record("4488", { columns: 2, rows: 2 }, false);
 
       expect(record).toMatchObject({
-        bettiNumber0Count: 1,
-        bettiNumber1Count: 0,
-        characteristics: [
-          "endsAreLatticeNeighbors",
-          "endsOnBorderRules",
-          "isBars",
-          "isSingleArc",
-          "isReducible",
-        ],
+        characteristics: {
+          bettiNumber0Count: 1,
+          density: 1,
+          edgeCount: 1,
+          endsAreLatticeNeighbors: true,
+          endsOnBorderRules: true,
+          freeEndCount: 2,
+          inkPointCount: 2,
+          isBars: true,
+          isReducible: true,
+          isSingleArc: true,
+          longestVerticalRunLength: 1,
+        },
         code: "02x02y4488",
         columns: 2,
-        crossCount: 0,
-        density: 1,
-        edgeCount: 1,
         family: "bars",
-        forkCount: 0,
-        freeEndCount: 2,
-        inkPointCount: 2,
+        isHardcoded: false,
         lattice: "4488",
-        longestHorizontalRunLength: 0,
-        longestVerticalRunLength: 1,
-        provenance: "enumerated",
         repeats: 1,
         rows: 2,
-        tileCrossingComponentDeltaCount: 0,
-        tileCrossingCount: 0,
       });
-      expect(record.drawingHash).toMatch(/^8fba/u);
+      expect(record.characteristics).not.toHaveProperty("crossCount");
+      expect(record.characteristics).not.toHaveProperty("isDots");
       expect(record).not.toHaveProperty("pitch");
-      expect(record).not.toHaveProperty("isBars");
+      expect(CHARACTERISTIC_KEYS.filter((key) => key in record)).toStrictEqual(
+        [],
+      );
     });
 
-    it("stores every non-letter numeric characteristic of the computed record under its own key, and the true booleans in key-list order", () => {
+    it("stores every characteristic of the computed record in the map, a missing key reading as zero or false", () => {
       const code = "2335635cc29ca339";
-      const record = service.record(code, { columns: 4, rows: 4 }, "hardcoded");
+      const record = service.record(code, { columns: 4, rows: 4 }, true);
       const canonical = codeService.parse(record.code);
       const expected = characteristicsService.compute(canonical);
 
       expect(
-        COLUMN_CHARACTERISTIC_KEYS.map((key) => [key, record[key]]),
+        NUMERIC_CHARACTERISTIC_KEYS.map((key) => [
+          key,
+          record.characteristics[key] ?? 0,
+        ]),
       ).toStrictEqual(
-        COLUMN_CHARACTERISTIC_KEYS.map((key) => [key, expected[key]]),
+        NUMERIC_CHARACTERISTIC_KEYS.map((key) => [key, expected[key]]),
       );
-
-      expect(record.characteristics).toStrictEqual([
-        ...BOOLEAN_CHARACTERISTIC_KEYS.filter((key) => expected[key]),
-        ...(characteristicsService.isReducible(canonical)
-          ? ["isReducible"]
-          : []),
-      ]);
+      expect(
+        BOOLEAN_CHARACTERISTIC_KEYS.map((key) => [
+          key,
+          record.characteristics[key] === true,
+        ]),
+      ).toStrictEqual(
+        BOOLEAN_CHARACTERISTIC_KEYS.map((key) => [key, expected[key]]),
+      );
+      expect(record.characteristics.isReducible === true).toBe(
+        characteristicsService.isReducible(canonical),
+      );
     });
 
-    it("stores every nonzero letter count in glyphs, and no letter count under a key of its own", () => {
+    it("stores no zero in the map, so every letter it lacks is left out", () => {
       const record = service.record("03x03y650ed0880");
-      const expected = characteristicsService.compute(
-        codeService.parse(record.code),
-      );
-      const letterKeys = NUMERIC_CHARACTERISTIC_KEYS.filter(
-        (key) => !COLUMN_CHARACTERISTIC_KEY_SET.has(key),
-      );
 
-      expect(record.glyphs.aSoutheastLatinCount).toBe(1);
-      expect(record.glyphs).toStrictEqual(
-        Object.fromEntries(
-          letterKeys
-            .filter((key) => expected[key] !== 0)
-            .map((key) => [key, expected[key]]),
-        ),
-      );
-      expect(letterKeys.filter((key) => key in record)).toStrictEqual([]);
+      expect(record.characteristics.aSoutheastLatinCount).toBe(1);
+      expect(
+        Object.values(record.characteristics).filter((value) => value === 0),
+      ).toStrictEqual([]);
+      expect(
+        LETTER_CHARACTERISTIC_KEYS.filter(
+          (key) => key in record.characteristics,
+        ).length,
+      ).toBeLessThan(LETTER_CHARACTERISTIC_KEYS.length);
     });
 
     it("records family and specific characteristics where a Code's structure earns them", () => {
       const record = service.record(
         "2335635cc29ca339",
         { columns: 4, rows: 4 },
-        "hardcoded",
+        true,
       );
 
       expect(record.family).toBe("whirl");
-      expect(record).toMatchObject({ crossCount: 0, forkCount: 0 });
+      expect(record.characteristics).not.toHaveProperty("crossCount");
+      expect(record.characteristics).not.toHaveProperty("forkCount");
 
       const waterfallRecord = service.record(
         "255aa1",
         { columns: 2, rows: 3 },
-        "hardcoded",
+        true,
       );
 
       expect(waterfallRecord.family).toBe("waterfalls");
-      expect(waterfallRecord.characteristics).toContain("isWaterfalls");
+      expect(waterfallRecord.characteristics.isWaterfalls).toBe(true);
 
       const wideWaterfallRecord = service.record(
         "23531a",
         { columns: 3, rows: 2 },
-        "hardcoded",
+        true,
       );
 
       expect(wideWaterfallRecord.family).toBe("waterfalls");
-      expect(wideWaterfallRecord.characteristics).toContain("isWaterfalls");
+      expect(wideWaterfallRecord.characteristics.isWaterfalls).toBe(true);
     });
 
-    it("records the provenance it was given rather than deriving one, since where a Code came from is no property of the Code", () => {
+    it("records whether it is hardcoded as it was told rather than deriving it, since where a Code came from is no property of the Code", () => {
       expect(
-        service.record("00", { columns: 1, rows: 2 }, "hardcoded").provenance,
-      ).toBe("hardcoded");
+        service.record("00", { columns: 1, rows: 2 }, true).isHardcoded,
+      ).toBe(true);
+      expect(
+        service.record("00", { columns: 1, rows: 2 }, false).isHardcoded,
+      ).toBe(false);
     });
 
     it("refuses a Code whose length disagrees with the shape it was named at", () => {
       expect(() =>
-        service.record("00", { columns: 2, rows: 2 }, "enumerated"),
+        service.record("00", { columns: 2, rows: 2 }, false),
       ).toThrow(/need 4/u);
     });
   });

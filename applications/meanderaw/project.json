@@ -36,9 +36,7 @@
     "form-codebase": {},
     "format-code": {},
     "gate-codebase": {},
-    "guard-code": {
-      "dependsOn": ["...", "start"]
-    },
+    "guard-code": {},
     "knip": {},
     "lint-code": {},
     "lint-codebase": {},
@@ -59,7 +57,7 @@
     "spell-check": {},
     "start": {
       "cache": false,
-      "description": "Run the Meanderaw application. With no arguments (or --args=\"--check\") it is read-only: it regenerates the whole sweep \u2014 the lattice's unit space, enumerated and classified, then the historical corpus's hardcoded Codes beyond that budget \u2014 into a throwaway database and fails if it disagrees with the committed output/meanders.sqlite. Nothing writes that database without --write: --args=\"--write\" clears its meander rows and regenerates the sweep into it, and --args=\"--write --rows <n> --columns <n> --code <code>\" writes that one row; --check with --write, or --code without --write, exits non-zero. `guard-code` depends on this target, and there are deliberately no configurations: `guard-code`'s own --configuration (check or write) and a bare `guard-code` all reach this target with no matching configuration, so every one of them runs the read-only default. A `write` configuration here would be forwarded by `guard-code:write` and rewrite the committed database as a side effect. `build` compiles this project rather than drawing anything, so populating the database is this target's job.",
+      "description": "Run the Meanderaw application, which always writes output/meanders.sqlite: with no arguments it clears its meander rows and regenerates the sweep into it \u2014 the lattice's unit space, enumerated and classified, then the historical corpus's hardcoded Codes beyond that budget \u2014 and --args=\"--rows <n> --columns <n> --code <code>\" writes that one row. Nothing else depends on this target, so no aggregate target rewrites the committed database as a side effect; keep it that way. `build` compiles this project rather than drawing anything, so populating the database is this target's job.",
       "executor": "nx:run-commands",
       "inputs": [
         "^production",

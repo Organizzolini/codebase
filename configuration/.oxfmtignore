@@ -60,7 +60,7 @@ tmp
 # The meander sweep writes `output/index.html`, and the page is committed the
 # way the drawings beside it are. `DrawIndexService` renders it compact — one
 # line per drawing — and oxfmt expands it to ten times the lines, so the very
-# next `meanderaw:start --args="--write"` writes the compact form back and
+# next `meanderaw:start` writes the compact form back and
 # `oxfmt --check` fails against what that run just produced. The same
 # standoff as the two entries above, and `.prettierignore` already excludes
 # this directory for its own formatter.

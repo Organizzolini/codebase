@@ -68,12 +68,9 @@ describe(BLatinLetterCharacteristicsService, () => {
     await letter.compile();
   });
 
-  it("keys all sixteen orientations, each marked a letter", () => {
+  it("keys all sixteen orientations", () => {
     expect(letter.keys()).toStrictEqual(
       LETTER_ORIENTATION_NAMES.map((name) => `b${name}LatinCount`),
-    );
-    expect(letter.marks()).toStrictEqual(
-      LETTER_ORIENTATION_NAMES.map(() => true),
     );
   });
 

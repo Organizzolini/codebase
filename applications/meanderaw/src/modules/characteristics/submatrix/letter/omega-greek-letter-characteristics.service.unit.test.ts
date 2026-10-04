@@ -58,12 +58,9 @@ describe(OmegaGreekLetterCharacteristicsService, () => {
     await letter.compile();
   });
 
-  it("keys all sixteen orientations, each marked a letter", () => {
+  it("keys all sixteen orientations", () => {
     expect(letter.keys()).toStrictEqual(
       LETTER_ORIENTATION_NAMES.map((name) => `omega${name}GreekCount`),
-    );
-    expect(letter.marks()).toStrictEqual(
-      LETTER_ORIENTATION_NAMES.map(() => true),
     );
   });
 
