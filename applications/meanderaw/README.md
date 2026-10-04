@@ -127,11 +127,11 @@ rather than overlapping.**
   `HARDCODED_MEANDERS_BY_FAMILY` for exactly where the boundary sits and why the filter
   is by shape rather than by Code.
 
-A duplicate lattice address across the two is a build failure rather than a convention
-nobody checks: the formatted Code spells out the lattice, rows, and columns, so the
-unique index over `code` refuses the second insert,
-and the sweep runs the enumerated half first so the refusal names the hardcoded entry
-that caused it.
+A duplicate lattice address within either half is a build failure rather than a convention
+nobody checks: the formatted Code spells out the lattice, rows, and columns, so the unique
+index over `code` refuses the second insert. Across the two, the hardcoded corpus is
+ingested first and the sweep skips any Code a hardcoded row already holds, so a hardcoded
+meander keeps its row and hand-filed family.
 
 The sweep writes no HTML page. At an edge budget of twenty-two the corpus is millions of
 rows, and a single family's page outgrew what one string — or a browser — can hold, so

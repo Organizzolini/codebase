@@ -59,6 +59,7 @@ describe(DrawEnumerationService, () => {
       { columns: 2, rows: 3 },
     ]);
     vi.mocked(drawPoolService.records).mockResolvedValue([record]);
+    vi.mocked(databaseService.codes).mockResolvedValue(new Set());
     vi.mocked(databaseService.saveAll).mockResolvedValue(1);
   });
 
@@ -78,6 +79,21 @@ describe(DrawEnumerationService, () => {
 
     it("answers with how many rows were written", async () => {
       await expect(service.persist([{ columns: 1, rows: 3 }])).resolves.toBe(1);
+    });
+
+    it("skips a meander whose Code a row of its shape already holds, so a hardcoded row wins", async () => {
+      const other = createMock<MeanderRecord>({ code: "01" });
+
+      vi.mocked(drawPoolService.records).mockResolvedValue([record, other]);
+      vi.mocked(databaseService.codes).mockResolvedValue(new Set(["00"]));
+
+      await service.persist([{ columns: 1, rows: 3 }]);
+
+      expect(databaseService.codes).toHaveBeenCalledWith({
+        columns: 1,
+        rows: 3,
+      });
+      expect(databaseService.saveAll).toHaveBeenCalledWith([other]);
     });
 
     it("writes the rows the pool draws for each shape", async () => {

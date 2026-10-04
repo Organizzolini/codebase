@@ -177,6 +177,15 @@ describe(DrawEnumerationService, () => {
       expect(folded.filter((code) => codes.has(code))).toStrictEqual([]);
     });
 
+    // 🎯 The hardcoded corpus is ingested before the sweep, and a meander
+    // whose Code a row already holds is skipped rather than refused — so a
+    // second pass over a shape whose every Code is held writes nothing and
+    // raises no unique-index error.
+    it("skips every meander whose Code a row of its shape already holds", async () => {
+      await expect(service.persist([{ columns: 3, rows: 2 }])).resolves.toBe(0);
+      await expect(repository.count()).resolves.toBe(2079);
+    });
+
     it("records every row as enumerated rather than hardcoded", async () => {
       await expect(repository.countBy({ isHardcoded: true })).resolves.toBe(0);
     });

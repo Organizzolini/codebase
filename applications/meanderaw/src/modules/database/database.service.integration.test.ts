@@ -259,6 +259,20 @@ describe(DatabaseService, () => {
     });
   });
 
+  describe("codes", () => {
+    it("reads the Codes one shape's rows hold, and no other shape's", async () => {
+      await service.saveAll([
+        meanderRecord({ code: "codes-a", columns: 7, lattice: "a", rows: 9 }),
+        meanderRecord({ code: "codes-b", columns: 7, lattice: "b", rows: 9 }),
+        meanderRecord({ code: "codes-c", columns: 6, lattice: "c", rows: 9 }),
+      ]);
+
+      await expect(
+        service.codes({ columns: 7, rows: 9 }),
+      ).resolves.toStrictEqual(new Set(["codes-a", "codes-b"]));
+    });
+  });
+
   describe("saveAll", () => {
     it("writes more rows than one chunk holds, every column bound, without exceeding the driver's variable limit", async () => {
       const records = Array.from(

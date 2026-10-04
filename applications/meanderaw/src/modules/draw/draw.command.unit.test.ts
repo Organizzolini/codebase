@@ -157,13 +157,13 @@ describe(DrawCommand, () => {
     expect(draw).not.toHaveBeenCalled();
   });
 
-  it("enumerates before ingesting, so a hardcoded collision is refused rather than overwriting", async () => {
+  it("ingests the hardcoded corpus before enumerating, so a hardcoded row wins over an enumerated meander with its Code", async () => {
     await command.run([], {});
 
     const [enumerated] = sweep.mock.invocationCallOrder;
     const [hardcoded] = ingest.mock.invocationCallOrder;
 
-    expect(enumerated).toBeLessThan(hardcoded ?? 0);
+    expect(hardcoded).toBeLessThan(enumerated ?? 0);
   });
 
   it("writes no file when it sweeps, the database being its only output", async () => {

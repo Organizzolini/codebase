@@ -7,7 +7,7 @@ import { CharacteristicsService } from "../characteristics/characteristics.servi
 import { ClassificationService } from "../classification/classification.service";
 import { CodeService } from "../code/code.service";
 import { DatabaseService } from "../database/database.service";
-import { EnumerationService } from "../enumeration/enumeration.service";
+import { TileEnumerationService } from "../enumeration/tile-enumeration.service";
 
 import { DuplicateCorpusCodeError } from "./corpus.constants";
 import { CorpusService } from "./corpus.service";
@@ -24,7 +24,7 @@ describe(CorpusService, () => {
   let classificationService: ClassificationService;
   let databaseService: DatabaseService;
   let codeService: CodeService;
-  let enumerationService: EnumerationService;
+  let tileEnumerationService: TileEnumerationService;
 
   const tile = createMock<Tile>({ columns: 1, rows: 2 });
   const record = characteristicRecord({
@@ -65,8 +65,8 @@ describe(CorpusService, () => {
           useValue: createMock<CodeService>(),
         },
         {
-          provide: EnumerationService,
-          useValue: createMock<EnumerationService>(),
+          provide: TileEnumerationService,
+          useValue: createMock<TileEnumerationService>(),
         },
       ],
     }).compile();
@@ -76,7 +76,7 @@ describe(CorpusService, () => {
     classificationService = await module.resolve(ClassificationService);
     databaseService = await module.resolve(DatabaseService);
     codeService = await module.resolve(CodeService);
-    enumerationService = await module.resolve(EnumerationService);
+    tileEnumerationService = await module.resolve(TileEnumerationService);
   });
 
   beforeEach(() => {
@@ -101,7 +101,7 @@ describe(CorpusService, () => {
         isReducible ? { ...stored, isReducible: true } : stored,
     );
     vi.mocked(classificationService.classify).mockReturnValue("snake");
-    vi.mocked(enumerationService.isAdmitted).mockReturnValue(false);
+    vi.mocked(tileEnumerationService.edges).mockReturnValue(17);
     vi.mocked(databaseService.findOneByCode).mockResolvedValue(null);
     vi.mocked(databaseService.save).mockResolvedValue(savedMeander);
   });
@@ -219,8 +219,8 @@ describe(CorpusService, () => {
       );
     });
 
-    it("skips an entry at a shape the enumeration already reaches", async () => {
-      vi.mocked(enumerationService.isAdmitted).mockReturnValue(true);
+    it("skips an entry within the sixteen edges the corpus was extracted against", async () => {
+      vi.mocked(tileEnumerationService.edges).mockReturnValue(16);
 
       await expect(service.ingest([entry])).resolves.toStrictEqual([]);
       expect(databaseService.save).not.toHaveBeenCalled();
@@ -249,8 +249,16 @@ describe(CorpusService, () => {
       expect(databaseService.save).not.toHaveBeenCalled();
     });
 
-    it("keeps an entry shallower than the sweep's own floor, which the budget alone would admit", async () => {
-      vi.mocked(enumerationService.isAdmitted).mockReturnValue(true);
+    it("keeps an entry past sixteen edges even where a raised budget now enumerates it, so a hardcoded meander is never folded into the sweep", async () => {
+      vi.mocked(tileEnumerationService.edges).mockReturnValue(21);
+
+      await expect(service.ingest([entry])).resolves.toStrictEqual([
+        savedMeander,
+      ]);
+    });
+
+    it("keeps an entry shallower than the sweep's own floor, which the edge boundary alone would skip", async () => {
+      vi.mocked(tileEnumerationService.edges).mockReturnValue(16);
 
       await expect(
         service.ingest([{ ...entry, rows: 1 }]),

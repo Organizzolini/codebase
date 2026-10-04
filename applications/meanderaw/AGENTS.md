@@ -26,15 +26,16 @@ one from its decoded Code, and a family is _read off_ the result rather than cho
 it. See "One Command" and "Output Layout" in [README.md](./README.md).
 
 **The corpus is two halves that partition it, and the partition is load-bearing.**
-Rows with `isHardcoded` false hold the 2,331,597 meanders `EnumerationService` walks — the
-twenty-three shapes the edge budget admits. Rows with it true hold the meanders of the
-historical corpus that lie beyond that budget, extracted once as Codes from the retired
-file tree. `CorpusService.isBeyondEnumeration` is the filter, and it is by shape rather
-than by Code: the enumeration applies no degree ceiling and no family filter, so at an
-admitted shape _every_ structurally distinct meander is already a row before ingestion
-begins. The filter asks the budget rather than restating it, so raising `EDGE_BUDGET`
-moves the boundary with it — `draw-sweep.command.integration.test.ts` pins how many
-entries lie beyond it.
+Rows with `isHardcoded` true hold the 963 meanders of the historical corpus past the sixteen
+edges it was extracted against, extracted once as Codes from the retired file tree;
+`CorpusService.isPreserved` is the filter, by shape against the fixed
+`HISTORICAL_CORPUS_EDGE_BUDGET` rather than the sweep's own budget, so raising
+`EDGE_BUDGET` never drops one. Rows with it false hold what `EnumerationService` walks — the
+twenty-three shapes the edge budget admits, one meander per symmetry class. The corpus is
+ingested first, and the sweep skips any Code a hardcoded row already holds, so a hardcoded
+row keeps its Code and hand-filed family. Only enumerated meanders are folded by
+symmetry: a hardcoded mirror or flip of an enumerated meander stays a row of its own.
+`draw-sweep.command.integration.test.ts` pins how many entries are preserved.
 
 **What bounds the enumeration is one edge budget, not a column cap.** A repeat of `rows` by
 `columns` holds `columns * (2 * rows - 1)` edges, its only degrees of freedom — so a shape
@@ -79,10 +80,10 @@ reclassifying the historical corpus through the new predicates explicitly out of
 `HardcodedMeandersService` carries that metadata over rather than re-deriving it. Do not
 "fix" a hardcoded row whose structure would classify differently.
 
-**A duplicate lattice address is a build failure.** The unique index over `code` refuses
-the second insert, and the sweep runs the enumerated half
-first so the refusal names the hardcoded entry that caused it. Do not soften that into an
-upsert.
+**A duplicate lattice address within one half is a build failure.** The unique index over
+`code` refuses a second insert. Across the halves the hardcoded row wins by design: the
+corpus is ingested first and the sweep skips the Codes it already holds, which is a skip
+rather than an upsert — an enumerated meander never overwrites a row.
 
 **No row stores its drawing.** The renderer draws each meander from its Code, rows, and
 columns whenever a drawing is needed, so a renderer change needs no database change at

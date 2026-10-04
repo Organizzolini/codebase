@@ -56,14 +56,23 @@ export class DrawEnumerationService {
    * memory before writing any of them buys nothing. Each shape is drawn
    * across `DrawPoolService`'s worker threads, which are ended once the last
    * shape is written — or the sweep fails — so none outlives it.
+   *
+   * A meander whose Code a row of its shape already holds is skipped rather
+   * than written: the hardcoded corpus is ingested first, and a hardcoded
+   * row keeps its Code and hand-filed family over the enumerated meander
+   * that shares it. Only enumerated meanders are folded by symmetry; a
+   * hardcoded mirror or flip of one stays a row of its own.
    */
   async persist(shapes: readonly MeanderShape[]): Promise<number> {
     let written = 0;
 
     try {
       for (const shape of shapes) {
+        const held = await this.databaseService.codes(shape);
+        const records = await this.drawPoolService.records(shape);
+
         written += await this.databaseService.saveAll(
-          await this.drawPoolService.records(shape),
+          records.filter(({ code }) => !held.has(code)),
         );
       }
     } finally {

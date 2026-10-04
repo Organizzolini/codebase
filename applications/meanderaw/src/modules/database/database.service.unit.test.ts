@@ -76,7 +76,7 @@ describe(DatabaseService, () => {
   });
 
   describe("saveAll", () => {
-    it("writes every record through one multi-row INSERT per chunk, inside a transaction, leaving generated columns out", async () => {
+    it("writes every record through one multi-row INSERT per chunk into the schema-qualified table, leaving database-filled columns out", async () => {
       vi.mocked(meanderRepository.manager.transaction).mockImplementation(
         async (
           callbackOrLevel: unknown,
@@ -96,6 +96,7 @@ describe(DatabaseService, () => {
       const column = (name: "code" | "lattice"): ColumnMetadata =>
         createMock<ColumnMetadata>({
           databaseName: name,
+          default: null,
           getEntityValue: (entity: MeanderRecord) => entity[name],
           isGenerated: false,
         });
@@ -106,8 +107,13 @@ describe(DatabaseService, () => {
             column("code"),
             column("lattice"),
             createMock<ColumnMetadata>({ isGenerated: true }),
+            createMock<ColumnMetadata>({
+              databaseName: "id",
+              default: () => "uuidv7()",
+              isGenerated: false,
+            }),
           ],
-          tableName: "meanders",
+          tablePath: "meanderaw_development.meanders",
         },
       });
       vi.mocked(
@@ -120,7 +126,7 @@ describe(DatabaseService, () => {
 
       expect(count).toBe(2);
       expect(meanderRepository.manager.query).toHaveBeenCalledWith(
-        'INSERT INTO "meanders" ("code", "lattice") VALUES (?, ?), (?, ?)',
+        'INSERT INTO "meanderaw_development"."meanders" ("code", "lattice") VALUES ($1, $2), ($3, $4)',
         ["3c9a", "3c9a", "3c9a", "3c9b"],
       );
     });

@@ -47,10 +47,9 @@ import type { DrawCommandOptions } from "./draw.types";
  * at the edge budget's millions of rows a family page outgrew what a string
  * — or a browser — can hold, so the database is the sweep's only output.
  *
- * The enumerated half runs first, so a sweep that cannot decode something
- * it found fails before the corpus is ingested behind it — and so
- * that a hardcoded entry claiming an address the enumeration already holds
- * fails loudly rather than silently replacing it.
+ * The hardcoded half runs first, so a hardcoded meander keeps its row: the
+ * sweep skips any Code a hardcoded row already holds rather than writing an
+ * enumerated duplicate beside it.
  */
 @Command({
   description:
@@ -117,11 +116,12 @@ export class DrawCommand extends CommandRunner {
    * database.
    *
    * Two halves, one corpus and one unique index over a meander's
-   * lattice address. The enumerated half is written first and the hardcoded
-   * half second, so the two are ordered rather than racing: an entry that
-   * claimed an address the enumeration already holds is refused by the index
-   * rather than overwriting it, which is spec #813's thirty-second story
-   * enforced by the schema rather than by a convention nobody checks.
+   * lattice address. The hardcoded half is written first and the enumerated
+   * half second, so the two are ordered rather than racing: an enumerated
+   * meander whose Code a hardcoded row already holds is skipped, so the
+   * hardcoded row keeps it and its hand-filed family. Only enumerated
+   * meanders are folded by symmetry — a hardcoded mirror or flip of one is
+   * a row of its own.
    *
    * The existing rows are cleared first, so a sweep regenerates the
    * database in place: every row is insert-only, and sweeping over the rows
@@ -130,13 +130,13 @@ export class DrawCommand extends CommandRunner {
   private async sweep(): Promise<void> {
     await this.databaseService.clear();
 
-    const enumerated = await this.drawEnumerationService.sweep();
+    const hardcoded = await this.corpusService.ingest(HISTORICAL_CORPUS);
 
-    this.logger.log("✨ Enumerated every family's unit space", undefined, {
-      enumerated,
+    this.logger.log("✨ Ingested the historical corpus", undefined, {
+      hardcoded: hardcoded.length,
     });
 
-    const hardcoded = await this.corpusService.ingest(HISTORICAL_CORPUS);
+    const enumerated = await this.drawEnumerationService.sweep();
 
     this.logger.log("✨ Generated every meander", undefined, {
       enumerated,

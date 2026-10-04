@@ -5,7 +5,7 @@ import { Repository } from "typeorm";
 import { MEANDER_INSERT_CHUNK_SIZE } from "./database.constants";
 import { Meander } from "./entities/Meander.entity";
 
-import type { MeanderRecord } from "./database.types";
+import type { MeanderRecord, MeanderShape } from "./database.types";
 import type { ColumnMetadata } from "typeorm/metadata/ColumnMetadata.js";
 
 /**
@@ -65,6 +65,20 @@ export class DatabaseService {
    */
   async clear(): Promise<void> {
     await this.meanderRepository.clear();
+  }
+
+  /**
+   * Every Code the rows of one shape hold, for the sweep to skip: a
+   * hardcoded row ingested first keeps its Code, and an enumerated meander
+   * with the same Code is not written beside it.
+   */
+  async codes(shape: MeanderShape): Promise<Set<string>> {
+    const rows = await this.meanderRepository.find({
+      select: { code: true },
+      where: { columns: shape.columns, rows: shape.rows },
+    });
+
+    return new Set(rows.map(({ code }) => code));
   }
 
   /**

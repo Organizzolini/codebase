@@ -20,4 +20,4 @@ Raising the budget no longer moves the historical corpus boundary. It stays at t
 
 - A clone of the repository carries no record of what a sweep produced; the database is reproduced by running `nx run meanderaw:start`, which at the default budget takes about three minutes on an 18-core machine.
 - A change that moves rows only past the suites' pinned budget is caught by no gate. Re-running the sweep and comparing is a manual step.
-- Pages can come back as a paginated, on-demand build from the database if a browsable record is wanted again.
+- Pages can come back as a paginated, on-demand build from the database if a record to browse is wanted again.

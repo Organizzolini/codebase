@@ -20,9 +20,8 @@ import { EnumerationService } from "../src/modules/enumeration/enumeration.servi
 import { GeometryModule } from "../src/modules/geometry/geometry.module";
 import { SymmetryModule } from "../src/modules/symmetry/symmetry.module";
 
-import { SWEEP_TEST_EDGE_BUDGET, SWEEP_TEST_WORKERS } from "./sweep-budget";
-
 import { testDataSourceOptions } from "./database";
+import { SWEEP_TEST_EDGE_BUDGET, SWEEP_TEST_WORKERS } from "./sweep-budget";
 
 import type { TestDatabaseContainer } from "./database";
 import type {

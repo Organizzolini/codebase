@@ -83,7 +83,7 @@ describe("drawCommand sweep mode", () => {
       "ignores the sweep quietly when a hardcoded entry's lattice address is already committed",
       async () => {
         const duplicated = HISTORICAL_CORPUS.find((entry) =>
-          sweep.corpus.isBeyondEnumeration(entry),
+          sweep.corpus.isPreserved(entry),
         );
 
         if (duplicated === undefined) {

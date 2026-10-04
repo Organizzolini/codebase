@@ -25,18 +25,18 @@ import { HISTORICAL_CORPUS } from "../corpus/historical-corpus.constants";
 import { DrawCodeService } from "./draw-code.service";
 
 /**
- * How many of the historical corpus's entries lie beyond the sweep's reach,
- * and so are ingested rather than enumerated.
+ * How many of the historical corpus's entries are preserved as hardcoded
+ * rows: those past the sixteen edges the corpus was extracted against, or
+ * shallower than the sweep's row floor.
  *
  * Written down rather than computed, because the boundary is computed from
- * the edge budget and the sweep's row floor rather than hand-listed, and a
- * number written down is what catches that computation drifting. This suite
- * sweeps at `SWEEP_TEST_EDGE_BUDGET` rather than `EDGE_BUDGET`, so it is the
- * count beyond twelve edges: the 1,026 entries the retired constants files
- * held beyond sixteen, plus the 40 between the two. A pinned budget moved
- * there moves this number, and should fail here rather than pass quietly.
+ * `HISTORICAL_CORPUS_EDGE_BUDGET` and the row floor rather than hand-listed,
+ * and a number written down is what catches that computation drifting. It
+ * is exactly the number of entries the retired constants files held, and it
+ * does not move with `SWEEP_TEST_EDGE_BUDGET` or `EDGE_BUDGET`: raising the
+ * sweep's budget never drops a hardcoded meander.
  */
-const HISTORICAL_CORPUS_BEYOND_ENUMERATION = 1066;
+const HISTORICAL_CORPUS_PRESERVED = 1026;
 
 /** Compiles a fresh sweep, over an emptied schema in `container`, with `--code` and logging mocked out. */
 async function compileSweep(
@@ -69,11 +69,12 @@ async function compileSweep(
  * them beside this file's shared sweep rather than after it.
  *
  * **This is what proves the two halves do not collide.** Both halves
- * write through the same unique index over a meander's lattice address, and
- * the enumerated half runs first, so an entry the hardcoded corpus still
- * claims inside the enumerated space fails the second insert rather than
- * quietly overwriting the first. Nothing short of running both halves for
- * real catches that: each half passes its own suite alone.
+ * write through the same unique index over a meander's lattice address.
+ * The hardcoded half is ingested first and the sweep skips any Code it
+ * already holds, so a collision across the halves resolves to the
+ * hardcoded row, while one within either half still fails its insert.
+ * Nothing short of running both halves for real catches a collision: each
+ * half passes its own suite alone.
  *
  * `HISTORICAL_CORPUS` is the real, committed corpus rather than a
  * fixture — `DrawCommand.run` reads it directly rather than through an
@@ -122,7 +123,7 @@ describe("drawCommand sweep mode", () => {
           (total, shape) => total + sweep.enumeration.enumerate(shape).length,
           0,
         );
-      const expectedHardcoded = 999;
+      const expectedHardcoded = 963;
 
       await expect(
         sweep.repository.countBy({ isHardcoded: false }),
@@ -132,27 +133,10 @@ describe("drawCommand sweep mode", () => {
       ).resolves.toBe(expectedHardcoded);
     });
 
-    it("ingests exactly the 1066 entries beyond the pinned budget, computed from the sweep's own reach rather than listed", () => {
+    it("preserves exactly the 1026 entries the retired constants files held, whatever the sweep's budget", () => {
       expect(
-        HISTORICAL_CORPUS.filter((entry) =>
-          sweep.corpus.isBeyondEnumeration(entry),
-        ),
-      ).toHaveLength(HISTORICAL_CORPUS_BEYOND_ENUMERATION);
-    });
-
-    it("keeps every ingested entry outside the shapes the enumeration already covers", () => {
-      const swept = new Set(
-        sweep.enumeration
-          .shapes()
-          .map((shape) => `${shape.rows}x${shape.columns}`),
-      );
-      const covered = HISTORICAL_CORPUS.filter(
-        (entry) =>
-          sweep.corpus.isBeyondEnumeration(entry) &&
-          swept.has(`${entry.rows}x${entry.columns}`),
-      );
-
-      expect(covered).toStrictEqual([]);
+        HISTORICAL_CORPUS.filter((entry) => sweep.corpus.isPreserved(entry)),
+      ).toHaveLength(HISTORICAL_CORPUS_PRESERVED);
     });
 
     it("carries the family it was filed under, and isHardcoded, on every ingested corpus entry", async () => {

@@ -36,7 +36,7 @@ export const SWEEP_MINIMUM_ROWS = 2;
  *
  * Twenty-two admits twenty-three shapes and 2,331,597 distinct meanders —
  * eleven rows deep at one column, seven columns wide at two rows — swept in
- * about fourteen minutes across worker threads. Sixteen admitted fourteen
+ * about nine minutes across worker threads. Sixteen admitted fourteen
  * shapes and 30,279 in about thirty seconds, and twenty-four would admit
  * about 7 million: each edge added roughly doubles both the walk and the
  * corpus. Raising it is a one-line
