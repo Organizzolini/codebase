@@ -1,4 +1,4 @@
-import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { ApolloServerPluginLandingPageLocalDefault } from "@apollo/server/plugin/landingPage/default";
 import { ApolloDriver, type ApolloDriverConfig } from "@nestjs/apollo";
@@ -22,7 +22,7 @@ import { environmentSchema } from "./{{nameKebabCase}}.constants";
         environmentSchema.parse(config),
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
-      autoSchemaFile: path.join(process.cwd(), "src/schema.gql"),
+      autoSchemaFile: fileURLToPath(new URL("schema.gql", import.meta.url)),
       driver: ApolloDriver,
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
