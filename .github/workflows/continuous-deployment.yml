@@ -310,18 +310,23 @@ jobs:
             git push origin "${refs[@]}"
           done
 
-      # Publishes every package in the Nx release group, read from nx.json,
+      # Publishes each package twice over: to npm, then as a GitHub release.
+      # npm gets every package in the Nx release group, read from nx.json,
       # whose version is not on npm yet, so a re-run sends only what is
       # missing. pnpm rather than `nx release publish`, because pnpm honors
       # provenance only as the `--provenance` flag, which Nx cannot pass:
       # NPM_CONFIG_PROVENANCE and `publishConfig.provenance` are ignored.
       # `setup-node` writes no registry `.npmrc`, so the token goes in the user
-      # config.
+      # config. Then every package tag with no GitHub release yet gets one, so
+      # a run that stopped after the push is completed by the next.
+      # `--latest=false` keeps the codebase's `v*` release as Latest for the
+      # README badge.
       - name: 📦 Publish Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
           matrix.target.id == 'push-releases'
         env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
@@ -333,16 +338,6 @@ jobs:
           pnpm -r "${filters[@]}" publish --provenance --no-git-checks \
             --tag latest --registry https://registry.npmjs.org
 
-      # One GitHub release per package tag that has none yet, so a run that
-      # stopped after the push is completed by the next. `--latest=false`
-      # keeps the codebase's `v*` release as Latest for the README badge.
-      - name: 🗒️ Create Package Releases
-        if: >-
-          steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-        run: |
           released="$(gh release list --limit 1000 --json tagName --jq '.[].tagName')"
           for tag in $(git tag --list '*@*'); do
             if grep -qxF "${tag}" <<< "${released}"; then continue; fi
@@ -365,7 +360,9 @@ jobs:
               --title "${name} ${version}" --notes-file "${RUNNER_TEMP}/release-notes.md"
           done
 
-      - name: 🦸 Push Releases
+      # semantic-release versions, tags and releases the codebase itself, the
+      # `v*` release the README badge shows, never an ic-suite package.
+      - name: 🦸 Release Codebase
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
           matrix.target.id == 'push-releases'
