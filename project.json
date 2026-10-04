@@ -95,28 +95,93 @@
       "outputs": []
     },
     "check-catalog-manifests": {
+      "cache": true,
       "description": "Enforce catalog: protocol for external dependencies in workspace package manifests",
       "executor": "nx:run-commands",
+      "inputs": [
+        "{workspaceRoot}/**/package.json",
+        {
+          "input": "production",
+          "projects": ["logger", "validation"]
+        },
+        {
+          "externalDependencies": [
+            "@nestjs/common",
+            "@nestjs/config",
+            "@nestjs/core",
+            "@swc-node/register",
+            "nest-commander",
+            "reflect-metadata",
+            "zod"
+          ]
+        }
+      ],
       "options": {
         "command": "NODE_OPTIONS='' node --import @swc-node/register/esm-register tools/validation/src/main.ts catalog-manifests",
         "cwd": "{workspaceRoot}"
-      }
+      },
+      "outputs": []
     },
     "check-lockfile": {
+      "cache": true,
       "description": "Verify that pnpm-lock.yaml is in sync with package.json files",
       "executor": "nx:run-commands",
+      "inputs": [
+        "{workspaceRoot}/**/package.json",
+        "{workspaceRoot}/.npmrc",
+        "{workspaceRoot}/patches/**/*",
+        "{workspaceRoot}/pnpm-lock.yaml",
+        "{workspaceRoot}/pnpm-workspace.yaml",
+        {
+          "input": "production",
+          "projects": ["logger", "validation"]
+        },
+        {
+          "externalDependencies": [
+            "@nestjs/common",
+            "@nestjs/config",
+            "@nestjs/core",
+            "@swc-node/register",
+            "nest-commander",
+            "reflect-metadata",
+            "zod"
+          ]
+        }
+      ],
       "options": {
         "command": "NODE_OPTIONS='' node --import @swc-node/register/esm-register tools/validation/src/main.ts lockfile",
         "cwd": "{workspaceRoot}"
-      }
+      },
+      "outputs": []
     },
     "check-readme-projects": {
+      "cache": true,
       "description": "Verify the root README links to every workspace project",
       "executor": "nx:run-commands",
+      "inputs": [
+        "{workspaceRoot}/**/package.json",
+        "{workspaceRoot}/README.md",
+        {
+          "input": "production",
+          "projects": ["logger", "validation"]
+        },
+        {
+          "externalDependencies": [
+            "@nestjs/common",
+            "@nestjs/config",
+            "@nestjs/core",
+            "@swc-node/register",
+            "nest-commander",
+            "reflect-metadata",
+            "zod"
+          ]
+        }
+      ],
       "options": {
         "command": "NODE_OPTIONS='' node --import @swc-node/register/esm-register tools/validation/src/main.ts readme-projects",
         "cwd": "{workspaceRoot}"
-      }
+      },
+      "outputs": []
     },
     "codependix": {
       "cache": true,
@@ -250,7 +315,10 @@
       "inputs": [
         "{projectRoot}/**/*.{ts,tsx,js,jsx,mts,cts,mjs,cjs}",
         "{workspaceRoot}/configuration/fallow.config.jsonc",
-        "shared-globals"
+        "shared-globals",
+        {
+          "externalDependencies": ["fallow"]
+        }
       ],
       "options": {
         "command": "fallow --config configuration/fallow.config.jsonc",
@@ -307,7 +375,10 @@
       "inputs": [
         "{projectRoot}/**/*.{ts,tsx,js,jsx,mts,cts,mjs,cjs}",
         "{workspaceRoot}/configuration/fallow.config.jsonc",
-        "shared-globals"
+        "shared-globals",
+        {
+          "externalDependencies": ["fallow"]
+        }
       ],
       "options": {
         "command": "fallow dead-code --config configuration/fallow.config.jsonc",
@@ -332,7 +403,10 @@
       "inputs": [
         "{projectRoot}/**/*.{ts,tsx,js,jsx,mts,cts,mjs,cjs}",
         "{workspaceRoot}/configuration/fallow.config.jsonc",
-        "shared-globals"
+        "shared-globals",
+        {
+          "externalDependencies": ["fallow"]
+        }
       ],
       "options": {
         "command": "fallow dupes --config configuration/fallow.config.jsonc",
@@ -379,7 +453,10 @@
       "inputs": [
         "{projectRoot}/**/*.{ts,tsx,js,jsx,mts,cts,mjs,cjs}",
         "{workspaceRoot}/configuration/fallow.config.jsonc",
-        "shared-globals"
+        "shared-globals",
+        {
+          "externalDependencies": ["fallow"]
+        }
       ],
       "options": {
         "command": "fallow health --config configuration/fallow.config.jsonc || true",
@@ -402,7 +479,10 @@
       "inputs": [
         "{workspaceRoot}/configuration/.gitleaksignore",
         "{workspaceRoot}/configuration/gitleaks.toml",
-        "default"
+        "default",
+        {
+          "externalDependencies": []
+        }
       ],
       "options": {
         "command": "gitleaks git --staged --verbose --redact --config configuration/gitleaks.toml --gitleaks-ignore-path configuration",
@@ -442,7 +522,10 @@
         "{workspaceRoot}/packages/**/*",
         "{workspaceRoot}/scripts/**/*",
         "{workspaceRoot}/tools/**/*",
-        "shared-globals"
+        "shared-globals",
+        {
+          "externalDependencies": ["jscpd"]
+        }
       ],
       "options": {
         "cwd": "{workspaceRoot}"
@@ -500,7 +583,7 @@
         }
       },
       "defaultConfiguration": "check",
-      "description": "Lint markdown files in workspace root (agents, scripts, documentation, infrastructure). Reaches .agents/ so this repository's own skills are linted like any other documentation; the vendored skills in skills-lock.json are excluded per skill in the markdownlint configuration. The inputs enumerate exactly the globs the command lints, plus the markdownlint configuration and shared-globals — the latter carries pnpm-lock.yaml, so a markdownlint upgrade cannot replay a cached pass. The workspace-wide default input is deliberately absent: it resolves to {projectRoot}/**/* for the root project, which made every root-owned file the tool never reads invalidate this cache. The vendored-skills negations then drop the 59 skills markdownlint already ignores, so editing one of them no longer busts the cache for nothing.",
+      "description": "Lint markdown files in workspace root (agents, scripts, documentation, infrastructure). Reaches .agents/ so this repository's own skills are linted like any other documentation; the vendored skills in skills-lock.json are excluded per skill in the markdownlint configuration. The inputs enumerate exactly the globs the command lints, plus the markdownlint configuration and shared-globals, and `markdownlint-cli2` as an external dependency, so a markdownlint upgrade cannot replay a cached pass while unrelated lockfile churn still hits. The workspace-wide default input is deliberately absent: it resolves to {projectRoot}/**/* for the root project, which made every root-owned file the tool never reads invalidate this cache. The vendored-skills negations then drop the 59 skills markdownlint already ignores, so editing one of them no longer busts the cache for nothing.",
       "executor": "nx:run-commands",
       "inputs": [
         "{projectRoot}/*.md",
@@ -511,7 +594,10 @@
         "{projectRoot}/scripts/**/*.md",
         "{workspaceRoot}/configuration/.markdownlint-cli2.jsonc",
         "shared-globals",
-        "vendored-skills"
+        "vendored-skills",
+        {
+          "externalDependencies": ["markdownlint-cli2"]
+        }
       ],
       "options": {
         "cwd": "{projectRoot}"
@@ -561,7 +647,10 @@
       "inputs": [
         "{workspaceRoot}/configuration/.oxfmtignore",
         "{workspaceRoot}/configuration/oxfmt.config.ts",
-        "default"
+        "default",
+        {
+          "externalDependencies": ["oxfmt"]
+        }
       ],
       "options": {
         "cwd": "{projectRoot}"
@@ -580,7 +669,13 @@
       "defaultConfiguration": "check",
       "description": "Run Oxlint on workspace root files — config files, scripts, documentation, infrastructure, and the devcontainer sync scripts. That last path is named because the others hold no TypeScript at all today: `scripts/` went shell-only when the two dead root scripts were deleted, and oxlint exits non-zero when its paths match nothing, so a target covering only empty directories fails rather than passing vacuously. The devcontainer scripts are real TypeScript that nothing else here was linting.",
       "executor": "nx:run-commands",
-      "inputs": ["{workspaceRoot}/configuration/oxlint.config.ts", "default"],
+      "inputs": [
+        "{workspaceRoot}/configuration/oxlint.config.ts",
+        "default",
+        {
+          "externalDependencies": ["oxlint"]
+        }
+      ],
       "options": {
         "cwd": "{projectRoot}"
       }
@@ -701,6 +796,12 @@
       "defaultConfiguration": "write",
       "description": "Format workspace root files with Prettier (excluding NX projects)",
       "executor": "nx:run-commands",
+      "inputs": [
+        "default",
+        {
+          "externalDependencies": ["prettier"]
+        }
+      ],
       "options": {
         "command": "prettier {args} --config configuration/prettier.config.ts --ignore-path configuration/.prettierignore --ignore-unknown .",
         "cwd": "{projectRoot}"
@@ -738,7 +839,10 @@
       "executor": "nx:run-commands",
       "inputs": [
         "{workspaceRoot}/**/package.json",
-        "{workspaceRoot}/pnpm-workspace.yaml"
+        "{workspaceRoot}/pnpm-workspace.yaml",
+        {
+          "externalDependencies": []
+        }
       ],
       "options": {
         "cwd": "{workspaceRoot}"
@@ -746,7 +850,7 @@
     },
     "spell-check": {
       "cache": true,
-      "description": "Check spelling in every workspace root file no project owns (configuration, documentation, infrastructure, notepads, openwiki, planning, scripts, and the .agents, .devcontainer, .github, and .vscode directories). Reaches .agents/ so this repository's own skills are spell-checked like any other documentation; the vendored skills in skills-lock.json are excluded per skill in the cspell configuration. The inputs enumerate exactly the globs the command checks, plus the cspell configuration and dictionaries and shared-globals — the latter carries pnpm-lock.yaml, so a cspell upgrade cannot replay a cached pass. The workspace-wide default input is deliberately absent: it resolves to {projectRoot}/**/* for the root project, which made every root-owned file the tool never reads invalidate this cache. The vendored-skills negations then drop the 59 skills cspell already ignores, so editing one of them no longer busts the cache for nothing.",
+      "description": "Check spelling in every workspace root file no project owns (configuration, documentation, infrastructure, notepads, openwiki, planning, scripts, and the .agents, .devcontainer, .github, and .vscode directories). Reaches .agents/ so this repository's own skills are spell-checked like any other documentation; the vendored skills in skills-lock.json are excluded per skill in the cspell configuration. The inputs enumerate exactly the globs the command checks, plus the cspell configuration and dictionaries and shared-globals, and `cspell` as an external dependency, so a cspell upgrade cannot replay a cached pass while unrelated lockfile churn still hits. The workspace-wide default input is deliberately absent: it resolves to {projectRoot}/**/* for the root project, which made every root-owned file the tool never reads invalidate this cache. The vendored-skills negations then drop the 59 skills cspell already ignores, so editing one of them no longer busts the cache for nothing.",
       "executor": "nx:run-commands",
       "inputs": [
         "{projectRoot}/*.{ts,tsx,js,jsx,md,yaml,yml,json}",
@@ -765,7 +869,10 @@
         "{workspaceRoot}/configuration/.cspell/**",
         "{workspaceRoot}/configuration/cspell.config.yaml",
         "shared-globals",
-        "vendored-skills"
+        "vendored-skills",
+        {
+          "externalDependencies": ["cspell"]
+        }
       ],
       "options": {
         "command": "cspell --config configuration/cspell.config.yaml '*.{ts,tsx,js,jsx,md,yaml,yml,json}' '.agents/**' '.devcontainer/**' '.github/**' '.vscode/**' 'configuration/**' 'docs/**' 'documentation/**' 'infrastructure/**' 'notepads/**' 'openwiki/**' 'planning/**' 'scripts/**' --no-progress --gitignore --gitignore-root .",
@@ -788,7 +895,10 @@
         "{projectRoot}/notepads/*.sql",
         "{workspaceRoot}/pyproject.toml",
         "{workspaceRoot}/uv.lock",
-        "shared-globals"
+        "shared-globals",
+        {
+          "externalDependencies": []
+        }
       ],
       "options": {
         "command": "uv run sqlfluff {args} --config pyproject.toml notepads",
@@ -811,7 +921,10 @@
         "{projectRoot}/notepads/*.sql",
         "{workspaceRoot}/pyproject.toml",
         "{workspaceRoot}/uv.lock",
-        "shared-globals"
+        "shared-globals",
+        {
+          "externalDependencies": []
+        }
       ],
       "options": {
         "command": "uv run sqlfluff {args} --config pyproject.toml notepads",
@@ -835,7 +948,10 @@
         "{projectRoot}/.devcontainer/cloud/devcontainer.json",
         "{projectRoot}/.devcontainer/local/devcontainer.json",
         "{projectRoot}/.devcontainer/scripts/sync-vscode-extensions.ts",
-        "{projectRoot}/.vscode/extensions.json"
+        "{projectRoot}/.vscode/extensions.json",
+        {
+          "externalDependencies": ["tsx"]
+        }
       ],
       "options": {
         "command": "tsx .devcontainer/scripts/sync-vscode-extensions.ts"
@@ -856,7 +972,10 @@
       "executor": "nx:run-commands",
       "inputs": [
         "{projectRoot}/.devcontainer/scripts/sync-vscode-settings.ts",
-        "{projectRoot}/.vscode/settings.json"
+        "{projectRoot}/.vscode/settings.json",
+        {
+          "externalDependencies": ["tsx"]
+        }
       ],
       "options": {
         "command": "tsx .devcontainer/scripts/sync-vscode-settings.ts"
@@ -878,7 +997,10 @@
       "inputs": [
         "{workspaceRoot}/**/package.json",
         "{workspaceRoot}/configuration/syncpack.config.cjs",
-        "{workspaceRoot}/pnpm-lock.yaml"
+        "{workspaceRoot}/pnpm-lock.yaml",
+        {
+          "externalDependencies": ["syncpack"]
+        }
       ],
       "options": {
         "command": "pnpm exec syncpack lint --config configuration/syncpack.config.cjs",
@@ -909,7 +1031,10 @@
       "executor": "nx:run-commands",
       "inputs": [
         "{workspaceRoot}/configuration/trivyignore",
-        "{workspaceRoot}/infrastructure/terraform/**/*.tf"
+        "{workspaceRoot}/infrastructure/terraform/**/*.tf",
+        {
+          "externalDependencies": []
+        }
       ],
       "options": {
         "command": "trivy config infrastructure/terraform --format table --severity CRITICAL,HIGH --exit-code 1 --ignorefile configuration/trivyignore",
@@ -923,7 +1048,10 @@
       "inputs": [
         "{projectRoot}/**/*.{ts,tsx}",
         "{workspaceRoot}/tsconfig.json",
-        "default"
+        "default",
+        {
+          "externalDependencies": ["type-coverage", "typescript"]
+        }
       ],
       "options": {
         "command": "type-coverage --at-least 95 --detail --project tsconfig.json",
@@ -931,12 +1059,26 @@
       }
     },
     "typecheck": {
+      "cache": true,
       "description": "Type-check workspace root TypeScript files",
       "executor": "nx:run-commands",
+      "inputs": [
+        "^production",
+        "{workspaceRoot}/*.ts",
+        "{workspaceRoot}/.devcontainer/scripts/**/*.ts",
+        "{workspaceRoot}/configuration/**/*.ts",
+        "{workspaceRoot}/scripts/**/*.ts",
+        "{workspaceRoot}/tsconfig.json",
+        "shared-globals",
+        {
+          "externalDependencies": ["typescript-7"]
+        }
+      ],
       "options": {
         "command": "node \"$NX_WORKSPACE_ROOT/node_modules/typescript-7/bin/tsc\" --noEmit -p tsconfig.json",
         "cwd": "{projectRoot}"
-      }
+      },
+      "outputs": []
     },
     "typecheck-code": {},
     "validate-branch-name": {
@@ -988,7 +1130,10 @@
         "{workspaceRoot}/configuration/vulture_whitelist.py",
         "{workspaceRoot}/pyproject.toml",
         "{workspaceRoot}/uv.lock",
-        "default"
+        "default",
+        {
+          "externalDependencies": []
+        }
       ],
       "options": {
         "command": "uv run vulture . configuration/vulture_whitelist.py --min-confidence 80 --exclude '*/applications/*,*/packages/*,*/tools/*,*/node_modules/*,*/dist/*,*/coverage/*,*/.venv/*'",
@@ -1007,7 +1152,10 @@
         "{workspaceRoot}/infrastructure/**/*.{yaml,yml}",
         "{workspaceRoot}/pnpm-workspace.yaml",
         "{workspaceRoot}/pyproject.toml",
-        "{workspaceRoot}/uv.lock"
+        "{workspaceRoot}/uv.lock",
+        {
+          "externalDependencies": []
+        }
       ],
       "options": {
         "command": "uv run yamllint -c configuration/yamllint.yaml .devcontainer .github configuration/cspell.config.yaml configuration/yamllint.yaml infrastructure pnpm-workspace.yaml",

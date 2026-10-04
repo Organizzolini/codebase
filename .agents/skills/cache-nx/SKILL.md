@@ -28,16 +28,25 @@ silently undoes the whole arrangement. See
 State the real dependency instead:
 
 - **Tool versions** belong in a per-target `{"externalDependencies": [...]}`
-  entry, which hashes the resolved versions of exactly those packages. This is
-  what `typecheck` has always done with `typescript`; every lint target now
-  names its own tools the same way. A tool added to a target's command must be
-  added there too, or an upgrade of it will replay a stale cached result.
-- **Python tools** need no entry: their targets already declare
-  `{workspaceRoot}/pyproject.toml` and `{workspaceRoot}/uv.lock`.
+  entry, which hashes the resolved versions of exactly those packages.
+  `typecheck` names `typescript-7`, the compiler its command runs, and every
+  lint target names its own tools the same way. A tool added to a target's
+  command must be added there too, or an upgrade of it will replay a stale
+  cached result. The packages a project itself imports need no entry: any `^`
+  input already hashes each of them and their dependencies.
+- **An `nx:run-commands` target with no `externalDependencies` entry hashes
+  every package in the lockfile.** Nx falls back to `AllExternalDependencies`,
+  so a bump of any package misses that target in every project. Give each one
+  an entry, even an empty `[]` for a tool the lockfile does not version (a
+  Python tool, a Homebrew binary, a `pnpm dlx` command pinned in the command
+  itself).
+- **Python tools** need an empty entry and nothing more: their targets already
+  declare `{workspaceRoot}/pyproject.toml` and `{workspaceRoot}/uv.lock`.
 - **Whole-lockfile sensitivity**, where a target genuinely depends on every
   dependency rather than a named few, is the `dependency-versions` namedInput.
   `build` uses it, because a bundle really does change when any dependency
-  does. No lint target should need it.
+  does, and `pack` because its tarball holds `build`'s output. No lint target
+  should need it.
 
 **A task's own artifact must never be one of its inputs**, or it rewrites the
 hash it was just cached under and can never hit its own cache. `.eslintcache/`

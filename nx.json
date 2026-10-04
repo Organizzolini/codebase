@@ -178,7 +178,7 @@
         },
         "defaultConfiguration": "check",
         "dependsOn": ["build"],
-        "description": "Measure one project and gate the limit it declares, writing the report the pull request's \u23f2\ufe0f Codometer section reads. This default depends on `build` because size analysis reads compiled output; the workspace-root `codebase:codometer` target must NOT, because it measures source and waiting on every build would be both slow and circular \u2014 it pins `dependsOn` to an empty list of its own so this default can never reach it, and neither half of that asymmetry may be collapsed into the other. The command runs with `cwd` set to `{projectRoot}` rather than the workspace root: codometer has no `--directory` flag of its own and always measures the process's own working directory, so running there is what makes a project's `limits[]` address paths like `Compiled JavaScript.size` rather than ones synthesized under a `Command Line` input, and it is also what lets `--config`'s upward-ancestor search land on the project's own `codometer.config.ts` instead of the workspace one. `main.ts` is addressed with a literal `../../` rather than `{workspaceRoot}` for the same reason \u2014 the working directory it runs from is no longer the workspace root, and Nx only resolves the `{workspaceRoot}` token when it opens the whole option's value, not when it appears partway through one; this entry reaches every project that sits exactly two directories below the workspace root, which is every project except the ones nested under `packages/ic-suite/<suite>/`, whose own four-directories-deep override sits below. `SWC_NODE_PROJECT` is pinned the same way, to the shared base every project's own tsconfig already extends: `@swc-node/register`'s ESM hook resolves its tsconfig as `<cwd>/tsconfig.json` with no upward search, so a project with no `tsconfig.json` of its own \u2014 `affirmations`, which is pure Python \u2014 would otherwise fail to load `codometer-cli` at all rather than measure anything, the same way `codometer-cli`'s own `start` target already pins this for the same hook. `--output-json` is a bare flag rather than a path, so it writes wherever the resolved configuration's own `json` output says to \u2014 the shared configuration's `codometer-report.json`, the same path for every project \u2014 and a target that left the flag off would write nothing at all and still exit clean \u2014 contributing nothing to the \u23f2\ufe0f Codometer section and looking exactly like a project that changed nothing \u2014 so passing it is what makes the report exist, not something the tool refuses to run without. `--output-markdown README.md` stays a literal path on the command line because only the `write` configuration passes it, which is what keeps a branch's `check` run from rewriting every project README; `check` adds `--check limits` so a breach fails only after the report is on disk. Neither checks staleness: project READMEs are written on main by the release workflow, so they are expected to be stale on a branch. The report this target writes is subtracted from its own inputs, because `production` would otherwise glob it back in and every run would rewrite the hash it was just cached under \u2014 a local run could never hit its own cache, and a fresh checkout could never match one. `README.md` stays an input despite also being an output: codometer measures markdown, so an edit to it genuinely changes the measurement, and restoring it from cache writes back the identical bytes.",
+        "description": "Measure one project and gate the limit it declares, writing the report the pull request's ⏲️ Codometer section reads. This default depends on `build` because size analysis reads compiled output; the workspace-root `codebase:codometer` target must NOT, because it measures source and waiting on every build would be both slow and circular — it pins `dependsOn` to an empty list of its own so this default can never reach it, and neither half of that asymmetry may be collapsed into the other. The command runs with `cwd` set to `{projectRoot}` rather than the workspace root: codometer has no `--directory` flag of its own and always measures the process's own working directory, so running there is what makes a project's `limits[]` address paths like `Compiled JavaScript.size` rather than ones synthesized under a `Command Line` input, and it is also what lets `--config`'s upward-ancestor search land on the project's own `codometer.config.ts` instead of the workspace one. `main.ts` is addressed with a literal `../../` rather than `{workspaceRoot}` for the same reason — the working directory it runs from is no longer the workspace root, and Nx only resolves the `{workspaceRoot}` token when it opens the whole option's value, not when it appears partway through one; this entry reaches every project that sits exactly two directories below the workspace root, which is every project except the ones nested under `packages/ic-suite/<suite>/`, whose own four-directories-deep override sits below. `SWC_NODE_PROJECT` is pinned the same way, to the shared base every project's own tsconfig already extends: `@swc-node/register`'s ESM hook resolves its tsconfig as `<cwd>/tsconfig.json` with no upward search, so a project with no `tsconfig.json` of its own — `affirmations`, which is pure Python — would otherwise fail to load `codometer-cli` at all rather than measure anything, the same way `codometer-cli`'s own `start` target already pins this for the same hook. `--output-json` is a bare flag rather than a path, so it writes wherever the resolved configuration's own `json` output says to — the shared configuration's `codometer-report.json`, the same path for every project — and a target that left the flag off would write nothing at all and still exit clean — contributing nothing to the ⏲️ Codometer section and looking exactly like a project that changed nothing — so passing it is what makes the report exist, not something the tool refuses to run without. `--output-markdown README.md` stays a literal path on the command line because only the `write` configuration passes it, which is what keeps a branch's `check` run from rewriting every project README; `check` adds `--check limits` so a breach fails only after the report is on disk. Neither checks staleness: project READMEs are written on main by the release workflow, so they are expected to be stale on a branch. The report this target writes is subtracted from its own inputs, because `production` would otherwise glob it back in and every run would rewrite the hash it was just cached under — a local run could never hit its own cache, and a fresh checkout could never match one. `README.md` stays an input despite also being an output: codometer measures markdown, so an edit to it genuinely changes the measurement, and restoring it from cache writes back the identical bytes.",
         "executor": "nx:run-commands",
         "inputs": [
           "!{projectRoot}/codometer-report.json",
@@ -210,7 +210,7 @@
         },
         "defaultConfiguration": "check",
         "dependsOn": ["build"],
-        "description": "The `packages/ic-suite/<suite>/` override of the default `codometer` entry above: every field is identical except the two relative paths, corrected from two directories below the workspace root to four. Kept as a full second entry rather than a partial one because Nx does not merge across matching targetDefaults array entries \u2014 the last one whose `filter` matches a project replaces the earlier entry wholesale for that project, so a partial override would silently drop the fields it left out.",
+        "description": "The `packages/ic-suite/<suite>/` override of the default `codometer` entry above: every field is identical except the two relative paths, corrected from two directories below the workspace root to four. Kept as a full second entry rather than a partial one because Nx does not merge across matching targetDefaults array entries — the last one whose `filter` matches a project replaces the earlier entry wholesale for that project, so a partial override would silently drop the fields it left out.",
         "executor": "nx:run-commands",
         "filter": {
           "projects": [
@@ -873,7 +873,10 @@
           "{projectRoot}/**/*.sql",
           "{workspaceRoot}/pyproject.toml",
           "{workspaceRoot}/uv.lock",
-          "shared-globals"
+          "shared-globals",
+          {
+            "externalDependencies": []
+          }
         ],
         "options": {
           "command": "uv run sqlfluff {args} --config pyproject.toml {projectRoot}",
@@ -901,7 +904,10 @@
           "{projectRoot}/**/*.sql",
           "{workspaceRoot}/pyproject.toml",
           "{workspaceRoot}/uv.lock",
-          "shared-globals"
+          "shared-globals",
+          {
+            "externalDependencies": []
+          }
         ],
         "options": {
           "command": "uv run sqlfluff {args} --config pyproject.toml {projectRoot}",
@@ -1118,8 +1124,10 @@
         },
         "inputs": [
           "^production",
-          "{workspaceRoot}/pnpm-workspace.yaml",
-          "typescript-files"
+          "typescript-files",
+          {
+            "externalDependencies": ["typescript-7"]
+          }
         ],
         "options": {
           "command": "node \"$NX_WORKSPACE_ROOT/node_modules/typescript-7/bin/tsc\" --noEmit",
@@ -1158,7 +1166,7 @@
         }
       },
       "defaultConfiguration": "coverage",
-      "description": "Extra configurations layered onto the vitest target that @nx/vitest infers. The plugin supplies the command, inputs, and outputs. Coverage is the default so that a bare `test-code` run still enforces the thresholds \u2014 Nx only propagates a configuration down `dependsOn` when it is named explicitly."
+      "description": "Extra configurations layered onto the vitest target that @nx/vitest infers. The plugin supplies the command, inputs, and outputs. Coverage is the default so that a bare `test-code` run still enforces the thresholds — Nx only propagates a configuration down `dependsOn` when it is named explicitly."
     },
     "vulture": [
       {
@@ -1176,7 +1184,10 @@
           "{projectRoot}/.vulture_whitelist.py",
           "{workspaceRoot}/pyproject.toml",
           "{workspaceRoot}/uv.lock",
-          "python-source"
+          "python-source",
+          {
+            "externalDependencies": []
+          }
         ],
         "options": {
           "command": "uv run python -m vulture src/ .vulture_whitelist.py --min-confidence 80",
@@ -1196,7 +1207,10 @@
           "{workspaceRoot}/configuration/yamllint.yaml",
           "{workspaceRoot}/pyproject.toml",
           "{workspaceRoot}/uv.lock",
-          "shared-globals"
+          "shared-globals",
+          {
+            "externalDependencies": []
+          }
         ],
         "options": {
           "command": "uv run yamllint -c configuration/yamllint.yaml '{projectRoot}'",
