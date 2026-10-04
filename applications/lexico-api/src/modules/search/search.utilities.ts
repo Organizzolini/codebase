@@ -1,5 +1,3 @@
-/* cspell:words FULLTEXT */
-
 import {
   AdjectivalForm,
   AdverbForm,
@@ -15,28 +13,10 @@ import {
 import {
   ENCLITIC_FALSE_POSITIVES,
   ENCLITIC_SUFFIXES,
-  SCORE_TRANSLATION_FULLTEXT,
 } from "./search.constants";
 
 import type { LexemeSearchResult } from "./search.entities";
 import type { EncliticDecompositionResult } from "./search.types";
-
-/**
- * Calculates search relevance score for English translation text matching.
- */
-export function calculateEnglishMatchScore(
-  translationText: string,
-  cleanQuery: string,
-): number {
-  const text = translationText.toLowerCase();
-  if (text === cleanQuery) {
-    return 1;
-  }
-  if (text.startsWith(cleanQuery)) {
-    return 0.8;
-  }
-  return SCORE_TRANSLATION_FULLTEXT;
-}
 
 /**
  * Decomposes possible Latin enclitic suffixes (-que, -ve, -ne) from a query string.
@@ -78,6 +58,13 @@ export function formatFormIdentifier(form: Form): null | string {
   }
 
   return formatDeclinedForm(form);
+}
+
+/**
+ * Returns whether a search result's lexeme has at least one translation to show.
+ */
+export function hasTranslations(result: LexemeSearchResult): boolean {
+  return (result.lexeme.translations?.length ?? 0) > 0;
 }
 
 /**

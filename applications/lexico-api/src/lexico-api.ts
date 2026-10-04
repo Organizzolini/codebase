@@ -27,6 +27,10 @@ async function main(): Promise<void> {
     new ExpressAdapter(),
     {
       bufferLogs: true,
+      cors: {
+        credentials: true,
+        origin: environment.LEXICO_API_CORS_ORIGINS,
+      },
       logger,
     },
   );

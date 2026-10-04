@@ -9,6 +9,8 @@ import {
   WordLexeme,
 } from "@codebase/lexico-entities";
 
+import { MacronsModule } from "../macrons/macrons.module";
+
 import { SearchResolver } from "./search.resolver";
 import { SearchService } from "./search.service";
 
@@ -19,6 +21,7 @@ import { SearchService } from "./search.service";
   controllers: [],
   exports: [SearchService],
   imports: [
+    MacronsModule,
     TypeOrmModule.forFeature([Lexeme, Word, Translation, WordLexeme, WordForm]),
   ],
   providers: [SearchResolver, SearchService],

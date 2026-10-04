@@ -21,7 +21,6 @@ import {
 } from "./search.constants";
 import { type LexemeSearchResult, SearchMatchSource } from "./search.entities";
 import {
-  calculateEnglishMatchScore,
   decomposeEnclitic,
   formatFormIdentifier,
   mergeSearchResult,
@@ -70,20 +69,6 @@ describe("search utilities suite", () => {
         enclitic: null,
         stem: "amare",
       });
-    });
-  });
-
-  describe(calculateEnglishMatchScore, () => {
-    it("assigns higher score for exact match and prefix match", () => {
-      expect.hasAssertions();
-
-      const exactScore = calculateEnglishMatchScore("love", "love");
-      const prefixScore = calculateEnglishMatchScore("love, adore", "love");
-      const fullTextScore = calculateEnglishMatchScore("to love", "love");
-
-      expect(exactScore).toBe(1);
-      expect(prefixScore).toBe(0.8);
-      expect(fullTextScore).toBe(0.6);
     });
   });
 
