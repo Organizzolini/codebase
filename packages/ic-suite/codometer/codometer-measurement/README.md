@@ -1,5 +1,7 @@
 # @codometer/measurement
 
+[![npm](https://img.shields.io/npm/v/@codometer/measurement?logo=npm&label=npm)](https://www.npmjs.com/package/@codometer/measurement)
+
 What codometer actually measures. It finds the files a run covers, counts their
 compressed and uncompressed size, evaluates whatever counters a configuration
 declares of its own, and holds every measured metric to the limits written

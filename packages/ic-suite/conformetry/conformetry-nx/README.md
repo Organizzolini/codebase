@@ -1,5 +1,7 @@
 # 👔 Conformetry Nx
 
+[![npm](https://img.shields.io/npm/v/@conformetry/nx?logo=npm&label=npm)](https://www.npmjs.com/package/@conformetry/nx)
+
 The Nx host for [Conformetry](https://github.com/Organizzolini/codebase/tree/main/packages/ic-suite/conformetry/conformetry-cli#readme).
 Canonical documentation for command behavior, configuration, template syntax, scoring, and validators is in the
 [@conformetry/cli README](https://github.com/Organizzolini/codebase/tree/main/packages/ic-suite/conformetry/conformetry-cli#readme).

@@ -1,5 +1,7 @@
 # 👔 Conformetry Languages
 
+[![npm](https://img.shields.io/npm/v/@conformetry/languages?logo=npm&label=npm)](https://www.npmjs.com/package/@conformetry/languages)
+
 Every Language [Conformetry](../conformetry-cli/README.md) compares files with,
 behind one import — plus the resolution that decides which of them a run needs.
 

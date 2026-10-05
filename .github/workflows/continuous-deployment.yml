@@ -278,16 +278,9 @@ jobs:
             --exclude=codebase
           pnpm exec nx run codebase:codometer:write
 
-      # Versions the ic-suite packages from their conventional commits, commits
-      # and tags `<project>@<version>`. Checkout persists no credentials, so
-      # the remote carries the release token for this push and
-      # semantic-release's. Nx's own `--git-push` would add `--no-verify` and
-      # skip the pre-push hook, so the push is made here instead. GitHub
-      # rejects any push to this repository that updates more than 6 refs, and
-      # a first release tags 20 or more packages, so the release commit goes
-      # first, on its own, and its tags follow 6 at a time. A batch that fails
-      # leaves `main` already carrying the versions, and the missing tags can
-      # be pushed from that commit without versioning again.
+      # Versions, commits, tags and pushes the ic-suite packages, and leaves the
+      # remote carrying the release token for semantic-release's push below.
+      # `scripts/release/version-packages.sh` explains the push it makes.
       - name: 🏷️ Version Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
@@ -296,76 +289,23 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           GIT_COMMITTER_EMAIL: jimmypaolini@gmail.com
           GIT_COMMITTER_NAME: Jimmy Paolini
-        run: |
-          git remote set-url origin \
-            "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          pnpm exec nx release version --git-commit --git-tag
-          git push origin HEAD:refs/heads/main
-          mapfile -t tags < <(git tag --points-at HEAD --list '*@*')
-          for ((start = 0; start < ${#tags[@]}; start += 6)); do
-            refs=()
-            for tag in "${tags[@]:start:6}"; do
-              refs+=("refs/tags/${tag}")
-            done
-            git push origin "${refs[@]}"
-          done
+        run: bash scripts/release/version-packages.sh
 
-      # Publishes every package in the Nx release group, read from nx.json,
-      # whose version is not on npm yet, so a re-run sends only what is
-      # missing. pnpm rather than `nx release publish`, because pnpm honors
-      # provenance only as the `--provenance` flag, which Nx cannot pass:
-      # NPM_CONFIG_PROVENANCE and `publishConfig.provenance` are ignored.
-      # `setup-node` writes no registry `.npmrc`, so the token goes in the user
-      # config.
+      # Publishes each released package to npm with provenance, then as a
+      # GitHub release. `scripts/release/publish-packages.sh` explains why it
+      # uses pnpm, and how a re-run completes a run that stopped part way.
       - name: 📦 Publish Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
           matrix.target.id == 'push-releases'
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
-          filters=()
-          release_projects="$(jq -r '.release.projects | join(",")' nx.json)"
-          for project in $(pnpm exec nx show projects --projects "${release_projects}" --json | jq -r '.[]'); do
-            filters+=(--filter "./$(pnpm exec nx show project "${project}" --json | jq -r .root)")
-          done
-          pnpm -r "${filters[@]}" publish --provenance --no-git-checks \
-            --tag latest --registry https://registry.npmjs.org
-
-      # One GitHub release per package tag that has none yet, so a run that
-      # stopped after the push is completed by the next. `--latest=false`
-      # keeps the codebase's `v*` release as Latest for the README badge.
-      - name: 🗒️ Create Package Releases
-        if: >-
-          steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
-        env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-        run: |
-          released="$(gh release list --limit 1000 --json tagName --jq '.[].tagName')"
-          for tag in $(git tag --list '*@*'); do
-            if grep -qxF "${tag}" <<< "${released}"; then continue; fi
-            project="${tag%@*}"
-            version="${tag##*@}"
-            root="$(pnpm exec nx show project "${project}" --json | jq -r .root)"
-            name="$(jq -r .name "${root}/package.json")"
-            previous="$(git tag --list "${project}@*" --sort=-v:refname --merged "${tag}^" | head -1)"
-            {
-              echo "Published to npm as [\`${name}@${version}\`](https://www.npmjs.com/package/${name}/v/${version})."
-              if [[ -n "${previous}" ]]; then
-                echo
-                echo "Changes since \`${previous}\`:"
-                echo
-                git log --no-merges --invert-grep --grep='^chore(release):' \
-                  --format='- %s (%h)' "${previous}..${tag}" -- "${root}"
-              fi
-            } > "${RUNNER_TEMP}/release-notes.md"
-            gh release create "${tag}" --verify-tag --latest=false \
-              --title "${name} ${version}" --notes-file "${RUNNER_TEMP}/release-notes.md"
-          done
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: bash scripts/release/publish-packages.sh
 
-      - name: 🦸 Push Releases
+      # semantic-release versions, tags and releases the codebase itself, the
+      # `v*` release the README badge shows, never an ic-suite package.
+      - name: 🦸 Release Codebase
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
           matrix.target.id == 'push-releases'

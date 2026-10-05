@@ -1,5 +1,7 @@
 # 🕸️ Codependix CLI
 
+[![npm](https://img.shields.io/npm/v/@codependix/cli?logo=npm&label=npm)](https://www.npmjs.com/package/@codependix/cli)
+
 **Exports a project's dependency graphs — Nx, NestJS, and file-level imports — as JSON and Markdown diagrams, and gates the rules those graphs are judged against.**
 
 Codependix reads what each project depends on and renders it four ways: the

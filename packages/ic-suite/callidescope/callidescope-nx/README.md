@@ -1,5 +1,7 @@
 # 🔭🧬 Callidescope Nx
 
+[![npm](https://img.shields.io/npm/v/@callidescope/nx?logo=npm&label=npm)](https://www.npmjs.com/package/@callidescope/nx)
+
 **An Nx plugin that traces call stacks per project, following the Nx dependency graph.**
 
 Canonical documentation for call-stack tracing, configuration, depth and breadth analysis, and report formats is in the

@@ -1,5 +1,7 @@
 # 🔭 Callidescope Output
 
+[![npm](https://img.shields.io/npm/v/@callidescope/output?logo=npm&label=npm)](https://www.npmjs.com/package/@callidescope/output)
+
 **Renders call-graph findings into markdown, mermaid, and JSON output formats.**
 
 This package sits between

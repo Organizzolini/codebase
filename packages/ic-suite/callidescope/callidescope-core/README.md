@@ -1,5 +1,7 @@
 # 🔭 Callidescope Core
 
+[![npm](https://img.shields.io/npm/v/@callidescope/core?logo=npm&label=npm)](https://www.npmjs.com/package/@callidescope/core)
+
 **The domain vocabulary every other Callidescope package speaks.**
 
 This package is the contracts leaf of the Callidescope spine: it declares what a

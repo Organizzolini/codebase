@@ -1,5 +1,7 @@
 # 🔭 Callidescope Graph
 
+[![npm](https://img.shields.io/npm/v/@callidescope/graph?logo=npm&label=npm)](https://www.npmjs.com/package/@callidescope/graph)
+
 **Builds the call graph from traced TypeScript source and measures its depth and breadth.**
 
 This package is the leaf of the

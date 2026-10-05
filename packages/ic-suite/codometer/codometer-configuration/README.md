@@ -1,5 +1,7 @@
 # ⏲️ Codometer Configuration
 
+[![npm](https://img.shields.io/npm/v/@codometer/configuration?logo=npm&label=npm)](https://www.npmjs.com/package/@codometer/configuration)
+
 **The configuration reference for [Codometer](../codometer-cli/README.md).**
 
 `@codometer/configuration` reads a repository's `codometer.config.ts` and hands

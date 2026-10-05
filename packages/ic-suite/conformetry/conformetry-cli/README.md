@@ -1,5 +1,7 @@
 # 👔 Conformetry
 
+[![npm](https://img.shields.io/npm/v/@conformetry/cli?logo=npm&label=npm)](https://www.npmjs.com/package/@conformetry/cli)
+
 **Scaffold from a template, then hold the result to it.**
 
 Conformetry is a code generation toolchain whose templates keep working after

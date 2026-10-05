@@ -1,5 +1,7 @@
 # 👔 Conformetry Generation
 
+[![npm](https://img.shields.io/npm/v/@conformetry/generation?logo=npm&label=npm)](https://www.npmjs.com/package/@conformetry/generation)
+
 The generation runtime for [Conformetry](../conformetry-cli/README.md): it
 walks a template tree, renders every path and every file, and writes the
 result.

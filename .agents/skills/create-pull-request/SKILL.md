@@ -412,8 +412,8 @@ Fixes incorrect timezone handling for ephemeris calculations near DST boundaries
 ## 🧪 Testing
 
 ```bash
-nx run caelundas:vitest:unit
-nx run caelundas:vitest:integration
+nx run caelundas-cli:vitest:unit
+nx run caelundas-cli:vitest:integration
 ```
 
 ## 🔗 Related

@@ -12,7 +12,7 @@ Generate astronomical event calendars using NASA's JPL Horizons API (Outputs: iC
 
 ```bash
 cp .env.default .env  # Fill in required environment variables
-nx run caelundas:start
+nx run caelundas-cli:start
 ```
 
 ## Architecture Overview
@@ -97,7 +97,7 @@ src/modules/
 
 ## Domain Knowledge
 
-See [ephemeris-pipeline skill](../../.agents/skills/ephemeris-pipeline/SKILL.md) for:
+See [ephemeris-pipeline skill](../../../.agents/skills/ephemeris-pipeline/SKILL.md) for:
 
 - NASA JPL Horizons API details (endpoints, parameters, rate limits)
 - Astronomical concepts (aspects, retrogrades, phases explained)
@@ -133,10 +133,10 @@ Outputs structured JSON in production (`NODE_ENV=production`) and pretty-printed
 Always prefer running tasks through Nx rather than calling the underlying tools directly.
 
 ```bash
-nx run caelundas:start           # Run the command-line application
-nx run caelundas:typecheck-code,lint-code,format-code,deprecate-code,guard-code   # Every static check, in one graph
-nx run caelundas:typecheck       # tsc --noEmit
-nx run caelundas:oxfmt           # Formatting
+nx run caelundas-cli:start           # Run the command-line application
+nx run caelundas-cli:typecheck-code,lint-code,format-code,deprecate-code,guard-code   # Every static check, in one graph
+nx run caelundas-cli:typecheck       # tsc --noEmit
+nx run caelundas-cli:oxfmt           # Formatting
 ```
 
 ### Testing
@@ -144,9 +144,9 @@ nx run caelundas:oxfmt           # Formatting
 Follow the codebase's strict three-tier testing strategy. Co-locate test files with the source they test.
 
 ```bash
-nx run caelundas:vitest:unit          # Fast (<100ms) — pure logic, mocked DI
-nx run caelundas:vitest:integration   # Moderate (1-2s) — real database/API I/O
-nx run caelundas:vitest:end-to-end    # Slow (30-60s) — full CLI execution
+nx run caelundas-cli:vitest:unit          # Fast (<100ms) — pure logic, mocked DI
+nx run caelundas-cli:vitest:integration   # Moderate (1-2s) — real database/API I/O
+nx run caelundas-cli:vitest:end-to-end    # Slow (30-60s) — full CLI execution
 ```
 
 | Tier | File pattern | What to test |
@@ -155,7 +155,7 @@ nx run caelundas:vitest:end-to-end    # Slow (30-60s) — full CLI execution
 | Integration | `*.integration.test.ts` | Database queries, external API clients |
 | End-to-end | `*.end-to-end.test.ts` | Full `CommandFactory.run()` execution |
 
-See the [testing-strategy skill](../../.agents/skills/testing-strategy/SKILL.md) and [testing-mocks skill](../../.agents/skills/testing-mocks/SKILL.md) for patterns and mock conventions.
+See the [testing-strategy skill](../../../.agents/skills/testing-strategy/SKILL.md) and [testing-mocks skill](../../../.agents/skills/testing-mocks/SKILL.md) for patterns and mock conventions.
 
 ### Environment Variables
 
@@ -197,37 +197,37 @@ Caelundas runs as a **Kubernetes Job** (not Deployment):
 
 ```bash
 # 1. Build and push image
-nx run caelundas:docker-build
+nx run caelundas-cli:docker-build
 docker push ghcr.io/organizzolini/caelundas:latest
 
 # 2. Deploy Job (auto-generated release name)
-nx run caelundas:helm-upgrade
+nx run caelundas-cli:helm-upgrade
 
 # 3. Monitor completion
 kubectl wait --for=condition=complete job/<job-name> --timeout=600s
 
 # 4. Retrieve output files
-nx run caelundas:kubernetes-copy-files
+nx run caelundas-cli:kubernetes-copy-files
 
 # 5. Clean up
-nx run caelundas:helm-uninstall
+nx run caelundas-cli:helm-uninstall
 kubectl delete pvc caelundas-output
 ```
 
 ### Helm Chart
 
-Uses [infrastructure/helm/kubernetes-job](../../infrastructure/helm/kubernetes-job) - reusable chart for batch jobs with PVC storage.
+Uses [infrastructure/helm/kubernetes-job](../../../infrastructure/helm/kubernetes-job) - reusable chart for batch jobs with PVC storage.
 
-**Values**: [infrastructure/helm/kubernetes-job/values/caelundas-production.yaml](../../infrastructure/helm/kubernetes-job/values/caelundas-production.yaml)
+**Values**: [infrastructure/helm/kubernetes-job/values/caelundas-production.yaml](../../../infrastructure/helm/kubernetes-job/values/caelundas-production.yaml)
 
-See [kubernetes-deployment skill](../../.agents/skills/kubernetes-deployment/SKILL.md) for Helm chart details.
+See [kubernetes-deployment skill](../../../.agents/skills/kubernetes-deployment/SKILL.md) for Helm chart details.
 
 ### Environment Variables in K8s
 
 Stored as Kubernetes Secret (`caelundas-env-secret`):
 
 ```bash
-kubectl apply -f applications/caelundas/kubernetes/secret.yaml
+kubectl apply -f applications/caelundas/caelundas-cli/kubernetes/secret.yaml
 ```
 
 ## Docker Workflow
@@ -235,12 +235,12 @@ kubectl apply -f applications/caelundas/kubernetes/secret.yaml
 ### Build
 
 ```bash
-nx run caelundas:docker-build  # Builds for linux/amd64
+nx run caelundas-cli:docker-build  # Builds for linux/amd64
 ```
 
 **Platform targeting**: Always use `linux/amd64` for K8s deployment (Apple Silicon compatibility).
 
-See [docker-workflows skill](../../.agents/skills/docker-workflows/SKILL.md) for multi-stage builds and GHCR integration.
+See [docker-workflows skill](../../../.agents/skills/docker-workflows/SKILL.md) for multi-stage builds and GHCR integration.
 
 ### Dockerfile
 
@@ -390,7 +390,7 @@ pnpm nx run-many --targets=conformetry-validate
 - **Type imports** — use `import { type Foo }` for type-only imports (enforced by ESLint).
 - **No `any` types** — use `unknown` or proper typing; strict mode is enabled.
 
-See the [write-typescript skill](../../.agents/skills/write-typescript/SKILL.md) for strict mode patterns.
+See the [write-typescript skill](../../../.agents/skills/write-typescript/SKILL.md) for strict mode patterns.
 
 ## Troubleshooting
 
@@ -400,7 +400,7 @@ See the [write-typescript skill](../../.agents/skills/write-typescript/SKILL.md)
 - **Env var validation error on startup** — add the missing variable to environmentSchema in src/constants.ts and to .env.default.
 - **TypeORM entity not found** — register the entity via `TypeOrmModule.forFeature([MyEntity])` in the module that uses it.
 
-See the [triage-integration skill](../../.agents/skills/triage-integration/SKILL.md) for lint and git hook failures.
+See the [triage-integration skill](../../../.agents/skills/triage-integration/SKILL.md) for lint and git hook failures.
 
 **Project-Specific Gotchas**:
 

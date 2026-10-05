@@ -1,5 +1,7 @@
 # ⏲️ Codometer
 
+[![npm](https://img.shields.io/npm/v/@codometer/cli?logo=npm&label=npm)](https://www.npmjs.com/package/@codometer/cli)
+
 **Measure a repository and report what it found.**
 
 Codometer walks a directory, parses everything it recognizes, and writes
