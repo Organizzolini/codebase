@@ -63,7 +63,7 @@ tmp
 # The meander draw run writes its index and family pages here, gitignored and
 # gigabytes at the default edge budget, and nothing in it is this formatter's
 # to rewrite. `.prettierignore` excludes it for its own formatter.
-**/applications/meanderaw/output/**
+**/applications/meanderaw/meanderaw-cli/output/**
 **/data/wikipedia
 **/data/wiktionary
 yarn.lock

@@ -24,7 +24,7 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "name": "meanderaw",
+  "name": "meanderaw-cli",
   "type": "module",
   "typeCoverage": {
     "atLeast": 100,

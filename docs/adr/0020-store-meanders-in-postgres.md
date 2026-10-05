@@ -24,7 +24,7 @@ In development, meanders live in a Postgres database named `meanderaw_developmen
 
 ## Consequences
 
-- Running `nx run meanderaw:start` needs the local Postgres container (`nx run codebase:postgres-container:up`). Running the integration suites needs Docker.
+- Running `nx run meanderaw-cli:start` needs the local Postgres container (`nx run codebase:postgres-container:up`). Running the integration suites needs Docker.
 - A clone of the repository no longer carries the rows. They are reproduced by sweeping, and the committed pages are the reviewable record of what a sweep produced.
 - A row's `id` changes on every sweep. Committed output must key on the Code instead: the index pages name each tile's SVG element `meander-<code>`, so they change only when a drawing does.
 - `clear` is a `TRUNCATE`. With no sequence there is no counter to restart, which is the job the SQLite version's `sqlite_sequence` reset did.

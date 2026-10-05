@@ -179,7 +179,8 @@ runs:
         key: |
           nx-graph-v3-${{ runner.os }}-${{ hashFiles(
           'pnpm-lock.yaml', 'nx.json', 'project.json',
-          'applications/*/project.json', 'packages/*/project.json',
+          'applications/*/project.json', 'applications/meanderaw/*/project.json',
+          'packages/*/project.json',
           'tools/*/project.json') }}
 
     # Keyed per check via `nx-cache-scope`, not `github.job`, which every

@@ -161,6 +161,8 @@ module.exports = {
           "README.md",
           "applications/*/AGENTS.md",
           "applications/*/README.md",
+          "applications/meanderaw/*/AGENTS.md",
+          "applications/meanderaw/*/README.md",
           "package.json",
           "packages/*/AGENTS.md",
           "packages/*/README.md",

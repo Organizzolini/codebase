@@ -242,7 +242,9 @@
     // `packages/`, including the pure grouping folder `packages/ic-suite`
     // that holds no package.json of its own — it exists only to nest the four
     // IC-suite toolchains one level deeper, at `packages/ic-suite/*/*`, which
-    // is a separate, already-matched pattern.
+    // is a separate, already-matched pattern. `applications/meanderaw` is
+    // the same kind of grouping folder for the meanderaw applications.
+    "applications/meanderaw",
     "packages/ic-suite",
     "**/*.min.js",
     "**/.agents/skills/**/scripts/**",

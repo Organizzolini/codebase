@@ -175,8 +175,14 @@
 
 </details>
 
-**🪵 [logger](packages/logger)** - Shared pino-backed NestJS `LoggerService` and `LoggerModule`\
-**🏺 [meanderaw](applications/meanderaw)** - CLI that enumerates Greek meander (key/fret) patterns into a Postgres database, measuring and classifying each by its Code
+**🪵 [logger](packages/logger)** - Shared pino-backed NestJS `LoggerService` and `LoggerModule`
+
+<details>
+<summary><strong>🏺 meanderaw</strong> - Greek meander (key/fret) applications that enumerate, measure, and classify meander patterns</summary>
+
+&nbsp;&nbsp;&nbsp;&nbsp;**[meanderaw-cli](applications/meanderaw/meanderaw-cli)** - CLI that enumerates Greek meander (key/fret) patterns into a Postgres database, measuring and classifying each by its Code
+
+</details>
 
 **🧑‍💻 [JimmyPaolini](applications/JimmyPaolini)** - GitHub profile site\
 **↔️ [synchronization](tools/synchronization)** - NestJS CLI that regenerates the workspace's derived configuration and documentation, and fails CI when they drift\
@@ -283,7 +289,7 @@ graph LR
   lexico_entities["lexico-entities"]
   lexico_ingestion["lexico-ingestion"]
   logger["logger"]
-  meanderaw["meanderaw"]
+  meanderaw_cli["meanderaw-cli"]
   synchronization["synchronization"]
   validation["validation"]
   caelundas_cli --> logger
@@ -388,7 +394,7 @@ graph LR
   lexico_api --> logger
   lexico_ingestion --> lexico_entities
   lexico_ingestion --> logger
-  meanderaw --> logger
+  meanderaw_cli --> logger
   synchronization --> conformetry_configuration
   synchronization --> logger
   validation --> logger
@@ -834,43 +840,43 @@ graph LR
   module_lexico_ingestion_WiktionaryModule["lexico-ingestion/WiktionaryModule"]
   module_lexico_ingestion_WordsModule["lexico-ingestion/WordsModule"]
   module_logger_LoggerModule["logger/LoggerModule"]
-  module_meanderaw_CharacteristicsModule["meanderaw/CharacteristicsModule"]
-  module_meanderaw_ClassificationModule["meanderaw/ClassificationModule"]
-  module_meanderaw_CodeModule["meanderaw/CodeModule"]
-  module_meanderaw_CompoundUtilitiesModule["meanderaw/CompoundUtilitiesModule"]
-  module_meanderaw_ConfigModule["meanderaw/ConfigModule"]
-  module_meanderaw_ConnectivityModule["meanderaw/ConnectivityModule"]
-  module_meanderaw_CornerCharacteristicsModule["meanderaw/CornerCharacteristicsModule"]
-  module_meanderaw_CorpusModule["meanderaw/CorpusModule"]
-  module_meanderaw_CrossCharacteristicsModule["meanderaw/CrossCharacteristicsModule"]
-  module_meanderaw_DatabaseModule["meanderaw/DatabaseModule"]
-  module_meanderaw_DiscoveryModule["meanderaw/DiscoveryModule"]
-  module_meanderaw_DrawingModule["meanderaw/DrawingModule"]
-  module_meanderaw_DrawModule["meanderaw/DrawModule"]
-  module_meanderaw_EmbeddedCharacteristicsModule["meanderaw/EmbeddedCharacteristicsModule"]
-  module_meanderaw_EndCharacteristicsModule["meanderaw/EndCharacteristicsModule"]
-  module_meanderaw_EnumerationModule["meanderaw/EnumerationModule"]
-  module_meanderaw_FamilyCharacteristicsModule["meanderaw/FamilyCharacteristicsModule"]
-  module_meanderaw_ForkCharacteristicsModule["meanderaw/ForkCharacteristicsModule"]
-  module_meanderaw_GeometryModule["meanderaw/GeometryModule"]
-  module_meanderaw_GraphModule["meanderaw/GraphModule"]
-  module_meanderaw_LetterCharacteristicsModule["meanderaw/LetterCharacteristicsModule"]
-  module_meanderaw_LoggerModule["meanderaw/LoggerModule"]
-  module_meanderaw_MainModule["meanderaw/MainModule"]
-  module_meanderaw_MatrixModule["meanderaw/MatrixModule"]
-  module_meanderaw_PathUtilitiesModule["meanderaw/PathUtilitiesModule"]
-  module_meanderaw_PointCharacteristicsModule["meanderaw/PointCharacteristicsModule"]
-  module_meanderaw_RectangleCharacteristicsModule["meanderaw/RectangleCharacteristicsModule"]
-  module_meanderaw_RunCharacteristicsModule["meanderaw/RunCharacteristicsModule"]
-  module_meanderaw_StructureCharacteristicsModule["meanderaw/StructureCharacteristicsModule"]
-  module_meanderaw_SubmatrixUtilitiesModule["meanderaw/SubmatrixUtilitiesModule"]
-  module_meanderaw_SvgModule["meanderaw/SvgModule"]
-  module_meanderaw_SymmetryModule["meanderaw/SymmetryModule"]
-  module_meanderaw_TileCrossingCharacteristicsModule["meanderaw/TileCrossingCharacteristicsModule"]
-  module_meanderaw_TileModule["meanderaw/TileModule"]
-  module_meanderaw_TopologyCharacteristicsModule["meanderaw/TopologyCharacteristicsModule"]
-  module_meanderaw_TurnCharacteristicsModule["meanderaw/TurnCharacteristicsModule"]
-  module_meanderaw_TypeOrmModule["meanderaw/TypeOrmModule"]
+  module_meanderaw_cli_CharacteristicsModule["meanderaw-cli/CharacteristicsModule"]
+  module_meanderaw_cli_ClassificationModule["meanderaw-cli/ClassificationModule"]
+  module_meanderaw_cli_CodeModule["meanderaw-cli/CodeModule"]
+  module_meanderaw_cli_CompoundUtilitiesModule["meanderaw-cli/CompoundUtilitiesModule"]
+  module_meanderaw_cli_ConfigModule["meanderaw-cli/ConfigModule"]
+  module_meanderaw_cli_ConnectivityModule["meanderaw-cli/ConnectivityModule"]
+  module_meanderaw_cli_CornerCharacteristicsModule["meanderaw-cli/CornerCharacteristicsModule"]
+  module_meanderaw_cli_CorpusModule["meanderaw-cli/CorpusModule"]
+  module_meanderaw_cli_CrossCharacteristicsModule["meanderaw-cli/CrossCharacteristicsModule"]
+  module_meanderaw_cli_DatabaseModule["meanderaw-cli/DatabaseModule"]
+  module_meanderaw_cli_DiscoveryModule["meanderaw-cli/DiscoveryModule"]
+  module_meanderaw_cli_DrawingModule["meanderaw-cli/DrawingModule"]
+  module_meanderaw_cli_DrawModule["meanderaw-cli/DrawModule"]
+  module_meanderaw_cli_EmbeddedCharacteristicsModule["meanderaw-cli/EmbeddedCharacteristicsModule"]
+  module_meanderaw_cli_EndCharacteristicsModule["meanderaw-cli/EndCharacteristicsModule"]
+  module_meanderaw_cli_EnumerationModule["meanderaw-cli/EnumerationModule"]
+  module_meanderaw_cli_FamilyCharacteristicsModule["meanderaw-cli/FamilyCharacteristicsModule"]
+  module_meanderaw_cli_ForkCharacteristicsModule["meanderaw-cli/ForkCharacteristicsModule"]
+  module_meanderaw_cli_GeometryModule["meanderaw-cli/GeometryModule"]
+  module_meanderaw_cli_GraphModule["meanderaw-cli/GraphModule"]
+  module_meanderaw_cli_LetterCharacteristicsModule["meanderaw-cli/LetterCharacteristicsModule"]
+  module_meanderaw_cli_LoggerModule["meanderaw-cli/LoggerModule"]
+  module_meanderaw_cli_MainModule["meanderaw-cli/MainModule"]
+  module_meanderaw_cli_MatrixModule["meanderaw-cli/MatrixModule"]
+  module_meanderaw_cli_PathUtilitiesModule["meanderaw-cli/PathUtilitiesModule"]
+  module_meanderaw_cli_PointCharacteristicsModule["meanderaw-cli/PointCharacteristicsModule"]
+  module_meanderaw_cli_RectangleCharacteristicsModule["meanderaw-cli/RectangleCharacteristicsModule"]
+  module_meanderaw_cli_RunCharacteristicsModule["meanderaw-cli/RunCharacteristicsModule"]
+  module_meanderaw_cli_StructureCharacteristicsModule["meanderaw-cli/StructureCharacteristicsModule"]
+  module_meanderaw_cli_SubmatrixUtilitiesModule["meanderaw-cli/SubmatrixUtilitiesModule"]
+  module_meanderaw_cli_SvgModule["meanderaw-cli/SvgModule"]
+  module_meanderaw_cli_SymmetryModule["meanderaw-cli/SymmetryModule"]
+  module_meanderaw_cli_TileCrossingCharacteristicsModule["meanderaw-cli/TileCrossingCharacteristicsModule"]
+  module_meanderaw_cli_TileModule["meanderaw-cli/TileModule"]
+  module_meanderaw_cli_TopologyCharacteristicsModule["meanderaw-cli/TopologyCharacteristicsModule"]
+  module_meanderaw_cli_TurnCharacteristicsModule["meanderaw-cli/TurnCharacteristicsModule"]
+  module_meanderaw_cli_TypeOrmModule["meanderaw-cli/TypeOrmModule"]
   module_synchronization_ConfigModule["synchronization/ConfigModule"]
   module_synchronization_ConfigurationModule["synchronization/ConfigurationModule"]
   module_synchronization_ConformetryGeneratorsModule["synchronization/ConformetryGeneratorsModule"]
@@ -1567,82 +1573,82 @@ graph LR
   module_lexico_ingestion_TranslationsModule --> module_lexico_ingestion_TypeOrmModule
   module_lexico_ingestion_WiktionaryModule --> module_lexico_ingestion_TypeOrmModule
   module_lexico_ingestion_WordsModule --> module_lexico_ingestion_TypeOrmModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_CodeModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_CornerCharacteristicsModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_CrossCharacteristicsModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_DiscoveryModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_EmbeddedCharacteristicsModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_EndCharacteristicsModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_FamilyCharacteristicsModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_ForkCharacteristicsModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_LetterCharacteristicsModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_MatrixModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_PointCharacteristicsModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_RectangleCharacteristicsModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_RunCharacteristicsModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_StructureCharacteristicsModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_TileCrossingCharacteristicsModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_TopologyCharacteristicsModule
-  module_meanderaw_CharacteristicsModule --> module_meanderaw_TurnCharacteristicsModule
-  module_meanderaw_CodeModule --> module_meanderaw_SymmetryModule
-  module_meanderaw_CompoundUtilitiesModule --> module_meanderaw_CrossCharacteristicsModule
-  module_meanderaw_CompoundUtilitiesModule --> module_meanderaw_ForkCharacteristicsModule
-  module_meanderaw_ConnectivityModule --> module_meanderaw_GraphModule
-  module_meanderaw_CornerCharacteristicsModule --> module_meanderaw_SubmatrixUtilitiesModule
-  module_meanderaw_CorpusModule --> module_meanderaw_CharacteristicsModule
-  module_meanderaw_CorpusModule --> module_meanderaw_ClassificationModule
-  module_meanderaw_CorpusModule --> module_meanderaw_CodeModule
-  module_meanderaw_CorpusModule --> module_meanderaw_DatabaseModule
-  module_meanderaw_CorpusModule --> module_meanderaw_EnumerationModule
-  module_meanderaw_CrossCharacteristicsModule --> module_meanderaw_SubmatrixUtilitiesModule
-  module_meanderaw_DatabaseModule --> module_meanderaw_TypeOrmModule
-  module_meanderaw_DatabaseModule --> module_meanderaw_TypeOrmModule
-  module_meanderaw_DrawingModule --> module_meanderaw_CodeModule
-  module_meanderaw_DrawingModule --> module_meanderaw_GeometryModule
-  module_meanderaw_DrawingModule --> module_meanderaw_SvgModule
-  module_meanderaw_DrawModule --> module_meanderaw_CharacteristicsModule
-  module_meanderaw_DrawModule --> module_meanderaw_ClassificationModule
-  module_meanderaw_DrawModule --> module_meanderaw_CodeModule
-  module_meanderaw_DrawModule --> module_meanderaw_CorpusModule
-  module_meanderaw_DrawModule --> module_meanderaw_DatabaseModule
-  module_meanderaw_DrawModule --> module_meanderaw_DrawingModule
-  module_meanderaw_DrawModule --> module_meanderaw_EnumerationModule
-  module_meanderaw_DrawModule --> module_meanderaw_GeometryModule
-  module_meanderaw_DrawModule --> module_meanderaw_SymmetryModule
-  module_meanderaw_EmbeddedCharacteristicsModule --> module_meanderaw_SubmatrixUtilitiesModule
-  module_meanderaw_EndCharacteristicsModule --> module_meanderaw_ConnectivityModule
-  module_meanderaw_EnumerationModule --> module_meanderaw_CodeModule
-  module_meanderaw_EnumerationModule --> module_meanderaw_SymmetryModule
-  module_meanderaw_EnumerationModule --> module_meanderaw_TileModule
-  module_meanderaw_FamilyCharacteristicsModule --> module_meanderaw_CompoundUtilitiesModule
-  module_meanderaw_FamilyCharacteristicsModule --> module_meanderaw_CrossCharacteristicsModule
-  module_meanderaw_FamilyCharacteristicsModule --> module_meanderaw_EmbeddedCharacteristicsModule
-  module_meanderaw_FamilyCharacteristicsModule --> module_meanderaw_EndCharacteristicsModule
-  module_meanderaw_FamilyCharacteristicsModule --> module_meanderaw_ForkCharacteristicsModule
-  module_meanderaw_FamilyCharacteristicsModule --> module_meanderaw_PointCharacteristicsModule
-  module_meanderaw_FamilyCharacteristicsModule --> module_meanderaw_RunCharacteristicsModule
-  module_meanderaw_FamilyCharacteristicsModule --> module_meanderaw_StructureCharacteristicsModule
-  module_meanderaw_FamilyCharacteristicsModule --> module_meanderaw_TileCrossingCharacteristicsModule
-  module_meanderaw_FamilyCharacteristicsModule --> module_meanderaw_TopologyCharacteristicsModule
-  module_meanderaw_FamilyCharacteristicsModule --> module_meanderaw_TurnCharacteristicsModule
-  module_meanderaw_ForkCharacteristicsModule --> module_meanderaw_SubmatrixUtilitiesModule
-  module_meanderaw_LetterCharacteristicsModule --> module_meanderaw_SubmatrixUtilitiesModule
-  module_meanderaw_MainModule --> module_meanderaw_ClassificationModule
-  module_meanderaw_MainModule --> module_meanderaw_DiscoveryModule
-  module_meanderaw_MainModule --> module_meanderaw_DrawingModule
-  module_meanderaw_MainModule --> module_meanderaw_DrawModule
-  module_meanderaw_MainModule --> module_meanderaw_MatrixModule
-  module_meanderaw_MatrixModule --> module_meanderaw_CodeModule
-  module_meanderaw_PointCharacteristicsModule --> module_meanderaw_SubmatrixUtilitiesModule
-  module_meanderaw_RectangleCharacteristicsModule --> module_meanderaw_SubmatrixUtilitiesModule
-  module_meanderaw_StructureCharacteristicsModule --> module_meanderaw_CompoundUtilitiesModule
-  module_meanderaw_StructureCharacteristicsModule --> module_meanderaw_TopologyCharacteristicsModule
-  module_meanderaw_SymmetryModule --> module_meanderaw_TileModule
-  module_meanderaw_TileCrossingCharacteristicsModule --> module_meanderaw_ConnectivityModule
-  module_meanderaw_TopologyCharacteristicsModule --> module_meanderaw_ConnectivityModule
-  module_meanderaw_TurnCharacteristicsModule --> module_meanderaw_ConnectivityModule
-  module_meanderaw_TurnCharacteristicsModule --> module_meanderaw_PathUtilitiesModule
-  module_meanderaw_TurnCharacteristicsModule --> module_meanderaw_PointCharacteristicsModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_CodeModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_CornerCharacteristicsModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_CrossCharacteristicsModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_DiscoveryModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_EmbeddedCharacteristicsModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_EndCharacteristicsModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_FamilyCharacteristicsModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_ForkCharacteristicsModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_LetterCharacteristicsModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_MatrixModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_PointCharacteristicsModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_RectangleCharacteristicsModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_RunCharacteristicsModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_StructureCharacteristicsModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_TileCrossingCharacteristicsModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_TopologyCharacteristicsModule
+  module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_TurnCharacteristicsModule
+  module_meanderaw_cli_CodeModule --> module_meanderaw_cli_SymmetryModule
+  module_meanderaw_cli_CompoundUtilitiesModule --> module_meanderaw_cli_CrossCharacteristicsModule
+  module_meanderaw_cli_CompoundUtilitiesModule --> module_meanderaw_cli_ForkCharacteristicsModule
+  module_meanderaw_cli_ConnectivityModule --> module_meanderaw_cli_GraphModule
+  module_meanderaw_cli_CornerCharacteristicsModule --> module_meanderaw_cli_SubmatrixUtilitiesModule
+  module_meanderaw_cli_CorpusModule --> module_meanderaw_cli_CharacteristicsModule
+  module_meanderaw_cli_CorpusModule --> module_meanderaw_cli_ClassificationModule
+  module_meanderaw_cli_CorpusModule --> module_meanderaw_cli_CodeModule
+  module_meanderaw_cli_CorpusModule --> module_meanderaw_cli_DatabaseModule
+  module_meanderaw_cli_CorpusModule --> module_meanderaw_cli_EnumerationModule
+  module_meanderaw_cli_CrossCharacteristicsModule --> module_meanderaw_cli_SubmatrixUtilitiesModule
+  module_meanderaw_cli_DatabaseModule --> module_meanderaw_cli_TypeOrmModule
+  module_meanderaw_cli_DatabaseModule --> module_meanderaw_cli_TypeOrmModule
+  module_meanderaw_cli_DrawingModule --> module_meanderaw_cli_CodeModule
+  module_meanderaw_cli_DrawingModule --> module_meanderaw_cli_GeometryModule
+  module_meanderaw_cli_DrawingModule --> module_meanderaw_cli_SvgModule
+  module_meanderaw_cli_DrawModule --> module_meanderaw_cli_CharacteristicsModule
+  module_meanderaw_cli_DrawModule --> module_meanderaw_cli_ClassificationModule
+  module_meanderaw_cli_DrawModule --> module_meanderaw_cli_CodeModule
+  module_meanderaw_cli_DrawModule --> module_meanderaw_cli_CorpusModule
+  module_meanderaw_cli_DrawModule --> module_meanderaw_cli_DatabaseModule
+  module_meanderaw_cli_DrawModule --> module_meanderaw_cli_DrawingModule
+  module_meanderaw_cli_DrawModule --> module_meanderaw_cli_EnumerationModule
+  module_meanderaw_cli_DrawModule --> module_meanderaw_cli_GeometryModule
+  module_meanderaw_cli_DrawModule --> module_meanderaw_cli_SymmetryModule
+  module_meanderaw_cli_EmbeddedCharacteristicsModule --> module_meanderaw_cli_SubmatrixUtilitiesModule
+  module_meanderaw_cli_EndCharacteristicsModule --> module_meanderaw_cli_ConnectivityModule
+  module_meanderaw_cli_EnumerationModule --> module_meanderaw_cli_CodeModule
+  module_meanderaw_cli_EnumerationModule --> module_meanderaw_cli_SymmetryModule
+  module_meanderaw_cli_EnumerationModule --> module_meanderaw_cli_TileModule
+  module_meanderaw_cli_FamilyCharacteristicsModule --> module_meanderaw_cli_CompoundUtilitiesModule
+  module_meanderaw_cli_FamilyCharacteristicsModule --> module_meanderaw_cli_CrossCharacteristicsModule
+  module_meanderaw_cli_FamilyCharacteristicsModule --> module_meanderaw_cli_EmbeddedCharacteristicsModule
+  module_meanderaw_cli_FamilyCharacteristicsModule --> module_meanderaw_cli_EndCharacteristicsModule
+  module_meanderaw_cli_FamilyCharacteristicsModule --> module_meanderaw_cli_ForkCharacteristicsModule
+  module_meanderaw_cli_FamilyCharacteristicsModule --> module_meanderaw_cli_PointCharacteristicsModule
+  module_meanderaw_cli_FamilyCharacteristicsModule --> module_meanderaw_cli_RunCharacteristicsModule
+  module_meanderaw_cli_FamilyCharacteristicsModule --> module_meanderaw_cli_StructureCharacteristicsModule
+  module_meanderaw_cli_FamilyCharacteristicsModule --> module_meanderaw_cli_TileCrossingCharacteristicsModule
+  module_meanderaw_cli_FamilyCharacteristicsModule --> module_meanderaw_cli_TopologyCharacteristicsModule
+  module_meanderaw_cli_FamilyCharacteristicsModule --> module_meanderaw_cli_TurnCharacteristicsModule
+  module_meanderaw_cli_ForkCharacteristicsModule --> module_meanderaw_cli_SubmatrixUtilitiesModule
+  module_meanderaw_cli_LetterCharacteristicsModule --> module_meanderaw_cli_SubmatrixUtilitiesModule
+  module_meanderaw_cli_MainModule --> module_meanderaw_cli_ClassificationModule
+  module_meanderaw_cli_MainModule --> module_meanderaw_cli_DiscoveryModule
+  module_meanderaw_cli_MainModule --> module_meanderaw_cli_DrawingModule
+  module_meanderaw_cli_MainModule --> module_meanderaw_cli_DrawModule
+  module_meanderaw_cli_MainModule --> module_meanderaw_cli_MatrixModule
+  module_meanderaw_cli_MatrixModule --> module_meanderaw_cli_CodeModule
+  module_meanderaw_cli_PointCharacteristicsModule --> module_meanderaw_cli_SubmatrixUtilitiesModule
+  module_meanderaw_cli_RectangleCharacteristicsModule --> module_meanderaw_cli_SubmatrixUtilitiesModule
+  module_meanderaw_cli_StructureCharacteristicsModule --> module_meanderaw_cli_CompoundUtilitiesModule
+  module_meanderaw_cli_StructureCharacteristicsModule --> module_meanderaw_cli_TopologyCharacteristicsModule
+  module_meanderaw_cli_SymmetryModule --> module_meanderaw_cli_TileModule
+  module_meanderaw_cli_TileCrossingCharacteristicsModule --> module_meanderaw_cli_ConnectivityModule
+  module_meanderaw_cli_TopologyCharacteristicsModule --> module_meanderaw_cli_ConnectivityModule
+  module_meanderaw_cli_TurnCharacteristicsModule --> module_meanderaw_cli_ConnectivityModule
+  module_meanderaw_cli_TurnCharacteristicsModule --> module_meanderaw_cli_PathUtilitiesModule
+  module_meanderaw_cli_TurnCharacteristicsModule --> module_meanderaw_cli_PointCharacteristicsModule
   module_synchronization_ConfigurationModule --> module_synchronization_InputModule
   module_synchronization_ConfigurationModule --> module_synchronization_InstanceDiscoveryModule
   module_synchronization_ConfigurationModule --> module_synchronization_InstanceGroupModule
@@ -3707,454 +3713,454 @@ graph LR
   file_logger_testing_mocks_ts["logger/testing/mocks.ts"]
   file_logger_testing_setup_ts["logger/testing/setup.ts"]
   file_logger_vitest_config_ts["logger/vitest.config.ts"]
-  file_meanderaw_callidescope_config_ts["meanderaw/callidescope.config.ts"]
-  file_meanderaw_codependix_config_ts["meanderaw/codependix.config.ts"]
-  file_meanderaw_codometer_config_ts["meanderaw/codometer.config.ts"]
-  file_meanderaw_eslint_config_ts["meanderaw/eslint.config.ts"]
-  file_meanderaw_src_constants_ts["meanderaw/src/constants.ts"]
-  file_meanderaw_src_main_end_to_end_test_ts["meanderaw/src/main.end-to-end.test.ts"]
-  file_meanderaw_src_main_module_ts["meanderaw/src/main.module.ts"]
-  file_meanderaw_src_main_ts["meanderaw/src/main.ts"]
-  file_meanderaw_src_main_unit_test_ts["meanderaw/src/main.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_characteristic_context_service_ts["meanderaw/src/modules/characteristics/characteristic-context.service.ts"]
-  file_meanderaw_src_modules_characteristics_characteristic_context_service_unit_test_ts["meanderaw/src/modules/characteristics/characteristic-context.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_characteristics_constants_ts["meanderaw/src/modules/characteristics/characteristics.constants.ts"]
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts["meanderaw/src/modules/characteristics/characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts["meanderaw/src/modules/characteristics/characteristics.module.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_characteristics_service_integration_test_ts["meanderaw/src/modules/characteristics/characteristics.service.integration.test.ts"]
-  file_meanderaw_src_modules_characteristics_characteristics_service_ts["meanderaw/src/modules/characteristics/characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_characteristics_types_ts["meanderaw/src/modules/characteristics/characteristics.types.ts"]
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_module_ts["meanderaw/src/modules/characteristics/compound/compound-utilities.module.ts"]
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_module_unit_test_ts["meanderaw/src/modules/characteristics/compound/compound-utilities.module.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts["meanderaw/src/modules/characteristics/compound/compound-utilities.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/compound-utilities.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts["meanderaw/src/modules/characteristics/compound/family/family-characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_family_utilities_service_ts["meanderaw/src/modules/characteristics/compound/family/family-utilities.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_family_utilities_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/family-utilities.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_family_types_ts["meanderaw/src/modules/characteristics/compound/family/family.types.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-arcade-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-arcade-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-bars-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-bars-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-boxes-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-boxes-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-chain-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-chain-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-clasps-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-clasps-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-comb-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-comb-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-cross-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-cross-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_dots_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-dots-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_dots_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-dots-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-double-chain-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-double-chain-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-fork-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-fork-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_lines_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-lines-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_lines_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-lines-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-mesh-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-mesh-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-parallel-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-parallel-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-pure-tree-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-pure-tree-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_snake_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-snake-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-snake-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-stippled-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-stippled-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-swirl-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-swirl-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-waterfalls-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-waterfalls-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_whirl_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/family/is-whirl-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/is-whirl-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts["meanderaw/src/modules/characteristics/compound/family/strand-utilities.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/family/strand-utilities.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/structure/is-closed-loop-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/structure/is-closed-loop-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts["meanderaw/src/modules/characteristics/compound/structure/is-single-arc-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/compound/structure/is-single-arc-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_compound_structure_structure_characteristics_module_ts["meanderaw/src/modules/characteristics/compound/structure/structure-characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_module_ts["meanderaw/src/modules/characteristics/connectivity/connectivity.module.ts"]
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_module_unit_test_ts["meanderaw/src/modules/characteristics/connectivity/connectivity.module.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts["meanderaw/src/modules/characteristics/connectivity/connectivity.service.ts"]
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_unit_test_ts["meanderaw/src/modules/characteristics/connectivity/connectivity.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_types_ts["meanderaw/src/modules/characteristics/connectivity/connectivity.types.ts"]
-  file_meanderaw_src_modules_characteristics_path_end_end_characteristics_module_ts["meanderaw/src/modules/characteristics/path/end/end-characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_path_end_end_utilities_service_ts["meanderaw/src/modules/characteristics/path/end/end-utilities.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_end_end_utilities_service_unit_test_ts["meanderaw/src/modules/characteristics/path/end/end-utilities.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_end_end_types_ts["meanderaw/src/modules/characteristics/path/end/end.types.ts"]
-  file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts["meanderaw/src/modules/characteristics/path/end/ends-are-lattice-neighbors-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/end/ends-are-lattice-neighbors-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts["meanderaw/src/modules/characteristics/path/end/ends-on-border-rules-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/end/ends-on-border-rules-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_path_utilities_module_ts["meanderaw/src/modules/characteristics/path/path-utilities.module.ts"]
-  file_meanderaw_src_modules_characteristics_path_path_utilities_module_unit_test_ts["meanderaw/src/modules/characteristics/path/path-utilities.module.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts["meanderaw/src/modules/characteristics/path/path-utilities.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_path_utilities_service_unit_test_ts["meanderaw/src/modules/characteristics/path/path-utilities.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_path_types_ts["meanderaw/src/modules/characteristics/path/path.types.ts"]
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_characteristics_module_ts["meanderaw/src/modules/characteristics/path/tile-crossing/tile-crossing-characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts["meanderaw/src/modules/characteristics/path/tile-crossing/tile-crossing-component-delta-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/tile-crossing/tile-crossing-component-delta-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts["meanderaw/src/modules/characteristics/path/tile-crossing/tile-crossing-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/tile-crossing/tile-crossing-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_ts["meanderaw/src/modules/characteristics/path/tile-crossing/tile-crossing-cycle-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/tile-crossing/tile-crossing-cycle-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts["meanderaw/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts["meanderaw/src/modules/characteristics/path/topology/betti-number-1-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/topology/betti-number-1-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts["meanderaw/src/modules/characteristics/path/topology/free-end-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/topology/free-end-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_topology_topology_characteristics_module_ts["meanderaw/src/modules/characteristics/path/topology/topology-characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_ts["meanderaw/src/modules/characteristics/path/turn/bottom-border-touch-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/turn/bottom-border-touch-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_ts["meanderaw/src/modules/characteristics/path/turn/inflection-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/turn/inflection-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_ts["meanderaw/src/modules/characteristics/path/turn/max-monotonic-turn-length-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/turn/max-monotonic-turn-length-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts["meanderaw/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_types_ts["meanderaw/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn.types.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_ts["meanderaw/src/modules/characteristics/path/turn/tightest-turn-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/turn/tightest-turn-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_ts["meanderaw/src/modules/characteristics/path/turn/top-border-touch-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/turn/top-border-touch-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_ts["meanderaw/src/modules/characteristics/path/turn/total-turn-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/path/turn/total-turn-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_path_turn_turn_characteristics_module_ts["meanderaw/src/modules/characteristics/path/turn/turn-characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts["meanderaw/src/modules/characteristics/submatrix/corner/corner-characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/corner/corner-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/corner/corner-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/corner/north-east-corner-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/corner/north-east-corner-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/corner/north-west-corner-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/corner/north-west-corner-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/corner/south-east-corner-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/corner/south-east-corner-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/corner/south-west-corner-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/corner/south-west-corner-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_cross_cross_characteristics_module_ts["meanderaw/src/modules/characteristics/submatrix/cross/cross-characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/cross/cross-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/cross/cross-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_characteristics_module_ts["meanderaw/src/modules/characteristics/submatrix/embedded/embedded-characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/embedded/embedded-u-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/embedded/embedded-u-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/fork/east-fork-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/fork/east-fork-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts["meanderaw/src/modules/characteristics/submatrix/fork/fork-characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/fork/fork-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/fork/fork-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/fork/north-fork-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/fork/north-fork-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/fork/south-fork-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/fork/south-fork-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/fork/west-fork-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/fork/west-fork-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/a-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/a-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/ain-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/ain-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/alef-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/alef-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/ao-hanzi-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/ao-hanzi-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/b-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/b-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/beh-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/beh-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/c-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/c-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/dal-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/dal-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/dalet-hebrew-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/dalet-hebrew-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/delta-greek-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/delta-greek-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/e-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/e-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/f-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/f-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/feh-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/feh-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/gan-hanzi-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/gan-hanzi-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/h-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/h-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/hah-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/hah-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/heh-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/heh-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/i-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/i-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/jia-hanzi-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/jia-hanzi-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/jing-hanzi-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/jing-hanzi-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/kaf-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/kaf-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/kappa-greek-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/kappa-greek-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/kieuk-hangul-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/kieuk-hangul-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/l-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/l-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/lam-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/lam-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/lambda-greek-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/lambda-greek-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/lamed-hebrew-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/lamed-hebrew-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts["meanderaw/src/modules/characteristics/submatrix/letter/letter-characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/letter-characteristics.module.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/letter-utilities.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/letter-utilities.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts["meanderaw/src/modules/characteristics/submatrix/letter/letter.constants.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_types_ts["meanderaw/src/modules/characteristics/submatrix/letter/letter.types.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/m-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/m-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/meem-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/meem-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/mu-hanzi-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/mu-hanzi-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/n-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/n-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/noon-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/noon-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/o-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/o-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/omega-greek-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/omega-greek-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/phi-greek-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/phi-greek-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/pieup-hangul-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/pieup-hangul-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/psi-greek-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/psi-greek-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/qaf-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/qaf-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/reh-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/reh-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/rho-greek-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/rho-greek-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/s-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/s-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/sad-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/sad-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/seen-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/seen-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/shang-hanzi-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/shang-hanzi-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/shen-hanzi-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/shen-hanzi-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/sigma-greek-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/sigma-greek-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/t-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/t-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/tah-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/tah-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/tav-hebrew-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/tav-hebrew-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/tian-hanzi-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/tian-hanzi-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/tu-hanzi-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/tu-hanzi-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/tu-soil-hanzi-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/tu-soil-hanzi-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/u-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/u-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/w-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/w-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/wang-hanzi-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/wang-hanzi-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/waw-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/waw-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/x-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/x-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/y-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/y-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/ya-hangul-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/ya-hangul-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/yeh-arabic-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/yeh-arabic-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/yeo-hangul-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/yeo-hangul-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/yo-hangul-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/yo-hangul-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/you-hanzi-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/you-hanzi-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/yu-hangul-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/yu-hangul-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/yu-katakana-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/yu-katakana-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_ts["meanderaw/src/modules/characteristics/submatrix/letter/z-latin-letter-characteristics.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/letter/z-latin-letter-characteristics.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/point/density-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/point/density-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/point/dot-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/point/dot-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/point/double-horizontal-edge-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/point/double-horizontal-edge-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/point/double-vertical-edge-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/point/double-vertical-edge-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/point/east-edge-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/point/east-edge-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/point/edge-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/point/edge-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/point/ink-point-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/point/ink-point-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/point/north-edge-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/point/north-edge-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts["meanderaw/src/modules/characteristics/submatrix/point/point-characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/point/point-characteristics.module.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_utilities_service_ts["meanderaw/src/modules/characteristics/submatrix/point/point-utilities.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_utilities_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/point/point-utilities.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/point/south-edge-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/point/south-edge-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/point/west-edge-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/point/west-edge-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/rectangle/horizontal-rectangle-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/rectangle/horizontal-rectangle-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_characteristics_module_ts["meanderaw/src/modules/characteristics/submatrix/rectangle/rectangle-characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts["meanderaw/src/modules/characteristics/submatrix/rectangle/rectangle-utilities.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/rectangle/rectangle-utilities.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/rectangle/vertical-rectangle-count-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/rectangle/vertical-rectangle-count-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/run/longest-horizontal-run-length-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/run/longest-horizontal-run-length-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts["meanderaw/src/modules/characteristics/submatrix/run/longest-vertical-run-length-characteristic.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/run/longest-vertical-run-length-characteristic.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_run_run_characteristics_module_ts["meanderaw/src/modules/characteristics/submatrix/run/run-characteristics.module.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_run_run_utilities_service_ts["meanderaw/src/modules/characteristics/submatrix/run/run-utilities.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_run_run_utilities_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/run/run-utilities.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_module_ts["meanderaw/src/modules/characteristics/submatrix/submatrix-utilities.module.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_module_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/submatrix-utilities.module.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts["meanderaw/src/modules/characteristics/submatrix/submatrix-utilities.service.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_unit_test_ts["meanderaw/src/modules/characteristics/submatrix/submatrix-utilities.service.unit.test.ts"]
-  file_meanderaw_src_modules_characteristics_submatrix_submatrix_types_ts["meanderaw/src/modules/characteristics/submatrix/submatrix.types.ts"]
-  file_meanderaw_src_modules_classification_classification_constants_ts["meanderaw/src/modules/classification/classification.constants.ts"]
-  file_meanderaw_src_modules_classification_classification_module_ts["meanderaw/src/modules/classification/classification.module.ts"]
-  file_meanderaw_src_modules_classification_classification_service_integration_test_ts["meanderaw/src/modules/classification/classification.service.integration.test.ts"]
-  file_meanderaw_src_modules_classification_classification_service_ts["meanderaw/src/modules/classification/classification.service.ts"]
-  file_meanderaw_src_modules_classification_classification_service_unit_test_ts["meanderaw/src/modules/classification/classification.service.unit.test.ts"]
-  file_meanderaw_src_modules_classification_classification_types_ts["meanderaw/src/modules/classification/classification.types.ts"]
-  file_meanderaw_src_modules_code_code_constants_ts["meanderaw/src/modules/code/code.constants.ts"]
-  file_meanderaw_src_modules_code_code_module_ts["meanderaw/src/modules/code/code.module.ts"]
-  file_meanderaw_src_modules_code_code_service_ts["meanderaw/src/modules/code/code.service.ts"]
-  file_meanderaw_src_modules_code_code_service_unit_test_ts["meanderaw/src/modules/code/code.service.unit.test.ts"]
-  file_meanderaw_src_modules_code_code_types_ts["meanderaw/src/modules/code/code.types.ts"]
-  file_meanderaw_src_modules_corpus_corpus_constants_ts["meanderaw/src/modules/corpus/corpus.constants.ts"]
-  file_meanderaw_src_modules_corpus_corpus_module_ts["meanderaw/src/modules/corpus/corpus.module.ts"]
-  file_meanderaw_src_modules_corpus_corpus_service_ts["meanderaw/src/modules/corpus/corpus.service.ts"]
-  file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts["meanderaw/src/modules/corpus/corpus.service.unit.test.ts"]
-  file_meanderaw_src_modules_corpus_corpus_types_ts["meanderaw/src/modules/corpus/corpus.types.ts"]
-  file_meanderaw_src_modules_corpus_historical_corpus_1_constants_ts["meanderaw/src/modules/corpus/historical-corpus-1.constants.ts"]
-  file_meanderaw_src_modules_corpus_historical_corpus_10_constants_ts["meanderaw/src/modules/corpus/historical-corpus-10.constants.ts"]
-  file_meanderaw_src_modules_corpus_historical_corpus_11_constants_ts["meanderaw/src/modules/corpus/historical-corpus-11.constants.ts"]
-  file_meanderaw_src_modules_corpus_historical_corpus_2_constants_ts["meanderaw/src/modules/corpus/historical-corpus-2.constants.ts"]
-  file_meanderaw_src_modules_corpus_historical_corpus_3_constants_ts["meanderaw/src/modules/corpus/historical-corpus-3.constants.ts"]
-  file_meanderaw_src_modules_corpus_historical_corpus_4_constants_ts["meanderaw/src/modules/corpus/historical-corpus-4.constants.ts"]
-  file_meanderaw_src_modules_corpus_historical_corpus_5_constants_ts["meanderaw/src/modules/corpus/historical-corpus-5.constants.ts"]
-  file_meanderaw_src_modules_corpus_historical_corpus_6_constants_ts["meanderaw/src/modules/corpus/historical-corpus-6.constants.ts"]
-  file_meanderaw_src_modules_corpus_historical_corpus_7_constants_ts["meanderaw/src/modules/corpus/historical-corpus-7.constants.ts"]
-  file_meanderaw_src_modules_corpus_historical_corpus_8_constants_ts["meanderaw/src/modules/corpus/historical-corpus-8.constants.ts"]
-  file_meanderaw_src_modules_corpus_historical_corpus_9_constants_ts["meanderaw/src/modules/corpus/historical-corpus-9.constants.ts"]
-  file_meanderaw_src_modules_corpus_historical_corpus_constants_ts["meanderaw/src/modules/corpus/historical-corpus.constants.ts"]
-  file_meanderaw_src_modules_database_database_constants_ts["meanderaw/src/modules/database/database.constants.ts"]
-  file_meanderaw_src_modules_database_database_factories_ts["meanderaw/src/modules/database/database.factories.ts"]
-  file_meanderaw_src_modules_database_database_module_integration_test_ts["meanderaw/src/modules/database/database.module.integration.test.ts"]
-  file_meanderaw_src_modules_database_database_module_ts["meanderaw/src/modules/database/database.module.ts"]
-  file_meanderaw_src_modules_database_database_service_integration_test_ts["meanderaw/src/modules/database/database.service.integration.test.ts"]
-  file_meanderaw_src_modules_database_database_service_ts["meanderaw/src/modules/database/database.service.ts"]
-  file_meanderaw_src_modules_database_database_service_unit_test_ts["meanderaw/src/modules/database/database.service.unit.test.ts"]
-  file_meanderaw_src_modules_database_database_types_ts["meanderaw/src/modules/database/database.types.ts"]
-  file_meanderaw_src_modules_database_entities_Meander_entity_ts["meanderaw/src/modules/database/entities/Meander.entity.ts"]
-  file_meanderaw_src_modules_draw_draw_code_service_ts["meanderaw/src/modules/draw/draw-code.service.ts"]
-  file_meanderaw_src_modules_draw_draw_code_service_unit_test_ts["meanderaw/src/modules/draw/draw-code.service.unit.test.ts"]
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts["meanderaw/src/modules/draw/draw-enumeration.service.integration.test.ts"]
-  file_meanderaw_src_modules_draw_draw_enumeration_service_ts["meanderaw/src/modules/draw/draw-enumeration.service.ts"]
-  file_meanderaw_src_modules_draw_draw_enumeration_service_unit_test_ts["meanderaw/src/modules/draw/draw-enumeration.service.unit.test.ts"]
-  file_meanderaw_src_modules_draw_draw_index_constants_ts["meanderaw/src/modules/draw/draw-index.constants.ts"]
-  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts["meanderaw/src/modules/draw/draw-index.service.integration.test.ts"]
-  file_meanderaw_src_modules_draw_draw_index_service_ts["meanderaw/src/modules/draw/draw-index.service.ts"]
-  file_meanderaw_src_modules_draw_draw_index_service_unit_test_ts["meanderaw/src/modules/draw/draw-index.service.unit.test.ts"]
-  file_meanderaw_src_modules_draw_draw_index_types_ts["meanderaw/src/modules/draw/draw-index.types.ts"]
-  file_meanderaw_src_modules_draw_draw_pool_service_integration_test_ts["meanderaw/src/modules/draw/draw-pool.service.integration.test.ts"]
-  file_meanderaw_src_modules_draw_draw_pool_service_ts["meanderaw/src/modules/draw/draw-pool.service.ts"]
-  file_meanderaw_src_modules_draw_draw_pool_service_unit_test_ts["meanderaw/src/modules/draw/draw-pool.service.unit.test.ts"]
-  file_meanderaw_src_modules_draw_draw_record_service_ts["meanderaw/src/modules/draw/draw-record.service.ts"]
-  file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts["meanderaw/src/modules/draw/draw-record.service.unit.test.ts"]
-  file_meanderaw_src_modules_draw_draw_run_collision_command_integration_test_ts["meanderaw/src/modules/draw/draw-run-collision.command.integration.test.ts"]
-  file_meanderaw_src_modules_draw_draw_run_regeneration_command_integration_test_ts["meanderaw/src/modules/draw/draw-run-regeneration.command.integration.test.ts"]
-  file_meanderaw_src_modules_draw_draw_run_command_integration_test_ts["meanderaw/src/modules/draw/draw-run.command.integration.test.ts"]
-  file_meanderaw_src_modules_draw_draw_worker_module_ts["meanderaw/src/modules/draw/draw-worker.module.ts"]
-  file_meanderaw_src_modules_draw_draw_worker_service_ts["meanderaw/src/modules/draw/draw-worker.service.ts"]
-  file_meanderaw_src_modules_draw_draw_worker_service_unit_test_ts["meanderaw/src/modules/draw/draw-worker.service.unit.test.ts"]
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts["meanderaw/src/modules/draw/draw.command.integration.test.ts"]
-  file_meanderaw_src_modules_draw_draw_command_ts["meanderaw/src/modules/draw/draw.command.ts"]
-  file_meanderaw_src_modules_draw_draw_command_unit_test_ts["meanderaw/src/modules/draw/draw.command.unit.test.ts"]
-  file_meanderaw_src_modules_draw_draw_constants_ts["meanderaw/src/modules/draw/draw.constants.ts"]
-  file_meanderaw_src_modules_draw_draw_module_ts["meanderaw/src/modules/draw/draw.module.ts"]
-  file_meanderaw_src_modules_draw_draw_types_ts["meanderaw/src/modules/draw/draw.types.ts"]
-  file_meanderaw_src_modules_drawing_drawing_constants_ts["meanderaw/src/modules/drawing/drawing.constants.ts"]
-  file_meanderaw_src_modules_drawing_drawing_module_ts["meanderaw/src/modules/drawing/drawing.module.ts"]
-  file_meanderaw_src_modules_drawing_drawing_service_ts["meanderaw/src/modules/drawing/drawing.service.ts"]
-  file_meanderaw_src_modules_drawing_drawing_service_unit_test_ts["meanderaw/src/modules/drawing/drawing.service.unit.test.ts"]
-  file_meanderaw_src_modules_drawing_drawing_types_ts["meanderaw/src/modules/drawing/drawing.types.ts"]
-  file_meanderaw_src_modules_enumeration_enumeration_constants_ts["meanderaw/src/modules/enumeration/enumeration.constants.ts"]
-  file_meanderaw_src_modules_enumeration_enumeration_module_ts["meanderaw/src/modules/enumeration/enumeration.module.ts"]
-  file_meanderaw_src_modules_enumeration_enumeration_service_ts["meanderaw/src/modules/enumeration/enumeration.service.ts"]
-  file_meanderaw_src_modules_enumeration_enumeration_service_unit_test_ts["meanderaw/src/modules/enumeration/enumeration.service.unit.test.ts"]
-  file_meanderaw_src_modules_enumeration_enumeration_types_ts["meanderaw/src/modules/enumeration/enumeration.types.ts"]
-  file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts["meanderaw/src/modules/enumeration/tile-enumeration.service.ts"]
-  file_meanderaw_src_modules_enumeration_tile_enumeration_service_unit_test_ts["meanderaw/src/modules/enumeration/tile-enumeration.service.unit.test.ts"]
-  file_meanderaw_src_modules_geometry_geometry_constants_ts["meanderaw/src/modules/geometry/geometry.constants.ts"]
-  file_meanderaw_src_modules_geometry_geometry_module_ts["meanderaw/src/modules/geometry/geometry.module.ts"]
-  file_meanderaw_src_modules_geometry_geometry_service_ts["meanderaw/src/modules/geometry/geometry.service.ts"]
-  file_meanderaw_src_modules_geometry_geometry_service_unit_test_ts["meanderaw/src/modules/geometry/geometry.service.unit.test.ts"]
-  file_meanderaw_src_modules_geometry_geometry_types_ts["meanderaw/src/modules/geometry/geometry.types.ts"]
-  file_meanderaw_src_modules_graph_graph_constants_ts["meanderaw/src/modules/graph/graph.constants.ts"]
-  file_meanderaw_src_modules_graph_graph_module_ts["meanderaw/src/modules/graph/graph.module.ts"]
-  file_meanderaw_src_modules_graph_graph_service_ts["meanderaw/src/modules/graph/graph.service.ts"]
-  file_meanderaw_src_modules_graph_graph_service_unit_test_ts["meanderaw/src/modules/graph/graph.service.unit.test.ts"]
-  file_meanderaw_src_modules_graph_graph_types_ts["meanderaw/src/modules/graph/graph.types.ts"]
-  file_meanderaw_src_modules_matrix_matrix_constants_ts["meanderaw/src/modules/matrix/matrix.constants.ts"]
-  file_meanderaw_src_modules_matrix_matrix_module_ts["meanderaw/src/modules/matrix/matrix.module.ts"]
-  file_meanderaw_src_modules_matrix_matrix_service_ts["meanderaw/src/modules/matrix/matrix.service.ts"]
-  file_meanderaw_src_modules_matrix_matrix_service_unit_test_ts["meanderaw/src/modules/matrix/matrix.service.unit.test.ts"]
-  file_meanderaw_src_modules_matrix_matrix_types_ts["meanderaw/src/modules/matrix/matrix.types.ts"]
-  file_meanderaw_src_modules_svg_svg_constants_ts["meanderaw/src/modules/svg/svg.constants.ts"]
-  file_meanderaw_src_modules_svg_svg_module_ts["meanderaw/src/modules/svg/svg.module.ts"]
-  file_meanderaw_src_modules_svg_svg_service_ts["meanderaw/src/modules/svg/svg.service.ts"]
-  file_meanderaw_src_modules_svg_svg_service_unit_test_ts["meanderaw/src/modules/svg/svg.service.unit.test.ts"]
-  file_meanderaw_src_modules_svg_svg_types_ts["meanderaw/src/modules/svg/svg.types.ts"]
-  file_meanderaw_src_modules_symmetry_symmetry_constants_ts["meanderaw/src/modules/symmetry/symmetry.constants.ts"]
-  file_meanderaw_src_modules_symmetry_symmetry_module_ts["meanderaw/src/modules/symmetry/symmetry.module.ts"]
-  file_meanderaw_src_modules_symmetry_symmetry_service_ts["meanderaw/src/modules/symmetry/symmetry.service.ts"]
-  file_meanderaw_src_modules_symmetry_symmetry_service_unit_test_ts["meanderaw/src/modules/symmetry/symmetry.service.unit.test.ts"]
-  file_meanderaw_src_modules_symmetry_symmetry_types_ts["meanderaw/src/modules/symmetry/symmetry.types.ts"]
-  file_meanderaw_src_modules_tile_tile_constants_ts["meanderaw/src/modules/tile/tile.constants.ts"]
-  file_meanderaw_src_modules_tile_tile_module_ts["meanderaw/src/modules/tile/tile.module.ts"]
-  file_meanderaw_src_modules_tile_tile_service_ts["meanderaw/src/modules/tile/tile.service.ts"]
-  file_meanderaw_src_modules_tile_tile_service_unit_test_ts["meanderaw/src/modules/tile/tile.service.unit.test.ts"]
-  file_meanderaw_src_modules_tile_tile_types_ts["meanderaw/src/modules/tile/tile.types.ts"]
-  file_meanderaw_src_repl_ts["meanderaw/src/repl.ts"]
-  file_meanderaw_src_worker_ts["meanderaw/src/worker.ts"]
-  file_meanderaw_src_worker_unit_test_ts["meanderaw/src/worker.unit.test.ts"]
-  file_meanderaw_testing_database_ts["meanderaw/testing/database.ts"]
-  file_meanderaw_testing_draw_run_budget_ts["meanderaw/testing/draw-run-budget.ts"]
-  file_meanderaw_testing_draw_run_ts["meanderaw/testing/draw-run.ts"]
-  file_meanderaw_testing_legacy_characteristics_ts["meanderaw/testing/legacy-characteristics.ts"]
-  file_meanderaw_testing_letters_ts["meanderaw/testing/letters.ts"]
-  file_meanderaw_testing_meanders_ts["meanderaw/testing/meanders.ts"]
-  file_meanderaw_testing_mocks_ts["meanderaw/testing/mocks.ts"]
-  file_meanderaw_testing_path_data_ts["meanderaw/testing/path-data.ts"]
-  file_meanderaw_testing_setup_ts["meanderaw/testing/setup.ts"]
-  file_meanderaw_testing_tiles_ts["meanderaw/testing/tiles.ts"]
-  file_meanderaw_vitest_config_ts["meanderaw/vitest.config.ts"]
+  file_meanderaw_cli_callidescope_config_ts["meanderaw-cli/callidescope.config.ts"]
+  file_meanderaw_cli_codependix_config_ts["meanderaw-cli/codependix.config.ts"]
+  file_meanderaw_cli_codometer_config_ts["meanderaw-cli/codometer.config.ts"]
+  file_meanderaw_cli_eslint_config_ts["meanderaw-cli/eslint.config.ts"]
+  file_meanderaw_cli_src_constants_ts["meanderaw-cli/src/constants.ts"]
+  file_meanderaw_cli_src_main_end_to_end_test_ts["meanderaw-cli/src/main.end-to-end.test.ts"]
+  file_meanderaw_cli_src_main_module_ts["meanderaw-cli/src/main.module.ts"]
+  file_meanderaw_cli_src_main_ts["meanderaw-cli/src/main.ts"]
+  file_meanderaw_cli_src_main_unit_test_ts["meanderaw-cli/src/main.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts["meanderaw-cli/src/modules/characteristics/characteristic-context.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/characteristic-context.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts["meanderaw-cli/src/modules/characteristics/characteristics.constants.ts"]
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts["meanderaw-cli/src/modules/characteristics/characteristics.module.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_integration_test_ts["meanderaw-cli/src/modules/characteristics/characteristics.service.integration.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts["meanderaw-cli/src/modules/characteristics/characteristics.types.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_module_ts["meanderaw-cli/src/modules/characteristics/compound/compound-utilities.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_module_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/compound-utilities.module.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts["meanderaw-cli/src/modules/characteristics/compound/compound-utilities.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/compound-utilities.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/compound/family/family-characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_utilities_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/family-utilities.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_utilities_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/family-utilities.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_types_ts["meanderaw-cli/src/modules/characteristics/compound/family/family.types.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-arcade-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-arcade-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-bars-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-bars-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-boxes-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-boxes-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-chain-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-chain-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-clasps-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-clasps-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-comb-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-comb-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-cross-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-cross-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_dots_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-dots-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_dots_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-dots-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-double-chain-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-double-chain-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-fork-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-fork-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_lines_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-lines-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_lines_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-lines-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-mesh-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-mesh-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-parallel-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-parallel-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-pure-tree-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-pure-tree-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_snake_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-snake-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-snake-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-stippled-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-stippled-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-swirl-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-swirl-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-waterfalls-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-waterfalls-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_whirl_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-whirl-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/is-whirl-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts["meanderaw-cli/src/modules/characteristics/compound/family/strand-utilities.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/family/strand-utilities.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/structure/is-closed-loop-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/structure/is-closed-loop-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/compound/structure/is-single-arc-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/compound/structure/is-single-arc-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_structure_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/compound/structure/structure-characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_module_ts["meanderaw-cli/src/modules/characteristics/connectivity/connectivity.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_module_unit_test_ts["meanderaw-cli/src/modules/characteristics/connectivity/connectivity.module.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts["meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_types_ts["meanderaw-cli/src/modules/characteristics/connectivity/connectivity.types.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_end_end_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/path/end/end-characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_end_end_utilities_service_ts["meanderaw-cli/src/modules/characteristics/path/end/end-utilities.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_end_end_utilities_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/end/end-utilities.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_end_end_types_ts["meanderaw-cli/src/modules/characteristics/path/end/end.types.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/end/ends-are-lattice-neighbors-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/end/ends-are-lattice-neighbors-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/end/ends-on-border-rules-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/end/ends-on-border-rules-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_path_utilities_module_ts["meanderaw-cli/src/modules/characteristics/path/path-utilities.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_path_utilities_module_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/path-utilities.module.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts["meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/path-utilities.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_path_types_ts["meanderaw-cli/src/modules/characteristics/path/path.types.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/path/tile-crossing/tile-crossing-characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/tile-crossing/tile-crossing-component-delta-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/tile-crossing/tile-crossing-component-delta-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/tile-crossing/tile-crossing-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/tile-crossing/tile-crossing-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/tile-crossing/tile-crossing-cycle-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/tile-crossing/tile-crossing-cycle-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/topology/betti-number-1-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/topology/betti-number-1-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/topology/free-end-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/topology/free-end-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_topology_topology_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/path/topology/topology-characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/turn/bottom-border-touch-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/turn/bottom-border-touch-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/turn/inflection-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/turn/inflection-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/turn/max-monotonic-turn-length-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/turn/max-monotonic-turn-length-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_types_ts["meanderaw-cli/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn.types.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/turn/tightest-turn-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/turn/tightest-turn-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/turn/top-border-touch-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/turn/top-border-touch-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/path/turn/total-turn-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/path/turn/total-turn-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_path_turn_turn_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/path/turn/turn-characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/submatrix/corner/corner-characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/corner/corner-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/corner/corner-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/corner/north-east-corner-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/corner/north-east-corner-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/corner/north-west-corner-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/corner/north-west-corner-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/corner/south-east-corner-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/corner/south-east-corner-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/corner/south-west-corner-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/corner/south-west-corner-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/submatrix/cross/cross-characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/cross/cross-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/cross/cross-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/submatrix/embedded/embedded-characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/embedded/embedded-u-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/embedded/embedded-u-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/fork/east-fork-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/fork/east-fork-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/submatrix/fork/fork-characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/fork/fork-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/fork/fork-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/fork/north-fork-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/fork/north-fork-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/fork/south-fork-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/fork/south-fork-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/fork/west-fork-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/fork/west-fork-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/a-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/a-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/ain-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/ain-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/alef-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/alef-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/ao-hanzi-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/ao-hanzi-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/b-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/b-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/beh-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/beh-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/c-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/c-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/dal-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/dal-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/dalet-hebrew-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/dalet-hebrew-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/delta-greek-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/delta-greek-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/e-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/e-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/f-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/f-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/feh-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/feh-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/gan-hanzi-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/gan-hanzi-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/h-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/h-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/hah-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/hah-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/heh-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/heh-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/i-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/i-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/jia-hanzi-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/jia-hanzi-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/jing-hanzi-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/jing-hanzi-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/kaf-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/kaf-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/kappa-greek-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/kappa-greek-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/kieuk-hangul-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/kieuk-hangul-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/l-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/l-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/lam-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/lam-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/lambda-greek-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/lambda-greek-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/lamed-hebrew-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/lamed-hebrew-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-characteristics.module.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-utilities.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-utilities.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/letter.constants.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_types_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/letter.types.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/m-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/m-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/meem-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/meem-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/mu-hanzi-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/mu-hanzi-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/n-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/n-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/noon-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/noon-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/o-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/o-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/omega-greek-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/omega-greek-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/phi-greek-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/phi-greek-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/pieup-hangul-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/pieup-hangul-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/psi-greek-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/psi-greek-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/qaf-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/qaf-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/reh-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/reh-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/rho-greek-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/rho-greek-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/s-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/s-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/sad-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/sad-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/seen-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/seen-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/shang-hanzi-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/shang-hanzi-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/shen-hanzi-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/shen-hanzi-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/sigma-greek-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/sigma-greek-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/t-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/t-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/tah-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/tah-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/tav-hebrew-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/tav-hebrew-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/tian-hanzi-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/tian-hanzi-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/tu-hanzi-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/tu-hanzi-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/tu-soil-hanzi-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/tu-soil-hanzi-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/u-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/u-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/w-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/w-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/wang-hanzi-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/wang-hanzi-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/waw-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/waw-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/x-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/x-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/y-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/y-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/ya-hangul-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/ya-hangul-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/yeh-arabic-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/yeh-arabic-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/yeo-hangul-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/yeo-hangul-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/yo-hangul-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/yo-hangul-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/you-hanzi-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/you-hanzi-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/yu-hangul-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/yu-hangul-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/yu-katakana-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/yu-katakana-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/z-latin-letter-characteristics.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/letter/z-latin-letter-characteristics.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/density-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/density-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/dot-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/dot-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/double-horizontal-edge-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/double-horizontal-edge-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/double-vertical-edge-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/double-vertical-edge-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/east-edge-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/east-edge-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/edge-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/edge-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/ink-point-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/ink-point-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/north-edge-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/north-edge-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/point-characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/point-characteristics.module.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_utilities_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/point-utilities.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_utilities_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/point-utilities.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/south-edge-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/south-edge-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/west-edge-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/point/west-edge-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/rectangle/horizontal-rectangle-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/rectangle/horizontal-rectangle-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/submatrix/rectangle/rectangle-characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/rectangle/rectangle-utilities.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/rectangle/rectangle-utilities.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/rectangle/vertical-rectangle-count-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/rectangle/vertical-rectangle-count-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/run/longest-horizontal-run-length-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/run/longest-horizontal-run-length-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/run/longest-vertical-run-length-characteristic.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/run/longest-vertical-run-length-characteristic.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_characteristics_module_ts["meanderaw-cli/src/modules/characteristics/submatrix/run/run-characteristics.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_utilities_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/run/run-utilities.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_utilities_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/run/run-utilities.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_module_ts["meanderaw-cli/src/modules/characteristics/submatrix/submatrix-utilities.module.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_module_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/submatrix-utilities.module.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts["meanderaw-cli/src/modules/characteristics/submatrix/submatrix-utilities.service.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_unit_test_ts["meanderaw-cli/src/modules/characteristics/submatrix/submatrix-utilities.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_types_ts["meanderaw-cli/src/modules/characteristics/submatrix/submatrix.types.ts"]
+  file_meanderaw_cli_src_modules_classification_classification_constants_ts["meanderaw-cli/src/modules/classification/classification.constants.ts"]
+  file_meanderaw_cli_src_modules_classification_classification_module_ts["meanderaw-cli/src/modules/classification/classification.module.ts"]
+  file_meanderaw_cli_src_modules_classification_classification_service_integration_test_ts["meanderaw-cli/src/modules/classification/classification.service.integration.test.ts"]
+  file_meanderaw_cli_src_modules_classification_classification_service_ts["meanderaw-cli/src/modules/classification/classification.service.ts"]
+  file_meanderaw_cli_src_modules_classification_classification_service_unit_test_ts["meanderaw-cli/src/modules/classification/classification.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_classification_classification_types_ts["meanderaw-cli/src/modules/classification/classification.types.ts"]
+  file_meanderaw_cli_src_modules_code_code_constants_ts["meanderaw-cli/src/modules/code/code.constants.ts"]
+  file_meanderaw_cli_src_modules_code_code_module_ts["meanderaw-cli/src/modules/code/code.module.ts"]
+  file_meanderaw_cli_src_modules_code_code_service_ts["meanderaw-cli/src/modules/code/code.service.ts"]
+  file_meanderaw_cli_src_modules_code_code_service_unit_test_ts["meanderaw-cli/src/modules/code/code.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_code_code_types_ts["meanderaw-cli/src/modules/code/code.types.ts"]
+  file_meanderaw_cli_src_modules_corpus_corpus_constants_ts["meanderaw-cli/src/modules/corpus/corpus.constants.ts"]
+  file_meanderaw_cli_src_modules_corpus_corpus_module_ts["meanderaw-cli/src/modules/corpus/corpus.module.ts"]
+  file_meanderaw_cli_src_modules_corpus_corpus_service_ts["meanderaw-cli/src/modules/corpus/corpus.service.ts"]
+  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts["meanderaw-cli/src/modules/corpus/corpus.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_corpus_corpus_types_ts["meanderaw-cli/src/modules/corpus/corpus.types.ts"]
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_1_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus-1.constants.ts"]
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_10_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus-10.constants.ts"]
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_11_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus-11.constants.ts"]
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_2_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus-2.constants.ts"]
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_3_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus-3.constants.ts"]
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_4_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus-4.constants.ts"]
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_5_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus-5.constants.ts"]
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_6_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus-6.constants.ts"]
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_7_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus-7.constants.ts"]
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_8_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus-8.constants.ts"]
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_9_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus-9.constants.ts"]
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus.constants.ts"]
+  file_meanderaw_cli_src_modules_database_database_constants_ts["meanderaw-cli/src/modules/database/database.constants.ts"]
+  file_meanderaw_cli_src_modules_database_database_factories_ts["meanderaw-cli/src/modules/database/database.factories.ts"]
+  file_meanderaw_cli_src_modules_database_database_module_integration_test_ts["meanderaw-cli/src/modules/database/database.module.integration.test.ts"]
+  file_meanderaw_cli_src_modules_database_database_module_ts["meanderaw-cli/src/modules/database/database.module.ts"]
+  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts["meanderaw-cli/src/modules/database/database.service.integration.test.ts"]
+  file_meanderaw_cli_src_modules_database_database_service_ts["meanderaw-cli/src/modules/database/database.service.ts"]
+  file_meanderaw_cli_src_modules_database_database_service_unit_test_ts["meanderaw-cli/src/modules/database/database.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_database_database_types_ts["meanderaw-cli/src/modules/database/database.types.ts"]
+  file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts["meanderaw-cli/src/modules/database/entities/Meander.entity.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_code_service_ts["meanderaw-cli/src/modules/draw/draw-code.service.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts["meanderaw-cli/src/modules/draw/draw-code.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts["meanderaw-cli/src/modules/draw/draw-enumeration.service.integration.test.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts["meanderaw-cli/src/modules/draw/draw-enumeration.service.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_unit_test_ts["meanderaw-cli/src/modules/draw/draw-enumeration.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_index_constants_ts["meanderaw-cli/src/modules/draw/draw-index.constants.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts["meanderaw-cli/src/modules/draw/draw-index.service.integration.test.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_index_service_ts["meanderaw-cli/src/modules/draw/draw-index.service.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts["meanderaw-cli/src/modules/draw/draw-index.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_index_types_ts["meanderaw-cli/src/modules/draw/draw-index.types.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts["meanderaw-cli/src/modules/draw/draw-pool.service.integration.test.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_ts["meanderaw-cli/src/modules/draw/draw-pool.service.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_unit_test_ts["meanderaw-cli/src/modules/draw/draw-pool.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_record_service_ts["meanderaw-cli/src/modules/draw/draw-record.service.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_record_service_unit_test_ts["meanderaw-cli/src/modules/draw/draw-record.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_run_collision_command_integration_test_ts["meanderaw-cli/src/modules/draw/draw-run-collision.command.integration.test.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_run_regeneration_command_integration_test_ts["meanderaw-cli/src/modules/draw/draw-run-regeneration.command.integration.test.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_run_command_integration_test_ts["meanderaw-cli/src/modules/draw/draw-run.command.integration.test.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_worker_module_ts["meanderaw-cli/src/modules/draw/draw-worker.module.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_ts["meanderaw-cli/src/modules/draw/draw-worker.service.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts["meanderaw-cli/src/modules/draw/draw-worker.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts["meanderaw-cli/src/modules/draw/draw.command.integration.test.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_command_ts["meanderaw-cli/src/modules/draw/draw.command.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts["meanderaw-cli/src/modules/draw/draw.command.unit.test.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_constants_ts["meanderaw-cli/src/modules/draw/draw.constants.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_module_ts["meanderaw-cli/src/modules/draw/draw.module.ts"]
+  file_meanderaw_cli_src_modules_draw_draw_types_ts["meanderaw-cli/src/modules/draw/draw.types.ts"]
+  file_meanderaw_cli_src_modules_drawing_drawing_constants_ts["meanderaw-cli/src/modules/drawing/drawing.constants.ts"]
+  file_meanderaw_cli_src_modules_drawing_drawing_module_ts["meanderaw-cli/src/modules/drawing/drawing.module.ts"]
+  file_meanderaw_cli_src_modules_drawing_drawing_service_ts["meanderaw-cli/src/modules/drawing/drawing.service.ts"]
+  file_meanderaw_cli_src_modules_drawing_drawing_service_unit_test_ts["meanderaw-cli/src/modules/drawing/drawing.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_drawing_drawing_types_ts["meanderaw-cli/src/modules/drawing/drawing.types.ts"]
+  file_meanderaw_cli_src_modules_enumeration_enumeration_constants_ts["meanderaw-cli/src/modules/enumeration/enumeration.constants.ts"]
+  file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts["meanderaw-cli/src/modules/enumeration/enumeration.module.ts"]
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts["meanderaw-cli/src/modules/enumeration/enumeration.service.ts"]
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_unit_test_ts["meanderaw-cli/src/modules/enumeration/enumeration.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_enumeration_enumeration_types_ts["meanderaw-cli/src/modules/enumeration/enumeration.types.ts"]
+  file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts["meanderaw-cli/src/modules/enumeration/tile-enumeration.service.ts"]
+  file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_unit_test_ts["meanderaw-cli/src/modules/enumeration/tile-enumeration.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_geometry_geometry_constants_ts["meanderaw-cli/src/modules/geometry/geometry.constants.ts"]
+  file_meanderaw_cli_src_modules_geometry_geometry_module_ts["meanderaw-cli/src/modules/geometry/geometry.module.ts"]
+  file_meanderaw_cli_src_modules_geometry_geometry_service_ts["meanderaw-cli/src/modules/geometry/geometry.service.ts"]
+  file_meanderaw_cli_src_modules_geometry_geometry_service_unit_test_ts["meanderaw-cli/src/modules/geometry/geometry.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_geometry_geometry_types_ts["meanderaw-cli/src/modules/geometry/geometry.types.ts"]
+  file_meanderaw_cli_src_modules_graph_graph_constants_ts["meanderaw-cli/src/modules/graph/graph.constants.ts"]
+  file_meanderaw_cli_src_modules_graph_graph_module_ts["meanderaw-cli/src/modules/graph/graph.module.ts"]
+  file_meanderaw_cli_src_modules_graph_graph_service_ts["meanderaw-cli/src/modules/graph/graph.service.ts"]
+  file_meanderaw_cli_src_modules_graph_graph_service_unit_test_ts["meanderaw-cli/src/modules/graph/graph.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_graph_graph_types_ts["meanderaw-cli/src/modules/graph/graph.types.ts"]
+  file_meanderaw_cli_src_modules_matrix_matrix_constants_ts["meanderaw-cli/src/modules/matrix/matrix.constants.ts"]
+  file_meanderaw_cli_src_modules_matrix_matrix_module_ts["meanderaw-cli/src/modules/matrix/matrix.module.ts"]
+  file_meanderaw_cli_src_modules_matrix_matrix_service_ts["meanderaw-cli/src/modules/matrix/matrix.service.ts"]
+  file_meanderaw_cli_src_modules_matrix_matrix_service_unit_test_ts["meanderaw-cli/src/modules/matrix/matrix.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_matrix_matrix_types_ts["meanderaw-cli/src/modules/matrix/matrix.types.ts"]
+  file_meanderaw_cli_src_modules_svg_svg_constants_ts["meanderaw-cli/src/modules/svg/svg.constants.ts"]
+  file_meanderaw_cli_src_modules_svg_svg_module_ts["meanderaw-cli/src/modules/svg/svg.module.ts"]
+  file_meanderaw_cli_src_modules_svg_svg_service_ts["meanderaw-cli/src/modules/svg/svg.service.ts"]
+  file_meanderaw_cli_src_modules_svg_svg_service_unit_test_ts["meanderaw-cli/src/modules/svg/svg.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_svg_svg_types_ts["meanderaw-cli/src/modules/svg/svg.types.ts"]
+  file_meanderaw_cli_src_modules_symmetry_symmetry_constants_ts["meanderaw-cli/src/modules/symmetry/symmetry.constants.ts"]
+  file_meanderaw_cli_src_modules_symmetry_symmetry_module_ts["meanderaw-cli/src/modules/symmetry/symmetry.module.ts"]
+  file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts["meanderaw-cli/src/modules/symmetry/symmetry.service.ts"]
+  file_meanderaw_cli_src_modules_symmetry_symmetry_service_unit_test_ts["meanderaw-cli/src/modules/symmetry/symmetry.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_symmetry_symmetry_types_ts["meanderaw-cli/src/modules/symmetry/symmetry.types.ts"]
+  file_meanderaw_cli_src_modules_tile_tile_constants_ts["meanderaw-cli/src/modules/tile/tile.constants.ts"]
+  file_meanderaw_cli_src_modules_tile_tile_module_ts["meanderaw-cli/src/modules/tile/tile.module.ts"]
+  file_meanderaw_cli_src_modules_tile_tile_service_ts["meanderaw-cli/src/modules/tile/tile.service.ts"]
+  file_meanderaw_cli_src_modules_tile_tile_service_unit_test_ts["meanderaw-cli/src/modules/tile/tile.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_tile_tile_types_ts["meanderaw-cli/src/modules/tile/tile.types.ts"]
+  file_meanderaw_cli_src_repl_ts["meanderaw-cli/src/repl.ts"]
+  file_meanderaw_cli_src_worker_ts["meanderaw-cli/src/worker.ts"]
+  file_meanderaw_cli_src_worker_unit_test_ts["meanderaw-cli/src/worker.unit.test.ts"]
+  file_meanderaw_cli_testing_database_ts["meanderaw-cli/testing/database.ts"]
+  file_meanderaw_cli_testing_draw_run_budget_ts["meanderaw-cli/testing/draw-run-budget.ts"]
+  file_meanderaw_cli_testing_draw_run_ts["meanderaw-cli/testing/draw-run.ts"]
+  file_meanderaw_cli_testing_legacy_characteristics_ts["meanderaw-cli/testing/legacy-characteristics.ts"]
+  file_meanderaw_cli_testing_letters_ts["meanderaw-cli/testing/letters.ts"]
+  file_meanderaw_cli_testing_meanders_ts["meanderaw-cli/testing/meanders.ts"]
+  file_meanderaw_cli_testing_mocks_ts["meanderaw-cli/testing/mocks.ts"]
+  file_meanderaw_cli_testing_path_data_ts["meanderaw-cli/testing/path-data.ts"]
+  file_meanderaw_cli_testing_setup_ts["meanderaw-cli/testing/setup.ts"]
+  file_meanderaw_cli_testing_tiles_ts["meanderaw-cli/testing/tiles.ts"]
+  file_meanderaw_cli_vitest_config_ts["meanderaw-cli/vitest.config.ts"]
   file_synchronization_callidescope_config_ts["synchronization/callidescope.config.ts"]
   file_synchronization_codependix_config_ts["synchronization/codependix.config.ts"]
   file_synchronization_codometer_config_ts["synchronization/codometer.config.ts"]
@@ -8044,1891 +8050,1891 @@ graph LR
   file_logger_src_modules_logger_logger_service_ts --> file_logger_src_modules_logger_logger_constants_ts
   file_logger_src_modules_logger_logger_service_ts --> file_logger_src_modules_logger_logger_types_ts
   file_logger_src_modules_logger_logger_service_unit_test_ts --> file_logger_src_modules_logger_logger_service_ts
-  file_meanderaw_src_constants_ts --> file_meanderaw_src_modules_database_database_constants_ts
-  file_meanderaw_src_constants_ts --> file_meanderaw_src_modules_enumeration_enumeration_constants_ts
-  file_meanderaw_src_main_end_to_end_test_ts --> file_meanderaw_src_constants_ts
-  file_meanderaw_src_main_module_ts --> file_meanderaw_src_constants_ts
-  file_meanderaw_src_main_module_ts --> file_meanderaw_src_modules_classification_classification_module_ts
-  file_meanderaw_src_main_module_ts --> file_meanderaw_src_modules_draw_draw_module_ts
-  file_meanderaw_src_main_module_ts --> file_meanderaw_src_modules_drawing_drawing_module_ts
-  file_meanderaw_src_main_module_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_main_ts --> file_meanderaw_src_main_module_ts
-  file_meanderaw_src_main_unit_test_ts --> file_meanderaw_src_main_module_ts
-  file_meanderaw_src_modules_characteristics_characteristic_context_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_characteristic_context_service_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_characteristics_characteristic_context_service_ts --> file_meanderaw_src_modules_code_code_types_ts
-  file_meanderaw_src_modules_characteristics_characteristic_context_service_ts --> file_meanderaw_src_modules_matrix_matrix_service_ts
-  file_meanderaw_src_modules_characteristics_characteristic_context_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_characteristic_context_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_characteristic_context_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_constants_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_structure_structure_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_end_end_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_topology_topology_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_turn_turn_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_run_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_dots_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_lines_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_snake_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_whirl_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_testing_legacy_characteristics_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_testing_meanders_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_ts --> file_meanderaw_src_modules_code_code_types_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_characteristics_types_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
-  file_meanderaw_src_modules_characteristics_characteristics_types_ts --> file_meanderaw_src_modules_code_code_types_ts
-  file_meanderaw_src_modules_characteristics_characteristics_types_ts --> file_meanderaw_src_modules_matrix_matrix_types_ts
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_module_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_module_ts
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_dots_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_lines_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_snake_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_whirl_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_structure_structure_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_end_end_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_topology_topology_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_turn_turn_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_run_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_utilities_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_utilities_service_ts --> file_meanderaw_src_modules_code_code_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_family_utilities_service_unit_test_ts --> file_meanderaw_src_modules_code_code_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_lines_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_lines_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_dots_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_dots_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_dots_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_dots_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_dots_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_dots_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_dots_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_dots_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_lines_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_lines_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_lines_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_lines_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_lines_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_lines_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_lines_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_lines_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_mesh_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_snake_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_snake_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_snake_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_whirl_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_whirl_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_family_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_is_whirl_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_structure_structure_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_compound_structure_structure_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_structure_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_compound_utilities_module_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_structure_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_structure_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_compound_structure_structure_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_topology_topology_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_module_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_module_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_module_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_types_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts --> file_meanderaw_src_modules_graph_graph_service_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts --> file_meanderaw_src_modules_graph_graph_types_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts --> file_meanderaw_src_modules_matrix_matrix_constants_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts --> file_meanderaw_src_modules_matrix_matrix_types_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_unit_test_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_service_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_service_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_unit_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
-  file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_end_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_module_ts
-  file_meanderaw_src_modules_characteristics_path_end_end_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_end_end_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_end_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_end_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_end_utilities_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_types_ts
-  file_meanderaw_src_modules_characteristics_path_end_end_utilities_service_ts --> file_meanderaw_src_modules_characteristics_path_end_end_types_ts
-  file_meanderaw_src_modules_characteristics_path_end_end_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_end_end_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_end_end_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_end_end_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_end_end_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_end_end_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_path_utilities_module_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_path_utilities_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_path_path_utilities_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_module_ts
-  file_meanderaw_src_modules_characteristics_path_path_utilities_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_types_ts
-  file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts --> file_meanderaw_src_modules_characteristics_path_path_types_ts
-  file_meanderaw_src_modules_characteristics_path_path_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_module_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_topology_topology_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_module_ts
-  file_meanderaw_src_modules_characteristics_path_topology_topology_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_topology_topology_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_topology_topology_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_types_ts
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_types_ts
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_point_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts --> file_meanderaw_src_modules_matrix_matrix_types_ts
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_point_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_connectivity_connectivity_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_path_utilities_module_ts
-  file_meanderaw_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_turn_inflection_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_cross_cross_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_cross_cross_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts --> file_meanderaw_src_modules_matrix_matrix_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts --> file_meanderaw_src_modules_matrix_matrix_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_types_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_letter_types_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_testing_letters_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_point_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_point_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_point_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_point_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_point_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_density_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_point_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_utilities_service_ts --> file_meanderaw_src_modules_matrix_matrix_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_point_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_point_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts --> file_meanderaw_src_modules_matrix_matrix_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_run_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_run_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_run_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_run_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_run_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_run_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_run_characteristics_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_run_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_run_utilities_service_ts --> file_meanderaw_src_modules_matrix_matrix_constants_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_run_utilities_service_ts --> file_meanderaw_src_modules_matrix_matrix_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_run_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_run_run_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_run_utilities_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_run_utilities_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_run_run_utilities_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_module_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
-  file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_module_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts --> file_meanderaw_src_modules_matrix_matrix_types_ts
-  file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_types_ts
-  file_meanderaw_src_modules_classification_classification_constants_ts --> file_meanderaw_src_modules_classification_classification_types_ts
-  file_meanderaw_src_modules_classification_classification_module_ts --> file_meanderaw_src_modules_classification_classification_service_ts
-  file_meanderaw_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_service_ts
-  file_meanderaw_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_src_modules_classification_classification_module_ts
-  file_meanderaw_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_src_modules_classification_classification_service_ts
-  file_meanderaw_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_src_modules_classification_classification_types_ts
-  file_meanderaw_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_src_modules_code_code_types_ts
-  file_meanderaw_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_testing_legacy_characteristics_ts
-  file_meanderaw_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_testing_meanders_ts
-  file_meanderaw_src_modules_classification_classification_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_classification_classification_service_ts --> file_meanderaw_src_modules_classification_classification_constants_ts
-  file_meanderaw_src_modules_classification_classification_service_ts --> file_meanderaw_src_modules_classification_classification_types_ts
-  file_meanderaw_src_modules_classification_classification_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_classification_classification_service_unit_test_ts --> file_meanderaw_src_modules_classification_classification_constants_ts
-  file_meanderaw_src_modules_classification_classification_service_unit_test_ts --> file_meanderaw_src_modules_classification_classification_service_ts
-  file_meanderaw_src_modules_classification_classification_service_unit_test_ts --> file_meanderaw_src_modules_classification_classification_types_ts
-  file_meanderaw_src_modules_classification_classification_service_unit_test_ts --> file_meanderaw_testing_meanders_ts
-  file_meanderaw_src_modules_classification_classification_types_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_code_code_module_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_code_code_module_ts --> file_meanderaw_src_modules_symmetry_symmetry_module_ts
-  file_meanderaw_src_modules_code_code_service_ts --> file_meanderaw_src_modules_code_code_constants_ts
-  file_meanderaw_src_modules_code_code_service_ts --> file_meanderaw_src_modules_code_code_types_ts
-  file_meanderaw_src_modules_code_code_service_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
-  file_meanderaw_src_modules_code_code_service_ts --> file_meanderaw_src_modules_tile_tile_types_ts
-  file_meanderaw_src_modules_code_code_service_unit_test_ts --> file_meanderaw_src_modules_code_code_constants_ts
-  file_meanderaw_src_modules_code_code_service_unit_test_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_code_code_service_unit_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
-  file_meanderaw_src_modules_code_code_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_src_modules_code_code_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_types_ts
-  file_meanderaw_src_modules_code_code_service_unit_test_ts --> file_meanderaw_testing_tiles_ts
-  file_meanderaw_src_modules_corpus_corpus_constants_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_corpus_module_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_corpus_corpus_module_ts --> file_meanderaw_src_modules_classification_classification_module_ts
-  file_meanderaw_src_modules_corpus_corpus_module_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_corpus_corpus_module_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
-  file_meanderaw_src_modules_corpus_corpus_module_ts --> file_meanderaw_src_modules_database_database_module_ts
-  file_meanderaw_src_modules_corpus_corpus_module_ts --> file_meanderaw_src_modules_enumeration_enumeration_module_ts
-  file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_service_ts
-  file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_classification_classification_service_ts
-  file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_corpus_corpus_constants_ts
-  file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_enumeration_enumeration_constants_ts
-  file_meanderaw_src_modules_corpus_corpus_service_ts --> file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts
-  file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_service_ts
-  file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_classification_classification_service_ts
-  file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_corpus_corpus_constants_ts
-  file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
-  file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts
-  file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_types_ts
-  file_meanderaw_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_testing_meanders_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_1_constants_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_10_constants_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_11_constants_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_2_constants_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_3_constants_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_4_constants_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_5_constants_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_6_constants_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_7_constants_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_8_constants_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_9_constants_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_corpus_types_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_1_constants_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_10_constants_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_11_constants_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_2_constants_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_3_constants_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_4_constants_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_5_constants_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_6_constants_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_7_constants_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_8_constants_ts
-  file_meanderaw_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_src_modules_corpus_historical_corpus_9_constants_ts
-  file_meanderaw_src_modules_database_database_factories_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_database_database_factories_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_src_constants_ts
-  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_src_modules_database_database_module_ts
-  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_testing_database_ts
-  file_meanderaw_src_modules_database_database_module_integration_test_ts --> file_meanderaw_testing_meanders_ts
-  file_meanderaw_src_modules_database_database_module_ts --> file_meanderaw_src_modules_database_database_factories_ts
-  file_meanderaw_src_modules_database_database_module_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_database_database_module_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
-  file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_src_modules_database_database_constants_ts
-  file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_testing_database_ts
-  file_meanderaw_src_modules_database_database_service_integration_test_ts --> file_meanderaw_testing_meanders_ts
-  file_meanderaw_src_modules_database_database_service_ts --> file_meanderaw_src_modules_classification_classification_types_ts
-  file_meanderaw_src_modules_database_database_service_ts --> file_meanderaw_src_modules_database_database_constants_ts
-  file_meanderaw_src_modules_database_database_service_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_database_database_service_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_database_database_service_unit_test_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_database_database_service_unit_test_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_database_database_service_unit_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_database_database_service_unit_test_ts --> file_meanderaw_testing_meanders_ts
-  file_meanderaw_src_modules_database_database_types_ts --> file_meanderaw_src_modules_classification_classification_types_ts
-  file_meanderaw_src_modules_database_database_types_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_database_entities_Meander_entity_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_src_modules_database_entities_Meander_entity_ts --> file_meanderaw_src_modules_classification_classification_constants_ts
-  file_meanderaw_src_modules_database_entities_Meander_entity_ts --> file_meanderaw_src_modules_classification_classification_types_ts
-  file_meanderaw_src_modules_draw_draw_code_service_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_draw_draw_code_service_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_code_service_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
-  file_meanderaw_src_modules_draw_draw_code_service_ts --> file_meanderaw_src_modules_draw_draw_types_ts
-  file_meanderaw_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
-  file_meanderaw_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_constants_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_classification_classification_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_draw_draw_pool_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_draw_draw_worker_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_drawing_drawing_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_enumeration_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_enumeration_enumeration_types_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_geometry_geometry_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_graph_graph_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_matrix_matrix_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_svg_svg_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_testing_database_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_testing_draw_run_budget_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_src_modules_draw_draw_pool_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_src_modules_enumeration_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_pool_service_ts
-  file_meanderaw_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_enumeration_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_draw_draw_index_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_drawing_drawing_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_geometry_geometry_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_svg_svg_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_testing_database_ts
-  file_meanderaw_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_testing_meanders_ts
-  file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
-  file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_classification_classification_types_ts
-  file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_draw_draw_index_constants_ts
-  file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_draw_draw_index_types_ts
-  file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_drawing_drawing_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_ts --> file_meanderaw_src_modules_geometry_geometry_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_src_modules_classification_classification_types_ts
-  file_meanderaw_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_index_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_index_types_ts
-  file_meanderaw_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_src_modules_drawing_drawing_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_src_modules_geometry_geometry_service_ts
-  file_meanderaw_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_testing_meanders_ts
-  file_meanderaw_src_modules_draw_draw_index_types_ts --> file_meanderaw_src_modules_classification_classification_types_ts
-  file_meanderaw_src_modules_draw_draw_index_types_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_draw_draw_index_types_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_src_constants_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_src_modules_classification_classification_module_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_src_modules_draw_draw_pool_service_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_src_modules_draw_draw_worker_service_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_src_modules_drawing_drawing_module_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_src_modules_enumeration_enumeration_module_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_module_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_ts --> file_meanderaw_src_modules_draw_draw_worker_service_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_ts --> file_meanderaw_src_modules_draw_draw_constants_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_ts --> file_meanderaw_src_modules_draw_draw_types_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_ts --> file_meanderaw_src_modules_enumeration_enumeration_types_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_ts --> file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_pool_service_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_worker_service_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_constants_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_types_ts
-  file_meanderaw_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_record_service_ts --> file_meanderaw_src_modules_characteristics_characteristics_service_ts
-  file_meanderaw_src_modules_draw_draw_record_service_ts --> file_meanderaw_src_modules_classification_classification_service_ts
-  file_meanderaw_src_modules_draw_draw_record_service_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_draw_draw_record_service_ts --> file_meanderaw_src_modules_code_code_types_ts
-  file_meanderaw_src_modules_draw_draw_record_service_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
-  file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_service_ts
-  file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_classification_classification_module_ts
-  file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
-  file_meanderaw_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_src_modules_drawing_drawing_module_ts
-  file_meanderaw_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
-  file_meanderaw_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
-  file_meanderaw_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_testing_database_ts
-  file_meanderaw_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_testing_draw_run_ts
-  file_meanderaw_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_testing_meanders_ts
-  file_meanderaw_src_modules_draw_draw_run_regeneration_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
-  file_meanderaw_src_modules_draw_draw_run_regeneration_command_integration_test_ts --> file_meanderaw_testing_database_ts
-  file_meanderaw_src_modules_draw_draw_run_regeneration_command_integration_test_ts --> file_meanderaw_testing_draw_run_ts
-  file_meanderaw_src_modules_draw_draw_run_command_integration_test_ts --> file_meanderaw_src_modules_classification_classification_constants_ts
-  file_meanderaw_src_modules_draw_draw_run_command_integration_test_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
-  file_meanderaw_src_modules_draw_draw_run_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
-  file_meanderaw_src_modules_draw_draw_run_command_integration_test_ts --> file_meanderaw_testing_database_ts
-  file_meanderaw_src_modules_draw_draw_run_command_integration_test_ts --> file_meanderaw_testing_draw_run_ts
-  file_meanderaw_src_modules_draw_draw_worker_module_ts --> file_meanderaw_src_constants_ts
-  file_meanderaw_src_modules_draw_draw_worker_module_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_draw_draw_worker_module_ts --> file_meanderaw_src_modules_classification_classification_module_ts
-  file_meanderaw_src_modules_draw_draw_worker_module_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_draw_draw_worker_module_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
-  file_meanderaw_src_modules_draw_draw_worker_module_ts --> file_meanderaw_src_modules_draw_draw_worker_service_ts
-  file_meanderaw_src_modules_draw_draw_worker_module_ts --> file_meanderaw_src_modules_drawing_drawing_module_ts
-  file_meanderaw_src_modules_draw_draw_worker_module_ts --> file_meanderaw_src_modules_enumeration_enumeration_module_ts
-  file_meanderaw_src_modules_draw_draw_worker_module_ts --> file_meanderaw_src_modules_symmetry_symmetry_module_ts
-  file_meanderaw_src_modules_draw_draw_worker_service_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_draw_draw_worker_service_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_draw_draw_worker_service_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
-  file_meanderaw_src_modules_draw_draw_worker_service_ts --> file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_worker_service_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
-  file_meanderaw_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
-  file_meanderaw_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_src_modules_draw_draw_worker_service_ts
-  file_meanderaw_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
-  file_meanderaw_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_testing_tiles_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_classification_classification_module_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_index_service_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_draw_draw_command_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_drawing_drawing_module_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_geometry_geometry_service_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_graph_graph_service_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_svg_svg_service_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_testing_database_ts
-  file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_code_code_constants_ts
-  file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
-  file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_corpus_historical_corpus_constants_ts
-  file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
-  file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_draw_draw_index_service_ts
-  file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_draw_draw_constants_ts
-  file_meanderaw_src_modules_draw_draw_command_ts --> file_meanderaw_src_modules_draw_draw_types_ts
-  file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
-  file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
-  file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_draw_draw_index_service_ts
-  file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_draw_draw_index_types_ts
-  file_meanderaw_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_src_modules_draw_draw_command_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_classification_classification_module_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_corpus_corpus_module_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_database_database_module_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_draw_draw_code_service_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_draw_draw_index_service_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_draw_draw_pool_service_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_draw_draw_worker_service_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_draw_draw_command_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_drawing_drawing_module_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_enumeration_enumeration_module_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_geometry_geometry_module_ts
-  file_meanderaw_src_modules_draw_draw_module_ts --> file_meanderaw_src_modules_symmetry_symmetry_module_ts
-  file_meanderaw_src_modules_draw_draw_types_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_drawing_drawing_module_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_drawing_drawing_module_ts --> file_meanderaw_src_modules_drawing_drawing_service_ts
-  file_meanderaw_src_modules_drawing_drawing_module_ts --> file_meanderaw_src_modules_geometry_geometry_module_ts
-  file_meanderaw_src_modules_drawing_drawing_module_ts --> file_meanderaw_src_modules_svg_svg_module_ts
-  file_meanderaw_src_modules_drawing_drawing_service_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_drawing_drawing_service_ts --> file_meanderaw_src_modules_code_code_types_ts
-  file_meanderaw_src_modules_drawing_drawing_service_ts --> file_meanderaw_src_modules_drawing_drawing_types_ts
-  file_meanderaw_src_modules_drawing_drawing_service_ts --> file_meanderaw_src_modules_geometry_geometry_service_ts
-  file_meanderaw_src_modules_drawing_drawing_service_ts --> file_meanderaw_src_modules_geometry_geometry_types_ts
-  file_meanderaw_src_modules_drawing_drawing_service_ts --> file_meanderaw_src_modules_svg_svg_service_ts
-  file_meanderaw_src_modules_drawing_drawing_service_ts --> file_meanderaw_src_modules_tile_tile_types_ts
-  file_meanderaw_src_modules_drawing_drawing_service_unit_test_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_drawing_drawing_service_unit_test_ts --> file_meanderaw_src_modules_code_code_types_ts
-  file_meanderaw_src_modules_drawing_drawing_service_unit_test_ts --> file_meanderaw_src_modules_drawing_drawing_service_ts
-  file_meanderaw_src_modules_drawing_drawing_service_unit_test_ts --> file_meanderaw_src_modules_geometry_geometry_service_ts
-  file_meanderaw_src_modules_drawing_drawing_service_unit_test_ts --> file_meanderaw_src_modules_svg_svg_service_ts
-  file_meanderaw_src_modules_drawing_drawing_service_unit_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
-  file_meanderaw_src_modules_drawing_drawing_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_src_modules_enumeration_enumeration_module_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_enumeration_enumeration_module_ts --> file_meanderaw_src_modules_enumeration_enumeration_service_ts
-  file_meanderaw_src_modules_enumeration_enumeration_module_ts --> file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts
-  file_meanderaw_src_modules_enumeration_enumeration_module_ts --> file_meanderaw_src_modules_symmetry_symmetry_module_ts
-  file_meanderaw_src_modules_enumeration_enumeration_module_ts --> file_meanderaw_src_modules_tile_tile_module_ts
-  file_meanderaw_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_src_modules_enumeration_enumeration_constants_ts
-  file_meanderaw_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_src_modules_enumeration_enumeration_types_ts
-  file_meanderaw_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts
-  file_meanderaw_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_src_constants_ts
-  file_meanderaw_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_enumeration_enumeration_service_ts
-  file_meanderaw_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_enumeration_enumeration_types_ts
-  file_meanderaw_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts
-  file_meanderaw_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
-  file_meanderaw_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_src_modules_enumeration_enumeration_types_ts --> file_meanderaw_src_constants_ts
-  file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts --> file_meanderaw_src_modules_enumeration_enumeration_constants_ts
-  file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts --> file_meanderaw_src_modules_enumeration_enumeration_types_ts
-  file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
-  file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts --> file_meanderaw_src_modules_tile_tile_types_ts
-  file_meanderaw_src_modules_enumeration_tile_enumeration_service_unit_test_ts --> file_meanderaw_src_constants_ts
-  file_meanderaw_src_modules_enumeration_tile_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_enumeration_tile_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_enumeration_enumeration_constants_ts
-  file_meanderaw_src_modules_enumeration_tile_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_enumeration_enumeration_types_ts
-  file_meanderaw_src_modules_enumeration_tile_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_enumeration_tile_enumeration_service_ts
-  file_meanderaw_src_modules_enumeration_tile_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
-  file_meanderaw_src_modules_enumeration_tile_enumeration_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_src_modules_geometry_geometry_module_ts --> file_meanderaw_src_modules_geometry_geometry_service_ts
-  file_meanderaw_src_modules_geometry_geometry_service_ts --> file_meanderaw_src_modules_geometry_geometry_constants_ts
-  file_meanderaw_src_modules_geometry_geometry_service_ts --> file_meanderaw_src_modules_geometry_geometry_types_ts
-  file_meanderaw_src_modules_geometry_geometry_service_unit_test_ts --> file_meanderaw_src_modules_geometry_geometry_service_ts
-  file_meanderaw_src_modules_graph_graph_module_ts --> file_meanderaw_src_modules_graph_graph_service_ts
-  file_meanderaw_src_modules_graph_graph_service_ts --> file_meanderaw_src_modules_graph_graph_types_ts
-  file_meanderaw_src_modules_graph_graph_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_service_ts
-  file_meanderaw_src_modules_graph_graph_service_unit_test_ts --> file_meanderaw_src_modules_graph_graph_types_ts
-  file_meanderaw_src_modules_matrix_matrix_constants_ts --> file_meanderaw_src_modules_matrix_matrix_types_ts
-  file_meanderaw_src_modules_matrix_matrix_module_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_src_modules_matrix_matrix_module_ts --> file_meanderaw_src_modules_matrix_matrix_service_ts
-  file_meanderaw_src_modules_matrix_matrix_service_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_matrix_matrix_service_ts --> file_meanderaw_src_modules_code_code_types_ts
-  file_meanderaw_src_modules_matrix_matrix_service_ts --> file_meanderaw_src_modules_matrix_matrix_constants_ts
-  file_meanderaw_src_modules_matrix_matrix_service_ts --> file_meanderaw_src_modules_matrix_matrix_types_ts
-  file_meanderaw_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_src_modules_code_code_service_ts
-  file_meanderaw_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_constants_ts
-  file_meanderaw_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_service_ts
-  file_meanderaw_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_src_modules_matrix_matrix_types_ts
-  file_meanderaw_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
-  file_meanderaw_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_src_modules_svg_svg_module_ts --> file_meanderaw_src_modules_svg_svg_service_ts
-  file_meanderaw_src_modules_svg_svg_service_ts --> file_meanderaw_src_modules_svg_svg_constants_ts
-  file_meanderaw_src_modules_svg_svg_service_ts --> file_meanderaw_src_modules_svg_svg_types_ts
-  file_meanderaw_src_modules_svg_svg_service_unit_test_ts --> file_meanderaw_src_modules_svg_svg_service_ts
-  file_meanderaw_src_modules_symmetry_symmetry_module_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
-  file_meanderaw_src_modules_symmetry_symmetry_module_ts --> file_meanderaw_src_modules_tile_tile_module_ts
-  file_meanderaw_src_modules_symmetry_symmetry_service_ts --> file_meanderaw_src_modules_symmetry_symmetry_types_ts
-  file_meanderaw_src_modules_symmetry_symmetry_service_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_src_modules_symmetry_symmetry_service_ts --> file_meanderaw_src_modules_tile_tile_types_ts
-  file_meanderaw_src_modules_symmetry_symmetry_service_unit_test_ts --> file_meanderaw_src_modules_symmetry_symmetry_service_ts
-  file_meanderaw_src_modules_symmetry_symmetry_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_src_modules_symmetry_symmetry_service_unit_test_ts --> file_meanderaw_testing_tiles_ts
-  file_meanderaw_src_modules_tile_tile_module_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_src_modules_tile_tile_service_ts --> file_meanderaw_src_modules_tile_tile_constants_ts
-  file_meanderaw_src_modules_tile_tile_service_ts --> file_meanderaw_src_modules_tile_tile_types_ts
-  file_meanderaw_src_modules_tile_tile_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_constants_ts
-  file_meanderaw_src_modules_tile_tile_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_src_modules_tile_tile_service_unit_test_ts --> file_meanderaw_src_modules_tile_tile_types_ts
-  file_meanderaw_src_modules_tile_tile_service_unit_test_ts --> file_meanderaw_testing_tiles_ts
-  file_meanderaw_src_repl_ts --> file_meanderaw_src_main_module_ts
-  file_meanderaw_src_worker_ts --> file_meanderaw_src_modules_draw_draw_worker_module_ts
-  file_meanderaw_src_worker_ts --> file_meanderaw_src_modules_draw_draw_worker_service_ts
-  file_meanderaw_src_worker_ts --> file_meanderaw_src_modules_draw_draw_types_ts
-  file_meanderaw_src_worker_unit_test_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_src_worker_unit_test_ts --> file_meanderaw_src_modules_draw_draw_types_ts
-  file_meanderaw_testing_database_ts --> file_meanderaw_src_modules_database_database_factories_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_constants_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_characteristics_characteristics_module_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_classification_classification_module_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_corpus_corpus_service_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_database_database_service_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_draw_draw_enumeration_service_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_draw_draw_index_service_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_draw_draw_pool_service_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_draw_draw_record_service_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_draw_draw_worker_service_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_draw_draw_command_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_drawing_drawing_module_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_enumeration_enumeration_module_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_enumeration_enumeration_service_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_geometry_geometry_module_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_src_modules_symmetry_symmetry_module_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_testing_database_ts
-  file_meanderaw_testing_draw_run_ts --> file_meanderaw_testing_draw_run_budget_ts
-  file_meanderaw_testing_letters_ts --> file_meanderaw_src_modules_characteristics_characteristic_context_service_ts
-  file_meanderaw_testing_letters_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_testing_letters_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
-  file_meanderaw_testing_letters_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_constants_ts
-  file_meanderaw_testing_letters_ts --> file_meanderaw_src_modules_characteristics_submatrix_letter_letter_types_ts
-  file_meanderaw_testing_letters_ts --> file_meanderaw_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
-  file_meanderaw_testing_letters_ts --> file_meanderaw_src_modules_code_code_module_ts
-  file_meanderaw_testing_letters_ts --> file_meanderaw_src_modules_matrix_matrix_module_ts
-  file_meanderaw_testing_meanders_ts --> file_meanderaw_src_modules_characteristics_characteristics_constants_ts
-  file_meanderaw_testing_meanders_ts --> file_meanderaw_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_testing_meanders_ts --> file_meanderaw_src_modules_code_code_types_ts
-  file_meanderaw_testing_meanders_ts --> file_meanderaw_src_modules_database_database_types_ts
-  file_meanderaw_testing_tiles_ts --> file_meanderaw_src_modules_tile_tile_service_ts
-  file_meanderaw_testing_tiles_ts --> file_meanderaw_src_modules_tile_tile_types_ts
+  file_meanderaw_cli_src_constants_ts --> file_meanderaw_cli_src_modules_database_database_constants_ts
+  file_meanderaw_cli_src_constants_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_constants_ts
+  file_meanderaw_cli_src_main_end_to_end_test_ts --> file_meanderaw_cli_src_constants_ts
+  file_meanderaw_cli_src_main_module_ts --> file_meanderaw_cli_src_constants_ts
+  file_meanderaw_cli_src_main_module_ts --> file_meanderaw_cli_src_modules_classification_classification_module_ts
+  file_meanderaw_cli_src_main_module_ts --> file_meanderaw_cli_src_modules_draw_draw_module_ts
+  file_meanderaw_cli_src_main_module_ts --> file_meanderaw_cli_src_modules_drawing_drawing_module_ts
+  file_meanderaw_cli_src_main_module_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_main_ts --> file_meanderaw_cli_src_main_module_ts
+  file_meanderaw_cli_src_main_unit_test_ts --> file_meanderaw_cli_src_main_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts --> file_meanderaw_cli_src_modules_code_code_types_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts --> file_meanderaw_cli_src_modules_matrix_matrix_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_structure_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_end_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_topology_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_turn_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_dots_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_lines_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_snake_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_whirl_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_cli_testing_legacy_characteristics_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_integration_test_ts --> file_meanderaw_cli_testing_meanders_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts --> file_meanderaw_cli_src_modules_code_code_types_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts --> file_meanderaw_cli_src_modules_code_code_types_ts
+  file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_dots_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_lines_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_snake_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_whirl_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_structure_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_end_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_topology_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_turn_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_utilities_service_ts --> file_meanderaw_cli_src_modules_code_code_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_family_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_boxes_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_clasps_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_lines_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_bars_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_lines_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_cross_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_dots_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_dots_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_dots_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_dots_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_dots_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_dots_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_dots_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_dots_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_double_chain_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_fork_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_lines_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_lines_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_lines_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_lines_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_lines_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_lines_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_lines_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_lines_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_mesh_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_parallel_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_arcade_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_comb_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_pure_tree_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_snake_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_snake_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_snake_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_snake_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_stippled_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_swirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_waterfalls_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_whirl_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_whirl_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_family_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_is_whirl_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_is_whirl_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_family_strand_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_structure_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_structure_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_structure_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_compound_utilities_module_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_structure_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_is_closed_loop_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_structure_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_compound_structure_is_single_arc_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_compound_structure_structure_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_topology_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_module_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_module_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_module_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_types_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts --> file_meanderaw_cli_src_modules_graph_graph_service_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts --> file_meanderaw_cli_src_modules_graph_graph_types_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts --> file_meanderaw_cli_src_modules_matrix_matrix_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_service_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_service_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_unit_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
+  file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_unit_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_end_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_end_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_end_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_end_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_end_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_end_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_end_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_end_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_end_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_end_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_end_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_end_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_are_lattice_neighbors_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_end_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_end_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_end_ends_on_border_rules_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_path_utilities_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_path_utilities_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_path_utilities_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_path_utilities_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_component_delta_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_tile_crossing_tile_crossing_cycle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_topology_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_topology_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_0_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_topology_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_betti_number_1_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_topology_topology_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_topology_free_end_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_connectivity_connectivity_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_path_utilities_module_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_bottom_border_touch_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_inflection_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_max_monotonic_turn_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_reverses_at_its_tightest_turn_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_tightest_turn_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_top_border_touch_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_path_turn_total_turn_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_path_turn_turn_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_north_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_east_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_corner_south_west_corner_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_cross_cross_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_embedded_embedded_u_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_east_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_north_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_south_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_fork_west_fork_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_a_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ain_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_alef_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ao_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_b_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_beh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_c_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dal_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_dalet_hebrew_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_delta_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_e_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_f_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_feh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_gan_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_h_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_hah_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_heh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_i_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jia_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_jing_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kaf_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kappa_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_kieuk_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_l_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lam_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lambda_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_lamed_hebrew_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_types_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_types_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_m_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_meem_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_mu_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_n_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_noon_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_o_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_omega_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_phi_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_pieup_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_psi_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_qaf_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_reh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_rho_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_s_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sad_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_seen_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shang_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_shen_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_sigma_greek_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_t_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tah_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tav_hebrew_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tian_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_tu_soil_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_u_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_w_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_wang_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_waw_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_x_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_y_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_ya_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeh_arabic_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yeo_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yo_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_you_hanzi_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_hangul_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_yu_katakana_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_letter_z_latin_letter_characteristics_service_unit_test_ts --> file_meanderaw_cli_testing_letters_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_density_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_dot_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_horizontal_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_double_vertical_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_ink_point_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_east_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_north_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_characteristics_module_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_utilities_service_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_point_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_south_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_point_west_edge_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_horizontal_rectangle_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_rectangle_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_rectangle_vertical_rectangle_count_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_horizontal_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_longest_vertical_run_length_characteristic_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_characteristics_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_utilities_service_ts --> file_meanderaw_cli_src_modules_matrix_matrix_constants_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_utilities_service_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_run_run_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_module_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_module_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_module_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
+  file_meanderaw_cli_src_modules_classification_classification_constants_ts --> file_meanderaw_cli_src_modules_classification_classification_types_ts
+  file_meanderaw_cli_src_modules_classification_classification_module_ts --> file_meanderaw_cli_src_modules_classification_classification_service_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_cli_src_modules_classification_classification_module_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_cli_src_modules_classification_classification_service_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_cli_src_modules_classification_classification_types_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_cli_src_modules_code_code_types_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_cli_testing_legacy_characteristics_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_integration_test_ts --> file_meanderaw_cli_testing_meanders_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_ts --> file_meanderaw_cli_src_modules_classification_classification_constants_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_ts --> file_meanderaw_cli_src_modules_classification_classification_types_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_unit_test_ts --> file_meanderaw_cli_src_modules_classification_classification_constants_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_unit_test_ts --> file_meanderaw_cli_src_modules_classification_classification_service_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_unit_test_ts --> file_meanderaw_cli_src_modules_classification_classification_types_ts
+  file_meanderaw_cli_src_modules_classification_classification_service_unit_test_ts --> file_meanderaw_cli_testing_meanders_ts
+  file_meanderaw_cli_src_modules_classification_classification_types_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_code_code_module_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_code_code_module_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_module_ts
+  file_meanderaw_cli_src_modules_code_code_service_ts --> file_meanderaw_cli_src_modules_code_code_constants_ts
+  file_meanderaw_cli_src_modules_code_code_service_ts --> file_meanderaw_cli_src_modules_code_code_types_ts
+  file_meanderaw_cli_src_modules_code_code_service_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
+  file_meanderaw_cli_src_modules_code_code_service_ts --> file_meanderaw_cli_src_modules_tile_tile_types_ts
+  file_meanderaw_cli_src_modules_code_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_constants_ts
+  file_meanderaw_cli_src_modules_code_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_code_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
+  file_meanderaw_cli_src_modules_code_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_code_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_tile_tile_types_ts
+  file_meanderaw_cli_src_modules_code_code_service_unit_test_ts --> file_meanderaw_cli_testing_tiles_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_module_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_module_ts --> file_meanderaw_cli_src_modules_classification_classification_module_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_module_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_module_ts --> file_meanderaw_cli_src_modules_corpus_corpus_service_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_module_ts --> file_meanderaw_cli_src_modules_database_database_module_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_module_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_classification_classification_service_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_corpus_corpus_constants_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_constants_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_classification_classification_service_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_corpus_corpus_constants_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_corpus_corpus_service_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_tile_tile_types_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_testing_meanders_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_1_constants_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_10_constants_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_11_constants_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_2_constants_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_3_constants_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_4_constants_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_5_constants_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_6_constants_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_7_constants_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_8_constants_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_9_constants_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_1_constants_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_10_constants_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_11_constants_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_2_constants_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_3_constants_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_4_constants_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_5_constants_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_6_constants_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_7_constants_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_8_constants_ts
+  file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_9_constants_ts
+  file_meanderaw_cli_src_modules_database_database_factories_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_database_database_factories_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_database_database_module_integration_test_ts --> file_meanderaw_cli_src_constants_ts
+  file_meanderaw_cli_src_modules_database_database_module_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_module_ts
+  file_meanderaw_cli_src_modules_database_database_module_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_database_database_module_integration_test_ts --> file_meanderaw_cli_testing_database_ts
+  file_meanderaw_cli_src_modules_database_database_module_integration_test_ts --> file_meanderaw_cli_testing_meanders_ts
+  file_meanderaw_cli_src_modules_database_database_module_ts --> file_meanderaw_cli_src_modules_database_database_factories_ts
+  file_meanderaw_cli_src_modules_database_database_module_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_database_database_module_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
+  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_constants_ts
+  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts --> file_meanderaw_cli_testing_database_ts
+  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts --> file_meanderaw_cli_testing_meanders_ts
+  file_meanderaw_cli_src_modules_database_database_service_ts --> file_meanderaw_cli_src_modules_classification_classification_types_ts
+  file_meanderaw_cli_src_modules_database_database_service_ts --> file_meanderaw_cli_src_modules_database_database_constants_ts
+  file_meanderaw_cli_src_modules_database_database_service_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_database_database_service_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_database_database_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_database_database_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_database_database_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_database_database_service_unit_test_ts --> file_meanderaw_cli_testing_meanders_ts
+  file_meanderaw_cli_src_modules_database_database_types_ts --> file_meanderaw_cli_src_modules_classification_classification_types_ts
+  file_meanderaw_cli_src_modules_database_database_types_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts --> file_meanderaw_cli_src_modules_classification_classification_constants_ts
+  file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts --> file_meanderaw_cli_src_modules_classification_classification_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_code_service_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_code_service_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_code_service_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_code_service_ts --> file_meanderaw_cli_src_modules_draw_draw_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_constants_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_classification_classification_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_pool_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_drawing_drawing_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_geometry_geometry_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_graph_graph_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_svg_svg_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_testing_database_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_testing_draw_run_budget_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_cli_src_modules_draw_draw_pool_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_pool_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_index_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_drawing_drawing_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_geometry_geometry_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_svg_svg_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_testing_database_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_testing_meanders_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_classification_classification_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_draw_draw_index_constants_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_draw_draw_index_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_drawing_drawing_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_geometry_geometry_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_classification_classification_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_index_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_index_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_drawing_drawing_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_geometry_geometry_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_testing_meanders_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_types_ts --> file_meanderaw_cli_src_modules_classification_classification_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_types_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_types_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_constants_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_classification_classification_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_pool_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_drawing_drawing_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_ts --> file_meanderaw_cli_src_modules_draw_draw_constants_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_ts --> file_meanderaw_cli_src_modules_draw_draw_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_pool_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_constants_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_record_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_record_service_ts --> file_meanderaw_cli_src_modules_classification_classification_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_record_service_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_record_service_ts --> file_meanderaw_cli_src_modules_code_code_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_record_service_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
+  file_meanderaw_cli_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_cli_src_modules_classification_classification_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_cli_src_modules_drawing_drawing_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts
+  file_meanderaw_cli_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_cli_testing_database_ts
+  file_meanderaw_cli_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_cli_testing_draw_run_ts
+  file_meanderaw_cli_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_cli_testing_meanders_ts
+  file_meanderaw_cli_src_modules_draw_draw_run_regeneration_command_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_run_regeneration_command_integration_test_ts --> file_meanderaw_cli_testing_database_ts
+  file_meanderaw_cli_src_modules_draw_draw_run_regeneration_command_integration_test_ts --> file_meanderaw_cli_testing_draw_run_ts
+  file_meanderaw_cli_src_modules_draw_draw_run_command_integration_test_ts --> file_meanderaw_cli_src_modules_classification_classification_constants_ts
+  file_meanderaw_cli_src_modules_draw_draw_run_command_integration_test_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts
+  file_meanderaw_cli_src_modules_draw_draw_run_command_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_run_command_integration_test_ts --> file_meanderaw_cli_testing_database_ts
+  file_meanderaw_cli_src_modules_draw_draw_run_command_integration_test_ts --> file_meanderaw_cli_testing_draw_run_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_module_ts --> file_meanderaw_cli_src_constants_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_module_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_module_ts --> file_meanderaw_cli_src_modules_classification_classification_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_module_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_module_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_module_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_module_ts --> file_meanderaw_cli_src_modules_drawing_drawing_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_module_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_module_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_testing_tiles_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_classification_classification_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_corpus_corpus_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_index_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_command_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_drawing_drawing_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_geometry_geometry_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_graph_graph_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_svg_svg_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_testing_database_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_code_code_constants_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_corpus_corpus_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_draw_draw_index_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_draw_draw_constants_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_draw_draw_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_corpus_corpus_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_index_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_index_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_command_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_classification_classification_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_corpus_corpus_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_database_database_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_draw_draw_index_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_draw_draw_pool_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_draw_draw_command_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_drawing_drawing_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_geometry_geometry_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_types_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_module_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_module_ts --> file_meanderaw_cli_src_modules_drawing_drawing_service_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_module_ts --> file_meanderaw_cli_src_modules_geometry_geometry_module_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_module_ts --> file_meanderaw_cli_src_modules_svg_svg_module_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_service_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_service_ts --> file_meanderaw_cli_src_modules_code_code_types_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_service_ts --> file_meanderaw_cli_src_modules_drawing_drawing_types_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_service_ts --> file_meanderaw_cli_src_modules_geometry_geometry_service_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_service_ts --> file_meanderaw_cli_src_modules_geometry_geometry_types_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_service_ts --> file_meanderaw_cli_src_modules_svg_svg_service_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_service_ts --> file_meanderaw_cli_src_modules_tile_tile_types_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_types_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_service_unit_test_ts --> file_meanderaw_cli_src_modules_drawing_drawing_service_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_service_unit_test_ts --> file_meanderaw_cli_src_modules_geometry_geometry_service_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_service_unit_test_ts --> file_meanderaw_cli_src_modules_svg_svg_service_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_service_unit_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
+  file_meanderaw_cli_src_modules_drawing_drawing_service_unit_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_module_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts --> file_meanderaw_cli_src_modules_tile_tile_module_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_constants_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_types_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_constants_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_types_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_types_ts --> file_meanderaw_cli_src_constants_ts
+  file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_constants_ts
+  file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_types_ts
+  file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
+  file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts --> file_meanderaw_cli_src_modules_tile_tile_types_ts
+  file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_constants_ts
+  file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_constants_ts
+  file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_types_ts
+  file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
+  file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_geometry_geometry_module_ts --> file_meanderaw_cli_src_modules_geometry_geometry_service_ts
+  file_meanderaw_cli_src_modules_geometry_geometry_service_ts --> file_meanderaw_cli_src_modules_geometry_geometry_constants_ts
+  file_meanderaw_cli_src_modules_geometry_geometry_service_ts --> file_meanderaw_cli_src_modules_geometry_geometry_types_ts
+  file_meanderaw_cli_src_modules_geometry_geometry_service_unit_test_ts --> file_meanderaw_cli_src_modules_geometry_geometry_service_ts
+  file_meanderaw_cli_src_modules_graph_graph_module_ts --> file_meanderaw_cli_src_modules_graph_graph_service_ts
+  file_meanderaw_cli_src_modules_graph_graph_service_ts --> file_meanderaw_cli_src_modules_graph_graph_types_ts
+  file_meanderaw_cli_src_modules_graph_graph_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_service_ts
+  file_meanderaw_cli_src_modules_graph_graph_service_unit_test_ts --> file_meanderaw_cli_src_modules_graph_graph_types_ts
+  file_meanderaw_cli_src_modules_matrix_matrix_constants_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
+  file_meanderaw_cli_src_modules_matrix_matrix_module_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_src_modules_matrix_matrix_module_ts --> file_meanderaw_cli_src_modules_matrix_matrix_service_ts
+  file_meanderaw_cli_src_modules_matrix_matrix_service_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_matrix_matrix_service_ts --> file_meanderaw_cli_src_modules_code_code_types_ts
+  file_meanderaw_cli_src_modules_matrix_matrix_service_ts --> file_meanderaw_cli_src_modules_matrix_matrix_constants_ts
+  file_meanderaw_cli_src_modules_matrix_matrix_service_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
+  file_meanderaw_cli_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
+  file_meanderaw_cli_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_constants_ts
+  file_meanderaw_cli_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_service_ts
+  file_meanderaw_cli_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
+  file_meanderaw_cli_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
+  file_meanderaw_cli_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_svg_svg_module_ts --> file_meanderaw_cli_src_modules_svg_svg_service_ts
+  file_meanderaw_cli_src_modules_svg_svg_service_ts --> file_meanderaw_cli_src_modules_svg_svg_constants_ts
+  file_meanderaw_cli_src_modules_svg_svg_service_ts --> file_meanderaw_cli_src_modules_svg_svg_types_ts
+  file_meanderaw_cli_src_modules_svg_svg_service_unit_test_ts --> file_meanderaw_cli_src_modules_svg_svg_service_ts
+  file_meanderaw_cli_src_modules_symmetry_symmetry_module_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
+  file_meanderaw_cli_src_modules_symmetry_symmetry_module_ts --> file_meanderaw_cli_src_modules_tile_tile_module_ts
+  file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_types_ts
+  file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts --> file_meanderaw_cli_src_modules_tile_tile_types_ts
+  file_meanderaw_cli_src_modules_symmetry_symmetry_service_unit_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
+  file_meanderaw_cli_src_modules_symmetry_symmetry_service_unit_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_symmetry_symmetry_service_unit_test_ts --> file_meanderaw_cli_testing_tiles_ts
+  file_meanderaw_cli_src_modules_tile_tile_module_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_tile_tile_service_ts --> file_meanderaw_cli_src_modules_tile_tile_constants_ts
+  file_meanderaw_cli_src_modules_tile_tile_service_ts --> file_meanderaw_cli_src_modules_tile_tile_types_ts
+  file_meanderaw_cli_src_modules_tile_tile_service_unit_test_ts --> file_meanderaw_cli_src_modules_tile_tile_constants_ts
+  file_meanderaw_cli_src_modules_tile_tile_service_unit_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_tile_tile_service_unit_test_ts --> file_meanderaw_cli_src_modules_tile_tile_types_ts
+  file_meanderaw_cli_src_modules_tile_tile_service_unit_test_ts --> file_meanderaw_cli_testing_tiles_ts
+  file_meanderaw_cli_src_repl_ts --> file_meanderaw_cli_src_main_module_ts
+  file_meanderaw_cli_src_worker_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_module_ts
+  file_meanderaw_cli_src_worker_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_service_ts
+  file_meanderaw_cli_src_worker_ts --> file_meanderaw_cli_src_modules_draw_draw_types_ts
+  file_meanderaw_cli_src_worker_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_worker_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_types_ts
+  file_meanderaw_cli_testing_database_ts --> file_meanderaw_cli_src_modules_database_database_factories_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_constants_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_classification_classification_module_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_corpus_corpus_service_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_draw_draw_index_service_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_draw_draw_pool_service_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_service_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_draw_draw_command_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_drawing_drawing_module_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_geometry_geometry_module_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_module_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_testing_database_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_testing_draw_run_budget_ts
+  file_meanderaw_cli_testing_letters_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
+  file_meanderaw_cli_testing_letters_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_testing_letters_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_utilities_service_ts
+  file_meanderaw_cli_testing_letters_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_constants_ts
+  file_meanderaw_cli_testing_letters_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_letter_letter_types_ts
+  file_meanderaw_cli_testing_letters_ts --> file_meanderaw_cli_src_modules_characteristics_submatrix_submatrix_utilities_service_ts
+  file_meanderaw_cli_testing_letters_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
+  file_meanderaw_cli_testing_letters_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_testing_meanders_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
+  file_meanderaw_cli_testing_meanders_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_testing_meanders_ts --> file_meanderaw_cli_src_modules_code_code_types_ts
+  file_meanderaw_cli_testing_meanders_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_testing_tiles_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_testing_tiles_ts --> file_meanderaw_cli_src_modules_tile_tile_types_ts
   file_synchronization_src_main_end_to_end_test_ts --> file_synchronization_src_constants_ts
   file_synchronization_src_main_module_ts --> file_synchronization_src_constants_ts
   file_synchronization_src_main_module_ts --> file_synchronization_src_modules_issue_labels_issue_labels_module_ts
@@ -10530,7 +10536,7 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 | `applications/caelundas/caelundas-cli` | 16 | 16 | 0 | 12 |
 | `applications/lexico` | 9 | 9 | 0 | 9 |
 | `applications/lexico-ingestion` | 17 | 17 | 0 | 8 |
-| `applications/meanderaw` | 16 | 16 | 0 | 13 |
+| `applications/meanderaw/meanderaw-cli` | 16 | 16 | 0 | 13 |
 | `packages/ic-suite/callidescope/callidescope-cli` | 15 | 15 | 0 | 10 |
 | `packages/ic-suite/callidescope/callidescope-nx` | 17 | 17 | 0 | 7 |
 | `packages/ic-suite/codependix/codependix-boundaries` | 12 | 12 | 0 | 7 |

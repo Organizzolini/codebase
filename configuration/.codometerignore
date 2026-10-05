@@ -32,7 +32,7 @@ packages/lexico-components/src/lib/
 # ignore both for the same reason.
 applications/lexico-ingestion/data/
 applications/affirmations/output/
-applications/meanderaw/output/
+applications/meanderaw/meanderaw-cli/output/
 applications/lexico-ingestion/src/modules/library/library.constants.ts
 applications/lexico-ingestion/src/modules/literature/literature.constants.ts
 **/library.json

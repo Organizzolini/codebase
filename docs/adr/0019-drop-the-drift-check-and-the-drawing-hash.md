@@ -17,5 +17,5 @@ With nothing left to check, `draw`'s `--check` and `--write` flags are removed t
 ## Consequences
 
 - The sweep no longer renders anything while it writes rows. The renderer runs only when `DrawIndexService` builds the index pages.
-- A change to the renderer, the enumerator, or a Characteristic is no longer caught at commit time. A stale committed database stays stale until someone runs `nx run meanderaw:start`.
+- A change to the renderer, the enumerator, or a Characteristic is no longer caught at commit time. A stale committed database stays stale until someone runs `nx run meanderaw-cli:start`.
 - Restoring a drift check means rebuilding the comparison. A renderer guard would also need a drawing hash or an equivalent column again.

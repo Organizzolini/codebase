@@ -23,6 +23,6 @@ Raising the budget no longer moves the historical corpus boundary. It stays at t
 
 ## Consequences
 
-- A clone of the repository carries no record of what a draw run produced. Running `nx run meanderaw:start` reproduces the rows and the pages, in about thirteen and a half minutes at the default budget of twenty-four edges on an 18-core machine, about two minutes of it writing the 7.7 GB of pages.
+- A clone of the repository carries no record of what a draw run produced. Running `nx run meanderaw-cli:start` reproduces the rows and the pages, in about thirteen and a half minutes at the default budget of twenty-four edges on an 18-core machine, about two minutes of it writing the 7.7 GB of pages.
 - A change that moves rows only past the suites' pinned budget is caught by no gate. Re-running the draw run and comparing is a manual step.
 - The largest pages run to gigabytes (`cross.html` is 4.8 GB at the default budget of twenty-four edges). They are complete records rather than something a browser opens comfortably, and paginating them is the natural next step if they are browsed often.

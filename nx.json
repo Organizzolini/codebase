@@ -303,7 +303,7 @@
         "description": "The `applications/<domain>/` override of the default `codometer` entry above: every field is identical except the two relative paths, corrected from two directories below the workspace root to three. A full entry for the same reason as the `packages/ic-suite/<suite>/` one: Nx replaces a matching targetDefaults array entry wholesale rather than merging it.",
         "executor": "nx:run-commands",
         "filter": {
-          "projects": ["caelundas-cli"]
+          "projects": ["caelundas-cli", "meanderaw-cli"]
         },
         "inputs": [
           "!{projectRoot}/codometer-report.json",
