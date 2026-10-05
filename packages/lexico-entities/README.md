@@ -112,6 +112,89 @@ migration lands ready to review. Every migration ships a `-up.sql` and
 readable in a diff — those files are linted by `sqlfluff` and checked by
 `squawk` like any other SQL in the repository.
 
+## Moving local data out of `postgres`.`public`
+
+Lexico's tables used to live in the shared container's default `postgres`
+database under `public`. A Docker volume from before
+[ADR 0022](../../docs/adr/0022-give-every-database-project-its-own-database-schema-and-role.md)
+still holds them there. Moving them into `lexico_development`.`lexico` is a
+one-time step, run from the workspace root against the running container,
+with `pg_dump`, `pg_restore`, and `psql` 18 on the path. It copies rows
+rather than moving them: `public` is left in place, and dropping it is the
+maintainer's call once the counts below match.
+
+1. **Back up everything first**, and confirm the file is not empty:
+
+   ```bash
+   nx run codebase:postgres-data:dump-complete
+   ls -l data/complete.dump
+   ```
+
+2. **Create the role, database, and schema** if the volume predates them,
+   with the Compose init script. Skip it if the objects already exist; never
+   run `postgres-container:recreate`, which deletes the volume:
+
+   ```bash
+   docker exec -e POSTGRES_PROJECTS=lexico postgres sh /docker-entrypoint-initdb.d/databases.sh
+   ```
+
+3. **Dump `public`'s rows alone**, leaving out TypeORM's own bookkeeping —
+   its metadata and, on a volume where the old migration ever ran, its
+   migrations table — both of which the new migration writes for `lexico`:
+
+   ```bash
+   nx run codebase:postgres-data:dump-custom \
+     --flags="-n public --data-only -T public.migrations -T public.typeorm_metadata" \
+     --name=lexico-public
+   ```
+
+4. **Build the empty schema** with the migration, as `lexico_username`:
+
+   ```bash
+   nx run lexico-entities:migration:run
+   ```
+
+5. **Restore the rows into `lexico`.** `pg_restore` cannot rename a schema, so
+   render the archive's `-n public` entries as SQL and point each `COPY` and
+   `ALTER TABLE` line at `lexico`; no data line can start with either, since
+   every table's first column is a `uuid`. It runs as the admin login because
+   `texts` references itself, and loading such a table's rows takes
+   `--disable-triggers`, which only a superuser may use:
+
+   ```bash
+   PGPASSWORD=postgres pg_restore --data-only --disable-triggers -n public \
+     -f - data/lexico-public.dump \
+     | sed -E 's/^(COPY|ALTER TABLE) public\./\1 lexico./' \
+     | PGPASSWORD=postgres psql -h localhost -U postgres -d lexico_development \
+       --single-transaction -v ON_ERROR_STOP=1 -q
+   ```
+
+6. **Compare every table's row count** in both schemas; `diff` printing
+   nothing means every table matches:
+
+   ```bash
+   row_counts() {
+     PGPASSWORD=postgres psql -h localhost -U postgres -d "$1" -At -v schema="$2" <<'SQL'
+   SELECT
+     table_name,
+     (xpath('/row/c/text()', query_to_xml(
+       format('SELECT count(*) AS c FROM %I.%I', table_schema, table_name),
+       FALSE, TRUE, ''
+     )))[1]::text::bigint AS row_count
+   FROM information_schema.tables
+   WHERE table_schema = :'schema'
+     AND table_type = 'BASE TABLE'
+     AND table_name NOT IN ('migrations', 'typeorm_metadata')
+   ORDER BY table_name;
+   SQL
+   }
+
+   diff <(row_counts postgres public) <(row_counts lexico_development lexico)
+   ```
+
+Restored rows keep their version 4 ids; rows written afterwards get the
+`uuidv7()` default.
+
 ## Testing
 
 ```bash
