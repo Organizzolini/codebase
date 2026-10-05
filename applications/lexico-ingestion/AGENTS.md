@@ -86,15 +86,19 @@ src/modules/
 
 ### Environment Variables
 
-All validated via `environmentSchema` in `lexico-ingestion.constants.ts`:
+All validated via `environmentSchema` in `constants.ts`, which spreads
+`postgresEnvironmentSchema({ project: "lexico" })` from `@codebase/database`.
+The root's unprefixed `POSTGRES_*` are the shared container's admin login and
+are never read:
 
 | Variable | Default | Description |
 | -------- | ------- | ----------- |
-| `POSTGRES_HOST` | `localhost` | PostgreSQL host |
-| `POSTGRES_PORT` | `5432` | PostgreSQL port |
-| `POSTGRES_USER` | `postgres` | PostgreSQL username |
-| `POSTGRES_PASSWORD` | `postgres` | PostgreSQL password |
-| `POSTGRES_DB` | `postgres` | PostgreSQL database name |
+| `LEXICO_POSTGRES_HOST` | `localhost` | PostgreSQL host |
+| `LEXICO_POSTGRES_PORT` | `5432` | PostgreSQL port |
+| `LEXICO_POSTGRES_USERNAME` | `lexico_username` | PostgreSQL role |
+| `LEXICO_POSTGRES_PASSWORD` | `lexico_password` | PostgreSQL password |
+| `LEXICO_POSTGRES_DATABASE` | `lexico_development` | PostgreSQL database name |
+| `LEXICO_POSTGRES_SCHEMA` | `lexico` | PostgreSQL schema holding lexico's tables |
 
 ## Development
 

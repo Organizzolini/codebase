@@ -185,7 +185,6 @@ const config: KnipConfig = {
         // Apollo 5's Express integration, which @nestjs/apollo resolves by
         // name at startup; without it GraphQLModule refuses to boot.
         "@as-integrations/express5",
-        "typeorm", // Used by testing/mocks.ts for repository mocks
       ],
       project: "src/**/*.ts",
     },
