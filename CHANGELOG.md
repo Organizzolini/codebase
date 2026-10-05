@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.33.2](https://github.com/organizzolini/codebase/compare/v2.33.1...v2.33.2) (2026-10-05)
+
+### ♻️ Code Refactoring
+
+* **meanderaw:** ♻️ rename meanderaw to meanderaw-cli under an applications/meanderaw group ([#1302](https://github.com/organizzolini/codebase/issues/1302)) ([52d2bc3](https://github.com/organizzolini/codebase/commit/52d2bc3ae7dd82b65c85696bb53b1d4fe8c3233c)), closes [#1259](https://github.com/organizzolini/codebase/issues/1259)
+
 ## [2.33.1](https://github.com/organizzolini/codebase/compare/v2.33.0...v2.33.1) (2026-10-05)
 
 ### 📝 Documentation
