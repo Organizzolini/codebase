@@ -8,7 +8,7 @@ import {
   OneToMany,
 } from "typeorm";
 
-import { AuditableEntity } from "../base/Auditable.entity";
+import { DeletableEntity } from "../base/Deletable.entity";
 
 import { Author } from "./Author.entity";
 import { Line } from "./Line.entity";
@@ -21,10 +21,9 @@ import type { Relation } from "typeorm";
 @Entity({
   comment: "A hierarchical literary work (corpus, book, text, poem, etc.)",
   name: "texts",
-  schema: "public",
 })
 @ObjectType()
-export class Text extends AuditableEntity {
+export class Text extends DeletableEntity {
   @Field(() => Author)
   @Index()
   @JoinColumn({ name: "author_id" })

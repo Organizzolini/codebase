@@ -17,7 +17,6 @@ import type { Lexeme } from "../Lexeme.entity";
   comment:
     "Abstract base table for grammatical inflection metadata using single-table inheritance",
   name: "inflections",
-  schema: "public",
 })
 @InterfaceType()
 @TableInheritance({ column: { name: "type", type: "text" } })

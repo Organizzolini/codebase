@@ -1,7 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, OneToMany } from "typeorm";
 
-import { AuditableEntity } from "../base/Auditable.entity";
+import { DeletableEntity } from "../base/Deletable.entity";
 
 import { WordForm } from "./WordForm.entity";
 import { WordLexeme } from "./WordLexeme.entity";
@@ -12,10 +12,9 @@ import { WordLexeme } from "./WordLexeme.entity";
 @Entity({
   comment: "A Latin word string that maps to one or more dictionary entries",
   name: "words",
-  schema: "public",
 })
 @ObjectType()
-export class Word extends AuditableEntity {
+export class Word extends DeletableEntity {
   @Column({
     comment: "The Latin word as written",
     unique: true,

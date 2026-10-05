@@ -1,7 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, ManyToOne } from "typeorm";
 
-import { AuditableEntity } from "../base/Auditable.entity";
+import { DeletableEntity } from "../base/Deletable.entity";
 
 import type { Lexeme } from "./Lexeme.entity";
 
@@ -12,10 +12,9 @@ import type { Lexeme } from "./Lexeme.entity";
   comment:
     "A named principal part (e.g. first, infinitive) of a Latin dictionary entry",
   name: "principal_parts",
-  schema: "public",
 })
 @ObjectType()
-export class PrincipalPart extends AuditableEntity {
+export class PrincipalPart extends DeletableEntity {
   @Index()
   @ManyToOne("Lexeme", "principalParts", {
     onDelete: "CASCADE",

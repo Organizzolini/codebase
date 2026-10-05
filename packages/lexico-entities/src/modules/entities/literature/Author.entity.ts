@@ -1,7 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, OneToMany } from "typeorm";
 
-import { AuditableEntity } from "../base/Auditable.entity";
+import { DeletableEntity } from "../base/Deletable.entity";
 
 import { Text } from "./Text.entity";
 
@@ -11,10 +11,9 @@ import { Text } from "./Text.entity";
 @Entity({
   comment: "An author of Latin literature",
   name: "authors",
-  schema: "public",
 })
 @ObjectType()
-export class Author extends AuditableEntity {
+export class Author extends DeletableEntity {
   @Column("jsonb", { comment: "Unstructured metadata", nullable: true })
   metadata?: null | Record<string, unknown>;
 

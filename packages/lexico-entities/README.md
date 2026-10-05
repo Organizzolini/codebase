@@ -50,9 +50,16 @@ morphology does not fit one flat row. A form is an `AdjectivalForm`,
 
 ### Base classes
 
-`IdentifiableEntity`, `CreatableEntity`, `UpdatableEntity`, `DeletableEntity`,
-and `AuditableEntity` supply the id and timestamp columns, so no entity
-restates them.
+Every entity but `Inflection` extends `DeletableEntity`, a thin GraphQL layer
+over [`@codebase/database`](../database/README.md)'s shared base of the same
+name. The shared base declares the columns — a `uuid` id the database assigns
+with `uuidv7()`, then the created, updated, and soft-deleted timestamps and
+their nullable `*By` columns — and this layer adds only their `@Field`
+decorators, so no entity restates them and the API schema stays as it was.
+Rows restored from before the move keep their version 4 ids; new rows get
+version 7.
+
+No entity names a schema: it comes from `LEXICO_POSTGRES_SCHEMA`.
 
 ## Grammatical enumerations
 

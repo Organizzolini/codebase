@@ -1,7 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 
-import { AuditableEntity } from "../base/Auditable.entity";
+import { DeletableEntity } from "../base/Deletable.entity";
 import { Word } from "../dictionary/Word.entity";
 
 import { Author } from "./Author.entity";
@@ -17,12 +17,11 @@ import type { Relation } from "typeorm";
   comment:
     "A single parsed token (word or punctuation) from a line of literature",
   name: "tokens",
-  schema: "public",
 })
 @Index(["line", "index"], { unique: true })
 @Index(["text", "index"])
 @ObjectType()
-export class Token extends AuditableEntity {
+export class Token extends DeletableEntity {
   @Field(() => Author)
   @Index()
   @ManyToOne("Author", { eager: false, onDelete: "CASCADE" })

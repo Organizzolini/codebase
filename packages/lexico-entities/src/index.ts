@@ -44,11 +44,7 @@ export type {
   VerbConjugation,
 } from "./modules/database/database.constants";
 export { DatabaseModule } from "./modules/database/database.module";
-export { AuditableEntity } from "./modules/entities/base/Auditable.entity";
-export { CreatableEntity } from "./modules/entities/base/Creatable.entity";
 export { DeletableEntity } from "./modules/entities/base/Deletable.entity";
-export { IdentifiableEntity } from "./modules/entities/base/Identifiable.entity";
-export { UpdatableEntity } from "./modules/entities/base/Updatable.entity";
 export { AdjectivalForm } from "./modules/entities/dictionary/form/AdjectivalForm.entity";
 export { AdverbForm } from "./modules/entities/dictionary/form/AdverbForm.entity";
 export { FiniteVerbForm } from "./modules/entities/dictionary/form/FiniteVerbForm.entity";

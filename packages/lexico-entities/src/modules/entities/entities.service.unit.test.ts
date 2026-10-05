@@ -54,6 +54,7 @@ interface EntityColumnExpectation {
   readonly databaseName?: string;
   readonly enumValues?: readonly string[];
   readonly generationStrategy?: "increment" | "rowid" | "uuid";
+  readonly isGenerated?: boolean;
   readonly isNullable?: boolean;
   readonly isPrimary?: boolean;
   readonly type?: string;
@@ -109,7 +110,7 @@ const AUDITABLE_COLUMN_EXPECTATIONS = {
     type: "uuid",
   },
   id: {
-    generationStrategy: "uuid",
+    isGenerated: false,
     isPrimary: true,
     type: "uuid",
   },
@@ -297,6 +298,10 @@ function verifyColumnExpectations(
       );
     }
 
+    if (columnExpectation.isGenerated !== undefined) {
+      expect(columnMetadata.isGenerated).toBe(columnExpectation.isGenerated);
+    }
+
     if (columnExpectation.isNullable !== undefined) {
       expect(columnMetadata.isNullable).toBe(columnExpectation.isNullable);
     }
@@ -317,6 +322,11 @@ function verifyEntityDefinitionExpectation(
   entityExpectation: EntityDefinitionExpectation,
 ): void {
   assertEntityHasTableMetadata(entityExpectation.entityClass);
+
+  expect(
+    getEntityTableMetadata(entityExpectation.entityClass).schema,
+    `Entity ${entityExpectation.entityClass.name} names a schema; it must come from LEXICO_POSTGRES_SCHEMA.`,
+  ).toBeUndefined();
 
   const entityMetadata = metadataDataSource.getMetadata(
     entityExpectation.entityClass,
