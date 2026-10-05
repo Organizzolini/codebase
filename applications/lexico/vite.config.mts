@@ -57,7 +57,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(
         import.meta.dirname,
-        "../../packages/lexico-components/src",
+        "../../packages/components-web/src",
       ),
     },
     tsconfigPaths: true,

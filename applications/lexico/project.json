@@ -1,6 +1,6 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "implicitDependencies": ["lexico-components"],
+  "implicitDependencies": ["components-web"],
   "name": "lexico",
   "projectType": "application",
   "sourceRoot": "applications/lexico/src",

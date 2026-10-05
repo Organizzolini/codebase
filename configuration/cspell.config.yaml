@@ -116,9 +116,9 @@ ignorePaths:
   - "**/.agents/skills/writing-skills/**"
   # installed-skills-end
   - "**/node_modules"
-  - "**/packages/lexico-components/src/components/**"
-  - "**/packages/lexico-components/src/hooks/**"
-  - "**/packages/lexico-components/src/lib/**"
+  - "**/packages/components-web/src/components/**"
+  - "**/packages/components-web/src/hooks/**"
+  - "**/packages/components-web/src/lib/**"
   - "**/pnpm-lock.yaml"
   - "**/routeTree.gen.ts"
   - "**/terraform.tfstate*"

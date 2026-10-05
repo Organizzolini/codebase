@@ -18,7 +18,7 @@ nx run lexico:develop
 
 - **Frontend**: React 19, TanStack Router (file-based routing)
 - **SSR**: TanStack Start server functions
-- **Styling**: Tailwind CSS, shadcn/ui via [@codebase/lexico-components](../../packages/lexico-components)
+- **Styling**: Tailwind CSS, shadcn/ui via [@codebase/components-web](../../packages/components-web)
 
 ### File-Based Routes
 
@@ -48,13 +48,13 @@ See [tanstack-start-ssr skill](../../.agents/skills/tanstack-start-ssr/SKILL.md)
 
 ## Component Library Integration
 
-Always import shared UI from `@codebase/lexico-components` and never duplicate UI code.
+Always import shared UI from `@codebase/components-web` and never duplicate UI code.
 
 ```tsx
-import { Button, Card, Input } from "@codebase/lexico-components";
+import { Button, Card, Input } from "@codebase/components-web";
 ```
 
-See the [write-react skill](../../.agents/skills/write-react/SKILL.md) and [lexico-components AGENTS](../../packages/lexico-components/AGENTS.md).
+See the [write-react skill](../../.agents/skills/write-react/SKILL.md) and [components-web AGENTS](../../packages/components-web/AGENTS.md).
 
 ## Testing
 

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { cn } from "@codebase/lexico-components";
+import { cn } from "@codebase/components-web";
 
 /**
  * Properties for the Logo component that displays the Lexico logo.

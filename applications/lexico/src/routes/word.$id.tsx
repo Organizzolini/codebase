@@ -3,7 +3,7 @@ import { noop } from "lodash";
 import { Bookmark, BookmarkCheck } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-import { Button, Separator } from "@codebase/lexico-components";
+import { Button, Separator } from "@codebase/components-web";
 
 import { AdjectiveFormsTable } from "../components/entry/adjective-forms-table";
 import { NounFormsTable } from "../components/entry/noun-forms-table";

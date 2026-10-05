@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@codebase/lexico-components": "workspace:*",
+    "@codebase/components-web": "workspace:*",
     "@tanstack/react-router": "catalog:",
     "@tanstack/react-router-devtools": "catalog:",
     "@tanstack/react-start": "catalog:",

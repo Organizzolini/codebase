@@ -21,9 +21,9 @@ openwiki/
 **/routeTree.gen.ts
 
 # 🧩 Vendored by shadcn, not authored here
-packages/lexico-components/src/components/
-packages/lexico-components/src/hooks/
-packages/lexico-components/src/lib/
+packages/components-web/src/components/
+packages/components-web/src/hooks/
+packages/components-web/src/lib/
 
 # 📚 Ingested corpus and generated output rather than authored source. They are
 # committed rather than ignored, so discovery finds them, and they are overwhelmingly

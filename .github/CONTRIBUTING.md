@@ -276,7 +276,7 @@ Five workflows run on every pull request. Each maps to targets you can run local
 - **File naming**: kebab-case; module files take a suffix (`*.service.ts`, `*.command.ts`, `*.module.ts`, `*.constants.ts`, `*.types.ts`, `*.utilities.ts`)
 - **Imports**: Auto-sorted (Node built-ins → external → workspace → parent → sibling → index → types), and alphabetical order is enforced for named imports, object literals, object types, class members, and switch cases
 - **Formatting**: `oxfmt` is the formatter, not Prettier — 80-column width, 2-space indent, double quotes, trailing commas
-- **React**: React 19, TanStack Router, shadcn/ui through `@codebase/lexico-components`, Tailwind CSS
+- **React**: React 19, TanStack Router, shadcn/ui through `@codebase/components-web`, Tailwind CSS
 - **Documentation**: TSDoc on public APIs where it adds non-obvious context; update docs alongside code
 
 **Never silence an error.** No `eslint-disable`, `@ts-ignore`, `@ts-expect-error`, or `nocheck` comments; no loosening `compilerOptions`; no adding ESLint `ignores` or rule overrides to suppress a specific failure. Triage the root cause instead. Suppression is only acceptable when explicitly requested.
@@ -444,7 +444,7 @@ Commits are validated by commitlint through Husky. See [commit-code](.agents/ski
 | `infrastructure`    | Helm charts, Terraform configs, and Kubernetes resources                                                                                  |
 | `JimmyPaolini`      | Static GitHub profile README project (markdown and assets)                                                                                |
 | `lexico`            | TanStack Start SSR Latin dictionary web app with Supabase backend                                                                         |
-| `lexico-components` | Shared React/shadcn component library                                                                                                     |
+| `components-web`    | Shared React/shadcn component library                                                                                                     |
 | `lexico-entities`   | Shared TypeORM entities and GraphQL types                                                                                                 |
 | `lexico-ingestion`  | Data ingestion scripts for Lexico                                                                                                         |
 | `meanderaw`         | Greek meander (key/fret) SVG generator CLI and the composable motif/modifier library it reads                                             |

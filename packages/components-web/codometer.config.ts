@@ -32,7 +32,7 @@ export default {
   // authored. `configuration/.codometerignore` has excluded them from the
   // repository's own statistics since it was written, but an ignore file is
   // anchored to the directory being measured: its
-  // `packages/lexico-components/src/components/` entry matches nothing when
+  // `packages/components-web/src/components/` entry matches nothing when
   // the walk starts inside this package, so a run here counted all 56 of them
   // and reported a package that is four-fifths code it does not own. Written
   // again, relative to this project, because that is the only anchor a

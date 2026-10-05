@@ -22,7 +22,7 @@ If you discover a security vulnerability, please report it responsibly.
 
 - A description of the vulnerability and its potential impact
 - Steps to reproduce or a proof of concept
-- The affected project(s) within the codebase (caelundas, lexico, lexico-components, infrastructure)
+- The affected project(s) within the codebase (caelundas, lexico, components-web, infrastructure)
 - Any suggested fixes, if available
 
 ### Response Timeline

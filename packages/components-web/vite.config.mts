@@ -17,9 +17,9 @@ export default defineConfig(() => ({
       entry: "src/index.ts",
       fileName: "index",
       formats: ["es" as const],
-      name: "lexico-components",
+      name: "components-web",
     },
-    outDir: "../../dist/packages/lexico-components",
+    outDir: "../../dist/packages/components-web",
     reportCompressedSize: true,
     rolldownOptions: {
       external: ["react", "react-dom", "react/jsx-runtime", /^@radix-ui\/.*/],
@@ -31,7 +31,7 @@ export default defineConfig(() => ({
       },
     },
   },
-  cacheDir: "../../node_modules/.vite/packages/lexico-components",
+  cacheDir: "../../node_modules/.vite/packages/components-web",
   plugins: [
     react(),
     tsconfigPaths(),

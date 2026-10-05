@@ -18,7 +18,7 @@ import {
   Input,
   Label,
   Textarea,
-} from "@codebase/lexico-components";
+} from "@codebase/components-web";
 
 import { useLibraryPage } from "./hooks/useLibraryPage";
 

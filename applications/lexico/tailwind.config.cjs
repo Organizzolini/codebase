@@ -1,6 +1,6 @@
 const path = require("node:path");
 
-const baseConfig = require("../../packages/lexico-components/tailwind.config.cjs");
+const baseConfig = require("../../packages/components-web/tailwind.config.cjs");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
     path.join(__dirname, "src/**/*.{js,ts,jsx,tsx,html}"),
     path.join(
       __dirname,
-      "../../packages/lexico-components/src/**/*.{js,ts,jsx,tsx}",
+      "../../packages/components-web/src/**/*.{js,ts,jsx,tsx}",
     ),
   ],
 };

@@ -10,7 +10,7 @@ import {
   CardHeader,
   cn,
   Separator,
-} from "@codebase/lexico-components";
+} from "@codebase/components-web";
 
 import { AdjectiveFormsTable } from "./adjective-forms-table";
 import { NounFormsTable } from "./noun-forms-table";

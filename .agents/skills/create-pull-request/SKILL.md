@@ -68,7 +68,7 @@ PR titles **must** follow the same format as commit messages:
 | `infrastructure`    | Helm charts, Terraform configs, and Kubernetes resources                                                                                  |
 | `JimmyPaolini`      | Static GitHub profile README project (markdown and assets)                                                                                |
 | `lexico`            | TanStack Start SSR Latin dictionary web app with Supabase backend                                                                         |
-| `lexico-components` | Shared React/shadcn component library                                                                                                     |
+| `components-web`    | Shared React/shadcn component library                                                                                                     |
 | `lexico-entities`   | Shared TypeORM entities and GraphQL types                                                                                                 |
 | `lexico-ingestion`  | Data ingestion scripts for Lexico                                                                                                         |
 | `meanderaw`         | Greek meander (key/fret) SVG generator CLI and the composable motif/modifier library it reads                                             |
@@ -95,7 +95,7 @@ feat(lexico): ✨ add user profile page
 fix(caelundas): 🐛 correct aspect angle calculation
 docs(codebase): 📝 update contributing guide
 chore(dependencies): ⬆️ upgrade react to v19
-refactor(lexico-components): ♻️ simplify button variants
+refactor(components-web): ♻️ simplify button variants
 ```
 
 ❌ **Bad PR titles:**

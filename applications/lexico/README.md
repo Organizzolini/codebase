@@ -12,14 +12,14 @@ React 19. It is the front end of a small suite: the dictionary's shape lives in
 [lexico-entities](../../packages/lexico-entities/README.md), the data that
 fills it is gathered by
 [lexico-ingestion](../lexico-ingestion/README.md), and the interface is built
-from [lexico-components](../../packages/lexico-components/README.md).
+from [components-web](../../packages/components-web/README.md).
 
 ## Projects
 
 | Project | Role |
 | ------- | ---- |
 | 🐺 [lexico](README.md) | The SSR web application — routes, server functions, pages |
-| 🎨 [lexico-components](../../packages/lexico-components/README.md) | Shared React component library on shadcn/ui and Radix primitives |
+| 🎨 [components-web](../../packages/components-web/README.md) | Shared React component library on shadcn/ui and Radix primitives |
 | 📖 [lexico-entities](../../packages/lexico-entities/README.md) | TypeORM entities and migrations for the dictionary and literature schema |
 | 🚰 [lexico-ingestion](../lexico-ingestion/README.md) | CLI that scrapes and loads dictionary, literature, and etymology sources |
 
@@ -77,7 +77,7 @@ datastore is the outstanding work.
 - **React 19** with TanStack Router for file-based routing
 - **TanStack Start** for SSR and server functions
 - **Tailwind CSS** with shadcn/ui components from
-  [lexico-components](../../packages/lexico-components/README.md)
+  [components-web](../../packages/components-web/README.md)
 - **Vite 7** with Nitro for the SSR bundle
 - **TypeScript 5.9**, strict mode throughout
 
@@ -255,7 +255,7 @@ What this project is judged against, as declared in its own `callidescope.config
    ↳ Render a single grid cell with optional corner identifiers.
   └─> computeBorderClasses(position: FormCellPosition | undefined): string [applications/lexico/src/components/entry/form-cell.tsx:43]
      ↳ Compute border classes for a form cell based on its grid position.
-    └─> cn(...inputs: ClassValue[]): string [packages/lexico-components/src/lib/utils.ts:4]
+    └─> cn(...inputs: ClassValue[]): string [packages/components-web/src/lib/utils.ts:4]
 ```
 
 **10. `PrincipalParts`** — depth 3 · orphan-root
@@ -290,7 +290,7 @@ What this project is judged against, as declared in its own `callidescope.config
 ```text
 🚀 Logo(properties: LogoProperties): React.ReactElement [applications/lexico/src/components/layout/logo.tsx:18]
    ↳ Render the Lexico brand logo at a configurable width.
-  └─> cn(...inputs: ClassValue[]): string [packages/lexico-components/src/lib/utils.ts:4]
+  └─> cn(...inputs: ClassValue[]): string [packages/components-web/src/lib/utils.ts:4]
 ```
 
 **14. `Identifier`** — depth 2 · orphan-root
@@ -298,7 +298,7 @@ What this project is judged against, as declared in its own `callidescope.config
 ```text
 🚀 Identifier(properties: IdentifierProperties): ReactElement [applications/lexico/src/components/entry/identifier.tsx:171]
    ↳ Badge component that displays abbreviated identifiers with tooltips.
-  └─> cn(...inputs: ClassValue[]): string [packages/lexico-components/src/lib/utils.ts:4]
+  └─> cn(...inputs: ClassValue[]): string [packages/components-web/src/lib/utils.ts:4]
 ```
 
 **15. `FormTabs`** — depth 2 · orphan-root
@@ -306,7 +306,7 @@ What this project is judged against, as declared in its own `callidescope.config
 ```text
 🚀 FormTabs(properties: FormTabsProperties): React.ReactElement [applications/lexico/src/components/entry/form-tabs.tsx:32]
    ↳ Render shared tab UI for selecting form groupings.
-  └─> cn(...inputs: ClassValue[]): string [packages/lexico-components/src/lib/utils.ts:4]
+  └─> cn(...inputs: ClassValue[]): string [packages/components-web/src/lib/utils.ts:4]
 ```
 
 **16. `FormsTable`** — depth 2 · orphan-root
@@ -314,7 +314,7 @@ What this project is judged against, as declared in its own `callidescope.config
 ```text
 🚀 FormsTable(properties: FormsTableProperties): React.ReactElement [applications/lexico/src/components/entry/forms-table.tsx:27]
    ↳ Render two-column form cells with border-position metadata.
-  └─> cn(...inputs: ClassValue[]): string [packages/lexico-components/src/lib/utils.ts:4]
+  └─> cn(...inputs: ClassValue[]): string [packages/components-web/src/lib/utils.ts:4]
 ```
 
 **17. `ApplicationSidebar`** — depth 2 · orphan-root
@@ -322,7 +322,7 @@ What this project is judged against, as declared in its own `callidescope.config
 ```text
 🚀 ApplicationSidebar(properties: Readonly<ApplicationSidebarProperties>): ReactNode [applications/lexico/src/routes/__root.tsx:112]
    ↳ Application sidebar component with navigation items.
-  └─> useSidebar(): SidebarContextProperties [packages/lexico-components/src/components/ui/sidebar.tsx:46]
+  └─> useSidebar(): SidebarContextProperties [packages/components-web/src/components/ui/sidebar.tsx:46]
 ```
 
 **18. `EntryCard`** — depth 2 · orphan-root
@@ -330,7 +330,7 @@ What this project is judged against, as declared in its own `callidescope.config
 ```text
 🚀 EntryCard(properties: EntryCardProperties): ReactElement [applications/lexico/src/components/entry/entry-card.tsx:104]
    ↳ Renders a lexical entry card and wires accordion state for detail sections.
-  └─> cn(...inputs: ClassValue[]): string [packages/lexico-components/src/lib/utils.ts:4]
+  └─> cn(...inputs: ClassValue[]): string [packages/components-web/src/lib/utils.ts:4]
 ```
 
 **19. `BookmarksList`** — depth 2 · orphan-root
@@ -475,9 +475,9 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 <!-- codependix:start name="codependix-nx-projects" -->
 ```mermaid
 graph LR
+  components_web["components-web"]
   lexico["lexico"]
-  lexico_components["lexico-components"]
-  lexico --> lexico_components
+  lexico --> components_web
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class lexico subject
 ```

@@ -30,9 +30,9 @@ applications/lexico/src/routeTree.gen.ts
 .claude/CLAUDE.md
 .github/copilot-instructions.md
 lint-staged.config.ts
-**/packages/lexico-components/src/components/**
-**/packages/lexico-components/src/hooks/**
-**/packages/lexico-components/src/lib/**
+**/packages/components-web/src/components/**
+**/packages/components-web/src/hooks/**
+**/packages/components-web/src/lib/**
 
 # Templates and data
 **/helm/**/templates/**

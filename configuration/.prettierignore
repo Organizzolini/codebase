@@ -64,10 +64,10 @@ CHANGELOG.md
 # ⚙️ Generated files
 **/routeTree.gen.ts
 projectStructure.cache.json
-**/packages/lexico-components/src/lib/utils
-**/packages/lexico-components/src/components/**
-**/packages/lexico-components/src/lib/**
-**/packages/lexico-components/src/hooks/**
+**/packages/components-web/src/lib/utils
+**/packages/components-web/src/components/**
+**/packages/components-web/src/lib/**
+**/packages/components-web/src/hooks/**
 
 # 🏗 Infrastructure templates
 **/helm/**/templates/**

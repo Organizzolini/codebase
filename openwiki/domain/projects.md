@@ -18,7 +18,7 @@ This document outlines the core applications and packages managed within the cod
 
 ## Packages & Tooling
 
-- **lexico-components**: Shared React UI component library built on shadcn/ui and Tailwind CSS.
+- **components-web**: Shared React UI component library built on shadcn/ui and Tailwind CSS.
 - **lexico-entities**: TypeORM entities and GraphQL schema definitions shared across backend services.
 - **synchronization**: Synchronization tooling ensuring codebase configuration consistency across packages.
 
