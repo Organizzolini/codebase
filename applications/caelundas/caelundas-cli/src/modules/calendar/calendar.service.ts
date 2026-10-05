@@ -5,7 +5,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import moment from "moment-timezone";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import type { Environment, Input } from "../input/input.types";
 import type {

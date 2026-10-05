@@ -11,7 +11,7 @@ import {
   parseAllDocuments,
 } from "yaml";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { EMPTY_YAML_RESULT } from "./yaml.constants";
 

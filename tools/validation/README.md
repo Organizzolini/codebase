@@ -270,7 +270,7 @@ What this project is judged against, as declared in its own `callidescope.config
 🚀 ReadmeProjectsCommand.run(): Promise<void> [tools/validation/src/modules/readme-projects/readme-projects.command.ts:43]
    ↳ Checks every workspace project and exits 0 or 1 on the verdict.
   └─> ReadmeProjectsService.resolveWorkspaceProjectPaths(workspaceRoot: string): string[] [tools/validation/src/modules/readme-projects/readme-projects.service.ts:82]
-     ↳ Every workspace project's scope-relative path, e.g. `packages/logger`.
+     ↳ Every workspace project's scope-relative path, e.g. `packages/logging`.
     └─> ReadmeProjectsService.findProjectPaths(workspaceRoot: string, directoryPath: string): string[] [tools/validation/src/modules/readme-projects/readme-projects.service.ts:41]
        ↳ Every project path nested under `directoryPath`, at any depth.
 ```
@@ -407,9 +407,9 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 <!-- codependix:start name="codependix-nx-projects" -->
 ```mermaid
 graph LR
-  logger["logger"]
+  logging["logging"]
   validation["validation"]
-  validation --> logger
+  validation --> logging
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class validation subject
 ```

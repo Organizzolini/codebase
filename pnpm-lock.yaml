@@ -748,9 +748,9 @@ importers:
       '@callidescope/nx':
         specifier: workspace:*
         version: link:packages/ic-suite/callidescope/callidescope-nx
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:packages/logger
+        version: link:packages/logging
       '@codependix/configuration':
         specifier: workspace:*
         version: link:packages/ic-suite/codependix/codependix-configuration
@@ -1014,9 +1014,9 @@ importers:
 
   applications/caelundas/caelundas-cli:
     dependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../packages/logger
+        version: link:../../../packages/logging
       '@nestjs/common':
         specifier: 'catalog:'
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
@@ -1172,9 +1172,9 @@ importers:
       '@codebase/lexico-entities':
         specifier: workspace:*
         version: link:../../packages/lexico-entities
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../packages/logger
+        version: link:../../packages/logging
       '@nestjs/apollo':
         specifier: 'catalog:'
         version: 14.0.2(@apollo/server@5.5.1(graphql@16.14.2)(supports-color@10.2.2))(@as-integrations/express5@1.1.2(@apollo/server@5.5.1(graphql@16.14.2)(supports-color@10.2.2))(express@5.2.1(supports-color@10.2.2)))(@nestjs/common@12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(@nestjs/core@12.1.0)(@nestjs/graphql@14.0.2(@nestjs/common@12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2))(@nestjs/core@12.1.0)(graphql@16.14.2)(reflect-metadata@0.2.2)(typescript@6.0.3))(graphql@16.14.2)
@@ -1248,9 +1248,9 @@ importers:
       '@codebase/lexico-entities':
         specifier: workspace:*
         version: link:../../packages/lexico-entities
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../packages/logger
+        version: link:../../packages/logging
       '@nestjs/common':
         specifier: 'catalog:'
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
@@ -1366,9 +1366,9 @@ importers:
 
   applications/meanderaw/meanderaw-cli:
     dependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../packages/logger
+        version: link:../../../packages/logging
       '@nestjs/common':
         specifier: 'catalog:'
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)
@@ -1491,9 +1491,9 @@ importers:
         specifier: 'catalog:'
         version: 4.6.5
     devDependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../logger
+        version: link:../../../logging
       '@golevelup/ts-vitest':
         specifier: 'catalog:'
         version: 4.0.0
@@ -1666,9 +1666,9 @@ importers:
         specifier: 'catalog:'
         version: 0.2.2
     devDependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../logger
+        version: link:../../../logging
       '@golevelup/ts-vitest':
         specifier: 'catalog:'
         version: 4.0.0
@@ -1730,9 +1730,9 @@ importers:
         specifier: 'catalog:'
         version: 0.2.2
     devDependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../logger
+        version: link:../../../logging
       '@golevelup/ts-vitest':
         specifier: 'catalog:'
         version: 4.0.0
@@ -1782,9 +1782,9 @@ importers:
         specifier: 'catalog:'
         version: 0.2.2
     devDependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../logger
+        version: link:../../../logging
       '@golevelup/ts-vitest':
         specifier: 'catalog:'
         version: 4.0.0
@@ -1916,9 +1916,9 @@ importers:
         specifier: 'catalog:'
         version: 4.6.5
     devDependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../logger
+        version: link:../../../logging
       '@golevelup/ts-vitest':
         specifier: 'catalog:'
         version: 4.0.0
@@ -2032,9 +2032,9 @@ importers:
 
   packages/ic-suite/codependix/codependix-examples:
     dependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../logger
+        version: link:../../../logging
       '@codependix/boundaries':
         specifier: workspace:*
         version: link:../codependix-boundaries
@@ -2140,9 +2140,9 @@ importers:
         specifier: 'catalog:'
         version: 0.2.2
     devDependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../logger
+        version: link:../../../logging
       '@golevelup/ts-vitest':
         specifier: 'catalog:'
         version: 4.0.0
@@ -2235,9 +2235,9 @@ importers:
         specifier: 'catalog:'
         version: 0.2.2
     devDependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../logger
+        version: link:../../../logging
       '@golevelup/ts-vitest':
         specifier: 'catalog:'
         version: 4.0.0
@@ -2323,9 +2323,9 @@ importers:
         specifier: 'catalog:'
         version: 4.6.5
     devDependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../logger
+        version: link:../../../logging
       '@golevelup/ts-vitest':
         specifier: 'catalog:'
         version: 4.0.0
@@ -2507,9 +2507,9 @@ importers:
         specifier: 'catalog:'
         version: 4.6.5
     devDependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../logger
+        version: link:../../../logging
       '@golevelup/ts-vitest':
         specifier: 'catalog:'
         version: 4.0.0
@@ -2562,9 +2562,9 @@ importers:
         specifier: 'catalog:'
         version: 0.2.2
     devDependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../logger
+        version: link:../../../logging
       '@golevelup/ts-vitest':
         specifier: 'catalog:'
         version: 4.0.0
@@ -2614,9 +2614,9 @@ importers:
         specifier: 'catalog:'
         version: 4.6.5
     devDependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../logger
+        version: link:../../../logging
       '@golevelup/ts-vitest':
         specifier: 'catalog:'
         version: 4.0.0
@@ -2699,9 +2699,9 @@ importers:
         specifier: 'catalog:'
         version: 4.6.5
     devDependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../logger
+        version: link:../../../logging
       '@conformetry/core':
         specifier: workspace:*
         version: link:../conformetry-core
@@ -2993,9 +2993,9 @@ importers:
         specifier: 'catalog:'
         version: 0.2.2
     devDependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../../logger
+        version: link:../../../logging
       '@golevelup/ts-vitest':
         specifier: 'catalog:'
         version: 4.0.0
@@ -3319,7 +3319,7 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
 
-  packages/logger:
+  packages/logging:
     dependencies:
       '@nestjs/common':
         specifier: 'catalog:'
@@ -3364,9 +3364,9 @@ importers:
 
   tools/synchronization:
     dependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../packages/logger
+        version: link:../../packages/logging
       '@conformetry/configuration':
         specifier: workspace:*
         version: link:../../packages/ic-suite/conformetry/conformetry-configuration
@@ -3431,9 +3431,9 @@ importers:
 
   tools/validation:
     dependencies:
-      '@codebase/logger':
+      '@codebase/logging':
         specifier: workspace:*
-        version: link:../../packages/logger
+        version: link:../../packages/logging
       '@nestjs/common':
         specifier: 'catalog:'
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)

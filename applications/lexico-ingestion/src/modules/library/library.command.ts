@@ -6,7 +6,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import _ from "lodash";
 import { Command, CommandRunner, Option } from "nest-commander";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import {
   getOptionText,

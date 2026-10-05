@@ -2,7 +2,7 @@ import { Test } from "@nestjs/testing";
 import moment, { type Moment } from "moment-timezone";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { CalendarService } from "../calendar/calendar.service";
 import { EphemerisModule } from "../ephemeris/ephemeris.module";
@@ -12,7 +12,7 @@ import { DailyCyclesBuilderService } from "./daily-cycles-builder.service";
 import { DailyCyclesService } from "./daily-cycles.service";
 
 import type { AzimuthElevationEphemeris } from "../ephemeris/ephemeris.types";
-import type { LogData } from "@codebase/logger";
+import type { LogData } from "@codebase/logging";
 
 vi.mock("fs", () => ({
   default: {

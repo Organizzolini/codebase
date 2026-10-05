@@ -9,7 +9,7 @@ import type { UserConfig } from "vite";
 export interface ViteLibraryConfigOptions {
   /**
    * Additional packages to inline into the bundle instead of externalizing.
-   * `@codebase/logger` is always inlined.
+   * `@codebase/logging` is always inlined.
    */
   readonly bundledPackages?: readonly string[];
   /**
@@ -35,7 +35,7 @@ export interface ViteLibraryConfigOptions {
  * Creates a shared Vite library build configuration for publishable packages.
  *
  * Emits ESM output into each project's own `dist/` directory, bundles declaration
- * files using API Extractor, and bundles internal utilities like `@codebase/logger`.
+ * files using API Extractor, and bundles internal utilities like `@codebase/logging`.
  *
  * @param options - Configuration options for the library build.
  * @returns Vite user configuration object.
@@ -54,7 +54,7 @@ export function createViteLibraryConfig(
   } = options;
 
   const inlinedPackages = new Set([
-    "@codebase/logger",
+    "@codebase/logging",
     "@oxc-project/runtime",
     ...bundledPackages,
   ]);

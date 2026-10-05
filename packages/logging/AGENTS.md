@@ -2,11 +2,11 @@
 
 ## Quick Start
 
-**Type**: NestJS library package (`@codebase/logger`)
+**Type**: NestJS library package (`@codebase/logging`)
 
 **Purpose**: The single `LoggerService` every NestJS project in the codebase
 injects. Seventeen projects each carried an identical copy of
-`src/modules/logger`, so a change to log formatting had to land seventeen
+`src/modules/logging`, so a change to log formatting had to land seventeen
 times. This package owns that code; consumers import it and declare nothing
 about `pino`.
 
@@ -41,11 +41,11 @@ Add the dependency, then import `LoggerModule` once in the root module:
 
 ```jsonc
 // package.json
-"dependencies": { "@codebase/logger": "workspace:*" }
+"dependencies": { "@codebase/logging": "workspace:*" }
 ```
 
 ```ts
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 @Module({
   imports: [ConfigModule.forRoot({ ... }), LoggerModule],
@@ -100,11 +100,11 @@ re-deriving timestamps and output paths:
 Always prefer running tasks through Nx rather than calling the underlying tools directly.
 
 ```bash
-nx run logger:lint           # ESLint
-nx run logger:typecheck      # tsc --noEmit
-nx run logger:format         # oxfmt formatting
-nx run logger:build          # Compile for production
-nx run logger:test           # Vitest
+nx run logging:lint           # ESLint
+nx run logging:typecheck      # tsc --noEmit
+nx run logging:format         # oxfmt formatting
+nx run logging:build          # Compile for production
+nx run logging:test           # Vitest
 ```
 
 ### Testing
@@ -116,7 +116,7 @@ mock; the `NODE_ENV` branches are covered by re-importing the module under a
 mutated environment with `vi.resetModules()`.
 
 ```bash
-nx run logger:vitest:unit
+nx run logging:vitest:unit
 ```
 
 ## Best Practices

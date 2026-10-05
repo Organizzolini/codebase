@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { CommentsService } from "./comments.service";
 import { CssCommentsService } from "./css-comments.service";

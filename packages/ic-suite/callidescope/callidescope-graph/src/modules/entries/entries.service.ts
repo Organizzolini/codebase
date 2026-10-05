@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import ts from "typescript";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { AddressService } from "../callables/address.service";
 

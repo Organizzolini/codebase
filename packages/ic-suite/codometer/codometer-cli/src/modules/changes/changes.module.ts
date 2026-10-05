@@ -6,7 +6,7 @@ import {
 } from "@codometer/output";
 import { Module } from "@nestjs/common";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { ChangesCommand } from "./changes.command";
 

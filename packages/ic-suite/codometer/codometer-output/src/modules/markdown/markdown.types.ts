@@ -17,7 +17,7 @@ export interface BuildAnchorHelpersArguments {
  * What a run measured: one project, or the repository holding it.
  *
  * Carried into the rendering because the first badge group is named after it.
- * A run scoped to `packages/logger` reporting a `Repository` heading names the
+ * A run scoped to `packages/logging` reporting a `Repository` heading names the
  * whole workspace for figures that only ever covered one package.
  */
 export type MeasurementScope = "project" | "repository";

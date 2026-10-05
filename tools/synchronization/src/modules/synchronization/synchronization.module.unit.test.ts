@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { ConformetryGeneratorsModule } from "../conformetry-generators/conformetry-generators.module";
 import { ConventionalConfigModule } from "../conventional-config/conventional-config.module";

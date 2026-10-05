@@ -2,7 +2,7 @@ import { ConfigurationModule } from "@codometer/configuration";
 import { LanguagesModule } from "@codometer/languages";
 import { Module } from "@nestjs/common";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { CustomizationModule } from "../customization/customization.module";
 import { DiscoveryModule } from "../discovery/discovery.module";

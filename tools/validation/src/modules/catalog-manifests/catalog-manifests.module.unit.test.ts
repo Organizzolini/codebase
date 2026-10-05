@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { CatalogManifestsCommand } from "./catalog-manifests.command";
 import { CatalogManifestsModule } from "./catalog-manifests.module";

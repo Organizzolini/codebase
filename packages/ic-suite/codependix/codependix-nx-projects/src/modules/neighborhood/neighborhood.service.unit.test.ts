@@ -171,11 +171,11 @@ describe(NeighborhoodService, () => {
 
   describe("readProjects", () => {
     it("resolves each project's directory against the workspace root", () => {
-      const graph = buildGraph({}, { logger: "packages/logger" });
+      const graph = buildGraph({}, { logger: "packages/logging" });
 
       expect(service.readProjects(graph, "/workspace")).toStrictEqual([
         {
-          absoluteRoot: path.join("/workspace", "packages/logger"),
+          absoluteRoot: path.join("/workspace", "packages/logging"),
           name: "logger",
           tags: [],
         },
@@ -199,7 +199,7 @@ describe(NeighborhoodService, () => {
     });
 
     it("carries each project's own tags", () => {
-      const graph = buildGraph({}, { logger: "packages/logger" });
+      const graph = buildGraph({}, { logger: "packages/logging" });
       const node = graph.nodes["logger"];
       if (node !== undefined) {
         node.data.tags = ["framework:nestjs", "type:package"];
@@ -214,7 +214,7 @@ describe(NeighborhoodService, () => {
 
     // Nx omits the field entirely for a project that declares no tags.
     it("reports no tags for a project whose node declares none", () => {
-      const graph = buildGraph({}, { logger: "packages/logger" });
+      const graph = buildGraph({}, { logger: "packages/logging" });
 
       expect(
         service
@@ -227,7 +227,7 @@ describe(NeighborhoodService, () => {
     it("leaves out the workspace root project", () => {
       const graph = buildGraph(
         {},
-        { codebase: ".", logger: "packages/logger" },
+        { codebase: ".", logger: "packages/logging" },
       );
 
       expect(

@@ -10,7 +10,7 @@ import {
 import { Injectable } from "@nestjs/common";
 import { Command, CommandRunner, Option } from "nest-commander";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import type { ReportFindingsArguments, RunPlan } from "./measure.types";
 import type {

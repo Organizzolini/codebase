@@ -2,7 +2,7 @@ import { ConfigurationService } from "@callidescope/configuration";
 import { Injectable } from "@nestjs/common";
 import { Command, CommandRunner, Option } from "nest-commander";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { readRefusalHeadline } from "../callidescope/callidescope.constants";
 
@@ -10,7 +10,7 @@ import { LimitsService } from "./limits.service";
 import { RenderLimitsService } from "./render-limits.service";
 
 import type { LimitsCommandOptions } from "./limits.types";
-import type { LogData } from "@codebase/logger";
+import type { LogData } from "@codebase/logging";
 
 /**
  * CLI entry point that lists what every project in scope is gated by.

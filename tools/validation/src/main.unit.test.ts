@@ -10,7 +10,7 @@ import type { PullRequestBodyModule } from "./modules/pull-request-body/pull-req
 import type { PullRequestMetadataModule } from "./modules/pull-request-metadata/pull-request-metadata.module";
 import type { PullRequestReleaseSignificanceModule } from "./modules/pull-request-release-significance/pull-request-release-significance.module";
 import type { ReadmeProjectsModule } from "./modules/readme-projects/readme-projects.module";
-import type { LoggerService } from "@codebase/logger";
+import type { LoggerService } from "@codebase/logging";
 
 type CommandFactoryRun = (
   module: unknown,
@@ -41,7 +41,7 @@ vi.mock("nest-commander", () => ({
   },
 }));
 
-vi.mock("@codebase/logger", () => ({
+vi.mock("@codebase/logging", () => ({
   // `main.module` imports `LoggerModule` from the same specifier, so the mock
   // has to stand in for the whole package, not just the service.
   LoggerModule: function LoggerModule() {},

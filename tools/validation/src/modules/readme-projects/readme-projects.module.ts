@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { ReadmeProjectsCommand } from "./readme-projects.command";
 import { ReadmeProjectsService } from "./readme-projects.service";

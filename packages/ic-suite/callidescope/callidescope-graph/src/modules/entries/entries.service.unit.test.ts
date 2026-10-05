@@ -23,7 +23,7 @@ import type { CallGraph } from "../graph/graph.types";
 import type { EntryPointCollection } from "./entries.types";
 import type { ResolvedCallidescopeEntryPoints } from "@callidescope/configuration";
 import type { EntryPointKind } from "@callidescope/core";
-import type { LoggerService } from "@codebase/logger";
+import type { LoggerService } from "@codebase/logging";
 import type { DeepMocked } from "@golevelup/ts-vitest";
 
 /** An empty call graph, for tests that never reach an edge. */

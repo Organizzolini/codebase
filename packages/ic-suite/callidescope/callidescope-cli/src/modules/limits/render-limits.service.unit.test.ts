@@ -17,7 +17,7 @@ const WORKSPACE_DEPTH_ROW: ProjectLimitRow = {
 const UNDECLARED_BREADTH_ROW: ProjectLimitRow = {
   limit: "maximumBreadth",
   path: undefined,
-  project: "packages/logger",
+  project: "packages/logging",
   value: undefined,
 };
 
@@ -57,14 +57,14 @@ describe(RenderLimitsService, () => {
     const document = service.render([
       {
         limit: "maximumDepth",
-        path: "packages/logger/callidescope.config.ts",
-        project: "packages/logger",
+        path: "packages/logging/callidescope.config.ts",
+        project: "packages/logging",
         value: 4,
       },
     ]);
 
     expect(document).toContain(
-      "| packages/logger | `maximumDepth` | 4 | `packages/logger/callidescope.config.ts` |",
+      "| packages/logging | `maximumDepth` | 4 | `packages/logging/callidescope.config.ts` |",
     );
   });
 
@@ -78,7 +78,7 @@ describe(RenderLimitsService, () => {
 
   it("says a limit nothing declares is none rather than inventing a number", () => {
     expect(service.render([UNDECLARED_BREADTH_ROW])).toContain(
-      "| packages/logger | `maximumBreadth` | none | — |",
+      "| packages/logging | `maximumBreadth` | none | — |",
     );
   });
 
@@ -93,7 +93,7 @@ describe(RenderLimitsService, () => {
         .split("\n")
         .slice(-2)
         .map((line) => line.split(" | ")[0]),
-    ).toStrictEqual(["| workspace", "| packages/logger"]);
+    ).toStrictEqual(["| workspace", "| packages/logging"]);
   });
 
   it("says where the numbers are written", () => {

@@ -18,7 +18,7 @@
 | --- | --- | --- | --- | --- |
 | `packages/ic-suite/callidescope/callidescope-examples` | 8 | 5 | -3 | 2 |
 | `packages/ic-suite/callidescope/callidescope-examples/examples/gated-leaf` | 4 | 3 | -1 | 3 |
-| `packages/logger` | 5 | 4 | -1 | 2 |
+| `packages/logging` | 5 | 4 | -1 | 2 |
 | `packages/ic-suite/codependix/codependix-configuration` | 7 | 7 | 0 | 4 |
 | `packages/ic-suite/codometer/codometer-configuration` | 9 | 9 | 0 | 4 |
 | `packages/ic-suite/callidescope/callidescope-configuration` | 7 | 8 | 1 | 7 |
@@ -144,15 +144,15 @@
 **6. `LoggerService.log`** — depth 5 · orphan-root
 
 ```text
-🚀 LoggerService.log(message: unknown, context?: string, data?: LogData): void [packages/logger/src/modules/logger/logger.service.ts:292]
+🚀 LoggerService.log(message: unknown, context?: string, data?: LogData): void [packages/logging/src/modules/logger/logger.service.ts:292]
    ↳ Logs an informational message at the `info` level.
-  └─> LoggerService.info(message: unknown, context?: string, data?: LogData): void [packages/logger/src/modules/logger/logger.service.ts:276]
+  └─> LoggerService.info(message: unknown, context?: string, data?: LogData): void [packages/logging/src/modules/logger/logger.service.ts:276]
      ↳ Logs an informational message at the `info` level.
-    └─> LoggerService.buildBindings(…): Record<string, unknown> [packages/logger/src/modules/logger/logger.service.ts:158]
+    └─> LoggerService.buildBindings(…): Record<string, unknown> [packages/logging/src/modules/logger/logger.service.ts:158]
        ↳ Assembles the object pino merges into the line.
-      └─> LoggerService.assertConventionalMessage(args: { context: string | undefined; parsed: ParsedLogMessage; }): void [packages/logger/src/modules/logger/logger.service.ts:125]
+      └─> LoggerService.assertConventionalMessage(args: { context: string | undefined; parsed: ParsedLogMessage; }): void [packages/logging/src/modules/logger/logger.service.ts:125]
          ↳ Fails a malformed message in development, and never in production.
-        └─> LoggerService.isConventionalVerb(word: string): boolean [packages/logger/src/modules/logger/logger.service.ts:183]
+        └─> LoggerService.isConventionalVerb(word: string): boolean [packages/logging/src/modules/logger/logger.service.ts:183]
            ↳ Whether a word is a verb in one of the two tenses the convention allows.
 ```
 

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Command, CommandRunner } from "nest-commander";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { ConformetryGeneratorsCommand } from "../conformetry-generators/conformetry-generators.command";
 import { ConventionalConfigCommand } from "../conventional-config/conventional-config.command";

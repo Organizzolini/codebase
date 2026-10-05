@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { IssueLabelsModule } from "./modules/issue-labels/issue-labels.module";
 import type { SynchronizationModule } from "./modules/synchronization/synchronization.module";
-import type { LoggerService } from "@codebase/logger";
+import type { LoggerService } from "@codebase/logging";
 
 type CommandFactoryRun = (
   module: unknown,
@@ -21,7 +21,7 @@ vi.mock("nest-commander", () => ({
   },
 }));
 
-vi.mock("@codebase/logger", () => ({
+vi.mock("@codebase/logging", () => ({
   // `main.module` imports `LoggerModule` from the same specifier, so the mock
   // has to stand in for the whole package, not just the service.
   LoggerModule: function LoggerModule() {},

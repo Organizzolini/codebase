@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import _ from "lodash";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import type { Event } from "../calendar/calendar.types";
 import type { TypedAspectParts } from "./progressive.types";

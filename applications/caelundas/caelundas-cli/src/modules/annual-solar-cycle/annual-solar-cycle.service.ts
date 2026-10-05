@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { EphemerisService } from "../ephemeris/ephemeris.service";
 import { MathService } from "../math/math.service";

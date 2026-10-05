@@ -14,7 +14,7 @@ vi.mock("./main.module", () => ({
   },
 }));
 
-vi.mock("@codebase/logger", () => ({
+vi.mock("@codebase/logging", () => ({
   LoggerService: class MockLoggerService {
     constructor() {
       loggerConstructorMock();

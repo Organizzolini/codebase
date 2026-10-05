@@ -23,7 +23,7 @@ nx run lexico-ingestion:start
 - **CLI runner**: `nest-commander` (`CommandRunner` + `@Command()` decorator)
 - **Database**: PostgreSQL via TypeORM (`@codebase/lexico-entities`)
 - **Env validation**: `@nestjs/config` + `zod` (`environmentSchema` in `.constants.ts`)
-- **Logging**: `@codebase/logger` — a `pino`-backed `LoggerService` (`Scope.TRANSIENT`)
+- **Logging**: `@codebase/logging` — a `pino`-backed `LoggerService` (`Scope.TRANSIENT`)
 - **Language**: Strict TypeScript
 
 ### Execution Flow
@@ -108,7 +108,7 @@ All validated via `environmentSchema` in `lexico-ingestion.constants.ts`:
 
 ### Logging
 
-`LoggerService` and `LoggerModule` come from `@codebase/logger` — this project does not define its own logger. Add `"@codebase/logger": "workspace:*"` to `dependencies`, then import `LoggerModule` once in the root module; it is `@Global()`, so feature modules inject `LoggerService` without importing it.
+`LoggerService` and `LoggerModule` come from `@codebase/logging` — this project does not define its own logger. Add `"@codebase/logging": "workspace:*"` to `dependencies`, then import `LoggerModule` once in the root module; it is `@Global()`, so feature modules inject `LoggerService` without importing it.
 
 `LoggerService` is `Scope.TRANSIENT` — each injecting class gets its own instance. Always call `setContext` in the constructor:
 
@@ -295,7 +295,7 @@ See the [triage-integration skill](../../.agents/skills/triage-integration/SKILL
 - [src/modules/lexico-ingestion/lexico-ingestion.command.ts](src/modules/lexico-ingestion/lexico-ingestion.command.ts): Root CLI command
 - [src/main.module.ts](src/main.module.ts): Root NestJS module
 - [src/constants.ts](src/constants.ts): environmentSchema (Zod)
-- `@codebase/logger` (`packages/logger`): shared pino-backed `LoggerService` and `LoggerModule`
+- `@codebase/logging` (`packages/logging`): shared pino-backed `LoggerService` and `LoggerModule`
 - [project.json](project.json): Nx targets (`develop`, `build`, `test`, `lint`, `typecheck`, `format`)
 - [.env.default](.env.default): Environment variable template
 

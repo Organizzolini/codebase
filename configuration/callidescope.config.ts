@@ -36,7 +36,7 @@ import {
  * `CallidescopeConfiguration`. An `import type` is still an Nx dependency
  * edge: it puts `@callidescope/configuration` into that project's graph, it
  * widens what the project's own `callidescope-gate` target has to trace, and it
- * asks the manifest of a project like `logger` to declare a toolchain package
+ * asks the manifest of a project like `logging` to declare a toolchain package
  * that project does not use. What it would buy is a second check of something
  * already checked: the four fields a project may set are validated when the
  * file is read and a fifth is refused by name, and every project's
@@ -143,7 +143,7 @@ export const workspaceLimits = {
    * scope: it passes at the number written and fails one below it. That is what
    * a ratchet is, and it is what this single number could never be. Seventeen
    * is the deepest stack anywhere in the repository, so as one workspace-wide
-   * limit it gated the three projects near it and nothing else — `logger` at
+   * limit it gated the three projects near it and nothing else — `logging` at
    * four had thirteen frames of free rein, which is to say no gate at all.
    * `nx run callidescope-cli:start -- limits --config
    * configuration/callidescope.config.ts` prints the whole set and the file

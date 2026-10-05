@@ -5,7 +5,7 @@ import { Test } from "@nestjs/testing";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Lexeme, Translation } from "@codebase/lexico-entities";
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import {
   createCommandTestHarness,

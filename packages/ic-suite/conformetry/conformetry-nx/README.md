@@ -419,13 +419,13 @@ graph LR
   conformetry_nx["conformetry-nx"]
   conformetry_output["conformetry-output"]
   conformetry_validation["conformetry-validation"]
-  logger["logger"]
+  logging["logging"]
   conformetry_examples --> conformetry_nx
   conformetry_nx --> conformetry_configuration
   conformetry_nx --> conformetry_generation
   conformetry_nx --> conformetry_output
   conformetry_nx --> conformetry_validation
-  conformetry_nx --> logger
+  conformetry_nx --> logging
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class conformetry_nx subject
 ```

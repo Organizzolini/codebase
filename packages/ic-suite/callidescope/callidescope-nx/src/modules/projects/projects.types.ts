@@ -6,7 +6,7 @@
  * `codependix-nx-projects` declares a near-identical shape and reads it out of the
  * graph the same way. They are deliberately not shared: the two packages sit
  * in different toolchains, and `configuration/eslint.config.ts` lets this one
- * depend on nothing but `logger` precisely so `@nx/devkit` cannot spread. A
+ * depend on nothing but `logging` precisely so `@nx/devkit` cannot spread. A
  * package extracted to hold both would have to be depended on by both, which
  * is the coupling that rule exists to prevent.
  */

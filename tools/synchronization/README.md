@@ -522,10 +522,10 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 ```mermaid
 graph LR
   conformetry_configuration["conformetry-configuration"]
-  logger["logger"]
+  logging["logging"]
   synchronization["synchronization"]
   synchronization --> conformetry_configuration
-  synchronization --> logger
+  synchronization --> logging
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class synchronization subject
 ```

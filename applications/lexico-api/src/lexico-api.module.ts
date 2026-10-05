@@ -21,7 +21,7 @@ import {
   UninflectedInflection,
   VerbInflection,
 } from "@codebase/lexico-entities";
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { environmentSchema, GRAPHQL_SCHEMA_FILE } from "./lexico-api.constants";
 import { HealthModule } from "./modules/health/health.module";

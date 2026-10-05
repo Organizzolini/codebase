@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { AuditGovernanceCommand } from "./audit-governance.command";
 import { AuditGovernanceModule } from "./audit-governance.module";

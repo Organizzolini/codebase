@@ -12,7 +12,7 @@ import {
   vi,
 } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { GenerateCommand } from "./generate.command";
 

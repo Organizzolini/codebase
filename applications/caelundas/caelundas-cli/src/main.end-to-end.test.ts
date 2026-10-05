@@ -6,7 +6,7 @@ import _ from "lodash";
 import moment from "moment-timezone";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { environmentSchema } from "./constants";
 import { CalendarService } from "./modules/calendar/calendar.service";

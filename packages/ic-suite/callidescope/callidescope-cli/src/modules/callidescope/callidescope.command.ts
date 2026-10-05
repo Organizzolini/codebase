@@ -15,7 +15,7 @@ import {
 import { Injectable } from "@nestjs/common";
 import { Command, CommandRunner, Option } from "nest-commander";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { ADDRESS_NOT_FOUND_ADVICE } from "../address-lookup/address-lookup.constants";
 
@@ -35,7 +35,7 @@ import type {
 } from "@callidescope/configuration";
 import type { CallGraphResult } from "@callidescope/core";
 import type { UnresolvedEntryPointAddress } from "@callidescope/graph";
-import type { LogData } from "@codebase/logger";
+import type { LogData } from "@codebase/logging";
 
 /**
  * CLI entry point for the call-stack tracing workflow.

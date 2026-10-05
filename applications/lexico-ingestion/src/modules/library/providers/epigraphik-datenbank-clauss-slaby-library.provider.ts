@@ -9,7 +9,7 @@ import _ from "lodash";
 import YAML from "yaml";
 
 import { Author, Text } from "@codebase/lexico-entities";
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 /**
  * Shape of a single record in the raw JSON chunks returned by the EDCS API.

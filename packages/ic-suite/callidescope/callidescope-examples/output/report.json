@@ -1074,11 +1074,11 @@
             "summary": "Logs an informational message at the `info` level. NestJS and `nest-commander` call this method directly as part of the framework's own `LoggerService` contract, so it must keep working exactly as before. Application code should call `info` instead — the same behavior under a name that says what level it logs at.",
             "tags": []
           },
-          "id": "packages/logger/src/modules/logger/logger.service.ts#9600",
+          "id": "packages/logging/src/modules/logger/logger.service.ts#9600",
           "isCycle": false,
           "location": {
             "column": 3,
-            "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+            "filePath": "packages/logging/src/modules/logger/logger.service.ts",
             "line": 292
           },
           "signature": {
@@ -1113,11 +1113,11 @@
             "summary": "Logs an informational message at the `info` level.",
             "tags": []
           },
-          "id": "packages/logger/src/modules/logger/logger.service.ts#8999",
+          "id": "packages/logging/src/modules/logger/logger.service.ts#8999",
           "isCycle": false,
           "location": {
             "column": 3,
-            "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+            "filePath": "packages/logging/src/modules/logger/logger.service.ts",
             "line": 276
           },
           "signature": {
@@ -1152,11 +1152,11 @@
             "summary": "Assembles the object pino merges into the line.",
             "tags": []
           },
-          "id": "packages/logger/src/modules/logger/logger.service.ts#5285",
+          "id": "packages/logging/src/modules/logger/logger.service.ts#5285",
           "isCycle": false,
           "location": {
             "column": 3,
-            "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+            "filePath": "packages/logging/src/modules/logger/logger.service.ts",
             "line": 158
           },
           "signature": {
@@ -1179,11 +1179,11 @@
             "summary": "Fails a malformed message in development, and never in production. A logger that throws in production turns an observability call into an outage, so the check runs only where a developer is present to fix it.",
             "tags": []
           },
-          "id": "packages/logger/src/modules/logger/logger.service.ts#4418",
+          "id": "packages/logging/src/modules/logger/logger.service.ts#4418",
           "isCycle": false,
           "location": {
             "column": 3,
-            "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+            "filePath": "packages/logging/src/modules/logger/logger.service.ts",
             "line": 125
           },
           "signature": {
@@ -1206,11 +1206,11 @@
             "summary": "Whether a word is a verb in one of the two tenses the convention allows. Present progressive means the operation is under way; past means it finished. Regular morphology covers both, so a new verb needs no registration anywhere — only irregular pasts are enumerated.",
             "tags": []
           },
-          "id": "packages/logger/src/modules/logger/logger.service.ts#6074",
+          "id": "packages/logging/src/modules/logger/logger.service.ts#6074",
           "isCycle": false,
           "location": {
             "column": 3,
-            "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+            "filePath": "packages/logging/src/modules/logger/logger.service.ts",
             "line": 183
           },
           "signature": {
@@ -13651,18 +13651,18 @@
           "callees": [
             {
               "displayName": "parseLogMessage",
-              "id": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts#3988"
+              "id": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts#3988"
             },
             {
               "displayName": "isConventionalVerb",
-              "id": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts#3520"
+              "id": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts#3520"
             }
           ],
           "displayName": "checkConventionalMessage",
-          "id": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts#2051",
+          "id": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts#2051",
           "location": {
             "column": 1,
-            "filePath": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts",
+            "filePath": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts",
             "line": 61
           },
           "signature": {
@@ -13683,18 +13683,18 @@
           "callees": [
             {
               "displayName": "isLoggerObjectText",
-              "id": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts#3809"
+              "id": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts#3809"
             },
             {
               "displayName": "checkMessageArgumentConvention",
-              "id": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts#2954"
+              "id": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts#2954"
             }
           ],
           "displayName": "CallExpression",
-          "id": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts#5140",
+          "id": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts#5140",
           "location": {
             "column": 7,
-            "filePath": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts",
+            "filePath": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts",
             "line": 151
           },
           "signature": {
@@ -13715,18 +13715,18 @@
           "callees": [
             {
               "displayName": "LoggerService.parseMessage",
-              "id": "packages/logger/src/modules/logger/logger.service.ts#6380"
+              "id": "packages/logging/src/modules/logger/logger.service.ts#6380"
             },
             {
               "displayName": "LoggerService.buildBindings",
-              "id": "packages/logger/src/modules/logger/logger.service.ts#5285"
+              "id": "packages/logging/src/modules/logger/logger.service.ts#5285"
             }
           ],
           "displayName": "LoggerService.debug",
-          "id": "packages/logger/src/modules/logger/logger.service.ts#7860",
+          "id": "packages/logging/src/modules/logger/logger.service.ts#7860",
           "location": {
             "column": 3,
-            "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+            "filePath": "packages/logging/src/modules/logger/logger.service.ts",
             "line": 241
           },
           "signature": {
@@ -13759,18 +13759,18 @@
           "callees": [
             {
               "displayName": "LoggerService.parseMessage",
-              "id": "packages/logger/src/modules/logger/logger.service.ts#6380"
+              "id": "packages/logging/src/modules/logger/logger.service.ts#6380"
             },
             {
               "displayName": "LoggerService.buildBindings",
-              "id": "packages/logger/src/modules/logger/logger.service.ts#5285"
+              "id": "packages/logging/src/modules/logger/logger.service.ts#5285"
             }
           ],
           "displayName": "LoggerService.error",
-          "id": "packages/logger/src/modules/logger/logger.service.ts#8441",
+          "id": "packages/logging/src/modules/logger/logger.service.ts#8441",
           "location": {
             "column": 3,
-            "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+            "filePath": "packages/logging/src/modules/logger/logger.service.ts",
             "line": 256
           },
           "signature": {
@@ -13803,18 +13803,18 @@
           "callees": [
             {
               "displayName": "LoggerService.parseMessage",
-              "id": "packages/logger/src/modules/logger/logger.service.ts#6380"
+              "id": "packages/logging/src/modules/logger/logger.service.ts#6380"
             },
             {
               "displayName": "LoggerService.buildBindings",
-              "id": "packages/logger/src/modules/logger/logger.service.ts#5285"
+              "id": "packages/logging/src/modules/logger/logger.service.ts#5285"
             }
           ],
           "displayName": "LoggerService.info",
-          "id": "packages/logger/src/modules/logger/logger.service.ts#8999",
+          "id": "packages/logging/src/modules/logger/logger.service.ts#8999",
           "location": {
             "column": 3,
-            "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+            "filePath": "packages/logging/src/modules/logger/logger.service.ts",
             "line": 276
           },
           "signature": {
@@ -13847,18 +13847,18 @@
           "callees": [
             {
               "displayName": "LoggerService.parseMessage",
-              "id": "packages/logger/src/modules/logger/logger.service.ts#6380"
+              "id": "packages/logging/src/modules/logger/logger.service.ts#6380"
             },
             {
               "displayName": "LoggerService.buildBindings",
-              "id": "packages/logger/src/modules/logger/logger.service.ts#5285"
+              "id": "packages/logging/src/modules/logger/logger.service.ts#5285"
             }
           ],
           "displayName": "LoggerService.verbose",
-          "id": "packages/logger/src/modules/logger/logger.service.ts#9983",
+          "id": "packages/logging/src/modules/logger/logger.service.ts#9983",
           "location": {
             "column": 3,
-            "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+            "filePath": "packages/logging/src/modules/logger/logger.service.ts",
             "line": 303
           },
           "signature": {
@@ -13891,18 +13891,18 @@
           "callees": [
             {
               "displayName": "LoggerService.parseMessage",
-              "id": "packages/logger/src/modules/logger/logger.service.ts#6380"
+              "id": "packages/logging/src/modules/logger/logger.service.ts#6380"
             },
             {
               "displayName": "LoggerService.buildBindings",
-              "id": "packages/logger/src/modules/logger/logger.service.ts#5285"
+              "id": "packages/logging/src/modules/logger/logger.service.ts#5285"
             }
           ],
           "displayName": "LoggerService.warn",
-          "id": "packages/logger/src/modules/logger/logger.service.ts#10293",
+          "id": "packages/logging/src/modules/logger/logger.service.ts#10293",
           "location": {
             "column": 3,
-            "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+            "filePath": "packages/logging/src/modules/logger/logger.service.ts",
             "line": 312
           },
           "signature": {
@@ -13935,14 +13935,14 @@
           "callees": [
             {
               "displayName": "checkConventionalMessage",
-              "id": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts#2051"
+              "id": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts#2051"
             }
           ],
           "displayName": "checkMessageArgumentConvention",
-          "id": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts#2954",
+          "id": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts#2954",
           "location": {
             "column": 1,
-            "filePath": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts",
+            "filePath": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts",
             "line": 91
           },
           "signature": {
@@ -13963,14 +13963,14 @@
           "callees": [
             {
               "displayName": "LoggerService.isConventionalVerb",
-              "id": "packages/logger/src/modules/logger/logger.service.ts#6074"
+              "id": "packages/logging/src/modules/logger/logger.service.ts#6074"
             }
           ],
           "displayName": "LoggerService.assertConventionalMessage",
-          "id": "packages/logger/src/modules/logger/logger.service.ts#4418",
+          "id": "packages/logging/src/modules/logger/logger.service.ts#4418",
           "location": {
             "column": 3,
-            "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+            "filePath": "packages/logging/src/modules/logger/logger.service.ts",
             "line": 125
           },
           "signature": {
@@ -13991,14 +13991,14 @@
           "callees": [
             {
               "displayName": "LoggerService.assertConventionalMessage",
-              "id": "packages/logger/src/modules/logger/logger.service.ts#4418"
+              "id": "packages/logging/src/modules/logger/logger.service.ts#4418"
             }
           ],
           "displayName": "LoggerService.buildBindings",
-          "id": "packages/logger/src/modules/logger/logger.service.ts#5285",
+          "id": "packages/logging/src/modules/logger/logger.service.ts#5285",
           "location": {
             "column": 3,
-            "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+            "filePath": "packages/logging/src/modules/logger/logger.service.ts",
             "line": 158
           },
           "signature": {
@@ -14019,14 +14019,14 @@
           "callees": [
             {
               "displayName": "LoggerService.createRootLogger",
-              "id": "packages/logger/src/modules/logger/logger.service.ts#2060"
+              "id": "packages/logging/src/modules/logger/logger.service.ts#2060"
             }
           ],
           "displayName": "LoggerService.get root",
-          "id": "packages/logger/src/modules/logger/logger.service.ts#6772",
+          "id": "packages/logging/src/modules/logger/logger.service.ts#6772",
           "location": {
             "column": 3,
-            "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+            "filePath": "packages/logging/src/modules/logger/logger.service.ts",
             "line": 207
           },
           "signature": {
@@ -14040,14 +14040,14 @@
           "callees": [
             {
               "displayName": "LoggerService.info",
-              "id": "packages/logger/src/modules/logger/logger.service.ts#8999"
+              "id": "packages/logging/src/modules/logger/logger.service.ts#8999"
             }
           ],
           "displayName": "LoggerService.log",
-          "id": "packages/logger/src/modules/logger/logger.service.ts#9600",
+          "id": "packages/logging/src/modules/logger/logger.service.ts#9600",
           "location": {
             "column": 3,
-            "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+            "filePath": "packages/logging/src/modules/logger/logger.service.ts",
             "line": 292
           },
           "signature": {
@@ -14076,7 +14076,7 @@
           }
         }
       ],
-      "projectName": "packages/logger",
+      "projectName": "packages/logging",
       "stacks": [
         {
           "depth": 5,
@@ -14089,11 +14089,11 @@
                 "summary": "Logs an informational message at the `info` level. NestJS and `nest-commander` call this method directly as part of the framework's own `LoggerService` contract, so it must keep working exactly as before. Application code should call `info` instead — the same behavior under a name that says what level it logs at.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#9600",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#9600",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 292
               },
               "signature": {
@@ -14128,11 +14128,11 @@
                 "summary": "Logs an informational message at the `info` level.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#8999",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#8999",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 276
               },
               "signature": {
@@ -14167,11 +14167,11 @@
                 "summary": "Assembles the object pino merges into the line.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#5285",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#5285",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 158
               },
               "signature": {
@@ -14194,11 +14194,11 @@
                 "summary": "Fails a malformed message in development, and never in production. A logger that throws in production turns an observability call into an outage, so the check runs only where a developer is present to fix it.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#4418",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#4418",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 125
               },
               "signature": {
@@ -14221,11 +14221,11 @@
                 "summary": "Whether a word is a verb in one of the two tenses the convention allows. Present progressive means the operation is under way; past means it finished. Regular morphology covers both, so a new verb needs no registration anywhere — only irregular pasts are enumerated.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#6074",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#6074",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 183
               },
               "signature": {
@@ -14250,11 +14250,11 @@
           "frames": [
             {
               "displayName": "CallExpression",
-              "id": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts#5140",
+              "id": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts#5140",
               "isCycle": false,
               "location": {
                 "column": 7,
-                "filePath": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts",
+                "filePath": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts",
                 "line": 151
               },
               "signature": {
@@ -14277,11 +14277,11 @@
                 "summary": "Extracts a message argument's static text, if it has one, and checks it against the logging convention. Only a `Literal` string or a `TemplateLiteral`'s static prefix (the text before its first interpolation) can be checked; anything else — an identifier, a caught error, a non-string literal — has no statically knowable text, so it is left unchecked rather than reported.",
                 "tags": []
               },
-              "id": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts#2954",
+              "id": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts#2954",
               "isCycle": false,
               "location": {
                 "column": 1,
-                "filePath": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts",
+                "filePath": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts",
                 "line": 91
               },
               "signature": {
@@ -14304,11 +14304,11 @@
                 "summary": "Checks a static message's text against the logging convention.",
                 "tags": []
               },
-              "id": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts#2051",
+              "id": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts#2051",
               "isCycle": false,
               "location": {
                 "column": 1,
-                "filePath": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts",
+                "filePath": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts",
                 "line": 61
               },
               "signature": {
@@ -14331,11 +14331,11 @@
                 "summary": "Splits a leading emoji off a message, leaving prose behind.",
                 "tags": []
               },
-              "id": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts#3988",
+              "id": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts#3988",
               "isCycle": false,
               "location": {
                 "column": 1,
-                "filePath": "packages/logger/src/lib/conventional-log-message.eslint-rule.ts",
+                "filePath": "packages/logging/src/lib/conventional-log-message.eslint-rule.ts",
                 "line": 124
               },
               "signature": {
@@ -14365,11 +14365,11 @@
                 "summary": "Logs a debug message at the `debug` level.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#7860",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#7860",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 241
               },
               "signature": {
@@ -14404,11 +14404,11 @@
                 "summary": "Assembles the object pino merges into the line.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#5285",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#5285",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 158
               },
               "signature": {
@@ -14431,11 +14431,11 @@
                 "summary": "Fails a malformed message in development, and never in production. A logger that throws in production turns an observability call into an outage, so the check runs only where a developer is present to fix it.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#4418",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#4418",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 125
               },
               "signature": {
@@ -14458,11 +14458,11 @@
                 "summary": "Whether a word is a verb in one of the two tenses the convention allows. Present progressive means the operation is under way; past means it finished. Regular morphology covers both, so a new verb needs no registration anywhere — only irregular pasts are enumerated.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#6074",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#6074",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 183
               },
               "signature": {
@@ -14492,11 +14492,11 @@
                 "summary": "Logs an error message at the `error` level, optionally including a stack trace. `ConsoleLogger.error` spends a third slot on a context string that the other levels do not have, so this one accepts either: a string keeps NestJS's meaning, an object is structured data like everywhere else.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#8441",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#8441",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 256
               },
               "signature": {
@@ -14531,11 +14531,11 @@
                 "summary": "Assembles the object pino merges into the line.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#5285",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#5285",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 158
               },
               "signature": {
@@ -14558,11 +14558,11 @@
                 "summary": "Fails a malformed message in development, and never in production. A logger that throws in production turns an observability call into an outage, so the check runs only where a developer is present to fix it.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#4418",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#4418",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 125
               },
               "signature": {
@@ -14585,11 +14585,11 @@
                 "summary": "Whether a word is a verb in one of the two tenses the convention allows. Present progressive means the operation is under way; past means it finished. Regular morphology covers both, so a new verb needs no registration anywhere — only irregular pasts are enumerated.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#6074",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#6074",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 183
               },
               "signature": {
@@ -14619,11 +14619,11 @@
                 "summary": "Logs a verbose message at the `trace` level.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#9983",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#9983",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 303
               },
               "signature": {
@@ -14658,11 +14658,11 @@
                 "summary": "Assembles the object pino merges into the line.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#5285",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#5285",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 158
               },
               "signature": {
@@ -14685,11 +14685,11 @@
                 "summary": "Fails a malformed message in development, and never in production. A logger that throws in production turns an observability call into an outage, so the check runs only where a developer is present to fix it.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#4418",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#4418",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 125
               },
               "signature": {
@@ -14712,11 +14712,11 @@
                 "summary": "Whether a word is a verb in one of the two tenses the convention allows. Present progressive means the operation is under way; past means it finished. Regular morphology covers both, so a new verb needs no registration anywhere — only irregular pasts are enumerated.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#6074",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#6074",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 183
               },
               "signature": {
@@ -14746,11 +14746,11 @@
                 "summary": "Logs a warning message at the `warn` level.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#10293",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#10293",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 312
               },
               "signature": {
@@ -14785,11 +14785,11 @@
                 "summary": "Assembles the object pino merges into the line.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#5285",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#5285",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 158
               },
               "signature": {
@@ -14812,11 +14812,11 @@
                 "summary": "Fails a malformed message in development, and never in production. A logger that throws in production turns an observability call into an outage, so the check runs only where a developer is present to fix it.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#4418",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#4418",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 125
               },
               "signature": {
@@ -14839,11 +14839,11 @@
                 "summary": "Whether a word is a verb in one of the two tenses the convention allows. Present progressive means the operation is under way; past means it finished. Regular morphology covers both, so a new verb needs no registration anywhere — only irregular pasts are enumerated.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#6074",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#6074",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 183
               },
               "signature": {
@@ -14873,11 +14873,11 @@
                 "summary": "The pino instance every logger's child is taken from.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#6772",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#6772",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 207
               },
               "signature": {
@@ -14893,11 +14893,11 @@
                 "summary": "Build the pino instance for production or local development output.",
                 "tags": []
               },
-              "id": "packages/logger/src/modules/logger/logger.service.ts#2060",
+              "id": "packages/logging/src/modules/logger/logger.service.ts#2060",
               "isCycle": false,
               "location": {
                 "column": 3,
-                "filePath": "packages/logger/src/modules/logger/logger.service.ts",
+                "filePath": "packages/logging/src/modules/logger/logger.service.ts",
                 "line": 65
               },
               "signature": {

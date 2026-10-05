@@ -4,7 +4,7 @@ import path from "node:path";
 import { Inject, Injectable } from "@nestjs/common";
 import { Command, CommandRunner, Option } from "nest-commander";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { CODE_FORMAT_PATTERN } from "../code/code.constants";
 import { CorpusService } from "../corpus/corpus.service";

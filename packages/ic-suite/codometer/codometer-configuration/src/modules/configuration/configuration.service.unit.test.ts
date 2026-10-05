@@ -457,7 +457,7 @@ describe(ConfigurationService, () => {
         {
           analyses: ["size"],
           directory: "../..",
-          include: ["dist/packages/logger/**/*.js"],
+          include: ["dist/packages/logging/**/*.js"],
           name: "compiled",
         },
       ],
@@ -1377,8 +1377,8 @@ describe(ConfigurationService, () => {
       expect(service.parseDefaultedOption(undefined, "markdown")).toBe(
         "markdown",
       );
-      expect(service.parseDirectoryOption("packages/logger")).toBe(
-        "packages/logger",
+      expect(service.parseDirectoryOption("packages/logging")).toBe(
+        "packages/logging",
       );
     });
 

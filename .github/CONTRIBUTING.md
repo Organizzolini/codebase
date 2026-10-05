@@ -295,7 +295,7 @@ See [configuration/eslint.config.ts](configuration/eslint.config.ts) for the com
 
 `@nx/dependency-checks` additionally requires that every imported package is declared in that project's own `package.json` — which is why a dependency goes in through `pnpm add --filter <project>` rather than a hand edit.
 
-Cross-project imports use the workspace package name (`@codebase/logger`), never a relative path out of the project. Inside a project, prefer relative paths over path aliases.
+Cross-project imports use the workspace package name (`@codebase/logging`), never a relative path out of the project. Inside a project, prefer relative paths over path aliases.
 
 ### Size Limits
 

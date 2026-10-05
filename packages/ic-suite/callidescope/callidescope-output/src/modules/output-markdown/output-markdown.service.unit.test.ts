@@ -16,7 +16,7 @@ import type {
   ResolvedCallidescopeMarkdownOutputConfiguration,
   WriteMarkdownOutput,
 } from "@callidescope/configuration";
-import type { LoggerService } from "@codebase/logger";
+import type { LoggerService } from "@codebase/logging";
 import type { DeepMocked } from "@golevelup/ts-vitest";
 
 /** Builds a markdown destination pointing at the given path. */

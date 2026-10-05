@@ -78,7 +78,7 @@ export class ReadmeProjectsService {
     return readFileSync(path.join(workspaceRoot, ROOT_README_PATH), "utf8");
   }
 
-  /** Every workspace project's scope-relative path, e.g. `packages/logger`. */
+  /** Every workspace project's scope-relative path, e.g. `packages/logging`. */
   public resolveWorkspaceProjectPaths(workspaceRoot: string): string[] {
     const projectPaths: string[] = [];
 

@@ -11,7 +11,7 @@ import {
   type Pronunciation,
   Translation,
 } from "@codebase/lexico-entities";
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { createRepositoryMock } from "../../../testing/mocks";
 import { EtymologyService } from "../etymology/etymology.service";

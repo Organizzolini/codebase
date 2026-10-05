@@ -2,7 +2,7 @@ import * as fs from "node:fs/promises";
 
 import { Injectable } from "@nestjs/common";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import type { IngestTextArguments, LibraryEntry } from "./literature.types";
 import type { Text } from "@codebase/lexico-entities";

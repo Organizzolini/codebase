@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { PullRequestReleaseSignificanceGithubService } from "./pull-request-release-significance-github.service";
 import { PullRequestReleaseSignificanceCommand } from "./pull-request-release-significance.command";

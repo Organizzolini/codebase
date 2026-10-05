@@ -6,7 +6,7 @@ import { Like, type Repository } from "typeorm";
 import { beforeAll, describe, expect, it } from "vitest";
 
 import { Lexeme, Translation } from "@codebase/lexico-entities";
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { createRepositoryMock } from "../../../testing/mocks";
 

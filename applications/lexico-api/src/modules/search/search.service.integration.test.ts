@@ -19,7 +19,7 @@ import { MacronsService } from "../macrons/macrons.service";
 import { SearchMatchSource } from "./search.entities";
 import { SearchService } from "./search.service";
 
-import type { LoggerService } from "@codebase/logger";
+import type { LoggerService } from "@codebase/logging";
 
 describe("search service integration suite", () => {
   it("integrates Latin dictionary search across exact lemma, word forms, prefix, and enclitic parsing", async () => {

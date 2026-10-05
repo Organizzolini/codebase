@@ -15,7 +15,7 @@
   },
   "description": "Markdown badge rendering and JSON report formatting for Codometer measurements",
   "devDependencies": {
-    "@codebase/logger": "workspace:*",
+    "@codebase/logging": "workspace:*",
     "@golevelup/ts-vitest": "catalog:",
     "@nestjs/testing": "catalog:",
     "@nx/eslint-plugin": "catalog:",

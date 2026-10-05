@@ -12,7 +12,7 @@ import {
 import { ProjectReportsService } from "@callidescope/output";
 import { Injectable } from "@nestjs/common";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { INCLUDE_CONSTRUCTOR_EDGES } from "./callidescope.constants";
 

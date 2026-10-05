@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { IssueMetadataGithubService } from "./issue-metadata-github.service";
 import { IssueMetadataCommand } from "./issue-metadata.command";

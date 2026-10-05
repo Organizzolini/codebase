@@ -4,7 +4,7 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { SynchronizationService } from "./synchronization.service";
 
-import type { LoggerService } from "@codebase/logger";
+import type { LoggerService } from "@codebase/logging";
 
 describe(SynchronizationService, () => {
   let service: SynchronizationService;

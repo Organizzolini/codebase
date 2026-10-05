@@ -5,7 +5,7 @@ import * as cheerio from "cheerio";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { Lexeme, PrincipalPart } from "@codebase/lexico-entities";
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { createRepositoryMock } from "../../../testing/mocks";
 

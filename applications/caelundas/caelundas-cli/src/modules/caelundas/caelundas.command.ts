@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Command, CommandRunner } from "nest-commander";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { CalendarService } from "../calendar/calendar.service";
 import { InputService } from "../input/input.service";

@@ -1,12 +1,12 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "name": "logger",
+  "name": "logging",
   "projectType": "library",
-  "sourceRoot": "packages/logger",
+  "sourceRoot": "packages/logging",
   "tags": [
     "framework:nestjs",
     "language:typescript",
-    "name:logger",
+    "name:logging",
     "type:package"
   ],
   "targets": {
@@ -16,13 +16,13 @@
         "assets": [
           {
             "glob": "README.md",
-            "input": "packages/logger",
+            "input": "packages/logging",
             "output": "."
           }
         ],
-        "main": "packages/logger/src/index.ts",
-        "outputPath": "packages/logger/dist",
-        "tsConfig": "packages/logger/tsconfig.build.json"
+        "main": "packages/logging/src/index.ts",
+        "outputPath": "packages/logging/dist",
+        "tsConfig": "packages/logging/tsconfig.build.json"
       },
       "outputs": ["{options.outputPath}"]
     },

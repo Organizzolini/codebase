@@ -5,7 +5,7 @@ import path from "node:path";
 import { Injectable } from "@nestjs/common";
 import postcss from "postcss";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { CSS_MEDIA_AT_RULE, EMPTY_CSS_RESULT } from "./css.constants";
 

@@ -23,7 +23,7 @@ nx run {{nameKebabCase}}:start
 - **Pagination**: Relay connections via `nestjs-graphql-connection`
 - **Dataloaders**: `dataloader` (request-scoped, prevents N+1 queries)
 - **Env validation**: `@nestjs/config` + `zod` (`environmentSchema` in `.constants.ts`)
-- **Logging**: `@codebase/logger` — a `pino`-backed `LoggerService` (`Scope.TRANSIENT`)
+- **Logging**: `@codebase/logging` — a `pino`-backed `LoggerService` (`Scope.TRANSIENT`)
 - **Language**: Strict TypeScript
 
 ### Execution Flow
@@ -106,7 +106,7 @@ This creates 13 files in `src/modules/<domain>/`. After generation:
 
 ### Logging
 
-`LoggerService` and `LoggerModule` come from `@codebase/logger` — this project does not define its own logger. Add `"@codebase/logger": "workspace:*"` to `dependencies`, then import `LoggerModule` once in the root module; it is `@Global()`, so feature modules inject `LoggerService` without importing it.
+`LoggerService` and `LoggerModule` come from `@codebase/logging` — this project does not define its own logger. Add `"@codebase/logging": "workspace:*"` to `dependencies`, then import `LoggerModule` once in the root module; it is `@Global()`, so feature modules inject `LoggerService` without importing it.
 
 `LoggerService` is `Scope.TRANSIENT` — each injecting class gets its own instance. Always call `setContext` in the constructor:
 
@@ -282,7 +282,7 @@ See the [triage-integration skill](../../.agents/skills/triage-integration/SKILL
 - [src/main.ts](src/main.ts): Application bootstrap
 - [src/modules/{{nameKebabCase}}/{{nameKebabCase}}.module.ts](src/modules/{{nameKebabCase}}/{{nameKebabCase}}.module.ts): Root NestJS module
 - [src/modules/{{nameKebabCase}}/{{nameKebabCase}}.constants.ts](src/modules/{{nameKebabCase}}/{{nameKebabCase}}.constants.ts): `environmentSchema` (Zod)
-- `@codebase/logger` (`packages/logger`): shared pino-backed `LoggerService` and `LoggerModule`
+- `@codebase/logging` (`packages/logging`): shared pino-backed `LoggerService` and `LoggerModule`
 - [src/modules/sample/sample.module.ts](src/modules/sample/sample.module.ts): Example GraphQL module
 - [project.json](project.json): Nx targets (`start`, `test`, `lint`, `typecheck`, `format`)
 - [.env.default](.env.default): Environment variable template

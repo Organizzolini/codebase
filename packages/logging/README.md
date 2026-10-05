@@ -22,7 +22,7 @@ Import `LoggerModule` once in the root module. It is `@Global()`, so feature
 modules inject `LoggerService` without importing anything themselves:
 
 ```ts
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 @Module({
   imports: [LoggerModule],
@@ -35,7 +35,7 @@ instance. Always call `setContext` in the constructor so every line is tagged
 with the originating class:
 
 ```ts
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 @Injectable()
 export class MyService {
@@ -71,7 +71,7 @@ re-deriving timestamps and output paths:
 ## Development
 
 ```bash
-nx run logger:vitest
+nx run logging:vitest
 ```
 
 ## License
@@ -82,7 +82,7 @@ MIT — see [LICENSE](../../LICENSE).
 
 ## 🔭 Callidescope
 
-Call stacks traced through `packages/logger`, deepest first. Each frame shows what it takes, what it returns, and what its documentation says.
+Call stacks traced through `packages/logging`, deepest first. Each frame shows what it takes, what it returns, and what its documentation says.
 
 | Measure | Value |
 | --- | --- |
@@ -108,12 +108,12 @@ What this project is judged against, as declared in its own `callidescope.config
 **1. `CallExpression`** — depth 4 · orphan-root
 
 ```text
-🚀 CallExpression(node: SimpleCallExpression & Rule.NodeParentExtension): void [packages/logger/src/lib/conventional-log-message.eslint-rule.ts:174]
-  └─> checkMessageArgumentConvention(argument: MessageArgumentShape): ConventionalLogMessageViolation | undefined [packages/logger/src/lib/conventional-log-message.eslint-rule.ts:91]
+🚀 CallExpression(node: SimpleCallExpression & Rule.NodeParentExtension): void [packages/logging/src/lib/conventional-log-message.eslint-rule.ts:174]
+  └─> checkMessageArgumentConvention(argument: MessageArgumentShape): ConventionalLogMessageViolation | undefined [packages/logging/src/lib/conventional-log-message.eslint-rule.ts:91]
      ↳ Extracts a message argument's static text, if it has one, and checks it against the logging convention.
-    └─> checkConventionalMessage(text: string): ConventionalLogMessageViolation | undefined [packages/logger/src/lib/conventional-log-message.eslint-rule.ts:61]
+    └─> checkConventionalMessage(text: string): ConventionalLogMessageViolation | undefined [packages/logging/src/lib/conventional-log-message.eslint-rule.ts:61]
        ↳ Checks a static message's text against the logging convention.
-      └─> parseLogMessage(message: string): ParsedLogMessage [packages/logger/src/lib/conventional-log-message.eslint-rule.ts:124]
+      └─> parseLogMessage(message: string): ParsedLogMessage [packages/logging/src/lib/conventional-log-message.eslint-rule.ts:124]
          ↳ Splits a leading emoji off a message, leaving prose behind.
 ```
 
@@ -121,9 +121,9 @@ What this project is judged against, as declared in its own `callidescope.config
 
 | Callable | Breadth | Calls directly | Location |
 | --- | --- | --- | --- |
-| `checkConventionalMessage` | 2 | `parseLogMessage`, `isConventionalVerb` | `packages/logger/src/lib/conventional-log-message.eslint-rule.ts:61` |
-| `CallExpression` | 2 | `isLoggerObjectText`, `checkMessageArgumentConvention` | `packages/logger/src/lib/conventional-log-message.eslint-rule.ts:174` |
-| `checkMessageArgumentConvention` | 1 | `checkConventionalMessage` | `packages/logger/src/lib/conventional-log-message.eslint-rule.ts:91` |
+| `checkConventionalMessage` | 2 | `parseLogMessage`, `isConventionalVerb` | `packages/logging/src/lib/conventional-log-message.eslint-rule.ts:61` |
+| `CallExpression` | 2 | `isLoggerObjectText`, `checkMessageArgumentConvention` | `packages/logging/src/lib/conventional-log-message.eslint-rule.ts:174` |
+| `checkMessageArgumentConvention` | 1 | `checkConventionalMessage` | `packages/logging/src/lib/conventional-log-message.eslint-rule.ts:91` |
 <!-- callidescope:end -->
 
 ## 🕸️ Codependix
@@ -152,32 +152,32 @@ graph LR
   conformetry_nx["conformetry-nx"]
   lexico_api["lexico-api"]
   lexico_ingestion["lexico-ingestion"]
-  logger["logger"]
+  logging["logging"]
   meanderaw_cli["meanderaw-cli"]
   synchronization["synchronization"]
   validation["validation"]
-  caelundas_cli --> logger
-  callidescope_cli --> logger
-  callidescope_graph --> logger
-  callidescope_nx --> logger
-  callidescope_output --> logger
-  codependix_cli --> logger
-  codependix_examples --> logger
-  codependix_nestjs_modules --> logger
-  codependix_output --> logger
-  codometer_cli --> logger
-  codometer_languages --> logger
-  codometer_measurement --> logger
-  codometer_output --> logger
-  conformetry_cli --> logger
-  conformetry_nx --> logger
-  lexico_api --> logger
-  lexico_ingestion --> logger
-  meanderaw_cli --> logger
-  synchronization --> logger
-  validation --> logger
+  caelundas_cli --> logging
+  callidescope_cli --> logging
+  callidescope_graph --> logging
+  callidescope_nx --> logging
+  callidescope_output --> logging
+  codependix_cli --> logging
+  codependix_examples --> logging
+  codependix_nestjs_modules --> logging
+  codependix_output --> logging
+  codometer_cli --> logging
+  codometer_languages --> logging
+  codometer_measurement --> logging
+  codometer_output --> logging
+  conformetry_cli --> logging
+  conformetry_nx --> logging
+  lexico_api --> logging
+  lexico_ingestion --> logging
+  meanderaw_cli --> logging
+  synchronization --> logging
+  validation --> logging
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
-  class logger subject
+  class logging subject
 ```
 <!-- codependix:end name="codependix-nx-projects" -->
 

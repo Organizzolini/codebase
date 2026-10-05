@@ -3,7 +3,7 @@ import { ConfigModule } from "@nestjs/config";
 import { DiscoveryModule } from "@nestjs/core";
 
 import { environmentSchema } from "./constants";
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 /**
  * Root NestJS application module.

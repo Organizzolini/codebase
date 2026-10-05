@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { IssueMetadataGithubService } from "./issue-metadata-github.service";
 import { IssueMetadataCommand } from "./issue-metadata.command";

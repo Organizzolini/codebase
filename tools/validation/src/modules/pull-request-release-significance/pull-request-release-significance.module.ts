@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { PullRequestReleaseSignificanceGithubService } from "./pull-request-release-significance-github.service";
 import { PullRequestReleaseSignificanceCommand } from "./pull-request-release-significance.command";

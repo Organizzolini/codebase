@@ -3,7 +3,7 @@ import { Test } from "@nestjs/testing";
 import moment, { type Moment } from "moment-timezone";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { MARGIN_MINUTES } from "../caelundas/caelundas.constants";
 import { CalendarService } from "../calendar/calendar.service";

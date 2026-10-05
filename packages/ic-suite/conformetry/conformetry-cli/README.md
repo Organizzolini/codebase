@@ -251,12 +251,12 @@ The same three numbers — met, total, percentage — are reported at every leve
 
 ```text
 Conformance scores:
-  ✗ packages/logger/src/modules/logger (nestjs-service-module) — 149/151 requirements met (98.7%), below threshold 100.0%
-  ✗ packages/logger/src/modules/logger/logger (nestjs-service-file) — 108/109 requirements met (99.1%), below threshold 100.0%
+  ✗ packages/logging/src/modules/logger (nestjs-service-module) — 149/151 requirements met (98.7%), below threshold 100.0%
+  ✗ packages/logging/src/modules/logger/logger (nestjs-service-file) — 108/109 requirements met (99.1%), below threshold 100.0%
   Total — 257/260 requirements met (98.8%) across 2 instance(s), 2 below threshold
 
   1. file: logger.types.ts — 1/2 requirements met (50.0%)
-     Instance: packages/logger/src/modules/logger/logger.types.ts
+     Instance: packages/logging/src/modules/logger/logger.types.ts
      Template: configuration/conformetry-templates/nestjs-service-module/{{nameKebabCase}}/{{nameKebabCase}}.types.ts
 
      1. Missing comment // 🏷️ Types
@@ -909,13 +909,13 @@ graph LR
   conformetry_generation["conformetry-generation"]
   conformetry_output["conformetry-output"]
   conformetry_validation["conformetry-validation"]
-  logger["logger"]
+  logging["logging"]
   conformetry_cli --> conformetry_configuration
   conformetry_cli --> conformetry_core
   conformetry_cli --> conformetry_generation
   conformetry_cli --> conformetry_output
   conformetry_cli --> conformetry_validation
-  conformetry_cli --> logger
+  conformetry_cli --> logging
   conformetry_examples -.-> conformetry_cli
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class conformetry_cli subject

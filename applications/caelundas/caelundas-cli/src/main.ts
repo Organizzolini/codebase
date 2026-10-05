@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { CommandFactory } from "nest-commander";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { MainModule } from "./main.module";
 

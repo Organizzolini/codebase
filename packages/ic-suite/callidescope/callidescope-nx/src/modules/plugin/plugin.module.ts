@@ -4,7 +4,7 @@ import { WorkspaceModule } from "@callidescope/graph";
 import { ProjectReportsModule, ReportModule } from "@callidescope/output";
 import { Module } from "@nestjs/common";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { OptionsModule } from "../options/options.module";
 import { ProjectsModule } from "../projects/projects.module";

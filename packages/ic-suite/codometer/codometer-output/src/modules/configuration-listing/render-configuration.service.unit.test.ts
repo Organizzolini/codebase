@@ -10,10 +10,10 @@ import type {
 import type { ResolvedCodometerConfiguration } from "@codometer/configuration";
 
 const LIMIT_ROW: ConfiguredLimitRow = {
-  directory: "packages/logger",
+  directory: "packages/logging",
   label: "—",
   metric: "Compiled JavaScript.size",
-  path: "packages/logger/codometer.config.ts",
+  path: "packages/logging/codometer.config.ts",
   severity: "fail",
   value: "6.00 kB",
 };
@@ -50,7 +50,7 @@ describe(RenderConfigurationService, () => {
     });
 
     expect(document).toContain("| Directory | Metric | Label |");
-    expect(document).toContain("`packages/logger/codometer.config.ts`");
+    expect(document).toContain("`packages/logging/codometer.config.ts`");
     expect(document).toContain("6.00 kB");
   });
 
@@ -126,9 +126,9 @@ describe(RenderConfigurationService, () => {
             ],
             python: { command: "uv run python" },
           } satisfies ResolvedCodometerConfiguration,
-          directory: "packages/logger",
+          directory: "packages/logging",
           error: undefined,
-          path: "packages/logger/codometer.config.ts",
+          path: "packages/logging/codometer.config.ts",
         },
       ],
       format: "markdown",

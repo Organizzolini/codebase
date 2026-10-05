@@ -2,7 +2,7 @@ import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { mockProcessExit } from "../../../testing/mocks";
 
@@ -41,7 +41,7 @@ describe(CatalogManifestsCommand, () => {
     });
     vi.mocked(
       catalogManifestsService.resolveWorkspaceManifestPaths,
-    ).mockReturnValue(["package.json", "packages/logger/package.json"]);
+    ).mockReturnValue(["package.json", "packages/logging/package.json"]);
     vi.mocked(catalogManifestsService.readManifest).mockReturnValue({});
   });
 
@@ -91,7 +91,7 @@ describe(CatalogManifestsCommand, () => {
       manifestPath === "package.json"
         ? ["package.json -> dependencies.zod must use catalog: (found ^3.0.0)"]
         : [
-            "packages/logger/package.json -> dependencies.pino must use catalog: (found ^9.0.0)",
+            "packages/logging/package.json -> dependencies.pino must use catalog: (found ^9.0.0)",
           ],
     );
 
@@ -104,7 +104,7 @@ describe(CatalogManifestsCommand, () => {
     expect(reportLines).toStrictEqual([
       "Catalog policy violations found:",
       "- package.json -> dependencies.zod must use catalog: (found ^3.0.0)",
-      "- packages/logger/package.json -> dependencies.pino must use catalog: (found ^9.0.0)",
+      "- packages/logging/package.json -> dependencies.pino must use catalog: (found ^9.0.0)",
     ]);
   });
 });

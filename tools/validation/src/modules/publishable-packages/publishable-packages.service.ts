@@ -11,7 +11,7 @@ import path from "node:path";
 
 import { Injectable } from "@nestjs/common";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import {
   TARBALL_VERSION_SUFFIX_PATTERN,

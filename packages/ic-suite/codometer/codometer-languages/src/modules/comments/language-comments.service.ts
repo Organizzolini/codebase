@@ -4,7 +4,7 @@ import path from "node:path";
 import { CODOMETER_COMMENT_LANGUAGES } from "@codometer/configuration";
 import { Injectable } from "@nestjs/common";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { CommentsService } from "./comments.service";
 import { CssCommentsService } from "./css-comments.service";

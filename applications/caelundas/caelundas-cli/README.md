@@ -1847,8 +1847,8 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 ```mermaid
 graph LR
   caelundas["caelundas"]
-  logger["logger"]
-  caelundas --> logger
+  logging["logging"]
+  caelundas --> logging
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class caelundas subject
 ```

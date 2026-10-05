@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { MARGIN_MINUTES } from "../caelundas/caelundas.constants";
 import { EphemerisService } from "../ephemeris/ephemeris.service";

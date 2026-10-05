@@ -8,7 +8,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@codebase/logger": "workspace:*",
+    "@codebase/logging": "workspace:*",
     "@golevelup/ts-vitest": "catalog:",
     "@nestjs/testing": "catalog:",
     "@nx/eslint-plugin": "catalog:",

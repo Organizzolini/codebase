@@ -1,4 +1,4 @@
-import type { LoggerService } from "@codebase/logger";
+import type { LoggerService } from "@codebase/logging";
 
 // 🏷️ Types
 

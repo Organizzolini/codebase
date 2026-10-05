@@ -15,7 +15,7 @@ import {
 import { Injectable } from "@nestjs/common";
 import { Command, CommandRunner, Option } from "nest-commander";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import type { GraphRunContext } from "@codependix/boundaries";
 import type { MapCommandOptions } from "@codependix/configuration";

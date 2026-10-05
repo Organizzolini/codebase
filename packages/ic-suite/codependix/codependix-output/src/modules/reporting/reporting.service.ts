@@ -2,7 +2,7 @@ import { BoundaryReportService } from "@codependix/boundaries";
 import { InputError } from "@codependix/configuration";
 import { Injectable } from "@nestjs/common";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import type { MapRunResult } from "../graph-run/graph-run.types";
 import type { BoundaryCheckOutcome } from "@codependix/boundaries";

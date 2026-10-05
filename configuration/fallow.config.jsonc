@@ -182,7 +182,7 @@
     "pino-pretty",
     // Invoked by the squawk target rather than imported.
     "squawk-cli",
-    // Runtime dependency of the inlined @codebase/logger utility.
+    // Runtime dependency of the inlined @codebase/logging utility.
     "pino",
     // Reached only through a runtime transport string in Pino for development-mode
     // pretty printing, so invisible to static import analysis.

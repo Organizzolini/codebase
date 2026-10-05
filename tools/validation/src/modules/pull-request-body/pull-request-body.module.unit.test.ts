@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { PullRequestBodyCommand } from "./pull-request-body.command";
 import { PullRequestBodyModule } from "./pull-request-body.module";

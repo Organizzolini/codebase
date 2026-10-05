@@ -5,7 +5,7 @@ import { pathToFileURL } from "node:url";
 import { Injectable } from "@nestjs/common";
 import { ModulesContainer, NestFactory } from "@nestjs/core";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { SyntheticRootModule } from "./nestjs-project-synthetic.module";
 import {

@@ -36,7 +36,7 @@ export const FILE_IMPORTS_MARKDOWN_SUBHEADING = "File Imports";
 /**
  * The intro line placed under a newly auto-created `## 🕸️ Codependix`
  * heading — copied verbatim from the wording a human already placed by hand
- * in `packages/logger/README.md`, so an auto-created section reads exactly
+ * in `packages/logging/README.md`, so an auto-created section reads exactly
  * like one a person wrote.
  */
 export const MARKDOWN_SECTION_INTRO_LINE =

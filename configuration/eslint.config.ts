@@ -22,7 +22,7 @@ import eslintPluginUnicorn from "eslint-plugin-unicorn";
 import eslintPluginYml from "eslint-plugin-yml";
 import tseslint from "typescript-eslint";
 
-import { conventionalLogMessagePlugin } from "@codebase/logger/eslint";
+import { conventionalLogMessagePlugin } from "@codebase/logging/eslint";
 
 import type { ConfigWithExtends } from "typescript-eslint";
 
@@ -413,7 +413,7 @@ export default [
       "@nx/dependency-checks": [
         "error",
         {
-          ignoredDependencies: ["@codebase/logger"],
+          ignoredDependencies: ["@codebase/logging"],
         },
       ],
       "@nx/enforce-module-boundaries": [
@@ -437,7 +437,7 @@ export default [
             {
               onlyDependOnLibsWithTags: [
                 "name:callidescope-core",
-                "name:logger",
+                "name:logging",
               ],
               sourceTag: "name:callidescope-configuration",
             },
@@ -445,7 +445,7 @@ export default [
               onlyDependOnLibsWithTags: [
                 "name:callidescope-configuration",
                 "name:callidescope-core",
-                "name:logger",
+                "name:logging",
               ],
               sourceTag: "name:callidescope-graph",
             },
@@ -454,7 +454,7 @@ export default [
                 "name:callidescope-configuration",
                 "name:callidescope-core",
                 "name:callidescope-graph",
-                "name:logger",
+                "name:logging",
               ],
               sourceTag: "name:callidescope-output",
             },
@@ -464,7 +464,7 @@ export default [
                 "name:callidescope-core",
                 "name:callidescope-graph",
                 "name:callidescope-output",
-                "name:logger",
+                "name:logging",
               ],
               sourceTag: "name:callidescope-cli",
             },
@@ -479,7 +479,7 @@ export default [
                 "name:callidescope-core",
                 "name:callidescope-graph",
                 "name:callidescope-output",
-                "name:logger",
+                "name:logging",
               ],
               sourceTag: "name:callidescope-nx",
             },
@@ -503,7 +503,7 @@ export default [
               onlyDependOnLibsWithTags: [
                 "name:codometer-configuration",
                 "name:codometer-core",
-                "name:logger",
+                "name:logging",
               ],
               sourceTag: "name:codometer-languages",
             },
@@ -512,7 +512,7 @@ export default [
                 "name:codometer-configuration",
                 "name:codometer-core",
                 "name:codometer-languages",
-                "name:logger",
+                "name:logging",
               ],
               sourceTag: "name:codometer-measurement",
             },
@@ -521,7 +521,7 @@ export default [
                 "name:codometer-configuration",
                 "name:codometer-core",
                 "name:codometer-measurement",
-                "name:logger",
+                "name:logging",
               ],
               sourceTag: "name:codometer-output",
             },
@@ -531,7 +531,7 @@ export default [
                 "name:codometer-core",
                 "name:codometer-measurement",
                 "name:codometer-output",
-                "name:logger",
+                "name:logging",
               ],
               sourceTag: "name:codometer-cli",
             },
@@ -594,7 +594,7 @@ export default [
                 "name:conformetry-generation",
                 "name:conformetry-output",
                 "name:conformetry-validation",
-                "name:logger",
+                "name:logging",
               ],
               sourceTag: "name:conformetry",
             },
@@ -605,7 +605,7 @@ export default [
                 "name:conformetry-generation",
                 "name:conformetry-output",
                 "name:conformetry-validation",
-                "name:logger",
+                "name:logging",
               ],
               sourceTag: "name:conformetry-nx",
             },
@@ -1412,7 +1412,7 @@ export default [
       "@nx/dependency-checks": [
         "error",
         {
-          ignoredDependencies: ["@codebase/logger"],
+          ignoredDependencies: ["@codebase/logging"],
         },
       ],
       // JSONC style rules

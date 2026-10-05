@@ -3,7 +3,7 @@ import _ from "lodash";
 import moment from "moment";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import {
   ingressBodies as decanIngressBodies,

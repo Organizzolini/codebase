@@ -12,7 +12,7 @@ import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { MissingMarkdownPathError } from "./markdown.constants";
 import { MarkdownService } from "./markdown.service";

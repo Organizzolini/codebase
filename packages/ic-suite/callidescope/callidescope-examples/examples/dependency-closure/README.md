@@ -55,7 +55,7 @@ starting roots and three arrive through the closure:
 | `.../../examples/gated-leaf` | Named — a nested project [`gated-leaf`](../gated-leaf/README.md) explains, and says why it is named rather than reached |
 | `packages/ic-suite/callidescope/callidescope-configuration` | The fixture above imports it, and [`callidescope.workspace.config.ts`](../../callidescope.workspace.config.ts) imports a type from it |
 | `packages/ic-suite/codometer/codometer-configuration` | Reached through the shared `configuration/codometer.config.ts` that this package's own [`codometer.config.ts`](../../codometer.config.ts) spreads |
-| `packages/logger` | Reached through the shared `configuration/eslint.config.ts`, which imports `@codebase/logger/eslint` |
+| `packages/logging` | Reached through the shared `configuration/eslint.config.ts`, which imports `@codebase/logging/eslint` |
 
 The last two arrive through the shared configuration directory the closure
 refuses to enter, which is not the contradiction it looks like. Refusing
@@ -70,7 +70,7 @@ project's program, not the dependency list its `package.json` declares. A
 manifest says what a package may import; the program says what it did. The two
 part company in both directions: a declared dependency nothing imports never
 widens a closure, and a package no manifest here names widens one all the same
-if some file the compiler read imported it — which is how `packages/logger`
+if some file the compiler read imported it — which is how `packages/logging`
 gets into this run, through a shared configuration file rather than through
 anything this package declares.
 

@@ -3,7 +3,7 @@
     "@apollo/server": "catalog:",
     "@as-integrations/express5": "catalog:",
     "@codebase/lexico-entities": "workspace:*",
-    "@codebase/logger": "workspace:*",
+    "@codebase/logging": "workspace:*",
     "@nestjs/apollo": "catalog:",
     "@nestjs/common": "catalog:",
     "@nestjs/config": "catalog:",

@@ -6,7 +6,7 @@ import { remark } from "remark";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkGfm from "remark-gfm";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { EMPTY_MARKDOWN_RESULT, NODE_COUNTER_KEYS } from "./markdown.constants";
 

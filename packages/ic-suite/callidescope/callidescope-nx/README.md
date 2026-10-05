@@ -217,8 +217,8 @@ projects the run calls its own — not how far a stack runs.
 ### Executor options
 
 ```bash
-nx run logger:trace --tags=type:package
-nx run logger:depth --addresses="a.ts#A.b" --projects=callidescope-cli
+nx run logging:trace --tags=type:package
+nx run logging:depth --addresses="a.ts#A.b" --projects=callidescope-cli
 ```
 
 All three executors take the same scoping options.
@@ -315,13 +315,13 @@ graph LR
   callidescope_graph["callidescope-graph"]
   callidescope_nx["callidescope-nx"]
   callidescope_output["callidescope-output"]
-  logger["logger"]
+  logging["logging"]
   callidescope_nx --> callidescope_cli
   callidescope_nx --> callidescope_configuration
   callidescope_nx --> callidescope_core
   callidescope_nx --> callidescope_graph
   callidescope_nx --> callidescope_output
-  callidescope_nx --> logger
+  callidescope_nx --> logging
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class callidescope_nx subject
 ```

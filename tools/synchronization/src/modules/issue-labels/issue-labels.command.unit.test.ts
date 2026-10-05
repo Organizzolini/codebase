@@ -2,7 +2,7 @@ import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { IssueLabelsGithubService } from "./issue-labels-github.service";
 import { IssueLabelsCommand } from "./issue-labels.command";

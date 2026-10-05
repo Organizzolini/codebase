@@ -3,7 +3,7 @@ import { NestFactory } from "@nestjs/core";
 import { ExpressAdapter } from "@nestjs/platform-express";
 import { createLightship } from "lightship";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { environmentSchema } from "./lexico-api.constants";
 import { LexicoApiModule } from "./lexico-api.module";

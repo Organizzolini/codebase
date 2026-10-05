@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 
 import { DatabaseModule } from "@codebase/lexico-entities";
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { ClearModule } from "../clear/clear.module";
 import { CorpusScriptorumEcclesiasticorumLatinorumModule } from "../corpus-scriptorum-ecclesiasticorum-latinorum/corpus-scriptorum-ecclesiasticorum-latinorum.module";

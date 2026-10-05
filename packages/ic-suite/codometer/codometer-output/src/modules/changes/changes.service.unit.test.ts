@@ -6,7 +6,7 @@ import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { ChangesService } from "./changes.service";
 
@@ -128,10 +128,10 @@ describe(ChangesService, () => {
 
   it("logs how many reports it found on each side", () => {
     const workingDirectory = writeWorkspace({
-      ".baseline/packages/logger/codometer-report.json": buildReport([
+      ".baseline/packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({ value: 40 }),
       ]),
-      "packages/logger/codometer-report.json": buildReport([
+      "packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({ value: 50 }),
       ]),
     });
@@ -153,7 +153,7 @@ describe(ChangesService, () => {
       "codometer-report.json": buildReport([buildMetricTarget({ value: 300 })]),
       "packages/ic-suite/codometer/codometer-cli/codometer-report.json":
         buildReport([buildMetricTarget({ value: 75 })]),
-      "packages/logger/codometer-report.json": buildReport([
+      "packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({ value: 50 }),
       ]),
       "tools/synchronization/codometer-report.json": buildReport([
@@ -170,7 +170,7 @@ describe(ChangesService, () => {
       "lexico",
       "codebase",
       "codometer-cli",
-      "logger",
+      "logging",
       "synchronization",
     ]);
     expect(rows.every((row) => row.measured)).toBe(true);
@@ -179,7 +179,7 @@ describe(ChangesService, () => {
 
   it("reads every metric, not only the ones denominated in bytes", () => {
     const workingDirectory = writeWorkspace({
-      "packages/logger/codometer-report.json": {
+      "packages/logging/codometer-report.json": {
         targets: [
           {
             empty: false,
@@ -236,9 +236,9 @@ describe(ChangesService, () => {
       ],
     });
     const workingDirectory = writeWorkspace({
-      ".baseline/packages/logger/codometer-report.json":
+      ".baseline/packages/logging/codometer-report.json":
         buildCustomCounterReport(12),
-      "packages/logger/codometer-report.json": buildCustomCounterReport(15),
+      "packages/logging/codometer-report.json": buildCustomCounterReport(15),
     });
 
     const rows = service.collect({
@@ -255,10 +255,10 @@ describe(ChangesService, () => {
 
   it("joins a measured metric to its baseline by name", () => {
     const workingDirectory = writeWorkspace({
-      ".baseline/packages/logger/codometer-report.json": buildReport([
+      ".baseline/packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({ value: 40 }),
       ]),
-      "packages/logger/codometer-report.json": buildReport([
+      "packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({ value: 50 }),
       ]),
     });
@@ -275,10 +275,10 @@ describe(ChangesService, () => {
 
   it("joins on the metric name even when the limit was relabelled", () => {
     const workingDirectory = writeWorkspace({
-      ".baseline/packages/logger/codometer-report.json": buildReport([
+      ".baseline/packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({ label: "Old label", limit: 100, value: 40 }),
       ]),
-      "packages/logger/codometer-report.json": buildReport([
+      "packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({ label: "New label", limit: 100, value: 50 }),
       ]),
     });
@@ -295,7 +295,7 @@ describe(ChangesService, () => {
 
   it("labels a row with its own metric name when the limit wrote no label", () => {
     const workingDirectory = writeWorkspace({
-      "packages/logger/codometer-report.json": buildReport([
+      "packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({ name: "Library bundle", value: 50 }),
       ]),
     });
@@ -311,11 +311,11 @@ describe(ChangesService, () => {
 
   it("marks a baseline metric the rebuild dropped as removed", () => {
     const workingDirectory = writeWorkspace({
-      ".baseline/packages/logger/codometer-report.json": buildReport([
+      ".baseline/packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({ value: 40 }),
         buildMetricTarget({ name: "Retired", value: 10 }),
       ]),
-      "packages/logger/codometer-report.json": buildReport([
+      "packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({ value: 50 }),
       ]),
     });
@@ -333,7 +333,7 @@ describe(ChangesService, () => {
 
   it("carries the baseline value for a project this run never rebuilt", () => {
     const workingDirectory = writeWorkspace({
-      ".baseline/packages/logger/codometer-report.json": buildReport([
+      ".baseline/packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({ value: 40 }),
       ]),
     });
@@ -353,7 +353,7 @@ describe(ChangesService, () => {
       "applications/lexico/codometer-report.json": buildReport([
         buildMetricTarget({ empty: true, value: 0 }),
       ]),
-      "packages/logger/codometer-report.json": buildReport([
+      "packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({ empty: false, value: 0 }),
       ]),
     });
@@ -367,7 +367,7 @@ describe(ChangesService, () => {
       rows.map((row) => [row.project, row.empty, row.value]),
     ).toStrictEqual([
       ["lexico", true, 0],
-      ["logger", false, 0],
+      ["logging", false, 0],
     ]);
   });
 
@@ -377,7 +377,7 @@ describe(ChangesService, () => {
     { label: "shaped like the outgoing tool's", report: '[{"name":"x"}]' },
   ])("tolerates a report $label", ({ report }) => {
     const workingDirectory = writeWorkspace({
-      "packages/logger/codometer-report.json": report,
+      "packages/logging/codometer-report.json": report,
     });
 
     expect(
@@ -387,7 +387,7 @@ describe(ChangesService, () => {
       "⚠️ Skipped an unreadable codometer report",
       undefined,
       {
-        reportPath: "packages/logger/codometer-report.json",
+        reportPath: "packages/logging/codometer-report.json",
         workingDirectory,
       },
     );
@@ -395,7 +395,7 @@ describe(ChangesService, () => {
 
   it("leaves a metric nothing limits without a limit or a severity", () => {
     const workingDirectory = writeWorkspace({
-      "packages/logger/codometer-report.json": buildReport([
+      "packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({ value: 90 }),
       ]),
     });
@@ -436,7 +436,7 @@ describe(ChangesService, () => {
 
   it("reports a breached fail beside a breached warn as failing", () => {
     const workingDirectory = writeWorkspace({
-      "packages/logger/codometer-report.json": buildReport([
+      "packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({
           limits: [
             { breached: true, label: null, severity: "warn", value: 40 },
@@ -458,7 +458,7 @@ describe(ChangesService, () => {
 
   it("falls back to the advisory limit when nothing fails the metric", () => {
     const workingDirectory = writeWorkspace({
-      "packages/logger/codometer-report.json": buildReport([
+      "packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({
           limits: [
             { breached: false, label: null, severity: "warn", value: 90 },
@@ -520,7 +520,7 @@ describe(ChangesService, () => {
 
   it("carries a failure through, tagged with the project it came from", () => {
     const workingDirectory = writeWorkspace({
-      "packages/logger/codometer-report.json": {
+      "packages/logging/codometer-report.json": {
         failures: [
           {
             kind: "target",
@@ -541,7 +541,7 @@ describe(ChangesService, () => {
     expect(collection.failures).toStrictEqual([
       {
         kind: "target",
-        project: "logger",
+        project: "logging",
         reason: "the build output is missing",
         subject: "Compiled JavaScript",
       },
@@ -550,13 +550,13 @@ describe(ChangesService, () => {
 
   it("ignores a failure the baseline run hit, which this change did not cause", () => {
     const workingDirectory = writeWorkspace({
-      ".baseline/packages/logger/codometer-report.json": {
+      ".baseline/packages/logging/codometer-report.json": {
         failures: [
           { kind: "target", reason: "broken on main", subject: "Ghost" },
         ],
         targets: [buildMetricTarget({ value: 40 })],
       },
-      "packages/logger/codometer-report.json": buildReport([
+      "packages/logging/codometer-report.json": buildReport([
         buildMetricTarget({ value: 50 }),
       ]),
     });
@@ -574,7 +574,7 @@ describe(ChangesService, () => {
     "reports a breached $severity limit at that severity",
     ({ severity }) => {
       const workingDirectory = writeWorkspace({
-        "packages/logger/codometer-report.json": buildReport([
+        "packages/logging/codometer-report.json": buildReport([
           buildMetricTarget({ breached: true, limit: 50, severity, value: 90 }),
         ]),
       });

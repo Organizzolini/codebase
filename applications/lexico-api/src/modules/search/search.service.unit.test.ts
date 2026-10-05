@@ -14,7 +14,7 @@ import {
   WordForm,
   WordLexeme,
 } from "@codebase/lexico-entities";
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { createRepositoryMock } from "../../../testing/mocks";
 import { MacronsService } from "../macrons/macrons.service";

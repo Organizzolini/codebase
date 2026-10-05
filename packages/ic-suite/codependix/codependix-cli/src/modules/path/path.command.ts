@@ -11,7 +11,7 @@ import {
 import { Injectable } from "@nestjs/common";
 import { Command, CommandRunner, Option } from "nest-commander";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { PATH_MISSING_ARGUMENTS_ERROR } from "./path.constants";
 

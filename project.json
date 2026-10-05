@@ -101,7 +101,7 @@
         "{workspaceRoot}/**/package.json",
         {
           "input": "production",
-          "projects": ["logger", "validation"]
+          "projects": ["logging", "validation"]
         },
         {
           "externalDependencies": [
@@ -133,7 +133,7 @@
         "{workspaceRoot}/pnpm-workspace.yaml",
         {
           "input": "production",
-          "projects": ["logger", "validation"]
+          "projects": ["logging", "validation"]
         },
         {
           "externalDependencies": [
@@ -162,7 +162,7 @@
         "{workspaceRoot}/README.md",
         {
           "input": "production",
-          "projects": ["logger", "validation"]
+          "projects": ["logging", "validation"]
         },
         {
           "externalDependencies": [

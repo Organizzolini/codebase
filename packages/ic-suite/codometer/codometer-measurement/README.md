@@ -37,12 +37,12 @@ graph LR
   codometer_languages["codometer-languages"]
   codometer_measurement["codometer-measurement"]
   codometer_output["codometer-output"]
-  logger["logger"]
+  logging["logging"]
   codometer_cli --> codometer_measurement
   codometer_measurement --> codometer_configuration
   codometer_measurement --> codometer_core
   codometer_measurement --> codometer_languages
-  codometer_measurement --> logger
+  codometer_measurement --> logging
   codometer_output --> codometer_measurement
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class codometer_measurement subject

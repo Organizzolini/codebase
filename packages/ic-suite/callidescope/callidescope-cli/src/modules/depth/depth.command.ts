@@ -4,7 +4,7 @@ import { AddressReportService } from "@callidescope/output";
 import { Injectable } from "@nestjs/common";
 import { Command, CommandRunner, Option } from "nest-commander";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { REJECTED_ADDRESS } from "../address-lookup/address-lookup.constants";
 import { AddressLookupService } from "../address-lookup/address-lookup.service";
@@ -13,7 +13,7 @@ import { readRefusalHeadline } from "../callidescope/callidescope.constants";
 import type { LocatedWorkspace } from "../address-lookup/address-lookup.types";
 import type { AddressCommandOptions } from "@callidescope/configuration";
 import type { CallableId } from "@callidescope/core";
-import type { LogData } from "@codebase/logger";
+import type { LogData } from "@codebase/logging";
 
 /**
  * CLI entry point that prints the call stacks above and below one callable.

@@ -82,7 +82,7 @@ const config: KnipConfig = {
     // typescript-eslint and @swc-node/register still require TypeScript 6.
     "typescript-7",
     "squawk-cli", // SQL linter CLI, invoked via nx:run-commands in project.json
-    // Runtime dependency of the inlined @codebase/logger utility
+    // Runtime dependency of the inlined @codebase/logging utility
     "pino",
     // Reached only through a runtime transport string in Pino for development-mode pretty printing, so invisible to static import analysis
     "pino-pretty",
@@ -250,7 +250,7 @@ const config: KnipConfig = {
     },
 
     // logger: Shared pino-backed NestJS LoggerService and LoggerModule
-    "packages/logger": {
+    "packages/logging": {
       entry: ["src/index.ts"],
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",

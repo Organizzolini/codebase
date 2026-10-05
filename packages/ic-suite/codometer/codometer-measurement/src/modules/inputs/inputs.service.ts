@@ -4,7 +4,7 @@ import path from "node:path";
 import { REPOSITORY_ROOT_MARKERS } from "@codometer/configuration";
 import { Injectable } from "@nestjs/common";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import {
   GLOB_MAGIC_CHARACTERS,
@@ -217,7 +217,7 @@ export class InputsService {
   /**
    * The literal path prefix of a glob, up to its first magic character.
    *
-   * `dist/packages/logger/**` can only match inside `dist/packages/logger`, so
+   * `dist/packages/logging/**` can only match inside `dist/packages/logging`, so
    * that is the only branch of the tree worth reading — the difference between
    * measuring one build directory and enumerating every dependency to find it.
    */

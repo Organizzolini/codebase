@@ -28,7 +28,7 @@ The run is not confined to this package, though. A scoped run also traces every
 project its imports transitively reach, so this one covers five projects: the
 two it is named at — `packages/ic-suite/callidescope/callidescope-examples` and the nested
 `gated-leaf` — plus `packages/ic-suite/callidescope/callidescope-configuration`,
-`packages/ic-suite/codometer/codometer-configuration`, and `packages/logger`. See
+`packages/ic-suite/codometer/codometer-configuration`, and `packages/logging`. See
 [`dependency-closure`](examples/dependency-closure/README.md).
 
 ## Callidescope said X — open this example
@@ -161,7 +161,7 @@ the point:
   the example away with it.
 
 One finding is not a fixture at all. `LoggerService.log` is reported at five
-frames against the four `packages/logger` declares — a real stack in a real
+frames against the four `packages/logging` declares — a real stack in a real
 package the closure reaches, not a fixture. Four is right there: the
 whole-workspace run ignores calls to `LoggerService.*` and measures four, and
 this run deliberately does not ignore them and measures five, so one declared
@@ -204,7 +204,7 @@ it.
 Numbers can also move with no edit here at all. The committed reports cover the
 three projects the closure reaches, so a change to
 `packages/ic-suite/callidescope/callidescope-configuration`, `packages/ic-suite/codometer/codometer-configuration`, or
-`packages/logger` makes them stale. The `examples` target names those packages'
+`packages/logging` makes them stale. The `examples` target names those packages'
 sources in its `inputs`, so the staleness is caught rather than cached over, and
 the three steps above are the fix. Their READMEs are not named there: this run
 measures those packages but publishes nothing into them.
@@ -212,7 +212,7 @@ measures those packages but publishes nothing into them.
 A root `configuration/*.config.ts` moves them too, which is less obvious. Two of
 those projects are in the closure only because this package's own
 `eslint.config.ts` and `codometer.config.ts` spread the root ones, which import
-`@codebase/logger/eslint` and `@codometer/configuration` — so removing an import
+`@codebase/logging/eslint` and `@codometer/configuration` — so removing an import
 there drops a whole project from the committed reports. That glob is in `inputs`
 for exactly that reason, and belongs there rather than in `shared-globals`.
 

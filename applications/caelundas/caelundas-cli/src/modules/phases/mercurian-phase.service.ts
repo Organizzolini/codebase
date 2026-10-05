@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import _ from "lodash";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { symbolByMercurianPhase } from "../caelundas/symbol-caelundas.constants";
 import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";

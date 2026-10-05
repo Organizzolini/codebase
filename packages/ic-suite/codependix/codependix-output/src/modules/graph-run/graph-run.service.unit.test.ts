@@ -7,7 +7,7 @@ import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { ProjectGraphsService } from "../project-graphs/project-graphs.service";
 import { PythonImportsService } from "../python-imports/python-imports.service";

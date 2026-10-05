@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { Command, CommandRunner } from "nest-commander";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { IssueLabelsGithubService } from "./issue-labels-github.service";
 import { ISSUE_NUMBER_PATTERN } from "./issue-labels.constants";

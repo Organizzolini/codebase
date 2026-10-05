@@ -7,7 +7,7 @@ import cheerioTableParser from "cheerio-tableparser";
 import _ from "lodash";
 
 import { Author, Text } from "@codebase/lexico-entities";
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { hasValidTextContent } from "../library.utilities";
 

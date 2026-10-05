@@ -18,7 +18,7 @@
   },
   "description": "Nx plugin providing project-scoped call-stack tracing and depth gating along Nx dependency graphs",
   "devDependencies": {
-    "@codebase/logger": "workspace:*",
+    "@codebase/logging": "workspace:*",
     "@golevelup/ts-vitest": "catalog:",
     "@nestjs/testing": "catalog:",
     "@nx/eslint-plugin": "catalog:",

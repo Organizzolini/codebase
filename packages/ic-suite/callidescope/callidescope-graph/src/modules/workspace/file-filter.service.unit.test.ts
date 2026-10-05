@@ -12,7 +12,7 @@ import { FileFilterService } from "./file-filter.service";
 import { WorkspaceService } from "./workspace.service";
 
 import type { FileFilter, WorkspaceProject } from "./workspace.types";
-import type { LoggerService } from "@codebase/logger";
+import type { LoggerService } from "@codebase/logging";
 import type { DeepMocked } from "@golevelup/ts-vitest";
 
 /** A project whose own configuration file excludes some of its files. */

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { bodies } from "../caelundas/caelundas.constants";
 import { isAspect } from "../caelundas/caelundas.types";

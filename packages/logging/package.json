@@ -27,7 +27,7 @@
     "README.md"
   ],
   "main": "src/index.ts",
-  "name": "@codebase/logger",
+  "name": "@codebase/logging",
   "private": true,
   "publishConfig": {
     "exports": {

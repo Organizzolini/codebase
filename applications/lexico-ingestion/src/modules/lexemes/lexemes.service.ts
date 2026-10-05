@@ -4,7 +4,7 @@ import * as cheerio from "cheerio";
 import { Repository } from "typeorm";
 
 import { Lexeme } from "@codebase/lexico-entities";
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { EtymologyService } from "../etymology/etymology.service";
 import { FormsBuilderService } from "../forms/forms-builder.service";

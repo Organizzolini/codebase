@@ -109,7 +109,7 @@ This repository _is_ an Nx host, so the difference is visible without leaving
 it. Every project that holds instances gets a target nobody wrote:
 
 ```bash
-pnpm exec nx show project logger --json
+pnpm exec nx show project logging --json
 ```
 
 Trimmed to the inferred target, which is what nobody wrote — a real run also
@@ -131,7 +131,7 @@ Because it is a real target with real inputs, validation is cached and joins
 `nx affected`:
 
 ```bash
-pnpm exec nx run logger:conformetry-validate
+pnpm exec nx run logging:conformetry-validate
 pnpm exec nx run-many --target=conformetry-validate --all
 pnpm exec nx affected --target=conformetry-validate --base=main
 ```

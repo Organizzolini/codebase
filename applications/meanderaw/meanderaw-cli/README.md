@@ -4872,9 +4872,9 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 <!-- codependix:start name="codependix-nx-projects" -->
 ```mermaid
 graph LR
-  logger["logger"]
+  logging["logging"]
   meanderaw_cli["meanderaw-cli"]
-  meanderaw_cli --> logger
+  meanderaw_cli --> logging
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class meanderaw_cli subject
 ```

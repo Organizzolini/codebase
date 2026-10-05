@@ -16,7 +16,7 @@ import { EdgesService } from "./edges.service";
 import { SymbolResolutionService } from "./symbol-resolution.service";
 
 import type { CallEdge, UnresolvedCall } from "@callidescope/core";
-import type { LoggerService } from "@codebase/logger";
+import type { LoggerService } from "@codebase/logging";
 import type { DeepMocked } from "@golevelup/ts-vitest";
 
 /** Renders the graph as `caller -> callee` pairs, for readable assertions. */
@@ -372,11 +372,11 @@ describe(EdgesService, () => {
 
   it("drops an edge whose callee matches a configured exclusion glob", () => {
     const projectProgram = buildFixtureProgram({
-      "packages/example/src/modules/a/logger.service.ts": `
+      "packages/example/src/modules/a/logging.service.ts": `
         export class LoggerService { public info(): void {} }
       `,
       "packages/example/src/modules/b/b.service.ts": `
-        import { LoggerService } from "../a/logger.service";
+        import { LoggerService } from "../a/logging.service";
         export function entry(logger: LoggerService): void { logger.info(); }
       `,
     });
@@ -405,12 +405,12 @@ describe(EdgesService, () => {
 
   it("keeps an edge whose callee does not match any configured exclusion glob", () => {
     const projectProgram = buildFixtureProgram({
-      "packages/example/src/modules/a/logger.service.ts": `
+      "packages/example/src/modules/a/logging.service.ts": `
         export class LoggerService { public info(): void {} }
         export class OtherService { public run(): void {} }
       `,
       "packages/example/src/modules/b/b.service.ts": `
-        import { OtherService } from "../a/logger.service";
+        import { OtherService } from "../a/logging.service";
         export function entry(other: OtherService): void { other.run(); }
       `,
     });
@@ -439,11 +439,11 @@ describe(EdgesService, () => {
 
   it("does not record an ignored callee as unresolved either", () => {
     const projectProgram = buildFixtureProgram({
-      "packages/example/src/modules/a/logger.service.ts": `
+      "packages/example/src/modules/a/logging.service.ts": `
         export class LoggerService { public info(): void {} }
       `,
       "packages/example/src/modules/b/b.service.ts": `
-        import { LoggerService } from "../a/logger.service";
+        import { LoggerService } from "../a/logging.service";
         export function entry(logger: LoggerService): void { logger.info(); }
       `,
     });

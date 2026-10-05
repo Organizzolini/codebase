@@ -10,7 +10,7 @@ import {
   vi,
 } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { CorpusService } from "../corpus/corpus.service";
 import { DatabaseService } from "../database/database.service";

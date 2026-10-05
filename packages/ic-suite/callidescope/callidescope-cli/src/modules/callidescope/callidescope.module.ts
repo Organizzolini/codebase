@@ -18,7 +18,7 @@ import {
 } from "@callidescope/output";
 import { Module } from "@nestjs/common";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { CallidescopeCommand } from "./callidescope.command";
 import { CallidescopeService } from "./callidescope.service";

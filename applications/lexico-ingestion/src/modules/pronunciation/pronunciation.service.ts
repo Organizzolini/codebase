@@ -4,7 +4,7 @@ import * as cheerio from "cheerio";
 import { Repository } from "typeorm";
 
 import { Lexeme, Pronunciation } from "@codebase/lexico-entities";
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { PronunciationClassifierService } from "./pronunciation-classifier.service";
 import { classicalSubstitutions } from "./pronunciation.constants";

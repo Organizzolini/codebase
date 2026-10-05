@@ -10,7 +10,7 @@ import type {
   PerseusLibraryTextExtractionProvider,
   PerseusMarkdownFile,
 } from "./perseus-library-text-extraction.provider";
-import type { LoggerService } from "@codebase/logger";
+import type { LoggerService } from "@codebase/logging";
 import type { AnyNode } from "domhandler";
 
 const { mkdirMock, readdirMock, readFileMock, writeFileMock } = vi.hoisted(

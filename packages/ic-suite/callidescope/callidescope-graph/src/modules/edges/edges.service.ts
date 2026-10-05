@@ -3,7 +3,7 @@ import path from "node:path";
 import { Injectable } from "@nestjs/common";
 import ts from "typescript";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { ExternalService } from "../classes/external.service";
 import { ProgramService } from "../program/program.service";

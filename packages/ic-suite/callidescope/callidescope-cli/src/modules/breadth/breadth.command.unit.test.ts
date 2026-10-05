@@ -18,7 +18,7 @@ import {
   vi,
 } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { buildDiscoveredCallable } from "../../../testing/mocks";
 import { AddressLookupService } from "../address-lookup/address-lookup.service";

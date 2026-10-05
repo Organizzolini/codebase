@@ -11,7 +11,7 @@ export default [
       "@nx/dependency-checks": [
         "error",
         {
-          // @codebase/logger: bundled directly into the emitted library bundle by Vite,
+          // @codebase/logging: bundled directly into the emitted library bundle by Vite,
           // so it is a build-time devDependency rather than a runtime dependency.
           // @golevelup/ts-vitest: a devDependency used only in test files, which
           // are outside the build dependency check's scope.
@@ -21,7 +21,7 @@ export default [
           // vitest: referenced via tsconfig "types" array; it's a devDependency and
           // the @nx/dependency-checks rule misidentifies it as a production dependency.
           ignoredDependencies: [
-            "@codebase/logger",
+            "@codebase/logging",
             "@golevelup/ts-vitest",
             "ignore",
             "pino",

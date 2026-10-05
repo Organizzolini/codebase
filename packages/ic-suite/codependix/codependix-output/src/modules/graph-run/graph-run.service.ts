@@ -1,7 +1,7 @@
 import { NeighborhoodService } from "@codependix/nx-projects";
 import { Injectable } from "@nestjs/common";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { ProjectGraphsService } from "../project-graphs/project-graphs.service";
 import { PythonImportsService } from "../python-imports/python-imports.service";

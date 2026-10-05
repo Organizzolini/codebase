@@ -5,7 +5,7 @@ import { Injectable } from "@nestjs/common";
 import * as cheerio from "cheerio";
 import { Command, CommandRunner } from "nest-commander";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { categories } from "./wiktionary.constants";
 

@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { AnnualSolarCycleModule } from "../annual-solar-cycle/annual-solar-cycle.module";
 import { AspectsModule } from "../aspects/aspects.module";

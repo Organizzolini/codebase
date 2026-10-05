@@ -7,7 +7,7 @@
   "devDependencies": {
     "@callidescope/configuration": "workspace:*",
     "@callidescope/nx": "workspace:*",
-    "@codebase/logger": "workspace:*",
+    "@codebase/logging": "workspace:*",
     "@codependix/configuration": "workspace:*",
     "@codometer/configuration": "workspace:*",
     "@commitlint/cli": "catalog:",

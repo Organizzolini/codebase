@@ -114,7 +114,7 @@ measured — its own sources, and whatever inputs the configuration declares for
 it:
 
 ```bash
-cd packages/logger && codometer --check limits
+cd packages/logging && codometer --check limits
 ```
 
 With no `--config`, the configuration is found by walking upward from that
@@ -279,7 +279,7 @@ codometer configuration --limits
 ```text
 | Directory        | Metric                    | Label | Severity | Value   | Declared in                          |
 | ---              | ---                       | ---   | ---      | ---     | ---                                  |
-| packages/logger  | `Compiled JavaScript.size`| —     | fail     | 12.00 kB | `packages/logger/codometer.config.ts`|
+| packages/logging  | `Compiled JavaScript.size`| —     | fail     | 12.00 kB | `packages/logging/codometer.config.ts`|
 ```
 
 It walks for every configuration file beneath the directory it is given — in
@@ -881,12 +881,12 @@ graph LR
   codometer_examples["codometer-examples"]
   codometer_measurement["codometer-measurement"]
   codometer_output["codometer-output"]
-  logger["logger"]
+  logging["logging"]
   codometer_cli --> codometer_configuration
   codometer_cli --> codometer_core
   codometer_cli --> codometer_measurement
   codometer_cli --> codometer_output
-  codometer_cli --> logger
+  codometer_cli --> logging
   codometer_examples -.-> codometer_cli
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class codometer_cli subject

@@ -21,7 +21,7 @@ import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { MapCommand } from "./map.command";
 
@@ -686,10 +686,10 @@ describe(MapCommand, () => {
   });
 
   it("delegates mode resolution to the configuration service", async () => {
-    await run({ directory: "packages/logger" });
+    await run({ directory: "packages/logging" });
 
     expect(configurationService.selectMode).toHaveBeenCalledWith({
-      directory: "packages/logger",
+      directory: "packages/logging",
     });
   });
 

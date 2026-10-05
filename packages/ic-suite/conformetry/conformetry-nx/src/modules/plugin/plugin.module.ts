@@ -4,7 +4,7 @@ import { ReportingModule } from "@conformetry/output";
 import { ValidationModule } from "@conformetry/validation";
 import { Module } from "@nestjs/common";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { AdapterModule } from "../adapter/adapter.module";
 import { GeneratorModule } from "../generator/generator.module";

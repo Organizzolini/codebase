@@ -6,7 +6,7 @@ import { Author, type Text } from "@codebase/lexico-entities";
 
 import { CorpusScriptorumEcclesiasticorumLatinorumLibraryProvider } from "./corpus-scriptorum-ecclesiasticorum-latinorum-library.provider";
 
-import type { LoggerService } from "@codebase/logger";
+import type { LoggerService } from "@codebase/logging";
 
 const { mkdirMock, readdirMock, readFileMock, writeFileMock } = vi.hoisted(
   () => ({

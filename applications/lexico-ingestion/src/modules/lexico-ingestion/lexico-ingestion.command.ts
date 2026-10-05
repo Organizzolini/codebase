@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Command, CommandRunner, Option } from "nest-commander";
 import prompts from "prompts";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { CorpusScriptorumEcclesiasticorumLatinorumCommand } from "../corpus-scriptorum-ecclesiasticorum-latinorum/corpus-scriptorum-ecclesiasticorum-latinorum.command";
 import { DictionaryCommand } from "../dictionary/dictionary.command";

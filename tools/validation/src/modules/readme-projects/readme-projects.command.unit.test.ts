@@ -2,7 +2,7 @@ import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { mockProcessExit } from "../../../testing/mocks";
 
@@ -41,9 +41,9 @@ describe(ReadmeProjectsCommand, () => {
     });
     vi.mocked(
       readmeProjectsService.resolveWorkspaceProjectPaths,
-    ).mockReturnValue(["packages/logger", "tools/validation"]);
+    ).mockReturnValue(["packages/logging", "tools/validation"]);
     vi.mocked(readmeProjectsService.readRootReadme).mockReturnValue(
-      "- **[logger](packages/logger)** - Shared logger\n- **[validation](tools/validation)** - Checks",
+      "- **[logger](packages/logging)** - Shared logger\n- **[validation](tools/validation)** - Checks",
     );
   });
 

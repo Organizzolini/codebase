@@ -186,12 +186,12 @@ graph LR
   codependix_core["codependix-core"]
   codependix_examples["codependix-examples"]
   codependix_output["codependix-output"]
-  logger["logger"]
+  logging["logging"]
   codependix_cli --> codependix_boundaries
   codependix_cli --> codependix_configuration
   codependix_cli --> codependix_core
   codependix_cli --> codependix_output
-  codependix_cli --> logger
+  codependix_cli --> logging
   codependix_examples -.-> codependix_cli
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class codependix_cli subject

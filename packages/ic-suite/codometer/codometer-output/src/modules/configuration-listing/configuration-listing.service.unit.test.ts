@@ -288,9 +288,9 @@ describe(ConfigurationListingService, () => {
               },
             ],
           }),
-          directory: "packages/logger",
+          directory: "packages/logging",
           error: undefined,
-          path: "packages/logger/codometer.config.ts",
+          path: "packages/logging/codometer.config.ts",
         },
       ]);
 

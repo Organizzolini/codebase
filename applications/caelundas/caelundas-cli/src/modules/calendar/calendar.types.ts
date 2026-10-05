@@ -1,5 +1,5 @@
 // 🏷️ Types
-import type { LogData } from "@codebase/logger";
+import type { LogData } from "@codebase/logging";
 import type { Moment } from "moment-timezone";
 
 /**

@@ -10,7 +10,7 @@ import { Injectable } from "@nestjs/common";
 import JSON5 from "json5";
 import _ from "lodash";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { RELEASE_RULES_SPECIAL_TYPES } from "./conventional-config.constants";
 

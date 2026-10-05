@@ -6,7 +6,7 @@ import JSON5 from "json5";
 import _ from "lodash";
 import { Command, CommandRunner } from "nest-commander";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { SynchronizationService } from "../synchronization/synchronization.service";
 

@@ -3,7 +3,7 @@ import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
 import { createLightship } from "lightship";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { environmentSchema } from "./{{nameKebabCase}}.constants";
 import { {{namePascalCase}}Module } from "./{{nameKebabCase}}.module";

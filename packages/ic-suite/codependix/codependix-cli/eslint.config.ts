@@ -11,14 +11,14 @@ export default [
       "@nx/dependency-checks": [
         "error",
         {
-          // @codebase/logger: inlined into the bundled build output and declared as a devDependency.
-          // pino, pino-pretty: runtime dependencies for the inlined @codebase/logger;
+          // @codebase/logging: inlined into the bundled build output and declared as a devDependency.
+          // pino, pino-pretty: runtime dependencies for the inlined @codebase/logging;
           // pino-pretty is a transport reached only via runtime string in pino configuration.
           // vitest: referenced via tsconfig "types" array; it's a devDependency
           // and the @nx/dependency-checks rule misidentifies it as a production
           // dependency.
           ignoredDependencies: [
-            "@codebase/logger",
+            "@codebase/logging",
             "pino",
             "pino-pretty",
             "vitest",

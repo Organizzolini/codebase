@@ -9,7 +9,7 @@ workspace and the Nx plugins load source, while a published consumer gets
 This is not stylistic. `@conformetry/nx` and `@callidescope/nx` are registered
 in `nx.json`, and Nx loads them while it builds the project graph — before any
 target can run. Between them they pull in 18 workspace packages,
-`@codebase/logger` included. Point any of those at built output and the graph
+`@codebase/logging` included. Point any of those at built output and the graph
 cannot load until they are built, and they cannot be built without the graph.
 Only `publishConfig` escapes that circularity.
 

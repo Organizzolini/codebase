@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { ReadmeProjectsCommand } from "./readme-projects.command";
 import { ReadmeProjectsModule } from "./readme-projects.module";

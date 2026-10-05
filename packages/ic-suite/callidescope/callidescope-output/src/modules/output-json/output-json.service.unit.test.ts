@@ -11,7 +11,7 @@ import { ANALYSIS_MODULES } from "../../../testing/modules";
 
 import { OutputJsonService } from "./output-json.service";
 
-import type { LoggerService } from "@codebase/logger";
+import type { LoggerService } from "@codebase/logging";
 import type { DeepMocked } from "@golevelup/ts-vitest";
 
 describe(OutputJsonService, () => {

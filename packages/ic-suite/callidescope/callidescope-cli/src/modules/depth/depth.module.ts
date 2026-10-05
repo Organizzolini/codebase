@@ -3,7 +3,7 @@ import { GraphModule } from "@callidescope/graph";
 import { AddressReportModule } from "@callidescope/output";
 import { Module } from "@nestjs/common";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { AddressLookupModule } from "../address-lookup/address-lookup.module";
 

@@ -299,7 +299,7 @@ function readNextLink(exampleName: string): string {
  * Every count below is read from here rather than from the whole-run summary,
  * because the run covers three dependency packages as well and they are
  * ordinary code that changes for ordinary reasons. A suite about fixtures that
- * failed when `packages/logger` gained a method would teach people to update
+ * failed when `packages/logging` gained a method would teach people to update
  * its numbers without reading them, which is the one thing these exact
  * assertions exist to prevent.
  */
@@ -633,7 +633,7 @@ describe("callidescope examples (integration)", () => {
         "packages/ic-suite/codependix/codependix-core",
         "packages/ic-suite/codometer/codometer-configuration",
         "packages/ic-suite/codometer/codometer-core",
-        "packages/logger",
+        "packages/logging",
       ]);
     });
 
@@ -751,7 +751,7 @@ describe("callidescope examples (integration)", () => {
       // Narrowed to the stacks this package heads, so it says nothing about
       // how many the whole run reports. The closure's three dependency
       // packages each declare their own limit now, and one of them is still
-      // over it — `packages/logger`, which measures five here and four in the
+      // over it — `packages/logging`, which measures five here and four in the
       // run that ignores calls into it. That is a fact about those packages
       // rather than about a fixture, and not this suite's to pin.
       expect(
@@ -864,16 +864,16 @@ describe("callidescope examples (integration)", () => {
     it("judges each project against the limit its own configuration settles on", () => {
       // The whole feature in one assertion: three different depth limits in
       // one report, each declared in a project's own `callidescope.config.ts`
-      // — `gated-leaf`'s three, this package's five, and `@codebase/logger`'s
+      // — `gated-leaf`'s three, this package's five, and `@codebase/logging`'s
       // four, which the closure reaches.
       //
-      // `@codebase/logger` is here because it is a real workspace package that
+      // `@codebase/logging` is here because it is a real workspace package that
       // now states its own limit, and this run does not ignore calls to it the
       // way the workspace run does: four is what the logger measures with
       // `LoggerService.*` ignored, five is what it measures here, so the same
       // number is a pass there and a finding in this report. That is the
       // per-project feature working rather than a fixture misbehaving —
-      // `packages/logger/callidescope.config.ts` says so beside the number.
+      // `packages/logging/callidescope.config.ts` says so beside the number.
       expect(
         result.deepStacks.map((stack) => [
           stack.frames[0]?.displayName,

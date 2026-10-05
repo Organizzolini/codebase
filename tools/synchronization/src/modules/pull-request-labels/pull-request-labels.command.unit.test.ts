@@ -12,7 +12,7 @@ import {
   vi,
 } from "vitest";
 
-import { LoggerService } from "@codebase/logger";
+import { LoggerService } from "@codebase/logging";
 
 import { mockProcessExit } from "../../../testing/mocks";
 import { SynchronizationService } from "../synchronization/synchronization.service";

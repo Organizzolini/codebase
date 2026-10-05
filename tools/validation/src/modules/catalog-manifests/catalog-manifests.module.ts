@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 
-import { LoggerModule } from "@codebase/logger";
+import { LoggerModule } from "@codebase/logging";
 
 import { CatalogManifestsCommand } from "./catalog-manifests.command";
 import { CatalogManifestsService } from "./catalog-manifests.service";

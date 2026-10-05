@@ -5,7 +5,7 @@ import type {
   SynchronizationModeResolutionOptions,
   SynchronizationModeResolutionResult,
 } from "./synchronization.types";
-import type { LoggerService } from "@codebase/logger";
+import type { LoggerService } from "@codebase/logging";
 
 /** Shared service for resolving and validating synchronization command modes. */
 @Injectable()

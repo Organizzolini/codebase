@@ -83,8 +83,8 @@ describe(InputService, () => {
   // 📂 Path option
 
   it("passes a given path option through trimmed", () => {
-    expect(service.parsePathOption("  packages/logger  ")).toBe(
-      "packages/logger",
+    expect(service.parsePathOption("  packages/logging  ")).toBe(
+      "packages/logging",
     );
   });
 

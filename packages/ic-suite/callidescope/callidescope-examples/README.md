@@ -126,7 +126,7 @@ was named at, and three its imports reached:
 | `.../examples/gated-leaf` | Named — a nested project, for the reason [gated-leaf](examples/gated-leaf/README.md) gives |
 | `packages/ic-suite/callidescope/callidescope-configuration` | Imported by the fixture, and by [`callidescope.workspace.config.ts`](callidescope.workspace.config.ts) |
 | `packages/ic-suite/codometer/codometer-configuration` | Reached through the shared configuration [`codometer.config.ts`](codometer.config.ts) spreads |
-| `packages/logger` | Reached through the shared `configuration/eslint.config.ts` |
+| `packages/logging` | Reached through the shared `configuration/eslint.config.ts` |
 
 That is what the closure buys, and it is measurable: the fixture's stack is
 depth 4 as traced, and depth 2 when the same fixtures are traced again with
@@ -328,7 +328,7 @@ named there, because this run does not write into them.
 not redundant with `shared-globals` — which holds `configuration/tsconfig.json`
 and nothing else. Two of the three dependency packages are in the closure only
 because this package's own `eslint.config.ts` and `codometer.config.ts` spread
-the root ones, and the root ones import `@codebase/logger/eslint` and
+the root ones, and the root ones import `@codebase/logging/eslint` and
 `@codometer/configuration`. Delete an import there and these reports lose a
 whole project, with nothing else in `inputs` changed — a cached green replayed
 over exactly the drift this gate exists to catch.
