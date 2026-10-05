@@ -1,7 +1,10 @@
 import { z } from "zod";
 
+import { postgresEnvironmentSchema } from "@codebase/database";
+
 // 🌱 Add environment schema fields here
 export const environmentSchema = z.object({
+  ...postgresEnvironmentSchema({ project: "caelundas" }),
   END_DATE: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "END_DATE must be in YYYY-MM-DD format")

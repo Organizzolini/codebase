@@ -30,9 +30,15 @@ const calendarService = new CalendarService(logger, {
 
 describe("main end-to-end suite", () => {
   describe("environment schema e2e", () => {
-    it("allows an empty schema by default", () => {
+    it("defaults the postgres connection and output directory", () => {
       expect.hasAssertions();
       expect(environmentSchema.parse({})).toStrictEqual({
+        CAELUNDAS_POSTGRES_DATABASE: "caelundas_development",
+        CAELUNDAS_POSTGRES_HOST: "localhost",
+        CAELUNDAS_POSTGRES_PASSWORD: "caelundas_password",
+        CAELUNDAS_POSTGRES_PORT: 5432,
+        CAELUNDAS_POSTGRES_SCHEMA: "caelundas",
+        CAELUNDAS_POSTGRES_USERNAME: "caelundas_username",
         OUTPUT_DIRECTORY: "./output",
       });
     });
@@ -189,7 +195,7 @@ describe("main end-to-end suite", () => {
     });
 
     describe("environment schema e2e", () => {
-      it("allows an empty schema by default", () => {
+      it("defaults the postgres connection and output directory", () => {
         expect.hasAssertions();
         expect(() => environmentSchema.parse({})).not.toThrow();
       });

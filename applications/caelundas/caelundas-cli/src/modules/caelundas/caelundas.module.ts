@@ -4,6 +4,7 @@ import { LoggerModule } from "@codebase/logging";
 
 import { AnnualSolarCycleModule } from "../annual-solar-cycle/annual-solar-cycle.module";
 import { AspectsModule } from "../aspects/aspects.module";
+import { CaelundasDatabaseModule } from "../caelundas-database/caelundas-database.module";
 import { CalendarModule } from "../calendar/calendar.module";
 import { DailyCyclesModule } from "../daily-cycles/daily-cycles.module";
 import { EclipsesModule } from "../eclipses/eclipses.module";
@@ -43,6 +44,7 @@ import { CaelundasCommand } from "./caelundas.command";
     MathModule,
     EphemerisModule,
     CalendarModule,
+    CaelundasDatabaseModule,
     AspectsModule,
     MajorAspectsModule,
     MinorAspectsModule,
