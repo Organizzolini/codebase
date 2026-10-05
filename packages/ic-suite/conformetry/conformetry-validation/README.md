@@ -1,5 +1,7 @@
 # 👔 Conformetry Validation
 
+[![npm](https://img.shields.io/npm/v/@conformetry/validation?logo=npm&label=npm)](https://www.npmjs.com/package/@conformetry/validation)
+
 The validation orchestrator for [Conformetry](../conformetry-cli/README.md):
 it matches instances to templates, checks the declared files exist, routes
 each document to the validator that claims its extension, and deduplicates

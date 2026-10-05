@@ -1,5 +1,7 @@
 # 👔 Conformetry Core
 
+[![npm](https://img.shields.io/npm/v/@conformetry/core?logo=npm&label=npm)](https://www.npmjs.com/package/@conformetry/core)
+
 The shared contract every other [Conformetry](../conformetry-cli/README.md)
 package builds on. It is the contracts leaf of the five-layer spine — `core <-
 configuration <- analysis <- output <- cli` — so it declares types and holds

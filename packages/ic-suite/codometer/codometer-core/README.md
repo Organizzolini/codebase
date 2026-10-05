@@ -1,5 +1,7 @@
 # @codometer/core
 
+[![npm](https://img.shields.io/npm/v/@codometer/core?logo=npm&label=npm)](https://www.npmjs.com/package/@codometer/core)
+
 The contracts leaf of the codometer toolchain. It holds what a measurement
 **produces** — the per-language statistics groups, the report vocabulary a
 consumer joins across runs, and the errors a configuration is refused with —

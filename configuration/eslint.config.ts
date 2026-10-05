@@ -1009,9 +1009,9 @@ export default [
   {
     files: ["**/*.types.ts"],
     ignores: [
-      "**/applications/caelundas/src/modules/caelundas/caelundas.types.ts",
+      "**/applications/caelundas/caelundas-cli/src/modules/caelundas/caelundas.types.ts",
       "**/src/modules/caelundas/caelundas.types.ts",
-      "applications/caelundas/src/modules/caelundas/caelundas.types.ts",
+      "applications/caelundas/caelundas-cli/src/modules/caelundas/caelundas.types.ts",
     ],
     rules: {
       "no-restricted-syntax": [
@@ -1032,8 +1032,8 @@ export default [
   {
     files: ["**/*.constants.ts"],
     ignores: [
-      "**/applications/caelundas/src/modules/caelundas/caelundas.constants.ts",
-      "**/applications/caelundas/src/modules/ephemeris/ephemeris.constants.ts",
+      "**/applications/caelundas/caelundas-cli/src/modules/caelundas/caelundas.constants.ts",
+      "**/applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris.constants.ts",
       "**/applications/lexico-ingestion/src/modules/forms/forms.constants.ts",
       "**/applications/lexico-ingestion/src/modules/manual/manual.constants.ts",
       "**/applications/lexico-ingestion/src/modules/part-of-speech/part-of-speech.constants.ts",
@@ -1070,7 +1070,7 @@ export default [
   {
     files: ["**/*.utilities.ts"],
     ignores: [
-      "**/applications/caelundas/testing/aspect-test.utilities.ts",
+      "**/applications/caelundas/caelundas-cli/testing/aspect-test.utilities.ts",
       "**/testing/aspect-test.utilities.ts",
     ],
     rules: {

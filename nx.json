@@ -97,7 +97,7 @@
     }
   },
   "projects": {
-    "caelundas": {
+    "caelundas-cli": {
       "tags": ["domain:caelundas", "language:typescript", "type:application"]
     },
     "codebase": {
@@ -281,6 +281,41 @@
           "cwd": "{projectRoot}",
           "env": {
             "SWC_NODE_PROJECT": "../../../../configuration/tsconfig.json"
+          }
+        },
+        "outputs": [
+          "{projectRoot}/codometer-report.json",
+          "{projectRoot}/README.md"
+        ]
+      },
+      {
+        "cache": true,
+        "configurations": {
+          "check": {
+            "command": "node --import @swc-node/register/esm-register ../../../packages/ic-suite/codometer/codometer-cli/src/main.ts measure --output-json --check limits"
+          },
+          "write": {
+            "command": "node --import @swc-node/register/esm-register ../../../packages/ic-suite/codometer/codometer-cli/src/main.ts measure --output-json --output-markdown README.md"
+          }
+        },
+        "defaultConfiguration": "check",
+        "dependsOn": ["build"],
+        "description": "The `applications/<domain>/` override of the default `codometer` entry above: every field is identical except the two relative paths, corrected from two directories below the workspace root to three. A full entry for the same reason as the `packages/ic-suite/<suite>/` one: Nx replaces a matching targetDefaults array entry wholesale rather than merging it.",
+        "executor": "nx:run-commands",
+        "filter": {
+          "projects": ["caelundas-cli"]
+        },
+        "inputs": [
+          "!{projectRoot}/codometer-report.json",
+          "^production",
+          "{workspaceRoot}/configuration/.codometerignore",
+          "{workspaceRoot}/configuration/codometer.config.ts",
+          "production"
+        ],
+        "options": {
+          "cwd": "{projectRoot}",
+          "env": {
+            "SWC_NODE_PROJECT": "../../../configuration/tsconfig.json"
           }
         },
         "outputs": [
