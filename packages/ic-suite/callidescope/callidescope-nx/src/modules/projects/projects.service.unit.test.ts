@@ -240,8 +240,8 @@ describe(ProjectsService, () => {
 
   describe("resolveDirectories by tag", () => {
     const graph = buildTaggedGraph({
-      affirmations: {
-        root: "applications/affirmations",
+      affirmancy: {
+        root: "applications/affirmancy",
         tags: ["language:python", "type:application"],
       },
       "callidescope-cli": {
@@ -265,7 +265,7 @@ describe(ProjectsService, () => {
       expect(
         service.resolveDirectories({ graph, tags: ["type:application"] })
           .directories,
-      ).toStrictEqual(["applications/affirmations", "applications/lexico"]);
+      ).toStrictEqual(["applications/affirmancy", "applications/lexico"]);
     });
 
     it("matches a project carrying ANY of the tags rather than all of them", () => {
@@ -279,7 +279,7 @@ describe(ProjectsService, () => {
           tags: ["type:application", "type:package"],
         }).directories,
       ).toStrictEqual([
-        "applications/affirmations",
+        "applications/affirmancy",
         "applications/lexico",
         "packages/ic-suite/callidescope/callidescope-cli",
         "packages/ic-suite/callidescope/callidescope-graph",
@@ -295,7 +295,7 @@ describe(ProjectsService, () => {
           tags: ["language:typescript", "type:application"],
         }).directories,
       ).toStrictEqual([
-        "applications/affirmations",
+        "applications/affirmancy",
         "applications/lexico",
         "packages/ic-suite/callidescope/callidescope-cli",
         "packages/ic-suite/callidescope/callidescope-graph",
@@ -311,7 +311,7 @@ describe(ProjectsService, () => {
           projectNames: ["untagged"],
           tags: ["language:python"],
         }).directories,
-      ).toStrictEqual(["applications/affirmations", "packages/untagged"]);
+      ).toStrictEqual(["applications/affirmancy", "packages/untagged"]);
     });
 
     it("resolves a project named and tagged at once only once", () => {
@@ -323,7 +323,7 @@ describe(ProjectsService, () => {
           projectNames: ["lexico"],
           tags: ["type:application"],
         }).directories,
-      ).toStrictEqual(["applications/affirmations", "applications/lexico"]);
+      ).toStrictEqual(["applications/affirmancy", "applications/lexico"]);
     });
 
     it("collects the tags no project carries", () => {
@@ -340,7 +340,7 @@ describe(ProjectsService, () => {
           "packages/ic-suite/callidescope/callidescope-graph",
         ],
         knownNames: [
-          "affirmations",
+          "affirmancy",
           "callidescope-cli",
           "callidescope-graph",
           "lexico",

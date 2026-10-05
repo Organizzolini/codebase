@@ -355,9 +355,7 @@ describe(PluginService, () => {
         service
           .inferTargets({
             options: {},
-            projectConfigurationFiles: [
-              "applications/affirmations/project.json",
-            ],
+            projectConfigurationFiles: ["applications/affirmancy/project.json"],
             workspaceRoot: "/workspace",
           })
           .then((targets) => targets.size),

@@ -172,7 +172,7 @@ describe(WorkspaceGraphService, () => {
     it("states in words that the workspace has no dependency edges", () => {
       const workspaceGraph = service.buildWorkspaceGraph(
         buildGraph({}),
-        buildProjects(["affirmations"]),
+        buildProjects(["affirmancy"]),
       );
 
       expect(service.renderMermaid(workspaceGraph)).toBe(

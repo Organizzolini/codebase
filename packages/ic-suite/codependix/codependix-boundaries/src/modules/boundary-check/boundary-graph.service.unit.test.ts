@@ -134,12 +134,12 @@ describe(BoundaryGraphService, () => {
       edges: [],
       fileNames: ["main.py"],
       isolatedFileNames: ["main.py"],
-      projectName: "affirmations",
+      projectName: "affirmancy",
     });
 
     expect(graph.level).toBe("python");
     expect(graph.nodes).toStrictEqual([
-      { id: "main.py", path: "main.py", project: "affirmations" },
+      { id: "main.py", path: "main.py", project: "affirmancy" },
     ]);
   });
 });

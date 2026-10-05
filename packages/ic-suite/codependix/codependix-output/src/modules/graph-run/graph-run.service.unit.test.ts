@@ -395,7 +395,7 @@ describe(GraphRunService, () => {
         results: [
           {
             isCurrent: true,
-            projectName: "affirmations",
+            projectName: "affirmancy",
             staleExports: [],
             stalePaths: [],
           },
