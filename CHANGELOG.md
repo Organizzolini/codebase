@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.33.1](https://github.com/organizzolini/codebase/compare/v2.33.0...v2.33.1) (2026-10-05)
+
+### 📝 Documentation
+
+* **ic-suite:** 📝 add an npm badge for every published ic-suite package ([#1298](https://github.com/organizzolini/codebase/issues/1298)) ([46bd103](https://github.com/organizzolini/codebase/commit/46bd103566aa3366d45646bfd33b96a5301b7340))
+
+### ♻️ Code Refactoring
+
+* **caelundas,configuration:** 🚚 nest caelundas under a domain folder as caelundas-cli ([#1304](https://github.com/organizzolini/codebase/issues/1304)) ([a465a2d](https://github.com/organizzolini/codebase/commit/a465a2d589d8fac7b0e9e87726f8dd6f4b168b51))
+
 ## [2.33.0](https://github.com/organizzolini/codebase/compare/v2.32.0...v2.33.0) (2026-10-05)
 
 ### ✨ Features

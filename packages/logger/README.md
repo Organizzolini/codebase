@@ -135,7 +135,7 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 <!-- codependix:start name="codependix-nx-projects" -->
 ```mermaid
 graph LR
-  caelundas["caelundas"]
+  caelundas_cli["caelundas-cli"]
   callidescope_cli["callidescope-cli"]
   callidescope_graph["callidescope-graph"]
   callidescope_nx["callidescope-nx"]
@@ -156,7 +156,7 @@ graph LR
   meanderaw["meanderaw"]
   synchronization["synchronization"]
   validation["validation"]
-  caelundas --> logger
+  caelundas_cli --> logger
   callidescope_cli --> logger
   callidescope_graph --> logger
   callidescope_nx --> logger
