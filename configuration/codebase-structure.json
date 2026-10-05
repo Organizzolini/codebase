@@ -430,6 +430,14 @@
             "name": "JimmyPaolini"
           },
           {
+            "children": [
+              {
+                "ruleId": "codebase-project"
+              }
+            ],
+            "name": "meanderaw"
+          },
+          {
             "ruleId": "codebase-project"
           }
         ],

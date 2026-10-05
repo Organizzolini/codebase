@@ -1364,11 +1364,11 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
 
-  applications/meanderaw-cli:
+  applications/meanderaw/meanderaw-cli:
     dependencies:
       '@codebase/logger':
         specifier: workspace:*
-        version: link:../../packages/logger
+        version: link:../../../packages/logger
       '@nestjs/common':
         specifier: 'catalog:'
         version: 12.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@10.2.2)

@@ -108,7 +108,7 @@ have.
 
 **Every Characteristic lives in that one map, and a missing key means zero or `false`.**
 No Characteristic has a column of its own, so adding one needs no schema change — see
-[ADR 0018](../../docs/adr/0018-store-every-characteristic-in-one-sparse-json-map.md). Raw
+[ADR 0018](../../../docs/adr/0018-store-every-characteristic-in-one-sparse-json-map.md). Raw
 SQL reads one as `COALESCE((characteristics ->> 'key')::numeric, 0)`; a bare `->>` is
 NULL for a missing key and silently drops it from a zero filter.
 
@@ -235,9 +235,9 @@ the `meanderaw_development` database and the schema of the same name, the defaul
 `MEANDERAW_POSTGRES_DB` and `MEANDERAW_POSTGRES_SCHEMA`. Every meanderaw variable carries the
 `MEANDERAW_` prefix, so the unprefixed `POSTGRES_*` the root `.env` sets for lexico — which
 Nx loads into every task — never reaches it — see
-[ADR 0020](../../docs/adr/0020-store-meanders-in-postgres.md). A draw run commits nothing: the
+[ADR 0020](../../../docs/adr/0020-store-meanders-in-postgres.md). A draw run commits nothing: the
 HTML pages it writes stay in the gitignored `output/` — see
-[ADR 0021](../../docs/adr/0021-stop-committing-the-meander-pages.md). Integration suites start their
+[ADR 0021](../../../docs/adr/0021-stop-committing-the-meander-pages.md). Integration suites start their
 own throwaway `postgres:18-alpine` container through `@testcontainers/postgresql` and hand
 it to `testing/database.ts`, so Docker must be running to test them.
 
@@ -260,7 +260,7 @@ nx run meanderaw-cli:vitest:end-to-end    # Slow (30-60s) — full CLI execution
 | Integration | `*.integration.test.ts` | Database queries, external API clients |
 | End-to-end | `*.end-to-end.test.ts` | Full `CommandFactory.run()` execution |
 
-See the [testing-strategy skill](../../.agents/skills/testing-strategy/SKILL.md) and [testing-mocks skill](../../.agents/skills/testing-mocks/SKILL.md) for patterns and mock conventions.
+See the [testing-strategy skill](../../../.agents/skills/testing-strategy/SKILL.md) and [testing-mocks skill](../../../.agents/skills/testing-mocks/SKILL.md) for patterns and mock conventions.
 
 ## Writing Modules
 
@@ -386,7 +386,7 @@ pnpm nx run-many --targets=conformetry-validate
 - **Type imports** — use `import { type Foo }` for type-only imports (enforced by ESLint).
 - **No `any` types** — use `unknown` or proper typing; strict mode is enabled.
 
-See the [write-typescript skill](../../.agents/skills/write-typescript/SKILL.md) for strict mode patterns.
+See the [write-typescript skill](../../../.agents/skills/write-typescript/SKILL.md) for strict mode patterns.
 
 ## Troubleshooting
 
@@ -395,7 +395,7 @@ See the [write-typescript skill](../../.agents/skills/write-typescript/SKILL.md)
 - **Unrecognized CLI flag** — check that `@Option()` decorators in the command class exactly match the flag names passed.
 - **Env var validation error on startup** — add the missing variable to `environmentSchema` in `src/constants.ts` and to `.env.default`.
 
-See the [triage-integration skill](../../.agents/skills/triage-integration/SKILL.md) for lint and git hook failures.
+See the [triage-integration skill](../../../.agents/skills/triage-integration/SKILL.md) for lint and git hook failures.
 
 ## Key Files
 

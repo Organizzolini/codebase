@@ -169,8 +169,14 @@
 
 </details>
 
-**🪵 [logger](packages/logger)** - Shared pino-backed NestJS `LoggerService` and `LoggerModule`\
-**🏺 [meanderaw-cli](applications/meanderaw-cli)** - CLI that enumerates Greek meander (key/fret) patterns into a Postgres database, measuring and classifying each by its Code
+**🪵 [logger](packages/logger)** - Shared pino-backed NestJS `LoggerService` and `LoggerModule`
+
+<details>
+<summary><strong>🏺 meanderaw</strong> - Greek meander (key/fret) applications that enumerate, measure, and classify meander patterns</summary>
+
+&nbsp;&nbsp;&nbsp;&nbsp;**[meanderaw-cli](applications/meanderaw/meanderaw-cli)** - CLI that enumerates Greek meander (key/fret) patterns into a Postgres database, measuring and classifying each by its Code
+
+</details>
 
 **🧑‍💻 [JimmyPaolini](applications/JimmyPaolini)** - GitHub profile site\
 **↔️ [synchronization](tools/synchronization)** - NestJS CLI that regenerates the workspace's derived configuration and documentation, and fails CI when they drift\
@@ -10509,10 +10515,10 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 
 | Measure | Value |
 | --- | --- |
-| Callables | 5906 |
-| Files | 1686 |
-| Calls traced | 6206 |
-| Call stacks | 1862 |
+| Callables | 5922 |
+| Files | 1690 |
+| Calls traced | 6226 |
+| Call stacks | 1864 |
 | Deepest stack | 17 |
 | Stacks through recursion | 12 |
 | Unfollowable calls | 357 |
@@ -10524,7 +10530,7 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 | `applications/caelundas` | 16 | 16 | 0 | 12 |
 | `applications/lexico` | 9 | 9 | 0 | 9 |
 | `applications/lexico-ingestion` | 17 | 17 | 0 | 8 |
-| `applications/meanderaw-cli` | 16 | 16 | 0 | 13 |
+| `applications/meanderaw/meanderaw-cli` | 16 | 16 | 0 | 13 |
 | `packages/ic-suite/callidescope/callidescope-cli` | 15 | 15 | 0 | 10 |
 | `packages/ic-suite/callidescope/callidescope-nx` | 17 | 17 | 0 | 7 |
 | `packages/ic-suite/codependix/codependix-boundaries` | 12 | 12 | 0 | 7 |
@@ -10555,7 +10561,7 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 | `packages/ic-suite/codometer/codometer-output` | 4 | 11 | 7 | 16 |
 | `packages/ic-suite/codependix/codependix-file-imports` | 0 | 8 | 8 | 8 |
 | `packages/ic-suite/callidescope/callidescope-output` | 4 | 13 | 9 | 7 |
-| `applications/lexico-api` | 7 | 17 | 10 | 7 |
+| `applications/lexico-api` | 7 | 17 | 10 | 10 |
 | `configuration` | 4 | 17 | 13 | 2 |
 | `packages/ic-suite/conformetry/conformetry-validation` | 0 | 13 | 13 | 10 |
 | `packages/ic-suite/codometer/codometer-measurement` | 0 | 14 | 14 | 9 |

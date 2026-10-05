@@ -1,5 +1,7 @@
 packages:
   - applications/*
+  - applications/meanderaw/*
+  - "!applications/meanderaw"
   - packages/*
   - packages/ic-suite/callidescope/*
   - packages/ic-suite/codependix/*
