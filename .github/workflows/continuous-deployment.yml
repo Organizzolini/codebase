@@ -24,6 +24,10 @@ permissions:
   # The identity token pnpm signs each package's npm provenance attestation
   # with; without it, `pnpm publish --provenance` refuses to publish.
   id-token: write
+  # The build-provenance attestations and storage records that list each
+  # published package on the organization's Linked artifacts page.
+  attestations: write
+  artifact-metadata: write
 
 # Never cancel a deployment/release run. Concurrency is scoped per-ref so
 # releases on main queue sequentially without colliding. A pull request's run
@@ -306,6 +310,33 @@ jobs:
           GITHUB_PACKAGES_TOKEN: ${{ github.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: bash scripts/release/publish-packages.sh
+
+      # Lists each package published to npm on the organization's Linked
+      # artifacts page, and names the ones this run published for the
+      # attestation below. `scripts/release/link-packages.sh` explains why only
+      # those are attested.
+      - name: 🔗 Link Packages
+        id: link-packages
+        if: >-
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/release/link-packages.sh
+
+      # A GitHub build-provenance attestation for each npm tarball this run
+      # published, which the Linked artifacts page shows beside its record.
+      # The records themselves come from the step above, since this action
+      # creates them only for container registries.
+      - name: 🔏 Attest Packages
+        if: >-
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases' &&
+          steps.link-packages.outputs.attest == 'true'
+        uses: actions/attest@v4
+        with:
+          subject-checksums: ${{ runner.temp }}/attestation-subjects.txt
+          create-storage-record: false
 
       # semantic-release versions, tags and releases the codebase itself, the
       # `v*` release the README badge shows, never an ic-suite package.
