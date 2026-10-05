@@ -21,7 +21,7 @@ anywhere unchanged.
 | ---------------------------- | ---------------------------------------------------------------------------------------------- |
 | `postgresEnvironmentSchema`  | The zod fragment for a project's six `<PROJECT>_POSTGRES_*` variables, with defaults           |
 | `postgresConnection`         | The connection those variables describe, read from any environment record                      |
-| `postgresDataSourceOptions`  | TypeORM options: snake case, connection-level schema, `synchronize` and `migrationsRun` off    |
+| `postgresDataSourceOptions`  | TypeORM options: snake case, schema as search path, `synchronize` and `migrationsRun` off      |
 | `DatabaseModule.forRoot`     | The NestJS module wiring TypeORM from those variables through `ConfigService`                  |
 | `createDataSource`           | The `DataSource` a project's TypeORM command-line entry exports, from the same options         |
 | `IdentifiableEntity` …       | Base entities: a `uuidv7()` id, then created, updated, and soft-deleted columns                |
@@ -159,6 +159,24 @@ The extracted SQL is linted only once the project opts in to it as well: a
 empty JSDoc blocks TypeORM writes into a new migration. Describe the class
 and its `up` and `down` methods, then run `lint-code:write` again.
 
+Every pooled connection pins its session's `search_path` to the project's
+schema alone, with no `public` after it. Unqualified SQL lands in the
+project's schema, or fails if that schema is missing, and TypeORM's
+`current_schema()` fallback names it too, so a generated column's
+`typeorm_metadata` row is planned under the project's schema with no edit.
+Two hand edits remain after `migration:generate` writes a project's first
+generated column or view:
+
+- Create the metadata table before the first `INSERT` into it, with
+  `CREATE TABLE IF NOT EXISTS "<project>"."typeorm_metadata" (...)`, and drop
+  it in `down`. TypeORM creates it only when it synchronizes, which never
+  happens here.
+- Replace the generating database's name, a literal
+  `<project>_development` among the parameters of the `INSERT` and the
+  `DELETE`, with `current_database()` in their SQL. TypeORM matches the row
+  by database when it reads the expression back, so a `_testing` or
+  production database would otherwise see the column as changed.
+
 ### Integration tests
 
 `@codebase/database/testing` starts a throwaway `postgres:18-alpine`, falling
@@ -277,9 +295,8 @@ graph LR
   file_eslint_config_ts["eslint.config.ts"]
   file_scripts_extract_migration_sql_ts["scripts/extract-migration-sql.ts"]
   file_src_index_ts["src/index.ts"]
+  file_src_modules_database_database_testing_utilities_integration_test_ts["src/modules/database/database-testing.utilities.integration.test.ts"]
   file_src_modules_database_database_constants_ts["src/modules/database/database.constants.ts"]
-  file_src_modules_database_database_factories_ts["src/modules/database/database.utilities.ts"]
-  file_src_modules_database_database_factories_unit_test_ts["src/modules/database/database.utilities.unit.test.ts"]
   file_src_modules_database_database_module_integration_test_ts["src/modules/database/database.module.integration.test.ts"]
   file_src_modules_database_database_module_ts["src/modules/database/database.module.ts"]
   file_src_modules_database_database_service_ts["src/modules/database/database.service.ts"]
@@ -287,36 +304,49 @@ graph LR
   file_src_modules_database_database_types_ts["src/modules/database/database.types.ts"]
   file_src_modules_database_database_utilities_ts["src/modules/database/database.utilities.ts"]
   file_src_modules_database_database_utilities_unit_test_ts["src/modules/database/database.utilities.unit.test.ts"]
-  file_src_modules_database_entities_Creatable_entity_ts["src/modules/database/entities/creatable.entity.ts"]
-  file_src_modules_database_entities_Deletable_entity_ts["src/modules/database/entities/deletable.entity.ts"]
-  file_src_modules_database_entities_Identifiable_entity_ts["src/modules/database/entities/identifiable.entity.ts"]
-  file_src_modules_database_entities_Updatable_entity_ts["src/modules/database/entities/updatable.entity.ts"]
+  file_src_modules_database_entities_creatable_entity_ts["src/modules/database/entities/creatable.entity.ts"]
+  file_src_modules_database_entities_deletable_entity_ts["src/modules/database/entities/deletable.entity.ts"]
+  file_src_modules_database_entities_identifiable_entity_ts["src/modules/database/entities/identifiable.entity.ts"]
+  file_src_modules_database_entities_updatable_entity_ts["src/modules/database/entities/updatable.entity.ts"]
   file_src_modules_database_postgres_container_constants_ts["src/modules/database/postgres-container.constants.ts"]
-  file_src_modules_database_postgres_container_factories_integration_test_ts["src/modules/database/postgres-container.utilities.integration.test.ts"]
-  file_src_modules_database_postgres_container_factories_ts["src/modules/database/postgres-container.utilities.ts"]
   file_src_modules_database_postgres_container_types_ts["src/modules/database/postgres-container.types.ts"]
-  file_src_testing_ts["src/testing.ts"]
+  file_src_modules_database_postgres_container_utilities_integration_test_ts["src/modules/database/postgres-container.utilities.integration.test.ts"]
+  file_src_modules_database_postgres_container_utilities_ts["src/modules/database/postgres-container.utilities.ts"]
+  file_testing_database_testing_types_ts["testing/database-testing.types.ts"]
+  file_testing_database_testing_utilities_ts["testing/database-testing.utilities.ts"]
+  file_testing_fixtures_fixture_database_module_ts["testing/fixtures/fixture-database.module.ts"]
+  file_testing_fixtures_gadget_entity_ts["testing/fixtures/gadget.entity.ts"]
   file_testing_fixtures_migrations_1767225600000_create_widgets_ts["testing/fixtures/migrations/1767225600000-create-widgets.ts"]
-  file_testing_fixtures_Widget_entity_ts["testing/fixtures/widget.entity.ts"]
+  file_testing_fixtures_sample_greeting_constants_ts["testing/fixtures/sample-greeting.constants.ts"]
+  file_testing_fixtures_sample_greeting_module_ts["testing/fixtures/sample-greeting.module.ts"]
+  file_testing_fixtures_sample_widgets_module_ts["testing/fixtures/sample-widgets.module.ts"]
+  file_testing_fixtures_sample_widgets_service_ts["testing/fixtures/sample-widgets.service.ts"]
+  file_testing_fixtures_widget_entity_ts["testing/fixtures/widget.entity.ts"]
+  file_testing_index_ts["testing/index.ts"]
   file_testing_mocks_ts["testing/mocks.ts"]
   file_testing_setup_ts["testing/setup.ts"]
   file_vitest_config_ts["vitest.config.ts"]
-  file_src_modules_database_database_factories_ts --> file_src_modules_database_database_constants_ts
-  file_src_modules_database_database_factories_ts --> file_src_modules_database_database_types_ts
-  file_src_modules_database_database_factories_ts --> file_src_modules_database_database_utilities_ts
-  file_src_modules_database_database_factories_unit_test_ts --> file_src_modules_database_database_factories_ts
-  file_src_modules_database_database_factories_unit_test_ts --> file_src_modules_database_database_types_ts
-  file_src_modules_database_database_module_integration_test_ts --> file_src_modules_database_database_factories_ts
+  file_src_modules_database_database_testing_utilities_integration_test_ts --> file_src_modules_database_database_utilities_ts
+  file_src_modules_database_database_testing_utilities_integration_test_ts --> file_testing_database_testing_types_ts
+  file_src_modules_database_database_testing_utilities_integration_test_ts --> file_testing_database_testing_utilities_ts
+  file_src_modules_database_database_testing_utilities_integration_test_ts --> file_testing_fixtures_fixture_database_module_ts
+  file_src_modules_database_database_testing_utilities_integration_test_ts --> file_testing_fixtures_migrations_1767225600000_create_widgets_ts
+  file_src_modules_database_database_testing_utilities_integration_test_ts --> file_testing_fixtures_sample_greeting_constants_ts
+  file_src_modules_database_database_testing_utilities_integration_test_ts --> file_testing_fixtures_sample_greeting_module_ts
+  file_src_modules_database_database_testing_utilities_integration_test_ts --> file_testing_fixtures_sample_widgets_module_ts
+  file_src_modules_database_database_testing_utilities_integration_test_ts --> file_testing_fixtures_sample_widgets_service_ts
+  file_src_modules_database_database_testing_utilities_integration_test_ts --> file_testing_fixtures_widget_entity_ts
   file_src_modules_database_database_module_integration_test_ts --> file_src_modules_database_database_module_ts
-  file_src_modules_database_database_module_integration_test_ts --> file_src_modules_database_postgres_container_factories_ts
+  file_src_modules_database_database_module_integration_test_ts --> file_src_modules_database_database_utilities_ts
   file_src_modules_database_database_module_integration_test_ts --> file_src_modules_database_postgres_container_types_ts
+  file_src_modules_database_database_module_integration_test_ts --> file_src_modules_database_postgres_container_utilities_ts
+  file_src_modules_database_database_module_integration_test_ts --> file_testing_fixtures_gadget_entity_ts
   file_src_modules_database_database_module_integration_test_ts --> file_testing_fixtures_migrations_1767225600000_create_widgets_ts
-  file_src_modules_database_database_module_integration_test_ts --> file_testing_fixtures_Widget_entity_ts
+  file_src_modules_database_database_module_integration_test_ts --> file_testing_fixtures_widget_entity_ts
   file_src_modules_database_database_module_ts --> file_src_modules_database_database_constants_ts
   file_src_modules_database_database_module_ts --> file_src_modules_database_database_service_ts
   file_src_modules_database_database_module_ts --> file_src_modules_database_database_types_ts
   file_src_modules_database_database_service_ts --> file_src_modules_database_database_constants_ts
-  file_src_modules_database_database_service_ts --> file_src_modules_database_database_factories_ts
   file_src_modules_database_database_service_ts --> file_src_modules_database_database_types_ts
   file_src_modules_database_database_service_ts --> file_src_modules_database_database_utilities_ts
   file_src_modules_database_database_service_unit_test_ts --> file_src_modules_database_database_constants_ts
@@ -324,19 +354,32 @@ graph LR
   file_src_modules_database_database_types_ts --> file_src_modules_database_database_constants_ts
   file_src_modules_database_database_utilities_ts --> file_src_modules_database_database_constants_ts
   file_src_modules_database_database_utilities_ts --> file_src_modules_database_database_types_ts
+  file_src_modules_database_database_utilities_unit_test_ts --> file_src_modules_database_database_types_ts
   file_src_modules_database_database_utilities_unit_test_ts --> file_src_modules_database_database_utilities_ts
-  file_src_modules_database_entities_Creatable_entity_ts --> file_src_modules_database_entities_Identifiable_entity_ts
-  file_src_modules_database_entities_Deletable_entity_ts --> file_src_modules_database_entities_Updatable_entity_ts
-  file_src_modules_database_entities_Updatable_entity_ts --> file_src_modules_database_entities_Creatable_entity_ts
-  file_src_modules_database_postgres_container_factories_integration_test_ts --> file_src_modules_database_postgres_container_constants_ts
-  file_src_modules_database_postgres_container_factories_integration_test_ts --> file_src_modules_database_postgres_container_factories_ts
-  file_src_modules_database_postgres_container_factories_integration_test_ts --> file_testing_fixtures_migrations_1767225600000_create_widgets_ts
-  file_src_modules_database_postgres_container_factories_ts --> file_src_modules_database_database_factories_ts
-  file_src_modules_database_postgres_container_factories_ts --> file_src_modules_database_database_types_ts
-  file_src_modules_database_postgres_container_factories_ts --> file_src_modules_database_database_utilities_ts
-  file_src_modules_database_postgres_container_factories_ts --> file_src_modules_database_postgres_container_constants_ts
-  file_src_modules_database_postgres_container_factories_ts --> file_src_modules_database_postgres_container_types_ts
+  file_src_modules_database_entities_creatable_entity_ts --> file_src_modules_database_entities_identifiable_entity_ts
+  file_src_modules_database_entities_deletable_entity_ts --> file_src_modules_database_entities_updatable_entity_ts
+  file_src_modules_database_entities_updatable_entity_ts --> file_src_modules_database_entities_creatable_entity_ts
   file_src_modules_database_postgres_container_types_ts --> file_src_modules_database_database_types_ts
-  file_testing_fixtures_Widget_entity_ts --> file_src_modules_database_entities_Deletable_entity_ts
+  file_src_modules_database_postgres_container_utilities_integration_test_ts --> file_src_modules_database_postgres_container_constants_ts
+  file_src_modules_database_postgres_container_utilities_integration_test_ts --> file_src_modules_database_postgres_container_utilities_ts
+  file_src_modules_database_postgres_container_utilities_integration_test_ts --> file_testing_fixtures_migrations_1767225600000_create_widgets_ts
+  file_src_modules_database_postgres_container_utilities_ts --> file_src_modules_database_database_types_ts
+  file_src_modules_database_postgres_container_utilities_ts --> file_src_modules_database_database_utilities_ts
+  file_src_modules_database_postgres_container_utilities_ts --> file_src_modules_database_postgres_container_constants_ts
+  file_src_modules_database_postgres_container_utilities_ts --> file_src_modules_database_postgres_container_types_ts
+  file_testing_database_testing_types_ts --> file_src_modules_database_database_types_ts
+  file_testing_database_testing_types_ts --> file_src_modules_database_postgres_container_types_ts
+  file_testing_database_testing_utilities_ts --> file_src_modules_database_database_module_ts
+  file_testing_database_testing_utilities_ts --> file_src_modules_database_postgres_container_utilities_ts
+  file_testing_database_testing_utilities_ts --> file_testing_database_testing_types_ts
+  file_testing_fixtures_fixture_database_module_ts --> file_src_modules_database_database_module_ts
+  file_testing_fixtures_fixture_database_module_ts --> file_testing_fixtures_widget_entity_ts
+  file_testing_fixtures_gadget_entity_ts --> file_src_modules_database_entities_identifiable_entity_ts
+  file_testing_fixtures_sample_greeting_module_ts --> file_testing_fixtures_sample_greeting_constants_ts
+  file_testing_fixtures_sample_widgets_module_ts --> file_testing_fixtures_fixture_database_module_ts
+  file_testing_fixtures_sample_widgets_module_ts --> file_testing_fixtures_sample_widgets_service_ts
+  file_testing_fixtures_sample_widgets_module_ts --> file_testing_fixtures_widget_entity_ts
+  file_testing_fixtures_sample_widgets_service_ts --> file_testing_fixtures_widget_entity_ts
+  file_testing_fixtures_widget_entity_ts --> file_src_modules_database_entities_deletable_entity_ts
 ```
 <!-- codependix:end name="codependix-file-imports" -->

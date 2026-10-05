@@ -5,11 +5,15 @@ import { DataSource } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 
+import { Gadget } from "../../../testing/fixtures/gadget.entity";
 import { CreateWidgets1767225600000 } from "../../../testing/fixtures/migrations/1767225600000-create-widgets";
 import { Widget } from "../../../testing/fixtures/widget.entity";
 
 import { DatabaseModule } from "./database.module";
-import { postgresEnvironmentSchema } from "./database.utilities";
+import {
+  createDataSource,
+  postgresEnvironmentSchema,
+} from "./database.utilities";
 import { startPostgresContainer } from "./postgres-container.utilities";
 
 import type { StartedPostgresContainer } from "./postgres-container.types";
@@ -80,6 +84,91 @@ describe(DatabaseModule, () => {
       database: "fixture_testing",
       role: "fixture_username",
     });
+  });
+
+  it("pins every pooled connection's search path to the project's schema alone", async () => {
+    const dataSource = module.get(DataSource);
+    const queryRunners = [1, 2, 3].map(() => dataSource.createQueryRunner());
+
+    try {
+      // 🎯 Each runner holds its own pooled connection until released.
+      const sessions = await Promise.all(
+        queryRunners.map(async (queryRunner) =>
+          dataSource.query<
+            { pid: number; schema: string; searchPath: string }[]
+          >(
+            `SELECT current_setting('search_path') AS "searchPath", current_schema() AS schema, pg_backend_pid() AS pid`,
+            [],
+            queryRunner,
+          ),
+        ),
+      );
+      const rows = sessions.flat();
+
+      expect(new Set(rows.map(({ pid }) => pid)).size).toBe(3);
+      expect(
+        rows.map(({ schema, searchPath }) => ({ schema, searchPath })),
+      ).toStrictEqual([
+        { schema: "fixture", searchPath: "fixture" },
+        { schema: "fixture", searchPath: "fixture" },
+        { schema: "fixture", searchPath: "fixture" },
+      ]);
+    } finally {
+      await Promise.all(
+        queryRunners.map(async (queryRunner) => queryRunner.release()),
+      );
+    }
+  });
+
+  it("creates an unqualified table in the project's schema rather than public", async () => {
+    const dataSource = module.get(DataSource);
+
+    await dataSource.query("CREATE TABLE unqualified_notes (body text)");
+
+    try {
+      const tables: { schema: string }[] = await dataSource.query(
+        "SELECT table_schema AS schema FROM information_schema.tables WHERE table_name = 'unqualified_notes'",
+      );
+
+      expect(tables).toStrictEqual([{ schema: "fixture" }]);
+    } finally {
+      await dataSource.query("DROP TABLE unqualified_notes");
+    }
+  });
+
+  it("plans a generated column's metadata row under the project's schema", async () => {
+    const dataSource = createDataSource(
+      { entities: [Gadget], migrations: [], project: "fixture" },
+      container.environment,
+    );
+
+    await dataSource.initialize();
+
+    try {
+      const { upQueries } = await dataSource.driver.createSchemaBuilder().log();
+
+      // 🎯 Only the row is planned, under the generating database's name:
+      // creating the table and naming the database stay hand edits.
+      expect(
+        upQueries
+          .filter(({ query }) => query.includes("typeorm_metadata"))
+          .map(({ parameters, query }) => ({ parameters, query })),
+      ).toStrictEqual([
+        {
+          parameters: [
+            "fixture_testing",
+            "fixture",
+            "gadgets",
+            "GENERATED_COLUMN",
+            "search_name",
+            "lower(display_name)",
+          ],
+          query: `INSERT INTO "fixture"."typeorm_metadata"("database", "schema", "table", "type", "name", "value") VALUES ($1, $2, $3, $4, $5, $6)`,
+        },
+      ]);
+    } finally {
+      await dataSource.destroy();
+    }
   });
 
   it("finds its table in the project's schema, every column in snake case", async () => {

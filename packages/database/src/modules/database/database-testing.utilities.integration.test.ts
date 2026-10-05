@@ -51,14 +51,15 @@ describe(startDatabaseTestingModule, () => {
     });
 
     it("connects the module as the project's role to its migrated _testing database", async () => {
-      const [session]: { database: string; role: string }[] =
+      const [session]: { database: string; role: string; schema: string }[] =
         await database.dataSource.query(
-          "SELECT current_database() AS database, current_user AS role",
+          "SELECT current_database() AS database, current_user AS role, current_schema() AS schema",
         );
 
       expect(session).toStrictEqual({
         database: "fixture_testing",
         role: "fixture_username",
+        schema: "fixture",
       });
     });
 

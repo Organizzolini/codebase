@@ -51,7 +51,7 @@ describe("database utilities", () => {
       const dataSource = createDataSource(
         {
           entities: [],
-          migrations: ["src/modules/database/migrations/*.ts"],
+          migrations: ["src/modules/sample-database/migrations/*.ts"],
           project: "sample",
         },
         {
@@ -64,7 +64,7 @@ describe("database utilities", () => {
       expect(dataSource.options).toMatchObject({
         database: "sample_development",
         host: "database.internal",
-        migrations: ["src/modules/database/migrations/*.ts"],
+        migrations: ["src/modules/sample-database/migrations/*.ts"],
         migrationsRun: false,
         schema: "sample",
         synchronize: false,
@@ -111,6 +111,30 @@ describe("database utilities", () => {
       });
     });
 
+    it("pins every pooled connection's search path to the schema alone", () => {
+      expect(
+        postgresDataSourceOptions(connection, { entities: [], migrations: [] }),
+      ).toMatchObject({ extra: { options: "-c search_path=fixture" } });
+    });
+
+    it("refuses a schema it could not name in the search path unquoted", () => {
+      expect(() =>
+        postgresDataSourceOptions(
+          { ...connection, schema: "fixture,public" },
+          { entities: [], migrations: [] },
+        ),
+      ).toThrow(/fixture,public/);
+    });
+
+    it("refuses a schema that would smuggle another setting into the parameter", () => {
+      expect(() =>
+        postgresDataSourceOptions(
+          { ...connection, schema: "fixture -c statement_timeout=0" },
+          { entities: [], migrations: [] },
+        ),
+      ).toThrow(/statement_timeout/);
+    });
+
     it("never synchronizes and never runs migrations on start", () => {
       expect(
         postgresDataSourceOptions(connection, { entities: [], migrations: [] }),
@@ -140,11 +164,11 @@ describe("database utilities", () => {
       expect(
         postgresDataSourceOptions(connection, {
           entities: ["src/**/*.entity.ts"],
-          migrations: ["src/modules/database/migrations/*.ts"],
+          migrations: ["src/modules/fixture-database/migrations/*.ts"],
         }),
       ).toMatchObject({
         entities: ["src/**/*.entity.ts"],
-        migrations: ["src/modules/database/migrations/*.ts"],
+        migrations: ["src/modules/fixture-database/migrations/*.ts"],
       });
     });
   });
@@ -154,12 +178,10 @@ describe("database utilities", () => {
       expect(
         postgresEnvironment({
           connection: {
+            ...connection,
             database: "fixture_testing",
             host: "127.0.0.1",
-            password: "fixture_password",
             port: 55_432,
-            schema: "fixture",
-            username: "fixture_username",
           },
           project: "fixture",
         }),
@@ -244,6 +266,16 @@ describe("database utilities", () => {
       expect(() =>
         environmentSchema.parse({ FIXTURE_POSTGRES_PORT: "not-a-port" }),
       ).toThrow(/expected number/i);
+    });
+
+    it("rejects a schema it could not name unquoted, naming the variable", () => {
+      const environmentSchema = z.object(
+        postgresEnvironmentSchema({ project: "fixture" }),
+      );
+
+      expect(() =>
+        environmentSchema.parse({ FIXTURE_POSTGRES_SCHEMA: "fixture,public" }),
+      ).toThrow(/FIXTURE_POSTGRES_SCHEMA/);
     });
 
     it("refuses a project name that cannot prefix a variable", () => {

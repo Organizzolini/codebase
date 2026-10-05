@@ -18,7 +18,7 @@ import type {
 } from "./postgres-container.types";
 import type { StartedPostgreSqlContainer } from "@testcontainers/postgresql";
 
-// 🏭 Factories
+// 🌎 Utilities
 
 /**
  * Starts a throwaway Postgres 18 laid out the way the local Docker one is —
@@ -51,8 +51,20 @@ export async function startPostgresContainer({
     port: container.getPort(),
   };
 
+  // 🎯 Migrated as the project's role, then disconnected; inline rather
+  // than a helper so a suite's call stack stays within the depth limit.
+  const dataSource = new DataSource(
+    postgresDataSourceOptions(connection, { entities: [], migrations }),
+  );
+
   try {
-    await runMigrations(connection, migrations);
+    await dataSource.initialize();
+
+    try {
+      await dataSource.runMigrations({ transaction: "each" });
+    } finally {
+      await dataSource.destroy();
+    }
   } catch (error) {
     await container.stop();
     throw error;
@@ -70,8 +82,9 @@ export async function startPostgresContainer({
 /**
  * The SQL the official image runs on its first start, as its superuser:
  * the same role, database, and schema the local Docker init creates, named
- * for testing. Every name is checked by {@link postgresConnection} first,
- * so none needs quoting.
+ * for testing. The schema is checked against the project-name pattern by
+ * {@link postgresConnection}, and the role and database are derived from the
+ * project name it checks, so none needs quoting.
  */
 function postgresInitializationSql(connection: PostgresConnection): string {
   return [
@@ -81,24 +94,6 @@ function postgresInitializationSql(connection: PostgresConnection): string {
     `CREATE SCHEMA ${connection.schema} AUTHORIZATION ${connection.username};`,
     "",
   ].join("\n");
-}
-
-/** Runs every migration as the project's role, then disconnects. */
-async function runMigrations(
-  connection: PostgresConnection,
-  migrations: PostgresContainerOptions["migrations"],
-): Promise<void> {
-  const dataSource = new DataSource(
-    postgresDataSourceOptions(connection, { entities: [], migrations }),
-  );
-
-  await dataSource.initialize();
-
-  try {
-    await dataSource.runMigrations({ transaction: "each" });
-  } finally {
-    await dataSource.destroy();
-  }
 }
 
 /**
