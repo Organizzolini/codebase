@@ -16,10 +16,22 @@
 # Inputs, all from the environment:
 #   GITHUB_TOKEN       a token allowed to push to `main` and create tags
 #   GITHUB_REPOSITORY  `owner/name`, which the remote URL is built from
+#   GITHUB_ENV         where `RELEASE_SUPERSEDED=true` is written when `main`
+#                      has already moved
 
 set -euo pipefail
 
+source "$(dirname "${BASH_SOURCE[0]}")/main-tip.sh"
+
 git remote set-url origin \
   "https://x-access-token:${GITHUB_TOKEN:?}@github.com/${GITHUB_REPOSITORY:?}.git"
+
+# A run `main` has already moved past steps aside before versioning, which
+# takes minutes, rather than leaving release-codebase.sh to find out later.
+base="$(git rev-parse HEAD)"
+if main_has_moved_from "${base}"; then
+  step_aside_from "${base}"
+  exit 0
+fi
 
 pnpm exec nx release --skip-publish

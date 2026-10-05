@@ -711,7 +711,9 @@ version and the packages' versions, so a release adds one commit to `main`.
 | `tag-packages.sh` | 🔖 Tag Packages | Commits any package versions semantic-release left uncommitted because the codebase had no release, then tags each newly versioned package `<project>@<version>` on `HEAD` and pushes the tags 6 at a time, since GitHub rejects a push that updates more than 6 refs |
 | `publish-packages.sh` | 📦 Publish Packages | Publishes every release-group package not yet on npm, with provenance, then mirrors each package to GitHub Packages as `@<owner>/<project>` |
 | `link-packages.sh` | 🔗 Link Packages | Creates a storage record on the organization's Linked artifacts page for every published npm version that has none, and lists the versions this run published for 🔏 Attest Packages |
+| `release-codebase.sh` | 🦸 Release Codebase | Runs semantic-release, stepping aside instead when `main` moved before it started or while its release commit was being made |
 | `release-group.sh` | sourced by the above | Lists the release group's projects and their directories from `nx.json`, and names and checks a package's npm version |
+| `main-tip.sh` | sourced by the version, codebase and tag scripts | Reports whether `main` moved during the run, and sets the `RELEASE_SUPERSEDED` variable the later release steps skip on |
 
 They read everything from the environment, and all are safe to re-run: Nx
 versions only what has changed since each package's last tag, tagging skips a

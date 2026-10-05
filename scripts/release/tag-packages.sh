@@ -21,32 +21,50 @@
 # Inputs, all from the environment:
 #   GIT_COMMITTER_NAME, GIT_COMMITTER_EMAIL
 #                      the identity a leftover release commit is signed as
+#   GITHUB_ENV         where `RELEASE_SUPERSEDED=true` is written when `main`
+#                      moved before the leftover commit could be pushed
 # The remote must already carry a token allowed to push, as
 # version-packages.sh leaves it.
 
 set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/release-group.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/main-tip.sh"
 
 # The most refs GitHub accepts in one push to this repository.
 readonly REFS_PER_PUSH=6
 
-# Everything version-packages.sh may write.
-readonly VERSIONED_FILES=(
-  ':(glob)packages/ic-suite/*/*/CHANGELOG.md'
-  ':(glob)packages/ic-suite/*/*/package.json'
-  pnpm-lock.yaml
-)
+# Prints every file version-packages.sh may have written that exists. Globs
+# rather than git path patterns, which fail the whole `git add` when one
+# matches nothing, as the changelog one does until a package's first
+# changelog entry.
+versioned_files() {
+  local file
+  for file in packages/ic-suite/*/*/CHANGELOG.md packages/ic-suite/*/*/package.json pnpm-lock.yaml; do
+    if [[ -e "${file}" ]]; then printf '%s\n' "${file}"; fi
+  done
+}
 
-# Commits and pushes any versions semantic-release left uncommitted.
+# Commits and pushes any versions semantic-release left uncommitted. A push
+# rejected because `main` moved steps aside, as main-tip.sh describes, and
+# exits the script before anything is tagged.
 commit_leftover_versions() {
-  git add -- "${VERSIONED_FILES[@]}"
+  local base files
+  mapfile -t files < <(versioned_files)
+  git add -- "${files[@]}"
   if git diff --cached --quiet; then
     return
   fi
   echo "🏷️ No codebase release committed the package versions; committing them"
+  base="$(git rev-parse HEAD)"
   git commit --message "chore(release): 🔖 version packages"
-  git push origin HEAD:refs/heads/main
+  if ! git push origin HEAD:refs/heads/main; then
+    if main_has_moved_from "${base}"; then
+      step_aside_from "${base}"
+      exit 0
+    fi
+    exit 1
+  fi
 }
 
 # Tags HEAD for every release-group package whose version has no tag yet,
