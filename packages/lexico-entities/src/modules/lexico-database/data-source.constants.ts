@@ -1,5 +1,6 @@
 import "reflect-metadata";
-import { DataSource } from "typeorm";
+
+import { createDataSource } from "@codebase/database";
 
 import { AdjectivalForm } from "../entities/dictionary/form/AdjectivalForm.entity";
 import { AdverbForm } from "../entities/dictionary/form/AdverbForm.entity";
@@ -29,7 +30,8 @@ import { Line } from "../entities/literature/Line.entity";
 import { Text } from "../entities/literature/Text.entity";
 import { Token } from "../entities/literature/Token.entity";
 
-import { LexicoNamingStrategy } from "./database.constants";
+import { LexicoNamingStrategy } from "./lexico-database.constants";
+import { Migration1781126991393 } from "./migrations/1781126991393-migration";
 
 export const LEXICO_DATABASE_ENTITIES = [
   Lexeme,
@@ -61,17 +63,18 @@ export const LEXICO_DATABASE_ENTITIES = [
   Token,
 ] as const;
 
-export const lexicoDataSource = new DataSource({
-  database: process.env["POSTGRES_DB"] ?? "postgres",
+/** Every migration, in order, for the test harness; the runtime module runs none. */
+export const LEXICO_DATABASE_MIGRATIONS = [Migration1781126991393] as const;
+
+/**
+ * The data source the TypeORM command line reads for
+ * `nx run lexico-entities:migration:*`, built from the same options as the
+ * runtime `LexicoDatabaseModule`. Reads only `LEXICO_POSTGRES_*`, defaulting to
+ * `lexico_development`.`lexico` as `lexico_username`, and never synchronizes.
+ */
+export const lexicoDataSource = createDataSource({
   entities: [...LEXICO_DATABASE_ENTITIES],
-  host: process.env["POSTGRES_HOST"] ?? "localhost",
-  logging: false,
-  migrations: ["src/modules/database/migrations/*.ts"],
+  migrations: ["src/modules/lexico-database/migrations/*.ts"],
   namingStrategy: new LexicoNamingStrategy(),
-  password: process.env["POSTGRES_PASSWORD"] ?? "postgres",
-  port: Number(process.env["POSTGRES_PORT"] ?? 5432),
-  schema: "public",
-  synchronize: false,
-  type: "postgres",
-  username: process.env["POSTGRES_USER"] ?? "postgres",
+  project: "lexico",
 });

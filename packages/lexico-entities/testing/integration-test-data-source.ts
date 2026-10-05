@@ -7,7 +7,7 @@ import { DataSource, type DataSourceOptions } from "typeorm";
 import {
   LEXICO_DATABASE_ENTITIES,
   lexicoDataSource,
-} from "../src/modules/database/data-source.constants";
+} from "../src/modules/lexico-database/data-source.constants";
 
 /** Represents the integration database resources needed by test suites. */
 export interface IntegrationTestDatabaseResources {
@@ -24,8 +24,8 @@ interface IntegrationPostgresConnectionOptions {
 }
 
 const DEFAULT_INTEGRATION_POSTGRES_IMAGES = [
-  "postgres:16-alpine",
-  "mirror.gcr.io/library/postgres:16-alpine",
+  "postgres:18-alpine",
+  "mirror.gcr.io/library/postgres:18-alpine",
 ] as const;
 
 /** Narrows DataSourceOptions to a postgres-only option shape. */
@@ -62,6 +62,9 @@ export async function createIntegrationTestDatabaseResources(): Promise<Integrat
     migrations: [],
     password: postgresContainer.getPassword(),
     port: postgresContainer.getPort(),
+    // 🎯 Synchronizes into the container's default schema until this harness
+    // gives way to the shared one, which migrates into `lexico`.
+    schema: "public",
     subscribers: [],
     synchronize: false,
     username: postgresContainer.getUsername(),

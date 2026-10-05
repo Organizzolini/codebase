@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 
 /**
- * TODO: Document the database service.
+ * TODO: Document the lexicoDatabase service.
  */
 @Injectable()
-export class DatabaseService {
+export class LexicoDatabaseService {
   // 🏗 Dependency Injection
 
   constructor() {}

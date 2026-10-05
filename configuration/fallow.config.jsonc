@@ -9,7 +9,7 @@
   "duplicates": {
     "crossLanguage": true,
     "ignore": [
-      "packages/*/src/modules/database/migrations/**/*.ts",
+      "packages/*/src/modules/*-database/migrations/**/*.ts",
       "applications/**/src/modules/*-database/migrations/**/*.ts",
     ],
     "ignoreDefaults": true,
@@ -85,7 +85,7 @@
     "applications/lexico/src/lib/routeTree.gen.ts",
     "applications/lexico/src/router.tsx",
     "applications/caelundas/caelundas-cli/src/modules/caelundas-database/migrations/**/*.ts",
-    "packages/lexico-entities/src/modules/database/migrations/**/*.ts",
+    "packages/lexico-entities/src/modules/lexico-database/migrations/**/*.ts",
     "applications/meanderaw/meanderaw-cli/src/modules/meanderaw-database/migrations/**/*.ts",
     "configuration/release.config.cjs",
     "validate-branch-name.config.cjs",

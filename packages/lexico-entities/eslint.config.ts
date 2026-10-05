@@ -5,7 +5,7 @@ export default [
   ...baseConfig,
 
   // 🙈 Ignores
-  { ignores: ["src/modules/database/migrations/**"] },
+  { ignores: ["src/modules/lexico-database/migrations/**"] },
 
   // 📦 Dependency Checks
   {

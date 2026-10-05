@@ -4,7 +4,7 @@ import { ChildEntity, Column } from "typeorm";
 import {
   type VerbConjugation,
   verbConjugationValues,
-} from "../../../database/database.constants";
+} from "../../../lexico-database/lexico-database.constants";
 
 import { Inflection } from "./Inflection.entity";
 

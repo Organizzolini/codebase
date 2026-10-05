@@ -2,7 +2,6 @@
   "dependencies": {
     "@codebase/database": "workspace:*",
     "@nestjs/common": "catalog:",
-    "@nestjs/config": "catalog:",
     "@nestjs/graphql": "catalog:",
     "@nestjs/typeorm": "catalog:",
     "@testcontainers/postgresql": "catalog:",
