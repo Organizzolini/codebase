@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.33.3](https://github.com/organizzolini/codebase/compare/v2.33.2...v2.33.3) (2026-10-05)
+
+### 📦 Build System
+
+* **configuration,documentation:** 📦️ move the verdaccio config into the configuration folder ([#1307](https://github.com/organizzolini/codebase/issues/1307)) ([5684bd1](https://github.com/organizzolini/codebase/commit/5684bd13f6189fbf0e97545b7502d6aff2af0ac7))
+
 ## [2.33.2](https://github.com/organizzolini/codebase/compare/v2.33.1...v2.33.2) (2026-10-05)
 
 ### ♻️ Code Refactoring
