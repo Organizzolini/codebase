@@ -1,4 +1,4 @@
-import { projectDefaults } from "../../configuration/callidescope.config.js";
+import { projectDefaults } from "../../../configuration/callidescope.config.js";
 
 /**
  * What caelundas is held to, measured rather than assumed.

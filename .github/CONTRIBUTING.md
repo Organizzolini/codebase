@@ -35,7 +35,7 @@ Thank you for contributing! This guide covers the development workflow, code sta
   - [Code Ownership](#code-ownership)
   - [Environment Variables](#environment-variables)
     - [Root (`.env.default`)](#root-envdefault)
-    - [caelundas (`applications/caelundas/.env.default`)](#caelundas-applicationscaelundasenvdefault)
+    - [caelundas-cli (`applications/caelundas/caelundas-cli/.env.default`)](#caelundas-cli-applicationscaelundascaelundas-clienvdefault)
   - [Dependency Update Workflow](#dependency-update-workflow)
   - [Additional Resources](#additional-resources)
   - [Getting Help](#getting-help)
@@ -204,7 +204,7 @@ git checkout -b feat/lexico-your-feature
 ```bash
 # Run an application — target names differ by project
 pnpm exec nx run lexico:develop           # Vite dev server with hot reload
-pnpm exec nx run caelundas:start          # CLI entry point
+pnpm exec nx run caelundas-cli:start          # CLI entry point
 pnpm exec nx run meanderaw:repl           # Interactive REPL
 ```
 
@@ -212,7 +212,7 @@ pnpm exec nx run meanderaw:repl           # Interactive REPL
 # Run tests
 pnpm exec nx run <project>:vitest             # Coverage is the default configuration
 pnpm exec nx run <project>:vitest:watch       # Watch mode
-pnpm exec nx run caelundas:vitest:unit        # One kind: unit, integration, end-to-end
+pnpm exec nx run caelundas-cli:vitest:unit        # One kind: unit, integration, end-to-end
 pnpm exec nx run <project>:test-code      # Aggregate — reaches pytest too
 ```
 
@@ -576,7 +576,7 @@ Each project ships a `.env.default` template with safe placeholder values. `scri
 | `TF_VAR_linode_token`                        | Linode API token for Terraform provisioning                         |
 | `TF_VAR_linode_kubernetes_engine_cluster_id` | Linode Kubernetes Engine cluster ID for deployments                 |
 
-### caelundas (`applications/caelundas/.env.default`)
+### caelundas-cli (`applications/caelundas/caelundas-cli/.env.default`)
 
 | Variable           | Default      | Purpose                                       |
 | ------------------ | ------------ | --------------------------------------------- |
