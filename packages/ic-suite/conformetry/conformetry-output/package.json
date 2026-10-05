@@ -1,7 +1,7 @@
 {
   "author": "Jimmy Paolini",
   "bugs": {
-    "url": "https://github.com/Organizzolini/codebase/issues"
+    "url": "https://github.com/organizzolini/codebase/issues"
   },
   "dependencies": {
     "@conformetry/core": "workspace:*",
@@ -28,7 +28,7 @@
     "LICENSE",
     "README.md"
   ],
-  "homepage": "https://github.com/Organizzolini/codebase/tree/main/packages/ic-suite/conformetry/conformetry-output#readme",
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/packages/ic-suite/conformetry/conformetry-output#readme",
   "keywords": [
     "cli-reporter",
     "conformetry",
@@ -55,7 +55,7 @@
   "repository": {
     "directory": "packages/ic-suite/conformetry/conformetry-output",
     "type": "git",
-    "url": "git+https://github.com/Organizzolini/codebase.git"
+    "url": "git+https://github.com/organizzolini/codebase.git"
   },
   "type": "module",
   "typeCoverage": {

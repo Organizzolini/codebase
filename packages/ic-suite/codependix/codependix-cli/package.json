@@ -4,7 +4,7 @@
     "codependix": "./dist/src/main.js"
   },
   "bugs": {
-    "url": "https://github.com/Organizzolini/codebase/issues"
+    "url": "https://github.com/organizzolini/codebase/issues"
   },
   "dependencies": {
     "@codependix/boundaries": "workspace:*",
@@ -43,7 +43,7 @@
     "LICENSE",
     "README.md"
   ],
-  "homepage": "https://github.com/Organizzolini/codebase/tree/main/packages/ic-suite/codependix/codependix-cli#readme",
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/packages/ic-suite/codependix/codependix-cli#readme",
   "keywords": [
     "architecture-linter",
     "boundaries",
@@ -71,7 +71,7 @@
   "repository": {
     "directory": "packages/ic-suite/codependix/codependix-cli",
     "type": "git",
-    "url": "git+https://github.com/Organizzolini/codebase.git"
+    "url": "git+https://github.com/organizzolini/codebase.git"
   },
   "type": "module",
   "typeCoverage": {
