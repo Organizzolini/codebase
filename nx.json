@@ -105,6 +105,24 @@
     }
   },
   "release": {
+    "changelog": {
+      "projectChangelogs": {
+        "createRelease": false,
+        "file": "{projectRoot}/CHANGELOG.md",
+        "renderOptions": {
+          "authors": false,
+          "commitReferences": true,
+          "versionTitleDate": true
+        }
+      },
+      "workspaceChangelog": false
+    },
+    "git": {
+      "commit": true,
+      "commitMessage": "chore(release): 🔖 publish",
+      "push": false,
+      "tag": true
+    },
     "projects": [
       "packages/ic-suite/*/*",
       "!callidescope-agents",
@@ -123,9 +141,6 @@
     "version": {
       "currentVersionResolver": "git-tag",
       "fallbackCurrentVersionResolver": "disk",
-      "git": {
-        "commitMessage": "chore(release): 🔖 publish"
-      },
       "specifierSource": "conventional-commits",
       "updateDependents": "auto"
     }

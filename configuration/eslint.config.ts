@@ -94,7 +94,7 @@ export default [
       "**/vite.config.*.timestamp*",
       "**/vitest.config.*.timestamp*",
       "**/codometer-report.json",
-      "CHANGELOG.md",
+      "**/CHANGELOG.md",
       "lint-staged.config.ts",
       // Shadcn generated components
       "**/packages/lexico-components/src/components/**",

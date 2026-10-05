@@ -278,9 +278,10 @@ jobs:
             --exclude=codebase
           pnpm exec nx run codebase:codometer:write
 
-      # Versions, commits, tags and pushes the ic-suite packages, and leaves the
-      # remote carrying the release token for semantic-release's push below.
-      # `scripts/release/version-packages.sh` explains the push it makes.
+      # Versions the ic-suite packages, writes each one's changelog, commits,
+      # tags and pushes, and leaves the remote carrying the release token for
+      # semantic-release's push below. `scripts/release/version-packages.sh`
+      # explains the push it makes.
       - name: 🏷️ Version Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
@@ -291,8 +292,8 @@ jobs:
           GIT_COMMITTER_NAME: Jimmy Paolini
         run: bash scripts/release/version-packages.sh
 
-      # Publishes each released package to npm with provenance, as a GitHub
-      # release, and to GitHub Packages under the owner's scope.
+      # Publishes each released package to npm with provenance, and to GitHub
+      # Packages under the owner's scope.
       # `scripts/release/publish-packages.sh` explains why it uses pnpm, why the
       # GitHub Packages copies are renamed, and how a re-run completes a run that
       # stopped part way. The workflow's own token publishes the copies, which
@@ -302,7 +303,6 @@ jobs:
           steps.check-skip.outputs.skip != 'true' &&
           matrix.target.id == 'push-releases'
         env:
-          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           GITHUB_PACKAGES_TOKEN: ${{ github.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: bash scripts/release/publish-packages.sh
