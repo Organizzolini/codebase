@@ -1,5 +1,7 @@
 # 🔭 Callidescope Configuration
 
+[![npm](https://img.shields.io/npm/v/@callidescope/configuration?logo=npm&label=npm)](https://www.npmjs.com/package/@callidescope/configuration)
+
 **Reads `callidescope.config.ts` and resolves the limits callidescope enforces.**
 
 This package is the configuration reader for

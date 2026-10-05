@@ -1,3 +1,9 @@
+# 🕸️ Codependix Core
+
+[![npm](https://img.shields.io/npm/v/@codependix/core?logo=npm&label=npm)](https://www.npmjs.com/package/@codependix/core)
+
+**Graph models, boundary rule definitions, and traversal contracts for the Codependix toolchain.**
+
 ## Test
 
 ```bash
