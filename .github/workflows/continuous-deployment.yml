@@ -291,15 +291,19 @@ jobs:
           GIT_COMMITTER_NAME: Jimmy Paolini
         run: bash scripts/release/version-packages.sh
 
-      # Publishes each released package to npm with provenance, then as a
-      # GitHub release. `scripts/release/publish-packages.sh` explains why it
-      # uses pnpm, and how a re-run completes a run that stopped part way.
+      # Publishes each released package to npm with provenance, as a GitHub
+      # release, and to GitHub Packages under the owner's scope.
+      # `scripts/release/publish-packages.sh` explains why it uses pnpm, why the
+      # GitHub Packages copies are renamed, and how a re-run completes a run that
+      # stopped part way. The workflow's own token publishes the copies, which
+      # links each one to this repository; `packages: write` above allows it.
       - name: 📦 Publish Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
           matrix.target.id == 'push-releases'
         env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_PACKAGES_TOKEN: ${{ github.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: bash scripts/release/publish-packages.sh
 
