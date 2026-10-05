@@ -79,7 +79,9 @@ describe("lexico api bootstrap suite", () => {
     expect(createSpy).toHaveBeenCalledWith(
       expect.anything(),
       expect.any(ExpressAdapter),
-      expect.anything(),
+      expect.objectContaining({
+        cors: { credentials: true, origin: ["http://localhost:3000"] },
+      }),
     );
     expect(createLightshipMock).toHaveBeenCalledWith({ port: 9000 });
     expect(loggerConstructorMock).toHaveBeenCalledTimes(1);

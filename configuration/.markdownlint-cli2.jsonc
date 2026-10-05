@@ -37,7 +37,6 @@
     "**/.ruff_cache",
     "**/.terraform/**",
     "**/.venv/**",
-    "**/.claude/worktrees/**",
     "**/coverage/**",
     "**/dist/**",
     "**/node_modules/**",
@@ -107,6 +106,7 @@
     ".agents/skills/writing-for-agents/**",
     ".agents/skills/writing-skills/**",
     // installed-skills-end
+    ".claude/worktrees/**",
     ".conformetry/**",
     ".nx/**",
     "applications/affirmations/output/**",

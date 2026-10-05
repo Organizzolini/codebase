@@ -3,6 +3,7 @@ import { Args as Arguments, Query, Resolver } from "@nestjs/graphql";
 
 import { SearchEnglishArguments } from "./search-english-arguments.entities";
 import { SearchLatinArguments } from "./search-latin-arguments.entities";
+import { ENGLISH_SEARCH_RESULT_LIMIT } from "./search.constants";
 import { LexemeSearchConnection, LexemeSearchResult } from "./search.entities";
 import { SearchService } from "./search.service";
 
@@ -25,8 +26,7 @@ export class SearchResolver {
    * Searches English definitions and translations using full-text and substring matching.
    */
   @Query(() => LexemeSearchConnection, {
-    description:
-      "Performs English definition and translation search with relevance ranking.",
+    description: `Performs English definition and translation search with relevance ranking, returning at most the ${ENGLISH_SEARCH_RESULT_LIMIT} best-ranked lexemes.`,
     name: "searchEnglish",
   })
   public async searchEnglish(

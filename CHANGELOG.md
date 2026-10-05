@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.33.0](https://github.com/organizzolini/codebase/compare/v2.32.0...v2.33.0) (2026-10-05)
+
+### ✨ Features
+
+* **lexico,configuration:** ✨ close lexico-api search gaps and add cors and search logging ([#1297](https://github.com/organizzolini/codebase/issues/1297)) ([af139b9](https://github.com/organizzolini/codebase/commit/af139b9698337f4217f4958a4d449eaa9aa79386)), closes [Organizzolini/codebase#1259](https://github.com/Organizzolini/codebase/issues/1259) [Organizzolini/codebase#1170](https://github.com/Organizzolini/codebase/issues/1170)
+* **meanderaw,configuration:** ✨ draw at a 24-edge budget across worker threads and stop committing the html pages ([#1259](https://github.com/organizzolini/codebase/issues/1259)) ([9d9196a](https://github.com/organizzolini/codebase/commit/9d9196a4155772a83d97da21e782781212d73e71)), closes [#1260](https://github.com/organizzolini/codebase/issues/1260) [#1168](https://github.com/organizzolini/codebase/issues/1168) [#1260](https://github.com/organizzolini/codebase/issues/1260) [#1248](https://github.com/organizzolini/codebase/issues/1248)
+
+### 🐛 Bug Fixes
+
+* **codependix:** 🐛 make the published codependix packages releasable at 0.0.1 ([#1290](https://github.com/organizzolini/codebase/issues/1290)) ([b8d920b](https://github.com/organizzolini/codebase/commit/b8d920b95a6b6bed25e14a0df1d2eb352d0cf25a)), closes [#1168](https://github.com/organizzolini/codebase/issues/1168) [#1168](https://github.com/organizzolini/codebase/issues/1168)
+* **configuration:** 🐛 anchor the claude worktree ignores to the workspace root ([#1299](https://github.com/organizzolini/codebase/issues/1299)) ([23220b5](https://github.com/organizzolini/codebase/commit/23220b53a657d1234eee5058736415217e6f7447))
+
+### 📦 Build System
+
+* **configuration:** 📦️ add file extensions to shared vite config imports ([#1296](https://github.com/organizzolini/codebase/issues/1296)) ([8b4c1e1](https://github.com/organizzolini/codebase/commit/8b4c1e12b3d80f3325868d0f57fac8d3fc832ff3))
+* **synchronization,ic-suite:** 📦️ spell the repository owner in lowercase so npm accepts provenance ([#1300](https://github.com/organizzolini/codebase/issues/1300)) ([92b73f0](https://github.com/organizzolini/codebase/commit/92b73f0c7ebe6d4499baf66cd8f9b6e48e16d9b8))
+
 ## [2.32.0](https://github.com/Organizzolini/codebase/compare/v2.31.0...v2.32.0) (2026-10-04)
 
 ### ✨ Features

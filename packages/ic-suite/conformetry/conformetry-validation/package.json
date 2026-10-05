@@ -1,7 +1,7 @@
 {
   "author": "Jimmy Paolini",
   "bugs": {
-    "url": "https://github.com/Organizzolini/codebase/issues"
+    "url": "https://github.com/organizzolini/codebase/issues"
   },
   "dependencies": {
     "@conformetry/configuration": "workspace:*",
@@ -30,7 +30,7 @@
     "LICENSE",
     "README.md"
   ],
-  "homepage": "https://github.com/Organizzolini/codebase/tree/main/packages/ic-suite/conformetry/conformetry-validation#readme",
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/packages/ic-suite/conformetry/conformetry-validation#readme",
   "keywords": [
     "conformance",
     "conformetry",
@@ -57,7 +57,7 @@
   "repository": {
     "directory": "packages/ic-suite/conformetry/conformetry-validation",
     "type": "git",
-    "url": "git+https://github.com/Organizzolini/codebase.git"
+    "url": "git+https://github.com/organizzolini/codebase.git"
   },
   "type": "module",
   "typeCoverage": {
@@ -65,5 +65,5 @@
     "strict": true
   },
   "types": "src/index.ts",
-  "version": "0.0.2"
+  "version": "0.0.4"
 }

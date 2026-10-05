@@ -1,7 +1,7 @@
 {
   "author": "Jimmy Paolini",
   "bugs": {
-    "url": "https://github.com/Organizzolini/codebase/issues"
+    "url": "https://github.com/organizzolini/codebase/issues"
   },
   "dependencies": {
     "@nestjs/common": "catalog:ic-suite",
@@ -27,7 +27,7 @@
     "LICENSE",
     "README.md"
   ],
-  "homepage": "https://github.com/Organizzolini/codebase/tree/main/packages/ic-suite/codependix/codependix-file-imports#readme",
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/packages/ic-suite/codependix/codependix-file-imports#readme",
   "keywords": [
     "circular-dependency",
     "codependix",
@@ -57,7 +57,7 @@
   "repository": {
     "directory": "packages/ic-suite/codependix/codependix-file-imports",
     "type": "git",
-    "url": "git+https://github.com/Organizzolini/codebase.git"
+    "url": "git+https://github.com/organizzolini/codebase.git"
   },
   "type": "module",
   "typeCoverage": {
@@ -65,5 +65,5 @@
     "strict": true
   },
   "types": "src/index.ts",
-  "version": "0.0.1"
+  "version": "0.0.3"
 }

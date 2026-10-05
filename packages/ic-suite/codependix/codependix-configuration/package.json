@@ -1,7 +1,7 @@
 {
   "author": "Jimmy Paolini",
   "bugs": {
-    "url": "https://github.com/Organizzolini/codebase/issues"
+    "url": "https://github.com/organizzolini/codebase/issues"
   },
   "dependencies": {
     "@codependix/core": "workspace:*",
@@ -32,7 +32,7 @@
     "LICENSE",
     "README.md"
   ],
-  "homepage": "https://github.com/Organizzolini/codebase/tree/main/packages/ic-suite/codependix/codependix-configuration#readme",
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/packages/ic-suite/codependix/codependix-configuration#readme",
   "keywords": [
     "boundaries",
     "codependix",
@@ -59,7 +59,7 @@
   "repository": {
     "directory": "packages/ic-suite/codependix/codependix-configuration",
     "type": "git",
-    "url": "git+https://github.com/Organizzolini/codebase.git"
+    "url": "git+https://github.com/organizzolini/codebase.git"
   },
   "type": "module",
   "typeCoverage": {
@@ -67,5 +67,5 @@
     "strict": true
   },
   "types": "src/index.ts",
-  "version": "0.0.1"
+  "version": "0.0.3"
 }

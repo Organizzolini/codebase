@@ -42,7 +42,7 @@ describe(PackageManifestsService, () => {
   const mockRootManifest: RootPackageManifest = {
     author: "Jimmy Paolini",
     license: "MIT",
-    repository: "Organizzolini/codebase.git",
+    repository: "organizzolini/codebase.git",
   };
 
   beforeAll(async () => {
@@ -82,6 +82,22 @@ describe(PackageManifestsService, () => {
         url: REPOSITORY_URL,
       });
     });
+
+    // npm compares a provenance-attested package's `repository.url` with the
+    // repository GitHub signed it from, case and all, and rejects a mismatch.
+    it("spells the repository owner as GitHub reports it, in lowercase", () => {
+      const derived = service.deriveMetadata({
+        projectPath: "packages/ic-suite/codometer/codometer-cli",
+        rootManifest: mockRootManifest,
+      });
+
+      expect(derived.repository.url).toBe(
+        "git+https://github.com/organizzolini/codebase.git",
+      );
+      expect(derived.bugs.url).toBe(
+        "https://github.com/organizzolini/codebase/issues",
+      );
+    });
   });
 
   describe("readRootManifest", () => {
@@ -92,7 +108,7 @@ describe(PackageManifestsService, () => {
 
       expect(manifest.author).toBe("Jimmy Paolini");
       expect(manifest.license).toBe("MIT");
-      expect(manifest.repository).toBe("Organizzolini/codebase.git");
+      expect(manifest.repository).toBe("organizzolini/codebase.git");
     });
 
     it("throws when root package.json is missing required fields", () => {

@@ -6,7 +6,7 @@ import { z } from "zod";
 export const ROOT_PACKAGE_JSON_PATH = "package.json";
 
 /** GitHub repository owner and repository name. */
-export const GITHUB_REPOSITORY_OWNER = "Organizzolini";
+export const GITHUB_REPOSITORY_OWNER = "organizzolini";
 export const GITHUB_REPOSITORY_NAME = "codebase";
 export const GITHUB_REPOSITORY = `${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY_NAME}`;
 

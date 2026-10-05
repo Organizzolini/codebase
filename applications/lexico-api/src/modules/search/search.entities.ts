@@ -10,6 +10,7 @@ import { Paginated } from "../../lexico-api.utilities";
  * Search match classification source.
  */
 export enum SearchMatchSource {
+  ENCLITIC = "ENCLITIC",
   FUZZY = "FUZZY",
   LEMMA_EXACT = "LEMMA_EXACT",
   PREFIX = "PREFIX",

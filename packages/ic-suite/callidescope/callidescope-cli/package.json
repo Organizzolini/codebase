@@ -4,7 +4,7 @@
     "callidescope": "./dist/src/main.js"
   },
   "bugs": {
-    "url": "https://github.com/Organizzolini/codebase/issues"
+    "url": "https://github.com/organizzolini/codebase/issues"
   },
   "dependencies": {
     "@callidescope/configuration": "workspace:*",
@@ -43,7 +43,7 @@
     "LICENSE",
     "README.md"
   ],
-  "homepage": "https://github.com/Organizzolini/codebase/tree/main/packages/ic-suite/callidescope/callidescope-cli#readme",
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/packages/ic-suite/callidescope/callidescope-cli#readme",
   "keywords": [
     "call-graph",
     "call-stack",
@@ -77,7 +77,7 @@
   "repository": {
     "directory": "packages/ic-suite/callidescope/callidescope-cli",
     "type": "git",
-    "url": "git+https://github.com/Organizzolini/codebase.git"
+    "url": "git+https://github.com/organizzolini/codebase.git"
   },
   "type": "module",
   "typeCoverage": {
@@ -85,5 +85,5 @@
     "strict": true
   },
   "types": "src/index.ts",
-  "version": "0.0.2"
+  "version": "0.0.4"
 }
