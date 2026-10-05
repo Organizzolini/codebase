@@ -39,6 +39,7 @@
     "./src/executors/*": "./src/executors/*"
   },
   "files": [
+    "CHANGELOG.md",
     "dist",
     "executors.json",
     "LICENSE",

@@ -706,13 +706,12 @@ semantic-release releases the codebase itself.
 
 | Script | Step | What it does |
 | ------ | ---- | ------------ |
-| `version-packages.sh` | 🏷️ Version Packages | Runs `nx release version`, then pushes the release commit to `main` and its `<project>@<version>` tags 6 at a time, since GitHub rejects a push that updates more than 6 refs |
-| `publish-packages.sh` | 📦 Publish Packages | Publishes every release-group package not yet on npm, with provenance, creates a GitHub release for every package tag that has none, then mirrors each package to GitHub Packages as `@<owner>/<project>` |
+| `version-packages.sh` | 🏷️ Version Packages | Runs `nx release --skip-publish`, which versions each package and writes its `CHANGELOG.md`, then pushes the release commit to `main` and its `<project>@<version>` tags 6 at a time, since GitHub rejects a push that updates more than 6 refs |
+| `publish-packages.sh` | 📦 Publish Packages | Publishes every release-group package not yet on npm, with provenance, then mirrors each package to GitHub Packages as `@<owner>/<project>` |
 
 Both read everything from the environment, and both are safe to re-run: Nx
 versions only what has changed since each package's last tag, pnpm skips a
-version npm already has, a tag that already has a release is skipped, and so is
-a version GitHub Packages already has. `GITHUB_PACKAGES_REGISTRY` points the
+version npm already has, and so is a version GitHub Packages already has. `GITHUB_PACKAGES_REGISTRY` points the
 mirror at another registry, such as `codebase:local-registry`, to try it
 without touching GitHub.
 

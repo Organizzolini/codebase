@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
-# Versions the ic-suite packages, commits and tags them, and pushes both.
+# Versions the ic-suite packages, writes their changelogs, commits and tags
+# them, and pushes both.
 #
-# `nx release version` reads each package's conventional commits, writes the
-# new versions, and makes one `chore(release): 🔖 publish` commit tagged
-# `<project>@<version>` per bumped package. Nx's own `--git-push` would add
-# `--no-verify` and skip the pre-push hook, so the push is made here instead.
+# `nx release --skip-publish` reads each package's conventional commits,
+# writes the new versions, and prepends the release's entry to each bumped
+# package's `CHANGELOG.md`, which ships inside the package. It then makes one
+# `chore(release): 🔖 publish` commit tagged `<project>@<version>` per bumped
+# package, as nx.json's `release.git` sets out. Publishing is left to the next
+# step. Nx's own push would add `--no-verify` and skip the pre-push hook, so
+# `release.git.push` is off and the push is made here instead.
 #
 # GitHub rejects any push to this repository that updates more than 6 refs,
 # and a first release tags 20 or more packages, so the release commit goes
@@ -30,7 +34,7 @@ readonly REFS_PER_PUSH=6
 git remote set-url origin \
   "https://x-access-token:${GITHUB_TOKEN:?}@github.com/${GITHUB_REPOSITORY:?}.git"
 
-pnpm exec nx release version --git-commit --git-tag
+pnpm exec nx release --skip-publish
 
 echo "🏷️ Pushing the release commit to main"
 git push origin HEAD:refs/heads/main

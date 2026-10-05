@@ -286,7 +286,7 @@
     ".github/skills/**",
     "applications/affirmations/**",
     "applications/JimmyPaolini/**",
-    "CHANGELOG.md",
+    "**/CHANGELOG.md",
     "CLAUDE.md",
     "notepads/**",
   ],
