@@ -1,8 +1,8 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "name": "caelundas",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "name": "caelundas-cli",
   "projectType": "application",
-  "sourceRoot": "applications/caelundas",
+  "sourceRoot": "applications/caelundas/caelundas-cli",
   "tags": [
     "domain:caelundas",
     "framework:nest-commander",
@@ -18,14 +18,14 @@
         "assets": [
           {
             "glob": "README.md",
-            "input": "applications/caelundas",
+            "input": "applications/caelundas/caelundas-cli",
             "output": "."
           }
         ],
         "generatePackageJson": false,
-        "main": "applications/caelundas/src/main.ts",
-        "outputPath": "applications/caelundas/dist",
-        "tsConfig": "applications/caelundas/tsconfig.build.json"
+        "main": "applications/caelundas/caelundas-cli/src/main.ts",
+        "outputPath": "applications/caelundas/caelundas-cli/dist",
+        "tsConfig": "applications/caelundas/caelundas-cli/tsconfig.build.json"
       },
       "outputs": ["{options.outputPath}"]
     },

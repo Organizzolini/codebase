@@ -1,5 +1,7 @@
 # 👔 Conformetry Configuration
 
+[![npm](https://img.shields.io/npm/v/@conformetry/configuration?logo=npm&label=npm)](https://www.npmjs.com/package/@conformetry/configuration)
+
 **The configuration reference for [Conformetry](../conformetry-cli/README.md).**
 
 `@conformetry/configuration` reads a repository's `conformetry.config.*`, checks

@@ -435,6 +435,14 @@
                 "ruleId": "codebase-project"
               }
             ],
+            "name": "caelundas"
+          },
+          {
+            "children": [
+              {
+                "ruleId": "codebase-project"
+              }
+            ],
             "name": "meanderaw"
           },
           {

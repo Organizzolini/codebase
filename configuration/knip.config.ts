@@ -144,7 +144,7 @@ const config: KnipConfig = {
     },
 
     // caelundas: Node.js CLI for astronomical calendar generation
-    "applications/caelundas": {
+    "applications/caelundas/caelundas-cli": {
       ignore: [
         "output/**", // Generated calendar output files
         "testing/**", // Test fixtures and setup

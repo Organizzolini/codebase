@@ -9,7 +9,7 @@ license: MIT
 ## Build Output and Publishing
 
 - **Every build writes into its own project's `dist/`** — `packages/logger/dist`,
-  `applications/caelundas/dist` — never a top-level one. `dist` is already
+  `applications/caelundas/caelundas-cli/dist` — never a top-level one. `dist` is already
   gitignored and in the folder-structure rule's `ignorePatterns`.
 - **`configuration/tsconfig.json` sets `declaration: true`**, so every build
   emits `.d.ts` beside its `.js`. Turning it off silently removes the types a

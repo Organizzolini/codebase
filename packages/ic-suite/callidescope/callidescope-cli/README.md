@@ -1,5 +1,7 @@
 # 🔭 Callidescope
 
+[![npm](https://img.shields.io/npm/v/@callidescope/cli?logo=npm&label=npm)](https://www.npmjs.com/package/@callidescope/cli)
+
 **Traces call stacks across a TypeScript monorepo and flags the ones that got too deep.**
 
 Callidescope builds one call graph for the whole workspace, measures how deep a
