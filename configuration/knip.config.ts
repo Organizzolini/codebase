@@ -235,9 +235,6 @@ const config: KnipConfig = {
       ignore: [
         "src/modules/entities/entities.module.ts", // Conformance-generated module stub, not yet exported
       ],
-      ignoreDependencies: [
-        "@testcontainers/postgresql", // Used by integration helper in packages/lexico-entities/testing (outside knip project scope)
-      ],
       project: ["src/**/*.ts"],
     },
 

@@ -121,7 +121,7 @@ const AUDITABLE_COLUMN_EXPECTATIONS = {
 
 const INFLECTION_COLUMN_EXPECTATIONS = {
   id: {
-    generationStrategy: "uuid",
+    isGenerated: false,
     isPrimary: true,
     type: "uuid",
   },

@@ -119,9 +119,12 @@ nx run lexico-entities:vitest:unit
 nx run lexico-entities:vitest:integration   # Against a Testcontainers PostgreSQL
 ```
 
-Integration tests spin up a real PostgreSQL through
-`@testcontainers/postgresql`, so entity mappings are verified against the
-database rather than against a mock.
+Integration tests start a throwaway Postgres 18 through
+[`@codebase/database/testing`](../database/README.md), laid out like local
+Docker: `lexico_username` owning `lexico_testing` with a `lexico` schema. The
+schema is built by running the real migrations, never by synchronizing, and
+the suite asserts the entities have nothing left to change, so entity mappings
+and migrations are verified against the database rather than against a mock.
 
 ## Related
 
