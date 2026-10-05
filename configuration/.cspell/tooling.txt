@@ -72,6 +72,7 @@ groupable
 gitmoji
 gitmojis
 glab
+globalconfig
 golevelup
 gpgsign
 gradlew
@@ -251,6 +252,7 @@ untaint
 unvalidated
 uppercased
 uppercases
+userconfig
 vaul
 verbing
 vinxi
