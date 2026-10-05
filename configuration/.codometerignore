@@ -31,7 +31,7 @@ packages/lexico-components/src/lib/
 # every prose metric under the data payload. `markdownlint` and `cspell` already
 # ignore both for the same reason.
 applications/lexico-ingestion/data/
-applications/affirmations/output/
+applications/affirmancy/output/
 applications/meanderaw/meanderaw-cli/output/
 applications/lexico-ingestion/src/modules/library/library.constants.ts
 applications/lexico-ingestion/src/modules/literature/literature.constants.ts

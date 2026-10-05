@@ -64,7 +64,7 @@ jobs:
 
           from="requires-python = \">=3\.[0-9][0-9]*"
           to="requires-python = \">=${LATEST_PYTHON}"
-          sed -i "s/${from}/${to}/" applications/affirmations/pyproject.toml
+          sed -i "s/${from}/${to}/" applications/affirmancy/pyproject.toml
 
       # Per-package npm and GitHub Actions version bumps now come from
       # Dependabot (.github/dependabot.yml) as their own isolated pull

@@ -24,7 +24,7 @@ yarn.lock
 **/build
 **/.next
 **/out
-**/affirmations/output
+**/affirmancy/output
 **/meanderaw-cli/output
 **/data/wiktionary
 **/data/wikipedia

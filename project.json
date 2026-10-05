@@ -1152,7 +1152,7 @@
       "inputs": [
         "{projectRoot}/*.py",
         "{projectRoot}/scripts/**/*.py",
-        "{workspaceRoot}/applications/affirmations/pyproject.toml",
+        "{workspaceRoot}/applications/affirmancy/pyproject.toml",
         "{workspaceRoot}/configuration/vulture_whitelist.py",
         "{workspaceRoot}/pyproject.toml",
         "{workspaceRoot}/uv.lock",

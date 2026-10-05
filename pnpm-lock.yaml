@@ -1010,7 +1010,7 @@ importers:
         specifier: 'catalog:'
         version: 4.6.5
 
-  applications/affirmations: {}
+  applications/affirmancy: {}
 
   applications/caelundas/caelundas-cli:
     dependencies:

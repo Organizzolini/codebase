@@ -44,7 +44,7 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
       description: z.string().describe("Application description"),
       name: z.string().describe("Application name in kebab-case"),
     }),
-    instances: [{ patterns: ["applications/affirmations"] }],
+    instances: [{ patterns: ["applications/affirmancy"] }],
     name: "jupyter-notebook-application",
     templatePath:
       "configuration/conformetry-templates/jupyter-notebook-application",

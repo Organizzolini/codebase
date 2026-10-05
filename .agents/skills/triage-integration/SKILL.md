@@ -240,10 +240,10 @@ on any project.
 | `knip` (TS)        | `knip --config configuration/knip.config.ts --workspace {projectRoot}` (cwd: workspaceRoot)  | [configuration/knip.config.ts](../../../configuration/knip.config.ts)                                                     |
 | `vulture` (Python) | `uv run python -m vulture src/ .vulture_whitelist.py --min-confidence 80` (cwd: projectRoot) | project `.vulture_whitelist.py`, global [configuration/vulture_whitelist.py](../../../configuration/vulture_whitelist.py) |
 
-#### `nbstripout` (affirmations only — Jupyter notebooks)
+#### `nbstripout` (affirmancy only — Jupyter notebooks)
 
 Strips cell outputs from `.ipynb` files before staging. Runs automatically on `*.ipynb` staged files.
-Config: [applications/affirmations/project.json](../../../applications/affirmations/project.json)
+Config: [applications/affirmancy/project.json](../../../applications/affirmancy/project.json)
 
 #### Sync checks
 
@@ -422,7 +422,7 @@ Read `configuration/commitlint.config.ts` for the full rule set before amending.
 | Scope | Description |
 | ----- | ----------- |
 | `ic-suite` | In-house code measurement and validation toolchains (Callidescope, Codependix, Codometer, Conformetry) and their shared conventions |
-| `affirmations` | Python Jupyter notebook application for LangGraph affirmation generation |
+| `affirmancy` | Python Jupyter notebook application for LangGraph affirmation generation |
 | `caelundas` | Node.js CLI for astronomical calendar generation (NASA JPL ephemeris) |
 | `configuration` | Workspace root config files (tsconfig, eslint, vitest, nx.json, etc.) |
 | `conformetry` | Code generator templates and validation tests for generated instances |
