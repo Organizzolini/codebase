@@ -701,20 +701,23 @@ pnpm exec nx run codebase:check-lockfile
 ## Release Scripts
 
 These scripts live in `scripts/release/`, and the release job of
-`.github/workflows/continuous-deployment.yml` runs them in order, before
-semantic-release releases the codebase itself.
+`.github/workflows/continuous-deployment.yml` runs them in order. semantic-release
+runs between the first two: its release commit carries both the codebase's
+version and the packages' versions, so a release adds one commit to `main`.
 
 | Script | Step | What it does |
 | ------ | ---- | ------------ |
-| `version-packages.sh` | 🏷️ Version Packages | Runs `nx release --skip-publish`, which versions each package and writes its `CHANGELOG.md`, then pushes the release commit to `main` and its `<project>@<version>` tags 6 at a time, since GitHub rejects a push that updates more than 6 refs |
+| `version-packages.sh` | 🏷️ Version Packages | Runs `nx release --skip-publish`, which versions each package and writes its `CHANGELOG.md` without committing, for semantic-release's release commit to carry |
+| `tag-packages.sh` | 🔖 Tag Packages | Commits any package versions semantic-release left uncommitted because the codebase had no release, then tags each newly versioned package `<project>@<version>` on `HEAD` and pushes the tags 6 at a time, since GitHub rejects a push that updates more than 6 refs |
 | `publish-packages.sh` | 📦 Publish Packages | Publishes every release-group package not yet on npm, with provenance, then mirrors each package to GitHub Packages as `@<owner>/<project>` |
 | `link-packages.sh` | 🔗 Link Packages | Creates a storage record on the organization's Linked artifacts page for every published npm version that has none, and lists the versions this run published for 🔏 Attest Packages |
-| `release-group.sh` | sourced by the above | Lists the release group's project directories from `nx.json`, and names and checks a package's npm version |
+| `release-group.sh` | sourced by the above | Lists the release group's projects and their directories from `nx.json`, and names and checks a package's npm version |
 
 They read everything from the environment, and all are safe to re-run: Nx
-versions only what has changed since each package's last tag, pnpm skips a
-version npm already has, and so is a version GitHub Packages already has or a
-tarball that already has a storage record. `GITHUB_PACKAGES_REGISTRY` points the
+versions only what has changed since each package's last tag, tagging skips a
+tag that already exists, pnpm skips a version npm already has, and so is a
+version GitHub Packages already has or a tarball that already has a storage
+record. `GITHUB_PACKAGES_REGISTRY` points the
 mirror at another registry, such as `codebase:local-registry`, to try it
 without touching GitHub.
 

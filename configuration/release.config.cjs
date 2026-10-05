@@ -8,15 +8,17 @@
  * NPM publishing: Not handled here — Nx release publishes the ic-suite packages.
  * Versioning: The root codebase version is semantic-release's; each ic-suite
  * package's independent version is Nx release's.
- * Auto-committed files: CHANGELOG.md, package.json, and generated
- * README/AGENTS artifacts
+ * Auto-committed files: CHANGELOG.md, package.json, generated README/AGENTS
+ * artifacts, and each ic-suite package's version and CHANGELOG.md
  *
  * Usage:
  *   pnpm semantic-release            # Manual release (requires GITHUB_TOKEN)
  *   pnpm semantic-release:dry-run    # Preview without changes
  *
- * Automated: Merging to `main` runs Nx release for versioning/publishing,
- * then semantic-release updates CHANGELOG.md and creates the GitHub release.
+ * Automated: Merging to `main` runs Nx release to version the ic-suite
+ * packages without committing, then semantic-release updates CHANGELOG.md,
+ * commits everything as one release commit, and creates the GitHub release.
+ * The packages are tagged and published after that commit.
  *
  * Per-project releases: Install `semantic-release-codebase` and configure
  * per-project release.config.cjs files if independent versioning is needed.
@@ -155,7 +157,9 @@ module.exports = {
         // AGENTS.md. Publishing on a branch instead made every pull request
         // rewrite the same blocks and conflict with every other one;
         // publishing on main makes them release artifacts, updated exactly
-        // when the changelog is.
+        // when the changelog is. The ic-suite packages' versions and
+        // changelogs, which Nx release wrote without committing, ride along
+        // too, so a release lands on main as this one commit.
         assets: [
           "CHANGELOG.md",
           "README.md",
@@ -165,6 +169,8 @@ module.exports = {
           "applications/meanderaw/*/README.md",
           "package.json",
           "packages/*/AGENTS.md",
+          "packages/ic-suite/*/*/CHANGELOG.md",
+          "packages/ic-suite/*/*/package.json",
           "packages/*/README.md",
           "pnpm-lock.yaml",
           "tools/*/AGENTS.md",

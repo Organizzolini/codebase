@@ -118,10 +118,9 @@
       "workspaceChangelog": false
     },
     "git": {
-      "commit": true,
-      "commitMessage": "chore(release): 🔖 publish",
+      "commit": false,
       "push": false,
-      "tag": true
+      "tag": false
     },
     "projects": [
       "packages/ic-suite/*/*",
