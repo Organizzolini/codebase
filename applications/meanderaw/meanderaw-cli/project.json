@@ -1,8 +1,8 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "name": "meanderaw",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "name": "meanderaw-cli",
   "projectType": "application",
-  "sourceRoot": "applications/meanderaw",
+  "sourceRoot": "applications/meanderaw/meanderaw-cli",
   "tags": [
     "domain:meanderaw",
     "framework:nest-commander",
@@ -18,14 +18,14 @@
         "assets": [
           {
             "glob": "README.md",
-            "input": "applications/meanderaw",
+            "input": "applications/meanderaw/meanderaw-cli",
             "output": "."
           }
         ],
         "generatePackageJson": false,
-        "main": "applications/meanderaw/src/main.ts",
-        "outputPath": "applications/meanderaw/dist",
-        "tsConfig": "applications/meanderaw/tsconfig.build.json"
+        "main": "applications/meanderaw/meanderaw-cli/src/main.ts",
+        "outputPath": "applications/meanderaw/meanderaw-cli/dist",
+        "tsConfig": "applications/meanderaw/meanderaw-cli/tsconfig.build.json"
       },
       "outputs": ["{options.outputPath}"]
     },

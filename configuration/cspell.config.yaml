@@ -39,7 +39,7 @@ ignorePaths:
   # text is three thousand mosaic tile identifiers — `ddddd-dots` and its
   # siblings — which are coordinates in a parameter space rather than words.
   # `.codometerignore` and `.prettierignore` exclude the same directory.
-  - "**/applications/meanderaw/output/**"
+  - "**/applications/meanderaw/meanderaw-cli/output/**"
   # cspell:ignore mermiad
   # 🔭 Everything callidescope's examples run writes. The report carries each
   # traced callable's own JSDoc summary verbatim, so a word a source file

@@ -27,4 +27,4 @@ The sparse map is larger in the working tree than the columns were, since each v
 - A new, renamed, or removed Characteristic of any kind needs no migration or entity change.
 - One reading rule covers every key: a missing key means zero or `false`. TypeScript readers use `?? 0` or `=== true`. Raw SQL readers use `COALESCE(json_extract(characteristics, '$.key'), 0)` whenever they filter on zero or less-than.
 - No Characteristic is a typed SQL column. Filtering on any of them goes through `json_extract` and cannot use an ordinary column index. None of them had an index before.
-- `synchronize` cannot migrate an existing database from the old layout, because the old and new `characteristics` columns are both text. A database from before this change must be regenerated with `nx run meanderaw:start`, not opened in place.
+- `synchronize` cannot migrate an existing database from the old layout, because the old and new `characteristics` columns are both text. A database from before this change must be regenerated with `nx run meanderaw-cli:start`, not opened in place.

@@ -43,6 +43,7 @@
     "./src/generators/*": "./src/generators/*"
   },
   "files": [
+    "CHANGELOG.md",
     "dist",
     "executors.json",
     "generators.json",

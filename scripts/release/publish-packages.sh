@@ -1,19 +1,15 @@
 #!/usr/bin/env bash
-# Publishes each released ic-suite package to npm, as a GitHub release, and to
-# GitHub Packages.
+# Publishes each released ic-suite package to npm and to GitHub Packages.
 #
-# Every `<project>@<version>` tag with no GitHub release yet gets one,
-# so a run that stopped after the push is completed by the next. Each release
-# links to the npm version and lists the package's commits since its previous
-# tag. `--latest=false` keeps the codebase's `v*` release as Latest, which is
-# the one the README badge shows.
+# Each package's changes are in the `CHANGELOG.md` it ships, which the version
+# step wrote, rather than in a GitHub release of its own: the repository's
+# releases are the codebase's `v*` ones alone.
 #
 # Inputs, all from the environment:
 #   NPM_TOKEN                 an npm token allowed to publish every package's scope
-#   GH_TOKEN                  a token allowed to create releases in this repository
 #   GITHUB_PACKAGES_TOKEN     a token with `packages: write` for this repository
 #   GITHUB_REPOSITORY_OWNER   the owner, whose lowercased name is the mirrors' scope
-#   RUNNER_TEMP               a scratch directory for release notes and mirrors
+#   RUNNER_TEMP               a scratch directory for the mirrors
 #   GITHUB_PACKAGES_REGISTRY  optional, the mirror registry, to test against
 #                             a local one instead of https://npm.pkg.github.com
 
@@ -47,41 +43,6 @@ publish_to_npm() {
   echo "📦 Publishing the release group to npm"
   pnpm -r "${filters[@]}" publish --provenance --no-git-checks \
     --tag latest --registry https://registry.npmjs.org
-}
-
-# Writes one package tag's release notes to the given file.
-write_release_notes() {
-  local tag="$1" name="$2" root="$3" notes="$4"
-  local project="${tag%@*}" version="${tag##*@}" previous
-  previous="$(git tag --list "${project}@*" --sort=-v:refname --merged "${tag}^" | head -1)"
-  {
-    echo "Published to npm as [\`${name}@${version}\`](https://www.npmjs.com/package/${name}/v/${version})."
-    if [[ -n "${previous}" ]]; then
-      echo
-      echo "Changes since \`${previous}\`:"
-      echo
-      git log --no-merges --invert-grep --grep='^chore(release):' \
-        --format='- %s (%h)' "${previous}..${tag}" -- "${root}"
-    fi
-  } >"${notes}"
-}
-
-# Creates a GitHub release for every package tag that has none yet.
-release_on_github() {
-  local released tag project version root name
-  local notes="${RUNNER_TEMP:?}/release-notes.md"
-  released="$(gh release list --limit 1000 --json tagName --jq '.[].tagName')"
-  for tag in $(git tag --list '*@*'); do
-    if grep -qxF "${tag}" <<<"${released}"; then continue; fi
-    project="${tag%@*}"
-    version="${tag##*@}"
-    root="$(pnpm exec nx show project "${project}" --json | jq -r .root)"
-    name="$(jq -r .name "${root}/package.json")"
-    write_release_notes "${tag}" "${name}" "${root}" "${notes}"
-    echo "🗒️ Releasing ${name} ${version} on GitHub"
-    gh release create "${tag}" --verify-tag --latest=false \
-      --title "${name} ${version}" --notes-file "${notes}"
-  done
 }
 
 # Publishes every release-group package to GitHub Packages, under the
@@ -124,5 +85,4 @@ mirror_to_github_packages() {
 
 mapfile -t roots < <(release_group_roots)
 publish_to_npm
-release_on_github
 mirror_to_github_packages
