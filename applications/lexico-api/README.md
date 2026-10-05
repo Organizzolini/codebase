@@ -818,7 +818,7 @@ What this project is judged against, as declared in its own `callidescope.config
 ### Project
 
 ![Lines of Code](https://img.shields.io/badge/Lines_of_Code-7819-22c55e?style=flat-square)
-![Repository Size](https://img.shields.io/badge/Repository_Size-234.28_kB-6b7280?style=flat-square)
+![Repository Size](https://img.shields.io/badge/Repository_Size-234.29_kB-6b7280?style=flat-square)
 ![Folders](https://img.shields.io/badge/Folders-9-4a4a4a?style=flat-square)
 ![Source Files](https://img.shields.io/badge/Source_Files-100-3178c6?style=flat-square)
 

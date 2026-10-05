@@ -7357,7 +7357,7 @@ graph LR
 
 ### Measured Targets
 
-![Compiled JavaScript Size](https://img.shields.io/badge/Compiled_JavaScript_Size-249.50_kB_gzip-6b7280?style=flat-square)
+![Compiled JavaScript Size](https://img.shields.io/badge/Compiled_JavaScript_Size-249.51_kB_gzip-6b7280?style=flat-square)
 
 ### TypeScript
 
