@@ -4,7 +4,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-import { cn } from "@codebase/lexico-components";
+import { cn } from "@codebase/components-web";
 
 import type { ReactElement } from "react";
 

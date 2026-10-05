@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
   Input,
-} from "@codebase/lexico-components";
+} from "@codebase/components-web";
 
 import { EntryCard } from "../components/entry/entry-card";
 import { transformForms } from "../lib/forms";

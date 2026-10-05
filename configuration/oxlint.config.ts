@@ -40,7 +40,7 @@ export default defineConfig({
   // Declares which global variables are available (prevents no-undef errors).
   // Matches the ESLint env settings for this codebase's runtime targets.
   env: {
-    // Browser globals for lexico (web app) and lexico-components
+    // Browser globals for lexico (web app) and components-web
     browser: true,
     builtin: true,
     commonjs: true,

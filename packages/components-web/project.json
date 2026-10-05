@@ -1,8 +1,8 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "name": "lexico-components",
+  "name": "components-web",
   "projectType": "library",
-  "sourceRoot": "packages/lexico-components/src",
+  "sourceRoot": "packages/components-web/src",
   "tags": [
     "domain:lexico",
     "framework:react",
@@ -14,7 +14,7 @@
       "executor": "@nx/vite:build",
       "options": {
         "generatePackageJson": false,
-        "outputPath": "packages/lexico-components/dist"
+        "outputPath": "packages/components-web/dist"
       },
       "outputs": ["{options.outputPath}"]
     },

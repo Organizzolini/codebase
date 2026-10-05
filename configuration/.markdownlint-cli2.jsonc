@@ -119,9 +119,9 @@
     "dist/**",
     "documentation/planning/**",
     "node_modules/**",
-    "packages/lexico-components/src/components/**",
-    "packages/lexico-components/src/hooks/use-mobile.tsx",
-    "packages/lexico-components/src/lib/utils.ts",
+    "packages/components-web/src/components/**",
+    "packages/components-web/src/hooks/use-mobile.tsx",
+    "packages/components-web/src/lib/utils.ts",
     "pnpm-lock.yaml",
   ],
 }

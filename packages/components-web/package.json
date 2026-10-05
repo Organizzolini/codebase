@@ -67,7 +67,7 @@
     "src"
   ],
   "main": "./src/index.ts",
-  "name": "@codebase/lexico-components",
+  "name": "@codebase/components-web",
   "peerDependencies": {
     "react": "catalog:"
   },

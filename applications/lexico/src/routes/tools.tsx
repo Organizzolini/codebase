@@ -5,7 +5,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@codebase/lexico-components";
+} from "@codebase/components-web";
 
 import type { ReactNode } from "react";
 

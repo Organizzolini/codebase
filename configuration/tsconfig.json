@@ -30,11 +30,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     // 🗺️ Codebase Path Aliases
-    // Enables `import { Button } from "@codebase/lexico-components"` across projects
+    // Enables `import { Button } from "@codebase/components-web"` across projects
     "paths": {
-      "@codebase/lexico-components": [
-        "../packages/lexico-components/src/index.ts"
-      ],
+      "@codebase/components-web": ["../packages/components-web/src/index.ts"],
       "codebase/configuration/*": ["./*"],
       "eslint-plugin-better-max-params": [
         "./types/eslint-plugin-better-max-params/index.d.ts"

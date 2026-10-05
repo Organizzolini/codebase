@@ -8,7 +8,7 @@ import {
   CardTitle,
   Label,
   Separator,
-} from "@codebase/lexico-components";
+} from "@codebase/components-web";
 
 import { deleteAccount, getGoogleSignInUrl, signOut } from "../lib/auth";
 

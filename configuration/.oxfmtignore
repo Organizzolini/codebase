@@ -35,9 +35,9 @@ dist
 node_modules
 out
 package-lock.json
-**/packages/lexico-components/src/components/**
-**/packages/lexico-components/src/hooks/**
-**/packages/lexico-components/src/lib/**
+**/packages/components-web/src/components/**
+**/packages/components-web/src/hooks/**
+**/packages/components-web/src/lib/**
 **/applications/lexico-ingestion/data/**
 **/applications/lexico-ingestion/data/library/**
 **/applications/lexico-ingestion/src/modules/literature/literature.constants.ts

@@ -9,7 +9,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@codebase/lexico-components";
+} from "@codebase/components-web";
 
 import { EntryCard } from "../components/entry/entry-card";
 import { getBookmarks, removeBookmark } from "../lib/bookmarks";

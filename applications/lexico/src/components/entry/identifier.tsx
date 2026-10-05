@@ -6,7 +6,7 @@ import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@codebase/lexico-components";
+} from "@codebase/components-web";
 
 import type { ReactElement } from "react";
 

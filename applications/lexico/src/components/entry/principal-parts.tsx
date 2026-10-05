@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardTitle,
   cn,
-} from "@codebase/lexico-components";
+} from "@codebase/components-web";
 
 import { Identifier } from "./identifier";
 

@@ -52,7 +52,7 @@ body:
         - infrastructure
         - JimmyPaolini
         - lexico
-        - lexico-components
+        - components-web
         - lexico-entities
         - lexico-ingestion
         - meanderaw

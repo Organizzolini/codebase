@@ -23,8 +23,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
   useSidebar,
-} from "@codebase/lexico-components";
-import applicationCss from "@codebase/lexico-components/styles/globals.css?url";
+} from "@codebase/components-web";
+import applicationCss from "@codebase/components-web/styles/globals.css?url";
 
 import { Logo } from "../components/layout";
 import { getCurrentUser } from "../lib/auth";

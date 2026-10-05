@@ -17,7 +17,7 @@ flowchart TD
     end
 
     subgraph Packages [Shared Packages]
-        LexicoComponents[lexico-components]
+        ComponentsWeb[components-web]
         LexicoEntities[lexico-entities]
     end
 
@@ -26,7 +26,7 @@ flowchart TD
         Conformance[conformance]
     end
 
-    Lexico --> LexicoComponents
+    Lexico --> ComponentsWeb
     Lexico --> LexicoEntities
     LexicoIngestion --> LexicoEntities
     Synchronization --> Apps
@@ -37,7 +37,7 @@ flowchart TD
 
 The codebase uses `pnpm` workspaces and `Nx` to coordinate builds, tests, and linting across TypeScript and Python workloads.
 
-- **Frontend & Web**: [`lexico`](applications/lexico) depends on shared packages like [`lexico-components`](packages/lexico-components) and [`lexico-entities`](packages/lexico-entities).
+- **Frontend & Web**: [`lexico`](applications/lexico) depends on shared packages like [`components-web`](packages/components-web) and [`lexico-entities`](packages/lexico-entities).
 - **Backend & Data**: [`lexico-ingestion`](applications/lexico-ingestion) manages data persistence using TypeORM and PostgreSQL.
 - **Python Workloads**: [`affirmations`](applications/affirmations) integrates LangChain, Ollama, and LangGraph.
 

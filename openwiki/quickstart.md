@@ -15,7 +15,7 @@ This codebase contains a comprehensive set of TypeScript and Python packages and
 - **[affirmations](applications/affirmations)** - Python LangChain + Ollama affirmation generator
 - **[caelundas](applications/caelundas)** - CLI ephemeris calendar generator
 - **[lexico](applications/lexico)** - TanStack Start dictionary web application
-- **[lexico-components](packages/lexico-components)** - Shared React UI components
+- **[components-web](packages/components-web)** - Shared React UI components
 - **[lexico-entities](packages/lexico-entities)** - TypeORM entities and GraphQL types
 - **[lexico-ingestion](applications/lexico-ingestion)** - NestJS CLI app for dictionary ingestion
 - **[synchronization](tools/synchronization)** - Codebase configuration synchronization tool

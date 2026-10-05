@@ -10,9 +10,9 @@
     "noEmit": true,
     "outDir": "../../dist/out-tsc",
     "paths": {
-      "@/*": ["../../packages/lexico-components/src/*"],
-      "@codebase/lexico-components": [
-        "../../packages/lexico-components/src/index.ts"
+      "@/*": ["../../packages/components-web/src/*"],
+      "@codebase/components-web": [
+        "../../packages/components-web/src/index.ts"
       ],
       "codebase/configuration/*": ["../../configuration/*"],
       "eslint-plugin-better-max-params": [

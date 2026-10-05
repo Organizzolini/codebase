@@ -169,7 +169,7 @@
 
 &nbsp;&nbsp;&nbsp;&nbsp;**[lexico](applications/lexico)** - TanStack Start SSR dictionary web application\
 &nbsp;&nbsp;&nbsp;&nbsp;**[lexico-api](applications/lexico-api)** - NestJS GraphQL API exposing Latin dictionary, literature, and Relay cursor-based search\
-&nbsp;&nbsp;&nbsp;&nbsp;**[lexico-components](packages/lexico-components)** - Shared React component library using shadcn/ui and Radix primitives\
+&nbsp;&nbsp;&nbsp;&nbsp;**[components-web](packages/components-web)** - Shared React component library using shadcn/ui and Radix primitives\
 &nbsp;&nbsp;&nbsp;&nbsp;**[lexico-entities](packages/lexico-entities)** - TypeORM entities, migrations, and grammatical enumerations for the dictionary and literature schema\
 &nbsp;&nbsp;&nbsp;&nbsp;**[lexico-ingestion](applications/lexico-ingestion)** - NestJS CLI that scrapes and loads dictionary, literature, and etymology sources
 
@@ -274,6 +274,7 @@ graph LR
   codometer_languages["codometer-languages"]
   codometer_measurement["codometer-measurement"]
   codometer_output["codometer-output"]
+  components_web["components-web"]
   conformetry_agents["conformetry-agents"]
   conformetry_cli["conformetry-cli"]
   conformetry_configuration["conformetry-configuration"]
@@ -286,7 +287,6 @@ graph LR
   conformetry_validation["conformetry-validation"]
   lexico["lexico"]
   lexico_api["lexico-api"]
-  lexico_components["lexico-components"]
   lexico_entities["lexico-entities"]
   lexico_ingestion["lexico-ingestion"]
   logging["logging"]
@@ -390,7 +390,7 @@ graph LR
   conformetry_validation --> conformetry_configuration
   conformetry_validation --> conformetry_core
   conformetry_validation --> conformetry_languages
-  lexico --> lexico_components
+  lexico --> components_web
   lexico_api --> lexico_entities
   lexico_api --> logging
   lexico_ingestion --> lexico_entities
@@ -2942,6 +2942,68 @@ graph LR
   file_codometer_output_testing_setup_ts["codometer-output/testing/setup.ts"]
   file_codometer_output_vite_config_ts["codometer-output/vite.config.ts"]
   file_codometer_output_vitest_config_ts["codometer-output/vitest.config.ts"]
+  file_components_web_callidescope_config_ts["components-web/callidescope.config.ts"]
+  file_components_web_codependix_config_ts["components-web/codependix.config.ts"]
+  file_components_web_codometer_config_ts["components-web/codometer.config.ts"]
+  file_components_web_eslint_config_ts["components-web/eslint.config.ts"]
+  file_components_web_src_components_ui_accordion_tsx["components-web/src/components/ui/accordion.tsx"]
+  file_components_web_src_components_ui_alert_dialog_tsx["components-web/src/components/ui/alert-dialog.tsx"]
+  file_components_web_src_components_ui_alert_tsx["components-web/src/components/ui/alert.tsx"]
+  file_components_web_src_components_ui_aspect_ratio_tsx["components-web/src/components/ui/aspect-ratio.tsx"]
+  file_components_web_src_components_ui_avatar_tsx["components-web/src/components/ui/avatar.tsx"]
+  file_components_web_src_components_ui_badge_tsx["components-web/src/components/ui/badge.tsx"]
+  file_components_web_src_components_ui_breadcrumb_tsx["components-web/src/components/ui/breadcrumb.tsx"]
+  file_components_web_src_components_ui_button_group_tsx["components-web/src/components/ui/button-group.tsx"]
+  file_components_web_src_components_ui_button_tsx["components-web/src/components/ui/button.tsx"]
+  file_components_web_src_components_ui_calendar_tsx["components-web/src/components/ui/calendar.tsx"]
+  file_components_web_src_components_ui_card_tsx["components-web/src/components/ui/card.tsx"]
+  file_components_web_src_components_ui_carousel_tsx["components-web/src/components/ui/carousel.tsx"]
+  file_components_web_src_components_ui_chart_tsx["components-web/src/components/ui/chart.tsx"]
+  file_components_web_src_components_ui_checkbox_tsx["components-web/src/components/ui/checkbox.tsx"]
+  file_components_web_src_components_ui_collapsible_tsx["components-web/src/components/ui/collapsible.tsx"]
+  file_components_web_src_components_ui_command_tsx["components-web/src/components/ui/command.tsx"]
+  file_components_web_src_components_ui_context_menu_tsx["components-web/src/components/ui/context-menu.tsx"]
+  file_components_web_src_components_ui_dialog_tsx["components-web/src/components/ui/dialog.tsx"]
+  file_components_web_src_components_ui_drawer_tsx["components-web/src/components/ui/drawer.tsx"]
+  file_components_web_src_components_ui_dropdown_menu_tsx["components-web/src/components/ui/dropdown-menu.tsx"]
+  file_components_web_src_components_ui_empty_tsx["components-web/src/components/ui/empty.tsx"]
+  file_components_web_src_components_ui_field_tsx["components-web/src/components/ui/field.tsx"]
+  file_components_web_src_components_ui_form_tsx["components-web/src/components/ui/form.tsx"]
+  file_components_web_src_components_ui_hover_card_tsx["components-web/src/components/ui/hover-card.tsx"]
+  file_components_web_src_components_ui_input_group_tsx["components-web/src/components/ui/input-group.tsx"]
+  file_components_web_src_components_ui_input_otp_tsx["components-web/src/components/ui/input-otp.tsx"]
+  file_components_web_src_components_ui_input_tsx["components-web/src/components/ui/input.tsx"]
+  file_components_web_src_components_ui_item_tsx["components-web/src/components/ui/item.tsx"]
+  file_components_web_src_components_ui_kbd_tsx["components-web/src/components/ui/kbd.tsx"]
+  file_components_web_src_components_ui_label_tsx["components-web/src/components/ui/label.tsx"]
+  file_components_web_src_components_ui_menubar_tsx["components-web/src/components/ui/menubar.tsx"]
+  file_components_web_src_components_ui_navigation_menu_tsx["components-web/src/components/ui/navigation-menu.tsx"]
+  file_components_web_src_components_ui_pagination_tsx["components-web/src/components/ui/pagination.tsx"]
+  file_components_web_src_components_ui_popover_tsx["components-web/src/components/ui/popover.tsx"]
+  file_components_web_src_components_ui_progress_tsx["components-web/src/components/ui/progress.tsx"]
+  file_components_web_src_components_ui_radio_group_tsx["components-web/src/components/ui/radio-group.tsx"]
+  file_components_web_src_components_ui_resizable_tsx["components-web/src/components/ui/resizable.tsx"]
+  file_components_web_src_components_ui_scroll_area_tsx["components-web/src/components/ui/scroll-area.tsx"]
+  file_components_web_src_components_ui_select_tsx["components-web/src/components/ui/select.tsx"]
+  file_components_web_src_components_ui_separator_tsx["components-web/src/components/ui/separator.tsx"]
+  file_components_web_src_components_ui_sheet_tsx["components-web/src/components/ui/sheet.tsx"]
+  file_components_web_src_components_ui_sidebar_tsx["components-web/src/components/ui/sidebar.tsx"]
+  file_components_web_src_components_ui_skeleton_tsx["components-web/src/components/ui/skeleton.tsx"]
+  file_components_web_src_components_ui_slider_tsx["components-web/src/components/ui/slider.tsx"]
+  file_components_web_src_components_ui_sonner_tsx["components-web/src/components/ui/sonner.tsx"]
+  file_components_web_src_components_ui_spinner_tsx["components-web/src/components/ui/spinner.tsx"]
+  file_components_web_src_components_ui_switch_tsx["components-web/src/components/ui/switch.tsx"]
+  file_components_web_src_components_ui_table_tsx["components-web/src/components/ui/table.tsx"]
+  file_components_web_src_components_ui_tabs_tsx["components-web/src/components/ui/tabs.tsx"]
+  file_components_web_src_components_ui_textarea_tsx["components-web/src/components/ui/textarea.tsx"]
+  file_components_web_src_components_ui_toggle_group_tsx["components-web/src/components/ui/toggle-group.tsx"]
+  file_components_web_src_components_ui_toggle_tsx["components-web/src/components/ui/toggle.tsx"]
+  file_components_web_src_components_ui_tooltip_tsx["components-web/src/components/ui/tooltip.tsx"]
+  file_components_web_src_hooks_use_media_query_ts["components-web/src/hooks/use-media-query.ts"]
+  file_components_web_src_hooks_use_mobile_tsx["components-web/src/hooks/use-mobile.tsx"]
+  file_components_web_src_index_ts["components-web/src/index.ts"]
+  file_components_web_src_lib_utils_ts["components-web/src/lib/utils.ts"]
+  file_components_web_vite_config_mts["components-web/vite.config.mts"]
   file_conformetry_agents_codependix_config_ts["conformetry-agents/codependix.config.ts"]
   file_conformetry_agents_codometer_config_ts["conformetry-agents/codometer.config.ts"]
   file_conformetry_agents_eslint_config_ts["conformetry-agents/eslint.config.ts"]
@@ -3380,68 +3442,6 @@ graph LR
   file_lexico_api_testing_mocks_ts["lexico-api/testing/mocks.ts"]
   file_lexico_api_testing_setup_ts["lexico-api/testing/setup.ts"]
   file_lexico_api_vitest_config_ts["lexico-api/vitest.config.ts"]
-  file_lexico_components_callidescope_config_ts["lexico-components/callidescope.config.ts"]
-  file_lexico_components_codependix_config_ts["lexico-components/codependix.config.ts"]
-  file_lexico_components_codometer_config_ts["lexico-components/codometer.config.ts"]
-  file_lexico_components_eslint_config_ts["lexico-components/eslint.config.ts"]
-  file_lexico_components_src_components_ui_accordion_tsx["lexico-components/src/components/ui/accordion.tsx"]
-  file_lexico_components_src_components_ui_alert_dialog_tsx["lexico-components/src/components/ui/alert-dialog.tsx"]
-  file_lexico_components_src_components_ui_alert_tsx["lexico-components/src/components/ui/alert.tsx"]
-  file_lexico_components_src_components_ui_aspect_ratio_tsx["lexico-components/src/components/ui/aspect-ratio.tsx"]
-  file_lexico_components_src_components_ui_avatar_tsx["lexico-components/src/components/ui/avatar.tsx"]
-  file_lexico_components_src_components_ui_badge_tsx["lexico-components/src/components/ui/badge.tsx"]
-  file_lexico_components_src_components_ui_breadcrumb_tsx["lexico-components/src/components/ui/breadcrumb.tsx"]
-  file_lexico_components_src_components_ui_button_group_tsx["lexico-components/src/components/ui/button-group.tsx"]
-  file_lexico_components_src_components_ui_button_tsx["lexico-components/src/components/ui/button.tsx"]
-  file_lexico_components_src_components_ui_calendar_tsx["lexico-components/src/components/ui/calendar.tsx"]
-  file_lexico_components_src_components_ui_card_tsx["lexico-components/src/components/ui/card.tsx"]
-  file_lexico_components_src_components_ui_carousel_tsx["lexico-components/src/components/ui/carousel.tsx"]
-  file_lexico_components_src_components_ui_chart_tsx["lexico-components/src/components/ui/chart.tsx"]
-  file_lexico_components_src_components_ui_checkbox_tsx["lexico-components/src/components/ui/checkbox.tsx"]
-  file_lexico_components_src_components_ui_collapsible_tsx["lexico-components/src/components/ui/collapsible.tsx"]
-  file_lexico_components_src_components_ui_command_tsx["lexico-components/src/components/ui/command.tsx"]
-  file_lexico_components_src_components_ui_context_menu_tsx["lexico-components/src/components/ui/context-menu.tsx"]
-  file_lexico_components_src_components_ui_dialog_tsx["lexico-components/src/components/ui/dialog.tsx"]
-  file_lexico_components_src_components_ui_drawer_tsx["lexico-components/src/components/ui/drawer.tsx"]
-  file_lexico_components_src_components_ui_dropdown_menu_tsx["lexico-components/src/components/ui/dropdown-menu.tsx"]
-  file_lexico_components_src_components_ui_empty_tsx["lexico-components/src/components/ui/empty.tsx"]
-  file_lexico_components_src_components_ui_field_tsx["lexico-components/src/components/ui/field.tsx"]
-  file_lexico_components_src_components_ui_form_tsx["lexico-components/src/components/ui/form.tsx"]
-  file_lexico_components_src_components_ui_hover_card_tsx["lexico-components/src/components/ui/hover-card.tsx"]
-  file_lexico_components_src_components_ui_input_group_tsx["lexico-components/src/components/ui/input-group.tsx"]
-  file_lexico_components_src_components_ui_input_otp_tsx["lexico-components/src/components/ui/input-otp.tsx"]
-  file_lexico_components_src_components_ui_input_tsx["lexico-components/src/components/ui/input.tsx"]
-  file_lexico_components_src_components_ui_item_tsx["lexico-components/src/components/ui/item.tsx"]
-  file_lexico_components_src_components_ui_kbd_tsx["lexico-components/src/components/ui/kbd.tsx"]
-  file_lexico_components_src_components_ui_label_tsx["lexico-components/src/components/ui/label.tsx"]
-  file_lexico_components_src_components_ui_menubar_tsx["lexico-components/src/components/ui/menubar.tsx"]
-  file_lexico_components_src_components_ui_navigation_menu_tsx["lexico-components/src/components/ui/navigation-menu.tsx"]
-  file_lexico_components_src_components_ui_pagination_tsx["lexico-components/src/components/ui/pagination.tsx"]
-  file_lexico_components_src_components_ui_popover_tsx["lexico-components/src/components/ui/popover.tsx"]
-  file_lexico_components_src_components_ui_progress_tsx["lexico-components/src/components/ui/progress.tsx"]
-  file_lexico_components_src_components_ui_radio_group_tsx["lexico-components/src/components/ui/radio-group.tsx"]
-  file_lexico_components_src_components_ui_resizable_tsx["lexico-components/src/components/ui/resizable.tsx"]
-  file_lexico_components_src_components_ui_scroll_area_tsx["lexico-components/src/components/ui/scroll-area.tsx"]
-  file_lexico_components_src_components_ui_select_tsx["lexico-components/src/components/ui/select.tsx"]
-  file_lexico_components_src_components_ui_separator_tsx["lexico-components/src/components/ui/separator.tsx"]
-  file_lexico_components_src_components_ui_sheet_tsx["lexico-components/src/components/ui/sheet.tsx"]
-  file_lexico_components_src_components_ui_sidebar_tsx["lexico-components/src/components/ui/sidebar.tsx"]
-  file_lexico_components_src_components_ui_skeleton_tsx["lexico-components/src/components/ui/skeleton.tsx"]
-  file_lexico_components_src_components_ui_slider_tsx["lexico-components/src/components/ui/slider.tsx"]
-  file_lexico_components_src_components_ui_sonner_tsx["lexico-components/src/components/ui/sonner.tsx"]
-  file_lexico_components_src_components_ui_spinner_tsx["lexico-components/src/components/ui/spinner.tsx"]
-  file_lexico_components_src_components_ui_switch_tsx["lexico-components/src/components/ui/switch.tsx"]
-  file_lexico_components_src_components_ui_table_tsx["lexico-components/src/components/ui/table.tsx"]
-  file_lexico_components_src_components_ui_tabs_tsx["lexico-components/src/components/ui/tabs.tsx"]
-  file_lexico_components_src_components_ui_textarea_tsx["lexico-components/src/components/ui/textarea.tsx"]
-  file_lexico_components_src_components_ui_toggle_group_tsx["lexico-components/src/components/ui/toggle-group.tsx"]
-  file_lexico_components_src_components_ui_toggle_tsx["lexico-components/src/components/ui/toggle.tsx"]
-  file_lexico_components_src_components_ui_tooltip_tsx["lexico-components/src/components/ui/tooltip.tsx"]
-  file_lexico_components_src_hooks_use_media_query_ts["lexico-components/src/hooks/use-media-query.ts"]
-  file_lexico_components_src_hooks_use_mobile_tsx["lexico-components/src/hooks/use-mobile.tsx"]
-  file_lexico_components_src_index_ts["lexico-components/src/index.ts"]
-  file_lexico_components_src_lib_utils_ts["lexico-components/src/lib/utils.ts"]
-  file_lexico_components_vite_config_mts["lexico-components/vite.config.mts"]
   file_lexico_entities_callidescope_config_ts["lexico-entities/callidescope.config.ts"]
   file_lexico_entities_codependix_config_ts["lexico-entities/codependix.config.ts"]
   file_lexico_entities_codometer_config_ts["lexico-entities/codometer.config.ts"]
@@ -6872,6 +6872,77 @@ graph LR
   file_codometer_output_src_modules_report_report_service_ts --> file_codometer_output_src_modules_report_report_constants_ts
   file_codometer_output_src_modules_report_report_service_ts --> file_codometer_output_src_modules_report_report_types_ts
   file_codometer_output_src_modules_report_report_service_unit_test_ts --> file_codometer_output_src_modules_report_report_service_ts
+  file_components_web_src_components_ui_accordion_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_alert_dialog_tsx --> file_components_web_src_components_ui_button_tsx
+  file_components_web_src_components_ui_alert_dialog_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_alert_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_avatar_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_badge_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_breadcrumb_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_button_group_tsx --> file_components_web_src_components_ui_separator_tsx
+  file_components_web_src_components_ui_button_group_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_button_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_calendar_tsx --> file_components_web_src_components_ui_button_tsx
+  file_components_web_src_components_ui_calendar_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_card_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_carousel_tsx --> file_components_web_src_components_ui_button_tsx
+  file_components_web_src_components_ui_carousel_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_chart_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_checkbox_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_command_tsx --> file_components_web_src_components_ui_dialog_tsx
+  file_components_web_src_components_ui_command_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_context_menu_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_dialog_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_drawer_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_dropdown_menu_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_empty_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_field_tsx --> file_components_web_src_components_ui_label_tsx
+  file_components_web_src_components_ui_field_tsx --> file_components_web_src_components_ui_separator_tsx
+  file_components_web_src_components_ui_field_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_form_tsx --> file_components_web_src_components_ui_label_tsx
+  file_components_web_src_components_ui_form_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_hover_card_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_input_group_tsx --> file_components_web_src_components_ui_button_tsx
+  file_components_web_src_components_ui_input_group_tsx --> file_components_web_src_components_ui_input_tsx
+  file_components_web_src_components_ui_input_group_tsx --> file_components_web_src_components_ui_textarea_tsx
+  file_components_web_src_components_ui_input_group_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_input_otp_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_input_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_item_tsx --> file_components_web_src_components_ui_separator_tsx
+  file_components_web_src_components_ui_item_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_kbd_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_label_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_menubar_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_navigation_menu_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_pagination_tsx --> file_components_web_src_components_ui_button_tsx
+  file_components_web_src_components_ui_pagination_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_popover_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_progress_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_radio_group_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_resizable_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_scroll_area_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_select_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_separator_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_sheet_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_sidebar_tsx --> file_components_web_src_components_ui_button_tsx
+  file_components_web_src_components_ui_sidebar_tsx --> file_components_web_src_components_ui_input_tsx
+  file_components_web_src_components_ui_sidebar_tsx --> file_components_web_src_components_ui_separator_tsx
+  file_components_web_src_components_ui_sidebar_tsx --> file_components_web_src_components_ui_sheet_tsx
+  file_components_web_src_components_ui_sidebar_tsx --> file_components_web_src_components_ui_skeleton_tsx
+  file_components_web_src_components_ui_sidebar_tsx --> file_components_web_src_components_ui_tooltip_tsx
+  file_components_web_src_components_ui_sidebar_tsx --> file_components_web_src_hooks_use_mobile_tsx
+  file_components_web_src_components_ui_sidebar_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_skeleton_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_slider_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_spinner_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_switch_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_table_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_tabs_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_textarea_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_toggle_group_tsx --> file_components_web_src_components_ui_toggle_tsx
+  file_components_web_src_components_ui_toggle_group_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_toggle_tsx --> file_components_web_src_lib_utils_ts
+  file_components_web_src_components_ui_tooltip_tsx --> file_components_web_src_lib_utils_ts
   file_conformetry_cli_src_main_end_to_end_test_ts --> file_conformetry_cli_src_constants_ts
   file_conformetry_cli_src_main_integration_test_ts --> file_conformetry_cli_src_main_module_ts
   file_conformetry_cli_src_main_integration_test_ts --> file_conformetry_cli_src_modules_generate_generate_command_ts
@@ -7496,77 +7567,6 @@ graph LR
   file_lexico_api_src_modules_words_words_resolver_unit_test_ts --> file_lexico_api_src_modules_words_words_service_ts
   file_lexico_api_src_modules_words_words_service_unit_test_ts --> file_lexico_api_src_modules_words_words_service_ts
   file_lexico_api_src_modules_words_words_service_unit_test_ts --> file_lexico_api_testing_mocks_ts
-  file_lexico_components_src_components_ui_accordion_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_alert_dialog_tsx --> file_lexico_components_src_components_ui_button_tsx
-  file_lexico_components_src_components_ui_alert_dialog_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_alert_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_avatar_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_badge_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_breadcrumb_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_button_group_tsx --> file_lexico_components_src_components_ui_separator_tsx
-  file_lexico_components_src_components_ui_button_group_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_button_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_calendar_tsx --> file_lexico_components_src_components_ui_button_tsx
-  file_lexico_components_src_components_ui_calendar_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_card_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_carousel_tsx --> file_lexico_components_src_components_ui_button_tsx
-  file_lexico_components_src_components_ui_carousel_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_chart_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_checkbox_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_command_tsx --> file_lexico_components_src_components_ui_dialog_tsx
-  file_lexico_components_src_components_ui_command_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_context_menu_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_dialog_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_drawer_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_dropdown_menu_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_empty_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_field_tsx --> file_lexico_components_src_components_ui_label_tsx
-  file_lexico_components_src_components_ui_field_tsx --> file_lexico_components_src_components_ui_separator_tsx
-  file_lexico_components_src_components_ui_field_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_form_tsx --> file_lexico_components_src_components_ui_label_tsx
-  file_lexico_components_src_components_ui_form_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_hover_card_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_input_group_tsx --> file_lexico_components_src_components_ui_button_tsx
-  file_lexico_components_src_components_ui_input_group_tsx --> file_lexico_components_src_components_ui_input_tsx
-  file_lexico_components_src_components_ui_input_group_tsx --> file_lexico_components_src_components_ui_textarea_tsx
-  file_lexico_components_src_components_ui_input_group_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_input_otp_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_input_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_item_tsx --> file_lexico_components_src_components_ui_separator_tsx
-  file_lexico_components_src_components_ui_item_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_kbd_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_label_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_menubar_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_navigation_menu_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_pagination_tsx --> file_lexico_components_src_components_ui_button_tsx
-  file_lexico_components_src_components_ui_pagination_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_popover_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_progress_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_radio_group_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_resizable_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_scroll_area_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_select_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_separator_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_sheet_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_sidebar_tsx --> file_lexico_components_src_components_ui_button_tsx
-  file_lexico_components_src_components_ui_sidebar_tsx --> file_lexico_components_src_components_ui_input_tsx
-  file_lexico_components_src_components_ui_sidebar_tsx --> file_lexico_components_src_components_ui_separator_tsx
-  file_lexico_components_src_components_ui_sidebar_tsx --> file_lexico_components_src_components_ui_sheet_tsx
-  file_lexico_components_src_components_ui_sidebar_tsx --> file_lexico_components_src_components_ui_skeleton_tsx
-  file_lexico_components_src_components_ui_sidebar_tsx --> file_lexico_components_src_components_ui_tooltip_tsx
-  file_lexico_components_src_components_ui_sidebar_tsx --> file_lexico_components_src_hooks_use_mobile_tsx
-  file_lexico_components_src_components_ui_sidebar_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_skeleton_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_slider_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_spinner_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_switch_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_table_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_tabs_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_textarea_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_toggle_group_tsx --> file_lexico_components_src_components_ui_toggle_tsx
-  file_lexico_components_src_components_ui_toggle_group_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_toggle_tsx --> file_lexico_components_src_lib_utils_ts
-  file_lexico_components_src_components_ui_tooltip_tsx --> file_lexico_components_src_lib_utils_ts
   file_lexico_entities_src_modules_database_data_source_constants_ts --> file_lexico_entities_src_modules_database_database_constants_ts
   file_lexico_entities_src_modules_database_data_source_constants_ts --> file_lexico_entities_src_modules_entities_dictionary_form_AdjectivalForm_entity_ts
   file_lexico_entities_src_modules_database_data_source_constants_ts --> file_lexico_entities_src_modules_entities_dictionary_form_AdverbForm_entity_ts
@@ -10538,6 +10538,7 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 | `applications/lexico` | 9 | 9 | 0 | 9 |
 | `applications/lexico-ingestion` | 17 | 17 | 0 | 8 |
 | `applications/meanderaw/meanderaw-cli` | 16 | 16 | 0 | 13 |
+| `packages/components-web` | 3 | 3 | 0 | 7 |
 | `packages/ic-suite/callidescope/callidescope-cli` | 15 | 15 | 0 | 10 |
 | `packages/ic-suite/callidescope/callidescope-nx` | 17 | 17 | 0 | 7 |
 | `packages/ic-suite/codependix/codependix-boundaries` | 12 | 12 | 0 | 7 |
@@ -10546,7 +10547,6 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 | `packages/ic-suite/conformetry/conformetry-cli` | 15 | 15 | 0 | 9 |
 | `packages/ic-suite/conformetry/conformetry-languages` | 13 | 13 | 0 | 11 |
 | `packages/ic-suite/conformetry/conformetry-nx` | 15 | 15 | 0 | 9 |
-| `packages/lexico-components` | 3 | 3 | 0 | 7 |
 | `packages/lexico-entities` | 3 | 3 | 0 | 3 |
 | `packages/logging` | 4 | 4 | 0 | 2 |
 | `tools/synchronization` | 10 | 10 | 0 | 10 |

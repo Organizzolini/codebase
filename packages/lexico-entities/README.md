@@ -96,7 +96,7 @@ database rather than against a mock.
 
 - 🐺 [lexico](../../applications/lexico/README.md) — the web application
 - 🚰 [lexico-ingestion](../../applications/lexico-ingestion/README.md) — fills these tables
-- 🎨 [lexico-components](../lexico-components/README.md) — the interface
+- 🎨 [components-web](../components-web/README.md) — the interface
 
 ## License
 

@@ -85,7 +85,7 @@ Keeping a branch scoped to one project or module (see the root [AGENTS.md](../..
 | `infrastructure`    | Helm charts, Terraform configs, and Kubernetes resources                                                                                  |
 | `JimmyPaolini`      | Static GitHub profile README project (markdown and assets)                                                                                |
 | `lexico`            | TanStack Start SSR Latin dictionary web app with Supabase backend                                                                         |
-| `lexico-components` | Shared React/shadcn component library                                                                                                     |
+| `components-web`    | Shared React/shadcn component library                                                                                                     |
 | `lexico-entities`   | Shared TypeORM entities and GraphQL types                                                                                                 |
 | `lexico-ingestion`  | Data ingestion scripts for Lexico                                                                                                         |
 | `meanderaw`         | Greek meander (key/fret) SVG generator CLI and the composable motif/modifier library it reads                                             |
@@ -131,7 +131,7 @@ Keeping a branch scoped to one project or module (see the root [AGENTS.md](../..
 
 ### Character Budget & Multi-Change Commits
 
-The prefix `type(scope): <gitmoji>` eats into the 128-character header limit. Long scopes like `infrastructure` (~27 characters) or `lexico-components` (~35 characters) leave as few as **93–101 characters** for the subject. Always count the full header.
+The prefix `type(scope): <gitmoji>` eats into the 128-character header limit. Long scopes like `infrastructure` (~27 characters) or `components-web` (~35 characters) leave as few as **93–101 characters** for the subject. Always count the full header.
 
 When a commit touches multiple concerns, **summarize or split** — never list changes with commas/"and":
 

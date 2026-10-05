@@ -9,7 +9,7 @@
 ### Add a shadcn Component
 
 ```bash
-cd packages/lexico-components
+cd packages/components-web
 pnpx shadcn@latest add <component-name>
 ```
 
@@ -37,7 +37,7 @@ See the [write-react skill](../../.agents/skills/write-react/SKILL.md) for themi
 ## Usage in Apps
 
 ```tsx
-import { Button, Card, Input } from "@codebase/lexico-components";
+import { Button, Card, Input } from "@codebase/components-web";
 ```
 
 Never duplicate UI code in apps. Always import from this package.
@@ -47,7 +47,7 @@ Never duplicate UI code in apps. Always import from this package.
 ### Add Custom Components
 
 ```bash
-cd packages/lexico-components/src/components
+cd packages/components-web/src/components
 touch word-card.tsx
 ```
 

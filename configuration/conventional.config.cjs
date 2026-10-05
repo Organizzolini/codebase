@@ -146,7 +146,7 @@ const scopes = [
   },
   {
     description: "Shared React/shadcn component library",
-    name: "lexico-components",
+    name: "components-web",
   },
   {
     description: "Shared TypeORM entities and GraphQL types",

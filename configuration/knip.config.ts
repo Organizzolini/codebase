@@ -205,8 +205,8 @@ const config: KnipConfig = {
       project: ["codometer.config.ts", "examples/**/*.ts", "testing/**/*.ts"],
     },
 
-    // lexico-components: Shared React component library (shadcn/ui)
-    "packages/lexico-components": {
+    // components-web: Shared React component library (shadcn/ui)
+    "packages/components-web": {
       entry: ["src/components/**/*.tsx"],
       project: ["src/**/*.ts", "src/**/*.tsx"],
     },

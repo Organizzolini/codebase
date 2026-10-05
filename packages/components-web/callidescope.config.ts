@@ -1,7 +1,7 @@
 import { projectDefaults } from "../../configuration/callidescope.config.js";
 
 /**
- * What lexico-components is held to, measured rather than assumed.
+ * What components-web is held to, measured rather than assumed.
  *
  * Three frames and seven callees, which is what a React component library
  * measures: nothing calls deeply, and a composed component calls widely.

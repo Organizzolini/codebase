@@ -1,6 +1,6 @@
 ---
 name: write-react
-description: React coding conventions for this codebase. Use when writing or reviewing React components, when asked about component structure, section ordering, Tailwind CSS usage, state management patterns, conditional rendering, list rendering, or React 19 conventions. Covers component section layout (🔖🧩🪝🏗💪🏁🎨), Tailwind CSS with theme tokens, TanStack Router file-based routing, lexico-components usage, and testing with Vitest + RTL.
+description: React coding conventions for this codebase. Use when writing or reviewing React components, when asked about component structure, section ordering, Tailwind CSS usage, state management patterns, conditional rendering, list rendering, or React 19 conventions. Covers component section layout (🔖🧩🪝🏗💪🏁🎨), Tailwind CSS with theme tokens, TanStack Router file-based routing, components-web usage, and testing with Vitest + RTL.
 license: MIT
 ---
 
@@ -81,18 +81,18 @@ export const UserCard = (props: UserCardProps): ReactElement => {
 };
 ```
 
-## lexico-components
+## components-web
 
 All UI components come from the shared component library. **Never duplicate UI code.**
 
 ```typescript
 // ✅ CORRECT
-import { Button, Card, Input, Label, cn } from "@codebase/lexico-components";
+import { Button, Card, Input, Label, cn } from "@codebase/components-web";
 
 // ❌ WRONG: Copying component code into lexico
 ```
 
-Never modify files in `packages/lexico-components/src/components/ui/` (shadcn-generated). Compose custom components in `packages/lexico-components/src/components/` instead.
+Never modify files in `packages/components-web/src/components/ui/` (shadcn-generated). Compose custom components in `packages/components-web/src/components/` instead.
 
 ## Styling with Tailwind CSS
 
@@ -121,7 +121,7 @@ Use CSS variables for themed colors to support dark mode:
 ### Conditional Classes with `cn()`
 
 ```typescript
-import { cn } from "@codebase/lexico-components";
+import { cn } from "@codebase/components-web";
 
 <button
   className={cn(
