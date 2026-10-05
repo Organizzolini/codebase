@@ -9,22 +9,17 @@
 #   NPM_TOKEN                 an npm token allowed to publish every package's scope
 #   GITHUB_PACKAGES_TOKEN     a token with `packages: write` for this repository
 #   GITHUB_REPOSITORY_OWNER   the owner, whose lowercased name is the mirrors' scope
-#   RUNNER_TEMP               a scratch directory for the mirrors
+#   RUNNER_TEMP               a scratch directory for the mirrors, and where
+#                             `newly-published.txt` lists each `<name>@<version>`
+#                             this run put on npm, for link-packages.sh
 #   GITHUB_PACKAGES_REGISTRY  optional, the mirror registry, to test against
 #                             a local one instead of https://npm.pkg.github.com
 
 set -euo pipefail
 
-readonly GITHUB_PACKAGES_REGISTRY="${GITHUB_PACKAGES_REGISTRY:-https://npm.pkg.github.com}"
+source "$(dirname "${BASH_SOURCE[0]}")/release-group.sh"
 
-# Prints the directory of every project in the release group, one per line.
-release_group_roots() {
-  local release_projects project
-  release_projects="$(jq -r '.release.projects | join(",")' nx.json)"
-  for project in $(pnpm exec nx show projects --projects "${release_projects}" --json | jq -r '.[]'); do
-    pnpm exec nx show project "${project}" --json | jq -r .root
-  done
-}
+readonly GITHUB_PACKAGES_REGISTRY="${GITHUB_PACKAGES_REGISTRY:-https://npm.pkg.github.com}"
 
 # Publishes every release-group package whose version is not on npm yet.
 #
@@ -33,24 +28,33 @@ release_group_roots() {
 # rather than `nx release publish`, because pnpm honors provenance only as the
 # `--provenance` flag, which Nx cannot pass: `NPM_CONFIG_PROVENANCE` and
 # `publishConfig.provenance` are ignored. `setup-node` writes no registry
-# `.npmrc`, so the tokens go in the user config.
+# `.npmrc`, so the tokens go in the user config. What npm lacked beforehand
+# and has afterwards is what this run published, which is all the next step
+# may attest as built here.
 publish_to_npm() {
-  local root filters=()
+  local root specifier filters=() missing=()
+  local published="${RUNNER_TEMP:?}/newly-published.txt"
   echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN:?}" >>~/.npmrc
   for root in "${roots[@]}"; do
     filters+=(--filter "./${root}")
+    specifier="$(package_specifier "${root}")"
+    is_on_npm "${specifier}" || missing+=("${specifier}")
   done
   echo "📦 Publishing the release group to npm"
   pnpm -r "${filters[@]}" publish --provenance --no-git-checks \
     --tag latest --registry https://registry.npmjs.org
+  : >"${published}"
+  for specifier in "${missing[@]}"; do
+    if is_on_npm "${specifier}"; then echo "${specifier}" >>"${published}"; fi
+  done
 }
 
 # Publishes every release-group package to GitHub Packages, under the
 # owner's scope, unless that version is there already.
 #
 # GitHub Packages is what lists each package in the repository's Packages
-# sidebar. That registry accepts only packages
-# scoped to the repository's owner, so `@codometer/cli` is mirrored as
+# sidebar. That registry accepts only packages scoped to the repository's
+# owner, so `@codometer/cli` is mirrored as
 # `@organizzolini/codometer-cli`, packed by pnpm exactly as npm got it and then
 # renamed. Its `publishConfig` is dropped, because a `publishConfig.registry`
 # overrides `--registry` and would send it to npm instead. It goes last because
