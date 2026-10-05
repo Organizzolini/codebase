@@ -2,26 +2,11 @@
 # Publishes each released ic-suite package to npm, as a GitHub release, and to
 # GitHub Packages.
 #
-# npm gets every package in the Nx release group, read from nx.json, whose
-# version is not on npm yet, so a re-run sends only what is missing. pnpm
-# rather than `nx release publish`, because pnpm honors provenance only as the
-# `--provenance` flag, which Nx cannot pass: `NPM_CONFIG_PROVENANCE` and
-# `publishConfig.provenance` are ignored. `setup-node` writes no registry
-# `.npmrc`, so the tokens go in the user config.
-#
-# Then every `<project>@<version>` tag with no GitHub release yet gets one,
+# Every `<project>@<version>` tag with no GitHub release yet gets one,
 # so a run that stopped after the push is completed by the next. Each release
 # links to the npm version and lists the package's commits since its previous
 # tag. `--latest=false` keeps the codebase's `v*` release as Latest, which is
 # the one the README badge shows.
-#
-# Last, each package is mirrored to GitHub Packages, which is what lists it in
-# the repository's Packages sidebar. That registry accepts only packages
-# scoped to the repository's owner, so `@codometer/cli` is mirrored as
-# `@organizzolini/codometer-cli`, packed by pnpm exactly as npm got it and then
-# renamed. Its `publishConfig` is dropped, because a `publishConfig.registry`
-# overrides `--registry` and would send it to npm instead. It goes last because
-# it is a copy: npm stays where the packages are installed from.
 #
 # Inputs, all from the environment:
 #   NPM_TOKEN                 an npm token allowed to publish every package's scope
@@ -46,6 +31,13 @@ release_group_roots() {
 }
 
 # Publishes every release-group package whose version is not on npm yet.
+#
+# npm gets every package in the Nx release group, read from nx.json, whose
+# version is not on npm yet, so a re-run sends only what is missing. pnpm
+# rather than `nx release publish`, because pnpm honors provenance only as the
+# `--provenance` flag, which Nx cannot pass: `NPM_CONFIG_PROVENANCE` and
+# `publishConfig.provenance` are ignored. `setup-node` writes no registry
+# `.npmrc`, so the tokens go in the user config.
 publish_to_npm() {
   local root filters=()
   echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN:?}" >>~/.npmrc
@@ -94,6 +86,14 @@ release_on_github() {
 
 # Publishes every release-group package to GitHub Packages, under the
 # owner's scope, unless that version is there already.
+#
+# GitHub Packages is what lists each package in the repository's Packages
+# sidebar. That registry accepts only packages
+# scoped to the repository's owner, so `@codometer/cli` is mirrored as
+# `@organizzolini/codometer-cli`, packed by pnpm exactly as npm got it and then
+# renamed. Its `publishConfig` is dropped, because a `publishConfig.registry`
+# overrides `--registry` and would send it to npm instead. It goes last because
+# it is a copy: npm stays where the packages are installed from.
 mirror_to_github_packages() {
   local root name version mirror tarball unpacked
   local scope="${GITHUB_REPOSITORY_OWNER:?}"
