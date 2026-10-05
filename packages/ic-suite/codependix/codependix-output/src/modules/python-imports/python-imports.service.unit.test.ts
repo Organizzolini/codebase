@@ -20,7 +20,7 @@ const PYTHON_IMPORT_GRAPH: PythonImportGraph = {
   edges: [{ source: "src/index.py", target: "src/helper.py" }],
   fileNames: ["src/helper.py", "src/index.py"],
   isolatedFileNames: [],
-  projectName: "affirmations",
+  projectName: "affirmancy",
 };
 
 describe(PythonImportsService, () => {
@@ -29,12 +29,12 @@ describe(PythonImportsService, () => {
   let pythonService: PythonService;
   let projectRoot: string;
 
-  /** Builds a `GraphRunContext` whose one project is `affirmations`. */
+  /** Builds a `GraphRunContext` whose one project is `affirmancy`. */
   function buildContext(
     overrides: Partial<GraphRunContext> = {},
   ): GraphRunContext {
     const projects = overrides.projects ?? [
-      { absoluteRoot: projectRoot, name: "affirmations", tags: [] },
+      { absoluteRoot: projectRoot, name: "affirmancy", tags: [] },
     ];
 
     return {
@@ -89,7 +89,7 @@ describe(PythonImportsService, () => {
     projectRoot = await mkdtemp(path.join(tmpdir(), "python-imports-service-"));
 
     vi.mocked(pythonService.discoverProjects).mockReturnValue([
-      { absoluteRoot: projectRoot, name: "affirmations" },
+      { absoluteRoot: projectRoot, name: "affirmancy" },
     ]);
     vi.mocked(pythonService.buildGraph).mockReturnValue(PYTHON_IMPORT_GRAPH);
     vi.mocked(pythonService.renderMermaid).mockReturnValue(
@@ -115,7 +115,7 @@ describe(PythonImportsService, () => {
 
   it("builds a graph only for the discovered python projects", () => {
     vi.mocked(configurationService.resolveForProject).mockReturnValue({
-      json: { path: "affirmations.json" },
+      json: { path: "affirmancy.json" },
       markdown: undefined,
       target: "json",
     });
@@ -124,13 +124,13 @@ describe(PythonImportsService, () => {
 
     expect(pythonService.buildGraph).toHaveBeenCalledWith({
       absoluteRoot: projectRoot,
-      name: "affirmations",
+      name: "affirmancy",
     });
   });
 
   it("writes a project's JSON export", async () => {
     vi.mocked(configurationService.resolveForProject).mockReturnValue({
-      json: { path: "affirmations.json" },
+      json: { path: "affirmancy.json" },
       markdown: undefined,
       target: "json",
     });
@@ -142,7 +142,7 @@ describe(PythonImportsService, () => {
       results: [
         {
           isCurrent: true,
-          projectName: "affirmations",
+          projectName: "affirmancy",
           staleExports: [],
           stalePaths: [],
         },
@@ -150,7 +150,7 @@ describe(PythonImportsService, () => {
     });
 
     const written = JSON.parse(
-      await readFile(path.join(projectRoot, "affirmations.json"), "utf8"),
+      await readFile(path.join(projectRoot, "affirmancy.json"), "utf8"),
     ) as unknown;
 
     expect(written).toStrictEqual(PYTHON_IMPORT_GRAPH);
@@ -158,7 +158,7 @@ describe(PythonImportsService, () => {
 
   it("reports a missing JSON export as stale in check mode", () => {
     vi.mocked(configurationService.resolveForProject).mockReturnValue({
-      json: { path: "affirmations.json" },
+      json: { path: "affirmancy.json" },
       markdown: undefined,
       target: "json",
     });
@@ -170,15 +170,15 @@ describe(PythonImportsService, () => {
       results: [
         {
           isCurrent: false,
-          projectName: "affirmations",
+          projectName: "affirmancy",
           staleExports: [
             {
               anchor: undefined,
               difference: "graph",
-              path: "affirmations.json",
+              path: "affirmancy.json",
             },
           ],
-          stalePaths: ["affirmations.json"],
+          stalePaths: ["affirmancy.json"],
         },
       ],
     });
@@ -190,7 +190,7 @@ describe(PythonImportsService, () => {
     await writeFile(
       readmePath,
       [
-        "# affirmations",
+        "# affirmancy",
         '<!-- codependix:start name="python-imports" -->',
         "stale",
         '<!-- codependix:end name="python-imports" -->',
@@ -220,7 +220,7 @@ describe(PythonImportsService, () => {
       throw nonErrorFailure;
     });
     vi.mocked(configurationService.resolveForProject).mockReturnValue({
-      json: { path: "affirmations.json" },
+      json: { path: "affirmancy.json" },
       markdown: undefined,
       target: "json",
     });
@@ -228,7 +228,7 @@ describe(PythonImportsService, () => {
     const outcome = service.runGraphs(buildContext());
 
     expect(outcome.failures).toStrictEqual([
-      { error: "boom", projectName: "affirmations" },
+      { error: "boom", projectName: "affirmancy" },
     ]);
   });
 
@@ -237,11 +237,11 @@ describe(PythonImportsService, () => {
 
     await mkdir(otherProjectRoot, { recursive: true });
     vi.mocked(pythonService.discoverProjects).mockReturnValue([
-      { absoluteRoot: projectRoot, name: "affirmations" },
+      { absoluteRoot: projectRoot, name: "affirmancy" },
       { absoluteRoot: otherProjectRoot, name: "other-python-project" },
     ]);
     vi.mocked(pythonService.buildGraph).mockImplementation((project) => {
-      if (project.name === "affirmations") {
+      if (project.name === "affirmancy") {
         throw new Error("failed to build graph");
       }
 
@@ -256,7 +256,7 @@ describe(PythonImportsService, () => {
     const outcome = service.runGraphs(
       buildContext({
         projects: [
-          { absoluteRoot: projectRoot, name: "affirmations", tags: [] },
+          { absoluteRoot: projectRoot, name: "affirmancy", tags: [] },
           {
             absoluteRoot: otherProjectRoot,
             name: "other-python-project",
@@ -267,7 +267,7 @@ describe(PythonImportsService, () => {
     );
 
     expect(outcome.failures).toStrictEqual([
-      { error: "failed to build graph", projectName: "affirmations" },
+      { error: "failed to build graph", projectName: "affirmancy" },
     ]);
     expect(outcome.results).toStrictEqual([
       {

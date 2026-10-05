@@ -49,7 +49,7 @@ describe(FileImportsWorkspaceGraphService, () => {
         edges: [{ source: "main.py", target: "utilities.py" }],
         fileNames: ["main.py", "utilities.py"],
         isolatedFileNames: [],
-        projectName: "affirmations",
+        projectName: "affirmancy",
       };
 
       const workspaceGraph = service.buildWorkspaceGraph({
@@ -58,7 +58,7 @@ describe(FileImportsWorkspaceGraphService, () => {
       });
 
       expect(workspaceGraph.edges).toStrictEqual([
-        { source: "affirmations/main.py", target: "affirmations/utilities.py" },
+        { source: "affirmancy/main.py", target: "affirmancy/utilities.py" },
         { source: "logger/src/index.ts", target: "logger/src/helper.ts" },
       ]);
     });

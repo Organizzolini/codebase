@@ -52,12 +52,12 @@ describe(PythonProjectService, () => {
   it("describes a project by its root and Nx name", () => {
     expect(
       service.describeProject(
-        "/workspace/applications/affirmations",
-        "affirmations",
+        "/workspace/applications/affirmancy",
+        "affirmancy",
       ),
     ).toStrictEqual({
-      absoluteRoot: "/workspace/applications/affirmations",
-      name: "affirmations",
+      absoluteRoot: "/workspace/applications/affirmancy",
+      name: "affirmancy",
     });
   });
 
@@ -65,7 +65,7 @@ describe(PythonProjectService, () => {
     it("reports true when a project's tags include language:python", () => {
       expect(
         service.isPythonProject(
-          buildTaggedProject("affirmations", ["language:python"]),
+          buildTaggedProject("affirmancy", ["language:python"]),
         ),
       ).toBe(true);
     });
@@ -88,24 +88,24 @@ describe(PythonProjectService, () => {
   describe("discoverProjects", () => {
     it("keeps only the projects tagged language:python", () => {
       const discovered = service.discoverProjects([
-        buildTaggedProject("affirmations", ["language:python"]),
+        buildTaggedProject("affirmancy", ["language:python"]),
         buildTaggedProject("lexico", ["language:typescript"]),
       ]);
 
       expect(discovered.map((project) => project.name)).toStrictEqual([
-        "affirmations",
+        "affirmancy",
       ]);
     });
 
     it("describes each discovered project", () => {
       const discovered = service.discoverProjects([
-        buildTaggedProject("affirmations", ["language:python"]),
+        buildTaggedProject("affirmancy", ["language:python"]),
       ]);
 
       expect(discovered).toStrictEqual([
         {
-          absoluteRoot: "/workspace/applications/affirmations",
-          name: "affirmations",
+          absoluteRoot: "/workspace/applications/affirmancy",
+          name: "affirmancy",
         },
       ]);
     });

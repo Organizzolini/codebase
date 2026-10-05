@@ -202,7 +202,7 @@ describe(WorkspaceGraphsService, () => {
         },
       ]);
       vi.mocked(pythonService.discoverProjects).mockReturnValue([
-        { absoluteRoot: projectRoot, name: "affirmations" },
+        { absoluteRoot: projectRoot, name: "affirmancy" },
       ]);
 
       service.runFileImportsWorkspaceGraph(buildContext());
@@ -217,7 +217,7 @@ describe(WorkspaceGraphsService, () => {
       );
       expect(pythonService.buildGraph).toHaveBeenCalledWith({
         absoluteRoot: projectRoot,
-        name: "affirmations",
+        name: "affirmancy",
       });
     });
 

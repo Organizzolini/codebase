@@ -32,7 +32,7 @@ export class IgnoreRulesService {
   /**
    * The path a rule set sees, or nothing when the path lies outside it.
    *
-   * A rule set anchored at `applications/affirmations` matches its patterns
+   * A rule set anchored at `applications/affirmancy` matches its patterns
    * against `output/one.md`, not against the full path, because that is what
    * the patterns in that directory's ignore file were written against.
    */

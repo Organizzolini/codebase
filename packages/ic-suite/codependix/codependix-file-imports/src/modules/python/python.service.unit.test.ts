@@ -48,8 +48,8 @@ describe(PythonService, () => {
   it("delegates discoverProjects to PythonProjectService", () => {
     const projects = [
       {
-        absoluteRoot: "/workspace/affirmations",
-        name: "affirmations",
+        absoluteRoot: "/workspace/affirmancy",
+        name: "affirmancy",
         tags: ["language:python"],
       },
     ];

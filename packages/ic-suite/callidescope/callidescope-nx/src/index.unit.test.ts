@@ -82,7 +82,7 @@ describe("callidescopePlugin", () => {
     await expect(
       createNodes([
         "packages/alpha/project.json",
-        "applications/affirmations/project.json",
+        "applications/affirmancy/project.json",
         "configuration/callidescope.config.ts",
       ]),
     ).resolves.toHaveLength(1);

@@ -186,7 +186,7 @@ describe(NeighborhoodService, () => {
       const graph = buildGraph(
         {},
         {
-          affirmations: "applications/affirmations",
+          affirmancy: "applications/affirmancy",
           caelundas: "packages/caelundas",
         },
       );
@@ -195,7 +195,7 @@ describe(NeighborhoodService, () => {
         service
           .readProjects(graph, "/workspace")
           .map((project) => project.name),
-      ).toStrictEqual(["affirmations", "caelundas"]);
+      ).toStrictEqual(["affirmancy", "caelundas"]);
     });
 
     it("carries each project's own tags", () => {
@@ -402,9 +402,9 @@ describe(NeighborhoodService, () => {
       const neighborhood = readNeighborhood(
         service.buildNeighborhoods(
           buildGraph({}),
-          buildProjects(["affirmations"]),
+          buildProjects(["affirmancy"]),
         ),
-        "affirmations",
+        "affirmancy",
       );
 
       expect(service.renderMermaid(neighborhood)).toBe(
