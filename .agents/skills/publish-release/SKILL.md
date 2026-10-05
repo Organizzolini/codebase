@@ -1,6 +1,6 @@
 ---
 name: publish-release
-description: Guidelines for building, packaging, and publishing projects. Use when modifying publishConfig, resolvePluginService, package.json main/types/exports for publishable libraries, checking dist folder generation, or debugging package resolution for released artifacts.
+description: Guidelines for building, packaging, and publishing projects. Use when modifying publishConfig, resolvePluginService, package.json main/types/exports for publishable libraries, checking dist folder generation, debugging package resolution for released artifacts, or rehearsing a publish against the local Verdaccio registry.
 license: MIT
 ---
 
@@ -31,3 +31,10 @@ actually applies, and why shrinking the Nx plugin closure buys nothing is
 [ADR 0009](../../docs/adr/0009-keep-manifest-fields-on-typescript-sources.md). **Do
 not point `main` or `exports` at `dist/`** — it deadlocks the plugin graph load
 and breaks `fallow-dead-code` and `vitest`.
+
+## Rehearsing a Publish
+
+**Before trusting a publish change, rehearse it** against the local registry:
+publish the packed tarball to Verdaccio and import it from a project outside
+the workspace. A naive rehearsal reaches the real npmjs.org registry, so follow
+[local-registry-rehearsal.md](local-registry-rehearsal.md) step by step.

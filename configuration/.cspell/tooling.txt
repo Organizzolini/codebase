@@ -72,6 +72,7 @@ groupable
 gitmoji
 gitmojis
 glab
+globalconfig
 golevelup
 gpgsign
 gradlew
@@ -114,6 +115,7 @@ mapbox
 maplibre
 materialui
 mattpocock
+maxage
 mcp
 metatype
 middlewares
@@ -250,6 +252,7 @@ untaint
 unvalidated
 uppercased
 uppercases
+userconfig
 vaul
 verbing
 vinxi
