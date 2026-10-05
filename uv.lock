@@ -9,7 +9,7 @@ resolution-markers = [
 
 [manifest]
 members = [
-    "affirmations",
+    "affirmancy",
 ]
 
 [manifest.dependency-groups]
@@ -21,9 +21,9 @@ dev = [
 ]
 
 [[package]]
-name = "affirmations"
+name = "affirmancy"
 version = "0.1.0"
-source = { editable = "applications/affirmations" }
+source = { editable = "applications/affirmancy" }
 dependencies = [
     { name = "inflect" },
     { name = "ipykernel" },

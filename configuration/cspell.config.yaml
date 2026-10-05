@@ -134,8 +134,8 @@ dictionaryDefinitions:
     path: .cspell/lexico.txt
   - name: linguistics
     path: .cspell/linguistics.txt
-  - name: affirmations
-    path: .cspell/affirmations.txt
+  - name: affirmancy
+    path: .cspell/affirmancy.txt
   - name: ai
     path: .cspell/ai.txt
   - name: python
@@ -215,7 +215,7 @@ dictionaries:
   - astronomy
   - ics
   - lexico
-  - affirmations
+  - affirmancy
   - ai
   - python
   - infrastructure

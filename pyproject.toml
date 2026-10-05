@@ -10,7 +10,7 @@
 # project to this list.
 
 [tool.uv.workspace]
-members = ["applications/affirmations"]
+members = ["applications/affirmancy"]
 
 # Tools the workspace-root Nx targets invoke, over files outside any project.
 [dependency-groups]

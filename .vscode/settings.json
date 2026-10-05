@@ -188,7 +188,7 @@
   "conventionalCommits.promptScopes": true,
   "conventionalCommits.scopes": [
     "ic-suite", // In-house code measurement and validation toolchains (Callidescope, Codependix, Codometer, Conformetry) and their shared conventions
-    "affirmations", // Python Jupyter notebook application for LangGraph affirmation generation
+    "affirmancy", // Python Jupyter notebook application for LangGraph affirmation generation
     "caelundas", // Node.js CLI for astronomical calendar generation (NASA JPL ephemeris)
     "configuration", // Workspace root config files (tsconfig, eslint, vitest, nx.json, etc.)
     "conformetry", // Code generator templates and validation tests for generated instances
@@ -220,10 +220,10 @@
   "conventionalCommits.storeScopesGlobally": false,
   "cSpell.blockCheckingWhenLineLengthGreaterThan": 5000,
   "cSpell.customDictionaries": {
-    "affirmations": {
+    "affirmancy": {
       "addWords": true,
-      "name": "affirmations",
-      "path": "${workspaceRoot}/configuration/.cspell/affirmations.txt"
+      "name": "affirmancy",
+      "path": "${workspaceRoot}/configuration/.cspell/affirmancy.txt"
     },
     "ai": {
       "addWords": true,

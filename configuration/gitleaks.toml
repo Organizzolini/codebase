@@ -32,5 +32,5 @@ description = "Ignore VS Code workspace files (keybindings, settings, extensions
 paths = ["\\.vscode/.*"]
 
 [[allowlists]]
-description = "Ignore affirmations LLM output (generated content, high entropy strings expected)"
-paths = ["applications/affirmations/output/.*"]
+description = "Ignore affirmancy LLM output (generated content, high entropy strings expected)"
+paths = ["applications/affirmancy/output/.*"]

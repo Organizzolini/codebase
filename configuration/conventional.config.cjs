@@ -101,7 +101,7 @@ const scopes = [
   {
     description:
       "Python Jupyter notebook application for LangGraph affirmation generation",
-    name: "affirmations",
+    name: "affirmancy",
   },
   {
     description:

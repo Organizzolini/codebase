@@ -94,7 +94,7 @@ const config: KnipConfig = {
   ignoreExportsUsedInFile: true,
 
   // JimmyPaolini is a GitHub profile page with no buildable code — skip analysis
-  ignoreWorkspaces: ["applications/JimmyPaolini", "applications/affirmations"],
+  ignoreWorkspaces: ["applications/JimmyPaolini", "applications/affirmancy"],
 
   workspaces: {
     // Root workspace: scripts, base configs, and Nx configuration files

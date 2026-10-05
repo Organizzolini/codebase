@@ -21,7 +21,7 @@ Use this skill to run cspell consistently in this codebase and fix failures by u
 - Dictionary folder: `configuration/.cspell/`
 - Active custom dictionaries:
   - `configuration/.cspell/lexico.txt`
-  - `configuration/.cspell/affirmations.txt`
+  - `configuration/.cspell/affirmancy.txt`
   - `configuration/.cspell/ai.txt`
   - `configuration/.cspell/astronomy.txt`
   - `configuration/.cspell/ics.txt`

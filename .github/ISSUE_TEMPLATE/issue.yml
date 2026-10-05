@@ -42,7 +42,7 @@ body:
       description: Which area of the codebase does this apply to?
       options:
         - ic-suite
-        - affirmations
+        - affirmancy
         - caelundas
         - configuration
         - conformetry

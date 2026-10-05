@@ -128,7 +128,7 @@ The root `pyproject.toml` is the single Python configuration file: it declares t
 
 ```toml
 [tool.uv.workspace]
-members = ["applications/affirmations"]
+members = ["applications/affirmancy"]
 
 [dependency-groups]
 dev = ["sqlfluff>=3.0", "vulture>=2.14", "yamllint>=1.35"]

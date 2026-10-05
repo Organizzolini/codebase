@@ -96,7 +96,7 @@
 
 ## 💽 Projects
 
-**🔮 [affirmations](applications/affirmations)** - Python LangChain + Ollama affirmation generator (LangGraph ReAct agent, SearxNG)\
+**🔮 [affirmancy](applications/affirmancy)** - Python LangChain + Ollama affirmation generator (LangGraph ReAct agent, SearxNG)\
 <details>
 <summary><strong>🛰️ caelundas</strong> - Swiss Ephemeris calendar generator that turns astronomical events into an `.ics` file</summary>
 
@@ -246,7 +246,7 @@ The workspace's dependency graph, exported by [codependix](packages/ic-suite/cod
 <!-- codependix:start name="codependix-nx-projects" -->
 ```mermaid
 graph LR
-  affirmations["affirmations"]
+  affirmancy["affirmancy"]
   caelundas_cli["caelundas-cli"]
   callidescope_agents["callidescope-agents"]
   callidescope_cli["callidescope-cli"]
@@ -1688,19 +1688,19 @@ graph LR
 <!-- codependix:start name="codependix-file-imports" -->
 ```mermaid
 graph LR
-  file_affirmations__vulture_whitelist_py["affirmations/.vulture_whitelist.py"]
-  file_affirmations_src___init___py["affirmations/src/__init__.py"]
-  file_affirmations_src_grammars_py["affirmations/src/grammars.py"]
-  file_affirmations_src_models_py["affirmations/src/models.py"]
-  file_affirmations_src_output_py["affirmations/src/output.py"]
-  file_affirmations_src_prompts_py["affirmations/src/prompts.py"]
-  file_affirmations_src_subjects_py["affirmations/src/subjects.py"]
-  file_affirmations_testing___init___py["affirmations/testing/__init__.py"]
-  file_affirmations_testing_test_grammars_py["affirmations/testing/test_grammars.py"]
-  file_affirmations_testing_test_models_py["affirmations/testing/test_models.py"]
-  file_affirmations_testing_test_output_py["affirmations/testing/test_output.py"]
-  file_affirmations_testing_test_prompts_py["affirmations/testing/test_prompts.py"]
-  file_affirmations_testing_test_subjects_py["affirmations/testing/test_subjects.py"]
+  file_affirmancy__vulture_whitelist_py["affirmancy/.vulture_whitelist.py"]
+  file_affirmancy_src___init___py["affirmancy/src/__init__.py"]
+  file_affirmancy_src_grammars_py["affirmancy/src/grammars.py"]
+  file_affirmancy_src_models_py["affirmancy/src/models.py"]
+  file_affirmancy_src_output_py["affirmancy/src/output.py"]
+  file_affirmancy_src_prompts_py["affirmancy/src/prompts.py"]
+  file_affirmancy_src_subjects_py["affirmancy/src/subjects.py"]
+  file_affirmancy_testing___init___py["affirmancy/testing/__init__.py"]
+  file_affirmancy_testing_test_grammars_py["affirmancy/testing/test_grammars.py"]
+  file_affirmancy_testing_test_models_py["affirmancy/testing/test_models.py"]
+  file_affirmancy_testing_test_output_py["affirmancy/testing/test_output.py"]
+  file_affirmancy_testing_test_prompts_py["affirmancy/testing/test_prompts.py"]
+  file_affirmancy_testing_test_subjects_py["affirmancy/testing/test_subjects.py"]
   file_caelundas_cli_callidescope_config_ts["caelundas-cli/callidescope.config.ts"]
   file_caelundas_cli_codependix_config_ts["caelundas-cli/codependix.config.ts"]
   file_caelundas_cli_codometer_config_ts["caelundas-cli/codometer.config.ts"]
@@ -4336,18 +4336,18 @@ graph LR
   file_validation_testing_mocks_ts["validation/testing/mocks.ts"]
   file_validation_testing_setup_ts["validation/testing/setup.ts"]
   file_validation_vitest_config_ts["validation/vitest.config.ts"]
-  file_affirmations_src_models_py --> file_affirmations_src_grammars_py
-  file_affirmations_src_models_py --> file_affirmations_src_subjects_py
-  file_affirmations_testing_test_grammars_py --> file_affirmations_src_grammars_py
-  file_affirmations_testing_test_models_py --> file_affirmations_src_grammars_py
-  file_affirmations_testing_test_models_py --> file_affirmations_src_models_py
-  file_affirmations_testing_test_models_py --> file_affirmations_src_subjects_py
-  file_affirmations_testing_test_output_py --> file_affirmations_src_grammars_py
-  file_affirmations_testing_test_output_py --> file_affirmations_src_models_py
-  file_affirmations_testing_test_output_py --> file_affirmations_src_output_py
-  file_affirmations_testing_test_output_py --> file_affirmations_src_subjects_py
-  file_affirmations_testing_test_prompts_py --> file_affirmations_src_prompts_py
-  file_affirmations_testing_test_subjects_py --> file_affirmations_src_subjects_py
+  file_affirmancy_src_models_py --> file_affirmancy_src_grammars_py
+  file_affirmancy_src_models_py --> file_affirmancy_src_subjects_py
+  file_affirmancy_testing_test_grammars_py --> file_affirmancy_src_grammars_py
+  file_affirmancy_testing_test_models_py --> file_affirmancy_src_grammars_py
+  file_affirmancy_testing_test_models_py --> file_affirmancy_src_models_py
+  file_affirmancy_testing_test_models_py --> file_affirmancy_src_subjects_py
+  file_affirmancy_testing_test_output_py --> file_affirmancy_src_grammars_py
+  file_affirmancy_testing_test_output_py --> file_affirmancy_src_models_py
+  file_affirmancy_testing_test_output_py --> file_affirmancy_src_output_py
+  file_affirmancy_testing_test_output_py --> file_affirmancy_src_subjects_py
+  file_affirmancy_testing_test_prompts_py --> file_affirmancy_src_prompts_py
+  file_affirmancy_testing_test_subjects_py --> file_affirmancy_src_subjects_py
   file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_constants_ts
   file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_calendar_calendar_service_ts
   file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_aggregation_service_ts

@@ -2,7 +2,7 @@
 # ollama.sh — Install Ollama, ensure the daemon is running, and pull the default model.
 #
 # Ollama serves local language models over HTTP at localhost:11434.
-# The affirmations application uses it as the LLM backend via LangChain.
+# The affirmancy application uses it as the LLM backend via LangChain.
 # gemma4:e2b is the default model used by the ReAct agent.
 #
 # Depends on: brew.sh (brew_install_or_check must be defined)

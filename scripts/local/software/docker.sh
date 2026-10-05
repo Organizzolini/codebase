@@ -2,7 +2,7 @@
 # docker.sh — Install Docker Desktop and ensure the daemon is running.
 #
 # Docker is required for docker-compose services (SearxNG, Open WebUI) used by
-# the affirmations application, and for building caelundas container images.
+# the affirmancy application, and for building caelundas container images.
 
 echo "🔍 Checking for Docker installation..."
 if ! command -v docker &> /dev/null; then

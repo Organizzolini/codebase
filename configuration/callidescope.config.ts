@@ -105,12 +105,12 @@ import {
  * measured against — and it keeps being traced and published by the
  * workspace `write` run.
  *
- * `applications/JimmyPaolini` and `applications/affirmations` have no
+ * `applications/JimmyPaolini` and `applications/affirmancy` have no
  * `callidescope-gate` target at all — a different fact from taking the default. Taking the default
  * means a gate that runs and passes against the number below; these two have no
  * gate to pass. `JimmyPaolini` holds only a `package.json`, being the git
  * submodule this repository leaves deliberately uninitialized everywhere (see
- * `AGENTS.md`'s `### Git Worktrees`); `affirmations` is a Python Jupyter
+ * `AGENTS.md`'s `### Git Worktrees`); `affirmancy` is a Python Jupyter
  * notebook application holding no `tsconfig.json`, and the plugin infers its
  * targets only onto a project that holds one
  * (`packages/ic-suite/callidescope/callidescope-nx/src/modules/plugin/plugin.service.ts:353`).

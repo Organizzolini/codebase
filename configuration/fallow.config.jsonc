@@ -286,7 +286,7 @@
     ".claude/skills/**",
     ".github/copilot-instructions.md",
     ".github/skills/**",
-    "applications/affirmations/**",
+    "applications/affirmancy/**",
     "applications/JimmyPaolini/**",
     "**/CHANGELOG.md",
     "CLAUDE.md",

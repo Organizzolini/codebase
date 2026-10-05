@@ -76,7 +76,7 @@ The script runs four stages in order, each sourced so that shell changes carry f
 
 - **Node.js** toolchain — `nvm`, the Node version pinned in `.nvmrc`, and `pnpm`
 - **Python** toolchain — `uv` plus the Python it manages
-- **Ollama**, and it pulls the `gemma4:e2b` model the affirmations ReAct agent uses
+- **Ollama**, and it pulls the `gemma4:e2b` model the affirmancy ReAct agent uses
 - **PostgreSQL** for local database work
 - **GnuPG** and `pinentry-mac`, because commits must be signed
 - **Infrastructure and quality tools** — `gitleaks`, `terraform`, `trivy`, `supabase`, `jq`, `gh`, `helm`, `kubectl`
@@ -242,7 +242,7 @@ Always run tasks through Nx rather than the underlying tool, so caching and the 
 
 ### Python Projects
 
-`affirmations` is a Python project and does not share the TypeScript tool names. It lives in the shared `uv` workspace at the repository root, so its dependencies come from the root `pyproject.toml` and `uv.lock` rather than a manifest of its own.
+`affirmancy` is a Python project and does not share the TypeScript tool names. It lives in the shared `uv` workspace at the repository root, so its dependencies come from the root `pyproject.toml` and `uv.lock` rather than a manifest of its own.
 
 | Concern   | TypeScript                   | Python          |
 | --------- | ---------------------------- | --------------- |
@@ -434,7 +434,7 @@ Commits are validated by commitlint through Husky. See [commit-code](.agents/ski
 | Scope               | Description                                                                                                                               |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `ic-suite`          | In-house code measurement and validation toolchains (Callidescope, Codependix, Codometer, Conformetry) and their shared conventions       |
-| `affirmations`      | Python Jupyter notebook application for LangGraph affirmation generation                                                                  |
+| `affirmancy`        | Python Jupyter notebook application for LangGraph affirmation generation                                                                  |
 | `caelundas`         | Node.js CLI for astronomical calendar generation (NASA JPL ephemeris)                                                                     |
 | `configuration`     | Workspace root config files (tsconfig, eslint, vitest, nx.json, etc.)                                                                     |
 | `conformetry`       | Code generator templates and validation tests for generated instances                                                                     |
