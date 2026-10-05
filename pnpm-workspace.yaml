@@ -1,5 +1,7 @@
 packages:
   - applications/*
+  - applications/caelundas/*
+  - "!applications/caelundas"
   - packages/*
   - packages/ic-suite/callidescope/*
   - packages/ic-suite/codependix/*

@@ -97,7 +97,13 @@
 ## 💽 Projects
 
 **🔮 [affirmations](applications/affirmations)** - Python LangChain + Ollama affirmation generator (LangGraph ReAct agent, SearxNG)\
-**🛰️ [caelundas](applications/caelundas)** - Swiss Ephemeris calendar generator that turns astronomical events into an `.ics` file\
+<details>
+<summary><strong>🛰️ caelundas</strong> - Swiss Ephemeris calendar generator that turns astronomical events into an `.ics` file</summary>
+
+&nbsp;&nbsp;&nbsp;&nbsp;**[caelundas-cli](applications/caelundas/caelundas-cli)** - Command-line application that detects astronomical events with Swiss Ephemeris and writes them to an `.ics` file
+
+</details>
+
 <details>
 <summary><strong>🔭 callidescope</strong> - Call stack tracing toolchain that follows control flow through injected dependencies and reports where a stack got too deep</summary>
 
@@ -10441,7 +10447,7 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 
 | Project | Deepest | Limit | Headroom | Widest |
 | --- | --- | --- | --- | --- |
-| `applications/caelundas` | 16 | 16 | 0 | 12 |
+| `applications/caelundas/caelundas-cli` | 16 | 16 | 0 | 12 |
 | `applications/lexico` | 9 | 9 | 0 | 9 |
 | `applications/lexico-ingestion` | 17 | 17 | 0 | 8 |
 | `applications/meanderaw` | 16 | 16 | 0 | 11 |

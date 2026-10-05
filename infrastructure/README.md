@@ -17,17 +17,17 @@
 
 ```bash
 # Build, push, and deploy
-nx run caelundas:docker-build
-nx run caelundas:docker-push
-nx run caelundas:helm-upgrade
+nx run caelundas-cli:docker-build
+nx run caelundas-cli:docker-push
+nx run caelundas-cli:helm-upgrade
 # → Release name: caelundas-20260125-143022
 
 # Monitor and retrieve output
 kubectl get jobs -l app.kubernetes.io/name=caelundas -w
-nx run caelundas:kubernetes-copy-files -- --release-name=caelundas-20260125-143022
+nx run caelundas-cli:kubernetes-copy-files -- --release-name=caelundas-20260125-143022
 
 # Clean up
-nx run caelundas:helm-uninstall -- --release-name=caelundas-20260125-143022
+nx run caelundas-cli:helm-uninstall -- --release-name=caelundas-20260125-143022
 ```
 
 ### Provision Kubernetes Cluster
@@ -56,5 +56,5 @@ Code → Docker Build → Push to GHCR → Helm Upgrade → K8s Job → Retrieve
 ## Documentation
 
 - **[AGENTS.md](AGENTS.md)**: Complete infrastructure architecture, Helm chart config, Terraform setup, troubleshooting
-- **[caelundas AGENTS.md](../applications/caelundas/AGENTS.md)**: Application deployment example
+- **[caelundas AGENTS.md](../applications/caelundas/caelundas-cli/AGENTS.md)**: Application deployment example
 - **[Main AGENTS.md](../AGENTS.md)**: Codebase architecture and Nx workflows

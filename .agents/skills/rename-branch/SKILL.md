@@ -127,6 +127,6 @@ If remote cleanup or rename operations are incorrect, use [restore-code](../rest
 
 ### Scenario 2: Pushed bugfix in caelundas
 
-- _Changes_: Modified `applications/caelundas/src/utils/time.ts` (already pushed as `fix-time`)
+- _Changes_: Modified `applications/caelundas/caelundas-cli/src/utils/time.ts` (already pushed as `fix-time`)
 - _Derived Name_: `fix/caelundas-time-calculation`
 - _Action_: `git branch backup/fix-time/2026-06-22T12-00-00Z`, then `git branch -m fix/caelundas-time-calculation`, push new, and delete old remote.
