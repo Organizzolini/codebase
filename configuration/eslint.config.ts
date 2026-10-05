@@ -88,9 +88,10 @@ export default [
       // never source, and gigabytes at the default edge budget, past the 2 GiB a
       // single file read can hold, so reading one would crash the whole run
       "**/applications/meanderaw/output/**",
-      // Nested local worktrees created by agent tooling; untracked scratch
-      // repositories that should never be linted as part of this workspace.
-      "**/.claude/worktrees/**",
+      // Nested agent worktrees — full copies of this repository, gitignored,
+      // which ESLint does not read. Anchored to the root: a `**/` prefix would
+      // also match the path of a checkout that is itself one of them.
+      ".claude/worktrees/**",
       "**/vite.config.*.timestamp*",
       "**/vitest.config.*.timestamp*",
       "**/codometer-report.json",

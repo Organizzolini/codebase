@@ -3,7 +3,6 @@
   "ignore": [
     "**/.agents/skills/**",
     "**/.claude/skills/**",
-    "**/.claude/worktrees/**",
     "**/.conformetry/**",
     "**/.git/**",
     "**/.github/skills/**",
@@ -23,6 +22,7 @@
     "**/src/**/*.types.ts",
     "**/testing/mocks.ts",
     "**/tmp/**",
+    ".claude/worktrees/**",
     "packages/ic-suite/callidescope/callidescope-examples/**"
   ],
   "minLines": 12,
