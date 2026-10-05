@@ -2414,13 +2414,13 @@ graph LR
 ### Project
 
 ![Lines of Code](https://img.shields.io/badge/Lines_of_Code-373-22c55e?style=flat-square)
-![Repository Size](https://img.shields.io/badge/Repository_Size-22.95_kB-6b7280?style=flat-square)
+![Repository Size](https://img.shields.io/badge/Repository_Size-22.92_kB-6b7280?style=flat-square)
 ![Folders](https://img.shields.io/badge/Folders-2-4a4a4a?style=flat-square)
 ![Source Files](https://img.shields.io/badge/Source_Files-8-3178c6?style=flat-square)
 
 ### Measured Targets
 
-![Library bundle Size](https://img.shields.io/badge/Library_bundle_Size-201.09_kB_gzip-6b7280?style=flat-square)
+![Library bundle Size](https://img.shields.io/badge/Library_bundle_Size-201.08_kB_gzip-6b7280?style=flat-square)
 
 ### TypeScript
 

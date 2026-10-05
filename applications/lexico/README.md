@@ -596,7 +596,7 @@ graph LR
 ### Project
 
 ![Lines of Code](https://img.shields.io/badge/Lines_of_Code-5480-22c55e?style=flat-square)
-![Repository Size](https://img.shields.io/badge/Repository_Size-166.15_kB-6b7280?style=flat-square)
+![Repository Size](https://img.shields.io/badge/Repository_Size-166.06_kB-6b7280?style=flat-square)
 ![Folders](https://img.shields.io/badge/Folders-9-4a4a4a?style=flat-square)
 ![Source Files](https://img.shields.io/badge/Source_Files-41-3178c6?style=flat-square)
 
@@ -605,7 +605,7 @@ graph LR
 ![Client entry JavaScript Size](https://img.shields.io/badge/Client_entry_JavaScript_Size-143.05_kB_gzip-6b7280?style=flat-square)
 ![Client route JavaScript Size](https://img.shields.io/badge/Client_route_JavaScript_Size-83.13_kB_gzip-6b7280?style=flat-square)
 ![Client CSS Size](https://img.shields.io/badge/Client_CSS_Size-15.45_kB_gzip-6b7280?style=flat-square)
-![Server JavaScript Size](https://img.shields.io/badge/Server_JavaScript_Size-165.80_kB_gzip-6b7280?style=flat-square)
+![Server JavaScript Size](https://img.shields.io/badge/Server_JavaScript_Size-165.76_kB_gzip-6b7280?style=flat-square)
 
 ### TypeScript
 

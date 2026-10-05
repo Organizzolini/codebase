@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.33.5](https://github.com/organizzolini/codebase/compare/v2.33.4...v2.33.5) (2026-10-05)
+
+### ♻️ Code Refactoring
+
+* **affirmancy:** ♻️ rename affirmations to affirmancy and untrack its generated output ([#1314](https://github.com/organizzolini/codebase/issues/1314)) ([02e3ba0](https://github.com/organizzolini/codebase/commit/02e3ba0deccc11366d7171922a886b40720fc972)), closes [#1302](https://github.com/organizzolini/codebase/issues/1302)
+* **components-web:** ♻️ rename lexico-components to components-web ([#1313](https://github.com/organizzolini/codebase/issues/1313)) ([9d1b62a](https://github.com/organizzolini/codebase/commit/9d1b62a4784adca2e5bb4418876775079f216cef)), closes [#1302](https://github.com/organizzolini/codebase/issues/1302)
+
 ## [2.33.4](https://github.com/organizzolini/codebase/compare/v2.33.3...v2.33.4) (2026-10-05)
 
 ### ♻️ Code Refactoring
