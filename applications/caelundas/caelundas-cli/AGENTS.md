@@ -23,7 +23,7 @@ nx run caelundas-cli:start
 - **CLI runner**: `nest-commander` (`CommandRunner` + `@Command()` decorator)
 - **Env validation**: `@nestjs/config` + `zod` (`environmentSchema` in `.constants.ts`)
 - **Logging**: `@codebase/logging` — a `pino`-backed `LoggerService` (`Scope.TRANSIENT`)
-- **Database**: SQLite (local caching of NASA API responses)
+- **Database**: Postgres via TypeORM and `@codebase/database` (the `calendar_events` table)
 - **Language**: Strict TypeScript
 
 ### Execution Flow
@@ -41,10 +41,12 @@ src/main.ts
   └─ CommandFactory.run(MainModule)
        └─ CaelundasCommand.run()
             ├─ Input (ENV) Validation      ← InputService.parse()
-            ├─ NASA API + SQLite Ephemeris ← EphemerisService (via Perfective/Progressive)
+            ├─ Swiss Ephemeris             ← EphemerisService (via Perfective/Progressive)
             ├─ Perfective Event Detection  ← PerfectiveService.detect()
             ├─ Progressive Event Synthesis ← ProgressiveService.detect()
-            └─ iCal Output Generation      ← CalendarService.write()
+            ├─ Store Events                ← CalendarEventsService.upsert()
+            ├─ Read Back Range + Location  ← CalendarEventsService.findInRange()
+            └─ iCal and JSON Output        ← CalendarService.write() / writeJson()
 ```
 
 ### Directory Layout
@@ -71,7 +73,9 @@ testing/                            # Shared test utilities
 src/modules/
   input/                               # Zod environmentSchema and config parsing
   calendar/                            # ICS and JSON file output formatting
-  ephemeris/                           # NASA JPL Horizons API client and SQLite caching
+  caelundas-database/                  # Postgres connection, CalendarEvent entity, migrations
+  calendar-events/                     # Upsert and range queries over the calendar_events table
+  ephemeris/                           # Swiss Ephemeris access
   perfective/                          # Exact moment event detection (aspects, phases)
   progressive/                         # Duration event synthesis (retrogrades)
   math/                                # Astronomical math utilities
@@ -81,10 +85,11 @@ src/modules/
 **Key Domain Components**:
 
 - **Input Validation** ([input.constants.ts](src/modules/input/input.constants.ts)): Zod schema for environment variables
-- **Ephemeris Retrieval** ([ephemeris/](src/modules/ephemeris/)): NASA JPL Horizons API with SQLite caching
+- **Ephemeris Retrieval** ([ephemeris/](src/modules/ephemeris/)): Swiss Ephemeris, computed locally
+- **Event Storage** ([calendar-events/](src/modules/calendar-events/) and [caelundas-database/](src/modules/caelundas-database/)): Upserts detected events into Postgres and reads them back by range and location
 - **Event Detection** ([perfective/](src/modules/perfective/) and domain modules): Aspects, phases, eclipses, retrogrades
 - **Progressive Synthesis** ([progressive/](src/modules/progressive/)): Pairs start/end moments into calendar events
-- **Output** ([calendar/](src/modules/calendar/)): iCal and JSON formatters
+- **Output** ([calendar/](src/modules/calendar/)): iCal and JSON files, rendered from the stored rows
 
 ### Event Types
 
@@ -97,12 +102,12 @@ src/modules/
 
 ## Domain Knowledge
 
-See [ephemeris-pipeline skill](../../../.agents/skills/ephemeris-pipeline/SKILL.md) for:
+Astronomical concepts, event detection, and storage:
 
-- NASA JPL Horizons API details (endpoints, parameters, rate limits)
-- Astronomical concepts (aspects, retrogrades, phases explained)
-- Caching strategy (SQLite schema, temporal margins)
-- Event detection algorithms
+- Swiss Ephemeris computes positions locally from JPL DE431 data files; there are no network calls or rate limits
+- Aspects, retrogrades, and phases are detected in two passes: perfective (the exact moment) and progressive (the span around it)
+- Detected events are stored in the `calendar_events` table, keyed by summary, start, latitude, and longitude, so a re-run updates rows in place and a second location adds its own
+- A range's files are rendered from the rows `findInRange` returns, using overlap semantics so an event spanning a range edge is included
 
 ## Development
 
@@ -175,13 +180,22 @@ Full schema: [src/modules/input/input.constants.ts](src/modules/input/input.cons
 
 ### Database
 
-SQLite with three tables:
+Postgres, in the `caelundas_development` database and `caelundas` schema, with one table:
 
-- `ephemeris`: Cached NASA API responses
-- `events`: Detected calendar events
-- `active_aspects`: Currently active aspect patterns
+- `calendar_events` (entity `CalendarEvent`): Detected calendar events, extending the shared `UpdatableEntity`. Columns: `summary`, `description`, `start`/`end` (`timestamptz`), `categories` (`text[]`, GIN-indexed), nullable `color` and `location`, and `latitude numeric(8,6)` / `longitude numeric(9,6)`. Unique on `(summary, start, latitude, longitude)`
 
-Inspect: `sqlite3 caelundas.db`
+The stored row is the entity `CalendarEvent`; the detected, in-memory event every detector returns stays the `Event` type in `calendar.types.ts`. `toEvent` in `calendar-events.utilities.ts` turns a row back into an `Event`.
+
+Connection variables are `CAELUNDAS_POSTGRES_HOST`, `_PORT`, `_USERNAME`, `_PASSWORD`, `_DATABASE`, and `_SCHEMA`; the unprefixed `POSTGRES_*` are never read. Postgres returns `numeric` as strings, so compare coordinates as strings.
+
+```bash
+nx run caelundas-cli:migration:run        # Apply pending migrations
+nx run caelundas-cli:migration:generate   # Generate the next migration from the entities
+```
+
+The `migration` target reads its data source and migrations from `src/modules/caelundas-database/`, named by its `module` option. Migrations never run on application start. `CalendarEventsService.upsert` batches rows under Postgres's 65,535-parameter limit and uses `ON CONFLICT … DO UPDATE`.
+
+Inspect: `docker exec -it postgres psql -U caelundas_username -d caelundas_development`
 
 ## Kubernetes Deployment
 
@@ -247,7 +261,7 @@ See [docker-workflows skill](../../../.agents/skills/docker-workflows/SKILL.md) 
 Single-stage build:
 
 - Base: Node.js 20 Alpine
-- Native deps: python3, make, g++ (for sqlite3 compilation)
+- Native deps: python3, make, g++ (for native modules)
 - Workspace: Full codebase copied (needed for path resolution)
 - Entry: `pnpm start` (runs TypeScript directly via tsx)
 
@@ -255,14 +269,11 @@ Single-stage build:
 
 **Execution times** (1-year range, all event types):
 
-- First run (empty cache): 8-12 minutes (NASA API calls)
-- Subsequent runs (warm cache): 1-2 minutes (local computation)
+- 1-2 minutes of local computation, plus a quick upsert and read back
 
 **Optimization strategies**:
 
 - Temporal margins: Fetch beyond date boundaries to catch edge events
-- SQLite caching: ~95% hit rate after first run
-- Batch API calls: Multiple days per request when possible
 - Lazy evaluation: Minute-resolution only for detected event windows
 
 ## Writing Modules
