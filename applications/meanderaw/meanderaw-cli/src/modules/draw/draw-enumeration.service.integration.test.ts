@@ -1,19 +1,15 @@
 import { ConfigService } from "@nestjs/config";
 import { Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import {
-  PostgreSqlContainer,
-  type StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
 import { DataSource, type Repository } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import { postgresDataSourceOptions } from "@codebase/database";
 import {
-  TEST_DATABASE_NAME,
-  TEST_POSTGRES_IMAGE,
-  TEST_SCHEMA_INITIALIZATION,
-  testDataSourceOptions,
-} from "../../../testing/database";
+  type StartedPostgresContainer,
+  startPostgresContainer,
+} from "@codebase/database/testing";
+
 import {
   DRAW_TEST_EDGE_BUDGET,
   DRAW_TEST_WORKERS,
@@ -22,14 +18,14 @@ import { environmentSchema } from "../../constants";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
 import { ClassificationService } from "../classification/classification.service";
 import { CodeService } from "../code/code.service";
-import { DatabaseService } from "../database/database.service";
-import { Meander } from "../database/entities/Meander.entity";
 import { DrawingService } from "../drawing/drawing.service";
 import { EnumerationService } from "../enumeration/enumeration.service";
 import { TileEnumerationService } from "../enumeration/tile-enumeration.service";
 import { GeometryService } from "../geometry/geometry.service";
 import { GraphService } from "../graph/graph.service";
 import { MatrixService } from "../matrix/matrix.service";
+import { Meander } from "../meanderaw-database/entities/meander.entity";
+import { MeanderawDatabaseService } from "../meanderaw-database/meanderaw-database.service";
 import { SvgService } from "../svg/svg.service";
 import { SymmetryService } from "../symmetry/symmetry.service";
 import { TileService } from "../tile/tile.service";
@@ -62,20 +58,20 @@ const DRAW_RUN_TIMEOUT_MILLISECONDS = 300_000;
  * a mocked service graph.
  *
  * The connection is assembled inline rather than through
- * `DatabaseModule`, which always connects to the local database — this
+ * `MeanderawDatabaseModule`, which always connects to the local database — this
  * suite needs a fresh, isolated database instead.
  */
 describe(DrawEnumerationService, () => {
-  let container: StartedPostgreSqlContainer;
+  let container: StartedPostgresContainer;
   let dataSource: DataSource;
   let repository: Repository<Meander>;
   let service: DrawEnumerationService;
 
   beforeAll(async () => {
-    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
-      .withDatabase(TEST_DATABASE_NAME)
-      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
-      .start();
+    container = await startPostgresContainer({
+      migrations: [],
+      project: "meanderaw",
+    });
 
     const environment = environmentSchema.parse({
       DRAW_EDGE_BUDGET: DRAW_TEST_EDGE_BUDGET,
@@ -83,7 +79,12 @@ describe(DrawEnumerationService, () => {
     });
     const module = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(testDataSourceOptions(container)),
+        TypeOrmModule.forRoot(
+          postgresDataSourceOptions(container.connection, {
+            entities: [Meander],
+            migrations: [],
+          }),
+        ),
         TypeOrmModule.forFeature([Meander]),
         CharacteristicsModule,
       ],
@@ -96,7 +97,7 @@ describe(DrawEnumerationService, () => {
         CodeService,
         MatrixService,
         ClassificationService,
-        DatabaseService,
+        MeanderawDatabaseService,
         CodeService,
         EnumerationService,
         DrawingService,

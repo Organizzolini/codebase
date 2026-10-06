@@ -2,13 +2,13 @@ import { ConfigModule } from "@nestjs/config";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
 import { DataSource, type Repository } from "typeorm";
 
+import { postgresDataSourceOptions } from "@codebase/database";
+
 import { environmentSchema } from "../src/constants";
 import { CharacteristicsModule } from "../src/modules/characteristics/characteristics.module";
 import { ClassificationModule } from "../src/modules/classification/classification.module";
 import { CodeModule } from "../src/modules/code/code.module";
 import { CorpusService } from "../src/modules/corpus/corpus.service";
-import { DatabaseService } from "../src/modules/database/database.service";
-import { Meander } from "../src/modules/database/entities/Meander.entity";
 import { DrawEnumerationService } from "../src/modules/draw/draw-enumeration.service";
 import { DrawIndexService } from "../src/modules/draw/draw-index.service";
 import { DrawPoolService } from "../src/modules/draw/draw-pool.service";
@@ -19,12 +19,13 @@ import { DrawingModule } from "../src/modules/drawing/drawing.module";
 import { EnumerationModule } from "../src/modules/enumeration/enumeration.module";
 import { EnumerationService } from "../src/modules/enumeration/enumeration.service";
 import { GeometryModule } from "../src/modules/geometry/geometry.module";
+import { Meander } from "../src/modules/meanderaw-database/entities/meander.entity";
+import { MeanderawDatabaseService } from "../src/modules/meanderaw-database/meanderaw-database.service";
 import { SymmetryModule } from "../src/modules/symmetry/symmetry.module";
 
-import { testDataSourceOptions } from "./database";
 import { DRAW_TEST_EDGE_BUDGET, DRAW_TEST_WORKERS } from "./draw-run-budget";
 
-import type { TestDatabaseContainer } from "./database";
+import type { StartedPostgresContainer } from "@codebase/database/testing";
 import type {
   INestApplicationContext,
   ModuleMetadata,
@@ -51,18 +52,22 @@ export interface DrawRunFixture {
 export async function drawRunFixture(
   module: INestApplicationContext,
 ): Promise<DrawRunFixture> {
+  const repository = module.get<Repository<Meander>>(
+    getRepositoryToken(Meander),
+  );
+
   return {
     command: await module.resolve(DrawCommand),
     corpus: module.get(CorpusService),
     dataSource: module.get(DataSource),
     enumeration: module.get(EnumerationService),
-    repository: module.get(getRepositoryToken(Meander)),
+    repository,
   };
 }
 
 /**
  * The module `DrawCommand`'s draw run compiles into: the real enumeration,
- * ingestion, and index services over an emptied schema in `container`'s Postgres
+ * ingestion, and index services over a migrated schema in `container`'s Postgres
  * database, plus whatever `mocks` the caller stands in for `--code` and
  * logging.
  *
@@ -74,7 +79,7 @@ export async function drawRunFixture(
  * cannot import.
  */
 export function drawRunModuleMetadata(
-  container: TestDatabaseContainer,
+  container: StartedPostgresContainer,
   mocks: readonly Provider[],
 ): ModuleMetadata {
   return {
@@ -88,7 +93,12 @@ export function drawRunModuleMetadata(
             DRAW_WORKERS: DRAW_TEST_WORKERS,
           }),
       }),
-      TypeOrmModule.forRoot(testDataSourceOptions(container)),
+      TypeOrmModule.forRoot(
+        postgresDataSourceOptions(container.connection, {
+          entities: [Meander],
+          migrations: [],
+        }),
+      ),
       TypeOrmModule.forFeature([Meander]),
       GeometryModule,
       CharacteristicsModule,
@@ -106,7 +116,7 @@ export function drawRunModuleMetadata(
       DrawRecordService,
       DrawWorkerService,
       CorpusService,
-      DatabaseService,
+      MeanderawDatabaseService,
       ...mocks,
     ],
   };

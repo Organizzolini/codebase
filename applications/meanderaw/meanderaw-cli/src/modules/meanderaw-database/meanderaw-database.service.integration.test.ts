@@ -1,59 +1,60 @@
 import { Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import {
-  PostgreSqlContainer,
-  type StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
 import { DataSource, Like, type Repository } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import { postgresDataSourceOptions } from "@codebase/database";
 import {
-  TEST_DATABASE_NAME,
-  TEST_POSTGRES_IMAGE,
-  TEST_SCHEMA_INITIALIZATION,
-  testDataSourceOptions,
-} from "../../../testing/database";
+  type StartedPostgresContainer,
+  startPostgresContainer,
+} from "@codebase/database/testing";
+
 import { meanderRecord } from "../../../testing/meanders";
 import { CHARACTERISTIC_KEYS } from "../characteristics/characteristics.constants";
 
-import { MEANDER_INSERT_CHUNK_SIZE } from "./database.constants";
-import { DatabaseService } from "./database.service";
-import { Meander } from "./entities/Meander.entity";
+import { Meander } from "./entities/meander.entity";
+import { MEANDER_INSERT_CHUNK_SIZE } from "./meanderaw-database.constants";
+import { MeanderawDatabaseService } from "./meanderaw-database.service";
 
-import type { MeanderRecord } from "./database.types";
+import type { MeanderRecord } from "./meanderaw-database.types";
 
 // 🧪 Tests
 
 /**
- * Drives `DatabaseService` against a real TypeORM connection to a throwaway
+ * Drives `MeanderawDatabaseService` against a real TypeORM connection to a throwaway
  * Postgres container, per spec #813's Testing Decisions: this is the highest
  * seam, and it asserts on persisted rows rather than on a mocked repository.
  *
- * The connection is assembled inline rather than through `DatabaseModule`,
+ * The connection is assembled inline rather than through `MeanderawDatabaseModule`,
  * which reads the local database's address from configuration — a test
  * needs a fresh, isolated database of its own instead.
  */
-describe(DatabaseService, () => {
-  let container: StartedPostgreSqlContainer;
+describe(MeanderawDatabaseService, () => {
+  let container: StartedPostgresContainer;
   let dataSource: DataSource;
   let repository: Repository<Meander>;
-  let service: DatabaseService;
+  let service: MeanderawDatabaseService;
 
   beforeAll(async () => {
-    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
-      .withDatabase(TEST_DATABASE_NAME)
-      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
-      .start();
+    container = await startPostgresContainer({
+      migrations: [],
+      project: "meanderaw",
+    });
 
     const module = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(testDataSourceOptions(container)),
+        TypeOrmModule.forRoot(
+          postgresDataSourceOptions(container.connection, {
+            entities: [Meander],
+            migrations: [],
+          }),
+        ),
         TypeOrmModule.forFeature([Meander]),
       ],
-      providers: [DatabaseService],
+      providers: [MeanderawDatabaseService],
     }).compile();
 
-    service = await module.resolve(DatabaseService);
+    service = await module.resolve(MeanderawDatabaseService);
     dataSource = module.get(DataSource);
     repository = module.get(getRepositoryToken(Meander));
   });

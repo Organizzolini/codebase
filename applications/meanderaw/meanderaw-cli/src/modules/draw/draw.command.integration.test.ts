@@ -1,10 +1,6 @@
 import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import {
-  PostgreSqlContainer,
-  type StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
 import { DataSource, type Repository } from "typeorm";
 import {
   afterAll,
@@ -17,24 +13,23 @@ import {
   vi,
 } from "vitest";
 
+import { postgresDataSourceOptions } from "@codebase/database";
+import {
+  type StartedPostgresContainer,
+  startPostgresContainer,
+} from "@codebase/database/testing";
 import { LoggerService } from "@codebase/logging";
 
-import {
-  TEST_DATABASE_NAME,
-  TEST_POSTGRES_IMAGE,
-  TEST_SCHEMA_INITIALIZATION,
-  testDataSourceOptions,
-} from "../../../testing/database";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
 import { ClassificationModule } from "../classification/classification.module";
 import { CodeModule } from "../code/code.module";
 import { CorpusService } from "../corpus/corpus.service";
-import { DatabaseService } from "../database/database.service";
-import { Meander } from "../database/entities/Meander.entity";
 import { DrawingModule } from "../drawing/drawing.module";
 import { GeometryService } from "../geometry/geometry.service";
 import { GraphService } from "../graph/graph.service";
 import { MatrixModule } from "../matrix/matrix.module";
+import { Meander } from "../meanderaw-database/entities/meander.entity";
+import { MeanderawDatabaseService } from "../meanderaw-database/meanderaw-database.service";
 import { SvgService } from "../svg/svg.service";
 import { TileService } from "../tile/tile.service";
 
@@ -52,26 +47,31 @@ import { DrawCommand } from "./draw.command";
  * graph.
  *
  * The connection is assembled inline rather than through
- * `DatabaseModule`, which always connects to the local database — this
- * suite needs a fresh, emptied schema per test instead.
+ * `MeanderawDatabaseModule`, which always connects to the local database — this
+ * suite needs a fresh, migrated schema instead.
  */
 describe("drawCommand --code mode", () => {
   let command: DrawCommand;
-  let container: StartedPostgreSqlContainer;
+  let container: StartedPostgresContainer;
   let dataSource: DataSource;
   let repository: Repository<Meander>;
 
   beforeAll(async () => {
-    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
-      .withDatabase(TEST_DATABASE_NAME)
-      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
-      .start();
+    container = await startPostgresContainer({
+      migrations: [],
+      project: "meanderaw",
+    });
   });
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(testDataSourceOptions(container)),
+        TypeOrmModule.forRoot(
+          postgresDataSourceOptions(container.connection, {
+            entities: [Meander],
+            migrations: [],
+          }),
+        ),
         TypeOrmModule.forFeature([Meander]),
         CharacteristicsModule,
         ClassificationModule,
@@ -84,7 +84,7 @@ describe("drawCommand --code mode", () => {
         DrawCodeService,
         DrawRecordService,
         GeometryService,
-        DatabaseService,
+        MeanderawDatabaseService,
         GraphService,
         TileService,
         SvgService,

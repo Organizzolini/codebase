@@ -15,7 +15,7 @@ nx run meanderaw-cli:start
 
 ## 🏛️ Before You Change a Meander
 
-**A meander is a row in the Postgres database `MEANDERAW_POSTGRES_DB` names (`meanderaw_development`
+**A meander is a row in the Postgres database `MEANDERAW_POSTGRES_DATABASE` names (`meanderaw_development`
 by default), addressed by its lattice address — its Code, its rows, and its columns — and nothing else.** The formatted
 Code spells out all three, so `code` alone is its identity; the row's `id` is a uuidv7
 the database assigns, which changes on every draw run and must never reach committed output. There is no `output/<family>/*.svg`
@@ -217,7 +217,7 @@ nx run meanderaw-cli:oxfmt           # Formatting
 ```
 
 This application has **one command, `draw`**, and it is the default — so `start` runs it,
-and it always writes the database `MEANDERAW_POSTGRES_DB` names. With no arguments it clears that
+and it always writes the database `MEANDERAW_POSTGRES_DATABASE` names. With no arguments it clears that
 database's meander rows and draws every meander the application can draw back into it: the whole lattice's unit space, enumerated
 and classified, then the historical corpus's hardcoded Codes beyond that budget. With
 `--rows`, `--columns`, and `--code` it decodes, measures, and persists that one:
@@ -232,7 +232,7 @@ or any other — rewrites the database as a side effect. Keep it that way: a `de
 
 **The database lives in Postgres, not in the repository.** The local Docker init creates
 the `meanderaw_development` database and the schema of the same name, the defaults of
-`MEANDERAW_POSTGRES_DB` and `MEANDERAW_POSTGRES_SCHEMA`. Every meanderaw variable carries the
+`MEANDERAW_POSTGRES_DATABASE` and `MEANDERAW_POSTGRES_SCHEMA`. Every meanderaw variable carries the
 `MEANDERAW_` prefix, so the unprefixed `POSTGRES_*` the root `.env` sets for lexico — which
 Nx loads into every task — never reaches it — see
 [ADR 0020](../../../docs/adr/0020-store-meanders-in-postgres.md). A draw run commits nothing: the

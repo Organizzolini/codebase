@@ -2,11 +2,11 @@ import { MessageChannel } from "node:worker_threads";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { MeanderRecord } from "./modules/database/database.types";
 import type {
   DrawWorkerReply,
   DrawWorkerTask,
 } from "./modules/draw/draw.types";
+import type { MeanderRecord } from "./modules/meanderaw-database/meanderaw-database.types";
 import type * as NestCore from "@nestjs/core";
 import type * as WorkerThreads from "node:worker_threads";
 

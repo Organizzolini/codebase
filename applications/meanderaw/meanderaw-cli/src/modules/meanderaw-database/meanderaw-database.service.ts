@@ -2,28 +2,28 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
+import { Meander } from "./entities/meander.entity";
 import {
   MEANDER_INSERT_CHUNK_SIZE,
   MEANDER_READ_BATCH_SIZE,
-} from "./database.constants";
-import { Meander } from "./entities/Meander.entity";
+} from "./meanderaw-database.constants";
 
 import type { MeanderFamily } from "../classification/classification.types";
 import type {
   MeanderFamilyShapeCount,
   MeanderRecord,
   MeanderShape,
-} from "./database.types";
+} from "./meanderaw-database.types";
 import type { ColumnMetadata } from "typeorm/metadata/ColumnMetadata.js";
 
 /**
- * Persists meanders to the Postgres database `MEANDERAW_POSTGRES_DB` names.
+ * Persists meanders to the Postgres database `MEANDERAW_POSTGRES_DATABASE` names.
  * Holds no decoding or rendering logic of its own — every field it writes
  * arrives already computed, so this is the one seam between the generic
  * rendering pipeline and TypeORM.
  */
 @Injectable()
-export class DatabaseService {
+export class MeanderawDatabaseService {
   // 🏗 Dependency Injection
 
   constructor(

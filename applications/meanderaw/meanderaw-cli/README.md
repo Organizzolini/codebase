@@ -9,7 +9,7 @@ The local Postgres container creates the `meanderaw_development` database, and t
 the same name inside it, the first time its volume starts empty; on a volume that predates
 that, `nx run codebase:postgres-container:recreate` builds it, discarding what the volume
 held. The connection is the `MEANDERAW_POSTGRES_HOST`, `MEANDERAW_POSTGRES_PORT`,
-`MEANDERAW_POSTGRES_USER`, `MEANDERAW_POSTGRES_PASSWORD`, `MEANDERAW_POSTGRES_DB`, and
+`MEANDERAW_POSTGRES_USERNAME`, `MEANDERAW_POSTGRES_PASSWORD`, `MEANDERAW_POSTGRES_DATABASE`, and
 `MEANDERAW_POSTGRES_SCHEMA` variables, set in this project's `.env` (copied from
 `.env.default`) and defaulting to the local container — `meanderaw_development` for the last
 two. The `MEANDERAW_` prefix keeps them apart from the unprefixed `MEANDERAW_POSTGRES_*` variables the
@@ -18,7 +18,7 @@ workspace root's `.env` sets for lexico, which Nx also loads into every task.
 ## 🖌️ One Command
 
 Meanderaw has one command, `draw`, and it is the default — so `nx run meanderaw-cli:start` runs it.
-Both of its modes write the Postgres database `MEANDERAW_POSTGRES_DB` names, and which one runs is
+Both of its modes write the Postgres database `MEANDERAW_POSTGRES_DATABASE` names, and which one runs is
 decided by whether a Code was named:
 
 | Invocation | What it does |

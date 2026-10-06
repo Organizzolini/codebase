@@ -1,10 +1,6 @@
 import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import {
-  PostgreSqlContainer,
-  type StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
-import {
   afterAll,
   afterEach,
   beforeAll,
@@ -15,13 +11,12 @@ import {
   vi,
 } from "vitest";
 
+import {
+  type StartedPostgresContainer,
+  startPostgresContainer,
+} from "@codebase/database/testing";
 import { LoggerService } from "@codebase/logging";
 
-import {
-  TEST_DATABASE_NAME,
-  TEST_POSTGRES_IMAGE,
-  TEST_SCHEMA_INITIALIZATION,
-} from "../../../testing/database";
 import {
   DRAW_RUN_TIMEOUT_MILLISECONDS,
   type DrawRunFixture,
@@ -36,9 +31,9 @@ vi.mock("node:fs/promises", () => ({
   writeFile: vi.fn<(path: string, data: unknown) => Promise<void>>(),
 }));
 
-/** Compiles a fresh draw run, over an emptied schema in `container`, with `--code` and logging mocked out. */
+/** Compiles a fresh draw run, over an emptied `meanders` table in `container`, with `--code` and logging mocked out. */
 async function compileDrawRun(
-  container: StartedPostgreSqlContainer,
+  container: StartedPostgresContainer,
 ): Promise<DrawRunFixture> {
   const module = await Test.createTestingModule(
     drawRunModuleMetadata(container, [
@@ -58,13 +53,13 @@ async function compileDrawRun(
  * parallel rather than after it.
  */
 describe("drawCommand draw run", () => {
-  let container: StartedPostgreSqlContainer;
+  let container: StartedPostgresContainer;
 
   beforeAll(async () => {
-    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
-      .withDatabase(TEST_DATABASE_NAME)
-      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
-      .start();
+    container = await startPostgresContainer({
+      migrations: [],
+      project: "meanderaw",
+    });
   });
 
   afterAll(async () => {

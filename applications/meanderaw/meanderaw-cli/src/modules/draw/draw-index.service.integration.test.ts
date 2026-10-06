@@ -1,31 +1,27 @@
 import { Test } from "@nestjs/testing";
 import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import {
-  PostgreSqlContainer,
-  type StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
 import { DataSource, type Repository } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
+import { postgresDataSourceOptions } from "@codebase/database";
 import {
-  TEST_DATABASE_NAME,
-  TEST_POSTGRES_IMAGE,
-  TEST_SCHEMA_INITIALIZATION,
-  testDataSourceOptions,
-} from "../../../testing/database";
+  type StartedPostgresContainer,
+  startPostgresContainer,
+} from "@codebase/database/testing";
+
 import { meanderRecord } from "../../../testing/meanders";
 import { CodeService } from "../code/code.service";
-import { DatabaseService } from "../database/database.service";
-import { Meander } from "../database/entities/Meander.entity";
 import { DrawingService } from "../drawing/drawing.service";
 import { GeometryService } from "../geometry/geometry.service";
+import { Meander } from "../meanderaw-database/entities/meander.entity";
+import { MeanderawDatabaseService } from "../meanderaw-database/meanderaw-database.service";
 import { SvgService } from "../svg/svg.service";
 import { SymmetryService } from "../symmetry/symmetry.service";
 import { TileService } from "../tile/tile.service";
 
 import { DrawIndexService } from "./draw-index.service";
 
-import type { MeanderRecord } from "../database/database.types";
+import type { MeanderRecord } from "../meanderaw-database/meanderaw-database.types";
 
 /**
  * Drives `DrawIndexService.build` against a real TypeORM connection to a
@@ -33,25 +29,30 @@ import type { MeanderRecord } from "../database/database.types";
  * constructed set of rows, per spec #813's Testing Decisions for this seam.
  *
  * The connection is assembled inline rather than through
- * `DatabaseModule`, which always connects to the local database — this
+ * `MeanderawDatabaseModule`, which always connects to the local database — this
  * suite needs a fresh, isolated database instead, the same way
  * `database.service.integration.test.ts` does.
  */
 describe(DrawIndexService, () => {
-  let container: StartedPostgreSqlContainer;
+  let container: StartedPostgresContainer;
   let dataSource: DataSource;
   let repository: Repository<Meander>;
   let service: DrawIndexService;
 
   beforeAll(async () => {
-    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
-      .withDatabase(TEST_DATABASE_NAME)
-      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
-      .start();
+    container = await startPostgresContainer({
+      migrations: [],
+      project: "meanderaw",
+    });
 
     const module = await Test.createTestingModule({
       imports: [
-        TypeOrmModule.forRoot(testDataSourceOptions(container)),
+        TypeOrmModule.forRoot(
+          postgresDataSourceOptions(container.connection, {
+            entities: [Meander],
+            migrations: [],
+          }),
+        ),
         TypeOrmModule.forFeature([Meander]),
       ],
       providers: [
@@ -59,7 +60,7 @@ describe(DrawIndexService, () => {
         CodeService,
         DrawingService,
         GeometryService,
-        DatabaseService,
+        MeanderawDatabaseService,
         SymmetryService,
         SvgService,
         TileService,

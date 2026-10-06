@@ -6,13 +6,13 @@ import { characteristicRecord } from "../../../testing/meanders";
 import { CharacteristicsService } from "../characteristics/characteristics.service";
 import { ClassificationService } from "../classification/classification.service";
 import { CodeService } from "../code/code.service";
-import { DatabaseService } from "../database/database.service";
 import { TileEnumerationService } from "../enumeration/tile-enumeration.service";
+import { MeanderawDatabaseService } from "../meanderaw-database/meanderaw-database.service";
 
 import { DuplicateCorpusCodeError } from "./corpus.constants";
 import { CorpusService } from "./corpus.service";
 
-import type { Meander } from "../database/entities/Meander.entity";
+import type { Meander } from "../meanderaw-database/entities/meander.entity";
 import type { Tile } from "../tile/tile.types";
 import type { CorpusEntry } from "./corpus.types";
 
@@ -22,7 +22,7 @@ describe(CorpusService, () => {
   let service: CorpusService;
   let characteristicsService: CharacteristicsService;
   let classificationService: ClassificationService;
-  let databaseService: DatabaseService;
+  let databaseService: MeanderawDatabaseService;
   let codeService: CodeService;
   let tileEnumerationService: TileEnumerationService;
 
@@ -57,8 +57,8 @@ describe(CorpusService, () => {
           useValue: createMock<ClassificationService>(),
         },
         {
-          provide: DatabaseService,
-          useValue: createMock<DatabaseService>(),
+          provide: MeanderawDatabaseService,
+          useValue: createMock<MeanderawDatabaseService>(),
         },
         {
           provide: CodeService,
@@ -74,7 +74,7 @@ describe(CorpusService, () => {
     service = await module.resolve(CorpusService);
     characteristicsService = await module.resolve(CharacteristicsService);
     classificationService = await module.resolve(ClassificationService);
-    databaseService = await module.resolve(DatabaseService);
+    databaseService = await module.resolve(MeanderawDatabaseService);
     codeService = await module.resolve(CodeService);
     tileEnumerationService = await module.resolve(TileEnumerationService);
   });

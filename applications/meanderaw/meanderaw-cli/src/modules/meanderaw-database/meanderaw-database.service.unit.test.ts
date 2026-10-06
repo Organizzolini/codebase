@@ -5,17 +5,17 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { meanderRecord } from "../../../testing/meanders";
 
-import { DatabaseService } from "./database.service";
-import { Meander } from "./entities/Meander.entity";
+import { Meander } from "./entities/meander.entity";
+import { MeanderawDatabaseService } from "./meanderaw-database.service";
 
-import type { MeanderRecord } from "./database.types";
+import type { MeanderRecord } from "./meanderaw-database.types";
 import type { EntityManager, Repository } from "typeorm";
 import type { ColumnMetadata } from "typeorm/metadata/ColumnMetadata.js";
 
 // 🧪 Tests
 
-describe(DatabaseService, () => {
-  let service: DatabaseService;
+describe(MeanderawDatabaseService, () => {
+  let service: MeanderawDatabaseService;
   let meanderRepository: Repository<Meander>;
 
   const record: MeanderRecord = meanderRecord({
@@ -32,7 +32,7 @@ describe(DatabaseService, () => {
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       providers: [
-        DatabaseService,
+        MeanderawDatabaseService,
         {
           provide: getRepositoryToken(Meander),
           useValue: createMock<Repository<Meander>>(),
@@ -40,7 +40,7 @@ describe(DatabaseService, () => {
       ],
     }).compile();
 
-    service = await module.resolve(DatabaseService);
+    service = await module.resolve(MeanderawDatabaseService);
     meanderRepository = module.get(getRepositoryToken(Meander));
 
     vi.mocked(meanderRepository.save).mockResolvedValue(savedMeander);
@@ -113,7 +113,7 @@ describe(DatabaseService, () => {
               isGenerated: false,
             }),
           ],
-          tablePath: "meanderaw_development.meanders",
+          tablePath: "meanderaw.meanders",
         },
       });
       vi.mocked(
@@ -126,7 +126,7 @@ describe(DatabaseService, () => {
 
       expect(count).toBe(2);
       expect(meanderRepository.manager.query).toHaveBeenCalledWith(
-        'INSERT INTO "meanderaw_development"."meanders" ("code", "lattice") VALUES ($1, $2), ($3, $4)',
+        'INSERT INTO "meanderaw"."meanders" ("code", "lattice") VALUES ($1, $2), ($3, $4)',
         ["3c9a", "3c9a", "3c9a", "3c9b"],
       );
     });
