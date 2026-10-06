@@ -31,11 +31,16 @@ readonly REPOSITORY_NAME="${repository#*/}"
 npm_tarball_digest() {
   local specifier="$1"
   local name="${specifier%@*}" version="${specifier##*@}"
-  local tarball="${RUNNER_TEMP:?}/npm-tarball.tgz"
-  curl --silent --show-error --fail --location --output "${tarball}" \
+  local tarball
+  tarball="$(mktemp "${RUNNER_TEMP:?}/npm-tarball.XXXXXX")"
+  if ! curl --silent --show-error --fail --location --output "${tarball}" \
     --retry 6 --retry-all-errors --retry-delay 10 \
-    "${NPM_REGISTRY_URL}${name}/-/${name##*/}-${version}.tgz"
+    "${NPM_REGISTRY_URL}${name}/-/${name##*/}-${version}.tgz"; then
+    rm -f "${tarball}"
+    return 1
+  fi
   echo "sha256:$(sha256sum "${tarball}" | cut -d' ' -f1)"
+  rm -f "${tarball}"
 }
 
 # Reports whether the organization already has an npm storage record for a
@@ -72,30 +77,37 @@ create_npm_storage_record() {
 # A version this run published is known to be on npm without asking, which
 # matters while npm's metadata has yet to list it.
 link_npm_packages() {
-  local root specifier digest
   local published="${RUNNER_TEMP:?}/newly-published.txt"
   local subjects="${RUNNER_TEMP}/attestation-subjects.txt"
   : >"${subjects}"
   touch "${published}"
-  for root in "${roots[@]}"; do
-    specifier="$(package_specifier "${root}")"
-    if grep -qxF "${specifier}" "${published}"; then
-      digest="$(npm_tarball_digest "${specifier}")"
-      echo "${digest#sha256:}  ${specifier}" >>"${subjects}"
-    elif is_on_npm "${specifier}"; then
-      digest="$(npm_tarball_digest "${specifier}")"
-    else
-      continue
-    fi
-    if has_npm_storage_record "${digest}"; then
-      echo "🔗 ${specifier} is already linked"
-      continue
-    fi
-    echo "🔗 Linking ${specifier} to ${repository}"
-    create_npm_storage_record "${specifier}" "${digest}"
-  done
+  run_in_parallel link_npm_package "${roots[@]}"
   if [[ -s "${subjects}" ]]; then echo "attest=true" >>"${GITHUB_OUTPUT:?}"; fi
 }
 
-mapfile -t roots < <(release_group_roots)
+# Links the package in the given directory, as link_npm_packages describes,
+# using its `published` and `subjects`. Each line it adds to `subjects` is one
+# short append, so several packages can link at once.
+link_npm_package() {
+  local root="$1"
+  local specifier digest
+  specifier="$(package_specifier "${root}")"
+  if grep -qxF "${specifier}" "${published}"; then
+    digest="$(npm_tarball_digest "${specifier}")"
+    echo "${digest#sha256:}  ${specifier}" >>"${subjects}"
+  elif is_on_npm "${specifier}"; then
+    digest="$(npm_tarball_digest "${specifier}")"
+  else
+    return 0
+  fi
+  if has_npm_storage_record "${digest}"; then
+    echo "🔗 ${specifier} is already linked"
+    return 0
+  fi
+  echo "🔗 Linking ${specifier} to ${repository}"
+  create_npm_storage_record "${specifier}" "${digest}"
+}
+
+group_roots="$(release_group_roots)"
+mapfile -t roots <<<"${group_roots}"
 link_npm_packages

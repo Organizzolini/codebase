@@ -70,16 +70,16 @@ commit_leftover_versions() {
 # Tags HEAD for every release-group package whose version has no tag yet,
 # adding each tag it makes to `tags`.
 tag_new_versions() {
-  local project root tag
-  for project in $(release_group_projects); do
-    root="$(project_root "${project}")"
+  local group project root tag
+  group="$(release_group)"
+  while read -r project root; do
     tag="${project}@$(jq -r .version "${root}/package.json")"
     if git rev-parse --quiet --verify "refs/tags/${tag}" >/dev/null; then
       continue
     fi
     git tag --annotate "${tag}" --message "${tag}"
     tags+=("${tag}")
-  done
+  done <<<"${group}"
 }
 
 commit_leftover_versions
