@@ -5,7 +5,7 @@
 ```bash
 # Run tasks via Nx (always prefer this)
 nx run <project>:<target>:<configuration>
-nx run-many --target=typecheck-code,lint-code,format-code,format-code,guard-code --all
+nx run-many --target=typecheck-code,lint-code,format-code,deprecate-code,guard-code --all
 nx affected --target=vitest --base=main
 
 # Install dependencies
@@ -217,17 +217,17 @@ invented scope fails validation.
 
 ```bash
 # Auto-fix all format, lint, and unused-code issues
-pnpm exec nx affected --target=typecheck-code,lint-code,format-code,format-code,guard-code --configuration=write --base=main
+pnpm exec nx affected --target=typecheck-code,lint-code,format-code,deprecate-code,guard-code --configuration=write --base=main
 
 # Verify no issues remain — all checks must pass
-pnpm exec nx affected --target=typecheck-code,lint-code,format-code,format-code,guard-code --configuration=check --base=main
+pnpm exec nx affected --target=typecheck-code,lint-code,format-code,deprecate-code,guard-code --configuration=check --base=main
 ```
 
 For new/untracked files not yet picked up by `nx affected`:
 
 ```bash
-pnpm exec nx run <project>:typecheck-code,lint-code,format-code,format-code,guard-code --configuration=write
-pnpm exec nx run <project>:typecheck-code,lint-code,format-code,format-code,guard-code --configuration=check
+pnpm exec nx run <project>:typecheck-code,lint-code,format-code,deprecate-code,guard-code --configuration=write
+pnpm exec nx run <project>:typecheck-code,lint-code,format-code,deprecate-code,guard-code --configuration=check
 ```
 
 **Do not commit until both commands pass cleanly.** If they fail, use the [triage-integration skill](.agents/skills/triage-integration/SKILL.md) to diagnose and fix the errors.
