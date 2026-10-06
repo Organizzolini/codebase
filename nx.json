@@ -117,6 +117,25 @@
       },
       "workspaceChangelog": false
     },
+    "conventionalCommits": {
+      "types": {
+        "build": {
+          "changelog": {
+            "hidden": false
+          },
+          "semverBump": "patch"
+        },
+        "perf": {
+          "semverBump": "patch"
+        },
+        "refactor": {
+          "changelog": {
+            "hidden": false
+          },
+          "semverBump": "patch"
+        }
+      }
+    },
     "git": {
       "commit": false,
       "push": false,

@@ -285,7 +285,10 @@ jobs:
       # Versions the ic-suite packages and writes each one's changelog, without
       # committing, and leaves the remote carrying the release token for the
       # pushes below. `scripts/release/version-packages.sh` explains why the
-      # release commit is semantic-release's.
+      # release commit is semantic-release's. When `main` moves during the run,
+      # this step or one below sets `RELEASE_SUPERSEDED` and every release step
+      # after it skips: the newer commit's run releases everything this one
+      # would have. `scripts/release/main-tip.sh` explains when each checks.
       - name: 🏷️ Version Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
@@ -294,19 +297,21 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: bash scripts/release/version-packages.sh
 
-      # semantic-release versions, tags and releases the codebase itself, the
+      # semantic-release versions and tags the codebase itself, and creates the
       # `v*` release the README badge shows, never an ic-suite package. Its one
-      # release commit also carries the package versions and changelogs the
-      # step above wrote, so it comes before anything is published.
-      - name: 🦸 Release Codebase
+      # `chore(release): 🔖 tag codebase` commit also carries the package
+      # versions and changelogs the step above wrote, so it comes before
+      # anything is published.
+      - name: 🔖 Tag Codebase
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           GIT_COMMITTER_EMAIL: jimmypaolini@gmail.com
           GIT_COMMITTER_NAME: Jimmy Paolini
-        run: pnpm semantic-release
+        run: bash scripts/release/tag-codebase.sh
 
       # Tags each newly versioned package on the release commit and pushes the
       # tags. `scripts/release/tag-packages.sh` explains the commit it makes
@@ -314,7 +319,8 @@ jobs:
       - name: 🔖 Tag Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         env:
           GIT_COMMITTER_EMAIL: jimmypaolini@gmail.com
           GIT_COMMITTER_NAME: Jimmy Paolini
@@ -329,7 +335,8 @@ jobs:
       - name: 📦 Publish Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         env:
           GITHUB_PACKAGES_TOKEN: ${{ github.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -343,7 +350,8 @@ jobs:
         id: link-packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: bash scripts/release/link-packages.sh
@@ -356,6 +364,7 @@ jobs:
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
           matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true' &&
           steps.link-packages.outputs.attest == 'true'
         uses: actions/attest@v4
         with:
