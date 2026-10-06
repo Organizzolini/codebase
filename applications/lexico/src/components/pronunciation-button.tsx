@@ -1,13 +1,16 @@
 import { Loader2, Volume2 } from "lucide-react";
-import { type ReactElement, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { Button } from "@codebase/components-web";
 
 import { getPronunciation } from "../lib/pronunciation";
 
+import type { ReactNode } from "react";
+
 // 🔖 Type
+
 /**
- * Props for the PronunciationButton component.
+ * Properties for the PronunciationButton component.
  */
 export interface PronunciationButtonProperties {
   className?: string;
@@ -16,9 +19,13 @@ export interface PronunciationButtonProperties {
 }
 
 // 🧩 Component
-export const PronunciationButton = (
-  properties: PronunciationButtonProperties,
-): ReactElement => {
+
+/**
+ * Plays the pronunciation of a word in the chosen dialect.
+ */
+export function PronunciationButton(
+  properties: Readonly<PronunciationButtonProperties>,
+): ReactNode {
   const { className, dialect = "classical", text } = properties;
 
   // 🪝 Hooks
@@ -26,7 +33,7 @@ export const PronunciationButton = (
 
   // 🏗 Setup
 
-  // 💪 Handler
+  // 💪 Handlers
   const handlePlay = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -59,14 +66,16 @@ export const PronunciationButton = (
     }
   }, [text, dialect]);
 
-  // 🎨 Markup
-
   // ♻️ Lifecycle
 
-  // 🔌 Short Circuits
+  // 🏁 Early Returns
 
+  // 🎨 Markup
   return (
-    <div className={className}>
+    <div
+      className={className}
+      data-testid="pronunciation-button"
+    >
       <Button
         disabled={isLoading}
         onClick={() => void handlePlay()}
@@ -82,4 +91,4 @@ export const PronunciationButton = (
       </Button>
     </div>
   );
-};
+}

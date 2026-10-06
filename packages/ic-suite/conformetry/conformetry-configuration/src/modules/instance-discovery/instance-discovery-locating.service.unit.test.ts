@@ -55,6 +55,30 @@ describe(InstanceDiscoveryLocatingService, () => {
   });
 
   describe("findInstances", () => {
+    it("drops a directory instance an exclude glob matches", () => {
+      const instances = service.findInstances({
+        exclude: ["packages/widgets/src/modules/logger"],
+        patterns: ["packages/*/src/modules/*"],
+        workingDirectory,
+      });
+
+      expect(instances.map((instance) => instance.nameStem)).toStrictEqual([
+        "differences",
+      ]);
+    });
+
+    it("drops a file instance whose files an exclude glob matches", () => {
+      const instances = service.findInstances({
+        exclude: ["packages/widgets/src/modules/differences/**"],
+        patterns: ["packages/*/src/modules/*/*.service.ts"],
+        workingDirectory,
+      });
+
+      expect(instances.map((instance) => instance.nameStem)).toStrictEqual([
+        "logger",
+      ]);
+    });
+
     it("names a directory instance by its basename and leaves the scope open", () => {
       const instances = service.findInstances({
         patterns: ["packages/*/src/modules/*"],

@@ -1,3 +1,4 @@
+import { createPlaceholderValue } from "@conformetry/configuration";
 import { Test } from "@nestjs/testing";
 import { beforeAll, describe, expect, it } from "vitest";
 
@@ -90,7 +91,11 @@ describe(TextService, () => {
 
     // A file that conforms still contributes its whole denominator; counting
     // only the broken lines would score every clean instance against nothing.
-    expect(conforming).toStrictEqual({ differences: [], totalWeight: 3 });
+    expect(conforming).toStrictEqual({
+      captures: {},
+      differences: [],
+      totalWeight: 3,
+    });
   });
 
   it("weighs each missing line as one requirement", () => {
@@ -113,5 +118,18 @@ describe(TextService, () => {
     expect(differences[0]?.fix).toBe(
       "Add the line `needed` to the instance file.",
     );
+  });
+
+  it("captures a line a placeholder value stands in for", () => {
+    const value = createPlaceholderValue();
+    const result = service.validateDocument(
+      createDocument({
+        instance: "first\nport=8080\nlast",
+        renderedTemplate: `first\nport=${value}\nlast`,
+      }),
+    );
+
+    expect(result.differences).toStrictEqual([]);
+    expect(result.captures).toStrictEqual({ [value]: "8080" });
   });
 });

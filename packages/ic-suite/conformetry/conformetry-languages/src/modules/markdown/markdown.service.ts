@@ -74,6 +74,12 @@ export class MarkdownService implements ConformetryLanguageValidator {
       },
     );
 
-    return { differences, totalWeight: comparison.totalWeight };
+    return {
+      ...(comparison.captures === undefined
+        ? {}
+        : { captures: comparison.captures }),
+      differences,
+      totalWeight: comparison.totalWeight,
+    };
   }
 }

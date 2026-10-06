@@ -71,14 +71,16 @@ export type ConformetryDifferenceLanguage =
  *
  * `"instance"` is the odd one out: it does not name a missing element inside a
  * file but a directory or file the caller declared to be generated code, which
- * conformetry could not attribute to any single template.
+ * conformetry could not attribute to any single template. `"placeholder"`
+ * names a template placeholder whose value no instance node revealed.
  */
 export type ConformetryDifferenceType =
   | "code"
   | "comment"
   | "directory"
   | "file"
-  | "instance";
+  | "instance"
+  | "placeholder";
 // 🏷️ Types
 
 /**
@@ -115,6 +117,13 @@ export interface ConformetryLanguageValidator {
  * only against the files it got wrong.
  */
 export interface DocumentValidationResult {
+  /**
+   * What each placeholder value in the rendered template stood for, keyed by
+   * the value: the text of the instance node the comparison aligned with the
+   * template node holding it, first occurrence first. Absent when a language
+   * captures nothing.
+   */
+  readonly captures?: Readonly<Record<string, string>>;
   readonly differences: ConformetryDifference[];
   /** Combined weight of the template requirements this document imposes. */
   readonly totalWeight: number;

@@ -51,7 +51,8 @@ against the outcome its own guide promises.
 | `below threshold 100.0%` | [scoring-thresholds](examples/scoring-thresholds/README.md) | The default threshold is a perfect match; three levels can lower it, narrowest first |
 | `meets threshold 75.0%` with findings printed | [scoring-thresholds](examples/scoring-thresholds/README.md) | A lowered threshold is permission to ship the drift, not a reason to stop showing it |
 | `No instances were found.` | [nx-host](examples/nx-host/README.md) | Tag-scoped groups are invisible to the command-line host, which locates by glob alone |
-| `MissingSubstitutionError: No value was supplied for …` | [failure-modes](examples/failure-modes/README.md) | A template interpolates a placeholder nothing supplies. Declare it as a generator input **and** in the matching instance group's `substitutions`, or ask the question with a `{{#section}}` instead |
+| `MissingSubstitutionError: No value was supplied for …` | [failure-modes](examples/failure-modes/README.md) | Generation only: a template interpolates a placeholder nothing supplies. Declare it as a generator input, or ask the question with a `{{#section}}` instead |
+| `Could not infer {{…}}: no instance node aligned with …` | [failure-modes](examples/failure-modes/README.md) | Validation found no instance text where the template uses that placeholder. Restore that text in the instance, or supply the value in the instance group's `substitutions` |
 | `All checked files conform.` but the code is obviously wrong | [failure-modes](examples/failure-modes/README.md) | A `TODO` template comment is satisfied by any comment, on purpose |
 | `Unknown generator "…"` | [two-directions](examples/two-directions/README.md) | `conformetry templates` is the only thing that answers which generators exist; a generator is addressed by its full name |
 

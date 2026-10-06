@@ -72,11 +72,7 @@ const EXPECTATIONS: Record<string, ExampleExpectation> = {
   },
   "failure-modes": {
     exitCode: 1,
-    present: [
-      "All checked files conform.",
-      "MissingSubstitutionError",
-      "No value was supplied for {{owner}}",
-    ],
+    present: ["All checked files conform.", "Could not infer {{owner}}"],
   },
   "hello-template": { exitCode: 0, present: ["All checked files conform."] },
   "language-validators": {

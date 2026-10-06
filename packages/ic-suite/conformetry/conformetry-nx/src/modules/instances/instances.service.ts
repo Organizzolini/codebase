@@ -83,6 +83,7 @@ export class InstancesService {
       })
       .flatMap((group) => {
         return this.configurationService.findInstances({
+          ...(group.exclude === undefined ? {} : { exclude: group.exclude }),
           patterns: group.patterns ?? [],
           ...(group.substitutions === undefined
             ? {}

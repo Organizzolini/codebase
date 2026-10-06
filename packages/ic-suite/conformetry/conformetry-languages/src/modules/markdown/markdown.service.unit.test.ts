@@ -1,3 +1,4 @@
+import { createPlaceholderValue } from "@conformetry/configuration";
 import { Test } from "@nestjs/testing";
 import { beforeAll, describe, expect, it } from "vitest";
 
@@ -169,5 +170,18 @@ describe(MarkdownService, () => {
     it("stops descending once a leaf node has matched", () => {
       expect(validate("---\n\n---\n", "---\n\n---\n")).toStrictEqual([]);
     });
+  });
+
+  it("captures a heading a placeholder value stands in for", () => {
+    const value = createPlaceholderValue();
+    const result = service.validateDocument(
+      createDocument({
+        instance: "# Intro\n\n## Alpha Widget\n",
+        renderedTemplate: `# Intro\n\n## ${value} Widget\n`,
+      }),
+    );
+
+    expect(result.differences).toStrictEqual([]);
+    expect(result.captures).toStrictEqual({ [value]: "Alpha" });
   });
 });

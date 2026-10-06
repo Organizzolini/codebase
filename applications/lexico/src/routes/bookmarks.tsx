@@ -17,6 +17,11 @@ import { getBookmarks, removeBookmark } from "../lib/bookmarks";
 import type { BookmarkedEntry } from "../lib/bookmarks";
 import type { ReactNode } from "react";
 
+// 🧭 Route
+
+/**
+ * The signed-in reader's bookmarked entries.
+ */
 export const Route = createFileRoute("/bookmarks")({
   component: BookmarksPage,
 });
@@ -95,16 +100,20 @@ function BookmarksList(properties: BookmarksListProperties): ReactNode {
   );
 }
 
+// 🧩 Component
+
 /**
  * Bookmarks page component that displays user's bookmarked entries.
  *
  * @returns React node.
  */
 function BookmarksPage(): ReactNode {
+  // 🪝 Hooks
   const [bookmarks, setBookmarks] = useState<BookmarkedEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<null | string>(null);
 
+  // 🏗 Setup
   const fetchBookmarks = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -124,6 +133,7 @@ function BookmarksPage(): ReactNode {
     void fetchBookmarks();
   }, [fetchBookmarks]);
 
+  // 💪 Handlers
   const handleRemoveBookmark = useCallback(async (entryId: string) => {
     try {
       const result = await removeBookmark({ data: { entryId } });
@@ -135,12 +145,17 @@ function BookmarksPage(): ReactNode {
     }
   }, []);
 
+  // ♻️ Lifecycle
+
+  // 🏁 Early Returns
+
+  // 🎨 Markup
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-3">
+    <section className="space-y-6">
+      <h1 className="flex items-center gap-3 text-3xl font-bold">
         <Bookmark className="h-8 w-8 text-primary" />
-        <h1 className="text-3xl font-bold">Bookmarks</h1>
-      </div>
+        Bookmarks
+      </h1>
 
       {isLoading && (
         <div className="text-center text-muted-foreground">
@@ -162,7 +177,7 @@ function BookmarksPage(): ReactNode {
       )}
 
       {!isLoading && !error && bookmarks.length === 0 && <EmptyBookmarks />}
-    </div>
+    </section>
   );
 }
 

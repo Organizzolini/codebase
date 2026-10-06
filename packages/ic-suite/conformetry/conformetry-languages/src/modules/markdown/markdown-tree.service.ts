@@ -56,6 +56,21 @@ export class MarkdownTreeService {
     };
   }
 
+  /** What the first matching candidate captured for the template node. */
+  private captureFirst(args: {
+    candidates: MarkdownNode[];
+    templateChild: MarkdownNode;
+  }): Record<string, string> {
+    const [instanceNode] = args.candidates;
+
+    return instanceNode === undefined
+      ? {}
+      : (this.markdownNodesService.capture({
+          instanceNode,
+          templateNode: args.templateChild,
+        }) ?? {});
+  }
+
   /**
    * Matches a container node, then descends into it.
    *
@@ -81,6 +96,7 @@ export class MarkdownTreeService {
 
     if (templateGrandchildren.length === 0) {
       return {
+        captures: this.captureFirst({ ...args, candidates }),
         differences: [],
         lastMatchedNode: candidates.at(-1),
         totalWeight: 1,
@@ -95,6 +111,10 @@ export class MarkdownTreeService {
         });
 
         return {
+          captures: {
+            ...comparison.captures,
+            ...this.captureFirst({ ...args, candidates: [candidate] }),
+          },
           differences: comparison.differences,
           lastMatchedNode: candidate,
           // The container itself is one requirement; its children add theirs.
@@ -125,6 +145,7 @@ export class MarkdownTreeService {
           totalWeight: weight,
         }
       : {
+          captures: this.captureFirst({ ...args, candidates }),
           differences: [],
           lastMatchedNode: candidates.at(-1),
           totalWeight: weight,
@@ -134,10 +155,12 @@ export class MarkdownTreeService {
   /** Finds every instance sibling satisfying the template node. */
   private findCandidates(args: CompareNodeArguments): MarkdownNode[] {
     return args.instanceChildren.filter((instanceNode) => {
-      return this.markdownNodesService.matches({
-        instanceNode,
-        templateNode: args.templateChild,
-      });
+      return (
+        this.markdownNodesService.capture({
+          instanceNode,
+          templateNode: args.templateChild,
+        }) !== undefined
+      );
     });
   }
 
@@ -147,6 +170,7 @@ export class MarkdownTreeService {
   public compareChildren(
     args: CompareChildrenArguments,
   ): CompareChildrenResult {
+    let captures: Record<string, string> = {};
     const differences: MarkdownComparisonError[] = [];
     let lastMatchedNode: MarkdownNode | undefined;
     let totalWeight = 0;
@@ -168,11 +192,13 @@ export class MarkdownTreeService {
             templateChild,
           });
 
+      // Earlier siblings win, so the first capture in the document stays.
+      captures = { ...result.captures, ...captures };
       differences.push(...result.differences);
       lastMatchedNode = result.lastMatchedNode;
       totalWeight += result.totalWeight;
     }
 
-    return { differences, totalWeight };
+    return { captures, differences, totalWeight };
   }
 }

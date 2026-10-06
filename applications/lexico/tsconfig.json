@@ -39,6 +39,8 @@
     "src/**/*.jsx",
     "src/**/*.ts",
     "src/**/*.tsx",
+    "testing/**/*.ts",
+    "testing/**/*.tsx",
     "vite.config.mts",
     "vitest.config.ts"
   ]

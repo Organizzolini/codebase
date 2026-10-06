@@ -9,7 +9,7 @@ import { AdjectiveFormsTable } from "../components/entry/adjective-forms-table";
 import { NounFormsTable } from "../components/entry/noun-forms-table";
 import { PrincipalParts } from "../components/entry/principal-parts";
 import { VerbFormsTable } from "../components/entry/verb-forms-table";
-import { PronunciationButton } from "../components/PronunciationButton";
+import { PronunciationButton } from "../components/pronunciation-button";
 import { isBookmarked, toggleBookmark } from "../lib/bookmarks";
 import { transformForms } from "../lib/forms";
 import { getEntry } from "../lib/search";
@@ -17,8 +17,13 @@ import { getEntry } from "../lib/search";
 import type { EntryFull } from "../lib/types";
 import type { ReactNode } from "react";
 
+// 🧭 Route
+
+/**
+ * One dictionary entry, with its forms and pronunciation.
+ */
 export const Route = createFileRoute("/word/$id")({
-  component: WordPage,
+  component: WordIdPage,
   loader: async ({ params: parameters }) => {
     const entry = await getEntry({ data: { id: parameters.id } });
     return { entry };
@@ -70,12 +75,15 @@ function WordForms(properties: WordFormsProperties): ReactNode {
   );
 }
 
+// 🧩 Component
+
 /**
  * Word detail page component that displays full entry information.
  *
  * @returns React node.
  */
-function WordPage(): ReactNode {
+function WordIdPage(): ReactNode {
+  // 🪝 Hooks
   const loaderData = Route.useLoaderData();
   const { entry } = loaderData;
   const [bookmarked, setBookmarked] = useState(false);
@@ -86,6 +94,9 @@ function WordPage(): ReactNode {
     }
   }, [entry]);
 
+  // 🏗 Setup
+
+  // 💪 Handlers
   const handleBookmarkToggle = useCallback(async () => {
     if (!entry) return;
     const result = await toggleBookmark({ data: { entryId: entry.id } });
@@ -94,6 +105,9 @@ function WordPage(): ReactNode {
     }
   }, [entry]);
 
+  // ♻️ Lifecycle
+
+  // 🏁 Early Returns
   if (!entry) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-16">
@@ -114,8 +128,10 @@ function WordPage(): ReactNode {
   const hasPronunciation =
     entry.pronunciation.classical ?? entry.pronunciation.ecclesiastical;
 
+  // 🎨 Markup
   return (
-    <div className="mx-auto max-w-4xl space-y-8 px-4 py-6">
+    <section className="mx-auto max-w-4xl space-y-8 px-4 py-6">
+      <h1 className="sr-only">Dictionary entry</h1>
       {/* Navigation bar */}
       <div className="flex items-center justify-between">
         <Link
@@ -198,7 +214,7 @@ function WordPage(): ReactNode {
           </>
         )}
       </article>
-    </div>
+    </section>
   );
 }
 

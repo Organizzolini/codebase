@@ -29,6 +29,8 @@ export interface ExtractedComment {
 
 /** What comparing two syntax trees produced. */
 export interface TreeComparison {
+  /** What each placeholder value stood for — see `DocumentValidationResult`. */
+  readonly captures?: Readonly<Record<string, string>>;
   readonly differences: TypescriptComparisonError[];
   /** Number of template nodes the walk weighed the instance against. */
   readonly totalWeight: number;

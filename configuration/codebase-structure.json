@@ -261,7 +261,7 @@
       "name": "^(?!(dir|err|req|res|utils|ctx|app)$)[a-z0-9-]+$"
     },
     "module-file": {
-      "name": "^[a-z0-9-]+.(command|constants|entities|factories|loader|module|resolver|service|types|utilities)(.(unit|integration|end-to-end).test)?.(ts|tsx|mts|cts|js|jsx|mjs|cjs)$"
+      "name": "^[a-z0-9-]+.(command|constants|entities|factories|functions|loader|module|resolver|service|types|utilities)(.(unit|integration|end-to-end).test)?.(ts|tsx|mts|cts|js|jsx|mjs|cjs)$"
     },
     "module-folder": {
       "children": [

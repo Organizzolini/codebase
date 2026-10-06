@@ -104,6 +104,7 @@ export class ValidateCommand extends CommandRunner {
       .readWorkspaceGroups(args.groups)
       .flatMap((group) => {
         return this.configurationService.findInstances({
+          ...(group.exclude === undefined ? {} : { exclude: group.exclude }),
           // A group may name only labels, which this host has nothing to match
           // them against — it locates instances by glob alone.
           patterns: group.patterns ?? [],

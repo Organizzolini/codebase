@@ -33,6 +33,18 @@ function defineInputs(
   return inputs;
 }
 
+/**
+ * Code the shadcn CLI writes, which is vendored rather than authored here: each
+ * directory is one of the aliases a project's `components.json` hands the CLI.
+ * Holding it to a template would mean editing files the next `shadcn add`
+ * overwrites, so every frontend instance group leaves it out of validation.
+ */
+const SHADCN_GENERATED_PATTERNS = [
+  "packages/components-web/src/components/ui/**",
+  "packages/components-web/src/hooks/**",
+  "packages/components-web/src/lib/**",
+];
+
 const conformetryConfiguration: ConformetryNxConfiguration = [
   // Groups without tags are plain workspace globs — the form a host with no
   // project graph writes, and the right one where the set of projects is not a
@@ -128,6 +140,16 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
     instances: [],
     name: "nestjs-service-project",
     templatePath: "configuration/conformetry-templates/nestjs-service-project",
+  },
+  {
+    description:
+      "A standalone TanStack Start web application template — server rendering, file-based routes, Tailwind CSS, and Vitest — for a new frontend in applications/",
+    inputs: defineInputs({
+      name: z.string().describe("Application name in kebab-case"),
+    }),
+    instances: [],
+    name: "tanstack-application",
+    templatePath: "configuration/conformetry-templates/tanstack-application",
   },
 
   // Groups with tags pick the projects the template suits — which is what
@@ -230,20 +252,93 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
     name: "nestjs-service-module",
     templatePath: "configuration/conformetry-templates/nestjs-service-module",
   },
-  // Tags select projects and patterns select the instances inside them, so a
-  // group naming tags alone registers nothing and this template is measured
-  // against no instance at all. That is deliberate while `lexico` is still in
-  // progress, and adding patterns here is what would start validating it.
+  // The extglob in each frontend source pattern keeps a test file from being
+  // read as an instance named after itself. Instances are matched to whichever
+  // template their files fit, not to the group that found them, so a route's
+  // test is `.integration.test.tsx` and a component's `.unit.test.tsx` —
+  // otherwise `index.tsx` would fit both templates equally and be held to both.
   {
     description:
-      "A React component and test file template for an existing React project",
+      "A React component and unit test file template for an existing React project, placed in src/components",
     inputs: defineInputs({
       name: z.string().describe("Component name in kebab-case"),
       project: z.string().describe("Parent project name in kebab-case"),
     }),
-    instances: [{ tags: ["framework:react"] }],
+    instances: [
+      {
+        patterns: [
+          "src/components/!(*.unit.test).tsx",
+          "src/components/*.unit.test.tsx",
+        ],
+        exclude: SHADCN_GENERATED_PATTERNS,
+        tags: ["framework:react"],
+      },
+    ],
     name: "react-component",
     templatePath: "configuration/conformetry-templates/react-component",
+  },
+  {
+    description:
+      "A React hook and unit test file template for an existing React project, placed in src/hooks",
+    inputs: defineInputs({
+      name: z
+        .string()
+        .regex(/^use-[a-z0-9-]+$/u)
+        .describe("Hook name in kebab-case, starting with use-"),
+      project: z.string().describe("Parent project name in kebab-case"),
+    }),
+    instances: [
+      {
+        patterns: [
+          "src/hooks/use-!(*.unit.test).ts",
+          "src/hooks/use-*.unit.test.ts",
+        ],
+        exclude: SHADCN_GENERATED_PATTERNS,
+        tags: ["framework:react"],
+      },
+    ],
+    name: "react-hook",
+    templatePath: "configuration/conformetry-templates/react-hook",
+  },
+  {
+    description:
+      "A TanStack Start file route and integration test template — the route and the page it renders — for an existing TanStack Start project",
+    inputs: defineInputs({
+      name: z
+        .string()
+        .describe(
+          "Route file stem as TanStack Router names it, e.g. index, search, or word.$id",
+        ),
+      project: z.string().describe("Parent project name in kebab-case"),
+      path: z
+        .string()
+        .describe("URL path the route serves, e.g. /, /search, or /word/$id"),
+    }),
+    instances: [
+      {
+        patterns: [
+          "src/routes/!(__root|*.integration.test).tsx",
+          "src/routes/*.integration.test.tsx",
+        ],
+        tags: ["framework:tanstack-start"],
+      },
+    ],
+    name: "tanstack-route",
+    templatePath: "configuration/conformetry-templates/tanstack-route",
+  },
+  {
+    description:
+      "A TanStack Start server function module template — GET and POST server functions, the utilities behind them, schemas, types, and unit test — for an existing TanStack Start project",
+    inputs: defineInputs({
+      name: z.string().describe("Module name in kebab-case"),
+      project: z.string().describe("Parent project name in kebab-case"),
+    }),
+    instances: [
+      { patterns: ["src/modules/*"], tags: ["framework:tanstack-start"] },
+    ],
+    name: "tanstack-server-function",
+    templatePath:
+      "configuration/conformetry-templates/tanstack-server-function",
   },
 ];
 

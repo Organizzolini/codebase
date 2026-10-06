@@ -1,3 +1,4 @@
+import { createPlaceholderValue } from "@conformetry/configuration";
 import { Test } from "@nestjs/testing";
 import ts from "typescript";
 import { beforeAll, describe, expect, it } from "vitest";
@@ -145,6 +146,53 @@ describe(TypescriptTreeService, () => {
           templateNode: parse(statement),
         }).differences,
       ).toStrictEqual([]);
+    });
+  });
+
+  describe("compareTree with placeholder values", () => {
+    const value = createPlaceholderValue();
+
+    it("captures a string literal a placeholder value stands in for", () => {
+      const comparison = service.compareTree({
+        instanceNode: parse(
+          'export const Route = createFileRoute("/word/$id")({});\n',
+        ),
+        templateNode: parse(
+          `export const Route = createFileRoute("${value}")({});\n`,
+        ),
+      });
+
+      expect(comparison.differences).toStrictEqual([]);
+      expect(comparison.captures).toStrictEqual({ [value]: "/word/$id" });
+    });
+
+    it("captures part of an identifier, matching the rest exactly", () => {
+      const comparison = service.compareTree({
+        instanceNode: parse("class GenerateCommand {}\n"),
+        templateNode: parse(`class ${value}Command {}\n`),
+      });
+
+      expect(comparison.differences).toStrictEqual([]);
+      expect(comparison.captures).toStrictEqual({ [value]: "Generate" });
+    });
+
+    it("captures a value inside a larger string", () => {
+      const comparison = service.compareTree({
+        instanceNode: parse('const label = "prefix-alpha-suffix";\n'),
+        templateNode: parse(`const label = "prefix-${value}-suffix";\n`),
+      });
+
+      expect(comparison.captures).toStrictEqual({ [value]: "alpha" });
+    });
+
+    it("captures nothing and reports the node when nothing aligns", () => {
+      const comparison = service.compareTree({
+        instanceNode: parse("class Widget {}\n"),
+        templateNode: parse(`class ${value}Command {}\n`),
+      });
+
+      expect(comparison.differences).toHaveLength(1);
+      expect(comparison.captures ?? {}).toStrictEqual({});
     });
   });
 });

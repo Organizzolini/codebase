@@ -64,7 +64,7 @@ Note which comment is named: the remaining ones slide up into the slots the
 template declared, and the last one is reported missing. The count and the
 order are part of the comparison even when one entry's text is not.
 
-## 2. A placeholder nobody supplied is refused
+## 2. A placeholder nobody supplied, and nothing in the instance reveals
 
 The `missing-input` template asks for `{{owner}}`:
 
@@ -77,21 +77,27 @@ Owner: {{owner}}
 ```
 
 Nothing supplies it. `owner` is not a declared input, and the instance group
-carries no `substitutions` entry for it:
+carries no `substitutions` entry for it. Validation then tries to read the
+value from the instance: it renders a random stand-in for `{{owner}}`, and
+whatever text the instance holds where the template holds the stand-in becomes
+the value. Here the instance's line is `Owner:` with nothing after it, so there
+is nothing to read:
 
 ```bash
 pnpm exec nx run conformetry-cli:start -- validate --config packages/ic-suite/conformetry/conformetry-examples/examples/failure-modes/conformetry.config.ts --instances packages/ic-suite/conformetry/conformetry-examples/examples/failure-modes/instances/unowned
 ```
 
 ```text
-MissingSubstitutionError: No value was supplied for {{owner}} while rendering
-…/templates/missing-input/{{nameKebabCase}}/{{nameKebabCase}}.md. Declare
-each one as an input of the generator so that generation asks for it, and in
-the matching instance group's `substitutions` so that validation renders it
-the same way.
+     1. Could not infer {{owner}}: no instance node aligned with the template text that uses it
+        Fix     : Supply owner in the instance group's substitutions, or restore the template text that uses {{owner}} in the instance.
 ```
 
-Generation refuses the same way, for the same reason:
+That finding fails the instance at any threshold. Had the line read
+`Owner: platform`, validation would have taken `platform` as the value and
+checked every other use of `{{owner}}` against it.
+
+Generation has no instance to read from, so it still refuses outright with
+`MissingSubstitutionError: No value was supplied for {{owner}}`:
 
 ```bash
 pnpm exec nx run conformetry-cli:start -- generate --template missing-input --name unowned --directory tmp/conformetry-examples/failure-modes --config packages/ic-suite/conformetry/conformetry-examples/examples/failure-modes/conformetry.config.ts
@@ -109,13 +115,12 @@ in the toolchain, because **both halves of the loop lost the same thing**:
 
 The instance conformed, the report was clean, and the value nobody supplied was
 gone from both ends. Conformance cannot catch a hole it renders identically
-into both sides of its own comparison, so the only place to catch it is the
-renderer, before either side exists.
+into both sides of its own comparison, so neither side renders it empty any
+more: generation refuses, and validation either reads a real value from the
+instance or says it could not.
 
-Refusing is a deliberate trade. It means a template cannot use a placeholder as
-an "optional field", and it means adding a placeholder to a template is a
-breaking change for every instance group that does not supply it. Both are
-better than a silent hole.
+Refusing is a deliberate trade: a template cannot use a placeholder as an
+"optional field". That is better than a silent hole.
 
 ### What is still allowed
 
@@ -140,8 +145,8 @@ section, and interpolate only inside it.
 
 Conformetry measures an instance against a **rendered** template, so anything
 the rendering itself loses is invisible to the comparison by construction. That
-is why the renderer refuses rather than reporting: a finding would have to come
-from a comparison that never saw the problem. The `TODO` case is the same
+is why nothing is ever rendered empty: a finding would have to come from a
+comparison that never saw the problem. The `TODO` case is the same
 mechanism used deliberately — the template chooses to ask for less.
 
 ## Next

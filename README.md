@@ -230,13 +230,17 @@ Template-driven code generation and conformance validation, templates synced fro
 | `nestjs-command-project` | A standalone NestJS CLI application template built on nest-commander, for a new command-line tool in applications/, packages/, or tools/ |
 | `nestjs-graphql-application` | A standalone NestJS GraphQL API application template, for a new backend service exposing a GraphQL schema over HTTP |
 | `nestjs-service-project` | A standalone NestJS library package template for internal workspace code shared across projects, with no CLI entry point or HTTP server |
+| `tanstack-application` | A standalone TanStack Start web application template — server rendering, file-based routes, Tailwind CSS, and Vitest — for a new frontend in applications/ |
 | `nestjs-command-module` | A nest-commander command module template — command, module, constants, types, and unit test — for an existing NestJS command-line project |
 | `nestjs-dataloader-module` | A GraphQL dataloader module template — dataloader, module, types, and unit test — for batching lookups inside an existing NestJS project |
 | `nestjs-graphql-module` | A GraphQL module template — resolver, entities, args/input types, factories, constants, and unit test — for an existing NestJS project |
 | `nestjs-service-file` | A service and unit test file template for an existing NestJS module, without the surrounding module files |
 | `nestjs-resolver-file` | A resolver and unit test file template for an existing NestJS module, without the surrounding module files |
 | `nestjs-service-module` | A plain service module template — module, service, constants, types, and unit test — for an existing NestJS project |
-| `react-component` | A React component and test file template for an existing React project |
+| `react-component` | A React component and unit test file template for an existing React project, placed in src/components |
+| `react-hook` | A React hook and unit test file template for an existing React project, placed in src/hooks |
+| `tanstack-route` | A TanStack Start file route and integration test template — the route and the page it renders — for an existing TanStack Start project |
+| `tanstack-server-function` | A TanStack Start server function module template — GET and POST server functions, the utilities behind them, schemas, types, and unit test — for an existing TanStack Start project |
 <!-- conformetry:end -->
 
 ## 🕸️ Codependix
@@ -3090,6 +3094,8 @@ graph LR
   file_conformetry_configuration_src_modules_rendering_rendering_service_ts["conformetry-configuration/src/modules/rendering/rendering.service.ts"]
   file_conformetry_configuration_src_modules_rendering_rendering_service_unit_test_ts["conformetry-configuration/src/modules/rendering/rendering.service.unit.test.ts"]
   file_conformetry_configuration_src_modules_rendering_rendering_types_ts["conformetry-configuration/src/modules/rendering/rendering.types.ts"]
+  file_conformetry_configuration_src_modules_rendering_rendering_utilities_ts["conformetry-configuration/src/modules/rendering/rendering.utilities.ts"]
+  file_conformetry_configuration_src_modules_rendering_rendering_utilities_unit_test_ts["conformetry-configuration/src/modules/rendering/rendering.utilities.unit.test.ts"]
   file_conformetry_configuration_src_modules_template_discovery_template_discovery_constants_ts["conformetry-configuration/src/modules/template-discovery/template-discovery.constants.ts"]
   file_conformetry_configuration_src_modules_template_discovery_template_discovery_module_ts["conformetry-configuration/src/modules/template-discovery/template-discovery.module.ts"]
   file_conformetry_configuration_src_modules_template_discovery_template_discovery_service_ts["conformetry-configuration/src/modules/template-discovery/template-discovery.service.ts"]
@@ -3675,8 +3681,8 @@ graph LR
   file_lexico_src_components_entry_verb_forms_table_tsx["lexico/src/components/entry/verb-forms-table.tsx"]
   file_lexico_src_components_layout_index_ts["lexico/src/components/layout/index.ts"]
   file_lexico_src_components_layout_logo_tsx["lexico/src/components/layout/logo.tsx"]
-  file_lexico_src_components_PronunciationButton_test_tsx["lexico/src/components/PronunciationButton.test.tsx"]
-  file_lexico_src_components_PronunciationButton_tsx["lexico/src/components/PronunciationButton.tsx"]
+  file_lexico_src_components_pronunciation_button_tsx["lexico/src/components/pronunciation-button.tsx"]
+  file_lexico_src_components_pronunciation_button_unit_test_tsx["lexico/src/components/pronunciation-button.unit.test.tsx"]
   file_lexico_src_lib_auth_ts["lexico/src/lib/auth.ts"]
   file_lexico_src_lib_bookmarks_ts["lexico/src/lib/bookmarks.ts"]
   file_lexico_src_lib_client_tsx["lexico/src/lib/client.tsx"]
@@ -3688,14 +3694,23 @@ graph LR
   file_lexico_src_lib_types_ts["lexico/src/lib/types.ts"]
   file_lexico_src_router_tsx["lexico/src/router.tsx"]
   file_lexico_src_routes___root_tsx["lexico/src/routes/__root.tsx"]
+  file_lexico_src_routes_bookmarks_integration_test_tsx["lexico/src/routes/bookmarks.integration.test.tsx"]
   file_lexico_src_routes_bookmarks_tsx["lexico/src/routes/bookmarks.tsx"]
   file_lexico_src_routes_hooks_useLibraryPage_ts["lexico/src/routes/hooks/useLibraryPage.ts"]
+  file_lexico_src_routes_index_integration_test_tsx["lexico/src/routes/index.integration.test.tsx"]
   file_lexico_src_routes_index_tsx["lexico/src/routes/index.tsx"]
+  file_lexico_src_routes_library_integration_test_tsx["lexico/src/routes/library.integration.test.tsx"]
   file_lexico_src_routes_library_tsx["lexico/src/routes/library.tsx"]
+  file_lexico_src_routes_search_integration_test_tsx["lexico/src/routes/search.integration.test.tsx"]
   file_lexico_src_routes_search_tsx["lexico/src/routes/search.tsx"]
+  file_lexico_src_routes_settings_integration_test_tsx["lexico/src/routes/settings.integration.test.tsx"]
   file_lexico_src_routes_settings_tsx["lexico/src/routes/settings.tsx"]
+  file_lexico_src_routes_tools_integration_test_tsx["lexico/src/routes/tools.integration.test.tsx"]
   file_lexico_src_routes_tools_tsx["lexico/src/routes/tools.tsx"]
+  file_lexico_src_routes_word__id_integration_test_tsx["lexico/src/routes/word.$id.integration.test.tsx"]
   file_lexico_src_routes_word__id_tsx["lexico/src/routes/word.$id.tsx"]
+  file_lexico_testing_render_route_tsx["lexico/testing/render-route.tsx"]
+  file_lexico_testing_setup_ts["lexico/testing/setup.ts"]
   file_lexico_vite_config_mts["lexico/vite.config.mts"]
   file_lexico_vitest_config_ts["lexico/vitest.config.ts"]
   file_logging_callidescope_config_ts["logging/callidescope.config.ts"]
@@ -7041,6 +7056,7 @@ graph LR
   file_conformetry_configuration_src_modules_instance_discovery_instance_discovery_matching_service_ts --> file_conformetry_configuration_src_modules_instance_discovery_instance_discovery_types_ts
   file_conformetry_configuration_src_modules_instance_discovery_instance_discovery_matching_service_ts --> file_conformetry_configuration_src_modules_rendering_rendering_service_ts
   file_conformetry_configuration_src_modules_instance_discovery_instance_discovery_matching_service_ts --> file_conformetry_configuration_src_modules_rendering_rendering_types_ts
+  file_conformetry_configuration_src_modules_instance_discovery_instance_discovery_matching_service_ts --> file_conformetry_configuration_src_modules_rendering_rendering_utilities_ts
   file_conformetry_configuration_src_modules_instance_discovery_instance_discovery_matching_service_ts --> file_conformetry_configuration_src_modules_template_discovery_template_discovery_service_ts
   file_conformetry_configuration_src_modules_instance_discovery_instance_discovery_matching_service_ts --> file_conformetry_configuration_src_modules_template_discovery_template_discovery_types_ts
   file_conformetry_configuration_src_modules_instance_discovery_instance_discovery_matching_service_unit_test_ts --> file_conformetry_configuration_src_modules_instance_discovery_instance_discovery_matching_service_ts
@@ -7075,6 +7091,8 @@ graph LR
   file_conformetry_configuration_src_modules_rendering_rendering_service_ts --> file_conformetry_configuration_src_modules_rendering_rendering_types_ts
   file_conformetry_configuration_src_modules_rendering_rendering_service_unit_test_ts --> file_conformetry_configuration_src_modules_rendering_rendering_constants_ts
   file_conformetry_configuration_src_modules_rendering_rendering_service_unit_test_ts --> file_conformetry_configuration_src_modules_rendering_rendering_service_ts
+  file_conformetry_configuration_src_modules_rendering_rendering_utilities_ts --> file_conformetry_configuration_src_modules_rendering_rendering_constants_ts
+  file_conformetry_configuration_src_modules_rendering_rendering_utilities_unit_test_ts --> file_conformetry_configuration_src_modules_rendering_rendering_utilities_ts
   file_conformetry_configuration_src_modules_template_discovery_template_discovery_module_ts --> file_conformetry_configuration_src_modules_rendering_rendering_module_ts
   file_conformetry_configuration_src_modules_template_discovery_template_discovery_module_ts --> file_conformetry_configuration_src_modules_template_discovery_template_discovery_service_ts
   file_conformetry_configuration_src_modules_template_discovery_template_discovery_service_ts --> file_conformetry_configuration_src_modules_configuration_configuration_types_ts
@@ -7384,6 +7402,7 @@ graph LR
   file_conformetry_validation_src_modules_validation_validation_deduplication_service_ts --> file_conformetry_validation_src_modules_validation_validation_types_ts
   file_conformetry_validation_src_modules_validation_validation_deduplication_service_unit_test_ts --> file_conformetry_validation_src_modules_validation_validation_deduplication_service_ts
   file_conformetry_validation_src_modules_validation_validation_deduplication_service_unit_test_ts --> file_conformetry_validation_src_modules_validation_validation_types_ts
+  file_conformetry_validation_src_modules_validation_validation_findings_service_ts --> file_conformetry_validation_src_modules_validation_validation_types_ts
   file_conformetry_validation_src_modules_validation_validation_findings_service_unit_test_ts --> file_conformetry_validation_src_modules_validation_validation_findings_service_ts
   file_conformetry_validation_src_modules_validation_validation_scoring_service_ts --> file_conformetry_validation_src_modules_validation_validation_constants_ts
   file_conformetry_validation_src_modules_validation_validation_scoring_service_ts --> file_conformetry_validation_src_modules_validation_validation_types_ts
@@ -7400,6 +7419,7 @@ graph LR
   file_conformetry_validation_src_modules_validation_validation_service_ts --> file_conformetry_validation_src_modules_validation_validation_types_ts
   file_conformetry_validation_src_modules_validation_validation_service_unit_test_ts --> file_conformetry_validation_src_modules_validation_validation_module_ts
   file_conformetry_validation_src_modules_validation_validation_service_unit_test_ts --> file_conformetry_validation_src_modules_validation_validation_service_ts
+  file_conformetry_validation_src_modules_validation_validation_service_unit_test_ts --> file_conformetry_validation_src_modules_validation_validation_types_ts
   file_lexico_api_src_lexico_api_end_to_end_test_ts --> file_lexico_api_src_lexico_api_constants_ts
   file_lexico_api_src_lexico_api_module_ts --> file_lexico_api_src_lexico_api_constants_ts
   file_lexico_api_src_lexico_api_module_ts --> file_lexico_api_src_modules_health_health_module_ts
@@ -8003,8 +8023,8 @@ graph LR
   file_lexico_src_components_entry_verb_forms_table_tsx --> file_lexico_src_components_entry_form_cell_tsx
   file_lexico_src_components_entry_verb_forms_table_tsx --> file_lexico_src_components_entry_form_tabs_tsx
   file_lexico_src_components_entry_verb_forms_table_tsx --> file_lexico_src_components_entry_forms_table_tsx
-  file_lexico_src_components_PronunciationButton_test_tsx --> file_lexico_src_components_PronunciationButton_tsx
-  file_lexico_src_components_PronunciationButton_tsx --> file_lexico_src_lib_pronunciation_ts
+  file_lexico_src_components_pronunciation_button_tsx --> file_lexico_src_lib_pronunciation_ts
+  file_lexico_src_components_pronunciation_button_unit_test_tsx --> file_lexico_src_components_pronunciation_button_tsx
   file_lexico_src_lib_bookmarks_ts --> file_lexico_src_lib_types_ts
   file_lexico_src_lib_forms_ts --> file_lexico_src_components_entry_adjective_forms_table_tsx
   file_lexico_src_lib_forms_ts --> file_lexico_src_components_entry_noun_forms_table_tsx
@@ -8023,26 +8043,40 @@ graph LR
   file_lexico_src_router_tsx --> file_lexico_src_lib_routeTree_gen_ts
   file_lexico_src_routes___root_tsx --> file_lexico_src_components_layout_index_ts
   file_lexico_src_routes___root_tsx --> file_lexico_src_lib_auth_ts
+  file_lexico_src_routes_bookmarks_integration_test_tsx --> file_lexico_src_routes_bookmarks_tsx
+  file_lexico_src_routes_bookmarks_integration_test_tsx --> file_lexico_testing_render_route_tsx
   file_lexico_src_routes_bookmarks_tsx --> file_lexico_src_components_entry_entry_card_tsx
   file_lexico_src_routes_bookmarks_tsx --> file_lexico_src_lib_bookmarks_ts
   file_lexico_src_routes_hooks_useLibraryPage_ts --> file_lexico_src_lib_library_ts
+  file_lexico_src_routes_index_integration_test_tsx --> file_lexico_src_routes_index_tsx
+  file_lexico_src_routes_index_integration_test_tsx --> file_lexico_testing_render_route_tsx
+  file_lexico_src_routes_library_integration_test_tsx --> file_lexico_src_routes_library_tsx
+  file_lexico_src_routes_library_integration_test_tsx --> file_lexico_testing_render_route_tsx
   file_lexico_src_routes_library_tsx --> file_lexico_src_lib_library_ts
   file_lexico_src_routes_library_tsx --> file_lexico_src_routes_hooks_useLibraryPage_ts
+  file_lexico_src_routes_search_integration_test_tsx --> file_lexico_src_routes_search_tsx
+  file_lexico_src_routes_search_integration_test_tsx --> file_lexico_testing_render_route_tsx
   file_lexico_src_routes_search_tsx --> file_lexico_src_components_entry_entry_card_tsx
   file_lexico_src_routes_search_tsx --> file_lexico_src_lib_forms_ts
   file_lexico_src_routes_search_tsx --> file_lexico_src_lib_search_ts
   file_lexico_src_routes_search_tsx --> file_lexico_src_lib_types_ts
+  file_lexico_src_routes_settings_integration_test_tsx --> file_lexico_src_routes_settings_tsx
+  file_lexico_src_routes_settings_integration_test_tsx --> file_lexico_testing_render_route_tsx
   file_lexico_src_routes_settings_tsx --> file_lexico_src_lib_auth_ts
+  file_lexico_src_routes_tools_integration_test_tsx --> file_lexico_src_routes_tools_tsx
+  file_lexico_src_routes_tools_integration_test_tsx --> file_lexico_testing_render_route_tsx
+  file_lexico_src_routes_word__id_integration_test_tsx --> file_lexico_src_routes_word__id_tsx
+  file_lexico_src_routes_word__id_integration_test_tsx --> file_lexico_testing_render_route_tsx
   file_lexico_src_routes_word__id_tsx --> file_lexico_src_components_entry_adjective_forms_table_tsx
   file_lexico_src_routes_word__id_tsx --> file_lexico_src_components_entry_noun_forms_table_tsx
   file_lexico_src_routes_word__id_tsx --> file_lexico_src_components_entry_principal_parts_tsx
   file_lexico_src_routes_word__id_tsx --> file_lexico_src_components_entry_verb_forms_table_tsx
-  file_lexico_src_routes_word__id_tsx --> file_lexico_src_components_PronunciationButton_tsx
+  file_lexico_src_routes_word__id_tsx --> file_lexico_src_components_pronunciation_button_tsx
   file_lexico_src_routes_word__id_tsx --> file_lexico_src_lib_bookmarks_ts
   file_lexico_src_routes_word__id_tsx --> file_lexico_src_lib_forms_ts
   file_lexico_src_routes_word__id_tsx --> file_lexico_src_lib_search_ts
   file_lexico_src_routes_word__id_tsx --> file_lexico_src_lib_types_ts
-  file_lexico_vitest_config_ts --> file_lexico_vite_config_mts
+  file_lexico_testing_render_route_tsx --> file_lexico_src_router_tsx
   file_logging_src_lib_conventional_log_message_eslint_rule_ts --> file_logging_src_modules_logger_logger_constants_ts
   file_logging_src_lib_conventional_log_message_eslint_rule_unit_test_ts --> file_logging_src_lib_conventional_log_message_eslint_rule_ts
   file_logging_src_modules_logger_logger_module_ts --> file_logging_src_modules_logger_logger_service_ts

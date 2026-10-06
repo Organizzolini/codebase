@@ -2,6 +2,7 @@ import path from "node:path";
 
 import { Injectable } from "@nestjs/common";
 
+import type { InstanceFileResults } from "./validation.types";
 import type {
   TemplateDefinition,
   UnmatchedInstance,
@@ -96,5 +97,61 @@ export class ValidationFindingsService {
         totalWeight: 0,
       };
     });
+  }
+
+  /**
+   * Adds one finding per placeholder nothing in the instance revealed.
+   *
+   * `missing` maps each such placeholder to the random value it was still
+   * rendered with. Differences quoting that value are dropped: they restate
+   * the same gap in terms of a value nobody wrote, and the finding names it.
+   */
+  public reportMissingPlaceholders(args: {
+    group: InstanceFileResults;
+    missing: Record<string, string>;
+  }): InstanceFileResults {
+    const entries = Object.entries(args.missing);
+
+    if (entries.length === 0) {
+      return args.group;
+    }
+
+    const { instance } = args.group.instance;
+    const fileResults = args.group.fileResults
+      .map((fileResult) => {
+        return {
+          ...fileResult,
+          differences: fileResult.differences.filter((difference) => {
+            const text = JSON.stringify(difference);
+
+            return !entries.some(([, value]) => text.includes(value));
+          }),
+        };
+      })
+      .filter((fileResult) => fileResult.differences.length > 0);
+
+    return {
+      ...args.group,
+      fileResults: [
+        {
+          differences: entries.map(([name]) => {
+            return {
+              differenceType: "placeholder" as const,
+              fix: `Supply ${name} in the instance group's substitutions, or restore the template text that uses {{${name}}} in the instance.`,
+              message: `Could not infer {{${name}}}: no instance node aligned with the template text that uses it`,
+              weight: 1,
+            };
+          }),
+          filename: instance.nameStem,
+          instanceFilePath: path.join(instance.path, instance.nameStem),
+          templateFilePath: args.group.instance.template.directoryPath,
+          totalWeight: entries.length,
+        },
+        ...fileResults,
+      ],
+      // Each placeholder nothing revealed is one requirement, unmet, so the
+      // score says the instance could not be checked rather than reading 100%.
+      totalWeight: args.group.totalWeight + entries.length,
+    };
   }
 }
