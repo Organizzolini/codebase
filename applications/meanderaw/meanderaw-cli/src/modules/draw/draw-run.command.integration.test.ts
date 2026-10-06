@@ -1,18 +1,12 @@
 import { createMock } from "@golevelup/ts-vitest";
-import { Test } from "@nestjs/testing";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
-import {
-  type StartedPostgresContainer,
-  startPostgresContainer,
-} from "@codebase/database/testing";
 import { LoggerService } from "@codebase/logging";
 
 import {
   DRAW_RUN_TIMEOUT_MILLISECONDS,
   type DrawRunFixture,
-  drawRunFixture,
-  drawRunModuleMetadata,
+  startDrawRun,
 } from "../../../testing/draw-run";
 import { MEANDER_FAMILIES } from "../classification/classification.constants";
 import { HISTORICAL_CORPUS } from "../corpus/historical-corpus.constants";
@@ -55,18 +49,12 @@ vi.mock("node:fs/promises", () => ({
  */
 const HISTORICAL_CORPUS_PRESERVED = 1026;
 
-/** Compiles a fresh draw run, over an emptied `meanders` table in `container`, with `--code` and logging mocked out. */
-async function compileDrawRun(
-  container: StartedPostgresContainer,
-): Promise<DrawRunFixture> {
-  const module = await Test.createTestingModule(
-    drawRunModuleMetadata(container, [
-      { provide: DrawCodeService, useValue: createMock<DrawCodeService>() },
-      { provide: LoggerService, useValue: createMock<LoggerService>() },
-    ]),
-  ).compile();
-
-  return drawRunFixture(module);
+/** Starts a fresh draw run over an emptied `meanders` table, with `--code` and logging mocked out. */
+async function startMockedDrawRun(): Promise<DrawRunFixture> {
+  return startDrawRun([
+    { provide: DrawCodeService, useValue: createMock<DrawCodeService>() },
+    { provide: LoggerService, useValue: createMock<LoggerService>() },
+  ]);
 }
 
 /**
@@ -101,19 +89,6 @@ async function compileDrawRun(
  * timeout is declared rather than left to the default five seconds.
  */
 describe("drawCommand draw run", () => {
-  let container: StartedPostgresContainer;
-
-  beforeAll(async () => {
-    container = await startPostgresContainer({
-      migrations: [],
-      project: "meanderaw",
-    });
-  });
-
-  afterAll(async () => {
-    await container.stop();
-  });
-
   /**
    * One draw run, shared by every case that only reads what an empty database
    * ends up holding. Each draw run costs 45–90 seconds on a CI runner, and
@@ -125,12 +100,12 @@ describe("drawCommand draw run", () => {
     let drawRun: DrawRunFixture;
 
     beforeAll(async () => {
-      drawRun = await compileDrawRun(container);
+      drawRun = await startMockedDrawRun();
       await drawRun.command.run([], {});
     }, DRAW_RUN_TIMEOUT_MILLISECONDS);
 
     afterAll(async () => {
-      await drawRun.dataSource.destroy();
+      await drawRun.close();
     });
 
     it("persists both halves of the corpus, with neither colliding with the other", async () => {

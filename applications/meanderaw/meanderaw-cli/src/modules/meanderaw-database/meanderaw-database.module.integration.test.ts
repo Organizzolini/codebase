@@ -1,20 +1,18 @@
-import { ConfigModule } from "@nestjs/config";
-import { Test } from "@nestjs/testing";
 import { DataSource } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import {
-  type StartedPostgresContainer,
-  startPostgresContainer,
+  type DatabaseTestingModule,
+  startDatabaseTestingModule,
 } from "@codebase/database/testing";
 
 import { meanderRecord } from "../../../testing/meanders";
 import { environmentSchema } from "../../constants";
 
+import { Meander } from "./entities/meander.entity";
 import { MeanderawDatabaseModule } from "./meanderaw-database.module";
 import { MeanderawDatabaseService } from "./meanderaw-database.service";
-
-import type { TestingModule } from "@nestjs/testing";
+import { Migration1791160950069 } from "./migrations/1791160950069-migration";
 
 // 🧪 Tests
 
@@ -27,58 +25,45 @@ import type { TestingModule } from "@nestjs/testing";
  * sets for the shared container's admin login is ignored.
  */
 describe(MeanderawDatabaseModule, () => {
-  let container: StartedPostgresContainer;
-  let module: TestingModule;
+  let database: DatabaseTestingModule;
 
   beforeAll(async () => {
-    container = await startPostgresContainer({
-      migrations: [],
-      project: "meanderaw",
-    });
-
     // 🎯 The workspace root's `.env`, which Nx loads into every task, names
     // the admin login under the unprefixed variable; it must be ignored.
     vi.stubEnv("POSTGRES_DB", "postgres");
 
-    for (const [key, value] of Object.entries(container.environment)) {
-      vi.stubEnv(key, value);
-    }
-
-    module = await Test.createTestingModule({
-      imports: [
-        ConfigModule.forRoot({
-          ignoreEnvFile: true,
-          isGlobal: true,
-          validate: (config: Record<string, unknown>) =>
-            environmentSchema.parse(config),
-        }),
-        MeanderawDatabaseModule,
-      ],
-    }).compile();
+    database = await startDatabaseTestingModule({
+      database: MeanderawDatabaseModule,
+      entities: [Meander],
+      migrations: [Migration1791160950069],
+      project: "meanderaw",
+      validate: (config) => environmentSchema.parse(config),
+    });
   });
 
   afterAll(async () => {
-    await module.close();
-    await container.stop();
+    await database.close();
     vi.unstubAllEnvs();
   });
 
   it("writes rows into the meanderaw schema, every column in snake case", async () => {
-    await module
+    await database.module
       .get(MeanderawDatabaseService)
       .save(meanderRecord({ code: "01x02y0" }));
 
-    const columns: { column_name: string }[] = await module
+    const columns: { column_name: string }[] = await database.module
       .get(DataSource)
       .query(
         "SELECT column_name FROM information_schema.columns WHERE table_schema = $1 AND table_name = 'meanders' ORDER BY column_name",
-        [container.connection.schema],
+        [database.container.connection.schema],
       );
 
     expect(columns.map((column) => column.column_name)).toStrictEqual([
       "characteristics",
       "code",
       "columns",
+      "created_at",
+      "created_by",
       "family",
       "id",
       "is_hardcoded",
@@ -86,13 +71,23 @@ describe(MeanderawDatabaseModule, () => {
       "repeats",
       "rows",
       "symmetrical_codes",
+      "updated_at",
+      "updated_by",
     ]);
-    expect(container.connection.schema).toBe("meanderaw");
+    expect(database.container.connection.schema).toBe("meanderaw");
   });
 
   it("reads back the row it wrote", async () => {
     await expect(
-      module.get(MeanderawDatabaseService).findOneByCode("01x02y0"),
+      database.module.get(MeanderawDatabaseService).findOneByCode("01x02y0"),
     ).resolves.toMatchObject({ code: "01x02y0", isHardcoded: true });
+  });
+
+  it("builds the table by migration alone, never by synchronizing", async () => {
+    const migrations: unknown[] = await database.module
+      .get(DataSource)
+      .query(`SELECT 1 FROM "meanderaw"."migrations"`);
+
+    expect(migrations).toHaveLength(1);
   });
 });

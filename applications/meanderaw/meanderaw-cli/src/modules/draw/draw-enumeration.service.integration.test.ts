@@ -1,13 +1,9 @@
 import { ConfigService } from "@nestjs/config";
-import { Test } from "@nestjs/testing";
-import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import { DataSource, type Repository } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { postgresDataSourceOptions } from "@codebase/database";
 import {
-  type StartedPostgresContainer,
-  startPostgresContainer,
+  type DatabaseTestingModule,
+  startDatabaseTestingModule,
 } from "@codebase/database/testing";
 
 import {
@@ -25,7 +21,8 @@ import { GeometryService } from "../geometry/geometry.service";
 import { GraphService } from "../graph/graph.service";
 import { MatrixService } from "../matrix/matrix.service";
 import { Meander } from "../meanderaw-database/entities/meander.entity";
-import { MeanderawDatabaseService } from "../meanderaw-database/meanderaw-database.service";
+import { MeanderawDatabaseModule } from "../meanderaw-database/meanderaw-database.module";
+import { Migration1791160950069 } from "../meanderaw-database/migrations/1791160950069-migration";
 import { SvgService } from "../svg/svg.service";
 import { SymmetryService } from "../symmetry/symmetry.service";
 import { TileService } from "../tile/tile.service";
@@ -36,6 +33,7 @@ import { DrawRecordService } from "./draw-record.service";
 import { DrawWorkerService } from "./draw-worker.service";
 
 import type { Environment } from "../enumeration/enumeration.types";
+import type { Repository } from "typeorm";
 
 // 🔧 Configuration
 
@@ -57,37 +55,26 @@ const DRAW_RUN_TIMEOUT_MILLISECONDS = 300_000;
  * this is the highest seam, and it asserts on persisted rows rather than on
  * a mocked service graph.
  *
- * The connection is assembled inline rather than through
- * `MeanderawDatabaseModule`, which always connects to the local database — this
- * suite needs a fresh, isolated database instead.
+ * The module is booted by `startDatabaseTestingModule`, which points
+ * `MeanderawDatabaseModule` at a fresh, isolated database instead of the
+ * local one.
  */
 describe(DrawEnumerationService, () => {
-  let container: StartedPostgresContainer;
-  let dataSource: DataSource;
+  let database: DatabaseTestingModule;
   let repository: Repository<Meander>;
   let service: DrawEnumerationService;
 
   beforeAll(async () => {
-    container = await startPostgresContainer({
-      migrations: [],
-      project: "meanderaw",
-    });
-
     const environment = environmentSchema.parse({
       DRAW_EDGE_BUDGET: DRAW_TEST_EDGE_BUDGET,
       DRAW_WORKERS: DRAW_TEST_WORKERS,
     });
-    const module = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot(
-          postgresDataSourceOptions(container.connection, {
-            entities: [Meander],
-            migrations: [],
-          }),
-        ),
-        TypeOrmModule.forFeature([Meander]),
-        CharacteristicsModule,
-      ],
+    database = await startDatabaseTestingModule({
+      database: MeanderawDatabaseModule,
+      entities: [Meander],
+      imports: [CharacteristicsModule],
+      migrations: [Migration1791160950069],
+      project: "meanderaw",
       providers: [
         DrawEnumerationService,
         DrawPoolService,
@@ -97,7 +84,6 @@ describe(DrawEnumerationService, () => {
         CodeService,
         MatrixService,
         ClassificationService,
-        MeanderawDatabaseService,
         CodeService,
         EnumerationService,
         DrawingService,
@@ -113,18 +99,16 @@ describe(DrawEnumerationService, () => {
           },
         },
       ],
-    }).compile();
+    });
 
-    service = await module.resolve(DrawEnumerationService);
-    dataSource = module.get(DataSource);
-    repository = module.get(getRepositoryToken(Meander));
+    service = await database.module.resolve(DrawEnumerationService);
+    repository = database.repository(Meander);
 
     await service.drawAll();
   }, DRAW_RUN_TIMEOUT_MILLISECONDS);
 
   afterAll(async () => {
-    await dataSource.destroy();
-    await container.stop();
+    await database.close();
   });
 
   it("is defined", () => {

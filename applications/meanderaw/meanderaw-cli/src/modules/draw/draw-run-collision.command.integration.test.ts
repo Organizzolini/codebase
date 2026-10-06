@@ -1,27 +1,12 @@
 import { createMock } from "@golevelup/ts-vitest";
-import { Test } from "@nestjs/testing";
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import {
-  type StartedPostgresContainer,
-  startPostgresContainer,
-} from "@codebase/database/testing";
 import { LoggerService } from "@codebase/logging";
 
 import {
   DRAW_RUN_TIMEOUT_MILLISECONDS,
   type DrawRunFixture,
-  drawRunFixture,
-  drawRunModuleMetadata,
+  startDrawRun,
 } from "../../../testing/draw-run";
 import { meanderRecord } from "../../../testing/meanders";
 import { HISTORICAL_CORPUS } from "../corpus/historical-corpus.constants";
@@ -33,18 +18,12 @@ vi.mock("node:fs/promises", () => ({
   writeFile: vi.fn<(path: string, data: unknown) => Promise<void>>(),
 }));
 
-/** Compiles a fresh draw run, over an emptied `meanders` table in `container`, with `--code` and logging mocked out. */
-async function compileDrawRun(
-  container: StartedPostgresContainer,
-): Promise<DrawRunFixture> {
-  const module = await Test.createTestingModule(
-    drawRunModuleMetadata(container, [
-      { provide: DrawCodeService, useValue: createMock<DrawCodeService>() },
-      { provide: LoggerService, useValue: createMock<LoggerService>() },
-    ]),
-  ).compile();
-
-  return drawRunFixture(module);
+/** Starts a fresh draw run over an emptied `meanders` table, with `--code` and logging mocked out. */
+async function startMockedDrawRun(): Promise<DrawRunFixture> {
+  return startDrawRun([
+    { provide: DrawCodeService, useValue: createMock<DrawCodeService>() },
+    { provide: LoggerService, useValue: createMock<LoggerService>() },
+  ]);
 }
 
 /**
@@ -56,28 +35,15 @@ async function compileDrawRun(
  * than one after the other.
  */
 describe("drawCommand draw run", () => {
-  let container: StartedPostgresContainer;
-
-  beforeAll(async () => {
-    container = await startPostgresContainer({
-      migrations: [],
-      project: "meanderaw",
-    });
-  });
-
-  afterAll(async () => {
-    await container.stop();
-  });
-
   describe("over a database already holding a hardcoded entry's address", () => {
     let drawRun: DrawRunFixture;
 
     beforeEach(async () => {
-      drawRun = await compileDrawRun(container);
+      drawRun = await startMockedDrawRun();
     });
 
     afterEach(async () => {
-      await drawRun.dataSource.destroy();
+      await drawRun.close();
     });
 
     it(

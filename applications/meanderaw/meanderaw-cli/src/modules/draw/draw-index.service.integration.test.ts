@@ -1,12 +1,8 @@
-import { Test } from "@nestjs/testing";
-import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import { DataSource, type Repository } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { postgresDataSourceOptions } from "@codebase/database";
 import {
-  type StartedPostgresContainer,
-  startPostgresContainer,
+  type DatabaseTestingModule,
+  startDatabaseTestingModule,
 } from "@codebase/database/testing";
 
 import { meanderRecord } from "../../../testing/meanders";
@@ -14,7 +10,8 @@ import { CodeService } from "../code/code.service";
 import { DrawingService } from "../drawing/drawing.service";
 import { GeometryService } from "../geometry/geometry.service";
 import { Meander } from "../meanderaw-database/entities/meander.entity";
-import { MeanderawDatabaseService } from "../meanderaw-database/meanderaw-database.service";
+import { MeanderawDatabaseModule } from "../meanderaw-database/meanderaw-database.module";
+import { Migration1791160950069 } from "../meanderaw-database/migrations/1791160950069-migration";
 import { SvgService } from "../svg/svg.service";
 import { SymmetryService } from "../symmetry/symmetry.service";
 import { TileService } from "../tile/tile.service";
@@ -22,59 +19,46 @@ import { TileService } from "../tile/tile.service";
 import { DrawIndexService } from "./draw-index.service";
 
 import type { MeanderRecord } from "../meanderaw-database/meanderaw-database.types";
+import type { Repository } from "typeorm";
 
 /**
  * Drives `DrawIndexService.build` against a real TypeORM connection to a
  * throwaway Postgres container seeded with a small, deliberately
  * constructed set of rows, per spec #813's Testing Decisions for this seam.
  *
- * The connection is assembled inline rather than through
- * `MeanderawDatabaseModule`, which always connects to the local database — this
- * suite needs a fresh, isolated database instead, the same way
- * `database.service.integration.test.ts` does.
+ * The module is booted by `startDatabaseTestingModule`, which points
+ * `MeanderawDatabaseModule` at a fresh, isolated database instead of the
+ * local one, the same way `meanderaw-database.service.integration.test.ts`
+ * does.
  */
 describe(DrawIndexService, () => {
-  let container: StartedPostgresContainer;
-  let dataSource: DataSource;
+  let database: DatabaseTestingModule;
   let repository: Repository<Meander>;
   let service: DrawIndexService;
 
   beforeAll(async () => {
-    container = await startPostgresContainer({
-      migrations: [],
+    database = await startDatabaseTestingModule({
+      database: MeanderawDatabaseModule,
+      entities: [Meander],
+      migrations: [Migration1791160950069],
       project: "meanderaw",
-    });
-
-    const module = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot(
-          postgresDataSourceOptions(container.connection, {
-            entities: [Meander],
-            migrations: [],
-          }),
-        ),
-        TypeOrmModule.forFeature([Meander]),
-      ],
       providers: [
         DrawIndexService,
         CodeService,
         DrawingService,
         GeometryService,
-        MeanderawDatabaseService,
         SymmetryService,
         SvgService,
         TileService,
       ],
-    }).compile();
+    });
 
-    service = await module.resolve(DrawIndexService);
-    dataSource = module.get(DataSource);
-    repository = module.get(getRepositoryToken(Meander));
+    service = await database.module.resolve(DrawIndexService);
+    repository = database.repository(Meander);
   });
 
   afterAll(async () => {
-    await dataSource.destroy();
-    await container.stop();
+    await database.close();
   });
 
   /** Every field besides `code` a fixture row does not care about, defaulted so a case only spells out what it means to test. */

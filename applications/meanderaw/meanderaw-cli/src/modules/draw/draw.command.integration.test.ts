@@ -1,10 +1,6 @@
 import { createMock } from "@golevelup/ts-vitest";
-import { Test } from "@nestjs/testing";
-import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import { DataSource, type Repository } from "typeorm";
 import {
   afterAll,
-  afterEach,
   beforeAll,
   beforeEach,
   describe,
@@ -13,10 +9,9 @@ import {
   vi,
 } from "vitest";
 
-import { postgresDataSourceOptions } from "@codebase/database";
 import {
-  type StartedPostgresContainer,
-  startPostgresContainer,
+  type DatabaseTestingModule,
+  startDatabaseTestingModule,
 } from "@codebase/database/testing";
 import { LoggerService } from "@codebase/logging";
 
@@ -29,7 +24,8 @@ import { GeometryService } from "../geometry/geometry.service";
 import { GraphService } from "../graph/graph.service";
 import { MatrixModule } from "../matrix/matrix.module";
 import { Meander } from "../meanderaw-database/entities/meander.entity";
-import { MeanderawDatabaseService } from "../meanderaw-database/meanderaw-database.service";
+import { MeanderawDatabaseModule } from "../meanderaw-database/meanderaw-database.module";
+import { Migration1791160950069 } from "../meanderaw-database/migrations/1791160950069-migration";
 import { SvgService } from "../svg/svg.service";
 import { TileService } from "../tile/tile.service";
 
@@ -39,6 +35,8 @@ import { DrawIndexService } from "./draw-index.service";
 import { DrawRecordService } from "./draw-record.service";
 import { DrawCommand } from "./draw.command";
 
+import type { Repository } from "typeorm";
+
 /**
  * Drives `DrawCommand`'s `--code` mode against a real TypeORM connection to
  * a throwaway Postgres container, per spec #813's Testing
@@ -46,45 +44,33 @@ import { DrawCommand } from "./draw.command";
  * path, and it asserts on persisted rows rather than on a mocked service
  * graph.
  *
- * The connection is assembled inline rather than through
- * `MeanderawDatabaseModule`, which always connects to the local database — this
- * suite needs a fresh, migrated schema instead.
+ * The module is booted by `startDatabaseTestingModule`, which points
+ * `MeanderawDatabaseModule` at a fresh, migrated schema instead of the
+ * local database.
  */
 describe("drawCommand --code mode", () => {
   let command: DrawCommand;
-  let container: StartedPostgresContainer;
-  let dataSource: DataSource;
+  let database: DatabaseTestingModule;
   let repository: Repository<Meander>;
 
   beforeAll(async () => {
-    container = await startPostgresContainer({
-      migrations: [],
-      project: "meanderaw",
-    });
-  });
-
-  beforeEach(async () => {
-    const module = await Test.createTestingModule({
+    database = await startDatabaseTestingModule({
+      database: MeanderawDatabaseModule,
+      entities: [Meander],
       imports: [
-        TypeOrmModule.forRoot(
-          postgresDataSourceOptions(container.connection, {
-            entities: [Meander],
-            migrations: [],
-          }),
-        ),
-        TypeOrmModule.forFeature([Meander]),
         CharacteristicsModule,
         ClassificationModule,
         CodeModule,
         DrawingModule,
         MatrixModule,
       ],
+      migrations: [Migration1791160950069],
+      project: "meanderaw",
       providers: [
         DrawCommand,
         DrawCodeService,
         DrawRecordService,
         GeometryService,
-        MeanderawDatabaseService,
         GraphService,
         TileService,
         SvgService,
@@ -107,19 +93,20 @@ describe("drawCommand --code mode", () => {
           }),
         },
       ],
-    }).compile();
+    });
 
-    command = await module.resolve(DrawCommand);
-    dataSource = module.get(DataSource);
-    repository = module.get(getRepositoryToken(Meander));
+    command = await database.module.resolve(DrawCommand);
+    repository = database.repository(Meander);
   });
 
-  afterEach(async () => {
-    await dataSource.destroy();
+  beforeEach(async () => {
+    // The migrated schema persists across the cases one container serves,
+    // so each case starts from an empty table.
+    await repository.clear();
   });
 
   afterAll(async () => {
-    await container.stop();
+    await database.close();
   });
 
   it("writes exactly one row, decoded and rendered by the generic pipeline", async () => {
