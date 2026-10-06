@@ -112,6 +112,27 @@ describe(WordsService, () => {
     expect(result).toStrictEqual(words);
   });
 
+  it("orders batched words by first request, once each, omitting misses", async () => {
+    expect.hasAssertions();
+
+    const amo = new Word();
+    amo.data = "amo";
+    const amare = new Word();
+    amare.data = "amare";
+    const wordRepo = createRepositoryMock<Word>();
+    vi.spyOn(wordRepo, "find").mockResolvedValue([amo, amare]);
+
+    const service = new WordsService(
+      wordRepo,
+      createRepositoryMock<WordForm>(),
+      createRepositoryMock<WordLexeme>(),
+    );
+
+    await expect(
+      service.findByDataList(["amare", "amas", "amo", "amare"]),
+    ).resolves.toStrictEqual([amare, amo]);
+  });
+
   it("returns empty arrays immediately for empty lookup batches", async () => {
     expect.hasAssertions();
 
