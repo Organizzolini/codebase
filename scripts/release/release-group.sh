@@ -2,13 +2,24 @@
 # Shared helpers for the release scripts beside this file.
 # Source it; it defines functions and runs nothing.
 
-# Prints the directory of every project in the Nx release group, read from
+# Prints the name of every project in the Nx release group, read from
 # nx.json's `release.projects`, one per line.
-release_group_roots() {
-  local release_projects project
+release_group_projects() {
+  local release_projects
   release_projects="$(jq -r '.release.projects | join(",")' nx.json)"
-  for project in $(pnpm exec nx show projects --projects "${release_projects}" --json | jq -r '.[]'); do
-    pnpm exec nx show project "${project}" --json | jq -r .root
+  pnpm exec nx show projects --projects "${release_projects}" --json | jq -r '.[]'
+}
+
+# Prints the directory of the given Nx project.
+project_root() {
+  pnpm exec nx show project "$1" --json | jq -r .root
+}
+
+# Prints the directory of every project in the Nx release group, one per line.
+release_group_roots() {
+  local project
+  for project in $(release_group_projects); do
+    project_root "${project}"
   done
 }
 

@@ -524,14 +524,16 @@ Releases operate at two distinct tiers:
 1. **Workspace Root (Repository)**: Uses [semantic-release](https://semantic-release.gitbook.io/), fully automated on merge to `main` by the 🦸 Continuous Deployment workflow (`push-releases` target). Versioning is fixed — the whole codebase shares one version — and nothing is published to a package registry.
 2. **IC-Suite Packages (Publishable Packages)**: Uses [Nx Release](https://nx.dev/features/manage-releases) to independently version and publish the 28 publishable packages across the four toolchains (`callidescope`, `codependix`, `codometer`, `conformetry`). Each package is versioned from its own commit history, and upstream bumps automatically cascade patch bumps to internal dependents. The 8 unpublished packages (`*-agents` and `*-examples` across the four suites) are explicitly excluded in `nx.json` (`release.projects`) in addition to their private manifest flags.
 
-**Version bumps**, from `releaseRules` in [release.config.cjs](../configuration/release.config.cjs):
+**Version bumps**, from `releaseRules` in [release.config.cjs](../configuration/release.config.cjs) for the codebase and `release.conventionalCommits` in [nx.json](../nx.json) for each package a commit touches:
 
-| Bump  | Types                                                                           |
-| ----- | ------------------------------------------------------------------------------- |
-| Major | Any breaking change — `!` after the scope, or a `BREAKING CHANGE:` footer       |
-| Minor | `feat`                                                                          |
-| Patch | `fix`, `perf`, `refactor`, `build`, `revert`                                    |
-| None  | `docs`, `style`, `test`, `ci`, `chore`, or any type with the `no-release` scope |
+| Type                                                                      | Codebase | IC-suite package             |
+| ------------------------------------------------------------------------- | -------- | ---------------------------- |
+| Any breaking change — `!` after the scope, or a `BREAKING CHANGE:` footer | Major    | Minor while `0.x`, then major |
+| `feat`                                                                    | Minor    | Patch while `0.x`, then minor |
+| `fix`, `perf`, `refactor`, `build`                                        | Patch    | Patch                        |
+| `ci`, `revert`                                                            | Patch    | None                         |
+| `docs`, `style`, `test`, `chore`                                          | None     | None                         |
+| Any type with the `no-release` scope                                      | None     | As its type                  |
 
 **Workflow**: merge to `main` → semantic-release analyzes the squashed commit → bumps the version → updates `CHANGELOG.md` → creates the tag and GitHub release.
 

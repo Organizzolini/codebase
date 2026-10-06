@@ -50,16 +50,16 @@ jobs:
             emoji: 🧑‍🏭
             timeout: 20
           # v2.31.0 took 7m19s: 4 minutes to set up, build, trace, graph, and
-          # measure, and 3 for semantic-release, most of it the version
+          # measure, and 3 for semantic-release, most of it the release
           # commit's pre-commit hook. A cold Nx cache adds about 4 to the
-          # first part. `nx release version` makes a second version commit
-          # whose hook checks every bumped ic-suite package and its
-          # dependents (25 projects on the first release), none of them
-          # cached because each bump changes a manifest, so this leaves room
-          # for that hook and the npm publish. Re-size it from the first real
-          # release run. A timeout before the push leaves nothing behind; a
-          # later one is finished by the next run, whose publish skips
-          # versions already on npm.
+          # first part. That one commit also carries the package versions, so
+          # its hook checks every bumped ic-suite package and its dependents
+          # (25 projects on the first release), none of them cached because
+          # each bump changes a manifest, so this leaves room for that hook
+          # and the npm publish. Re-size it from the first real release run.
+          # A timeout before the push leaves nothing behind; a later one is
+          # finished by the next run, whose publish skips versions already on
+          # npm.
           - id: push-releases
             name: Releases
             emoji: 🦸
@@ -282,19 +282,49 @@ jobs:
             --exclude=codebase
           pnpm exec nx run codebase:codometer:write
 
-      # Versions the ic-suite packages, writes each one's changelog, commits,
-      # tags and pushes, and leaves the remote carrying the release token for
-      # semantic-release's push below. `scripts/release/version-packages.sh`
-      # explains the push it makes.
+      # Versions the ic-suite packages and writes each one's changelog, without
+      # committing, and leaves the remote carrying the release token for the
+      # pushes below. `scripts/release/version-packages.sh` explains why the
+      # release commit is semantic-release's. When `main` moves during the run,
+      # this step or one below sets `RELEASE_SUPERSEDED` and every release step
+      # after it skips: the newer commit's run releases everything this one
+      # would have. `scripts/release/main-tip.sh` explains when each checks.
       - name: 🏷️ Version Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
           matrix.target.id == 'push-releases'
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: bash scripts/release/version-packages.sh
+
+      # semantic-release versions and tags the codebase itself, and creates the
+      # `v*` release the README badge shows, never an ic-suite package. Its one
+      # `chore(release): 🔖 tag codebase` commit also carries the package
+      # versions and changelogs the step above wrote, so it comes before
+      # anything is published.
+      - name: 🔖 Tag Codebase
+        if: >-
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           GIT_COMMITTER_EMAIL: jimmypaolini@gmail.com
           GIT_COMMITTER_NAME: Jimmy Paolini
-        run: bash scripts/release/version-packages.sh
+        run: bash scripts/release/tag-codebase.sh
+
+      # Tags each newly versioned package on the release commit and pushes the
+      # tags. `scripts/release/tag-packages.sh` explains the commit it makes
+      # when there was no codebase release to carry the versions.
+      - name: 🔖 Tag Packages
+        if: >-
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
+        env:
+          GIT_COMMITTER_EMAIL: jimmypaolini@gmail.com
+          GIT_COMMITTER_NAME: Jimmy Paolini
+        run: bash scripts/release/tag-packages.sh
 
       # Publishes each released package to npm with provenance, and to GitHub
       # Packages under the owner's scope.
@@ -305,7 +335,8 @@ jobs:
       - name: 📦 Publish Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         env:
           GITHUB_PACKAGES_TOKEN: ${{ github.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -319,7 +350,8 @@ jobs:
         id: link-packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: bash scripts/release/link-packages.sh
@@ -332,23 +364,12 @@ jobs:
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
           matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true' &&
           steps.link-packages.outputs.attest == 'true'
         uses: actions/attest@v4
         with:
           subject-checksums: ${{ runner.temp }}/attestation-subjects.txt
           create-storage-record: false
-
-      # semantic-release versions, tags and releases the codebase itself, the
-      # `v*` release the README badge shows, never an ic-suite package.
-      - name: 🦸 Release Codebase
-        if: >-
-          steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-          GIT_COMMITTER_EMAIL: jimmypaolini@gmail.com
-          GIT_COMMITTER_NAME: Jimmy Paolini
-        run: pnpm semantic-release
 
       # The only save of this workflow's Nx cache, which the next release
       # restores. Every project is built above, so it covers the whole graph.

@@ -117,11 +117,29 @@
       },
       "workspaceChangelog": false
     },
+    "conventionalCommits": {
+      "types": {
+        "build": {
+          "changelog": {
+            "hidden": false
+          },
+          "semverBump": "patch"
+        },
+        "perf": {
+          "semverBump": "patch"
+        },
+        "refactor": {
+          "changelog": {
+            "hidden": false
+          },
+          "semverBump": "patch"
+        }
+      }
+    },
     "git": {
-      "commit": true,
-      "commitMessage": "chore(release): 🔖 publish",
+      "commit": false,
       "push": false,
-      "tag": true
+      "tag": false
     },
     "projects": [
       "packages/ic-suite/*/*",
