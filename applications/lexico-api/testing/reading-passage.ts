@@ -50,6 +50,32 @@ export const PASSAGE_TOKENS = PASSAGE_LINES.map((line) =>
 );
 
 /**
+ * Reads an `index` column as a number. Postgres returns `bigint` columns as
+ * strings, whatever the entity declares, so the value is parsed explicitly.
+ */
+export function parseIndex(entity: { readonly index: number }): number {
+  return Number.parseInt(String(entity.index), 10);
+}
+
+/** The seeded line at an index, failing loudly rather than going vacuous. */
+export function passageLineAt(passage: ReadingPassage, index: number): Line {
+  const line = passage.lines[index];
+  if (!line) {
+    throw new Error(`The reading passage has no line ${String(index)}`);
+  }
+  return line;
+}
+
+/** The expected tokens of a passage line, failing loudly when there is none. */
+export function passageTokensAt(index: number): PassageToken[] {
+  const tokens = PASSAGE_TOKENS[index];
+  if (!tokens) {
+    throw new Error(`The reading passage has no line ${String(index)}`);
+  }
+  return tokens;
+}
+
+/**
  * Seeds the Aeneid's opening lines, out of index order, with every token
  * linked to its dictionary word, beside a second text by the same author.
  */

@@ -11,7 +11,8 @@ import {
   startLexicoTestDatabase,
 } from "../../../testing/database";
 import {
-  PASSAGE_TOKENS,
+  parseIndex,
+  passageTokensAt,
   type ReadingPassage,
   seedReadingPassage,
 } from "../../../testing/reading-passage";
@@ -32,21 +33,13 @@ interface LinesPage {
   readonly totalCount: number;
 }
 
-/**
- * Reads an `index` column as a number. Postgres returns `bigint` columns as
- * strings, whatever the entity declares, so the value is parsed explicitly.
- */
-function indexOf(entity: { readonly index: number }): number {
-  return Number.parseInt(String(entity.index), 10);
-}
-
 /** Reduces a connection to the line indices it holds and its page info. */
 function summarize(connection: Connection<Line>): LinesPage {
   return {
     endCursor: connection.pageInfo.endCursor ?? null,
     hasNextPage: connection.pageInfo.hasNextPage,
     hasPreviousPage: connection.pageInfo.hasPreviousPage,
-    indices: connection.edges.map((edge) => indexOf(edge.node)),
+    indices: connection.edges.map((edge) => parseIndex(edge.node)),
     startCursor: connection.pageInfo.startCursor ?? null,
     totalCount: connection.totalCount,
   };
@@ -278,7 +271,7 @@ describe("lines resolver integration suite", () => {
     for (const [index, line] of passage.lines.entries()) {
       const tokens = await resolver.tokensForLine(line);
 
-      expect(tokens.map((token) => indexOf(token))).toStrictEqual(
+      expect(tokens.map((token) => parseIndex(token))).toStrictEqual(
         tokens.map((_token, position) => position),
       );
       expect(
@@ -287,7 +280,7 @@ describe("lines resolver integration suite", () => {
           isPunctuation: token.isPunctuation,
           word: token.word?.data ?? null,
         })),
-      ).toStrictEqual(PASSAGE_TOKENS[index]);
+      ).toStrictEqual(passageTokensAt(index));
       expect(tokens.every((token) => token.line.id === line.id)).toBe(true);
     }
   });

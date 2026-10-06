@@ -81,7 +81,7 @@ const READER_TWICE = `
   }
 `;
 
-/** Matches a statement whose own table, not a joined one, is the given one. */
+/** Matches a statement reading from a table, not merely joining it. */
 function readsFrom(table: string): RegExp {
   return new RegExp(String.raw`FROM ("\w+"\.)?"${table}"`, "u");
 }
@@ -140,7 +140,8 @@ describe("lines resolver end-to-end suite", () => {
   /**
    * Strips the word relation from every token a line lists, as a parent
    * that never joined it would, so `Token.word` must go through the loader.
-   * Returns a spy on the loader's batched lookup.
+   * Returns a spy on the loader's batched lookup. Both spies sit on the one
+   * singleton service every request-scoped resolver is handed.
    */
   function forceWordLoader(): TokenLookupSpy {
     const service = application.module.get(LiteratureService);
@@ -232,9 +233,13 @@ describe("lines resolver end-to-end suite", () => {
     });
   });
 
-  it("issues one token statement per line and no word statements, however many tokens", async () => {
+  it("issues one token statement per line and no word lookups, however many tokens", async () => {
     expect.hasAssertions();
 
+    const findTokensByIds = vi.spyOn(
+      application.module.get(LiteratureService),
+      "findTokensByIds",
+    );
     const one = await readWithStatements({ range: { endIndex: 0 } });
     const all = await readWithStatements({});
     const tokenCount = PASSAGE_TOKENS.flat().length;
@@ -244,9 +249,7 @@ describe("lines resolver end-to-end suite", () => {
     expect(
       all.statements.filter((statement) => readsFrom("tokens").test(statement)),
     ).toHaveLength(5);
-    expect(
-      all.statements.filter((statement) => readsFrom("words").test(statement)),
-    ).toStrictEqual([]);
+    expect(findTokensByIds).not.toHaveBeenCalled();
     expect(all.statements.length - one.statements.length).toBe(4);
   });
 

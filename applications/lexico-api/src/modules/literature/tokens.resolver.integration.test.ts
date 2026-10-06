@@ -11,7 +11,9 @@ import {
   startLexicoTestDatabase,
 } from "../../../testing/database";
 import {
-  PASSAGE_TOKENS,
+  parseIndex,
+  passageLineAt,
+  passageTokensAt,
   type ReadingPassage,
   seedReadingPassage,
 } from "../../../testing/reading-passage";
@@ -31,14 +33,6 @@ interface TokensPage {
   readonly hasPreviousPage: boolean;
   readonly startCursor: null | string;
   readonly totalCount: number;
-}
-
-/**
- * Reads an `index` column as a number. Postgres returns `bigint` columns as
- * strings, whatever the entity declares, so the value is parsed explicitly.
- */
-function indexOf(entity: { readonly index: number }): number {
-  return Number.parseInt(String(entity.index), 10);
 }
 
 /** Reduces a connection to the token strings it holds and its page info. */
@@ -63,7 +57,7 @@ describe("tokens resolver integration suite", () => {
   let resolver: TokensResolver;
 
   /** The first passage line, which mixes words, spaces, and punctuation. */
-  const FIRST_LINE_TOKENS = PASSAGE_TOKENS[0] ?? [];
+  const FIRST_LINE_TOKENS = passageTokensAt(0);
 
   /** Fetches one page of a line's tokens, the first line's by default. */
   async function tokensPage(
@@ -71,7 +65,7 @@ describe("tokens resolver integration suite", () => {
   ): Promise<TokensPage> {
     return summarize(
       await resolver.tokens({
-        lineId: passage.lines[0]?.id ?? "",
+        lineId: passageLineAt(passage, 0).id,
         ...arguments_,
       }),
     );
@@ -98,7 +92,7 @@ describe("tokens resolver integration suite", () => {
     expect.hasAssertions();
 
     const connection = await resolver.tokens({
-      lineId: passage.lines[0]?.id ?? "",
+      lineId: passageLineAt(passage, 0).id,
     });
 
     expect(
@@ -108,7 +102,7 @@ describe("tokens resolver integration suite", () => {
         word: edge.node.word?.data ?? null,
       })),
     ).toStrictEqual(FIRST_LINE_TOKENS);
-    expect(connection.edges.map((edge) => indexOf(edge.node))).toStrictEqual(
+    expect(connection.edges.map((edge) => parseIndex(edge.node))).toStrictEqual(
       FIRST_LINE_TOKENS.map((_token, index) => index),
     );
     expect(connection.totalCount).toBe(FIRST_LINE_TOKENS.length);
@@ -166,11 +160,11 @@ describe("tokens resolver integration suite", () => {
     });
   });
 
-  it("resolves each listed token to its word and each marker to null", async () => {
+  it("resolves each listed token to its already-loaded word and each marker to null", async () => {
     expect.hasAssertions();
 
     const connection = await resolver.tokens({
-      lineId: passage.lines[2]?.id ?? "",
+      lineId: passageLineAt(passage, 2).id,
     });
     const words = await Promise.all(
       connection.edges.map(async (edge) =>
@@ -179,7 +173,7 @@ describe("tokens resolver integration suite", () => {
     );
 
     expect(words.map((word) => word?.data ?? null)).toStrictEqual(
-      PASSAGE_TOKENS[2]?.map((token) => token.word),
+      passageTokensAt(2).map((token) => token.word),
     );
   });
 });
