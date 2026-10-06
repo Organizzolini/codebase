@@ -49,10 +49,19 @@ export class TextsResolver {
     return this.literatureService.listLines(text.id);
   }
 
-  /** Resolves the parent text for a nested text. */
+  /**
+   * Resolves the parent text for a nested text. A parent that was itself
+   * loaded as a relation carries no `parentText` of its own, so one that was
+   * not joined is looked up here rather than reported as absent.
+   */
   @ResolveField(() => Text, { name: "parentText", nullable: true })
-  public parentText(@Parent() text: Text): null | Text {
-    return text.parentText ?? null;
+  public async parentText(@Parent() text: Text): Promise<null | Text> {
+    if (text.parentText !== undefined) {
+      return text.parentText;
+    }
+
+    const loaded = await this.literatureService.findTextByLookup(text.id);
+    return loaded?.parentText ?? null;
   }
 
   // 🖋️ Mutations
