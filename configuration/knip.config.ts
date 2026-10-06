@@ -252,8 +252,16 @@ const config: KnipConfig = {
     // meanderaw: Greek meander (key/fret) SVG generator CLI
     "applications/meanderaw/meanderaw-cli": {
       // The CLI, the REPL its own target runs, and the sweep's worker
-      // thread — spawned by URL, so nothing imports it.
-      entry: ["src/main.ts", "src/repl.ts", "src/worker.ts"],
+      // thread — spawned by URL, so nothing imports it. The data source and
+      // the migrations are read by the TypeORM command line the `migration`
+      // target runs, by path rather than by import.
+      entry: [
+        "src/main.ts",
+        "src/repl.ts",
+        "src/worker.ts",
+        "src/modules/meanderaw-database/data-source.constants.ts",
+        "src/modules/meanderaw-database/migrations/**/*.ts",
+      ],
       project: "src/**/*.ts",
     },
 

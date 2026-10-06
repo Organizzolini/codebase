@@ -149,17 +149,19 @@ export class MeanderawDatabaseService {
       .addGroupBy("meander.rows")
       .addGroupBy("meander.columns")
       .getRawMany<{
-        columns: number;
+        columns: string;
         count: string;
         family: MeanderFamily;
-        rows: number;
+        rows: string;
       }>();
 
+    // A raw row skips the entity's column transformers, and `pg` returns a
+    // `bigint` as a string, so each number is converted here.
     return counted.map(({ columns, count, family, rows }) => ({
-      columns,
+      columns: Number(columns),
       count: Number(count),
       family,
-      rows,
+      rows: Number(rows),
     }));
   }
 

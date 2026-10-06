@@ -1,14 +1,19 @@
-import { Column, Entity, Index, PrimaryColumn } from "typeorm";
+import { Column, Entity, Index } from "typeorm";
+
+import { UpdatableEntity } from "@codebase/database";
 
 import { MEANDER_FAMILIES } from "../../classification/classification.constants";
+import { BIGINT_NUMBER_TRANSFORMER } from "../meanderaw-database.constants";
 
 import type { StoredCharacteristics } from "../../characteristics/characteristics.types";
 import type { MeanderFamily } from "../../classification/classification.types";
 
 /**
  * One row of the `meanders` table, in the schema
- * `MEANDERAW_POSTGRES_SCHEMA` names: a single meander addressed by its Code,
- * decoded and rendered by the generic, family-agnostic pipeline.
+ * `MEANDERAW_POSTGRES_SCHEMA` names (`meanderaw` unless set): a single
+ * meander addressed by its Code, decoded and rendered by the generic,
+ * family-agnostic pipeline. Its `id`, which the database assigns as a
+ * `uuidv7()`, and its audit columns come from {@link UpdatableEntity}.
  *
  * `code` is unbounded text, because several families' full Codes outgrow
  * the 255-byte filesystem path component a file per Code once needed.
@@ -31,7 +36,7 @@ import type { MeanderFamily } from "../../classification/classification.types";
 @Entity({ name: "meanders" })
 @Index(["code"], { unique: true })
 @Index(["family", "rows", "columns", "code"])
-export class Meander {
+export class Meander extends UpdatableEntity {
   /**
    * Every Characteristic the meander has, as one sparse JSON object: see
    * {@link StoredCharacteristics}. A numeric key holds its nonzero value, and
@@ -50,20 +55,11 @@ export class Meander {
   @Column({ type: "text" })
   code!: string;
 
-  @Column({ type: "int" })
+  @Column({ transformer: BIGINT_NUMBER_TRANSFORMER, type: "bigint" })
   columns!: number;
 
   @Column({ enum: MEANDER_FAMILIES, type: "simple-enum" })
   family!: MeanderFamily;
-
-  /**
-   * A uuidv7 the database assigns on insert, so ids sort by when their rows
-   * were written. Postgres 18's native `uuidv7()` rather than a
-   * TypeORM-generated one: TypeORM only generates version 4, and a bulk
-   * `insert` skips any per-entity hook that could generate one here.
-   */
-  @PrimaryColumn({ default: () => "uuidv7()", type: "uuid" })
-  id!: string;
 
   @Column({ type: "boolean" })
   isHardcoded!: boolean;
@@ -71,10 +67,14 @@ export class Meander {
   @Column({ type: "text" })
   lattice!: string;
 
-  @Column({ default: 1, type: "int" })
+  @Column({
+    default: 1,
+    transformer: BIGINT_NUMBER_TRANSFORMER,
+    type: "bigint",
+  })
   repeats!: number;
 
-  @Column({ type: "int" })
+  @Column({ transformer: BIGINT_NUMBER_TRANSFORMER, type: "bigint" })
   rows!: number;
 
   /**
@@ -82,9 +82,7 @@ export class Meander {
    * mirror, its flip, and both — each at its own canonical phase, sorted.
    * The draw run keeps one row per class, so these are the meanders folded
    * into this one; empty when every reflection maps the meander onto
-   * itself. See `CodeService.symmetricalCodes`. Defaults to empty so a
-   * database written before the column existed gains it in place when the
-   * schema synchronizes, rather than refusing to open.
+   * itself. See `CodeService.symmetricalCodes`.
    */
   @Column({ default: "", type: "simple-array" })
   symmetricalCodes!: string[];

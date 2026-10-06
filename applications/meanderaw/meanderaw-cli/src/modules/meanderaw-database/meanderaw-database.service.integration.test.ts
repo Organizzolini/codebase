@@ -384,13 +384,17 @@ describe(MeanderawDatabaseService, () => {
 
       const {
         code: _one,
+        createdAt: _oneCreated,
         id: _oneId,
+        updatedAt: _oneUpdated,
         ...one
       } = await repository.findOneByOrFail({ code: "saved-one" });
       const {
         code: _all,
+        createdAt: _allCreated,
         id: _allId,
         lattice: _lattice,
+        updatedAt: _allUpdated,
         ...all
       } = await repository.findOneByOrFail({ code: "saved-all" });
       const { lattice: _oneLattice, ...comparable } = one;

@@ -8,7 +8,10 @@
   },
   "duplicates": {
     "crossLanguage": true,
-    "ignore": ["packages/*/src/modules/database/migrations/**/*.ts"],
+    "ignore": [
+      "packages/*/src/modules/database/migrations/**/*.ts",
+      "applications/**/src/modules/*-database/migrations/**/*.ts",
+    ],
     "ignoreDefaults": true,
     "ignoreImports": true,
     "minLines": 12,
@@ -82,6 +85,7 @@
     "applications/lexico/src/lib/routeTree.gen.ts",
     "applications/lexico/src/router.tsx",
     "packages/lexico-entities/src/modules/database/migrations/**/*.ts",
+    "applications/meanderaw/meanderaw-cli/src/modules/meanderaw-database/migrations/**/*.ts",
     "configuration/release.config.cjs",
     "validate-branch-name.config.cjs",
   ],

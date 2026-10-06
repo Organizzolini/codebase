@@ -26,6 +26,8 @@ import {
 
 import { DrawCodeService } from "./draw-code.service";
 
+import type { Meander } from "../meanderaw-database/entities/meander.entity";
+
 vi.mock("node:fs/promises", () => ({
   mkdir: vi.fn<() => Promise<void>>(),
   writeFile: vi.fn<(path: string, data: unknown) => Promise<void>>(),
@@ -43,6 +45,16 @@ async function compileDrawRun(
   ).compile();
 
   return drawRunFixture(module);
+}
+
+/** A row without the columns the database assigns on each insert, so two draw runs' rows compare by what they describe. */
+function withoutRowIdentity({
+  createdAt: _createdAt,
+  id: _id,
+  updatedAt: _updatedAt,
+  ...row
+}: Meander): Omit<Meander, "createdAt" | "id" | "updatedAt"> {
+  return row;
 }
 
 /**
@@ -78,7 +90,7 @@ describe("drawCommand draw run", () => {
     });
 
     it(
-      "regenerates an already-populated database into exactly the rows a fresh draw run writes, each under a new id",
+      "regenerates an already-populated database into exactly the rows a fresh draw run writes, each under a new id and timestamp",
       async () => {
         await drawRun.command.run([], {});
 
@@ -91,8 +103,8 @@ describe("drawCommand draw run", () => {
         });
 
         expect(regenerated).toHaveLength(fresh.length);
-        expect(regenerated.map(({ id: _id, ...row }) => row)).toStrictEqual(
-          fresh.map(({ id: _id, ...row }) => row),
+        expect(regenerated.map((row) => withoutRowIdentity(row))).toStrictEqual(
+          fresh.map((row) => withoutRowIdentity(row)),
         );
       },
       DRAW_RUN_TIMEOUT_MILLISECONDS,

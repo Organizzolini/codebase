@@ -1,3 +1,5 @@
+import type { ValueTransformer } from "typeorm";
+
 // ♟️ Constants
 
 /**
@@ -23,3 +25,18 @@ export const MEANDER_INSERT_CHUNK_SIZE = 500;
  * edge budget.
  */
 export const MEANDER_READ_BATCH_SIZE = 5000;
+
+/**
+ * Maps a Postgres `bigint` column to and from a JavaScript `number`.
+ *
+ * The `pg` driver returns a `bigint` as a string, because a 64-bit integer
+ * can outgrow a `number`. A meander's `rows`, `columns`, and `repeats` never
+ * do: each stays far below `Number.MAX_SAFE_INTEGER`, which is why the
+ * entity can keep typing them as `number`, and why the column is a `bigint`
+ * only to satisfy squawk's ban on narrower integer types for such columns.
+ */
+export const BIGINT_NUMBER_TRANSFORMER: ValueTransformer = {
+  from: (value: null | string): null | number =>
+    value === null ? null : Number(value),
+  to: (value: null | number): null | number => value,
+};

@@ -30,7 +30,9 @@ describe(DrawIndexService, () => {
     overrides: Partial<Meander> & Pick<Meander, "code">,
   ): Meander => ({
     ...meanderRecord({ code: overrides.code, lattice: "3c9a" }),
+    createdAt: new Date(0),
     id: "01a107d6-cff8-7238-8684-a2a863bc6928",
+    updatedAt: new Date(0),
     ...overrides,
   });
 
