@@ -132,17 +132,22 @@ graph LR
   file_src_modules_words_words_arguments_entities_ts["src/modules/words/words-arguments.entities.ts"]
   file_src_modules_words_words_constants_ts["src/modules/words/words.constants.ts"]
   file_src_modules_words_words_module_ts["src/modules/words/words.module.ts"]
+  file_src_modules_words_words_resolver_end_to_end_test_ts["src/modules/words/words.resolver.end-to-end.test.ts"]
   file_src_modules_words_words_resolver_ts["src/modules/words/words.resolver.ts"]
   file_src_modules_words_words_resolver_unit_test_ts["src/modules/words/words.resolver.unit.test.ts"]
+  file_src_modules_words_words_service_integration_test_ts["src/modules/words/words.service.integration.test.ts"]
   file_src_modules_words_words_service_ts["src/modules/words/words.service.ts"]
   file_src_modules_words_words_service_unit_test_ts["src/modules/words/words.service.unit.test.ts"]
   file_src_modules_words_words_types_ts["src/modules/words/words.types.ts"]
   file_testing_database_ts["testing/database.ts"]
+  file_testing_graphql_application_ts["testing/graphql-application.ts"]
   file_testing_mocks_ts["testing/mocks.ts"]
   file_testing_setup_ts["testing/setup.ts"]
+  file_testing_word_lookups_ts["testing/word-lookups.ts"]
   file_vitest_config_ts["vitest.config.ts"]
   file_src_lexico_api_end_to_end_test_ts --> file_src_lexico_api_constants_ts
   file_src_lexico_api_module_ts --> file_src_lexico_api_constants_ts
+  file_src_lexico_api_module_ts --> file_src_lexico_api_entities_ts
   file_src_lexico_api_module_ts --> file_src_modules_health_health_module_ts
   file_src_lexico_api_module_ts --> file_src_modules_lexemes_lexemes_module_ts
   file_src_lexico_api_module_ts --> file_src_modules_literature_literature_module_ts
@@ -301,14 +306,23 @@ graph LR
   file_src_modules_search_search_utilities_unit_test_ts --> file_src_modules_search_search_utilities_ts
   file_src_modules_words_words_module_ts --> file_src_modules_words_words_resolver_ts
   file_src_modules_words_words_module_ts --> file_src_modules_words_words_service_ts
+  file_src_modules_words_words_resolver_end_to_end_test_ts --> file_src_modules_words_words_module_ts
+  file_src_modules_words_words_resolver_end_to_end_test_ts --> file_testing_graphql_application_ts
+  file_src_modules_words_words_resolver_end_to_end_test_ts --> file_testing_word_lookups_ts
   file_src_modules_words_words_resolver_ts --> file_src_modules_words_word_arguments_entities_ts
   file_src_modules_words_words_resolver_ts --> file_src_modules_words_words_arguments_entities_ts
   file_src_modules_words_words_resolver_ts --> file_src_modules_words_words_service_ts
   file_src_modules_words_words_resolver_unit_test_ts --> file_src_modules_words_words_resolver_ts
   file_src_modules_words_words_resolver_unit_test_ts --> file_src_modules_words_words_service_ts
+  file_src_modules_words_words_service_integration_test_ts --> file_src_modules_words_words_service_ts
+  file_src_modules_words_words_service_integration_test_ts --> file_testing_database_ts
+  file_src_modules_words_words_service_integration_test_ts --> file_testing_word_lookups_ts
   file_src_modules_words_words_service_unit_test_ts --> file_src_modules_words_words_service_ts
   file_src_modules_words_words_service_unit_test_ts --> file_testing_mocks_ts
   file_testing_database_ts --> file_src_lexico_api_constants_ts
+  file_testing_graphql_application_ts --> file_src_lexico_api_constants_ts
+  file_testing_graphql_application_ts --> file_src_lexico_api_entities_ts
+  file_testing_graphql_application_ts --> file_testing_word_lookups_ts
 ```
 <!-- codependix:end name="codependix-file-imports" -->
 
