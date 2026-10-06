@@ -33,7 +33,8 @@ readonly GITHUB_PACKAGES_REGISTRY="${GITHUB_PACKAGES_REGISTRY:-https://npm.pkg.g
 # What this run published, which is all the next step may attest as built
 # here, comes from pnpm's own summary of it. Asking npm afterwards, as this
 # once did, missed 21 of 23 new versions in one run: a version npm has just
-# accepted can still read as missing for minutes after.
+# accepted can still read as missing for minutes after. A publish that fails
+# part way still records whatever pnpm reports, before the step fails.
 publish_to_npm() {
   local root filters=()
   local published="${RUNNER_TEMP:?}/newly-published.txt"
@@ -43,11 +44,16 @@ publish_to_npm() {
   done
   echo "📦 Publishing the release group to npm"
   rm -f pnpm-publish-summary.json
+  : >"${published}"
+  local status=0
   pnpm -r "${filters[@]}" publish --provenance --no-git-checks \
-    --tag latest --registry https://registry.npmjs.org --report-summary
-  jq -r '.publishedPackages[] | "\(.name)@\(.version)"' \
-    pnpm-publish-summary.json >"${published}"
-  rm pnpm-publish-summary.json
+    --tag latest --registry https://registry.npmjs.org --report-summary || status=$?
+  if [[ -f pnpm-publish-summary.json ]]; then
+    jq -r '.publishedPackages[] | "\(.name)@\(.version)"' \
+      pnpm-publish-summary.json >"${published}"
+    rm pnpm-publish-summary.json
+  fi
+  return "${status}"
 }
 
 # Publishes every release-group package to GitHub Packages, under the
