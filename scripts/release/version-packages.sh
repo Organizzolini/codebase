@@ -27,7 +27,7 @@ git remote set-url origin \
   "https://x-access-token:${GITHUB_TOKEN:?}@github.com/${GITHUB_REPOSITORY:?}.git"
 
 # A run `main` has already moved past steps aside before versioning, which
-# takes minutes, rather than leaving release-codebase.sh to find out later.
+# takes minutes, rather than leaving tag-codebase.sh to find out later.
 base="$(git rev-parse HEAD)"
 if main_has_moved_from "${base}"; then
   step_aside_from "${base}"
