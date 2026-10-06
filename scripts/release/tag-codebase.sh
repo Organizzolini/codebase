@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Releases the codebase with semantic-release: the root version, the root
-# `CHANGELOG.md`, the `v*` GitHub release the README badge shows, and the one
-# release commit that also carries the package versions and changelogs
-# version-packages.sh wrote.
+# Versions and tags the codebase with semantic-release: the root version, the
+# root `CHANGELOG.md`, the `v*` tag and GitHub release the README badge shows,
+# and the one `chore(release): 🔖 tag codebase` commit that also carries the
+# package versions and changelogs version-packages.sh wrote.
 #
 # It steps aside, as main-tip.sh describes, both before semantic-release and
 # after a failed one. Before matters because semantic-release, finding `main`

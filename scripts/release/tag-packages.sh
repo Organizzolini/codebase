@@ -57,7 +57,7 @@ commit_leftover_versions() {
   fi
   echo "🏷️ No codebase release committed the package versions; committing them"
   base="$(git rev-parse HEAD)"
-  git commit --message "chore(release): 🔖 version packages"
+  git commit --message "chore(release): 🔖 tag packages"
   if ! git push origin HEAD:refs/heads/main; then
     if main_has_moved_from "${base}"; then
       step_aside_from "${base}"

@@ -98,7 +98,7 @@ module.exports = {
           { type: "refactor", release: "patch" }, // Code restructuring → patch
           { type: "test", release: false }, // Test additions/changes → no release
           { type: "build", release: "patch" }, // Build system changes → patch
-          { type: "ci", release: false }, // CI/CD changes → no release
+          { type: "ci", release: "patch" }, // CI/CD changes → patch
           { type: "chore", release: false }, // Housekeeping → no release
           { scope: "no-release", release: false }, // Escape hatch: any type with this scope → no release
         ],
@@ -176,7 +176,7 @@ module.exports = {
           "tools/*/AGENTS.md",
           "tools/*/README.md",
         ],
-        message: "chore(release): 🔖 version ${nextRelease.version}",
+        message: "chore(release): 🔖 tag codebase ${nextRelease.version}",
       },
     ],
 
