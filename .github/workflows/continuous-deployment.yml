@@ -49,21 +49,19 @@ jobs:
             name: Devcontainer
             emoji: 🧑‍🏭
             timeout: 20
-          # v2.31.0 took 7m19s: 4 minutes to set up, build, trace, graph, and
-          # measure, and 3 for semantic-release, most of it the release
-          # commit's pre-commit hook. A cold Nx cache adds about 4 to the
-          # first part. That one commit also carries the package versions, so
-          # its hook checks every bumped ic-suite package and its dependents
-          # (25 projects on the first release), none of them cached because
-          # each bump changes a manifest, so this leaves room for that hook
-          # and the npm publish. Re-size it from the first real release run.
-          # A timeout before the push leaves nothing behind; a later one is
-          # finished by the next run, whose publish skips versions already on
-          # npm.
+          # v2.33.6 bumped all 28 ic-suite packages and ran out of 24 minutes
+          # part way through publishing them. Setting up, building, tracing,
+          # graphing and measuring took 11 minutes on a cold Nx cache, and the
+          # release commit's pre-commit hook 10 more: it checks every bumped
+          # package and its dependents (34 projects), none of them cached
+          # because each bump changes a manifest. Publishing and linking 28
+          # packages take 7 more. A timeout before the push leaves nothing
+          # behind; a later one is finished by the next run, whose publish
+          # skips versions already on npm.
           - id: push-releases
             name: Releases
             emoji: 🦸
-            timeout: 24
+            timeout: 40
 
     steps:
       # Decides from the GitHub API alone, before any checkout, so a run with

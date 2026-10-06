@@ -28,25 +28,26 @@ readonly GITHUB_PACKAGES_REGISTRY="${GITHUB_PACKAGES_REGISTRY:-https://npm.pkg.g
 # rather than `nx release publish`, because pnpm honors provenance only as the
 # `--provenance` flag, which Nx cannot pass: `NPM_CONFIG_PROVENANCE` and
 # `publishConfig.provenance` are ignored. `setup-node` writes no registry
-# `.npmrc`, so the tokens go in the user config. What npm lacked beforehand
-# and has afterwards is what this run published, which is all the next step
-# may attest as built here.
+# `.npmrc`, so the tokens go in the user config.
+#
+# What this run published, which is all the next step may attest as built
+# here, comes from pnpm's own summary of it. Asking npm afterwards, as this
+# once did, missed 21 of 23 new versions in one run: a version npm has just
+# accepted can still read as missing for minutes after.
 publish_to_npm() {
-  local root specifier filters=() missing=()
+  local root filters=()
   local published="${RUNNER_TEMP:?}/newly-published.txt"
   echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN:?}" >>~/.npmrc
   for root in "${roots[@]}"; do
     filters+=(--filter "./${root}")
-    specifier="$(package_specifier "${root}")"
-    is_on_npm "${specifier}" || missing+=("${specifier}")
   done
   echo "📦 Publishing the release group to npm"
+  rm -f pnpm-publish-summary.json
   pnpm -r "${filters[@]}" publish --provenance --no-git-checks \
-    --tag latest --registry https://registry.npmjs.org
-  : >"${published}"
-  for specifier in "${missing[@]}"; do
-    if is_on_npm "${specifier}"; then echo "${specifier}" >>"${published}"; fi
-  done
+    --tag latest --registry https://registry.npmjs.org --report-summary
+  jq -r '.publishedPackages[] | "\(.name)@\(.version)"' \
+    pnpm-publish-summary.json >"${published}"
+  rm pnpm-publish-summary.json
 }
 
 # Publishes every release-group package to GitHub Packages, under the

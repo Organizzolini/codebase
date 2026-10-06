@@ -24,10 +24,17 @@ readonly REPOSITORY_NAME="${repository#*/}"
 # Prints the `sha256:…` digest of the tarball npm serves for a
 # `<name>@<version>`, which is what both a storage record and an attestation
 # identify the package by. npm itself reports only a sha512 integrity.
+#
+# The tarball's address is built rather than looked up, and fetched with
+# retries, because npm's metadata can trail a publish by minutes: a version
+# this run just published may not be listed yet.
 npm_tarball_digest() {
+  local specifier="$1"
+  local name="${specifier%@*}" version="${specifier##*@}"
   local tarball="${RUNNER_TEMP:?}/npm-tarball.tgz"
   curl --silent --show-error --fail --location --output "${tarball}" \
-    "$(npm view "$1" dist.tarball --registry "${NPM_REGISTRY_URL}")"
+    --retry 6 --retry-all-errors --retry-delay 10 \
+    "${NPM_REGISTRY_URL}${name}/-/${name##*/}-${version}.tgz"
   echo "sha256:$(sha256sum "${tarball}" | cut -d' ' -f1)"
 }
 
@@ -62,6 +69,8 @@ create_npm_storage_record() {
 # lists the ones this run published in a checksums file for `actions/attest`.
 # Attesting only those keeps the provenance honest: an attestation says this
 # run built the package, which is untrue of a version an earlier run published.
+# A version this run published is known to be on npm without asking, which
+# matters while npm's metadata has yet to list it.
 link_npm_packages() {
   local root specifier digest
   local published="${RUNNER_TEMP:?}/newly-published.txt"
@@ -70,10 +79,13 @@ link_npm_packages() {
   touch "${published}"
   for root in "${roots[@]}"; do
     specifier="$(package_specifier "${root}")"
-    is_on_npm "${specifier}" || continue
-    digest="$(npm_tarball_digest "${specifier}")"
     if grep -qxF "${specifier}" "${published}"; then
+      digest="$(npm_tarball_digest "${specifier}")"
       echo "${digest#sha256:}  ${specifier}" >>"${subjects}"
+    elif is_on_npm "${specifier}"; then
+      digest="$(npm_tarball_digest "${specifier}")"
+    else
+      continue
     fi
     if has_npm_storage_record "${digest}"; then
       echo "🔗 ${specifier} is already linked"
