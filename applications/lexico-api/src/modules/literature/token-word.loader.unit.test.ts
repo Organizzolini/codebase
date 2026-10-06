@@ -1,16 +1,46 @@
+/* cspell:words puella */
+
 import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { LiteratureService } from "./literature.service";
 import { TokenWordLoader } from "./token-word.loader";
 
 import type { Token, Word } from "@codebase/lexico-entities";
 
-describe(TokenWordLoader, () => {
-  let service: TokenWordLoader;
+const amo = { data: "amo", id: "word-1" } as Word;
+const puella = { data: "puella", id: "word-2" } as Word;
 
-  beforeAll(async () => {
+const TOKENS: readonly Token[] = [
+  { data: "amo", id: "token-1", word: amo } as Token,
+  { data: "puella", id: "token-2", word: puella } as Token,
+  { data: ",", id: "token-3", isPunctuation: true, word: null } as Token,
+];
+
+/** Builds a loader whose service answers from TOKENS out of order. */
+function createLoader(): {
+  findTokensByIds: ReturnType<
+    typeof vi.fn<LiteratureService["findTokensByIds"]>
+  >;
+  loader: TokenWordLoader;
+} {
+  const findTokensByIds = vi
+    .fn<LiteratureService["findTokensByIds"]>()
+    .mockImplementation(async (tokenIds) => {
+      await Promise.resolve();
+      return TOKENS.filter((token) => tokenIds.includes(token.id)).toReversed();
+    });
+  const loader = new TokenWordLoader(
+    createMock<LiteratureService>({ findTokensByIds }),
+  );
+  return { findTokensByIds, loader };
+}
+
+describe(TokenWordLoader, () => {
+  it("is provided per request by the Nest container", async () => {
+    expect.hasAssertions();
+
     const module = await Test.createTestingModule({
       providers: [
         TokenWordLoader,
@@ -21,101 +51,42 @@ describe(TokenWordLoader, () => {
       ],
     }).compile();
 
-    service = await module.resolve(TokenWordLoader);
+    const first = await module.resolve(TokenWordLoader, { id: 1 });
+    const second = await module.resolve(TokenWordLoader, { id: 2 });
+
+    expect(first).toBeInstanceOf(TokenWordLoader);
+    expect(first).not.toBe(second);
   });
 
-  it("is defined", () => {
-    expect(service).toBeDefined();
-  });
-
-  it("loads a single token word mapping", async () => {
+  it("coalesces every load in one tick into a single token query", async () => {
     expect.hasAssertions();
 
-    const word = { data: "amo", id: "word-1" } as Word;
+    const { findTokensByIds, loader } = createLoader();
 
-    const token = { data: "amo", id: "token-1", word } as Token;
-
-    const tokenNoWord = { data: "et", id: "token-2" } as Token;
-
-    const tokenUndefinedWord = {
-      data: "null",
-      id: "token-3",
-      word: undefined,
-    } as unknown as Token;
-
-    const mockLiteratureService = createMock<LiteratureService>({
-      findTokensByIds: vi
-        .fn<LiteratureService["findTokensByIds"]>()
-        .mockImplementation(async (ids) => {
-          await Promise.resolve();
-          const result: Token[] = [];
-          if (ids.includes("token-1")) {
-            result.push(token);
-          }
-          if (ids.includes("token-2")) {
-            result.push(tokenNoWord);
-          }
-          if (ids.includes("token-3")) {
-            result.push(tokenUndefinedWord);
-          }
-          return result;
-        }),
-    });
-
-    const loader = new TokenWordLoader(mockLiteratureService);
-
-    await expect(loader.loadTokenWord("token-1")).resolves.toBe(word);
-    await expect(loader.loadTokenWord("token-2")).resolves.toBeNull();
-    await expect(loader.loadTokenWord("token-3")).resolves.toBeNull();
-    await expect(loader.loadTokenWord("token-missing")).resolves.toBeNull();
-
-    await expect(loader.byTokenId.load("token-1")).resolves.toBe(word);
-    await expect(loader.byTokenId.loadMany(["token-1"])).resolves.toStrictEqual(
-      [word],
+    const words = await Promise.all(
+      ["token-1", "token-2", "token-3", "token-missing"].map(async (tokenId) =>
+        loader.byTokenId.load(tokenId),
+      ),
     );
+
+    expect(words).toStrictEqual([amo, puella, null, null]);
+    expect(findTokensByIds).toHaveBeenCalledTimes(1);
+    expect(findTokensByIds).toHaveBeenCalledWith([
+      "token-1",
+      "token-2",
+      "token-3",
+      "token-missing",
+    ]);
   });
 
-  it("loads token word mappings for a batch of token IDs", async () => {
+  it("caches a token's word for the rest of the request", async () => {
     expect.hasAssertions();
 
-    const word1 = { data: "amo", id: "word-1" } as Word;
+    const { findTokensByIds, loader } = createLoader();
 
-    const token1 = { data: "amo", id: "token-1", word: word1 } as Token;
+    await expect(loader.byTokenId.load("token-1")).resolves.toBe(amo);
+    await expect(loader.byTokenId.load("token-1")).resolves.toBe(amo);
 
-    const token2 = { data: "et", id: "token-2" } as Token;
-
-    const tokenWithUndefinedWord = {
-      id: "token-3",
-      word: undefined,
-    } as unknown as Token;
-
-    const tokenWithNullWord = {
-      id: "token-4",
-      word: null,
-    } as unknown as Token;
-
-    const mockLiteratureService = createMock<LiteratureService>({
-      findTokensByIds: vi
-        .fn<LiteratureService["findTokensByIds"]>()
-        .mockResolvedValue([
-          token1,
-          token2,
-          tokenWithUndefinedWord,
-          tokenWithNullWord,
-        ]),
-    });
-
-    const loader = new TokenWordLoader(mockLiteratureService);
-
-    await expect(loader.loadTokenWords([])).resolves.toStrictEqual([]);
-    await expect(
-      loader.loadTokenWords([
-        "token-1",
-        "token-2",
-        "token-3",
-        "token-4",
-        "token-5",
-      ]),
-    ).resolves.toStrictEqual([word1, null, null, null, null]);
+    expect(findTokensByIds).toHaveBeenCalledTimes(1);
   });
 });

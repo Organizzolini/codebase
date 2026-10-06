@@ -32,9 +32,15 @@ export class TokensResolver {
 
   // 🔎 Queries
 
-  /** Resolves a token to the matching dictionary word. */
+  /**
+   * Resolves a token to the matching dictionary word, reusing the parent's
+   * already-loaded relation and batching the rest through the loader.
+   */
   @ResolveField(() => Word, { name: "word", nullable: true })
   public async resolveTokenWord(@Parent() token: Token): Promise<null | Word> {
+    if (token.word !== undefined) {
+      return token.word;
+    }
     return this.tokenWordLoader.byTokenId.load(token.id);
   }
 

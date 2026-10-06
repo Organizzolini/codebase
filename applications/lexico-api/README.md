@@ -101,6 +101,7 @@ graph LR
   file_src_modules_literature_texts_arguments_entities_ts["src/modules/literature/texts-arguments.entities.ts"]
   file_src_modules_literature_texts_resolver_ts["src/modules/literature/texts.resolver.ts"]
   file_src_modules_literature_texts_resolver_unit_test_ts["src/modules/literature/texts.resolver.unit.test.ts"]
+  file_src_modules_literature_token_word_loader_integration_test_ts["src/modules/literature/token-word.loader.integration.test.ts"]
   file_src_modules_literature_token_word_loader_ts["src/modules/literature/token-word.loader.ts"]
   file_src_modules_literature_token_word_loader_unit_test_ts["src/modules/literature/token-word.loader.unit.test.ts"]
   file_src_modules_literature_tokens_arguments_entities_ts["src/modules/literature/tokens-arguments.entities.ts"]
@@ -240,6 +241,10 @@ graph LR
   file_src_modules_literature_texts_resolver_ts --> file_src_modules_literature_texts_arguments_entities_ts
   file_src_modules_literature_texts_resolver_unit_test_ts --> file_src_modules_literature_literature_service_ts
   file_src_modules_literature_texts_resolver_unit_test_ts --> file_src_modules_literature_texts_resolver_ts
+  file_src_modules_literature_token_word_loader_integration_test_ts --> file_src_modules_literature_literature_service_ts
+  file_src_modules_literature_token_word_loader_integration_test_ts --> file_src_modules_literature_token_word_loader_ts
+  file_src_modules_literature_token_word_loader_integration_test_ts --> file_src_modules_literature_tokens_resolver_ts
+  file_src_modules_literature_token_word_loader_integration_test_ts --> file_testing_database_ts
   file_src_modules_literature_token_word_loader_ts --> file_src_modules_literature_literature_service_ts
   file_src_modules_literature_token_word_loader_unit_test_ts --> file_src_modules_literature_literature_service_ts
   file_src_modules_literature_token_word_loader_unit_test_ts --> file_src_modules_literature_token_word_loader_ts
@@ -332,6 +337,7 @@ flowchart LR
   SearchModule
   TypeOrmModule
   WordsModule
+  DatabaseModule --> DatabaseModule
   DatabaseModule --> TypeOrmModule
   GraphQLModule --> GraphQLSchemaBuilderModule
   LexemesModule --> TypeOrmModule
