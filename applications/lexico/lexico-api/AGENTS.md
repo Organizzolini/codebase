@@ -151,7 +151,7 @@ nx run lexico-api:vitest:end-to-end    # Slow (30-60s) — full server execution
 | Integration | `*.integration.test.ts` | Database queries, external API clients             |
 | End-to-end  | `*.end-to-end.test.ts`  | Full GraphQL request/response cycles               |
 
-See the [testing-strategy skill](../../.agents/skills/testing-strategy/SKILL.md) and [testing-mocks skill](../../.agents/skills/testing-mocks/SKILL.md) for patterns and mock conventions.
+See the [testing-strategy skill](../../../.agents/skills/testing-strategy/SKILL.md) and [testing-mocks skill](../../../.agents/skills/testing-mocks/SKILL.md) for patterns and mock conventions.
 
 ## Writing GraphQL Modules
 
@@ -265,7 +265,7 @@ Key rules:
 - **Type imports** — use `import { type Foo }` for type-only imports (enforced by ESLint).
 - **No `any` types** — use `unknown` or proper typing; strict mode is enabled.
 
-See the [write-typescript skill](../../.agents/skills/write-typescript/SKILL.md) for strict mode patterns.
+See the [write-typescript skill](../../../.agents/skills/write-typescript/SKILL.md) for strict mode patterns.
 
 ## Troubleshooting
 
@@ -275,7 +275,7 @@ See the [write-typescript skill](../../.agents/skills/write-typescript/SKILL.md)
 - **N+1 query problem** — use DataLoaders for all relation fields in resolvers.
 - **Env var validation error on startup** — add the missing variable to `environmentSchema` in `.constants.ts` and to `.env.default`.
 
-See the [triage-integration skill](../../.agents/skills/triage-integration/SKILL.md) for lint and git hook failures.
+See the [triage-integration skill](../../../.agents/skills/triage-integration/SKILL.md) for lint and git hook failures.
 
 ## Key Files
 

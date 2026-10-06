@@ -1,8 +1,8 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "name": "lexico-api",
   "projectType": "application",
-  "sourceRoot": "applications/lexico-api",
+  "sourceRoot": "applications/lexico/lexico-api",
   "tags": [
     "domain:lexico",
     "framework:nestjs",
@@ -18,14 +18,14 @@
         "assets": [
           {
             "glob": "README.md",
-            "input": "applications/lexico-api",
+            "input": "applications/lexico/lexico-api",
             "output": "."
           }
         ],
         "generatePackageJson": false,
-        "main": "applications/lexico-api/src/lexico-api.ts",
-        "outputPath": "applications/lexico-api/dist",
-        "tsConfig": "applications/lexico-api/tsconfig.build.json"
+        "main": "applications/lexico/lexico-api/src/lexico-api.ts",
+        "outputPath": "applications/lexico/lexico-api/dist",
+        "tsConfig": "applications/lexico/lexico-api/tsconfig.build.json"
       },
       "outputs": ["{options.outputPath}"]
     },

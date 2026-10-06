@@ -170,7 +170,7 @@
 <summary><strong>🐺 lexico</strong> - Latin-English dictionary suite: the web application, its components, its schema, and the ingestion that fills it</summary>
 
 &nbsp;&nbsp;&nbsp;&nbsp;**[lexico-web](applications/lexico/lexico-web)** - TanStack Start SSR dictionary web application\
-&nbsp;&nbsp;&nbsp;&nbsp;**[lexico-api](applications/lexico-api)** - NestJS GraphQL API exposing Latin dictionary, literature, and Relay cursor-based search\
+&nbsp;&nbsp;&nbsp;&nbsp;**[lexico-api](applications/lexico/lexico-api)** - NestJS GraphQL API exposing Latin dictionary, literature, and Relay cursor-based search\
 &nbsp;&nbsp;&nbsp;&nbsp;**[components-web](packages/components-web)** - Shared React component library using shadcn/ui and Radix primitives\
 &nbsp;&nbsp;&nbsp;&nbsp;**[lexico-entities](packages/lexico-entities)** - TypeORM entities, migrations, and grammatical enumerations for the dictionary and literature schema\
 &nbsp;&nbsp;&nbsp;&nbsp;**[lexico-ingestion](applications/lexico-ingestion)** - NestJS CLI that scrapes and loads dictionary, literature, and etymology sources
@@ -10884,7 +10884,7 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 | `packages/ic-suite/codometer/codometer-output` | 4 | 11 | 7 | 16 |
 | `packages/ic-suite/codependix/codependix-file-imports` | 0 | 8 | 8 | 8 |
 | `packages/ic-suite/callidescope/callidescope-output` | 4 | 13 | 9 | 7 |
-| `applications/lexico-api` | 7 | 17 | 10 | 10 |
+| `applications/lexico/lexico-api` | 7 | 17 | 10 | 10 |
 | `configuration` | 4 | 17 | 13 | 2 |
 | `packages/ic-suite/conformetry/conformetry-validation` | 0 | 13 | 13 | 10 |
 | `packages/ic-suite/codometer/codometer-measurement` | 0 | 14 | 14 | 9 |
