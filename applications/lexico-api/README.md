@@ -76,6 +76,8 @@ graph LR
   file_src_modules_lexemes_lexemes_types_ts["src/modules/lexemes/lexemes.types.ts"]
   file_src_modules_literature_author_argument_entities_ts["src/modules/literature/author-argument.entities.ts"]
   file_src_modules_literature_author_lookup_input_entities_ts["src/modules/literature/author-lookup-input.entities.ts"]
+  file_src_modules_literature_authors_resolver_end_to_end_test_ts["src/modules/literature/authors.resolver.end-to-end.test.ts"]
+  file_src_modules_literature_authors_resolver_integration_test_ts["src/modules/literature/authors.resolver.integration.test.ts"]
   file_src_modules_literature_authors_resolver_ts["src/modules/literature/authors.resolver.ts"]
   file_src_modules_literature_authors_resolver_unit_test_ts["src/modules/literature/authors.resolver.unit.test.ts"]
   file_src_modules_literature_line_arguments_entities_ts["src/modules/literature/line-arguments.entities.ts"]
@@ -99,6 +101,8 @@ graph LR
   file_src_modules_literature_text_argument_entities_ts["src/modules/literature/text-argument.entities.ts"]
   file_src_modules_literature_text_lookup_input_entities_ts["src/modules/literature/text-lookup-input.entities.ts"]
   file_src_modules_literature_texts_arguments_entities_ts["src/modules/literature/texts-arguments.entities.ts"]
+  file_src_modules_literature_texts_resolver_end_to_end_test_ts["src/modules/literature/texts.resolver.end-to-end.test.ts"]
+  file_src_modules_literature_texts_resolver_integration_test_ts["src/modules/literature/texts.resolver.integration.test.ts"]
   file_src_modules_literature_texts_resolver_ts["src/modules/literature/texts.resolver.ts"]
   file_src_modules_literature_texts_resolver_unit_test_ts["src/modules/literature/texts.resolver.unit.test.ts"]
   file_src_modules_literature_token_word_loader_ts["src/modules/literature/token-word.loader.ts"]
@@ -137,8 +141,11 @@ graph LR
   file_src_modules_words_words_service_ts["src/modules/words/words.service.ts"]
   file_src_modules_words_words_service_unit_test_ts["src/modules/words/words.service.unit.test.ts"]
   file_src_modules_words_words_types_ts["src/modules/words/words.types.ts"]
+  file_testing_author_text_application_ts["testing/author-text-application.ts"]
+  file_testing_author_text_catalog_ts["testing/author-text-catalog.ts"]
   file_testing_database_ts["testing/database.ts"]
   file_testing_mocks_ts["testing/mocks.ts"]
+  file_testing_relay_connection_walk_ts["testing/relay-connection-walk.ts"]
   file_testing_setup_ts["testing/setup.ts"]
   file_vitest_config_ts["vitest.config.ts"]
   file_src_lexico_api_end_to_end_test_ts --> file_src_lexico_api_constants_ts
@@ -177,6 +184,15 @@ graph LR
   file_src_modules_lexemes_lexemes_service_unit_test_ts --> file_src_modules_lexemes_lexemes_service_ts
   file_src_modules_lexemes_lexemes_service_unit_test_ts --> file_testing_mocks_ts
   file_src_modules_literature_author_argument_entities_ts --> file_src_modules_literature_author_lookup_input_entities_ts
+  file_src_modules_literature_authors_resolver_end_to_end_test_ts --> file_testing_author_text_application_ts
+  file_src_modules_literature_authors_resolver_end_to_end_test_ts --> file_testing_author_text_catalog_ts
+  file_src_modules_literature_authors_resolver_end_to_end_test_ts --> file_testing_database_ts
+  file_src_modules_literature_authors_resolver_end_to_end_test_ts --> file_testing_relay_connection_walk_ts
+  file_src_modules_literature_authors_resolver_integration_test_ts --> file_src_modules_literature_authors_resolver_ts
+  file_src_modules_literature_authors_resolver_integration_test_ts --> file_src_modules_literature_literature_service_ts
+  file_src_modules_literature_authors_resolver_integration_test_ts --> file_testing_author_text_catalog_ts
+  file_src_modules_literature_authors_resolver_integration_test_ts --> file_testing_database_ts
+  file_src_modules_literature_authors_resolver_integration_test_ts --> file_testing_relay_connection_walk_ts
   file_src_modules_literature_authors_resolver_ts --> file_src_lexico_api_types_ts
   file_src_modules_literature_authors_resolver_ts --> file_src_modules_literature_author_argument_entities_ts
   file_src_modules_literature_authors_resolver_ts --> file_src_modules_literature_literature_connection_entities_ts
@@ -232,6 +248,15 @@ graph LR
   file_src_modules_literature_literature_service_unit_test_ts --> file_src_modules_literature_literature_service_ts
   file_src_modules_literature_literature_service_unit_test_ts --> file_testing_mocks_ts
   file_src_modules_literature_text_argument_entities_ts --> file_src_modules_literature_text_lookup_input_entities_ts
+  file_src_modules_literature_texts_resolver_end_to_end_test_ts --> file_testing_author_text_application_ts
+  file_src_modules_literature_texts_resolver_end_to_end_test_ts --> file_testing_author_text_catalog_ts
+  file_src_modules_literature_texts_resolver_end_to_end_test_ts --> file_testing_database_ts
+  file_src_modules_literature_texts_resolver_end_to_end_test_ts --> file_testing_relay_connection_walk_ts
+  file_src_modules_literature_texts_resolver_integration_test_ts --> file_src_modules_literature_literature_service_ts
+  file_src_modules_literature_texts_resolver_integration_test_ts --> file_src_modules_literature_texts_resolver_ts
+  file_src_modules_literature_texts_resolver_integration_test_ts --> file_testing_author_text_catalog_ts
+  file_src_modules_literature_texts_resolver_integration_test_ts --> file_testing_database_ts
+  file_src_modules_literature_texts_resolver_integration_test_ts --> file_testing_relay_connection_walk_ts
   file_src_modules_literature_texts_resolver_ts --> file_src_lexico_api_types_ts
   file_src_modules_literature_texts_resolver_ts --> file_src_modules_literature_literature_connection_entities_ts
   file_src_modules_literature_texts_resolver_ts --> file_src_modules_literature_literature_service_ts
@@ -308,6 +333,9 @@ graph LR
   file_src_modules_words_words_resolver_unit_test_ts --> file_src_modules_words_words_service_ts
   file_src_modules_words_words_service_unit_test_ts --> file_src_modules_words_words_service_ts
   file_src_modules_words_words_service_unit_test_ts --> file_testing_mocks_ts
+  file_testing_author_text_application_ts --> file_testing_author_text_catalog_ts
+  file_testing_author_text_application_ts --> file_testing_database_ts
+  file_testing_author_text_catalog_ts --> file_testing_database_ts
   file_testing_database_ts --> file_src_lexico_api_constants_ts
 ```
 <!-- codependix:end name="codependix-file-imports" -->
@@ -332,6 +360,7 @@ flowchart LR
   SearchModule
   TypeOrmModule
   WordsModule
+  DatabaseModule --> DatabaseModule
   DatabaseModule --> TypeOrmModule
   GraphQLModule --> GraphQLSchemaBuilderModule
   LexemesModule --> TypeOrmModule
