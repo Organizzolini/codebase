@@ -232,28 +232,54 @@ jobs:
           matrix.target.id == 'push-releases'
         run: bash scripts/git/check-commit-signing-configuration.sh
 
-      - name: 👷 Build Projects
+      # Versions the ic-suite packages and writes each one's changelog, without
+      # committing, and leaves the remote carrying the release token for the
+      # pushes below. `scripts/release/version-packages.sh` explains why the
+      # release commit is semantic-release's. When `main` moves during the run,
+      # this step or one below sets `RELEASE_SUPERSEDED` and every release step
+      # after it skips: the newer commit's run releases everything this one
+      # would have. `scripts/release/main-tip.sh` explains when each checks.
+      #
+      # It runs before the build and the reports so that they see the new
+      # versions and changelogs: npm then gets a `dist` built from the
+      # manifest it is published with, and the run on the release commit
+      # finds every package already built in the cache this job saves. Runs
+      # on `main` queue rather than cancel, so that run starts only after
+      # 🧹 Cleanup Codebase has saved the cache.
+      - name: 🏷️ Version Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
           matrix.target.id == 'push-releases'
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: bash scripts/release/version-packages.sh
+
+      - name: 👷 Build Projects
+        if: >-
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         run: pnpm exec nx run-many --target=build
 
       - name: 🔭 Trace Calls
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         run: pnpm exec nx run codebase:callidescope:write
 
       - name: 🕸️ Graph Dependencies
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         run: pnpm exec nx run codebase:codependix:write
 
       - name: 👔 Inventory Generators
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         run: |
           pnpm exec nx run-many \
             --target=conformetry-generators \
@@ -262,7 +288,8 @@ jobs:
       - name: 🔗 Synchronize
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         run: |
           pnpm exec nx run-many \
             --target=conventional-config \
@@ -274,26 +301,12 @@ jobs:
       - name: 📊 Measure Code
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         run: |
           pnpm exec nx run-many --target=codometer --configuration=write \
             --exclude=codebase
           pnpm exec nx run codebase:codometer:write
-
-      # Versions the ic-suite packages and writes each one's changelog, without
-      # committing, and leaves the remote carrying the release token for the
-      # pushes below. `scripts/release/version-packages.sh` explains why the
-      # release commit is semantic-release's. When `main` moves during the run,
-      # this step or one below sets `RELEASE_SUPERSEDED` and every release step
-      # after it skips: the newer commit's run releases everything this one
-      # would have. `scripts/release/main-tip.sh` explains when each checks.
-      - name: 🏷️ Version Packages
-        if: >-
-          steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-        run: bash scripts/release/version-packages.sh
 
       # semantic-release versions and tags the codebase itself, and creates the
       # `v*` release the README badge shows, never an ic-suite package. Its one
@@ -372,7 +385,8 @@ jobs:
           create-storage-record: false
 
       # The only save of this workflow's Nx cache, which the next release
-      # restores. Every project is built above, so it covers the whole graph.
+      # restores. Every project is built above, at the versions the release
+      # commit carries, so it covers the whole graph of that commit.
       - name: 🧹 Cleanup Codebase
         if: >-
           always() &&
