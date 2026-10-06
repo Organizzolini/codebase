@@ -30,9 +30,9 @@ ignorePaths:
   - "**/coverage"
   - "**/dist"
   - "**/supabase/data.sql"
-  - "**/applications/lexico-ingestion/data/**"
-  - "**/applications/lexico-ingestion/src/modules/literature/literature.constants.ts"
-  - "**/applications/lexico-ingestion/src/modules/library/library.constants.ts"
+  - "**/applications/lexico/lexico-cli/data/**"
+  - "**/applications/lexico/lexico-cli/src/modules/literature/literature.constants.ts"
+  - "**/applications/lexico/lexico-cli/src/modules/library/library.constants.ts"
   - "**/documentation/planning/**"
   # 🌀 Every meander the `draw` command writes. The SVGs are already covered by
   # the `*.svg` entry above; the index page listing them is markup, and its link
@@ -124,7 +124,7 @@ ignorePaths:
   - "**/terraform.tfstate*"
   - coverage
   - dist
-  - applications/lexico-ingestion/data/**
+  - applications/lexico/lexico-cli/data/**
 dictionaryDefinitions:
   - name: astronomy
     path: .cspell/astronomy.txt
@@ -303,7 +303,7 @@ overrides:
   - filename: "**/*.ipynb"
     ignoreRegExpList:
       - notebook-outputs
-  - filename: "**/lexico-ingestion/data/**"
+  - filename: "**/lexico-cli/data/**"
     enabled: false
   # cspell:disable
   # Python spells some of the banned abbreviations itself: `bool` is a builtin type, and

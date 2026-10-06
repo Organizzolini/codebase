@@ -277,13 +277,13 @@ graph LR
   caelundas_cli["caelundas-cli"]
   database["database"]
   lexico_api["lexico-api"]
+  lexico_cli["lexico-cli"]
   lexico_entities["lexico-entities"]
-  lexico_ingestion["lexico-ingestion"]
   meanderaw_cli["meanderaw-cli"]
   caelundas_cli --> database
   lexico_api --> database
+  lexico_cli --> database
   lexico_entities --> database
-  lexico_ingestion --> database
   meanderaw_cli --> database
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class database subject

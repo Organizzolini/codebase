@@ -38,10 +38,10 @@ package-lock.json
 **/packages/components-web/src/components/**
 **/packages/components-web/src/hooks/**
 **/packages/components-web/src/lib/**
-**/applications/lexico-ingestion/data/**
-**/applications/lexico-ingestion/data/library/**
-**/applications/lexico-ingestion/src/modules/literature/literature.constants.ts
-**/applications/lexico-ingestion/src/modules/library/library.constants.ts
+**/applications/lexico/lexico-cli/data/**
+**/applications/lexico/lexico-cli/data/library/**
+**/applications/lexico/lexico-cli/src/modules/literature/literature.constants.ts
+**/applications/lexico/lexico-cli/src/modules/library/library.constants.ts
 **/library.json
 pnpm-lock.yaml
 tmp

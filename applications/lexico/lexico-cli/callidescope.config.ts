@@ -1,7 +1,7 @@
-import { projectDefaults } from "../../configuration/callidescope.config.js";
+import { projectDefaults } from "../../../configuration/callidescope.config.js";
 
 /**
- * What lexico-ingestion is held to, measured rather than assumed.
+ * What lexico-cli is held to, measured rather than assumed.
  *
  * Seventeen is the workspace's own number, and `LexicoIngestionCommand.run`
  * is one of the three stacks pinning it — the workspace configuration names

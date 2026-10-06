@@ -237,8 +237,8 @@ const config: KnipConfig = {
       project: ["src/**/*.ts"],
     },
 
-    // lexico-ingestion: Data ingestion CLI for the Lexico database
-    "applications/lexico-ingestion": {
+    // lexico-cli: Data ingestion CLI for the Lexico database
+    "applications/lexico/lexico-cli": {
       ignore: [
         "testing/**", // Test fixtures and setup
       ],

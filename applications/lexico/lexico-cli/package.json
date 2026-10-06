@@ -45,7 +45,7 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "name": "lexico-ingestion",
+  "name": "lexico-cli",
   "type": "module",
   "typeCoverage": {
     "atLeast": 100,

@@ -12,7 +12,7 @@ Ingest Wiktionary Latin dictionary data into PostgreSQL, parsing HTML pages into
 
 ```bash
 cp .env.default .env  # Fill in required environment variables
-nx run lexico-ingestion:start
+nx run lexico-cli:start
 ```
 
 ## Architecture Overview
@@ -130,10 +130,10 @@ Outputs structured JSON in production (`NODE_ENV=production`) and pretty-printed
 Always prefer running tasks through Nx rather than calling the underlying tools directly.
 
 ```bash
-nx run lexico-ingestion:start           # Run the command-line application
-nx run lexico-ingestion:typecheck-code,lint-code,format-code,deprecate-code,guard-code   # Every static check, in one graph
-nx run lexico-ingestion:typecheck       # tsc --noEmit
-nx run lexico-ingestion:oxfmt           # Formatting
+nx run lexico-cli:start           # Run the command-line application
+nx run lexico-cli:typecheck-code,lint-code,format-code,deprecate-code,guard-code   # Every static check, in one graph
+nx run lexico-cli:typecheck       # tsc --noEmit
+nx run lexico-cli:oxfmt           # Formatting
 ```
 
 ### Testing
@@ -141,9 +141,9 @@ nx run lexico-ingestion:oxfmt           # Formatting
 Follow the codebase's strict three-tier testing strategy. Co-locate test files with the source they test.
 
 ```bash
-nx run lexico-ingestion:vitest:unit          # Fast (<100ms) — pure logic, mocked DI
-nx run lexico-ingestion:vitest:integration   # Moderate (1-2s) — real database/API I/O
-nx run lexico-ingestion:vitest:end-to-end    # Slow (30-60s) — full CLI execution
+nx run lexico-cli:vitest:unit          # Fast (<100ms) — pure logic, mocked DI
+nx run lexico-cli:vitest:integration   # Moderate (1-2s) — real database/API I/O
+nx run lexico-cli:vitest:end-to-end    # Slow (30-60s) — full CLI execution
 ```
 
 | Tier | File pattern | What to test |
@@ -154,7 +154,7 @@ nx run lexico-ingestion:vitest:end-to-end    # Slow (30-60s) — full CLI execut
 
 Project-specific integration tests also cover Wiktionary HTML parsing.
 
-See the [testing-strategy skill](../../.agents/skills/testing-strategy/SKILL.md) and [testing-mocks skill](../../.agents/skills/testing-mocks/SKILL.md) for patterns and mock conventions.
+See the [testing-strategy skill](../../../.agents/skills/testing-strategy/SKILL.md) and [testing-mocks skill](../../../.agents/skills/testing-mocks/SKILL.md) for patterns and mock conventions.
 
 ## Writing Modules
 
@@ -281,7 +281,7 @@ pnpm nx run-many --targets=conformetry-validate
 - **Type imports** — use `import { type Foo }` for type-only imports (enforced by ESLint).
 - **No `any` types** — use `unknown` or proper typing; strict mode is enabled.
 
-See the [write-typescript skill](../../.agents/skills/write-typescript/SKILL.md) for strict mode patterns.
+See the [write-typescript skill](../../../.agents/skills/write-typescript/SKILL.md) for strict mode patterns.
 
 ## Troubleshooting
 
@@ -291,7 +291,7 @@ See the [write-typescript skill](../../.agents/skills/write-typescript/SKILL.md)
 - **Env var validation error on startup** — add the missing variable to environmentSchema in src/constants.ts and to .env.default.
 - **TypeORM entity not found** — register the entity via `TypeOrmModule.forFeature([MyEntity])` in the module that uses it.
 
-See the [triage-integration skill](../../.agents/skills/triage-integration/SKILL.md) for lint and git hook failures.
+See the [triage-integration skill](../../../.agents/skills/triage-integration/SKILL.md) for lint and git hook failures.
 
 ## Key Files
 

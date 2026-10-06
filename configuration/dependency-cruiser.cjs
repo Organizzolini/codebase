@@ -45,7 +45,7 @@ module.exports = {
           String.raw`\.d\.ts$`,
           String.raw`^applications/.+/project\.json$`,
           String.raw`^applications/.+/vitest\.config\.ts$`,
-          String.raw`^applications/lexico-ingestion/src/modules/.+\.(types|constants)\.ts$`,
+          String.raw`^applications/lexico/lexico-cli/src/modules/.+\.(types|constants)\.ts$`,
           String.raw`^documentation/.*\.md$`,
           String.raw`^packages/.+/project\.json$`,
           String.raw`^planning/.*\.md$`,

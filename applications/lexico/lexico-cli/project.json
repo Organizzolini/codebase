@@ -1,8 +1,8 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "name": "lexico-ingestion",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "name": "lexico-cli",
   "projectType": "application",
-  "sourceRoot": "applications/lexico-ingestion",
+  "sourceRoot": "applications/lexico/lexico-cli",
   "tags": [
     "domain:lexico",
     "framework:nest-commander",
@@ -18,14 +18,14 @@
         "assets": [
           {
             "glob": "README.md",
-            "input": "applications/lexico-ingestion",
+            "input": "applications/lexico/lexico-cli",
             "output": "."
           }
         ],
         "generatePackageJson": false,
-        "main": "applications/lexico-ingestion/src/main.ts",
-        "outputPath": "applications/lexico-ingestion/dist",
-        "tsConfig": "applications/lexico-ingestion/tsconfig.build.json"
+        "main": "applications/lexico/lexico-cli/src/main.ts",
+        "outputPath": "applications/lexico/lexico-cli/dist",
+        "tsConfig": "applications/lexico/lexico-cli/tsconfig.build.json"
       },
       "outputs": ["{options.outputPath}"]
     },
