@@ -75,14 +75,17 @@ create_npm_storage_record() {
 # Attesting only those keeps the provenance honest: an attestation says this
 # run built the package, which is untrue of a version an earlier run published.
 # A version this run published is known to be on npm without asking, which
-# matters while npm's metadata has yet to list it.
+# matters while npm's metadata has yet to list it. One package failing to link
+# still lets the others be attested, before the step fails.
 link_npm_packages() {
   local published="${RUNNER_TEMP:?}/newly-published.txt"
   local subjects="${RUNNER_TEMP}/attestation-subjects.txt"
   : >"${subjects}"
   touch "${published}"
-  run_in_parallel link_npm_package "${roots[@]}"
+  local status=0
+  run_in_parallel link_npm_package "${roots[@]}" || status=$?
   if [[ -s "${subjects}" ]]; then echo "attest=true" >>"${GITHUB_OUTPUT:?}"; fi
+  return "${status}"
 }
 
 # Links the package in the given directory, as link_npm_packages describes,
