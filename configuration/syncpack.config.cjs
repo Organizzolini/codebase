@@ -12,6 +12,7 @@ module.exports = {
   source: [
     "package.json",
     "applications/*/package.json",
+    "applications/lexico/*/package.json",
     "applications/meanderaw/*/package.json",
     "packages/*/package.json",
     "packages/ic-suite/*/*/package.json",

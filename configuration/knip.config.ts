@@ -163,7 +163,7 @@ const config: KnipConfig = {
     // `vite.config.mts` rather than imported, so knip is told where they are;
     // both sit under `src/lib/` because `codebase-structure.json` restricts a
     // `src/` root to entry-point names.
-    "applications/lexico": {
+    "applications/lexico/lexico-web": {
       entry: [
         "src/lib/client.tsx",
         "src/lib/routeTree.gen.ts",

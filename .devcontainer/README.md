@@ -332,10 +332,10 @@ docker run hello-world  # Should complete successfully
 pnpm install            # Should complete with no errors
 
 # 4. Start Supabase (lexico)
-nx run lexico:supabase:start  # All services should start
+nx run lexico-web:supabase:start  # All services should start
 
 # 5. Start dev server
-nx run lexico:develop   # Should be accessible at localhost:3000
+nx run lexico-web:develop   # Should be accessible at localhost:3000
 
 # 6. Run tests
 nx run-many --target=test --all  # Tests should pass

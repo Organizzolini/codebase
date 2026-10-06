@@ -1,7 +1,7 @@
 # 📖 Lexico Entities
 
 **The dictionary's shape.** TypeORM entities, PostgreSQL migrations, and the
-shared enumerations for [Lexico](../../applications/lexico/README.md).
+shared enumerations for [Lexico](../../applications/lexico/lexico-web/README.md).
 
 This package is the single definition of what a Latin word _is_ in this suite.
 [lexico-ingestion](../../applications/lexico-ingestion/README.md) writes
@@ -211,7 +211,7 @@ and migrations are verified against the database rather than against a mock.
 
 ## Related
 
-- 🐺 [lexico](../../applications/lexico/README.md) — the web application
+- 🐺 [lexico-web](../../applications/lexico/lexico-web/README.md) — the web application
 - 🚰 [lexico-ingestion](../../applications/lexico-ingestion/README.md) — fills these tables
 - 🎨 [components-web](../components-web/README.md) — the interface
 

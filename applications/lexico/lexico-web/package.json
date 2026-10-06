@@ -26,7 +26,7 @@
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
-  "name": "lexico",
+  "name": "lexico-web",
   "private": true,
   "type": "module",
   "typeCoverage": {

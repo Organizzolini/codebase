@@ -122,7 +122,7 @@ If remote cleanup or rename operations are incorrect, use [restore-code](../rest
 
 ### Scenario 1: Uncommitted feature in lexico
 
-- _Changes_: Modified `applications/lexico/src/components/Button.tsx`
+- _Changes_: Modified `applications/lexico/lexico-web/src/components/Button.tsx`
 - _Derived Name_: `feat/lexico-button-component`
 - _Action_: `git branch backup/old-name/2026-06-22T12-00-00Z`, then `git branch -m feat/lexico-button-component`
 

@@ -81,9 +81,9 @@
     // vite plugin detects a client entry by convention at src/client.tsx,
     // so a relocated one has to be declared. knip names the same paths in
     // its own entry list for the same reason.
-    "applications/lexico/src/lib/client.tsx",
-    "applications/lexico/src/lib/routeTree.gen.ts",
-    "applications/lexico/src/router.tsx",
+    "applications/lexico/lexico-web/src/lib/client.tsx",
+    "applications/lexico/lexico-web/src/lib/routeTree.gen.ts",
+    "applications/lexico/lexico-web/src/router.tsx",
     "applications/caelundas/caelundas-cli/src/modules/caelundas-database/migrations/**/*.ts",
     "packages/lexico-entities/src/modules/lexico-database/migrations/**/*.ts",
     "applications/meanderaw/meanderaw-cli/src/modules/meanderaw-database/migrations/**/*.ts",
@@ -247,8 +247,10 @@
     // `packages/`, including the pure grouping folder `packages/ic-suite`
     // that holds no package.json of its own — it exists only to nest the four
     // IC-suite toolchains one level deeper, at `packages/ic-suite/*/*`, which
-    // is a separate, already-matched pattern. `applications/meanderaw` is
-    // the same kind of grouping folder for the meanderaw applications.
+    // is a separate, already-matched pattern. `applications/lexico` and
+    // `applications/meanderaw` are the same kind of grouping folder for the
+    // lexico and meanderaw applications.
+    "applications/lexico",
     "applications/meanderaw",
     "packages/ic-suite",
     "**/*.min.js",

@@ -1,6 +1,6 @@
 import { defineConfig, mergeConfig } from "vitest/config";
 
-import vitestConfig from "../../configuration/vitest.config";
+import vitestConfig from "../../../configuration/vitest.config";
 
 // Deliberately not merged with `vite.config.mts`: the TanStack Start plugin
 // code-splits every route component into a lazy chunk, which a test would then
@@ -10,7 +10,7 @@ export default mergeConfig(
   defineConfig({
     resolve: {
       alias: {
-        "@": `${import.meta.dirname}/../../packages/components-web/src`,
+        "@": `${import.meta.dirname}/../../../packages/components-web/src`,
       },
     },
     test: {

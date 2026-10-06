@@ -199,8 +199,8 @@ Adds a user profile page where users can view and edit their information.
 ## 🧪 Testing
 
 ```bash
-nx run lexico:vitest
-nx run lexico:develop  # Navigate to /profile
+nx run lexico-web:vitest
+nx run lexico-web:develop  # Navigate to /profile
 ```
 
 ## 🔗 Related
@@ -384,8 +384,8 @@ Adds autocomplete suggestions to the dictionary search input.
 ## 🧪 Testing
 
 ```bash
-nx run lexico:vitest
-nx run lexico:develop
+nx run lexico-web:vitest
+nx run lexico-web:develop
 ```
 
 1. Navigate to search page and type a query.
@@ -464,8 +464,8 @@ Updates TanStack Router to latest version with bug fixes.
 ## 🧪 Testing
 
 ```bash
-nx run lexico:vitest
-nx run lexico:develop
+nx run lexico-web:vitest
+nx run lexico-web:develop
 ```
 
 1. All routes should work as before.
