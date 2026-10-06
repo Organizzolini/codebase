@@ -1,4 +1,4 @@
-import { Injectable, Scope } from "@nestjs/common";
+import { Inject, Injectable, Scope } from "@nestjs/common";
 import DataLoader from "dataloader";
 
 import { Word } from "@codebase/lexico-entities";
@@ -14,7 +14,10 @@ import { LiteratureService } from "./literature.service";
 export class TokenWordLoader {
   // 🏗 Dependency Injection
 
-  public constructor(private readonly literatureService: LiteratureService) {}
+  public constructor(
+    @Inject(LiteratureService)
+    private readonly literatureService: LiteratureService,
+  ) {}
 
   // 🔐 Private Fields
 

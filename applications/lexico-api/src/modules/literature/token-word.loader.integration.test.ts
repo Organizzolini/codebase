@@ -1,6 +1,14 @@
 /* cspell:words arma virumque cano */
 
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
 import { Author, Line, Text, Token, Word } from "@codebase/lexico-entities";
 
@@ -84,6 +92,10 @@ describe("token word loader integration suite", () => {
     );
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   afterAll(async () => {
     await database.stop();
   }, DATABASE_TIMEOUT_MILLISECONDS);
@@ -106,8 +118,6 @@ describe("token word loader integration suite", () => {
       LINE_TOKENS.map((entry) => entry.word),
     );
     expect(find).toHaveBeenCalledTimes(1);
-
-    find.mockRestore();
   });
 
   it("reuses the word relation a line's token listing already loaded", async () => {
@@ -125,7 +135,5 @@ describe("token word loader integration suite", () => {
       LINE_TOKENS.map((entry) => entry.word),
     );
     expect(find).not.toHaveBeenCalled();
-
-    find.mockRestore();
   });
 });

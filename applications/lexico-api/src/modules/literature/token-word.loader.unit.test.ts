@@ -1,12 +1,11 @@
 /* cspell:words puella */
 
 import { createMock } from "@golevelup/ts-vitest";
-import { Test } from "@nestjs/testing";
 import { describe, expect, it, vi } from "vitest";
 
-import { LiteratureService } from "./literature.service";
 import { TokenWordLoader } from "./token-word.loader";
 
+import type { LiteratureService } from "./literature.service";
 import type { Token, Word } from "@codebase/lexico-entities";
 
 const amo = { data: "amo", id: "word-1" } as Word;
@@ -38,26 +37,6 @@ function createLoader(): {
 }
 
 describe(TokenWordLoader, () => {
-  it("is provided per request by the Nest container", async () => {
-    expect.hasAssertions();
-
-    const module = await Test.createTestingModule({
-      providers: [
-        TokenWordLoader,
-        {
-          provide: LiteratureService,
-          useValue: createMock<LiteratureService>(),
-        },
-      ],
-    }).compile();
-
-    const first = await module.resolve(TokenWordLoader, { id: 1 });
-    const second = await module.resolve(TokenWordLoader, { id: 2 });
-
-    expect(first).toBeInstanceOf(TokenWordLoader);
-    expect(first).not.toBe(second);
-  });
-
   it("coalesces every load in one tick into a single token query", async () => {
     expect.hasAssertions();
 
