@@ -243,9 +243,11 @@ jobs:
       # It runs before the build and the reports so that they see the new
       # versions and changelogs: npm then gets a `dist` built from the
       # manifest it is published with, and the run on the release commit
-      # finds every package already built in the cache this job saves. Runs
-      # on `main` queue rather than cancel, so that run starts only after
-      # 🧹 Cleanup Codebase has saved the cache.
+      # finds the packages already built in the cache this job saves. Runs on
+      # `main` queue rather than cancel, so that run starts only after
+      # 🧹 Cleanup Codebase has saved the cache. A package still rebuilds there
+      # when the reports below rewrite its README, or a dependency's, since a
+      # build hashes every file in its project.
       - name: 🏷️ Version Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
