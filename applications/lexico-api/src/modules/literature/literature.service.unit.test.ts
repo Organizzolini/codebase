@@ -8,6 +8,21 @@ import { createRepositoryMock } from "../../../testing/mocks";
 
 import { LiteratureService } from "./literature.service";
 
+import type { Repository } from "typeorm";
+
+/** Stubs a repository so its next connection holds exactly these entities. */
+function stubPage<Entity extends { id: string }>(
+  repository: Repository<Entity>,
+  entities: Entity[],
+): ReturnType<Repository<Entity>["createQueryBuilder"]> {
+  const builder = repository.createQueryBuilder();
+  vi.mocked(builder.getCount).mockResolvedValue(entities.length);
+  vi.mocked(builder.getRawMany).mockResolvedValue(entities);
+  vi.mocked(repository.find).mockResolvedValue(entities);
+  vi.mocked(repository.findBy).mockResolvedValue(entities);
+  return builder;
+}
+
 describe(LiteratureService, () => {
   let service: LiteratureService;
 
@@ -88,7 +103,7 @@ describe(LiteratureService, () => {
     }
     firstAuthor.id = "author-1";
     firstAuthor.name = "Virgil";
-    vi.spyOn(authorRepo, "find").mockResolvedValue(authors);
+    const authorQb = stubPage(authorRepo, authors);
 
     const service = new LiteratureService(
       authorRepo,
@@ -103,6 +118,11 @@ describe(LiteratureService, () => {
     expect(result.totalCount).toBe(1);
     expect(result.edges).toHaveLength(1);
     expect(result.edges[0]?.node).toBe(firstAuthor);
+    expect(authorQb.limit).toHaveBeenCalledWith(11);
+    expect(authorRepo.find).toHaveBeenCalledWith({
+      relations: { texts: true },
+      where: { id: In(["author-1"]) },
+    });
   });
 
   it("finds a text by id or slug and lists paginated text results", async () => {
@@ -111,7 +131,7 @@ describe(LiteratureService, () => {
     const textRepo = createRepositoryMock<Text>();
     const text = Object.assign(new Text(), { id: "text-1", slug: "aeneid" });
     vi.spyOn(textRepo, "findOne").mockResolvedValue(text);
-    vi.spyOn(textRepo, "find").mockResolvedValue([text]);
+    stubPage(textRepo, [text]);
 
     const service = new LiteratureService(
       createRepositoryMock<Author>(),
@@ -142,14 +162,13 @@ describe(LiteratureService, () => {
     line.index = 2;
     line.text = new Text();
 
-    const qb = lineRepo.createQueryBuilder();
-    vi.spyOn(qb, "getMany").mockResolvedValue([line]);
+    const qb = stubPage(lineRepo, [line]);
 
     const tokenRepo = createRepositoryMock<Token>();
     const token = new Token();
     token.id = "token-1";
     token.index = 1;
-    vi.spyOn(tokenRepo, "find").mockResolvedValue([token]);
+    stubPage(tokenRepo, [token]);
 
     const service = new LiteratureService(
       createRepositoryMock<Author>(),
@@ -291,12 +310,9 @@ describe(LiteratureService, () => {
     line.id = "line-1";
     line.data = "arma virumque";
 
-    const authorQb = authorRepo.createQueryBuilder();
-    vi.spyOn(authorQb, "getMany").mockResolvedValue([author]);
-    const textQb = textRepo.createQueryBuilder();
-    vi.spyOn(textQb, "getMany").mockResolvedValue([text]);
-    const lineQb = lineRepo.createQueryBuilder();
-    vi.spyOn(lineQb, "getMany").mockResolvedValue([line]);
+    stubPage(authorRepo, [author]);
+    stubPage(textRepo, [text]);
+    stubPage(lineRepo, [line]);
 
     const service = new LiteratureService(
       authorRepo,
@@ -376,8 +392,7 @@ describe(LiteratureService, () => {
     line.id = "line-1";
     line.data = "arma virumque";
 
-    const qb = lineRepo.createQueryBuilder();
-    vi.spyOn(qb, "getMany").mockResolvedValue([line]);
+    const qb = stubPage(lineRepo, [line]);
 
     const service = new LiteratureService(
       createRepositoryMock<Author>(),
@@ -391,7 +406,7 @@ describe(LiteratureService, () => {
       edges: [{ node: line }],
       totalCount: 1,
     });
-    expect(qb.andWhere).toHaveBeenCalledWith("text.id = :textId", {
+    expect(qb.andWhere).toHaveBeenCalledWith("line.text_id = :textId", {
       textId: "text-1",
     });
   });
@@ -423,12 +438,16 @@ describe(LiteratureService, () => {
 
     const lineCreateQueryBuilder = vi.mocked(lineRepo.createQueryBuilder);
     lineCreateQueryBuilder.mockReturnValue({
+      addOrderBy: vi.fn<() => unknown>().mockReturnThis(),
+      alias: "line",
       andWhere: vi.fn<() => unknown>().mockReturnThis(),
-      getMany: vi.fn<() => Promise<Line[]>>().mockResolvedValue([line]),
-      leftJoinAndSelect: vi.fn<() => unknown>().mockReturnThis(),
+      getCount: vi.fn<() => Promise<number>>().mockResolvedValue(1),
+      getRawMany: vi.fn<() => Promise<Line[]>>().mockResolvedValue([line]),
       orderBy: vi.fn<() => unknown>().mockReturnThis(),
+      select: vi.fn<() => unknown>().mockReturnThis(),
       where: vi.fn<() => unknown>().mockReturnThis(),
     } as never);
+    vi.mocked(lineRepo.findBy).mockResolvedValue([line]);
 
     const service = new LiteratureService(
       authorRepo,
