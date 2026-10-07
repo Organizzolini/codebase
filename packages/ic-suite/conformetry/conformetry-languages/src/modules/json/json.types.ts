@@ -12,6 +12,8 @@ export interface CompareJsonArguments {
 
 /** What structurally comparing two JSON values produced. */
 export interface JsonComparison {
+  /** What each placeholder value stood for — see `DocumentValidationResult`. */
+  readonly captures?: Readonly<Record<string, string>>;
   readonly differences: ConformetryDifference[];
   /** Template nodes the walk weighed the instance against. */
   readonly totalWeight: number;

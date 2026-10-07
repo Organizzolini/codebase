@@ -51,9 +51,15 @@ template that nothing validates afterwards.
 
 ### Instance groups: where output already lives
 
-`instances` is a list of groups, each with optional `patterns`, `tags`,
-`substitutions`, and `threshold`. Groups exist so substitutions — and the
-conformance bar — can differ per set of paths.
+`instances` is a list of groups, each with optional `patterns`, `exclude`,
+`tags`, `substitutions`, and `threshold`. Groups exist so substitutions — and
+the conformance bar — can differ per set of paths.
+
+`exclude` lists workspace-relative globs for paths that are never instances. A
+directory or file the patterns found is dropped when an `exclude` glob matches
+it, with or without `tags`. Use it for vendored or generated code that sits
+among real instances, such as shadcn's component output:
+`exclude: ["applications/lexico/src/components/ui/**"]`.
 
 Under the Nx plugin, `tags` is what changes a group's meaning:
 
@@ -121,10 +127,28 @@ Four naming-case variants are always available, derived from the name:
 Explicit inputs and configured substitutions are applied _last_, so they always
 beat a derived variant of the same name.
 
-**An interpolated placeholder nobody supplied raises
-`MissingSubstitutionError`**, naming the placeholder and the template file, on
-generation and validation alike. So a typo in a placeholder name fails loudly
-rather than leaving a silent hole in content or an empty segment in a path.
+**Generation refuses a placeholder nobody supplied.** It raises
+`MissingSubstitutionError`, naming the placeholder and the template file, so a
+typo fails loudly rather than leaving a silent hole or an empty path segment.
+
+**Validation reads a placeholder nobody supplied from the instance.** It
+renders a random stand-in for the placeholder and compares as usual. Where a
+template node holding the stand-in aligns with an instance node, the instance's
+text at that spot is captured. The first capture wins, in file order and then
+document order. The template is rendered again with that value and compared
+again, so a later use holding different text is an ordinary difference. When
+nothing aligns, validation reports
+`Could not infer {{path}}: no instance node aligned with the template text that uses it`
+and the instance fails at any threshold.
+
+- `name` and its variants are never inferred; they come from the instance path.
+- A configured `substitutions` value always wins over inference.
+- Capture follows each language's own matching: a TypeScript node key (a
+  string literal, a declaration name such as `class {{commandName}}Command`, a
+  call's first argument), a JSON value, a Markdown node's text such as a
+  heading, a plain-text line. The literal text around the placeholder must
+  match exactly. Python, Jupyter, comments, and file paths capture nothing, so
+  a placeholder used only there must be supplied.
 
 Two things are still permissive, and are how a template asks for something
 optional:
@@ -135,8 +159,9 @@ optional:
 - **A supplied empty value.** `substitutions: { owner: "" }` is an answer.
   Only an absent key is a hole.
 
-Adding a placeholder to a template is therefore a breaking change for every
-instance group that does not supply it. Add the substitution in the same change.
+Adding a placeholder to a template is therefore safe for validation only when
+every instance shows the value somewhere the comparison aligns. Otherwise add
+the substitution in the same change.
 
 ### There is no conditional-file mechanism
 
@@ -212,7 +237,7 @@ answer configuration questions:
   and why declaring the same glob twice is a mistake.
 - **`nx-host`** — tag-scoped instance groups, and what a host without a project
   graph does with them.
-- **`failure-modes`** — a placeholder nobody supplied, rendered as an empty
-  string on both sides of the loop rather than as an error.
+- **`failure-modes`** — a placeholder nobody supplied and no instance text
+  reveals, refused by generation and reported by validation.
 
 See [its AGENTS.md](https://github.com/Organizzolini/codebase/blob/main/packages/ic-suite/conformetry/conformetry-examples/AGENTS.md) for the full index.

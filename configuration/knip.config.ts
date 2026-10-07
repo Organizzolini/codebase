@@ -185,7 +185,6 @@ const config: KnipConfig = {
         // Apollo 5's Express integration, which @nestjs/apollo resolves by
         // name at startup; without it GraphQLModule refuses to boot.
         "@as-integrations/express5",
-        "typeorm", // Used by testing/mocks.ts for repository mocks
       ],
       project: "src/**/*.ts",
     },
@@ -229,18 +228,13 @@ const config: KnipConfig = {
     "packages/lexico-entities": {
       entry: [
         "src/index.ts",
-        "scripts/**/*.ts",
-        "src/modules/database/data-source.constants.ts",
-        "src/modules/database/migrations/**/*.ts",
+        "src/modules/lexico-database/data-source.constants.ts",
+        "src/modules/lexico-database/migrations/**/*.ts",
       ],
       ignore: [
-        "src/modules/database/database.module.ts", // Conformance-generated module stub, not yet exported
         "src/modules/entities/entities.module.ts", // Conformance-generated module stub, not yet exported
       ],
-      ignoreDependencies: [
-        "@testcontainers/postgresql", // Used by integration helper in packages/lexico-entities/testing (outside knip project scope)
-      ],
-      project: ["src/**/*.ts", "scripts/**/*.ts"],
+      project: ["src/**/*.ts"],
     },
 
     // lexico-ingestion: Data ingestion CLI for the Lexico database

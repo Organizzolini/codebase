@@ -1,7 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, JoinColumn, ManyToOne, Unique } from "typeorm";
 
-import { AuditableEntity } from "../base/Auditable.entity";
+import { DeletableEntity } from "../base/Deletable.entity";
 
 import type { Lexeme } from "./Lexeme.entity";
 
@@ -28,11 +28,10 @@ export const pronunciationVariants = Object.values(
   comment:
     "A pronunciation variant (classical, ecclesiastical, or vulgar) for a Latin lexeme",
   name: "pronunciations",
-  schema: "public",
 })
 @ObjectType()
 @Unique(["lexeme", "variant"])
-export class Pronunciation extends AuditableEntity {
+export class Pronunciation extends DeletableEntity {
   @Index()
   @JoinColumn()
   @ManyToOne("Lexeme", "pronunciations", {

@@ -1,7 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 
-import { AuditableEntity } from "../base/Auditable.entity";
+import { DeletableEntity } from "../base/Deletable.entity";
 
 import type { Lexeme } from "./Lexeme.entity";
 
@@ -11,10 +11,9 @@ import type { Lexeme } from "./Lexeme.entity";
 @Entity({
   comment: "An English translation of a Latin dictionary entry",
   name: "translations",
-  schema: "public",
 })
 @ObjectType()
-export class Translation extends AuditableEntity {
+export class Translation extends DeletableEntity {
   constructor(data: string, lexeme?: Lexeme) {
     super();
     this.data = data;

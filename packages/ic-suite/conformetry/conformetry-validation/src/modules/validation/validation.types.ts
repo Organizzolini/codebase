@@ -16,6 +16,13 @@ export interface InstanceFileResults {
   readonly totalWeight: number;
 }
 
+/** An instance with its inferred placeholders substituted. */
+export interface PlaceholderInference {
+  readonly instance: MatchedInstance;
+  /** The stand-in of every placeholder nothing revealed, keyed by name. */
+  readonly missing: Record<string, string>;
+}
+
 /** Arguments for one validation run. */
 export interface RunValidationArguments {
   /**

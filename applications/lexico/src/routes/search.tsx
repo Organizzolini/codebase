@@ -27,6 +27,11 @@ const searchSchema = z.object({
   query: z.string().optional(),
 });
 
+// 🧭 Route
+
+/**
+ * Searches the dictionary by English or Latin query.
+ */
 export const Route = createFileRoute("/search")({
   component: SearchPage,
   validateSearch: searchSchema,
@@ -60,12 +65,15 @@ function EmptyResults(properties: EmptyResultsProperties): ReactNode {
   );
 }
 
+// 🧩 Component
+
 /**
  * Search page component that allows users to search for Latin entries.
  *
  * @returns React node.
  */
 function SearchPage(): ReactNode {
+  // 🪝 Hooks
   const navigate = useNavigate({ from: "/search" });
   const { query: urlQuery } = Route.useSearch();
   const [query, setQuery] = useState<string>(urlQuery ?? "");
@@ -93,6 +101,7 @@ function SearchPage(): ReactNode {
     }
   }, [debouncedQuery, urlQuery, navigate]);
 
+  // 🏗 Setup
   const performSearch = useCallback(async (searchQuery: string) => {
     if (!searchQuery.trim()) {
       setResults([]);
@@ -121,8 +130,16 @@ function SearchPage(): ReactNode {
     void performSearch(debouncedQuery);
   }, [debouncedQuery, performSearch]);
 
+  // 💪 Handlers
+
+  // ♻️ Lifecycle
+
+  // 🏁 Early Returns
+
+  // 🎨 Markup
   return (
-    <div className="space-y-6">
+    <section className="space-y-6">
+      <h1 className="sr-only">Search</h1>
       <div className="mx-auto max-w-2xl">
         <Input
           ref={inputReference}
@@ -155,7 +172,7 @@ function SearchPage(): ReactNode {
       )}
 
       {!query && <WelcomeCard />}
-    </div>
+    </section>
   );
 }
 

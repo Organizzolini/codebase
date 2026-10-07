@@ -9,6 +9,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { ValidationModule } from "./validation.module";
 import { ValidationService } from "./validation.service";
 
+import type { RunValidationResult } from "./validation.types";
 import type { TemplateDefinition } from "@conformetry/configuration";
 
 /** Writes an instance directory, optionally dropping the markdown file. */
@@ -61,6 +62,45 @@ async function createTemplatePath(): Promise<string> {
   );
 
   return templatePath;
+}
+
+/** Writes each file under a fresh directory and returns that directory. */
+async function writeTree(args: {
+  files: Record<string, string>;
+  prefix: string;
+}): Promise<string> {
+  const directoryPath = await mkdtemp(path.join(tmpdir(), args.prefix));
+
+  for (const [filePath, content] of Object.entries(args.files)) {
+    await mkdir(path.dirname(path.join(directoryPath, filePath)), {
+      recursive: true,
+    });
+    await writeFile(path.join(directoryPath, filePath), content, "utf8");
+  }
+
+  return directoryPath;
+}
+
+/** A route whose path no substitution supplies, and a test repeating it. */
+const ROUTE_TEMPLATE_FILES = {
+  "{{nameKebabCase}}/{{nameKebabCase}}.route.test.ts":
+    'it("renders", async () => {\n  await renderRoute("{{path}}");\n  expect(readPath()).toBe("{{path}}");\n});\n',
+  "{{nameKebabCase}}/{{nameKebabCase}}.route.ts":
+    'export const Route = createFileRoute("{{path}}")({});\n',
+};
+
+/** Writes a route instance, its test asserting `assertedPath`. */
+async function createRouteInstance(args: {
+  assertedPath: string;
+  routePath: string;
+}): Promise<string> {
+  return writeTree({
+    files: {
+      "word/word.route.test.ts": `it("renders", async () => {\n  await renderRoute("${args.routePath}");\n  expect(readPath()).toBe("${args.assertedPath}");\n});\n`,
+      "word/word.route.ts": `export const Route = createFileRoute("${args.routePath}")({});\n`,
+    },
+    prefix: "conformetry-validate-route-",
+  });
 }
 
 describe(ValidationService, () => {
@@ -166,6 +206,158 @@ describe(ValidationService, () => {
       expect(result.ok).toBe(false);
       expect(result.unmatched[0]?.reason).toBe("no-match");
       expect(result.checkedPaths).toStrictEqual([]);
+    });
+  });
+
+  describe("placeholders nothing supplied", () => {
+    let routeTemplates: TemplateDefinition[];
+
+    beforeAll(async () => {
+      const module = await Test.createTestingModule({
+        imports: [ValidationModule],
+      }).compile();
+      const configurationService = await module.resolve(ConfigurationService);
+
+      routeTemplates = [
+        configurationService.collectTemplate({
+          name: "route",
+          templatePath: await writeTree({
+            files: ROUTE_TEMPLATE_FILES,
+            prefix: "conformetry-validate-route-template-",
+          }),
+        }),
+      ];
+    });
+
+    it("infers the value from the instance and passes a consistent one", async () => {
+      const instancePath = await createRouteInstance({
+        assertedPath: "/word/$id",
+        routePath: "/word/$id",
+      });
+
+      const result = service.validate({
+        instances: [{ nameStem: "word", path: instancePath }],
+        templates: routeTemplates,
+      });
+
+      expect(result.fileResults).toStrictEqual([]);
+      expect(result.ok).toBe(true);
+    });
+
+    it("reports a later occurrence holding a different value as a difference", async () => {
+      const instancePath = await createRouteInstance({
+        assertedPath: "/word",
+        routePath: "/word/$id",
+      });
+
+      const result = service.validate({
+        instances: [{ nameStem: "word", path: instancePath }],
+        templates: routeTemplates,
+      });
+
+      expect(result.ok).toBe(false);
+      expect(result.fileResults[0]?.filename).toBe("word.route.test.ts");
+      expect(result.fileResults[0]?.differences[0]?.differenceType).toBe(
+        "code",
+      );
+    });
+
+    it("reports a placeholder no instance node revealed, failing at any threshold", async () => {
+      const instancePath = await writeTree({
+        files: {
+          "word/word.route.test.ts": "it();\n",
+          "word/word.route.ts": "export const Route = 1;\n",
+        },
+        prefix: "conformetry-validate-route-",
+      });
+
+      const result = service.validate({
+        instances: [{ nameStem: "word", path: instancePath }],
+        templates: routeTemplates,
+        threshold: 0,
+      });
+      const messages = result.fileResults.flatMap((fileResult) => {
+        return fileResult.differences.map((difference) => difference.message);
+      });
+
+      expect(result.ok).toBe(false);
+      expect(result.scores[0]?.score).toBeLessThan(1);
+      expect(messages).toContain(
+        "Could not infer {{path}}: no instance node aligned with the template text that uses it",
+      );
+      expect(messages.join("\n")).not.toMatch(/conformetry[0-9a-f]{32}/);
+    });
+
+    it("tolerates a discovery service that records or prepares nothing", async () => {
+      const instancePath = await createRouteInstance({
+        assertedPath: "/word/$id",
+        routePath: "/word/$id",
+      });
+      const realModule = await Test.createTestingModule({
+        imports: [ValidationModule],
+      }).compile();
+      const real = await realModule.resolve(ConfigurationService);
+      const validateWith = async (
+        matchInstances: ConfigurationService["matchInstances"],
+      ): Promise<RunValidationResult> => {
+        const module = await Test.createTestingModule({
+          imports: [ValidationModule],
+        })
+          .overrideProvider(ConfigurationService)
+          .useValue({
+            matchInstances,
+            prepareDocuments: () => [],
+            resolveInstanceFiles: real.resolveInstanceFiles.bind(real),
+          })
+          .compile();
+
+        const validation = await module.resolve(ValidationService);
+
+        return validation.validate({
+          instances: [{ nameStem: "word", path: instancePath }],
+          templates: routeTemplates,
+        });
+      };
+
+      // Nothing prepared means nothing to capture from, so the placeholder
+      // is reported rather than the run failing.
+      const unprepared = await validateWith(real.matchInstances.bind(real));
+      // An instance recording no stand-ins has nothing left to infer.
+      const unrecorded = await validateWith((args) => {
+        const resolved = real.matchInstances(args);
+
+        return {
+          ...resolved,
+          matched: resolved.matched.map(
+            ({ placeholderValues: _ignored, ...matched }) => matched,
+          ),
+        };
+      });
+
+      expect(unprepared.fileResults[0]?.differences[0]?.differenceType).toBe(
+        "placeholder",
+      );
+      expect(unrecorded.ok).toBe(true);
+    });
+
+    it("lets a configured substitution win over inference", async () => {
+      const instancePath = await createRouteInstance({
+        assertedPath: "/word/$id",
+        routePath: "/word/$id",
+      });
+
+      const result = service.validate({
+        instances: [
+          {
+            nameStem: "word",
+            path: instancePath,
+            substitutions: { path: "/elsewhere" },
+          },
+        ],
+        templates: routeTemplates,
+      });
+
+      expect(result.ok).toBe(false);
     });
   });
 

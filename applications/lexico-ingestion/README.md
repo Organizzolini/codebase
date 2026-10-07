@@ -833,9 +833,11 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 <!-- codependix:start name="codependix-nx-projects" -->
 ```mermaid
 graph LR
+  database["database"]
   lexico_entities["lexico-entities"]
   lexico_ingestion["lexico-ingestion"]
   logging["logging"]
+  lexico_ingestion --> database
   lexico_ingestion --> lexico_entities
   lexico_ingestion --> logging
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
@@ -859,6 +861,7 @@ flowchart LR
   FormsModule
   LatinLibraryModule
   LexemesModule
+  LexicoDatabaseModule
   LexicoIngestionModule
   LibraryModule
   LiteratureModule
@@ -874,7 +877,7 @@ flowchart LR
   TypeOrmModule
   WiktionaryModule
   WordsModule
-  ClearModule --> DatabaseModule
+  ClearModule --> LexicoDatabaseModule
   ClearModule --> TypeOrmModule
   DatabaseModule --> TypeOrmModule
   DictionaryModule --> FormsModule
@@ -894,19 +897,20 @@ flowchart LR
   LexemesModule --> TranslationsModule
   LexemesModule --> TypeOrmModule
   LexemesModule --> WordsModule
+  LexicoDatabaseModule --> DatabaseModule
   LexicoIngestionModule --> ClearModule
   LexicoIngestionModule --> CorpusScriptorumEcclesiasticorumLatinorumModule
-  LexicoIngestionModule --> DatabaseModule
   LexicoIngestionModule --> DictionaryModule
   LexicoIngestionModule --> EpigraphikDatenbankClaussSlabyModule
   LexicoIngestionModule --> LatinLibraryModule
+  LexicoIngestionModule --> LexicoDatabaseModule
   LexicoIngestionModule --> LibraryModule
   LexicoIngestionModule --> LiteratureModule
   LexicoIngestionModule --> ManualModule
   LexicoIngestionModule --> PerseusModule
   LexicoIngestionModule --> WiktionaryModule
   LexicoIngestionModule --> WordsModule
-  LiteratureModule --> DatabaseModule
+  LiteratureModule --> LexicoDatabaseModule
   LiteratureModule --> NumeralsModule
   LiteratureModule --> TypeOrmModule
   MainModule --> DiscoveryModule

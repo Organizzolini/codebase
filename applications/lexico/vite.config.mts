@@ -44,6 +44,9 @@ export default defineConfig({
       },
       router: {
         generatedRouteTree: "lib/routeTree.gen.ts",
+        // Route tests sit beside the routes they test, so the route
+        // generator skips them rather than treating each one as a route.
+        routeFileIgnorePattern: String.raw`\.test\.`,
       },
     }),
     // React plugin must come after TanStack Start plugin

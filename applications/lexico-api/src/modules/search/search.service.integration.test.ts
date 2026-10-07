@@ -1,122 +1,181 @@
-/* cspell:words absque atque bonis bonisve denique diligo FULLTEXT neque puella puellam puellamque quinque vides videsne vocabant voco */
+/* cspell:words diligo FULLTEXT puella puellam puellamque tabula vocabant voco */
 
 import { createMock } from "@golevelup/ts-vitest";
-import { describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import {
   FiniteVerbForm,
+  type Form,
   Lexeme,
   NominalForm,
+  type PartOfSpeech,
   Translation,
   Word,
   WordForm,
   WordLexeme,
 } from "@codebase/lexico-entities";
 
-import { createRepositoryMock } from "../../../testing/mocks";
+import {
+  DATABASE_TIMEOUT_MILLISECONDS,
+  startLexicoDatabaseTestingModule,
+} from "../../../testing/database";
 import { MacronsService } from "../macrons/macrons.service";
 
 import { SearchMatchSource } from "./search.entities";
 import { SearchService } from "./search.service";
 
+import type { DatabaseTestingModule } from "@codebase/database/testing";
 import type { LoggerService } from "@codebase/logging";
 
+/** One headword to seed, with the English senses it translates to. */
+interface SeededLexeme {
+  readonly forms?: readonly Form[];
+  readonly lemma: string;
+  readonly meanings: readonly string[];
+  readonly partOfSpeech: PartOfSpeech;
+}
+
+/**
+ * Searches a real `lexico_testing` database, built by lexico's migrations,
+ * so each tier's SQL — exact and prefix headwords, inflected words, and
+ * English full-text ranking — runs against the schema the API reads.
+ */
 describe("search service integration suite", () => {
-  it("integrates Latin dictionary search across exact lemma, word forms, prefix, and enclitic parsing", async () => {
-    expect.hasAssertions();
+  let database: DatabaseTestingModule;
+  let service: SearchService;
 
-    const puellaLexeme = new Lexeme();
-    puellaLexeme.id = "lex-puella";
-    puellaLexeme.lemma = "puella";
-    puellaLexeme.partOfSpeech = "noun";
-    puellaLexeme.translations = [new Translation("girl", puellaLexeme)];
+  /** Saves a lexeme with its translations and forms, cascading all three. */
+  async function seedLexeme(seed: SeededLexeme): Promise<Lexeme> {
+    const lexeme = new Lexeme();
+    lexeme.lemma = seed.lemma;
+    lexeme.partOfSpeech = seed.partOfSpeech;
+    lexeme.forms = [...(seed.forms ?? [])];
+    lexeme.translations = seed.meanings.map(
+      (meaning) => new Translation(meaning, lexeme),
+    );
 
-    const amoLexeme = new Lexeme();
-    amoLexeme.id = "lex-amo";
-    amoLexeme.lemma = "amo";
-    amoLexeme.partOfSpeech = "verb";
+    return database.repository(Lexeme).save(lexeme);
+  }
 
-    const nominalForm = new NominalForm();
-    nominalForm.case = "accusative";
-    nominalForm.number = "singular";
+  /** Saves an inflected word linked to one form of one lexeme. */
+  async function seedWord(
+    data: string,
+    lexeme: Lexeme,
+    form: Form,
+  ): Promise<void> {
+    const word = new Word();
+    word.data = data;
+    const savedWord = await database.repository(Word).save(word);
 
     const wordForm = new WordForm();
-    wordForm.form = nominalForm;
+    wordForm.form = form;
+    wordForm.word = savedWord;
+    await database.repository(WordForm).save(wordForm);
 
     const wordLexeme = new WordLexeme();
-    wordLexeme.lexeme = puellaLexeme;
+    wordLexeme.lexeme = lexeme;
+    wordLexeme.word = savedWord;
+    await database.repository(WordLexeme).save(wordLexeme);
+  }
 
-    const puellamWord = new Word();
-    puellamWord.id = "word-1";
-    puellamWord.data = "puellam";
-    puellamWord.wordForms = [wordForm];
-    puellamWord.wordLexemes = [wordLexeme];
-
-    const mockLexemeRepo = createRepositoryMock<Lexeme>();
-    const mockWordRepo = createRepositoryMock<Word>();
-    const mockTranslationRepo = createRepositoryMock<Translation>();
-
-    const lexemeQb = mockLexemeRepo.createQueryBuilder();
-    vi.spyOn(lexemeQb, "getMany").mockResolvedValue([puellaLexeme]);
-
-    const wordQb = mockWordRepo.createQueryBuilder();
-    vi.spyOn(wordQb, "getMany").mockResolvedValue([puellamWord]);
-
-    const service = new SearchService(
-      mockLexemeRepo,
-      mockWordRepo,
-      mockTranslationRepo,
+  beforeAll(async () => {
+    database = await startLexicoDatabaseTestingModule([
+      Lexeme,
+      Translation,
+      Word,
+      WordForm,
+      WordLexeme,
+    ]);
+    service = new SearchService(
+      database.repository(Lexeme),
+      database.repository(Word),
+      database.repository(Translation),
       new MacronsService(),
       createMock<LoggerService>(),
     );
+  }, DATABASE_TIMEOUT_MILLISECONDS);
+
+  afterAll(async () => {
+    await database.close();
+  }, DATABASE_TIMEOUT_MILLISECONDS);
+
+  it("integrates Latin dictionary search across word forms and enclitic parsing", async () => {
+    expect.hasAssertions();
+
+    const accusative = new NominalForm();
+    accusative.case = "accusative";
+    accusative.number = "singular";
+    const puella = await seedLexeme({
+      forms: [accusative],
+      lemma: "puella",
+      meanings: ["girl"],
+      partOfSpeech: "noun",
+    });
+    await seedWord("puellam", puella, accusative);
 
     const result = await service.searchLatin("puellamque");
 
-    expect(result.edges.length).toBeGreaterThan(0);
     expect(result.totalCount).toBe(1);
-    expect(result.edges[0]?.node.enclitic).toBe("que");
+    expect(result.edges[0]?.node).toMatchObject({
+      enclitic: "que",
+      lexeme: { id: puella.id },
+      source: SearchMatchSource.WORD_EXACT,
+    });
     expect(result.edges[0]?.node.identifiers).toContain("accusative singular");
-    expect(result.edges[0]?.node.lexeme.id).toBe("lex-puella");
     expect(result.pageInfo.startCursor).toBeDefined();
     expect(result.pageInfo.endCursor).toBeDefined();
+  });
+
+  it("matches a headword both whole and as a stem with its enclitic split off", async () => {
+    expect.hasAssertions();
+
+    const si = await seedLexeme({
+      lemma: "si",
+      meanings: ["if"],
+      partOfSpeech: "conjunction",
+    });
+    const sine = await seedLexeme({
+      lemma: "sine",
+      meanings: ["without"],
+      partOfSpeech: "preposition",
+    });
+
+    const result = await service.searchLatin("sine");
+    const nodes = new Map(
+      result.edges.map((edge) => [edge.node.lexeme.id, edge.node]),
+    );
+
+    // 🧩 The whole query keeps no enclitic; its stem carries the split-off "-ne".
+    expect(result.totalCount).toBe(2);
+    expect(nodes.get(sine.id)).toMatchObject({
+      enclitic: null,
+      source: SearchMatchSource.LEMMA_EXACT,
+    });
+    expect(nodes.get(si.id)).toMatchObject({
+      enclitic: "ne",
+      source: SearchMatchSource.LEMMA_EXACT,
+    });
   });
 
   it("integrates Relay keyset pagination forward and backward on multi-page search results", async () => {
     expect.hasAssertions();
 
-    const lexemes = Array.from({ length: 5 }, (_, index) => {
-      const lexeme = new Lexeme();
-      lexeme.id = `lex-${index + 1}`;
-      lexeme.lemma = `word${index + 1}`;
-      lexeme.partOfSpeech = "noun";
-      lexeme.translations = [new Translation(`meaning ${index + 1}`, lexeme)];
-      return lexeme;
-    });
+    for (let index = 1; index <= 5; index++) {
+      await seedLexeme({
+        lemma: `tabula${index}`,
+        meanings: [`board ${index}`],
+        partOfSpeech: "noun",
+      });
+    }
 
-    const mockLexemeRepo = createRepositoryMock<Lexeme>();
-    const mockWordRepo = createRepositoryMock<Word>();
-    const mockTranslationRepo = createRepositoryMock<Translation>();
+    const page1 = await service.searchLatin("tabula", { first: 2 });
 
-    const lexemeQb = mockLexemeRepo.createQueryBuilder();
-    vi.spyOn(lexemeQb, "getMany").mockResolvedValue(lexemes);
-
-    const service = new SearchService(
-      mockLexemeRepo,
-      mockWordRepo,
-      mockTranslationRepo,
-      new MacronsService(),
-      createMock<LoggerService>(),
-    );
-
-    // Forward pagination: Page 1 (first: 2)
-    const page1 = await service.searchLatin("word", { first: 2 });
-
+    expect(page1.totalCount).toBe(5);
     expect(page1.edges).toHaveLength(2);
     expect(page1.pageInfo.hasNextPage).toBe(true);
     expect(page1.pageInfo.hasPreviousPage).toBe(false);
 
-    // Forward pagination: Page 2 (first: 2, after: page1.endCursor)
-    const page2 = await service.searchLatin("word", {
+    const page2 = await service.searchLatin("tabula", {
       after: page1.pageInfo.endCursor,
       first: 2,
     });
@@ -125,8 +184,7 @@ describe("search service integration suite", () => {
     expect(page2.pageInfo.hasNextPage).toBe(true);
     expect(page2.pageInfo.hasPreviousPage).toBe(true);
 
-    // Forward pagination: Page 3 (first: 2, after: page2.endCursor)
-    const page3 = await service.searchLatin("word", {
+    const page3 = await service.searchLatin("tabula", {
       after: page2.pageInfo.endCursor,
       first: 2,
     });
@@ -135,8 +193,7 @@ describe("search service integration suite", () => {
     expect(page3.pageInfo.hasNextPage).toBe(false);
     expect(page3.pageInfo.hasPreviousPage).toBe(true);
 
-    // Backward pagination: (last: 2, before: page3.startCursor)
-    const backwardPage = await service.searchLatin("word", {
+    const backwardPage = await service.searchLatin("tabula", {
       before: page3.pageInfo.startCursor,
       last: 2,
     });
@@ -150,50 +207,34 @@ describe("search service integration suite", () => {
   it("integrates English full-text search with database ranking and lexeme hydration", async () => {
     expect.hasAssertions();
 
-    const lexemeAmo = new Lexeme();
-    lexemeAmo.id = "lex-amo";
-    lexemeAmo.lemma = "amo";
-
-    const lexemeDiligo = new Lexeme();
-    lexemeDiligo.id = "lex-diligo";
-    lexemeDiligo.lemma = "diligo";
-
-    lexemeAmo.translations = [
-      new Translation("love, to cherish", lexemeAmo),
-      new Translation("beloved, dear", lexemeAmo),
-    ];
-    lexemeDiligo.translations = [new Translation("love", lexemeDiligo)];
-
-    const mockLexemeRepo = createRepositoryMock<Lexeme>();
-    const mockWordRepo = createRepositoryMock<Word>();
-    const mockTranslationRepo = createRepositoryMock<Translation>();
-
-    const translationQb = mockTranslationRepo.createQueryBuilder();
-    vi.spyOn(translationQb, "getRawMany").mockResolvedValue([
-      { lexemeId: "lex-diligo", score: "1" },
-      { lexemeId: "lex-amo", score: "0.8" },
-    ]);
-
-    const lexemeQb = mockLexemeRepo.createQueryBuilder();
-    vi.spyOn(lexemeQb, "getMany").mockResolvedValue([lexemeAmo, lexemeDiligo]);
-
-    const service = new SearchService(
-      mockLexemeRepo,
-      mockWordRepo,
-      mockTranslationRepo,
-      new MacronsService(),
-      createMock<LoggerService>(),
-    );
+    const amo = await seedLexeme({
+      lemma: "amo",
+      meanings: ["love, to cherish", "beloved, dear"],
+      partOfSpeech: "verb",
+    });
+    const diligo = await seedLexeme({
+      lemma: "diligo",
+      meanings: ["love"],
+      partOfSpeech: "verb",
+    });
+    await seedLexeme({
+      lemma: "Amor",
+      meanings: ["Love, the god"],
+      partOfSpeech: "properNoun",
+    });
 
     const result = await service.searchEnglish("love");
 
-    expect(result.edges).toHaveLength(2);
+    // 🎯 The exact translation outranks the prefix one; proper nouns never rank.
     expect(result.totalCount).toBe(2);
-    // Exact match lex-diligo ("love") should rank before prefix match lex-amo ("love, to cherish")
-    expect(result.edges[0]?.node.lexeme.id).toBe("lex-diligo");
-    expect(result.edges[0]?.node.score).toBe(1);
-    expect(result.edges[1]?.node.lexeme.id).toBe("lex-amo");
-    expect(result.edges[1]?.node.score).toBe(0.8);
+    expect(result.edges.map((edge) => edge.node.lexeme.id)).toStrictEqual([
+      diligo.id,
+      amo.id,
+    ]);
+    expect(result.edges[0]?.node.score).toBeGreaterThan(
+      result.edges[1]?.node.score ?? Number.POSITIVE_INFINITY,
+    );
+    expect(result.edges[1]?.node.lexeme.translations).toHaveLength(2);
     expect(result.edges[0]?.node.source).toBe(
       SearchMatchSource.TRANSLATION_FULLTEXT,
     );
@@ -202,48 +243,24 @@ describe("search service integration suite", () => {
   it("handles finite verb morphological identifier resolution in search", async () => {
     expect.hasAssertions();
 
-    const lexeme = new Lexeme();
-    lexeme.id = "lex-voco";
-    lexeme.lemma = "voco";
-    lexeme.translations = [new Translation("call", lexeme)];
-
-    const verbForm = new FiniteVerbForm();
-    verbForm.person = "third";
-    verbForm.number = "plural";
-    verbForm.tense = "imperfect";
-    verbForm.voice = "active";
-    verbForm.mood = "indicative";
-
-    const wordForm = new WordForm();
-    wordForm.form = verbForm;
-
-    const wordLexeme = new WordLexeme();
-    wordLexeme.lexeme = lexeme;
-
-    const word = new Word();
-    word.id = "word-vocabant";
-    word.data = "vocabant";
-    word.wordForms = [wordForm];
-    word.wordLexemes = [wordLexeme];
-
-    const mockLexemeRepo = createRepositoryMock<Lexeme>();
-    const mockWordRepo = createRepositoryMock<Word>();
-    const mockTranslationRepo = createRepositoryMock<Translation>();
-
-    const wordQb = mockWordRepo.createQueryBuilder();
-    vi.spyOn(wordQb, "getMany").mockResolvedValue([word]);
-
-    const service = new SearchService(
-      mockLexemeRepo,
-      mockWordRepo,
-      mockTranslationRepo,
-      new MacronsService(),
-      createMock<LoggerService>(),
-    );
+    const imperfect = new FiniteVerbForm();
+    imperfect.mood = "indicative";
+    imperfect.number = "plural";
+    imperfect.person = "third";
+    imperfect.tense = "imperfect";
+    imperfect.voice = "active";
+    const voco = await seedLexeme({
+      forms: [imperfect],
+      lemma: "voco",
+      meanings: ["call"],
+      partOfSpeech: "verb",
+    });
+    await seedWord("vocabant", voco, imperfect);
 
     const result = await service.searchLatin("vocabant");
 
     expect(result.edges).toHaveLength(1);
+    expect(result.edges[0]?.node.lexeme.id).toBe(voco.id);
     expect(result.edges[0]?.node.identifiers).toContain(
       "third person plural imperfect active indicative",
     );

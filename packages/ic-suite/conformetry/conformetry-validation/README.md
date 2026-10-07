@@ -281,6 +281,7 @@ graph LR
   file_src_modules_validation_validation_deduplication_service_ts --> file_src_modules_validation_validation_types_ts
   file_src_modules_validation_validation_deduplication_service_unit_test_ts --> file_src_modules_validation_validation_deduplication_service_ts
   file_src_modules_validation_validation_deduplication_service_unit_test_ts --> file_src_modules_validation_validation_types_ts
+  file_src_modules_validation_validation_findings_service_ts --> file_src_modules_validation_validation_types_ts
   file_src_modules_validation_validation_findings_service_unit_test_ts --> file_src_modules_validation_validation_findings_service_ts
   file_src_modules_validation_validation_scoring_service_ts --> file_src_modules_validation_validation_constants_ts
   file_src_modules_validation_validation_scoring_service_ts --> file_src_modules_validation_validation_types_ts
@@ -297,6 +298,7 @@ graph LR
   file_src_modules_validation_validation_service_ts --> file_src_modules_validation_validation_types_ts
   file_src_modules_validation_validation_service_unit_test_ts --> file_src_modules_validation_validation_module_ts
   file_src_modules_validation_validation_service_unit_test_ts --> file_src_modules_validation_validation_service_ts
+  file_src_modules_validation_validation_service_unit_test_ts --> file_src_modules_validation_validation_types_ts
 ```
 <!-- codependix:end name="codependix-file-imports" -->
 

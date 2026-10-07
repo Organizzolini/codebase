@@ -1,23 +1,32 @@
 import { Field, ID, ObjectType } from "@nestjs/graphql";
-import { Column, DeleteDateColumn } from "typeorm";
 
-import { UpdatableEntity } from "./Updatable.entity";
+import { DeletableEntity as DatabaseDeletableEntity } from "@codebase/database";
 
-/** Base class providing deletion tracking columns */
+/**
+ * Exposes the shared base columns over GraphQL. Every column, its type, and
+ * its default come from `@codebase/database`; this layer adds only the
+ * `@Field` decorators, so lexico's API schema is unchanged.
+ */
 @ObjectType({ isAbstract: true })
-export abstract class DeletableEntity extends UpdatableEntity {
-  @DeleteDateColumn({
-    comment: "Timestamp when the record was soft-deleted",
-    nullable: true,
-    type: "timestamptz",
-  })
-  @Field(() => Date, { nullable: true })
-  deletedAt?: Date | null;
+export abstract class DeletableEntity extends DatabaseDeletableEntity {
+  @Field(() => Date)
+  declare createdAt: Date;
 
-  @Column("uuid", {
-    comment: "Identifier of the user or process that soft-deleted the record",
-    nullable: true,
-  })
   @Field(() => ID, { nullable: true })
-  deletedBy?: null | string;
+  declare createdBy?: null | string;
+
+  @Field(() => Date, { nullable: true })
+  declare deletedAt?: Date | null;
+
+  @Field(() => ID, { nullable: true })
+  declare deletedBy?: null | string;
+
+  @Field(() => ID)
+  declare id: string;
+
+  @Field(() => Date)
+  declare updatedAt: Date;
+
+  @Field(() => ID, { nullable: true })
+  declare updatedBy?: null | string;
 }

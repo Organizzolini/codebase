@@ -1,11 +1,16 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import "reflect-metadata";
 
-import {
-  createIntegrationTestDatabaseResources,
-  type IntegrationTestDatabaseResources,
-} from "../../../testing/integration-test-data-source";
+import { createDataSource } from "@codebase/database";
+import { startPostgresContainer } from "@codebase/database/testing";
 
+import {
+  LEXICO_DATABASE_ENTITIES,
+  LEXICO_DATABASE_MIGRATIONS,
+} from "../lexico-database/data-source.constants";
+import { LexicoNamingStrategy } from "../lexico-database/lexico-database.constants";
+
+import type { StartedPostgresContainer } from "@codebase/database/testing";
 import type { DataSource } from "typeorm";
 
 interface EntityIntegrationExpectation {
@@ -19,8 +24,12 @@ interface TableIndexSnapshot {
   readonly isUnique: boolean;
 }
 
-const INTEGRATION_SCHEMA_NAME = "public";
+const INTEGRATION_SCHEMA_NAME = "lexico";
+const MIGRATIONS_TABLE_NAME = "migrations";
 const TYPEORM_METADATA_TABLE_NAME = "typeorm_metadata";
+
+/** Starting Postgres and running every migration takes longer than a test. */
+const CONTAINER_TIMEOUT_MILLISECONDS = 120_000;
 
 const ENTITY_INTEGRATION_EXPECTATIONS: Readonly<
   Record<string, EntityIntegrationExpectation>
@@ -162,10 +171,8 @@ const ENTITY_INTEGRATION_EXPECTATIONS: Readonly<
   },
 };
 
+let container: StartedPostgresContainer | undefined;
 let integrationDataSource: DataSource;
-let integrationTestDatabaseResources:
-  | IntegrationTestDatabaseResources
-  | undefined;
 
 async function getTableIndexes(
   dataSource: DataSource,
@@ -335,10 +342,13 @@ async function verifyDatabaseSchema(): Promise<void> {
     INTEGRATION_SCHEMA_NAME,
   );
 
+  expect(tableNames).toContain(MIGRATIONS_TABLE_NAME);
   expect(tableNames).toContain(TYPEORM_METADATA_TABLE_NAME);
 
   const relevantTableNames = tableNames.filter(
-    (tableName) => tableName !== TYPEORM_METADATA_TABLE_NAME,
+    (tableName) =>
+      tableName !== MIGRATIONS_TABLE_NAME &&
+      tableName !== TYPEORM_METADATA_TABLE_NAME,
   );
 
   expect(relevantTableNames).toStrictEqual(
@@ -393,17 +403,72 @@ async function verifyDatabaseSchema(): Promise<void> {
 
 describe("entity integration schema", () => {
   beforeAll(async (): Promise<void> => {
-    integrationTestDatabaseResources =
-      await createIntegrationTestDatabaseResources();
-    integrationDataSource = integrationTestDatabaseResources.dataSource;
-  }, 30_000);
+    container = await startPostgresContainer({
+      migrations: [...LEXICO_DATABASE_MIGRATIONS],
+      project: "lexico",
+    });
+
+    // 🎯 The root `.env`, which Nx loads into every task, names the shared
+    // container's admin login under the unprefixed variables; the data
+    // source must read only `LEXICO_POSTGRES_*`.
+    vi.stubEnv("POSTGRES_DB", "postgres");
+    vi.stubEnv("POSTGRES_USER", "postgres");
+
+    integrationDataSource = createDataSource(
+      {
+        entities: [...LEXICO_DATABASE_ENTITIES],
+        migrations: [...LEXICO_DATABASE_MIGRATIONS],
+        namingStrategy: new LexicoNamingStrategy(),
+        project: "lexico",
+      },
+      { ...process.env, ...container.environment },
+    );
+    await integrationDataSource.initialize();
+  }, CONTAINER_TIMEOUT_MILLISECONDS);
 
   afterAll(async (): Promise<void> => {
-    if (!integrationTestDatabaseResources) {
-      return;
+    if (integrationDataSource.isInitialized) {
+      await integrationDataSource.destroy();
     }
 
-    await integrationTestDatabaseResources.stop();
+    await container?.stop();
+    vi.unstubAllEnvs();
+  }, CONTAINER_TIMEOUT_MILLISECONDS);
+
+  it("connects as lexico_username to lexico_testing", async () => {
+    const [session]: { database: string; role: string }[] =
+      await integrationDataSource.query(
+        "SELECT current_database() AS database, current_user AS role",
+      );
+
+    expect(session).toStrictEqual({
+      database: "lexico_testing",
+      role: "lexico_username",
+    });
+  });
+
+  it("builds the schema from the migration alone, leaving nothing for the entities to change", async () => {
+    const migrations: { name: string }[] = await integrationDataSource.query(
+      `SELECT name FROM "${INTEGRATION_SCHEMA_NAME}"."${MIGRATIONS_TABLE_NAME}"`,
+    );
+    const pending = await integrationDataSource.driver
+      .createSchemaBuilder()
+      .log();
+
+    expect(migrations.map(({ name }) => name)).toStrictEqual(
+      LEXICO_DATABASE_MIGRATIONS.map((migration) => migration.name),
+    );
+    expect(pending.upQueries.map(({ query }) => query)).toStrictEqual([]);
+  });
+
+  it("assigns new rows a uuidv7 id in the database", async () => {
+    const [author]: { id: string }[] = await integrationDataSource.query(
+      `INSERT INTO "${INTEGRATION_SCHEMA_NAME}"."authors" (name, slug) VALUES ('Vergil', 'vergil') RETURNING id`,
+    );
+
+    expect(author?.id).toMatch(
+      /^[\da-f]{8}-[\da-f]{4}-7[\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/,
+    );
   });
 
   it("creates the expected tables, indexes, and uniqueness constraints", async () => {

@@ -59,6 +59,7 @@ export const conformetryConfigurationSchema = z
       instances: z
         .array(
           z.object({
+            exclude: z.array(z.string()).optional(),
             // Optional because a group naming only `tags` is meaningful to a
             // host that resolves them: it names where a generator may be run
             // without claiming anything there is an instance yet.

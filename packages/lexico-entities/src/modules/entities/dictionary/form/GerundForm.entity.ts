@@ -4,7 +4,7 @@ import { ChildEntity, Column } from "typeorm";
 import {
   type FormGerundCase,
   formGerundCaseValues,
-} from "../../../database/database.constants";
+} from "../../../lexico-database/lexico-database.constants";
 
 import { Form } from "./Form.entity";
 

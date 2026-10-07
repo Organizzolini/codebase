@@ -10,6 +10,15 @@ Read this before writing template content in an unfamiliar file type. For
 reading a difference that has already been reported, the `conformetry-validate`
 skill covers the other direction.
 
+**Where a placeholder nobody supplied is read from.** During validation such a
+placeholder renders as a random stand-in, and a template node whose identity
+holds the stand-in is matched as a pattern: literal parts exactly, the
+stand-in capturing a non-empty value. TypeScript captures through any node key
+below — a string literal, a declaration name, a call's `callee:first-argument`
+— against nodes of the same syntax kind. JSON captures through string values,
+Markdown through a node's text such as a heading, and text through a whole line.
+Python, Jupyter, and comments capture nothing.
+
 ## TypeScript and JavaScript — `.ts`, `.tsx`
 
 Compared as a syntax tree. Every declaration in the template must exist
@@ -33,8 +42,12 @@ Two consequences worth planning around:
   in a template and every instance is required to keep that exact wording
   forever. There is no `TODO` escape for strings as there is for comments. Leave
   such values out of the template unless the wording is genuinely a standard.
-- **Function bodies are not compared**, so logic inside a method is free. Only
-  the declarations are the contract.
+- **Function bodies are compared too.** The walk descends into every child
+  node, so each statement a template puts inside a function or method is
+  required in the instance's matching body — matched by its key, or by syntax
+  kind when it has none, so an anonymous statement is satisfied by any
+  statement of that kind. The instance may add statements freely. Keep logic
+  out of a template body unless every instance must contain it.
 
 Comments are checked separately, as an **ordered subsequence**: every comment the
 template declares must appear, in that order, with anything else interleaved

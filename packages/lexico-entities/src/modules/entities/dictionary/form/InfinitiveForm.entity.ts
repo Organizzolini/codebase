@@ -6,7 +6,7 @@ import {
   formNonFiniteTenseValues,
   type FormVoice,
   formVoiceValues,
-} from "../../../database/database.constants";
+} from "../../../lexico-database/lexico-database.constants";
 
 import { Form } from "./Form.entity";
 

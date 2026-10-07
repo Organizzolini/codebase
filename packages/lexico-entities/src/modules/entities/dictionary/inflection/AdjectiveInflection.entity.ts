@@ -6,7 +6,7 @@ import {
   type AdjectiveDegree,
   adjectiveDegreeValues,
   inflectionDeclensionValues,
-} from "../../../database/database.constants";
+} from "../../../lexico-database/lexico-database.constants";
 
 import { Inflection } from "./Inflection.entity";
 

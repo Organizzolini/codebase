@@ -23,9 +23,11 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 <!-- codependix:start name="codependix-nx-projects" -->
 ```mermaid
 graph LR
+  database["database"]
   lexico_api["lexico-api"]
   lexico_entities["lexico-entities"]
   logging["logging"]
+  lexico_api --> database
   lexico_api --> lexico_entities
   lexico_api --> logging
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
@@ -135,6 +137,7 @@ graph LR
   file_src_modules_words_words_service_ts["src/modules/words/words.service.ts"]
   file_src_modules_words_words_service_unit_test_ts["src/modules/words/words.service.unit.test.ts"]
   file_src_modules_words_words_types_ts["src/modules/words/words.types.ts"]
+  file_testing_database_ts["testing/database.ts"]
   file_testing_mocks_ts["testing/mocks.ts"]
   file_testing_setup_ts["testing/setup.ts"]
   file_vitest_config_ts["vitest.config.ts"]
@@ -170,7 +173,7 @@ graph LR
   file_src_modules_lexemes_lexemes_resolver_unit_test_ts --> file_src_modules_lexemes_lexemes_resolver_ts
   file_src_modules_lexemes_lexemes_resolver_unit_test_ts --> file_src_modules_lexemes_lexemes_service_ts
   file_src_modules_lexemes_lexemes_service_integration_test_ts --> file_src_modules_lexemes_lexemes_service_ts
-  file_src_modules_lexemes_lexemes_service_integration_test_ts --> file_testing_mocks_ts
+  file_src_modules_lexemes_lexemes_service_integration_test_ts --> file_testing_database_ts
   file_src_modules_lexemes_lexemes_service_unit_test_ts --> file_src_modules_lexemes_lexemes_service_ts
   file_src_modules_lexemes_lexemes_service_unit_test_ts --> file_testing_mocks_ts
   file_src_modules_literature_author_argument_entities_ts --> file_src_modules_literature_author_lookup_input_entities_ts
@@ -275,7 +278,7 @@ graph LR
   file_src_modules_search_search_service_integration_test_ts --> file_src_modules_macrons_macrons_service_ts
   file_src_modules_search_search_service_integration_test_ts --> file_src_modules_search_search_entities_ts
   file_src_modules_search_search_service_integration_test_ts --> file_src_modules_search_search_service_ts
-  file_src_modules_search_search_service_integration_test_ts --> file_testing_mocks_ts
+  file_src_modules_search_search_service_integration_test_ts --> file_testing_database_ts
   file_src_modules_search_search_service_ts --> file_src_lexico_api_types_ts
   file_src_modules_search_search_service_ts --> file_src_lexico_api_utilities_ts
   file_src_modules_search_search_service_ts --> file_src_modules_macrons_macrons_service_ts
@@ -305,10 +308,49 @@ graph LR
   file_src_modules_words_words_resolver_unit_test_ts --> file_src_modules_words_words_service_ts
   file_src_modules_words_words_service_unit_test_ts --> file_src_modules_words_words_service_ts
   file_src_modules_words_words_service_unit_test_ts --> file_testing_mocks_ts
+  file_testing_database_ts --> file_src_lexico_api_constants_ts
 ```
 <!-- codependix:end name="codependix-file-imports" -->
 
 <!-- callidescope:start -->
+
+### NestJS Module Graph
+
+<!-- codependix:start name="codependix-nestjs-modules" -->
+```mermaid
+flowchart LR
+  DatabaseModule
+  GraphQLModule
+  GraphQLSchemaBuilderModule
+  HealthModule
+  LexemesModule
+  LexicoApiModule
+  LexicoDatabaseModule
+  LiteratureModule
+  LoggerModule([LoggerModule])
+  MacronsModule
+  SearchModule
+  TypeOrmModule
+  WordsModule
+  DatabaseModule --> TypeOrmModule
+  GraphQLModule --> GraphQLSchemaBuilderModule
+  LexemesModule --> TypeOrmModule
+  LexicoApiModule --> GraphQLModule
+  LexicoApiModule --> HealthModule
+  LexicoApiModule --> LexemesModule
+  LexicoApiModule --> LexicoDatabaseModule
+  LexicoApiModule --> LiteratureModule
+  LexicoApiModule --> SearchModule
+  LexicoApiModule --> WordsModule
+  LexicoDatabaseModule --> DatabaseModule
+  LiteratureModule --> TypeOrmModule
+  SearchModule --> MacronsModule
+  SearchModule --> TypeOrmModule
+  WordsModule --> TypeOrmModule
+```
+
+_Rounded modules are global: every module can inject them, so their edges are left out._
+<!-- codependix:end name="codependix-nestjs-modules" -->
 
 ## 🔭 Callidescope
 

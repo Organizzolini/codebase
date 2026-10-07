@@ -1,3 +1,4 @@
+import { createPlaceholderValue } from "@conformetry/configuration";
 import { Test } from "@nestjs/testing";
 import { beforeAll, describe, expect, it } from "vitest";
 
@@ -73,5 +74,18 @@ describe(JsonService, () => {
         }),
       ).differences,
     ).toStrictEqual([]);
+  });
+
+  it("captures a value and an array entry a placeholder value stands in for", () => {
+    const value = createPlaceholderValue();
+    const result = service.validateDocument(
+      createDocument({
+        instance: '{ "name": "@scope/alpha", "tags": ["scope:alpha"] }',
+        renderedTemplate: `{ "name": "@scope/${value}", "tags": ["scope:${value}"] }`,
+      }),
+    );
+
+    expect(result.differences).toStrictEqual([]);
+    expect(result.captures).toStrictEqual({ [value]: "alpha" });
   });
 });

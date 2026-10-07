@@ -9,9 +9,16 @@ import {
 
 import type { ReactNode } from "react";
 
+// 🧭 Route
+
+/**
+ * Grammar reference tools.
+ */
 export const Route = createFileRoute("/tools")({
   component: ToolsPage,
 });
+
+// 🧩 Component
 
 /**
  * Tools page component displaying available Latin learning utilities.
@@ -19,8 +26,19 @@ export const Route = createFileRoute("/tools")({
  * @returns React node.
  */
 function ToolsPage(): ReactNode {
+  // 🪝 Hooks
+
+  // 🏗 Setup
+
+  // 💪 Handlers
+
+  // ♻️ Lifecycle
+
+  // 🏁 Early Returns
+
+  // 🎨 Markup
   return (
-    <div className="space-y-6">
+    <section className="space-y-6">
       <h1 className="text-3xl font-bold">Tools</h1>
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
@@ -60,6 +78,6 @@ function ToolsPage(): ReactNode {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </section>
   );
 }

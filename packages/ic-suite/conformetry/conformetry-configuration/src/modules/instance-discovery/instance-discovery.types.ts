@@ -7,6 +7,12 @@ import type { PreparedValidationDocument } from "@conformetry/core";
 
 /** Arguments for expanding instance globs into instances. */
 export interface FindInstancesArguments {
+  /**
+   * Globs, relative to the working directory, naming paths that are never
+   * instances: a directory or file a pattern found is dropped when one of
+   * these matches it.
+   */
+  readonly exclude?: string[] | undefined;
   /** Glob patterns, resolved against the working directory. */
   readonly patterns: string[];
   /**
@@ -75,6 +81,13 @@ export interface MatchedInstance {
   readonly instance: Instance;
   /** How many of the template's files the instance already has. */
   readonly matchedFileCount: number;
+  /**
+   * The random stand-in rendered for each placeholder nothing supplied, keyed
+   * by placeholder. Validation replaces each with the text the instance holds
+   * there. Absent or empty when every placeholder was supplied.
+   */
+  readonly placeholderValues?: Substitutions;
+  /** Every value the template renders with, stand-ins included. */
   readonly substitutions: Substitutions;
   readonly template: TemplateDefinition;
 }
@@ -124,6 +137,10 @@ export interface TemplateMatch {
   readonly matchedFileCount: number;
   /** Share of the template's files the instance already has, 0 to 1. */
   readonly matchRatio: number;
+  /** The stand-ins this template needed — see `MatchedInstance`. */
+  readonly placeholderValues: Substitutions;
+  /** The instance's substitutions with those stand-ins added. */
+  readonly substitutions: Substitutions;
   readonly template: TemplateDefinition;
 }
 

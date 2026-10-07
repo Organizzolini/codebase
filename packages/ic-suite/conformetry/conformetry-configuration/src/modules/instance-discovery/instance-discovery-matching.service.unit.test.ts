@@ -148,6 +148,42 @@ describe(InstanceDiscoveryMatchingService, () => {
   });
 
   describe("matchInstances", () => {
+    it("stands in for every placeholder but name and supplied ones", async () => {
+      const templatesRootPath = await mkdtemp(
+        path.join(tmpdir(), "conformetry-templates-"),
+      );
+      const templatePath = path.join(templatesRootPath, "route");
+
+      await mkdir(templatePath, { recursive: true });
+      await writeFile(
+        path.join(templatePath, "{{nameKebabCase}}.ts"),
+        '"{{name}}" "{{path}}" "{{title}}" "{{type}}"',
+        "utf8",
+      );
+      const instancePath = await mkdtemp(path.join(tmpdir(), "conformetry-"));
+
+      await writeFile(path.join(instancePath, "word.ts"), "", "utf8");
+      const { matched } = service.matchInstances({
+        instances: [
+          {
+            nameStem: "word",
+            path: instancePath,
+            substitutions: { title: "Word", type: "applications" },
+          },
+        ],
+        templates: collectTemplates(templatesService, templatesRootPath),
+      });
+
+      expect(Object.keys(matched[0]?.placeholderValues ?? {})).toStrictEqual([
+        "path",
+      ]);
+      expect(matched[0]?.substitutions).toMatchObject({
+        name: "word",
+        title: "Word",
+        type: "applications",
+      });
+    });
+
     it("prefers the larger template when both match completely", async () => {
       const { templatesRootPath } = await createTemplates();
       const templates = collectTemplates(templatesService, templatesRootPath);

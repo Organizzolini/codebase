@@ -52,6 +52,34 @@ export class InstanceDiscoveryService {
 
   // 🔏 Private Methods
 
+  /**
+   * The globs an inventory expands: the configured groups' patterns and
+   * exclusions, or an explicit pattern list replacing both.
+   *
+   * One expansion rather than one per group, so an instance two groups locate
+   * is listed once; every group's exclusions therefore apply to all of them.
+   */
+  private readInventoryGlobs(
+    args: ResolveInventoryArguments,
+  ): FindInstancesArguments {
+    if (args.instancePatterns !== undefined) {
+      return {
+        patterns: args.instancePatterns,
+        workingDirectory: args.workingDirectory,
+      };
+    }
+
+    const groups = args.configuration.flatMap((generator) => {
+      return this.readWorkspaceGroups(generator.instances);
+    });
+
+    return {
+      exclude: groups.flatMap((group) => group.exclude ?? []),
+      patterns: groups.flatMap((group) => group.patterns ?? []),
+      workingDirectory: args.workingDirectory,
+    };
+  }
+
   /** Weighs one instance against every template, best fit first. */
   private weighInstance(args: {
     instance: Instance;
@@ -260,17 +288,7 @@ export class InstanceDiscoveryService {
       configuration: args.configuration,
       workingDirectory: args.workingDirectory,
     });
-    const patterns =
-      args.instancePatterns ??
-      args.configuration.flatMap((generator) =>
-        this.readWorkspaceGroups(generator.instances).flatMap(
-          (group) => group.patterns ?? [],
-        ),
-      );
-    const instances = this.findInstances({
-      patterns,
-      workingDirectory: args.workingDirectory,
-    });
+    const instances = this.findInstances(this.readInventoryGlobs(args));
 
     return {
       templates,

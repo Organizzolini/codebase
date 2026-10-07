@@ -65,6 +65,33 @@ export class RunnerService {
   // 🌎 Public Methods
 
   /**
+   * Compares every document with the validator claiming it and collects what
+   * the placeholder values captured, keyed by value.
+   *
+   * Documents are visited in order and the first capture of a value is kept,
+   * so the value comes from the first file — and within it the first node —
+   * that revealed it.
+   */
+  public captureDocuments(args: {
+    documents: PreparedValidationDocument[];
+    validators: ConformetryLanguageValidator[];
+  }): Record<string, string> {
+    return args.documents.reduce<Record<string, string>>(
+      (captures, document) => {
+        const validator = args.validators.find((candidate) => {
+          return this.claimsDocument({ document, validator: candidate });
+        });
+
+        return {
+          ...validator?.validateDocument(document).captures,
+          ...captures,
+        };
+      },
+      {},
+    );
+  }
+
+  /**
    * Selects the documents a validator claims and returns its aggregated
    * result.
    *

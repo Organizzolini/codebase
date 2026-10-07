@@ -98,6 +98,7 @@ instances: [
 
 | Field | Purpose |
 | ----- | ------- |
+| `exclude` | Workspace-relative globs naming paths that are never instances, applied with or without `tags` |
 | `patterns` | Globs locating this group's instances, workspace-relative |
 | `substitutions` | Values the template's placeholders are rendered with for this group |
 | `tags` | Labels selecting which hosts the group applies to, carried uninterpreted |
@@ -107,12 +108,23 @@ Groups exist so substitutions can differ per glob. `type` is `packages` for one
 set of paths and `applications` for another, and no generic rule can tell them
 apart.
 
-> **Every placeholder a template uses must be supplied here.** A missing entry
-> fails the run with `MissingSubstitutionError` rather than rendering as an
-> empty string — see
-> [`@conformetry/generation`](../conformetry-generation/README.md) for why that
-> is an error and not a finding, and for the section syntax a template uses to
-> make a placeholder genuinely optional.
+> **A placeholder these substitutions leave out is read from the instance.**
+> Validation renders a random stand-in for it, captures the text the instance
+> holds where the template's first use of it aligns, renders the template again
+> with that text, and compares as usual — so a later use holding different text
+> is an ordinary difference. When nothing aligns, the instance fails with
+> `Could not infer {{…}}`. `name` and its variants always come from the
+> instance path, and a value supplied here always wins. Generation has no
+> instance to read, so there a placeholder nobody supplied still raises
+> `MissingSubstitutionError` — see
+> [`@conformetry/generation`](../conformetry-generation/README.md) for why, and
+> for the section syntax a template uses to make a placeholder optional.
+
+`exclude` drops any instance whose own path — the directory a pattern found, or
+the files of a file instance — matches one of its globs, whether or not the
+group has `tags`. It is how vendored or generated code living beside real
+instances, such as shadcn's component output, is left out of validation:
+`exclude: ["applications/lexico/src/components/ui/**"]`.
 
 `tags` is carried through untouched by this package, which has no notion of a
 host to match labels against. [`@conformetry/nx`](../conformetry-nx/README.md)
@@ -583,6 +595,8 @@ graph LR
   file_src_modules_rendering_rendering_service_ts["src/modules/rendering/rendering.service.ts"]
   file_src_modules_rendering_rendering_service_unit_test_ts["src/modules/rendering/rendering.service.unit.test.ts"]
   file_src_modules_rendering_rendering_types_ts["src/modules/rendering/rendering.types.ts"]
+  file_src_modules_rendering_rendering_utilities_ts["src/modules/rendering/rendering.utilities.ts"]
+  file_src_modules_rendering_rendering_utilities_unit_test_ts["src/modules/rendering/rendering.utilities.unit.test.ts"]
   file_src_modules_template_discovery_template_discovery_constants_ts["src/modules/template-discovery/template-discovery.constants.ts"]
   file_src_modules_template_discovery_template_discovery_module_ts["src/modules/template-discovery/template-discovery.module.ts"]
   file_src_modules_template_discovery_template_discovery_service_ts["src/modules/template-discovery/template-discovery.service.ts"]
@@ -658,6 +672,7 @@ graph LR
   file_src_modules_instance_discovery_instance_discovery_matching_service_ts --> file_src_modules_instance_discovery_instance_discovery_types_ts
   file_src_modules_instance_discovery_instance_discovery_matching_service_ts --> file_src_modules_rendering_rendering_service_ts
   file_src_modules_instance_discovery_instance_discovery_matching_service_ts --> file_src_modules_rendering_rendering_types_ts
+  file_src_modules_instance_discovery_instance_discovery_matching_service_ts --> file_src_modules_rendering_rendering_utilities_ts
   file_src_modules_instance_discovery_instance_discovery_matching_service_ts --> file_src_modules_template_discovery_template_discovery_service_ts
   file_src_modules_instance_discovery_instance_discovery_matching_service_ts --> file_src_modules_template_discovery_template_discovery_types_ts
   file_src_modules_instance_discovery_instance_discovery_matching_service_unit_test_ts --> file_src_modules_instance_discovery_instance_discovery_matching_service_ts
@@ -692,6 +707,8 @@ graph LR
   file_src_modules_rendering_rendering_service_ts --> file_src_modules_rendering_rendering_types_ts
   file_src_modules_rendering_rendering_service_unit_test_ts --> file_src_modules_rendering_rendering_constants_ts
   file_src_modules_rendering_rendering_service_unit_test_ts --> file_src_modules_rendering_rendering_service_ts
+  file_src_modules_rendering_rendering_utilities_ts --> file_src_modules_rendering_rendering_constants_ts
+  file_src_modules_rendering_rendering_utilities_unit_test_ts --> file_src_modules_rendering_rendering_utilities_ts
   file_src_modules_template_discovery_template_discovery_module_ts --> file_src_modules_rendering_rendering_module_ts
   file_src_modules_template_discovery_template_discovery_module_ts --> file_src_modules_template_discovery_template_discovery_service_ts
   file_src_modules_template_discovery_template_discovery_service_ts --> file_src_modules_configuration_configuration_types_ts

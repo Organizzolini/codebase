@@ -12,6 +12,7 @@ import { ValidationScoringService } from "./validation-scoring.service";
 
 import type {
   InstanceFileResults,
+  PlaceholderInference,
   RunValidationArguments,
   RunValidationResult,
 } from "./validation.types";
@@ -46,6 +47,106 @@ export class ValidationService {
 
   // 🔏 Private Methods
 
+  /**
+   * Checks one instance's files exist, then compares the documents whose
+   * extensions the selected validators claim.
+   *
+   * File existence comes first because a missing file cannot be compared, and
+   * reporting it once is clearer than every language reporting it in turn.
+   */
+  private compareInstance(args: {
+    instance: MatchedInstance;
+    validators: ConformetryLanguageValidator[];
+  }): InstanceFileResults {
+    const [prepared] = this.configurationService.prepareDocuments({
+      fileExtensions: this.readClaimedExtensions(args.validators),
+      instances: [args.instance],
+    });
+    const files = this.filesService.checkInstanceFiles({
+      instances: [args.instance],
+    });
+    const languages = args.validators.map((validator) => {
+      return this.runnerService.runValidator({
+        checkedPaths: [args.instance.instance.path],
+        documents: prepared?.documents ?? [],
+        validator,
+      });
+    });
+
+    return {
+      fileResults: [
+        ...files.fileResults,
+        ...languages.flatMap((language) => language.fileResults),
+      ],
+      instance: args.instance,
+      // Existence and content are separate requirements over the same files:
+      // a file can be present and still wrong, so neither total subsumes the
+      // other and they add.
+      totalWeight: languages.reduce((total, language) => {
+        return total + language.totalWeight;
+      }, files.totalWeight),
+    };
+  }
+
+  /**
+   * Fills in each placeholder nothing supplied from the instance itself.
+   *
+   * The template was rendered with a random value standing in for each one,
+   * and a first comparison captures the text of the instance node aligned with
+   * the first template node holding each value. The instance comes back with
+   * that text substituted, ready for the ordinary comparison — which is the
+   * consistency check, since a later occurrence holding different text is an
+   * ordinary difference. `missing` keeps the stand-in of every placeholder
+   * nothing revealed. The capture pass runs only when something is unresolved.
+   */
+  private inferPlaceholders(args: {
+    instance: MatchedInstance;
+    validators: ConformetryLanguageValidator[];
+  }): PlaceholderInference {
+    const placeholderValues = Object.entries(
+      args.instance.placeholderValues ?? {},
+    );
+
+    if (placeholderValues.length === 0) {
+      return { instance: args.instance, missing: {} };
+    }
+
+    const [prepared] = this.configurationService.prepareDocuments({
+      fileExtensions: this.readClaimedExtensions(args.validators),
+      instances: [args.instance],
+    });
+    const captures = this.runnerService.captureDocuments({
+      documents: prepared?.documents ?? [],
+      validators: args.validators,
+    });
+    const inferred = Object.fromEntries(
+      placeholderValues.flatMap(([name, value]) => {
+        const captured = captures[value];
+
+        return captured === undefined ? [] : [[name, captured]];
+      }),
+    );
+
+    return {
+      instance: {
+        ...args.instance,
+        substitutions: { ...args.instance.substitutions, ...inferred },
+      },
+      missing: Object.fromEntries(
+        placeholderValues.filter(([name]) => !Object.hasOwn(inferred, name)),
+      ),
+    };
+  }
+
+  /** Every extension the selected validators claim. */
+  private readClaimedExtensions(
+    validators: ConformetryLanguageValidator[],
+  ): string[] {
+    return validators.flatMap((validator) => {
+      return [...validator.descriptor.fileExtensions];
+    });
+  }
+
   /** Every distinct file extension the matched templates declare. */
   private readTemplateExtensions(instances: MatchedInstance[]): string[] {
     return [
@@ -77,49 +178,6 @@ export class ValidationService {
     });
   }
 
-  /**
-   * Checks one instance's files exist, then compares the documents whose
-   * extensions the selected validators claim.
-   *
-   * File existence comes first because a missing file cannot be compared, and
-   * reporting it once is clearer than every language reporting it in turn.
-   */
-  private validateInstance(args: {
-    instance: MatchedInstance;
-    validators: ConformetryLanguageValidator[];
-  }): InstanceFileResults {
-    const [prepared] = this.configurationService.prepareDocuments({
-      fileExtensions: args.validators.flatMap((validator) => {
-        return [...validator.descriptor.fileExtensions];
-      }),
-      instances: [args.instance],
-    });
-    const files = this.filesService.checkInstanceFiles({
-      instances: [args.instance],
-    });
-    const languages = args.validators.map((validator) => {
-      return this.runnerService.runValidator({
-        checkedPaths: [args.instance.instance.path],
-        documents: prepared?.documents ?? [],
-        validator,
-      });
-    });
-
-    return {
-      fileResults: [
-        ...files.fileResults,
-        ...languages.flatMap((language) => language.fileResults),
-      ],
-      instance: args.instance,
-      // Existence and content are separate requirements over the same files:
-      // a file can be present and still wrong, so neither total subsumes the
-      // other and they add.
-      totalWeight: languages.reduce((total, language) => {
-        return total + language.totalWeight;
-      }, files.totalWeight),
-    };
-  }
-
   // 🌎 Public Methods
 
   /**
@@ -145,7 +203,15 @@ export class ValidationService {
       }),
     });
     const groups: InstanceFileResults[] = matched.map((instance) => {
-      return this.validateInstance({ instance, validators });
+      const inference = this.inferPlaceholders({ instance, validators });
+
+      return this.validationFindingsService.reportMissingPlaceholders({
+        group: this.compareInstance({
+          instance: inference.instance,
+          validators,
+        }),
+        missing: inference.missing,
+      });
     });
     const scores = this.validationScoringService.scoreInstances({
       groups,

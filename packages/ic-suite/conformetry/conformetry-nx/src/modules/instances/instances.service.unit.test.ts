@@ -81,6 +81,41 @@ describe(InstancesService, () => {
   });
 
   describe("findProjectInstances", () => {
+    it.each([
+      ["a tagged", { patterns: ["src/modules/*"], tags: ["type:package"] }],
+      ["an untagged", { patterns: ["packages/*/src/modules/*"] }],
+    ])(
+      "drops what %s group's workspace-relative exclude matches",
+      async (kind, group) => {
+        const configurationPath = path.join(
+          workspaceRoot,
+          `excluded-${kind.replace(" ", "-")}.config.json`,
+        );
+
+        await writeFile(
+          configurationPath,
+          JSON.stringify([
+            {
+              instances: [
+                { ...group, exclude: ["packages/widgets/src/modules/*"] },
+              ],
+              name: "widget",
+              templatePath: "templates/widget",
+            },
+          ]),
+          "utf8",
+        );
+
+        await expect(
+          service.findProjectInstances({
+            configurationPath,
+            project: PROJECT,
+            workspaceRoot,
+          }),
+        ).resolves.toStrictEqual([]);
+      },
+    );
+
     it("keeps only the instances inside the project", async () => {
       const instances = await service.findProjectInstances({
         configurationPath: path.join(workspaceRoot, "conformetry.config.json"),

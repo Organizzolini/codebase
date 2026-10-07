@@ -4,7 +4,7 @@ import {
   Entity,
   JoinColumn,
   OneToOne,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   TableInheritance,
 } from "typeorm";
 
@@ -17,15 +17,16 @@ import type { Lexeme } from "../Lexeme.entity";
   comment:
     "Abstract base table for grammatical inflection metadata using single-table inheritance",
   name: "inflections",
-  schema: "public",
 })
 @InterfaceType()
 @TableInheritance({ column: { name: "type", type: "text" } })
 export class Inflection extends BaseEntity {
   @Field(() => ID)
-  @PrimaryGeneratedColumn("uuid", {
+  @PrimaryColumn({
     comment:
-      "Auto-generated UUID; discriminator column 'type' selects the child entity",
+      "Primary key, a uuidv7 the database assigns on insert; discriminator column 'type' selects the child entity",
+    default: () => "uuidv7()",
+    type: "uuid",
   })
   id!: string;
 

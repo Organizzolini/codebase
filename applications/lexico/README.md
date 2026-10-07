@@ -504,8 +504,8 @@ graph LR
   file_src_components_entry_verb_forms_table_tsx["src/components/entry/verb-forms-table.tsx"]
   file_src_components_layout_index_ts["src/components/layout/index.ts"]
   file_src_components_layout_logo_tsx["src/components/layout/logo.tsx"]
-  file_src_components_PronunciationButton_test_tsx["src/components/PronunciationButton.test.tsx"]
-  file_src_components_PronunciationButton_tsx["src/components/PronunciationButton.tsx"]
+  file_src_components_pronunciation_button_tsx["src/components/pronunciation-button.tsx"]
+  file_src_components_pronunciation_button_unit_test_tsx["src/components/pronunciation-button.unit.test.tsx"]
   file_src_lib_auth_ts["src/lib/auth.ts"]
   file_src_lib_bookmarks_ts["src/lib/bookmarks.ts"]
   file_src_lib_client_tsx["src/lib/client.tsx"]
@@ -517,14 +517,23 @@ graph LR
   file_src_lib_types_ts["src/lib/types.ts"]
   file_src_router_tsx["src/router.tsx"]
   file_src_routes___root_tsx["src/routes/__root.tsx"]
+  file_src_routes_bookmarks_integration_test_tsx["src/routes/bookmarks.integration.test.tsx"]
   file_src_routes_bookmarks_tsx["src/routes/bookmarks.tsx"]
   file_src_routes_hooks_useLibraryPage_ts["src/routes/hooks/useLibraryPage.ts"]
+  file_src_routes_index_integration_test_tsx["src/routes/index.integration.test.tsx"]
   file_src_routes_index_tsx["src/routes/index.tsx"]
+  file_src_routes_library_integration_test_tsx["src/routes/library.integration.test.tsx"]
   file_src_routes_library_tsx["src/routes/library.tsx"]
+  file_src_routes_search_integration_test_tsx["src/routes/search.integration.test.tsx"]
   file_src_routes_search_tsx["src/routes/search.tsx"]
+  file_src_routes_settings_integration_test_tsx["src/routes/settings.integration.test.tsx"]
   file_src_routes_settings_tsx["src/routes/settings.tsx"]
+  file_src_routes_tools_integration_test_tsx["src/routes/tools.integration.test.tsx"]
   file_src_routes_tools_tsx["src/routes/tools.tsx"]
+  file_src_routes_word__id_integration_test_tsx["src/routes/word.$id.integration.test.tsx"]
   file_src_routes_word__id_tsx["src/routes/word.$id.tsx"]
+  file_testing_render_route_tsx["testing/render-route.tsx"]
+  file_testing_setup_ts["testing/setup.ts"]
   file_vite_config_mts["vite.config.mts"]
   file_vitest_config_ts["vitest.config.ts"]
   file_src_components_entry_adjective_forms_table_tsx --> file_src_components_entry_form_cell_tsx
@@ -546,8 +555,8 @@ graph LR
   file_src_components_entry_verb_forms_table_tsx --> file_src_components_entry_form_cell_tsx
   file_src_components_entry_verb_forms_table_tsx --> file_src_components_entry_form_tabs_tsx
   file_src_components_entry_verb_forms_table_tsx --> file_src_components_entry_forms_table_tsx
-  file_src_components_PronunciationButton_test_tsx --> file_src_components_PronunciationButton_tsx
-  file_src_components_PronunciationButton_tsx --> file_src_lib_pronunciation_ts
+  file_src_components_pronunciation_button_tsx --> file_src_lib_pronunciation_ts
+  file_src_components_pronunciation_button_unit_test_tsx --> file_src_components_pronunciation_button_tsx
   file_src_lib_bookmarks_ts --> file_src_lib_types_ts
   file_src_lib_forms_ts --> file_src_components_entry_adjective_forms_table_tsx
   file_src_lib_forms_ts --> file_src_components_entry_noun_forms_table_tsx
@@ -566,26 +575,40 @@ graph LR
   file_src_router_tsx --> file_src_lib_routeTree_gen_ts
   file_src_routes___root_tsx --> file_src_components_layout_index_ts
   file_src_routes___root_tsx --> file_src_lib_auth_ts
+  file_src_routes_bookmarks_integration_test_tsx --> file_src_routes_bookmarks_tsx
+  file_src_routes_bookmarks_integration_test_tsx --> file_testing_render_route_tsx
   file_src_routes_bookmarks_tsx --> file_src_components_entry_entry_card_tsx
   file_src_routes_bookmarks_tsx --> file_src_lib_bookmarks_ts
   file_src_routes_hooks_useLibraryPage_ts --> file_src_lib_library_ts
+  file_src_routes_index_integration_test_tsx --> file_src_routes_index_tsx
+  file_src_routes_index_integration_test_tsx --> file_testing_render_route_tsx
+  file_src_routes_library_integration_test_tsx --> file_src_routes_library_tsx
+  file_src_routes_library_integration_test_tsx --> file_testing_render_route_tsx
   file_src_routes_library_tsx --> file_src_lib_library_ts
   file_src_routes_library_tsx --> file_src_routes_hooks_useLibraryPage_ts
+  file_src_routes_search_integration_test_tsx --> file_src_routes_search_tsx
+  file_src_routes_search_integration_test_tsx --> file_testing_render_route_tsx
   file_src_routes_search_tsx --> file_src_components_entry_entry_card_tsx
   file_src_routes_search_tsx --> file_src_lib_forms_ts
   file_src_routes_search_tsx --> file_src_lib_search_ts
   file_src_routes_search_tsx --> file_src_lib_types_ts
+  file_src_routes_settings_integration_test_tsx --> file_src_routes_settings_tsx
+  file_src_routes_settings_integration_test_tsx --> file_testing_render_route_tsx
   file_src_routes_settings_tsx --> file_src_lib_auth_ts
+  file_src_routes_tools_integration_test_tsx --> file_src_routes_tools_tsx
+  file_src_routes_tools_integration_test_tsx --> file_testing_render_route_tsx
+  file_src_routes_word__id_integration_test_tsx --> file_src_routes_word__id_tsx
+  file_src_routes_word__id_integration_test_tsx --> file_testing_render_route_tsx
   file_src_routes_word__id_tsx --> file_src_components_entry_adjective_forms_table_tsx
   file_src_routes_word__id_tsx --> file_src_components_entry_noun_forms_table_tsx
   file_src_routes_word__id_tsx --> file_src_components_entry_principal_parts_tsx
   file_src_routes_word__id_tsx --> file_src_components_entry_verb_forms_table_tsx
-  file_src_routes_word__id_tsx --> file_src_components_PronunciationButton_tsx
+  file_src_routes_word__id_tsx --> file_src_components_pronunciation_button_tsx
   file_src_routes_word__id_tsx --> file_src_lib_bookmarks_ts
   file_src_routes_word__id_tsx --> file_src_lib_forms_ts
   file_src_routes_word__id_tsx --> file_src_lib_search_ts
   file_src_routes_word__id_tsx --> file_src_lib_types_ts
-  file_vitest_config_ts --> file_vite_config_mts
+  file_testing_render_route_tsx --> file_src_router_tsx
 ```
 <!-- codependix:end name="codependix-file-imports" -->
 

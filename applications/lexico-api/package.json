@@ -2,6 +2,7 @@
   "dependencies": {
     "@apollo/server": "catalog:",
     "@as-integrations/express5": "catalog:",
+    "@codebase/database": "workspace:*",
     "@codebase/lexico-entities": "workspace:*",
     "@codebase/logging": "workspace:*",
     "@nestjs/apollo": "catalog:",

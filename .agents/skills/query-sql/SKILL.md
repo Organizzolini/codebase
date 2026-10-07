@@ -1,7 +1,7 @@
 ---
 name: query-sql
 
-description: Toolkit for interactively querying and exploring the local PostgreSQL database schema and data using the local psql client. Use when asked to write a SQL query, explore database schemas, inspect table structures, or execute local database queries. Relies on workspace default environment variables.
+description: Toolkit for interactively querying and exploring the local PostgreSQL database schema and data using the local psql client. Use when asked to write a SQL query, explore database schemas, inspect table structures, or execute local database queries. Connects as each project's own role to its `<project>_development` database and `<project>` schema, such as lexico's `lexico_development`.`lexico`.
 ---
 
 # PostgreSQL SQL Query & Exploration
@@ -19,43 +19,42 @@ Use this skill when you need to:
 
 - The local PostgreSQL container must be running. Use `nx run codebase:postgres-container:up` if needed.
 - `psql` (PostgreSQL client) must be installed locally.
-- The `.env` file at the workspace root must contain the default PostgreSQL connection variables (`POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_DB`, `POSTGRES_PASSWORD`).
+- Know which project's data you are querying. Each database-backed project has its own database, schema, and role ([ADR 0022](../../../docs/adr/0022-give-every-database-project-its-own-database-schema-and-role.md)):
+
+  | Project     | Database                | Schema      | Role / password                             |
+  | ----------- | ----------------------- | ----------- | ------------------------------------------- |
+  | `lexico`    | `lexico_development`    | `lexico`    | `lexico_username` / `lexico_password`       |
+  | `meanderaw` | `meanderaw_development` | `meanderaw` | `meanderaw_username` / `meanderaw_password` |
+  | `caelundas` | `caelundas_development` | `caelundas` | `caelundas_username` / `caelundas_password` |
+
+  Lexico's dictionary and literature tables live in `lexico_development`.`lexico`, not in `postgres`.`public`.
+
+- Each project reads its own `<PROJECT>_POSTGRES_*` variables, defaulting to the values above. The root `.env`'s unprefixed `POSTGRES_*` are the shared container's admin login; use them only for administration, never to query a project's data.
 
 ## Step-by-Step Workflows
 
 ### 1. Schema Exploration
 
-To explore the database quickly, use `psql` meta-commands passed via the `-c` flag. Use `set -a; source .env; set +a;` to ensure environment variables are automatically exported.
+To explore the database quickly, use `psql` meta-commands passed via the `-c` flag. Connect as the project's role to its database; the examples use lexico, and the `LEXICO_POSTGRES_*` defaults apply when the variables are unset. Swap the prefix and defaults for another project.
 
 - **List all tables:**
 
   ```bash
-  set -a; source .env; set +a; PGPASSWORD=$POSTGRES_PASSWORD psql -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres} -c "\dt"
+  PGPASSWORD=${LEXICO_POSTGRES_PASSWORD:-lexico_password} psql -h ${LEXICO_POSTGRES_HOST:-localhost} -p ${LEXICO_POSTGRES_PORT:-5432} -U ${LEXICO_POSTGRES_USERNAME:-lexico_username} -d ${LEXICO_POSTGRES_DATABASE:-lexico_development} -c "\dt lexico.*"
 
   ```
 
 - **Describe a specific table:**
 
   ```bash
-  set -a; source .env; set +a; PGPASSWORD=$POSTGRES_PASSWORD psql -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres} -c "\d+ table_name"
+  PGPASSWORD=${LEXICO_POSTGRES_PASSWORD:-lexico_password} psql -h ${LEXICO_POSTGRES_HOST:-localhost} -p ${LEXICO_POSTGRES_PORT:-5432} -U ${LEXICO_POSTGRES_USERNAME:-lexico_username} -d ${LEXICO_POSTGRES_DATABASE:-lexico_development} -c "\d+ lexico.table_name"
 
   ```
 
 - **List all schemas:**
 
   ```bash
-  set -a; source .env; set +a; PGPASSWORD=$POSTGRES_PASSWORD psql -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres} -c "\dn"
-
-  ```
-
-- **Connect as a project's own role:** each database-backed project reads
-  its own `<PROJECT>_POSTGRES_*` variables, defaulted from its name, so
-  `LEXICO_POSTGRES_USERNAME` is `lexico_username` and
-  `LEXICO_POSTGRES_DATABASE` is `lexico_development`, with the tables in the
-  `lexico` schema:
-
-  ```bash
-  PGPASSWORD=lexico_password psql -h localhost -p 5432 -U lexico_username -d lexico_development -c "\dt lexico.*"
+  PGPASSWORD=${LEXICO_POSTGRES_PASSWORD:-lexico_password} psql -h ${LEXICO_POSTGRES_HOST:-localhost} -p ${LEXICO_POSTGRES_PORT:-5432} -U ${LEXICO_POSTGRES_USERNAME:-lexico_username} -d ${LEXICO_POSTGRES_DATABASE:-lexico_development} -c "\dn"
 
   ```
 
@@ -70,7 +69,7 @@ To explore the database quickly, use `psql` meta-commands passed via the `-c` fl
    Run the file using the `-f` flag in the terminal:
 
    ```bash
-   set -a; source .env; set +a; PGPASSWORD=$POSTGRES_PASSWORD psql -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres} -f notepads/notepad.sql
+   PGPASSWORD=${LEXICO_POSTGRES_PASSWORD:-lexico_password} psql -h ${LEXICO_POSTGRES_HOST:-localhost} -p ${LEXICO_POSTGRES_PORT:-5432} -U ${LEXICO_POSTGRES_USERNAME:-lexico_username} -d ${LEXICO_POSTGRES_DATABASE:-lexico_development} -f notepads/notepad.sql
    ```
 
 ## Good SQL Practices
@@ -82,7 +81,7 @@ To explore the database quickly, use `psql` meta-commands passed via the `-c` fl
 
   ```sql
   \x on;
-  SELECT * FROM users LIMIT 1;
+  SELECT * FROM lexico.lexemes LIMIT 1;
 
   ```
 

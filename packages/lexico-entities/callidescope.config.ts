@@ -25,7 +25,7 @@ export default {
    * `configuration/.callidescopeignore`, the only project this path ever
    * matched.
    */
-  exclude: ["src/modules/database/migrations/**"],
+  exclude: ["src/modules/lexico-database/migrations/**"],
   limits: {
     maximumBreadth: 3,
     maximumDepth: 3,

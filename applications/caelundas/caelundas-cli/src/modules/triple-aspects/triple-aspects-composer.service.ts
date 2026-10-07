@@ -232,18 +232,9 @@ export class TripleAspectsComposerService {
     const body2Capitalized = bodiesCapitalized[1] ?? "";
     const body3Capitalized = bodiesCapitalized[2] ?? "";
 
-    const bodyMap: Record<string, Body> = {
-      Jupiter: "jupiter",
-      Mars: "mars",
-      Mercury: "mercury",
-      Moon: "moon",
-      Neptune: "neptune",
-      Pluto: "pluto",
-      Saturn: "saturn",
-      Sun: "sun",
-      Uranus: "uranus",
-      Venus: "venus",
-    };
+    const bodyMap: Record<string, Body> = Object.fromEntries(
+      tripleAspectBodies.map((body) => [_.startCase(body), body]),
+    );
 
     const body1 = bodyMap[body1Capitalized];
     const body2 = bodyMap[body2Capitalized];

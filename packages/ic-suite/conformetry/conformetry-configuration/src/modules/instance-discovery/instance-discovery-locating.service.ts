@@ -62,6 +62,41 @@ export class InstanceDiscoveryLocatingService {
     return type === "" || type === ".." ? {} : { type };
   }
 
+  /** Expands one pattern, leaving out every path an exclude glob matches. */
+  private globEntries(args: {
+    exclude?: string[] | undefined;
+    pattern: string;
+    workingDirectory: string;
+  }): fs.Dirent[] {
+    return fs
+      .globSync(args.pattern, {
+        cwd: args.workingDirectory,
+        withFileTypes: true,
+      })
+      .filter((entry) => {
+        return !this.isExcluded({
+          ...args,
+          entryPath: path.join(entry.parentPath, entry.name),
+        });
+      });
+  }
+
+  /** Whether an exclude glob matches a found path, workspace-relative. */
+  private isExcluded(args: {
+    entryPath: string;
+    exclude?: string[] | undefined;
+    workingDirectory: string;
+  }): boolean {
+    const relativePath = path.relative(
+      args.workingDirectory,
+      path.resolve(args.workingDirectory, args.entryPath),
+    );
+
+    return (args.exclude ?? []).some((pattern) => {
+      return path.matchesGlob(relativePath, pattern);
+    });
+  }
+
   /**
    * Returns the literal filename suffix a pattern ends with, such as
    * `.service.ts` for `**\/*.service.ts`, or `""` when the pattern's last
@@ -124,12 +159,10 @@ export class InstanceDiscoveryLocatingService {
     for (const pattern of args.patterns) {
       const suffix = this.resolveGlobSuffix(pattern);
 
-      for (const entry of fs.globSync(pattern, {
-        cwd: args.workingDirectory,
-        withFileTypes: true,
-      })) {
+      for (const entry of this.globEntries({ ...args, pattern })) {
         const isDirectory = entry.isDirectory();
         const entryPath = path.join(entry.parentPath, entry.name);
+
         // Always the parent, whether the glob matched a directory or a file:
         // a template that produces a folder contains that folder, so the tree
         // is laid over the folder's parent either way.

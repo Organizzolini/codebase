@@ -1,7 +1,7 @@
 pg-version = "18.0"
 exclude-path = [
   "**/applications/lexico/supabase/migrations/*",
-  "**/packages/lexico-entities/src/modules/database/migrations/*",
+  "**/packages/lexico-entities/src/modules/lexico-database/migrations/*",
 ]
 
 [rules]

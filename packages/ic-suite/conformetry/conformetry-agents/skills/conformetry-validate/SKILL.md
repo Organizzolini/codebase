@@ -1,6 +1,6 @@
 ---
 name: conformetry-validate
-description: Run a conformetry conformance check and act on what it reports. Use when a conformetry-validate target fails; when a composite lint run reports conformance differences; when a report names a missing file, a missing declaration, a missing comment, an ambiguous instance, or an unmatched instance; when deciding whether to edit an instance or regenerate it; or before claiming generated code is finished. Covers both the Nx plugin and the conformetry command-line host.
+description: Run a conformetry conformance check and act on what it reports. Use when a conformetry-validate target fails; when a composite lint run reports conformance differences; when a report names a missing file, a missing declaration, a missing comment, a placeholder it could not infer, an ambiguous instance, or an unmatched instance; when deciding whether to edit an instance or regenerate it; or before claiming generated code is finished. Covers both the Nx plugin and the conformetry command-line host.
 license: MIT
 ---
 
@@ -104,6 +104,16 @@ working, not a regression.
 **A missing declaration or comment.** Add it. Comments are compared as an ordered
 subsequence, so a section marker in the wrong position reads as missing even
 though the text is present.
+
+**`Could not infer {{…}}: no instance node aligned with the template text that
+uses it`** — the template uses a placeholder no substitution supplies, and no
+instance node lined up with the template text around it, so validation could
+not read its value. The instance fails at any threshold; its other findings are
+still reported. Either restore that template text in the instance, with the
+real value in the placeholder's place, or supply the value in the instance
+group's `substitutions`. When the value _was_ read, a later use that disagrees
+with it shows up as an ordinary difference instead — fix whichever occurrence is
+wrong. The `conformetry-configure` skill explains how the value is read.
 
 **An unmatched instance** — no template explains this path. Either the path is
 not generated code and should not be in the instance globs, or it has drifted so

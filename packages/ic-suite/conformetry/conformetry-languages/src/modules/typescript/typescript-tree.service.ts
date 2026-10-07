@@ -1,3 +1,4 @@
+import { capturePlaceholderValues } from "@conformetry/configuration";
 import { Injectable } from "@nestjs/common";
 
 import { ScoringService } from "../scoring/scoring.service";
@@ -66,15 +67,21 @@ export class TypescriptTreeService {
    * and counting findings would have picked the wrong one.
    */
   private compareBestCandidate(args: {
-    candidates: Node[];
+    candidates: { captures: Record<string, string>; node: Node }[];
     templateChild: Node;
   }): TreeComparison {
     return args.candidates
       .map((candidate) => {
-        return this.compareTree({
-          instanceNode: candidate,
+        const comparison = this.compareTree({
+          instanceNode: candidate.node,
           templateNode: args.templateChild,
         });
+
+        // The node's own key comes before anything beneath it in the file.
+        return {
+          ...comparison,
+          captures: { ...comparison.captures, ...candidate.captures },
+        };
       })
       .reduce((best, candidate) => {
         return this.scoringService.sumWeights(candidate.differences) <
@@ -91,16 +98,21 @@ export class TypescriptTreeService {
     templateChild: Node;
   }): TreeComparison {
     const nodeKey = this.typeScriptNodesService.readKey(args.templateChild);
-    const candidates =
-      nodeKey === null
-        ? args.instanceChildren.filter((instanceChild) => {
-            return instanceChild.kind === args.templateChild.kind;
-          })
-        : args.instanceChildren.filter((instanceChild) => {
-            return (
-              this.typeScriptNodesService.readKey(instanceChild) === nodeKey
-            );
-          });
+    const candidates = args.instanceChildren.flatMap((node) => {
+      const captures =
+        nodeKey === null
+          ? this.matchKind({
+              instanceChild: node,
+              templateChild: args.templateChild,
+            })
+          : this.matchKey({
+              instanceChild: node,
+              nodeKey,
+              templateChild: args.templateChild,
+            });
+
+      return captures === undefined ? [] : [{ captures, node }];
+    });
 
     if (candidates.length === 0) {
       const error = this.buildError({
@@ -119,6 +131,46 @@ export class TypescriptTreeService {
       candidates,
       templateChild: args.templateChild,
     });
+  }
+
+  /**
+   * Matches a template node on its key, returning what any placeholder value
+   * in the key captured, or `undefined` when the instance node does not match.
+   *
+   * A key holding a placeholder value is a pattern, and is only tried against
+   * nodes of the same syntax kind: a bare value would otherwise match any key
+   * at all, the callee's own name included.
+   */
+  private matchKey(args: {
+    instanceChild: Node;
+    nodeKey: string;
+    templateChild: Node;
+  }): Record<string, string> | undefined {
+    const instanceKey = this.typeScriptNodesService.readKey(args.instanceChild);
+
+    if (instanceKey === args.nodeKey) {
+      return {};
+    }
+
+    if (
+      instanceKey === null ||
+      args.instanceChild.kind !== args.templateChild.kind
+    ) {
+      return undefined;
+    }
+
+    return capturePlaceholderValues({
+      instanceText: instanceKey,
+      templateText: args.nodeKey,
+    });
+  }
+
+  /** Matches a keyless template node on syntax kind alone. */
+  private matchKind(args: {
+    instanceChild: Node;
+    templateChild: Node;
+  }): Record<string, string> | undefined {
+    return args.instanceChild.kind === args.templateChild.kind ? {} : undefined;
   }
 
   // 🌎 Public Methods
@@ -141,6 +193,8 @@ export class TypescriptTreeService {
       .reduce<TreeComparison>(
         (combined, comparison) => {
           return {
+            // Earlier siblings win, so the first capture in the file stays.
+            captures: { ...comparison.captures, ...combined.captures },
             differences: [...combined.differences, ...comparison.differences],
             totalWeight: combined.totalWeight + comparison.totalWeight,
           };

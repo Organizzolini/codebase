@@ -25,6 +25,11 @@ import { useLibraryPage } from "./hooks/useLibraryPage";
 import type { UserText } from "../lib/library";
 import type { ReactNode } from "react";
 
+// 🧭 Route
+
+/**
+ * The signed-in reader's own texts.
+ */
 export const Route = createFileRoute("/library")({
   component: LibraryPage,
 });
@@ -262,12 +267,15 @@ function LibraryEmptyState({
   );
 }
 
+// 🧩 Component
+
 /**
  * Library page component that displays and manages user's saved texts.
  *
  * @returns React node.
  */
 function LibraryPage(): ReactNode {
+  // 🪝 Hooks
   const {
     closeEdit,
     editingText,
@@ -289,13 +297,22 @@ function LibraryPage(): ReactNode {
     texts,
   } = useLibraryPage();
 
+  // 🏗 Setup
+
+  // 💪 Handlers
+
+  // ♻️ Lifecycle
+
+  // 🏁 Early Returns
+
+  // 🎨 Markup
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <BookOpen className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl font-bold">Library</h1>
-        </div>
+    <section className="space-y-6">
+      <h1 className="flex items-center gap-3 text-3xl font-bold">
+        <BookOpen className="h-8 w-8 text-primary" />
+        Library
+      </h1>
+      <div className="flex justify-end">
         <LibraryCreateDialog
           formText={formText}
           formTitle={formTitle}
@@ -345,7 +362,7 @@ function LibraryPage(): ReactNode {
         isLoading={isLoading}
         texts={texts}
       />
-    </div>
+    </section>
   );
 }
 

@@ -8,6 +8,13 @@
  */
 export interface ConformetryInstanceGroup {
   /**
+   * Workspace-relative globs naming paths that are never instances, applied
+   * whether or not the group has tags. A directory or file the patterns found
+   * is dropped when one of these matches it — how vendored or generated code,
+   * such as shadcn components, is left out of validation.
+   */
+  exclude?: string[] | undefined;
+  /**
    * Globs locating this group's instances.
    *
    * Workspace-relative on their own. A host that resolves `tags` may instead

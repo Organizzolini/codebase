@@ -149,7 +149,13 @@ export class TypescriptService implements ConformetryLanguageValidator {
       },
     );
 
-    return { differences, totalWeight: comparison.totalWeight };
+    return {
+      ...(comparison.captures === undefined
+        ? {}
+        : { captures: comparison.captures }),
+      differences,
+      totalWeight: comparison.totalWeight,
+    };
   }
 
   // 🌎 Public Methods
@@ -178,6 +184,10 @@ export class TypescriptService implements ConformetryLanguageValidator {
     const comments = this.validateComments(sourceFiles);
 
     return {
+      // Comments are matched as whole text, so only the structure captures.
+      ...(structure.captures === undefined
+        ? {}
+        : { captures: structure.captures }),
       differences: [...structure.differences, ...comments.differences],
       totalWeight: structure.totalWeight + comments.totalWeight,
     };
