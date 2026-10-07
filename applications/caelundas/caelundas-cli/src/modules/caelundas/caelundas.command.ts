@@ -3,6 +3,8 @@ import { Command, CommandRunner } from "nest-commander";
 
 import { LoggerService } from "@codebase/logging";
 
+import { CalendarEventsService } from "../calendar-events/calendar-events.service";
+import { toEvent } from "../calendar-events/calendar-events.utilities";
 import { CalendarService } from "../calendar/calendar.service";
 import { InputService } from "../input/input.service";
 import { PerfectiveService } from "../perfective/perfective.service";
@@ -13,8 +15,9 @@ import { ProgressiveService } from "../progressive/progressive.service";
  * CLI entry point that orchestrates the full calendar generation pipeline.
  *
  * Reads observer coordinates and date range from environment variables,
- * runs perfective and progressive event detection in sequence, and writes
- * the result to an `.ics` file via {@link CalendarService}.
+ * runs perfective and progressive event detection in sequence, upserts the
+ * detected events into Postgres, then reads the requested range and location
+ * back and writes it to `.ics` and JSON files via {@link CalendarService}.
  */
 @Command({
   description: "Run the caelundas command",
@@ -34,6 +37,8 @@ export class CaelundasCommand extends CommandRunner {
     private readonly progressiveEventsService: ProgressiveService,
     @Inject(CalendarService)
     private readonly calendarService: CalendarService,
+    @Inject(CalendarEventsService)
+    private readonly calendarEventsService: CalendarEventsService,
   ) {
     super();
     this.logger.setContext(CaelundasCommand.name);
@@ -51,10 +56,11 @@ export class CaelundasCommand extends CommandRunner {
    * Executes the full calendar generation pipeline.
    *
    * Parses environment input, detects all perfective and progressive astronomical events
-   * across the configured date range, merges and sorts the results by start time, then
-   * writes the complete event set to an ICS file via {@link CalendarService}.
+   * across the configured date range, merges and sorts the results by start time, upserts
+   * them through {@link CalendarEventsService}, then renders the stored events for the range and
+   * location to ICS and JSON files via {@link CalendarService}.
    *
-   * @returns Promise that resolves when the ICS file has been written.
+   * @returns Promise that resolves when both files have been written.
    */
   async run(): Promise<void> {
     this.logger.debug("🚀 Starting a caelundas run", undefined, {
@@ -78,10 +84,26 @@ export class CaelundasCommand extends CommandRunner {
       (a, b) => a.start.valueOf() - b.start.valueOf(),
     );
 
-    await this.calendarService.write(allEvents, input);
+    const coordinates = {
+      latitude: input.latitude,
+      longitude: input.longitude,
+    };
+    await this.calendarEventsService.upsert(allEvents, coordinates);
+
+    const storedRows = await this.calendarEventsService.findInRange({
+      ...coordinates,
+      // Detection covers the whole end date, so read back through its end.
+      end: input.end.clone().add(1, "day"),
+      start: input.start,
+    });
+    const storedEvents = storedRows.map((row) => toEvent(row));
+
+    await this.calendarService.write(storedEvents, input);
+    await this.calendarService.writeJson(storedEvents, input);
 
     this.logger.info("🏁 Completed a caelundas run", undefined, {
-      totalEvents: allEvents.length,
+      detectedEvents: allEvents.length,
+      totalEvents: storedEvents.length,
     });
   }
 }

@@ -34,7 +34,8 @@ describe("caelundas module", () => {
     expect(options.envFilePath).toBe(".env");
     expect(options.isGlobal).toBe(true);
     expect(typeof options.validate).toBe("function");
-    expect(options.validate?.({})).toStrictEqual({
+    expect(options.validate?.({})).toMatchObject({
+      CAELUNDAS_POSTGRES_DATABASE: "caelundas_development",
       OUTPUT_DIRECTORY: "./output",
     });
   });

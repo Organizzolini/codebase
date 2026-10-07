@@ -1,9 +1,11 @@
 {
   "dependencies": {
+    "@codebase/database": "workspace:*",
     "@codebase/logging": "workspace:*",
     "@nestjs/common": "catalog:",
     "@nestjs/config": "catalog:",
     "@nestjs/core": "catalog:",
+    "@nestjs/typeorm": "catalog:",
     "@photostructure/tz-lookup": "catalog:",
     "lodash": "catalog:",
     "moment-timezone": "catalog:",
@@ -11,6 +13,7 @@
     "reflect-metadata": "catalog:",
     "sweph": "catalog:",
     "tslib": "catalog:",
+    "typeorm": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

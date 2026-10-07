@@ -81,6 +81,7 @@
     "applications/lexico/src/lib/client.tsx",
     "applications/lexico/src/lib/routeTree.gen.ts",
     "applications/lexico/src/router.tsx",
+    "applications/caelundas/caelundas-cli/src/modules/caelundas-database/migrations/**/*.ts",
     "packages/lexico-entities/src/modules/database/migrations/**/*.ts",
     "configuration/release.config.cjs",
     "validate-branch-name.config.cjs",

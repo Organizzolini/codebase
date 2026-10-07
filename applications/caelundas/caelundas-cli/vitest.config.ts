@@ -7,7 +7,12 @@ export default mergeConfig(
   defineConfig({
     test: {
       coverage: {
-        exclude: ["src/**/*.test.ts"],
+        /**
+         * Entities as well as tests: an entity is decorators alone, whose
+         * only branches are the `emitDecoratorMetadata` fallbacks the
+         * compiler adds, and no test can reach them.
+         */
+        exclude: ["src/**/*.entity.ts", "src/**/*.test.ts"],
         include: ["src/**/*.ts"],
       },
     },

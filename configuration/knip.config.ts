@@ -145,6 +145,12 @@ const config: KnipConfig = {
 
     // caelundas: Node.js CLI for astronomical calendar generation
     "applications/caelundas/caelundas-cli": {
+      // The data source and the migrations are read by the TypeORM command
+      // line the `migration` target runs, by path rather than by import.
+      entry: [
+        "src/modules/caelundas-database/data-source.constants.ts",
+        "src/modules/caelundas-database/migrations/**/*.ts",
+      ],
       ignore: [
         "output/**", // Generated calendar output files
         "testing/**", // Test fixtures and setup
