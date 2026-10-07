@@ -1064,10 +1064,10 @@
         "cache": true,
         "configurations": {
           "check": {
-            "command": "stylelint --allow-empty-input --config ../../configuration/stylelint.config.cjs 'src/**/*.css'"
+            "command": "stylelint --allow-empty-input --config configuration/stylelint.config.cjs '{projectRoot}/src/**/*.css'"
           },
           "write": {
-            "command": "stylelint --allow-empty-input --fix --config ../../configuration/stylelint.config.cjs 'src/**/*.css'"
+            "command": "stylelint --allow-empty-input --fix --config configuration/stylelint.config.cjs '{projectRoot}/src/**/*.css'"
           }
         },
         "defaultConfiguration": "check",
@@ -1088,77 +1088,7 @@
           }
         ],
         "options": {
-          "command": "stylelint --allow-empty-input --config ../../configuration/stylelint.config.cjs 'src/**/*.css'",
-          "cwd": "{projectRoot}"
-        }
-      },
-      {
-        "cache": true,
-        "configurations": {
-          "check": {
-            "command": "stylelint --allow-empty-input --config ../../../../configuration/stylelint.config.cjs 'src/**/*.css'"
-          },
-          "write": {
-            "command": "stylelint --allow-empty-input --fix --config ../../../../configuration/stylelint.config.cjs 'src/**/*.css'"
-          }
-        },
-        "defaultConfiguration": "check",
-        "executor": "nx:run-commands",
-        "filter": {
-          "projects": [
-            "callidescope-agents",
-            "callidescope-cli",
-            "callidescope-configuration",
-            "callidescope-core",
-            "callidescope-examples",
-            "callidescope-graph",
-            "callidescope-nx",
-            "callidescope-output",
-            "codependix-agents",
-            "codependix-boundaries",
-            "codependix-cli",
-            "codependix-configuration",
-            "codependix-core",
-            "codependix-examples",
-            "codependix-file-imports",
-            "codependix-nestjs-modules",
-            "codependix-nx-projects",
-            "codependix-output",
-            "codometer-agents",
-            "codometer-cli",
-            "codometer-configuration",
-            "codometer-core",
-            "codometer-examples",
-            "codometer-languages",
-            "codometer-measurement",
-            "codometer-output",
-            "conformetry-agents",
-            "conformetry-cli",
-            "conformetry-configuration",
-            "conformetry-core",
-            "conformetry-examples",
-            "conformetry-generation",
-            "conformetry-languages",
-            "conformetry-nx",
-            "conformetry-output",
-            "conformetry-validation"
-          ]
-        },
-        "inputs": [
-          "{projectRoot}/src/**/*.css",
-          "{workspaceRoot}/configuration/stylelint.config.cjs",
-          "shared-globals",
-          {
-            "externalDependencies": [
-              "stylelint",
-              "stylelint-config-standard",
-              "stylelint-config-tailwindcss"
-            ]
-          }
-        ],
-        "options": {
-          "command": "stylelint --allow-empty-input --config ../../../../configuration/stylelint.config.cjs 'src/**/*.css'",
-          "cwd": "{projectRoot}"
+          "command": "stylelint --allow-empty-input --config configuration/stylelint.config.cjs '{projectRoot}/src/**/*.css'"
         }
       }
     ],
