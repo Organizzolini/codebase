@@ -15,8 +15,8 @@ nx run meanderaw-cli:start
 
 ## 🏛️ Before You Change a Meander
 
-**A meander is a row in the Postgres database `MEANDERAW_POSTGRES_DB` names (`meanderaw_development`
-by default), addressed by its lattice address — its Code, its rows, and its columns — and nothing else.** The formatted
+**A meander is a row in the `meanders` table of the Postgres database `MEANDERAW_POSTGRES_DATABASE` names
+(`meanderaw_development`, schema `meanderaw`, by default), addressed by its lattice address — its Code, its rows, and its columns — and nothing else.** The formatted
 Code spells out all three, so `code` alone is its identity; the row's `id` is a uuidv7
 the database assigns, which changes on every draw run and must never reach committed output. There is no `output/<family>/*.svg`
 tree, no per-family procedural motif service, and no `--type`/`--modifier` command line.
@@ -65,7 +65,7 @@ drives real threads.
 **A draw run commits nothing.** The rows live in Postgres, and `output/index.html` and a page
 per family are written on every draw run but gitignored — at the default budget they are
 gigabytes of HTML. `DrawIndexService.build` hands each page over as an async iterable of
-pieces, read from `DatabaseService.familyRows` a batch at a time, because a family page
+pieces, read from `MeanderawDatabaseService.familyRows` a batch at a time, because a family page
 outgrows a JavaScript string; never build one as a single string or read every row first.
 
 **A family is a combination of Characteristics, not a label a generator attached.**
@@ -210,6 +210,7 @@ Always prefer running tasks through Nx rather than calling the underlying tools 
 
 ```bash
 nx run codebase:postgres-container:up     # The local Postgres the database lives in
+nx run meanderaw-cli:migration:run            # Build or update the meanders table
 nx run meanderaw-cli:start                    # Clear the meander rows, then draw every meander back into them
 nx run meanderaw-cli:typecheck-code,lint-code,format-code,deprecate-code,guard-code   # Every static check, in one graph
 nx run meanderaw-cli:typecheck       # tsc --noEmit
@@ -217,7 +218,7 @@ nx run meanderaw-cli:oxfmt           # Formatting
 ```
 
 This application has **one command, `draw`**, and it is the default — so `start` runs it,
-and it always writes the database `MEANDERAW_POSTGRES_DB` names. With no arguments it clears that
+and it always writes the database `MEANDERAW_POSTGRES_DATABASE` names. With no arguments it clears that
 database's meander rows and draws every meander the application can draw back into it: the whole lattice's unit space, enumerated
 and classified, then the historical corpus's hardcoded Codes beyond that budget. With
 `--rows`, `--columns`, and `--code` it decodes, measures, and persists that one:
@@ -230,16 +231,28 @@ nx run meanderaw-cli:start --args="--rows 3 --columns 2 --code 3c9a"
 or any other — rewrites the database as a side effect. Keep it that way: a `dependsOn` on
 `start` would run a full draw run on every check.
 
-**The database lives in Postgres, not in the repository.** The local Docker init creates
-the `meanderaw_development` database and the schema of the same name, the defaults of
-`MEANDERAW_POSTGRES_DB` and `MEANDERAW_POSTGRES_SCHEMA`. Every meanderaw variable carries the
-`MEANDERAW_` prefix, so the unprefixed `POSTGRES_*` the root `.env` sets for lexico — which
-Nx loads into every task — never reaches it — see
-[ADR 0020](../../../docs/adr/0020-store-meanders-in-postgres.md). A draw run commits nothing: the
-HTML pages it writes stay in the gitignored `output/` — see
-[ADR 0021](../../../docs/adr/0021-stop-committing-the-meander-pages.md). Integration suites start their
-own throwaway `postgres:18-alpine` container through `@testcontainers/postgresql` and hand
-it to `testing/database.ts`, so Docker must be running to test them.
+**The database lives in Postgres, not in the repository.** Meanderaw uses the shared convention
+from `@codebase/database`: the local Docker init creates the `meanderaw_development` database,
+the `meanderaw` schema inside it, and the `meanderaw_username` role that owns both, the defaults
+of `MEANDERAW_POSTGRES_DATABASE`, `MEANDERAW_POSTGRES_SCHEMA`, and `MEANDERAW_POSTGRES_USERNAME`. Every
+meanderaw variable carries the `MEANDERAW_` prefix, so the unprefixed `POSTGRES_*` the root
+`.env` sets as the container's admin login — which Nx loads into every task — never reaches it
+— see [ADR 0022](../../../docs/adr/0022-give-every-database-project-its-own-database-schema-and-role.md).
+
+**The `meanders` table is built by migrations, never by synchronizing.** `Meander` extends
+`UpdatableEntity`, so its `uuidv7()` id and audit columns come from the shared package, and the
+migrations live in `src/modules/meanderaw-database/migrations/`. After changing the entity run
+`nx run meanderaw-cli:migration:generate`, and `nx run meanderaw-cli:migration:run` to apply it; the
+`start` target never migrates, so run the migrations before the first draw run. The CLI reads the
+data source `src/modules/meanderaw-database/data-source.constants.ts` exports, and the
+`migration` target finds both through its `module` option, which names that folder.
+
+A draw run commits nothing: the HTML pages it writes stay in the gitignored `output/` — see
+[ADR 0021](../../../docs/adr/0021-stop-committing-the-meander-pages.md). Integration suites start
+their own throwaway `postgres:18-alpine` container, migrated by the real migrations, through
+`startDatabaseTestingModule` from `@codebase/database/testing` against `meanderaw_testing`, so Docker
+must be running to test them. `MeanderawDatabaseModule` is the project's own database module and
+is passed to that helper as `database`.
 
 There is deliberately no second command, and no other flag — see "One Command" and
 "Output Layout" in [README.md](./README.md).

@@ -1,8 +1,8 @@
 // 🏷️ Types
 
 import type { MeanderFamily } from "../classification/classification.types";
-import type { MeanderFamilyShapeCount } from "../database/database.types";
-import type { Meander } from "../database/entities/Meander.entity";
+import type { Meander } from "../meanderaw-database/entities/meander.entity";
+import type { MeanderFamilyShapeCount } from "../meanderaw-database/meanderaw-database.types";
 
 /**
  * One page's HTML, a piece at a time: read lazily from the database as it

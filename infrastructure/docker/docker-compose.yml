@@ -84,9 +84,6 @@ configs:
   # `<project>` schema it owns. The unprefixed `POSTGRES_*` in the root
   # `.env` remain the container's admin login, which runs this script. `$$`
   # escapes Compose's own interpolation, leaving `$` for the shell.
-  #
-  # The `meanderaw_development` schema is the one meanderaw still reads
-  # until it moves onto the `meanderaw` schema and its own role.
   postgres-databases:
     content: |
       #!/bin/sh
@@ -103,8 +100,6 @@ configs:
       CREATE SCHEMA $${project} AUTHORIZATION $${project}_username;
       SQL
       done
-
-      psql -v ON_ERROR_STOP=1 --username "$$POSTGRES_USER" --dbname meanderaw_development --command "CREATE SCHEMA IF NOT EXISTS meanderaw_development;"
 
 volumes:
   open-webui_data:

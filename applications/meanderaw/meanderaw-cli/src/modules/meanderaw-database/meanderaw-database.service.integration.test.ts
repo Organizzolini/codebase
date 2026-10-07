@@ -1,66 +1,54 @@
-import { Test } from "@nestjs/testing";
-import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import {
-  PostgreSqlContainer,
-  type StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
-import { DataSource, Like, type Repository } from "typeorm";
+import { type DataSource, Like, type Repository } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import {
-  TEST_DATABASE_NAME,
-  TEST_POSTGRES_IMAGE,
-  TEST_SCHEMA_INITIALIZATION,
-  testDataSourceOptions,
-} from "../../../testing/database";
+  type DatabaseTestingModule,
+  startDatabaseTestingModule,
+} from "@codebase/database/testing";
+
 import { meanderRecord } from "../../../testing/meanders";
 import { CHARACTERISTIC_KEYS } from "../characteristics/characteristics.constants";
 
-import { MEANDER_INSERT_CHUNK_SIZE } from "./database.constants";
-import { DatabaseService } from "./database.service";
-import { Meander } from "./entities/Meander.entity";
+import { Meander } from "./entities/meander.entity";
+import { MEANDER_INSERT_CHUNK_SIZE } from "./meanderaw-database.constants";
+import { MeanderawDatabaseModule } from "./meanderaw-database.module";
+import { MeanderawDatabaseService } from "./meanderaw-database.service";
+import { Migration1791160950069 } from "./migrations/1791160950069-migration";
 
-import type { MeanderRecord } from "./database.types";
+import type { MeanderRecord } from "./meanderaw-database.types";
 
 // 🧪 Tests
 
 /**
- * Drives `DatabaseService` against a real TypeORM connection to a throwaway
+ * Drives `MeanderawDatabaseService` against a real TypeORM connection to a throwaway
  * Postgres container, per spec #813's Testing Decisions: this is the highest
  * seam, and it asserts on persisted rows rather than on a mocked repository.
  *
- * The connection is assembled inline rather than through `DatabaseModule`,
- * which reads the local database's address from configuration — a test
- * needs a fresh, isolated database of its own instead.
+ * The module is booted by `startDatabaseTestingModule`, which points
+ * `MeanderawDatabaseModule` at a fresh, isolated database of its own
+ * instead of the local one.
  */
-describe(DatabaseService, () => {
-  let container: StartedPostgreSqlContainer;
+describe(MeanderawDatabaseService, () => {
+  let database: DatabaseTestingModule;
   let dataSource: DataSource;
   let repository: Repository<Meander>;
-  let service: DatabaseService;
+  let service: MeanderawDatabaseService;
 
   beforeAll(async () => {
-    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
-      .withDatabase(TEST_DATABASE_NAME)
-      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
-      .start();
+    database = await startDatabaseTestingModule({
+      database: MeanderawDatabaseModule,
+      entities: [Meander],
+      migrations: [Migration1791160950069],
+      project: "meanderaw",
+    });
 
-    const module = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot(testDataSourceOptions(container)),
-        TypeOrmModule.forFeature([Meander]),
-      ],
-      providers: [DatabaseService],
-    }).compile();
-
-    service = await module.resolve(DatabaseService);
-    dataSource = module.get(DataSource);
-    repository = module.get(getRepositoryToken(Meander));
+    service = await database.module.resolve(MeanderawDatabaseService);
+    dataSource = database.dataSource;
+    repository = database.repository(Meander);
   });
 
   afterAll(async () => {
-    await dataSource.destroy();
-    await container.stop();
+    await database.close();
   });
 
   it("is defined", () => {
@@ -383,13 +371,17 @@ describe(DatabaseService, () => {
 
       const {
         code: _one,
+        createdAt: _oneCreated,
         id: _oneId,
+        updatedAt: _oneUpdated,
         ...one
       } = await repository.findOneByOrFail({ code: "saved-one" });
       const {
         code: _all,
+        createdAt: _allCreated,
         id: _allId,
         lattice: _lattice,
+        updatedAt: _allUpdated,
         ...all
       } = await repository.findOneByOrFail({ code: "saved-all" });
       const { lattice: _oneLattice, ...comparable } = one;

@@ -3,9 +3,9 @@ import { Inject, Injectable } from "@nestjs/common";
 import { CharacteristicsService } from "../characteristics/characteristics.service";
 import { ClassificationService } from "../classification/classification.service";
 import { CodeService } from "../code/code.service";
-import { DatabaseService } from "../database/database.service";
 import { DRAW_MINIMUM_ROWS } from "../enumeration/enumeration.constants";
 import { TileEnumerationService } from "../enumeration/tile-enumeration.service";
+import { MeanderawDatabaseService } from "../meanderaw-database/meanderaw-database.service";
 
 import {
   CORPUS_FAMILIES,
@@ -13,7 +13,7 @@ import {
   HISTORICAL_CORPUS_EDGE_BUDGET,
 } from "./corpus.constants";
 
-import type { Meander } from "../database/entities/Meander.entity";
+import type { Meander } from "../meanderaw-database/entities/meander.entity";
 import type { CorpusEntry, CorpusFamily } from "./corpus.types";
 
 /**
@@ -59,7 +59,7 @@ import type { CorpusEntry, CorpusFamily } from "./corpus.types";
  * A Code that collides with one already committed — an Enumerated row, or
  * another entry ingested earlier in the same draw run — fails loudly through
  * {@link DuplicateCorpusCodeError} rather than silently overwriting, since
- * `DatabaseService.save` relies on the `code` column's own unique constraint
+ * `MeanderawDatabaseService.save` relies on the `code` column's own unique constraint
  * rather than checking beforehand.
  */
 @Injectable()
@@ -71,8 +71,8 @@ export class CorpusService {
     private readonly characteristicsService: CharacteristicsService,
     @Inject(ClassificationService)
     private readonly classificationService: ClassificationService,
-    @Inject(DatabaseService)
-    private readonly databaseService: DatabaseService,
+    @Inject(MeanderawDatabaseService)
+    private readonly databaseService: MeanderawDatabaseService,
     @Inject(CodeService)
     private readonly codeService: CodeService,
     @Inject(TileEnumerationService)

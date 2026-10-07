@@ -1,6 +1,9 @@
 // 🏷️ Types
 
-import type { MeanderRecord, MeanderShape } from "../database/database.types";
+import type {
+  MeanderRecord,
+  MeanderShape,
+} from "../meanderaw-database/meanderaw-database.types";
 
 /**
  * What `DrawCodeService.draw` needs to decode, render, and persist one
@@ -30,7 +33,7 @@ export interface CodeDrawingOptions {
  * `--output-directory` flags this once carried are retired with the
  * per-family procedural pipeline they named a drawing in. A meander is now
  * addressed by its lattice address alone, and the database it is written to
- * is the one `MEANDERAW_POSTGRES_DB` names rather than somewhere a flag points.
+ * is the one `MEANDERAW_POSTGRES_DATABASE` names rather than somewhere a flag points.
  */
 export interface DrawCommandOptions {
   code?: string;

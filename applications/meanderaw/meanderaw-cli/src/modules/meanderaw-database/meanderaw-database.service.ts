@@ -2,28 +2,28 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
+import { Meander } from "./entities/meander.entity";
 import {
   MEANDER_INSERT_CHUNK_SIZE,
   MEANDER_READ_BATCH_SIZE,
-} from "./database.constants";
-import { Meander } from "./entities/Meander.entity";
+} from "./meanderaw-database.constants";
 
 import type { MeanderFamily } from "../classification/classification.types";
 import type {
   MeanderFamilyShapeCount,
   MeanderRecord,
   MeanderShape,
-} from "./database.types";
+} from "./meanderaw-database.types";
 import type { ColumnMetadata } from "typeorm/metadata/ColumnMetadata.js";
 
 /**
- * Persists meanders to the Postgres database `MEANDERAW_POSTGRES_DB` names.
+ * Persists meanders to the Postgres database `MEANDERAW_POSTGRES_DATABASE` names.
  * Holds no decoding or rendering logic of its own — every field it writes
  * arrives already computed, so this is the one seam between the generic
  * rendering pipeline and TypeORM.
  */
 @Injectable()
-export class DatabaseService {
+export class MeanderawDatabaseService {
   // 🏗 Dependency Injection
 
   constructor(
@@ -149,17 +149,19 @@ export class DatabaseService {
       .addGroupBy("meander.rows")
       .addGroupBy("meander.columns")
       .getRawMany<{
-        columns: number;
+        columns: string;
         count: string;
         family: MeanderFamily;
-        rows: number;
+        rows: string;
       }>();
 
+    // A raw row skips the entity's column transformers, and `pg` returns a
+    // `bigint` as a string, so each number is converted here.
     return counted.map(({ columns, count, family, rows }) => ({
-      columns,
+      columns: Number(columns),
       count: Number(count),
       family,
-      rows,
+      rows: Number(rows),
     }));
   }
 

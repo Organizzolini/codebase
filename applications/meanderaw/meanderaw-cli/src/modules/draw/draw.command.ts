@@ -9,7 +9,7 @@ import { LoggerService } from "@codebase/logging";
 import { CODE_FORMAT_PATTERN } from "../code/code.constants";
 import { CorpusService } from "../corpus/corpus.service";
 import { HISTORICAL_CORPUS } from "../corpus/historical-corpus.constants";
-import { DatabaseService } from "../database/database.service";
+import { MeanderawDatabaseService } from "../meanderaw-database/meanderaw-database.service";
 
 import { DrawCodeService } from "./draw-code.service";
 import { DrawEnumerationService } from "./draw-enumeration.service";
@@ -19,7 +19,7 @@ import { IncompleteCodeDrawingError } from "./draw.constants";
 import type { DrawCommandOptions } from "./draw.types";
 
 /**
- * Draws meanders into the Postgres database `MEANDERAW_POSTGRES_DB` names.
+ * Draws meanders into the Postgres database `MEANDERAW_POSTGRES_DATABASE` names.
  * It is the application's only command, and its default, so running it
  * with no arguments at all runs this.
  *
@@ -59,7 +59,7 @@ import type { DrawCommandOptions } from "./draw.types";
  */
 @Command({
   description:
-    "Draw meanders into the Postgres database MEANDERAW_POSTGRES_DB names: with no flag, draw every meander the application can draw into it (the whole lattice's unit space, enumerated and classified into a family by each meander's own structure, plus the historical corpus's hardcoded constants beyond the enumeration's budget); with --rows, --columns, and --code, draw that one",
+    "Draw meanders into the Postgres database MEANDERAW_POSTGRES_DATABASE names: with no flag, draw every meander the application can draw into it (the whole lattice's unit space, enumerated and classified into a family by each meander's own structure, plus the historical corpus's hardcoded constants beyond the enumeration's budget); with --rows, --columns, and --code, draw that one",
   name: "draw",
   options: { isDefault: true },
 })
@@ -77,8 +77,8 @@ export class DrawCommand extends CommandRunner {
     private readonly drawIndexService: DrawIndexService,
     @Inject(CorpusService)
     private readonly corpusService: CorpusService,
-    @Inject(DatabaseService)
-    private readonly databaseService: DatabaseService,
+    @Inject(MeanderawDatabaseService)
+    private readonly databaseService: MeanderawDatabaseService,
   ) {
     super();
     this.logger.setContext(DrawCommand.name);

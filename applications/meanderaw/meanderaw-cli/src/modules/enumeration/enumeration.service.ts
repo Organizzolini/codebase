@@ -6,7 +6,7 @@ import { CodeService } from "../code/code.service";
 import { DRAW_MINIMUM_ROWS } from "./enumeration.constants";
 import { TileEnumerationService } from "./tile-enumeration.service";
 
-import type { MeanderShape } from "../database/database.types";
+import type { MeanderShape } from "../meanderaw-database/meanderaw-database.types";
 import type { EnumeratedMeander, Environment } from "./enumeration.types";
 
 /**

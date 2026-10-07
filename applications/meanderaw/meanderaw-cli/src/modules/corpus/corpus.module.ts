@@ -3,8 +3,8 @@ import { Module } from "@nestjs/common";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
 import { ClassificationModule } from "../classification/classification.module";
 import { CodeModule } from "../code/code.module";
-import { DatabaseModule } from "../database/database.module";
 import { EnumerationModule } from "../enumeration/enumeration.module";
+import { MeanderawDatabaseModule } from "../meanderaw-database/meanderaw-database.module";
 
 import { CorpusService } from "./corpus.service";
 
@@ -26,7 +26,7 @@ import { CorpusService } from "./corpus.service";
     CharacteristicsModule,
     ClassificationModule,
     CodeModule,
-    DatabaseModule,
+    MeanderawDatabaseModule,
     EnumerationModule,
   ],
   providers: [CorpusService],

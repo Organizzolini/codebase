@@ -14,12 +14,12 @@ describe("main end-to-end suite", () => {
         DRAW_MAXIMUM_COLUMNS: parsed.DRAW_MAXIMUM_COLUMNS,
         DRAW_MAXIMUM_ROWS: parsed.DRAW_MAXIMUM_ROWS,
         DRAW_WORKERS: parsed.DRAW_WORKERS,
-        MEANDERAW_POSTGRES_DB: "meanderaw_development",
+        MEANDERAW_POSTGRES_DATABASE: "meanderaw_development",
         MEANDERAW_POSTGRES_HOST: "localhost",
-        MEANDERAW_POSTGRES_PASSWORD: "postgres",
+        MEANDERAW_POSTGRES_PASSWORD: "meanderaw_password",
         MEANDERAW_POSTGRES_PORT: 5432,
-        MEANDERAW_POSTGRES_SCHEMA: "meanderaw_development",
-        MEANDERAW_POSTGRES_USER: "postgres",
+        MEANDERAW_POSTGRES_SCHEMA: "meanderaw",
+        MEANDERAW_POSTGRES_USERNAME: "meanderaw_username",
       });
     });
   });

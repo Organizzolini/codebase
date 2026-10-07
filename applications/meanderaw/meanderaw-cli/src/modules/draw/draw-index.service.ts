@@ -6,9 +6,9 @@ import { Inject, Injectable } from "@nestjs/common";
 
 import { STORED_BOOLEAN_KEYS } from "../characteristics/characteristics.constants";
 import { CodeService } from "../code/code.service";
-import { DatabaseService } from "../database/database.service";
 import { DrawingService } from "../drawing/drawing.service";
 import { GeometryService } from "../geometry/geometry.service";
+import { MeanderawDatabaseService } from "../meanderaw-database/meanderaw-database.service";
 
 import {
   BAND_REPEAT_COUNT,
@@ -18,8 +18,8 @@ import {
 } from "./draw-index.constants";
 
 import type { MeanderFamily } from "../classification/classification.types";
-import type { MeanderFamilyShapeCount } from "../database/database.types";
-import type { Meander } from "../database/entities/Meander.entity";
+import type { Meander } from "../meanderaw-database/entities/meander.entity";
+import type { MeanderFamilyShapeCount } from "../meanderaw-database/meanderaw-database.types";
 import type {
   MeanderPageContent,
   MeanderPageSource,
@@ -58,8 +58,8 @@ export class DrawIndexService {
   constructor(
     @Inject(CodeService)
     private readonly codeService: CodeService,
-    @Inject(DatabaseService)
-    private readonly databaseService: DatabaseService,
+    @Inject(MeanderawDatabaseService)
+    private readonly databaseService: MeanderawDatabaseService,
     @Inject(DrawingService)
     private readonly drawingService: DrawingService,
     @Inject(GeometryService)

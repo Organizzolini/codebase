@@ -4,10 +4,10 @@ import { CharacteristicsModule } from "../characteristics/characteristics.module
 import { ClassificationModule } from "../classification/classification.module";
 import { CodeModule } from "../code/code.module";
 import { CorpusModule } from "../corpus/corpus.module";
-import { DatabaseModule } from "../database/database.module";
 import { DrawingModule } from "../drawing/drawing.module";
 import { EnumerationModule } from "../enumeration/enumeration.module";
 import { GeometryModule } from "../geometry/geometry.module";
+import { MeanderawDatabaseModule } from "../meanderaw-database/meanderaw-database.module";
 import { SymmetryModule } from "../symmetry/symmetry.module";
 
 import { DrawCodeService } from "./draw-code.service";
@@ -30,7 +30,7 @@ import { DrawCommand } from "./draw.command";
  * decoder and renderer every family's Code is drawn through,
  * `CharacteristicsModule` measures that same Code,
  * `EnumerationModule` walks the space the draw run covers, and
- * `DatabaseModule` is the Postgres database all of it
+ * `MeanderawDatabaseModule` is the Postgres database all of it
  * persists to and `DrawIndexService` reads back from, `GeometryModule` is
  * the scaling rule the index pages place each repeat of a tile by, and
  * `SymmetryModule` folds each symmetry class the draw run's worker threads draw
@@ -39,7 +39,7 @@ import { DrawCommand } from "./draw.command";
  * one service `DrawCommand` calls once per draw run with the historical corpus,
  * trusting its family/subFamily rather than classifying them.
  *
- * `DatabaseModule` always connects to the database the `MEANDERAW_POSTGRES_*`
+ * `MeanderawDatabaseModule` always connects to the database the `MEANDERAW_POSTGRES_*`
  * variables name — a test exercising `DrawCommand`, `DrawCodeService`,
  * `DrawEnumerationService`, `DrawIndexService`, or `CorpusService` builds
  * its own `TestingModule` against a throwaway Postgres container instead of
@@ -52,7 +52,7 @@ import { DrawCommand } from "./draw.command";
     CorpusModule,
     CharacteristicsModule,
     ClassificationModule,
-    DatabaseModule,
+    MeanderawDatabaseModule,
     CodeModule,
     EnumerationModule,
     DrawingModule,
