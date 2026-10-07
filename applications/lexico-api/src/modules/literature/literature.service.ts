@@ -388,9 +388,10 @@ export class LiteratureService {
     const qb = this.textRepository
       .createQueryBuilder("text")
       .leftJoinAndSelect("text.author", "author")
-      .where("LOWER(text.title) LIKE :query OR LOWER(text.slug) LIKE :query", {
-        query: `%${clean.toLowerCase()}%`,
-      })
+      .where(
+        "(LOWER(text.title) LIKE :query OR LOWER(text.slug) LIKE :query)",
+        { query: `%${clean.toLowerCase()}%` },
+      )
       .orderBy("text.title", "ASC");
 
     if (authorId) {
