@@ -73,29 +73,63 @@ describe(TokensResolver, () => {
     });
   });
 
-  it("resolves a token to its word through the data loader", async () => {
-    expect.hasAssertions();
-
-    const word = new Word();
-    word.id = "word-1";
-    word.data = "amo";
-
-    const token = new Token();
-    token.id = "token-1";
-    token.data = "amo";
-    token.isPunctuation = false;
-    token.word = word;
-
-    const mockService = createMock<LiteratureService>({
-      findTokensByIds: vi
+  describe("word", () => {
+    /** Builds a resolver whose loader answers from the given loaded token. */
+    function createWordResolver(loaded: Token): {
+      findTokensByIds: ReturnType<
+        typeof vi.fn<LiteratureService["findTokensByIds"]>
+      >;
+      tokensResolver: TokensResolver;
+    } {
+      const findTokensByIds = vi
         .fn<LiteratureService["findTokensByIds"]>()
-        .mockResolvedValue([token]),
-    });
-    const tokensResolver = new TokensResolver(
-      mockService,
-      new TokenWordLoader(mockService),
-    );
+        .mockResolvedValue([loaded]);
+      const mockService = createMock<LiteratureService>({ findTokensByIds });
+      return {
+        findTokensByIds,
+        tokensResolver: new TokensResolver(
+          mockService,
+          new TokenWordLoader(mockService),
+        ),
+      };
+    }
 
-    await expect(tokensResolver.resolveTokenWord(token)).resolves.toBe(word);
+    const word = Object.assign(new Word(), { data: "amo", id: "word-1" });
+
+    it("loads the word through the data loader when the relation is absent", async () => {
+      expect.hasAssertions();
+
+      const loaded = Object.assign(new Token(), { id: "token-1", word });
+      const { findTokensByIds, tokensResolver } = createWordResolver(loaded);
+      const parent = Object.assign(new Token(), { id: "token-1" });
+
+      await expect(tokensResolver.resolveTokenWord(parent)).resolves.toBe(word);
+      expect(findTokensByIds).toHaveBeenCalledWith(["token-1"]);
+    });
+
+    it("returns the parent's loaded word without querying", async () => {
+      expect.hasAssertions();
+
+      const parent = Object.assign(new Token(), { id: "token-1", word });
+      const { findTokensByIds, tokensResolver } = createWordResolver(parent);
+
+      await expect(tokensResolver.resolveTokenWord(parent)).resolves.toBe(word);
+      expect(findTokensByIds).not.toHaveBeenCalled();
+    });
+
+    it("returns null without querying for a loaded token that has no word", async () => {
+      expect.hasAssertions();
+
+      const parent = Object.assign(new Token(), {
+        data: ",",
+        id: "token-2",
+        isPunctuation: true,
+        word: null,
+      });
+      const { findTokensByIds, tokensResolver } = createWordResolver(parent);
+
+      await expect(tokensResolver.resolveTokenWord(parent)).resolves.toBeNull();
+      expect(findTokensByIds).not.toHaveBeenCalled();
+    });
   });
 });
