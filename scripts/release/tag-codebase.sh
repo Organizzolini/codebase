@@ -21,6 +21,18 @@ set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/main-tip.sh"
 
+# Prints, in a collapsed group, what the release commit's pre-commit hook ran.
+# semantic-release commits without showing the hook's output, which is most of
+# this step's time, and the hook leaves a copy in `last-lint-staged-output.log`.
+# A run that made no release commit has no copy, since checkout starts clean.
+print_hook_output() {
+  if [[ -f last-lint-staged-output.log ]]; then
+    echo "::group::🪝 The release commit's pre-commit hook"
+    cat last-lint-staged-output.log
+    echo "::endgroup::"
+  fi
+}
+
 base="$(git rev-parse HEAD)"
 
 if main_has_moved_from "${base}"; then
@@ -28,7 +40,10 @@ if main_has_moved_from "${base}"; then
   exit 0
 fi
 
-if pnpm semantic-release; then
+status=0
+pnpm semantic-release || status=$?
+print_hook_output
+if [[ "${status}" -eq 0 ]]; then
   exit 0
 fi
 

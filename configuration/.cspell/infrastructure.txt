@@ -15,6 +15,7 @@ distroless
 dockerfiles
 dshm
 einvalidghtoken
+endgroup
 enochange
 ensurepath
 esockettimedout
