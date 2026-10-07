@@ -1,7 +1,7 @@
 import { Field, Float, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, OneToMany, OneToOne, Unique } from "typeorm";
 
-import { AuditableEntity } from "../base/Auditable.entity";
+import { DeletableEntity } from "../base/Deletable.entity";
 
 import { Form } from "./form/Form.entity";
 import { Inflection } from "./inflection/Inflection.entity";
@@ -18,11 +18,10 @@ import { WordLexeme } from "./WordLexeme.entity";
   comment:
     "A dictionary entry representing a Latin word form with its translations, principal parts, pronunciation, and inflection data",
   name: "lexemes",
-  schema: "public",
 })
 @ObjectType()
 @Unique(["lemma", "disambiguator"])
-export class Lexeme extends AuditableEntity {
+export class Lexeme extends DeletableEntity {
   @Column("bigint", {
     comment:
       "Disambiguation index when multiple entries share the same lemma (0-based)",

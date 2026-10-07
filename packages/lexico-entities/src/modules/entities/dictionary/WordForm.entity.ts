@@ -1,7 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Entity, Index, ManyToOne } from "typeorm";
 
-import { AuditableEntity } from "../base/Auditable.entity";
+import { DeletableEntity } from "../base/Deletable.entity";
 
 import { Form } from "./form/Form.entity";
 import { Word } from "./Word.entity";
@@ -20,11 +20,10 @@ import type { Relation } from "typeorm";
   comment:
     "Junction table linking a normalized Latin word string to the morphological forms it can surface as",
   name: "word_forms",
-  schema: "public",
 })
 @Index(["word", "form"], { unique: true })
 @ObjectType()
-export class WordForm extends AuditableEntity {
+export class WordForm extends DeletableEntity {
   /** The morphological form side of the junction. Cascade-deletes with the Form. */
   @Field(() => Form)
   @Index()

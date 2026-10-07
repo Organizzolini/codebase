@@ -1,7 +1,7 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, ManyToOne, OneToMany } from "typeorm";
 
-import { AuditableEntity } from "../base/Auditable.entity";
+import { DeletableEntity } from "../base/Deletable.entity";
 
 import { Author } from "./Author.entity";
 import { Text } from "./Text.entity";
@@ -15,11 +15,10 @@ import type { Relation } from "typeorm";
 @Entity({
   comment: "A single line of classical Latin literature",
   name: "lines",
-  schema: "public",
 })
 @Index(["text", "index"], { unique: true })
 @ObjectType()
-export class Line extends AuditableEntity {
+export class Line extends DeletableEntity {
   @Field(() => Author)
   @Index()
   @ManyToOne("Author", { eager: false, onDelete: "CASCADE" })

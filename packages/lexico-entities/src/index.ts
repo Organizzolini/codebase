@@ -1,54 +1,4 @@
-export { lexicoDataSource } from "./modules/database/data-source.constants";
-export {
-  adjectiveDeclensionValues,
-  adjectiveDegreeValues,
-  adverbDegrees as adverbDegreeValues,
-  adverbTypes as adverbFunctionTypeValues,
-  formCaseValues,
-  formDegreeValues,
-  formGenderValues,
-  formGerundCaseValues,
-  formMoodValues,
-  formNonFiniteTenseValues,
-  formNumberValues,
-  formPersonValues,
-  formSupineCaseValues,
-  formTenseValues,
-  formVoiceValues,
-  inflectionDeclensionValues,
-  LexicoNamingStrategy,
-  nounDeclensionValues,
-  nounGenders,
-  prepositionCases,
-  verbConjugationValues,
-} from "./modules/database/database.constants";
-export type {
-  AdjectiveDeclension,
-  AdjectiveDegree,
-  AdverbDegree,
-  AdverbType as AdverbFunctionType,
-  FormCase,
-  FormDegree,
-  FormGender,
-  FormGerundCase,
-  FormMood,
-  FormNonFiniteTense,
-  FormNumber,
-  FormPerson,
-  FormSupineCase,
-  FormTense,
-  FormVoice,
-  NounDeclension,
-  NounGender,
-  PrepositionCase,
-  VerbConjugation,
-} from "./modules/database/database.constants";
-export { DatabaseModule } from "./modules/database/database.module";
-export { AuditableEntity } from "./modules/entities/base/Auditable.entity";
-export { CreatableEntity } from "./modules/entities/base/Creatable.entity";
 export { DeletableEntity } from "./modules/entities/base/Deletable.entity";
-export { IdentifiableEntity } from "./modules/entities/base/Identifiable.entity";
-export { UpdatableEntity } from "./modules/entities/base/Updatable.entity";
 export { AdjectivalForm } from "./modules/entities/dictionary/form/AdjectivalForm.entity";
 export { AdverbForm } from "./modules/entities/dictionary/form/AdverbForm.entity";
 export { FiniteVerbForm } from "./modules/entities/dictionary/form/FiniteVerbForm.entity";
@@ -83,5 +33,51 @@ export { Author } from "./modules/entities/literature/Author.entity";
 export { Line } from "./modules/entities/literature/Line.entity";
 export { Text } from "./modules/entities/literature/Text.entity";
 export { Token } from "./modules/entities/literature/Token.entity";
+export { LEXICO_DATABASE_MIGRATIONS } from "./modules/lexico-database/data-source.constants";
+export {
+  adjectiveDeclensionValues,
+  adjectiveDegreeValues,
+  adverbDegrees as adverbDegreeValues,
+  adverbTypes as adverbFunctionTypeValues,
+  formCaseValues,
+  formDegreeValues,
+  formGenderValues,
+  formGerundCaseValues,
+  formMoodValues,
+  formNonFiniteTenseValues,
+  formNumberValues,
+  formPersonValues,
+  formSupineCaseValues,
+  formTenseValues,
+  formVoiceValues,
+  inflectionDeclensionValues,
+  LexicoNamingStrategy,
+  nounDeclensionValues,
+  nounGenders,
+  prepositionCases,
+  verbConjugationValues,
+} from "./modules/lexico-database/lexico-database.constants";
+export type {
+  AdjectiveDeclension,
+  AdjectiveDegree,
+  AdverbDegree,
+  AdverbType as AdverbFunctionType,
+  FormCase,
+  FormDegree,
+  FormGender,
+  FormGerundCase,
+  FormMood,
+  FormNonFiniteTense,
+  FormNumber,
+  FormPerson,
+  FormSupineCase,
+  FormTense,
+  FormVoice,
+  NounDeclension,
+  NounGender,
+  PrepositionCase,
+  VerbConjugation,
+} from "./modules/lexico-database/lexico-database.constants";
+export { LexicoDatabaseModule } from "./modules/lexico-database/lexico-database.module";
 export { InjectRepository, TypeOrmModule } from "@nestjs/typeorm";
 export { DataSource, In, Repository } from "typeorm";

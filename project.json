@@ -733,10 +733,10 @@
           "command": "PGPASSWORD=${POSTGRES_PASSWORD:-postgres} pg_dump -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -Fc -d {args.database} -f data/{args.database}.dump"
         },
         "dump-dictionary": {
-          "command": "PGPASSWORD=${POSTGRES_PASSWORD:-postgres} pg_dump -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -t forms -t inflections -t lexemes -t principal_parts -t pronunciations -t translations -t words -t word_forms -t word_lexemes -Fc -d ${POSTGRES_DB:-postgres} -f data/dictionary.dump"
+          "command": "PGPASSWORD=${POSTGRES_PASSWORD:-postgres} pg_dump -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -n lexico -t lexico.forms -t lexico.inflections -t lexico.lexemes -t lexico.principal_parts -t lexico.pronunciations -t lexico.translations -t lexico.words -t lexico.word_forms -t lexico.word_lexemes -Fc -d lexico_development -f data/dictionary.dump"
         },
         "dump-literature": {
-          "command": "PGPASSWORD=${POSTGRES_PASSWORD:-postgres} pg_dump -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -t authors -t lines -t texts -t tokens -Fc -d ${POSTGRES_DB:-postgres} -f data/literature.dump"
+          "command": "PGPASSWORD=${POSTGRES_PASSWORD:-postgres} pg_dump -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -n lexico -t lexico.authors -t lexico.lines -t lexico.texts -t lexico.tokens -Fc -d lexico_development -f data/literature.dump"
         },
         "dump-schema": {
           "command": "PGPASSWORD=${POSTGRES_PASSWORD:-postgres} pg_dump -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -n {args.schema} -Fc -d ${POSTGRES_DB:-postgres} -f data/{args.schema}.dump"
@@ -754,10 +754,10 @@
           "command": "PGPASSWORD=${POSTGRES_PASSWORD:-postgres} pg_restore -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -d {args.database} -c -1 data/{args.database}.dump"
         },
         "restore-dictionary": {
-          "command": "PGPASSWORD=${POSTGRES_PASSWORD:-postgres} pg_restore -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres} -c -1 -t forms -t inflections -t lexemes -t principal_parts -t pronunciations -t translations -t words -t word_forms -t word_lexemes data/dictionary.dump"
+          "command": "PGPASSWORD=${POSTGRES_PASSWORD:-postgres} pg_restore -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -d lexico_development -c -1 -n lexico -t forms -t inflections -t lexemes -t principal_parts -t pronunciations -t translations -t words -t word_forms -t word_lexemes data/dictionary.dump"
         },
         "restore-literature": {
-          "command": "PGPASSWORD=${POSTGRES_PASSWORD:-postgres} pg_restore -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres} -c -1 -t authors -t lines -t texts -t tokens data/literature.dump"
+          "command": "PGPASSWORD=${POSTGRES_PASSWORD:-postgres} pg_restore -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -d lexico_development -c -1 -n lexico -t authors -t lines -t texts -t tokens data/literature.dump"
         },
         "restore-schema": {
           "command": "PGPASSWORD=${POSTGRES_PASSWORD:-postgres} pg_restore -h ${POSTGRES_HOST:-localhost} -p ${POSTGRES_PORT:-5432} -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres} -c -1 -n {args.schema} data/{args.schema}.dump"

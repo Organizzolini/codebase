@@ -3,8 +3,8 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 
 import {
   Author,
-  DatabaseModule,
   Lexeme,
+  LexicoDatabaseModule,
   Line,
   Text,
   Token,
@@ -21,7 +21,7 @@ import { ClearCommand } from "./clear.command";
   controllers: [],
   exports: [ClearCommand],
   imports: [
-    DatabaseModule,
+    LexicoDatabaseModule,
     TypeOrmModule.forFeature([
       Lexeme,
       Translation,
