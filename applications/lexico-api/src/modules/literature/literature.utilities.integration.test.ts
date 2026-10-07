@@ -1,14 +1,12 @@
 /* cspell:words Aeneid Amores colonorum Eclogues faciat Georgics laetas Metamorphoses rustica segetes Troiae vergil virumque */
 
-import { DataSource } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { Author, Line, Text, Token, Word } from "@codebase/lexico-entities";
 
 import {
   DATABASE_TIMEOUT_MILLISECONDS,
-  type LexicoTestDatabase,
-  startLexicoTestDatabase,
+  startLexicoDatabaseTestingModule,
 } from "../../../testing/database";
 import {
   expectedPage,
@@ -21,6 +19,7 @@ import { toCursor } from "../../lexico-api.utilities";
 import { LiteratureService } from "./literature.service";
 
 import type { Connection } from "../../lexico-api.types";
+import type { DatabaseTestingModule } from "@codebase/database/testing";
 
 /** Each boundary matrix issues a few hundred queries, which a slow runner needs time for. */
 const MATRIX_TIMEOUT_MILLISECONDS = 120_000;
@@ -47,7 +46,7 @@ function idsInOrder<Entity extends { id: string }>(
  * load-everything-then-slice behavior on every boundary.
  */
 describe("literature pagination integration suite", () => {
-  let database: LexicoTestDatabase;
+  let database: DatabaseTestingModule;
   let service: LiteratureService;
   const authors: Record<string, Author> = {};
   const texts: Record<string, Text> = {};
@@ -94,7 +93,13 @@ describe("literature pagination integration suite", () => {
   }
 
   beforeAll(async () => {
-    database = await startLexicoTestDatabase([Author, Line, Text, Token, Word]);
+    database = await startLexicoDatabaseTestingModule([
+      Author,
+      Line,
+      Text,
+      Token,
+      Word,
+    ]);
     service = new LiteratureService(
       database.repository(Author),
       database.repository(Line),
@@ -146,7 +151,7 @@ describe("literature pagination integration suite", () => {
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
   afterAll(async () => {
-    await database.stop();
+    await database.close();
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
   /** Asserts a connection agrees with the original slicing for every argument combination. */
@@ -279,7 +284,7 @@ describe("literature pagination integration suite", () => {
   it("asks the database for one page of lines rather than every line", async () => {
     expect.hasAssertions();
 
-    const { logger } = database.module.get(DataSource);
+    const { logger } = database.dataSource;
     const spy = vi.spyOn(logger, "logQuery");
 
     const connection = await service.listLinesConnection(
