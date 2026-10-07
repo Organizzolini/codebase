@@ -5,6 +5,7 @@ import { Line } from "@codebase/lexico-entities";
 import { createRepositoryMock } from "../../../testing/mocks";
 import { toCursor } from "../../lexico-api.utilities";
 
+import { LOAD_CHUNK_SIZE } from "./literature.constants";
 import {
   createEmptyConnection,
   paginateQuery,
@@ -77,6 +78,31 @@ describe("literature utilities", () => {
   });
 
   describe(paginateQuery, () => {
+    it("loads an unlimited page in chunks and drops rows that vanished before loading", async () => {
+      expect.hasAssertions();
+
+      const ids = Array.from(
+        { length: LOAD_CHUNK_SIZE + 1 },
+        (_, index) =>
+          `01a10ee5-dd0a-77b5-97b1-${index.toString(16).padStart(12, "0")}`,
+      );
+      const { builder, query } = createLineQuery(ids);
+      vi.mocked(query.load).mockResolvedValue(
+        ids.slice(1).map((id) => Object.assign(new Line(), { id })),
+      );
+      const connection = await paginateQuery(query);
+
+      expect(query.load).toHaveBeenCalledTimes(2);
+      expect(
+        vi.mocked(query.load).mock.calls.map(([chunk]) => chunk.length),
+      ).toStrictEqual([LOAD_CHUNK_SIZE, 1]);
+      expect(connection.edges.map((edge) => edge.node.id)).toStrictEqual(
+        ids.slice(1),
+      );
+      expect(connection.totalCount).toBe(LOAD_CHUNK_SIZE + 1);
+      expect(builder.limit).not.toHaveBeenCalled();
+    });
+
     it("reads one row past the first page in ascending order and keeps the page order", async () => {
       expect.hasAssertions();
 

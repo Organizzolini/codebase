@@ -491,4 +491,47 @@ describe(LiteratureService, () => {
       texts: [],
     });
   });
+
+  it("lists every line of a text within index bounds and every token of a line for field resolvers", async () => {
+    expect.hasAssertions();
+
+    const lineRepo = createRepositoryMock<Line>();
+    const tokenRepo = createRepositoryMock<Token>();
+    const line = Object.assign(new Line(), { id: "line-1", index: 2 });
+    const token = Object.assign(new Token(), { id: "token-1", index: 0 });
+    const qb = lineRepo.createQueryBuilder();
+    vi.mocked(qb.getMany).mockResolvedValue([line]);
+    vi.mocked(tokenRepo.find).mockResolvedValue([token]);
+
+    const service = new LiteratureService(
+      createRepositoryMock<Author>(),
+      lineRepo,
+      createRepositoryMock<Text>(),
+      tokenRepo,
+      createRepositoryMock<Word>(),
+    );
+
+    await expect(service.listLines("text-1", 1, 5)).resolves.toStrictEqual([
+      line,
+    ]);
+    await expect(service.listLines("text-1")).resolves.toStrictEqual([line]);
+    await expect(service.listTokensForLine("line-1")).resolves.toStrictEqual([
+      token,
+    ]);
+
+    expect(qb.where).toHaveBeenCalledWith("line.text_id = :textId", {
+      textId: "text-1",
+    });
+    expect(qb.andWhere).toHaveBeenCalledWith("line.index >= :startIndex", {
+      startIndex: 1,
+    });
+    expect(qb.andWhere).toHaveBeenCalledWith("line.index <= :endIndex", {
+      endIndex: 5,
+    });
+    expect(tokenRepo.find).toHaveBeenCalledWith({
+      order: { index: "ASC" },
+      relations: { author: true, line: true, text: true, word: true },
+      where: { line: { id: "line-1" } },
+    });
+  });
 });
