@@ -232,22 +232,16 @@ jobs:
           matrix.target.id == 'push-releases'
         run: bash scripts/git/check-commit-signing-configuration.sh
 
-      # Versions the ic-suite packages and writes each one's changelog, without
-      # committing, and leaves the remote carrying the release token for the
-      # pushes below. `scripts/release/version-packages.sh` explains why the
-      # release commit is semantic-release's. When `main` moves during the run,
-      # this step or one below sets `RELEASE_SUPERSEDED` and every release step
-      # after it skips: the newer commit's run releases everything this one
-      # would have. `scripts/release/main-tip.sh` explains when each checks.
+      # Versions the ic-suite packages and writes their changelogs, uncommitted,
+      # and leaves the remote carrying the release token. When `main` moves
+      # during the run, this step or a later one sets `RELEASE_SUPERSEDED` and
+      # every step after it skips, since the newer commit's run releases it all.
+      # `scripts/release/version-packages.sh` and `main-tip.sh` explain more.
       #
-      # It runs before the build and the reports so that they see the new
-      # versions and changelogs: npm then gets a `dist` built from the
-      # manifest it is published with, and the run on the release commit
-      # finds the packages already built in the cache this job saves. Runs on
-      # `main` queue rather than cancel, so that run starts only after
-      # 🧹 Cleanup Codebase has saved the cache. A package still rebuilds there
-      # when the reports below rewrite its README, or a dependency's, since a
-      # build hashes every file in its project.
+      # It precedes the build, so npm gets a `dist` built from the manifest it
+      # is published with, and the queued run on the release commit restores
+      # those builds from the cache this job saves. A package still rebuilds
+      # there when a report below rewrites its README or a dependency's.
       - name: 🏷️ Version Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
