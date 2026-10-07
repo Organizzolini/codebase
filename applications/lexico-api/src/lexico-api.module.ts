@@ -4,26 +4,11 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
 
-import {
-  AdjectivalForm,
-  AdjectiveInflection,
-  AdverbForm,
-  AdverbInflection,
-  FiniteVerbForm,
-  GerundForm,
-  InfinitiveForm,
-  LexicoDatabaseModule,
-  NominalForm,
-  NounInflection,
-  ParticipleForm,
-  PrepositionInflection,
-  SupineForm,
-  UninflectedInflection,
-  VerbInflection,
-} from "@codebase/lexico-entities";
+import { LexicoDatabaseModule } from "@codebase/lexico-entities";
 import { LoggerModule } from "@codebase/logging";
 
 import { environmentSchema, GRAPHQL_SCHEMA_FILE } from "./lexico-api.constants";
+import { ORPHANED_GRAPHQL_TYPES } from "./lexico-api.entities";
 import { HealthModule } from "./modules/health/health.module";
 import { LexemesModule } from "./modules/lexemes/lexemes.module";
 import { LiteratureModule } from "./modules/literature/literature.module";
@@ -44,22 +29,7 @@ import { WordsModule } from "./modules/words/words.module";
     GraphQLModule.forRoot<ApolloDriverConfig>({
       autoSchemaFile: GRAPHQL_SCHEMA_FILE,
       buildSchemaOptions: {
-        orphanedTypes: [
-          NominalForm,
-          FiniteVerbForm,
-          ParticipleForm,
-          AdverbForm,
-          InfinitiveForm,
-          GerundForm,
-          SupineForm,
-          AdjectivalForm,
-          NounInflection,
-          VerbInflection,
-          AdjectiveInflection,
-          AdverbInflection,
-          PrepositionInflection,
-          UninflectedInflection,
-        ],
+        orphanedTypes: [...ORPHANED_GRAPHQL_TYPES],
       },
       driver: ApolloDriver,
       playground: false,

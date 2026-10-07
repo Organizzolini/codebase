@@ -57,14 +57,15 @@ export class WordsService {
   }
 
   /**
-   * Returns multiple surface words in the input order.
+   * Returns multiple surface words in the input order, each once, omitting
+   * any spelling no word has.
    */
   public async findByDataList(data: string[]): Promise<Word[]> {
     if (data.length === 0) {
       return [];
     }
 
-    return this.wordRepository.find({
+    const words = await this.wordRepository.find({
       relations: {
         wordForms: {
           form: true,
@@ -81,6 +82,9 @@ export class WordsService {
       },
       where: { data: In(data) },
     });
+
+    const wordsByData = new Map(words.map((word) => [word.data, word]));
+    return [...new Set(data)].flatMap((entry) => wordsByData.get(entry) ?? []);
   }
 
   /**
