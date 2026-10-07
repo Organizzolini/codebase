@@ -3,9 +3,11 @@
 The 28 publishable packages across the four IC suites (`conformetry`,
 `codometer`, `callidescope`, and `codependix`) are versioned independently using
 Nx Release (`nx release`), rather than in lockstep across the repository or per
-suite. Conventional commits scoped to individual package boundaries determine
-semver bump specifiers, and Nx Release automatically cascades patch version bumps
-to internal dependent packages within the publishable packages.
+suite. Conventional commits determine semver bump specifiers for every package a
+commit affects, which reaches past each package's own files as
+[ADR 0023](0023-version-packages-by-everything-a-commit-affects.md) records, and
+Nx Release automatically cascades patch version bumps to internal dependent
+packages within the publishable packages.
 
 This decouples the release cycle of public npm packages from the monorepo's
 internal applications, tools, and root fixed-version releases, while guaranteeing
@@ -45,9 +47,9 @@ Releases in this repository operate at two distinct tiers:
   dependency constraints or encounter runtime mismatches unless maintainers
   manually track and bump all reverse dependencies.
 - **Independent versioning with automated cascading dependents via Nx Release.**
-  Chosen. Each publishable package computes its own semver bump based on commits
-  touching its path. When a dependency package is bumped, Nx Release automatically
-  cascades a patch version bump (`updateDependents: "auto"`) and updates
+  Chosen. Each publishable package computes its own semver bump based on the
+  commits that affect it, as ADR 0023 describes. When a dependency package is
+  bumped, Nx Release automatically cascades a patch version bump (`updateDependents: "auto"`) and updates
   manifest dependency constraints across all internal dependents.
 
 ## Consequences
