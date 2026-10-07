@@ -15,7 +15,7 @@ import {
 } from "./phases.constants";
 import { VenusianPhaseService } from "./venusian-phase.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { PhaseParameters } from "./phases.types";
 
 const createTimestamp = (): moment.Moment =>
@@ -42,7 +42,7 @@ const configurePhaseCalculationServiceMock = (
   >,
 ): void => {
   vi.mocked(phaseCalculationService.filterByCategory).mockImplementation(
-    (events: Event[], category: string) =>
+    (events: DetectedCalendarEvent[], category: string) =>
       events.filter((event) => event.categories.includes(category)),
   );
   vi.mocked(phaseCalculationService.formatTimeZoneIso).mockReturnValue(
@@ -336,14 +336,14 @@ describe(VenusianPhaseService, () => {
 
   describe("getVenusianPhaseProgressiveEvents", () => {
     it("creates venusian morning visibility duration events", () => {
-      const morningRise: Event = {
+      const morningRise: DetectedCalendarEvent = {
         categories: ["Planetary Phase", "Venusian", "Morning Rise"],
         description: "Venus Morning Rise",
         end: moment.utc("2024-01-01T00:00:00.000Z"),
         start: moment.utc("2024-01-01T00:00:00.000Z"),
         summary: "Venus Morning Rise",
       };
-      const morningSet: Event = {
+      const morningSet: DetectedCalendarEvent = {
         categories: ["Planetary Phase", "Venusian", "Morning Set"],
         description: "Venus Morning Set",
         end: moment.utc("2024-01-02T00:00:00.000Z"),
@@ -366,14 +366,14 @@ describe(VenusianPhaseService, () => {
     });
 
     it("creates venusian evening visibility duration events", () => {
-      const eveningRise: Event = {
+      const eveningRise: DetectedCalendarEvent = {
         categories: ["Planetary Phase", "Venusian", "Evening Rise"],
         description: "Venus Evening Rise",
         end: moment.utc("2024-01-01T00:00:00.000Z"),
         start: moment.utc("2024-01-01T00:00:00.000Z"),
         summary: "Venus Evening Rise",
       };
-      const eveningSet: Event = {
+      const eveningSet: DetectedCalendarEvent = {
         categories: ["Planetary Phase", "Venusian", "Evening Set"],
         description: "Venus Evening Set",
         end: moment.utc("2024-01-02T00:00:00.000Z"),

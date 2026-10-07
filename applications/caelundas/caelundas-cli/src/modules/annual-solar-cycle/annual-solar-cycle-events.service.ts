@@ -10,7 +10,7 @@ import {
   SOLAR_CYCLE_LONGITUDE_THRESHOLDS,
 } from "./annual-solar-cycle.constants";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   BuildSolarCycleEventArguments,
   SolarCycleLongitudes,
@@ -35,7 +35,9 @@ export class AnnualSolarCycleEventsService {
   // 🔏 Private Methods
 
   /** Builds a calendar event anchored at a single minute. */
-  private buildSolarCycleEvent(args: BuildSolarCycleEventArguments): Event {
+  private buildSolarCycleEvent(
+    args: BuildSolarCycleEventArguments,
+  ): DetectedCalendarEvent {
     const { categories, date, description, summary } = args;
     const dateString = date
       .clone()
@@ -58,8 +60,8 @@ export class AnnualSolarCycleEventsService {
   private getAutumnEvents(
     longitudes: SolarCycleLongitudes,
     date: Moment,
-  ): Event[] {
-    const events: Event[] = [];
+  ): DetectedCalendarEvent[] {
+    const events: DetectedCalendarEvent[] = [];
     if (this.isAutumnalEquinox(longitudes)) {
       events.push(this.buildAutumnalEquinoxEvent(date));
     }
@@ -79,8 +81,8 @@ export class AnnualSolarCycleEventsService {
   private getSpringEvents(
     longitudes: SolarCycleLongitudes,
     date: Moment,
-  ): Event[] {
-    const events: Event[] = [];
+  ): DetectedCalendarEvent[] {
+    const events: DetectedCalendarEvent[] = [];
     if (this.isVernalEquinox(longitudes)) {
       events.push(this.buildVernalEquinoxEvent(date));
     }
@@ -100,8 +102,8 @@ export class AnnualSolarCycleEventsService {
   private getSummerEvents(
     longitudes: SolarCycleLongitudes,
     date: Moment,
-  ): Event[] {
-    const events: Event[] = [];
+  ): DetectedCalendarEvent[] {
+    const events: DetectedCalendarEvent[] = [];
     if (this.isSummerSolstice(longitudes)) {
       events.push(this.buildSummerSolsticeEvent(date));
     }
@@ -121,8 +123,8 @@ export class AnnualSolarCycleEventsService {
   private getWinterEvents(
     longitudes: SolarCycleLongitudes,
     date: Moment,
-  ): Event[] {
-    const events: Event[] = [];
+  ): DetectedCalendarEvent[] {
+    const events: DetectedCalendarEvent[] = [];
     if (this.isWinterSolstice(longitudes)) {
       events.push(this.buildWinterSolsticeEvent(date));
     }
@@ -150,7 +152,7 @@ export class AnnualSolarCycleEventsService {
   // 🌎 Public Methods
 
   /** Builds the solar aphelion event. */
-  buildAphelionEvent(date: Moment): Event {
+  buildAphelionEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: [...ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES, APHELION_CATEGORY],
       date,
@@ -160,7 +162,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the autumnal equinox event. */
-  buildAutumnalEquinoxEvent(date: Moment): Event {
+  buildAutumnalEquinoxEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -170,7 +172,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the Beltane event. */
-  buildBeltaneEvent(date: Moment): Event {
+  buildBeltaneEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -180,7 +182,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the eleventh hexadecan event. */
-  buildEleventhHexadecanEvent(date: Moment): Event {
+  buildEleventhHexadecanEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -190,7 +192,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the fifteenth hexadecan event. */
-  buildFifteenthHexadecanEvent(date: Moment): Event {
+  buildFifteenthHexadecanEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -200,7 +202,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the fifth hexadecan event. */
-  buildFifthHexadecanEvent(date: Moment): Event {
+  buildFifthHexadecanEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -210,7 +212,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the first hexadecan event. */
-  buildFirstHexadecanEvent(date: Moment): Event {
+  buildFirstHexadecanEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -220,7 +222,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the Imbolc event. */
-  buildImbolcEvent(date: Moment): Event {
+  buildImbolcEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -230,7 +232,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the Lammas event. */
-  buildLammasEvent(date: Moment): Event {
+  buildLammasEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -240,7 +242,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the ninth hexadecan event. */
-  buildNinthHexadecanEvent(date: Moment): Event {
+  buildNinthHexadecanEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -250,7 +252,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the solar perihelion event. */
-  buildPerihelionEvent(date: Moment): Event {
+  buildPerihelionEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: [...ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES, PERIHELION_CATEGORY],
       date,
@@ -260,7 +262,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the Samhain event. */
-  buildSamhainEvent(date: Moment): Event {
+  buildSamhainEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -270,7 +272,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the seventh hexadecan event. */
-  buildSeventhHexadecanEvent(date: Moment): Event {
+  buildSeventhHexadecanEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -280,7 +282,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the summer solstice event. */
-  buildSummerSolsticeEvent(date: Moment): Event {
+  buildSummerSolsticeEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -290,7 +292,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the third hexadecan event. */
-  buildThirdHexadecanEvent(date: Moment): Event {
+  buildThirdHexadecanEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -300,7 +302,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the thirteenth hexadecan event. */
-  buildThirteenthHexadecanEvent(date: Moment): Event {
+  buildThirteenthHexadecanEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -310,7 +312,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the vernal equinox event. */
-  buildVernalEquinoxEvent(date: Moment): Event {
+  buildVernalEquinoxEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -320,7 +322,7 @@ export class AnnualSolarCycleEventsService {
   }
 
   /** Builds the winter solstice event. */
-  buildWinterSolsticeEvent(date: Moment): Event {
+  buildWinterSolsticeEvent(date: Moment): DetectedCalendarEvent {
     return this.buildSolarCycleEvent({
       categories: ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
       date,
@@ -333,7 +335,7 @@ export class AnnualSolarCycleEventsService {
   getAutumnalToVernalEvents(
     longitudes: SolarCycleLongitudes,
     date: Moment,
-  ): Event[] {
+  ): DetectedCalendarEvent[] {
     return [
       ...this.getAutumnEvents(longitudes, date),
       ...this.getWinterEvents(longitudes, date),
@@ -344,7 +346,7 @@ export class AnnualSolarCycleEventsService {
   getVernalToAutumnalEvents(
     longitudes: SolarCycleLongitudes,
     date: Moment,
-  ): Event[] {
+  ): DetectedCalendarEvent[] {
     return [
       ...this.getSpringEvents(longitudes, date),
       ...this.getSummerEvents(longitudes, date),

@@ -184,7 +184,13 @@ Postgres, in the `caelundas_development` database and `caelundas` schema, with o
 
 - `calendar_events` (entity `CalendarEvent`): Detected calendar events, extending the shared `UpdatableEntity`. Columns: `summary`, `description`, `start`/`end` (`timestamptz`), `categories` (`text[]`, GIN-indexed), nullable `color` and `location`, and `latitude numeric(8,6)` / `longitude numeric(9,6)`. Unique on `(summary, start, latitude, longitude)`
 
-The stored row is the entity `CalendarEvent`; the detected, in-memory event every detector returns stays the `Event` type in `calendar.types.ts`. `toEvent` in `calendar-events.utilities.ts` turns a row back into an `Event`.
+`CalendarEvent` is caelundas' only event type: detectors build it, `CalendarEventsService` stores and reads it, and the writers render it, with no mapper between them. Its shape differences from the table are settled in the entity, not at the call sites:
+
+- **Times**: `start` and `end` are `Moment`s, through the column transformer `createMomentTransformer` builds in `caelundas-database.utilities.ts`, which reads them back in UTC. A transformer, not a `Date` property, because every detector and writer does moment arithmetic, and retyping would move a conversion into each of them.
+- **Color and location**: optional as well as nullable (`color?: null | string`), so a detector leaves them out and a stored row reads back `null`; the writers treat the two alike.
+- **Coordinates**: `latitude`/`longitude` stay `numeric` strings, which only `CalendarEventsService` reads or writes. The in-memory `geography`, `url`, and `priority` fields are gone: no detector set them, and no column stored them.
+
+A detected event, which has no id, audit columns, or coordinates yet, is `DetectedCalendarEvent` in `caelundas-database.types.ts`, an `Omit` of the entity rather than a second type. A stored row is assignable to it, so the writers take it too.
 
 Connection variables are `CAELUNDAS_POSTGRES_HOST`, `_PORT`, `_USERNAME`, `_PASSWORD`, `_DATABASE`, and `_SCHEMA`; the unprefixed `POSTGRES_*` are never read. Postgres returns `numeric` as strings, so compare coordinates as strings.
 

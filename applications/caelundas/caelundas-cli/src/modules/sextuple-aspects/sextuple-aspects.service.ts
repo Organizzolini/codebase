@@ -7,8 +7,8 @@ import { MathService } from "../math/math.service";
 import { SextupleAspectsComposerService } from "./sextuple-aspects-composer.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { ComposeHexagramsArguments } from "./sextuple-aspects.types";
 import type { Moment } from "moment-timezone";
 
@@ -32,7 +32,9 @@ export class SextupleAspectsService {
   // 🔏 Private Methods
 
   /** Builds sextuple-aspect hexagram events from trine and sextile edge snapshots. */
-  private composeHexagrams(args: ComposeHexagramsArguments): Event[] {
+  private composeHexagrams(
+    args: ComposeHexagramsArguments,
+  ): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
     const unionEdges = [...currentAspectBodies, ...previousAspectBodies];
     const aspectsByType =
@@ -59,7 +61,7 @@ export class SextupleAspectsService {
     minute: Moment;
     previousAspectBodies: AspectBodies[];
     unionEdges: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const {
       combinations,
       currentAspectBodies,
@@ -67,7 +69,7 @@ export class SextupleAspectsService {
       previousAspectBodies,
       unionEdges,
     } = args;
-    const events: Event[] = [];
+    const events: DetectedCalendarEvent[] = [];
     for (const bodyCombination of combinations) {
       const hexagramBodies =
         this.sextupleAspectsComposerService.findHexagramPattern(
@@ -111,7 +113,7 @@ export class SextupleAspectsService {
     currentAspectBodies: AspectBodies[];
     minute: Moment;
     previousAspectBodies: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
     return this.composeHexagrams({
       currentAspectBodies,
@@ -127,8 +129,8 @@ export class SextupleAspectsService {
    * pattern type to create events spanning the entire active period.
    *
    */
-  detectProgressive(events: Event[]): Event[] {
-    const progressiveEvents: Event[] = [];
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
+    const progressiveEvents: DetectedCalendarEvent[] = [];
     const groupedEvents =
       this.sextupleAspectsComposerService.groupSextupleEventsByKey(events);
 

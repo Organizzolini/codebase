@@ -4,7 +4,7 @@ import { ProgressiveUtilitiesService } from "../progressive/progressive-utilitie
 
 import { TwilightsBuilderService } from "./twilights-builder.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 /**
  * Composes progressive twilight/daylight intervals by pairing ordered transition events.
@@ -30,10 +30,10 @@ export class TwilightsComposerService {
    * Builds morning twilight intervals from astronomical to nautical and nautical to civil.
    */
   buildDawnProgressiveEvents(
-    astronomicalDawnEvents: Event[],
-    nauticalDawnEvents: Event[],
-    civilDawnEvents: Event[],
-  ): Event[] {
+    astronomicalDawnEvents: DetectedCalendarEvent[],
+    nauticalDawnEvents: DetectedCalendarEvent[],
+    civilDawnEvents: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     return [
       ...this.pairAndBuild({
         beginnings: astronomicalDawnEvents,
@@ -62,11 +62,11 @@ export class TwilightsComposerService {
    * Builds daytime/evening intervals: daylight, nautical twilight, astronomical twilight.
    */
   buildDuskProgressiveEvents(args: {
-    astronomicalDuskEvents: Event[];
-    civilDawnEvents: Event[];
-    civilDuskEvents: Event[];
-    nauticalDuskEvents: Event[];
-  }): Event[] {
+    astronomicalDuskEvents: DetectedCalendarEvent[];
+    civilDawnEvents: DetectedCalendarEvent[];
+    civilDuskEvents: DetectedCalendarEvent[];
+    nauticalDuskEvents: DetectedCalendarEvent[];
+  }): DetectedCalendarEvent[] {
     const {
       astronomicalDuskEvents,
       civilDawnEvents,
@@ -112,11 +112,14 @@ export class TwilightsComposerService {
    * Pairs beginnings/endings via progressive utilities and maps each pair through `builder`.
    */
   pairAndBuild(args: {
-    beginnings: Event[];
-    builder: (beginning: Event, ending: Event) => Event;
-    endings: Event[];
+    beginnings: DetectedCalendarEvent[];
+    builder: (
+      beginning: DetectedCalendarEvent,
+      ending: DetectedCalendarEvent,
+    ) => DetectedCalendarEvent;
+    endings: DetectedCalendarEvent[];
     label: string;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { beginnings, builder, endings, label } = args;
     const pairs = this.progressiveUtilitiesService.pairProgressiveEvents(
       beginnings,

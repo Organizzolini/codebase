@@ -23,8 +23,8 @@ import {
   PHASE_EVENT_TIMEZONE,
 } from "./phases.constants";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { MartianPhase } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type {
   BuildPlanetPhaseEventArguments,
   MartianPhaseEventArguments,
@@ -61,8 +61,8 @@ export class MartianPhaseService {
   private detectMartianPhases(
     parameters: PhaseParameters,
     minute: Moment,
-  ): Event[] {
-    const events: Event[] = [];
+  ): DetectedCalendarEvent[] {
+    const events: DetectedCalendarEvent[] = [];
     const checks: [boolean, MartianPhase][] = [
       [this.phaseCalculationService.isMorningRise(parameters), "morning rise"],
       [this.phaseCalculationService.isMorningSet(parameters), "morning set"],
@@ -96,7 +96,7 @@ export class MartianPhaseService {
    */
   buildMartianPhaseEvent(
     args: BuildPlanetPhaseEventArguments<MartianPhase>,
-  ): Event {
+  ): DetectedCalendarEvent {
     const { phase, timestamp } = args;
 
     const phaseCapitalized = _.startCase(phase);
@@ -114,7 +114,7 @@ export class MartianPhaseService {
       summary,
     });
 
-    const martianPhaseEvent: Event = {
+    const martianPhaseEvent: DetectedCalendarEvent = {
       categories: [
         ...MartianPhaseService.categories,
         MARTIAN_CATEGORY,
@@ -132,9 +132,9 @@ export class MartianPhaseService {
    * Derives mars evening visibility duration event.
    */
   getMarsEveningVisibilityDurationEvent(
-    beginning: Event,
-    ending: Event,
-  ): Event {
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return {
       categories: [
         ...MartianPhaseService.categories,
@@ -152,9 +152,9 @@ export class MartianPhaseService {
    * Derives mars morning visibility duration event.
    */
   getMarsMorningVisibilityDurationEvent(
-    beginning: Event,
-    ending: Event,
-  ): Event {
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return {
       categories: [
         ...MartianPhaseService.categories,
@@ -171,7 +171,9 @@ export class MartianPhaseService {
   /**
    * Derives martian evening progressive events.
    */
-  getMartianEveningProgressiveEvents(events: Event[]): Event[] {
+  getMartianEveningProgressiveEvents(
+    events: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     const pairs = this.progressiveUtilitiesService.pairProgressiveEvents(
       this.phaseCalculationService.filterByCategory(
         events,
@@ -191,7 +193,9 @@ export class MartianPhaseService {
   /**
    * Derives martian morning progressive events.
    */
-  getMartianMorningProgressiveEvents(events: Event[]): Event[] {
+  getMartianMorningProgressiveEvents(
+    events: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     const pairs = this.progressiveUtilitiesService.pairProgressiveEvents(
       this.phaseCalculationService.filterByCategory(
         events,
@@ -211,7 +215,9 @@ export class MartianPhaseService {
   /**
    * Produces Martian phase events for one minute using precomputed phase parameters.
    */
-  getMartianPhaseEvents(args: MartianPhaseEventArguments): Event[] {
+  getMartianPhaseEvents(
+    args: MartianPhaseEventArguments,
+  ): DetectedCalendarEvent[] {
     const {
       marsCoordinateEphemeris,
       marsDistanceEphemeris,
@@ -234,7 +240,9 @@ export class MartianPhaseService {
   /**
    * Derives martian phase progressive events.
    */
-  getMartianPhaseProgressiveEvents(events: Event[]): Event[] {
+  getMartianPhaseProgressiveEvents(
+    events: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     return [
       ...this.getMartianMorningProgressiveEvents(events),
       ...this.getMartianEveningProgressiveEvents(events),

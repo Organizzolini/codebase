@@ -12,8 +12,8 @@ import {
 import { MajorAspectEventService } from "./major-aspect-event.service";
 import { MajorAspectProgressiveService } from "./major-aspect-progressive.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { AspectPhase, Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 import type { DetectAspectForBodyPairArguments } from "./major-aspects.types";
 import type { Moment } from "moment-timezone";
@@ -58,7 +58,7 @@ export class MajorAspectsService {
    */
   private detectAspectForBodyPair(
     args: DetectAspectForBodyPairArguments,
-  ): Event | null {
+  ): DetectedCalendarEvent | null {
     const body1LongitudesWindow = this.getLongitudesWindowForBody({
       body: args.body1,
       coordinateEphemerisByBody: args.coordinateEphemerisByBody,
@@ -128,7 +128,7 @@ export class MajorAspectsService {
     longitudeBody2: number;
     phase: AspectPhase;
     timestamp: Moment;
-  }): Event {
+  }): DetectedCalendarEvent {
     return this.majorAspectEventService.buildMajorAspectEvent(args);
   }
 
@@ -138,7 +138,7 @@ export class MajorAspectsService {
   detect(args: {
     coordinateEphemerisByBody: Record<Body, CoordinateEphemeris>;
     minute: Moment;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     return AspectsUtilitiesService.scanUniqueBodyPairsAtMinute({
       bodies: majorAspectBodies,
       coordinateEphemerisByBody: args.coordinateEphemerisByBody,
@@ -151,7 +151,7 @@ export class MajorAspectsService {
   /**
    * Builds duration events by pairing forming and dissolving events per body-pair/aspect key.
    */
-  detectProgressive(events: Event[]): Event[] {
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
     return this.majorAspectProgressiveService.detectProgressive(events);
   }
 

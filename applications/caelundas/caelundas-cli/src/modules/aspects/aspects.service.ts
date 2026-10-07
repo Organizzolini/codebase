@@ -11,8 +11,8 @@ import {
   SIMPLE_ASPECT_DETECTORS_TOKEN,
 } from "./aspects.constants";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Aspect, Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 import type {
   AspectBodies,
@@ -54,7 +54,7 @@ export class AspectsService {
   /** Applies a forming or dissolving simple-aspect event to the active aspect snapshot map. */
   private applyEventToMap(
     map: Map<string, AspectBodies>,
-    event: Event,
+    event: DetectedCalendarEvent,
     lowercaseBodies: string[],
   ): void {
     const parsed = this.parseSimpleAspectEvent(event, lowercaseBodies);
@@ -73,13 +73,13 @@ export class AspectsService {
     currentAspectBodies: AspectBodies[],
     minute: Moment,
     previousAspectBodies: AspectBodies[],
-  ): Event[] {
+  ): DetectedCalendarEvent[] {
     const sharedArguments = {
       currentAspectBodies,
       minute,
       previousAspectBodies,
     };
-    const detectedEvents: Event[] = [];
+    const detectedEvents: DetectedCalendarEvent[] = [];
     for (const compositeAspectDetector of this.compositeAspectDetectors) {
       detectedEvents.push(...compositeAspectDetector.detect(sharedArguments));
     }
@@ -90,8 +90,8 @@ export class AspectsService {
   private detectSimpleAspects(
     coordinateEphemerisByBody: Record<Body, CoordinateEphemeris>,
     minute: Moment,
-  ): Event[] {
-    const detectedEvents: Event[] = [];
+  ): DetectedCalendarEvent[] {
+    const detectedEvents: DetectedCalendarEvent[] = [];
     for (const simpleAspectDetector of this.simpleAspectDetectors) {
       detectedEvents.push(
         ...simpleAspectDetector.detect({ coordinateEphemerisByBody, minute }),
@@ -126,7 +126,7 @@ export class AspectsService {
 
   /** Parses a simple-aspect event into typed bodies, aspect, and phase direction flags. */
   private parseSimpleAspectEvent(
-    event: Event,
+    event: DetectedCalendarEvent,
     lowercaseBodies: string[],
   ): null | {
     aspect: Aspect;
@@ -159,7 +159,7 @@ export class AspectsService {
    */
   computeAspectBodies(
     previousAspectBodies: AspectBodies[],
-    events: Event[],
+    events: DetectedCalendarEvent[],
   ): AspectBodies[] {
     const map = new Map<string, AspectBodies>(
       previousAspectBodies.map((ab) => [
@@ -186,7 +186,7 @@ export class AspectsService {
     coordinateEphemerisByBody: Record<Body, CoordinateEphemeris>;
     minute: Moment;
     previousAspectBodies: AspectBodies[];
-  }): { aspectBodies: AspectBodies[]; events: Event[] } {
+  }): { aspectBodies: AspectBodies[]; events: DetectedCalendarEvent[] } {
     const { coordinateEphemerisByBody, minute, previousAspectBodies } = args;
     const simpleAspectEvents = this.detectSimpleAspects(
       coordinateEphemerisByBody,
@@ -201,7 +201,10 @@ export class AspectsService {
       minute,
       previousAspectBodies,
     );
-    const events: Event[] = [...simpleAspectEvents, ...compositeEvents];
+    const events: DetectedCalendarEvent[] = [
+      ...simpleAspectEvents,
+      ...compositeEvents,
+    ];
     this.logger.debug("🔍 Detected aspect events", undefined, {
       count: events.length,
     });
@@ -215,8 +218,8 @@ export class AspectsService {
    * events spanning its full in-orb period.
    *
    */
-  detectProgressive(events: Event[]): Event[] {
-    const progressiveEvents: Event[] = [];
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
+    const progressiveEvents: DetectedCalendarEvent[] = [];
     for (const progressiveAspectDetector of this.progressiveAspectDetectors) {
       progressiveEvents.push(
         ...progressiveAspectDetector.detectProgressive(events),

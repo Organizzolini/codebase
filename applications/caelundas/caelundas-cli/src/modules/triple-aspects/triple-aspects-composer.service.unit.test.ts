@@ -12,7 +12,7 @@ import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { TripleAspectsComposerService } from "./triple-aspects-composer.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 describe(TripleAspectsComposerService, () => {
   let service: TripleAspectsComposerService;
@@ -104,7 +104,7 @@ describe(TripleAspectsComposerService, () => {
     });
 
     it("pairs forming and dissolving events into one progressive event", () => {
-      const forming: Event = {
+      const forming: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -123,7 +123,7 @@ describe(TripleAspectsComposerService, () => {
         summary: "T-Square forming",
       };
 
-      const dissolving: Event = {
+      const dissolving: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -175,7 +175,7 @@ describe(TripleAspectsComposerService, () => {
         end: minute,
         start: minute,
         summary: "➡️ ✶ Moon-Sun-Mars Moon, Sun, Mars grand trine forming",
-      } as Event;
+      } as DetectedCalendarEvent;
       const dissolving = {
         ...forming,
         categories: forming.categories.map((category) =>
@@ -314,7 +314,7 @@ describe(TripleAspectsComposerService, () => {
         end: minute,
         start: minute,
         summary: "⬅️ Sun-Moon-Mars",
-      } as Event;
+      } as DetectedCalendarEvent;
       const dissolving = {
         ...forming,
         categories: forming.categories.map((category) =>
@@ -334,9 +334,9 @@ describe(TripleAspectsComposerService, () => {
     it("skips sparse progressive pairs", () => {
       const internals = service as unknown as {
         pairProgressiveGroupPairs: (
-          formingEvents: (Event | undefined)[],
-          dissolvingEvents: (Event | undefined)[],
-        ) => Event[];
+          formingEvents: (DetectedCalendarEvent | undefined)[],
+          dissolvingEvents: (DetectedCalendarEvent | undefined)[],
+        ) => DetectedCalendarEvent[];
         resolveAspectType: (aspectCapitalized: string) => null;
         resolveProgressiveMeta: (
           bodiesCapitalized: string[],
@@ -360,7 +360,7 @@ describe(TripleAspectsComposerService, () => {
         end: minute,
         start: minute,
         summary: "➡️ ✶ Sun-Moon-Mars",
-      } as Event;
+      } as DetectedCalendarEvent;
       const dissolving = {
         ...forming,
         categories: forming.categories.map((category) =>
@@ -399,7 +399,7 @@ describe(TripleAspectsComposerService, () => {
         end: minute.clone().add(1, "hour"),
         start: minute.clone().add(1, "hour"),
         summary: "➡️ ✶ Sun-Moon-Mars",
-      } as Event;
+      } as DetectedCalendarEvent;
       const earlierDissolving = {
         ...laterForming,
         categories: laterForming.categories.map((category) =>
@@ -448,7 +448,7 @@ describe(TripleAspectsComposerService, () => {
         end: minute,
         start: minute,
         summary: "➡️ ⊤ ☀️-🌙-♂️ Mars, Moon, Sun t-square forming (Mars focal)",
-      } as Event;
+      } as DetectedCalendarEvent;
       const dissolving = {
         ...forming,
         categories: forming.categories.map((category) =>
@@ -489,7 +489,7 @@ describe(TripleAspectsComposerService, () => {
         end: minute,
         start: minute,
         summary: "",
-      } as Event;
+      } as DetectedCalendarEvent;
       const dissolving = {
         ...forming,
         end: minute.clone().add(2, "hours"),
@@ -525,7 +525,7 @@ describe(TripleAspectsComposerService, () => {
         end: minute,
         start: minute,
         summary: "➡️ ✶ Sun-Moon-Mars",
-      } as Event;
+      } as DetectedCalendarEvent;
       const dissolving = {
         ...forming,
         categories: forming.categories.map((category) =>
@@ -544,9 +544,9 @@ describe(TripleAspectsComposerService, () => {
       const results = (
         service as unknown as {
           pairProgressiveGroupPairs: (
-            formingEvents: Event[],
-            dissolvingEvents: Event[],
-          ) => Event[];
+            formingEvents: DetectedCalendarEvent[],
+            dissolvingEvents: DetectedCalendarEvent[],
+          ) => DetectedCalendarEvent[];
         }
       ).pairProgressiveGroupPairs([forming], [dissolving]);
 
@@ -585,7 +585,7 @@ describe(TripleAspectsComposerService, () => {
         end: minute.clone().add(2, "hours"),
         start: minute.clone().add(2, "hours"),
         summary: "later forming",
-      } as Event;
+      } as DetectedCalendarEvent;
       const formingEarlier = {
         ...formingLater,
         description: "earlier forming",
@@ -613,9 +613,9 @@ describe(TripleAspectsComposerService, () => {
 
       const internals = service as unknown as {
         pairProgressiveGroupPairs: (
-          formingEvents: Event[],
-          dissolvingEvents: Event[],
-        ) => Event[];
+          formingEvents: DetectedCalendarEvent[],
+          dissolvingEvents: DetectedCalendarEvent[],
+        ) => DetectedCalendarEvent[];
       };
       const pairSpy = vi
         .spyOn(internals, "pairProgressiveGroupPairs")
@@ -630,7 +630,9 @@ describe(TripleAspectsComposerService, () => {
 
       expect(pairSpy).toHaveBeenCalledTimes(1);
 
-      const firstCall = pairSpy.mock.calls[0] as [Event[], Event[]] | undefined;
+      const firstCall = pairSpy.mock.calls[0] as
+        | [DetectedCalendarEvent[], DetectedCalendarEvent[]]
+        | undefined;
 
       expect(firstCall).toBeDefined();
       expect(firstCall?.[0].map((event) => event.description)).toStrictEqual([

@@ -15,11 +15,11 @@ import { EphemerisService } from "../ephemeris/ephemeris.service";
 import { MathService } from "../math/math.service";
 import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   OrbitalDirection,
   RetrogradeBody,
 } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 import type { Moment } from "moment-timezone";
 
@@ -57,8 +57,8 @@ export class RetrogradesService {
     body: RetrogradeBody,
     ephemeris: CoordinateEphemeris,
     minute: Moment,
-  ): Event[] {
-    const events: Event[] = [];
+  ): DetectedCalendarEvent[] {
+    const events: DetectedCalendarEvent[] = [];
     const currentLongitude = this.ephemerisService.getCoordinateFromEphemeris(
       ephemeris,
       minute.toISOString(),
@@ -126,10 +126,10 @@ export class RetrogradesService {
    * Derives retrograde progressive event.
    */
   private getRetrogradeProgressiveEvent(
-    beginningEvent: Event,
-    endingEvent: Event,
+    beginningEvent: DetectedCalendarEvent,
+    endingEvent: DetectedCalendarEvent,
     planet: RetrogradeBody,
-  ): Event {
+  ): DetectedCalendarEvent {
     const start = beginningEvent.start;
     const end = endingEvent.start;
 
@@ -228,7 +228,7 @@ export class RetrogradesService {
    *
    * @see {@link symbolByBody} for planetary Unicode symbols
    * @see {@link symbolByOrbitalDirection} for direction symbols
-   * @see {@link Event} for calendar event structure
+   * @see {@link DetectedCalendarEvent} for calendar event structure
    *
    * @example
    * ```typescript
@@ -244,7 +244,7 @@ export class RetrogradesService {
     body: RetrogradeBody;
     direction: OrbitalDirection;
     timestamp: Moment;
-  }): Event {
+  }): DetectedCalendarEvent {
     const { body, direction, timestamp } = args;
 
     const bodyCapitalized = capitalize(body);
@@ -261,7 +261,7 @@ export class RetrogradesService {
       summary,
     });
 
-    const retrogradeEvent: Event = {
+    const retrogradeEvent: DetectedCalendarEvent = {
       categories: [
         ...RetrogradesService.categories,
         ...(direction === "retrograde" ? ["Retrograde"] : ["Direct"]),
@@ -308,9 +308,9 @@ export class RetrogradesService {
   detect(args: {
     coordinateEphemerisByBody: Record<RetrogradeBody, CoordinateEphemeris>;
     minute: Moment;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { coordinateEphemerisByBody, minute } = args;
-    const retrogradeEvents: Event[] = [];
+    const retrogradeEvents: DetectedCalendarEvent[] = [];
     for (const body of retrogradeBodies) {
       const ephemeris = coordinateEphemerisByBody[body];
       retrogradeEvents.push(
@@ -355,8 +355,8 @@ export class RetrogradesService {
    * // ]
    * ```
    */
-  detectProgressive(events: Event[]): Event[] {
-    const progressiveEvents: Event[] = [];
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
+    const progressiveEvents: DetectedCalendarEvent[] = [];
 
     const retrogradeEvents = events.filter((event) =>
       event.categories.includes("Direction"),

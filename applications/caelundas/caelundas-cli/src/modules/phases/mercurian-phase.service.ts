@@ -23,8 +23,8 @@ import {
   PHASE_EVENT_TIMEZONE,
 } from "./phases.constants";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { MercurianPhase } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type {
   BuildPlanetPhaseEventArguments,
   MercurianPhaseEventArguments,
@@ -61,8 +61,8 @@ export class MercurianPhaseService {
   private detectMercurianEveningPhases(
     parameters: PhaseParameters,
     minute: Moment,
-  ): Event[] {
-    const events: Event[] = [];
+  ): DetectedCalendarEvent[] {
+    const events: DetectedCalendarEvent[] = [];
     const checks: [boolean, MercurianPhase][] = [
       [this.phaseCalculationService.isEveningRise(parameters), "evening rise"],
       [
@@ -91,8 +91,8 @@ export class MercurianPhaseService {
   private detectMercurianMorningPhases(
     parameters: PhaseParameters,
     minute: Moment,
-  ): Event[] {
-    const events: Event[] = [];
+  ): DetectedCalendarEvent[] {
+    const events: DetectedCalendarEvent[] = [];
     const checks: [boolean, MercurianPhase][] = [
       [this.phaseCalculationService.isMorningRise(parameters), "morning rise"],
       [
@@ -135,7 +135,7 @@ export class MercurianPhaseService {
    */
   buildMercurianPhaseEvent(
     args: BuildPlanetPhaseEventArguments<MercurianPhase>,
-  ): Event {
+  ): DetectedCalendarEvent {
     const { phase, timestamp } = args;
 
     const phaseCapitalized = _.startCase(phase);
@@ -153,7 +153,7 @@ export class MercurianPhaseService {
       summary,
     });
 
-    const mercurianPhaseEvent: Event = {
+    const mercurianPhaseEvent: DetectedCalendarEvent = {
       categories: [
         ...MercurianPhaseService.categories,
         MERCURIAN_CATEGORY,
@@ -170,7 +170,9 @@ export class MercurianPhaseService {
   /**
    * Derives mercurian evening progressive events.
    */
-  getMercurianEveningProgressiveEvents(events: Event[]): Event[] {
+  getMercurianEveningProgressiveEvents(
+    events: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     const pairs = this.progressiveUtilitiesService.pairProgressiveEvents(
       this.phaseCalculationService.filterByCategory(
         events,
@@ -190,7 +192,9 @@ export class MercurianPhaseService {
   /**
    * Derives mercurian morning progressive events.
    */
-  getMercurianMorningProgressiveEvents(events: Event[]): Event[] {
+  getMercurianMorningProgressiveEvents(
+    events: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     const pairs = this.progressiveUtilitiesService.pairProgressiveEvents(
       this.phaseCalculationService.filterByCategory(
         events,
@@ -210,7 +214,9 @@ export class MercurianPhaseService {
   /**
    * Produces Mercurian morning/evening phase events for one minute.
    */
-  getMercurianPhaseEvents(args: MercurianPhaseEventArguments): Event[] {
+  getMercurianPhaseEvents(
+    args: MercurianPhaseEventArguments,
+  ): DetectedCalendarEvent[] {
     const {
       mercuryCoordinateEphemeris,
       mercuryDistanceEphemeris,
@@ -236,7 +242,9 @@ export class MercurianPhaseService {
   /**
    * Derives mercurian phase progressive events.
    */
-  getMercurianPhaseProgressiveEvents(events: Event[]): Event[] {
+  getMercurianPhaseProgressiveEvents(
+    events: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     return [
       ...this.getMercurianMorningProgressiveEvents(events),
       ...this.getMercurianEveningProgressiveEvents(events),
@@ -247,9 +255,9 @@ export class MercurianPhaseService {
    * Derives mercury evening visibility duration event.
    */
   getMercuryEveningVisibilityDurationEvent(
-    beginning: Event,
-    ending: Event,
-  ): Event {
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return {
       categories: [
         ...MercurianPhaseService.categories,
@@ -267,9 +275,9 @@ export class MercurianPhaseService {
    * Derives mercury morning visibility duration event.
    */
   getMercuryMorningVisibilityDurationEvent(
-    beginning: Event,
-    ending: Event,
-  ): Event {
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return {
       categories: [
         ...MercurianPhaseService.categories,

@@ -7,8 +7,8 @@ import { MathService } from "../math/math.service";
 import { EclipseEventService } from "./eclipse-event.service";
 import { EclipseGeometryService } from "./eclipse-geometry.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { EclipsePhase } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { AzimuthElevationEphemeris } from "../ephemeris/ephemeris.types";
 import type { EclipseCoordinates } from "./eclipses.types";
 import type { Moment } from "moment-timezone";
@@ -68,7 +68,7 @@ export class EclipseTopocentricService {
     nextVisible: boolean;
     previousCoordinates: EclipseCoordinates;
     previousVisible: boolean;
-  }): Event | null {
+  }): DetectedCalendarEvent | null {
     const phase = this.getTopocentricPhase({
       currentActive: this.isLunarTopocentricActive(
         args.currentCoordinates,
@@ -106,7 +106,7 @@ export class EclipseTopocentricService {
     nextVisible: boolean;
     previousCoordinates: EclipseCoordinates;
     previousVisible: boolean;
-  }): Event | null {
+  }): DetectedCalendarEvent | null {
     const phase = this.getTopocentricPhase({
       currentActive: this.isSolarTopocentricActive(
         args.currentCoordinates,
@@ -176,7 +176,7 @@ export class EclipseTopocentricService {
     previousCoordinates: EclipseCoordinates;
     solarPhase: EclipsePhase | null;
     sunAzimuthElevationEphemeris: AzimuthElevationEphemeris;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const visibilities =
       this.eclipseGeometryService.getAllTopocentricVisibilities({
         minute: args.minute,
@@ -184,7 +184,7 @@ export class EclipseTopocentricService {
         sunAzimuthElevationEphemeris: args.sunAzimuthElevationEphemeris,
       });
 
-    const events: Event[] = [];
+    const events: DetectedCalendarEvent[] = [];
 
     const solarEvent = this.getSolarTopocentricEvent({
       currentCoordinates: args.currentCoordinates,

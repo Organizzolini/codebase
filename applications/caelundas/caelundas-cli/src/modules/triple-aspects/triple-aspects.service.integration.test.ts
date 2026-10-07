@@ -12,7 +12,7 @@ import { TripleAspectsDetectorService } from "./triple-aspects-detector.service"
 import { TripleAspectsService } from "./triple-aspects.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 /**
  * Integration tests for Triple Aspect pattern detection
@@ -114,7 +114,7 @@ describe("triple-aspects.events integration", () => {
       const formingStart = moment.utc("2024-06-15T14:30:00.000Z");
       const dissolvingStart = moment.utc("2024-06-15T16:00:00.000Z");
 
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -133,7 +133,7 @@ describe("triple-aspects.events integration", () => {
         summary: "➡️ ⊤ ☀️-🌙-♂️ Mars, Moon, Sun t-square forming (Mars focal)",
       };
 
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -321,7 +321,7 @@ describe("triple-aspects.events integration", () => {
       const formingStart = moment.utc("2024-08-05T09:00:00.000Z");
       const dissolvingStart = moment.utc("2024-08-05T12:00:00.000Z");
 
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -339,7 +339,7 @@ describe("triple-aspects.events integration", () => {
         summary: "➡️ △ ☀️-🌙-♂️ Mars, Moon, Sun grand trine forming",
       };
 
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",

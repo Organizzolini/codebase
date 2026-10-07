@@ -11,12 +11,12 @@ import {
 import { MinorAspectsEventService } from "./minor-aspects-event.service";
 import { MinorAspectsProgressiveService } from "./minor-aspects-progressive.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   AspectPhase,
   Body,
   MinorAspect,
 } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 import type { DetectBodyPairAspectArguments } from "./minor-aspects.types";
 import type { Moment } from "moment-timezone";
@@ -59,7 +59,7 @@ export class MinorAspectsService {
   /** Detects a minor-aspect event for one body pair at a specific minute window. */
   private detectBodyPairAspect(
     args: DetectBodyPairAspectArguments,
-  ): Event | null {
+  ): DetectedCalendarEvent | null {
     const {
       body1,
       body2,
@@ -130,7 +130,7 @@ export class MinorAspectsService {
     longitudeBody2: number;
     phase: AspectPhase;
     timestamp: Moment;
-  }): Event {
+  }): DetectedCalendarEvent {
     const { body1, body2, longitudeBody1, longitudeBody2, phase, timestamp } =
       args;
     const minorAspect = this.getMinorAspect({ longitudeBody1, longitudeBody2 });
@@ -172,7 +172,7 @@ export class MinorAspectsService {
   detect(args: {
     coordinateEphemerisByBody: Record<Body, CoordinateEphemeris>;
     minute: Moment;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     return AspectsUtilitiesService.scanUniqueBodyPairsAtMinute({
       bodies: minorAspectBodies,
       coordinateEphemerisByBody: args.coordinateEphemerisByBody,
@@ -190,7 +190,7 @@ export class MinorAspectsService {
    *
    * @see {@link pairProgressiveEvents} for forming/dissolving pairing logic
    */
-  detectProgressive(events: Event[]): Event[] {
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
     return this.minorAspectsProgressiveService.detectProgressive(events);
   }
 

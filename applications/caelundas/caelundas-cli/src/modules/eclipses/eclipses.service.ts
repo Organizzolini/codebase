@@ -5,8 +5,8 @@ import { LoggerService } from "@codebase/logging";
 import { EclipseCalculationService } from "./eclipse-calculation.service";
 import { EclipseEventService } from "./eclipse-event.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { EclipsePhase } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type {
   AzimuthElevationEphemeris,
   CoordinateEphemeris,
@@ -45,7 +45,7 @@ export class EclipsesService {
     date: Moment;
     frame: EclipseFrame;
     phase: EclipsePhase;
-  }): Event {
+  }): DetectedCalendarEvent {
     return this.eclipseEventService.buildLunarEclipseEvent(args);
   }
 
@@ -56,7 +56,7 @@ export class EclipsesService {
     date: Moment;
     frame: EclipseFrame;
     phase: EclipsePhase;
-  }): Event {
+  }): DetectedCalendarEvent {
     return this.eclipseEventService.buildSolarEclipseEvent(args);
   }
 
@@ -71,7 +71,7 @@ export class EclipsesService {
     sunAzimuthElevationEphemeris?: AzimuthElevationEphemeris;
     sunCoordinateEphemeris: CoordinateEphemeris;
     sunDiameterEphemeris: DiameterEphemeris;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const coordinates = this.eclipseCalculationService.getAllEclipseCoordinates(
       {
         minute: args.minute,
@@ -89,7 +89,7 @@ export class EclipsesService {
       },
     );
 
-    const eclipseEvents: Event[] = [...geocentricResult.events];
+    const eclipseEvents: DetectedCalendarEvent[] = [...geocentricResult.events];
 
     if (
       args.moonAzimuthElevationEphemeris &&
@@ -119,7 +119,7 @@ export class EclipsesService {
   /**
    * Builds progressive event spans for eclipse periods.
    */
-  detectProgressive(events: Event[]): Event[] {
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
     const progressiveEvents =
       this.eclipseEventService.detectProgressive(events);
 

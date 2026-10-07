@@ -9,7 +9,7 @@ import { ProgressiveUtilitiesService } from "../progressive/progressive-utilitie
 
 import { EclipseEventService } from "./eclipse-event.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 describe(EclipseEventService, () => {
   let service: EclipseEventService;
@@ -150,7 +150,7 @@ describe(EclipseEventService, () => {
 
   describe("detectProgressive", () => {
     it("creates progressive events for geocentric solar and lunar eclipse ranges", () => {
-      const solarBeginning: Event = {
+      const solarBeginning: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -163,7 +163,7 @@ describe(EclipseEventService, () => {
         start: moment.utc("2024-04-08T18:00:00.000Z"),
         summary: "🌐 ☀️🐉▶️ Solar Eclipse begins",
       };
-      const solarEnding: Event = {
+      const solarEnding: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -176,7 +176,7 @@ describe(EclipseEventService, () => {
         start: moment.utc("2024-04-08T19:00:00.000Z"),
         summary: "🌐 ☀️🐉◀️ Solar Eclipse ends",
       };
-      const lunarBeginning: Event = {
+      const lunarBeginning: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -189,7 +189,7 @@ describe(EclipseEventService, () => {
         start: moment.utc("2024-09-18T02:00:00.000Z"),
         summary: "🌐 🌙🐉▶️ Lunar Eclipse begins",
       };
-      const lunarEnding: Event = {
+      const lunarEnding: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -260,7 +260,7 @@ describe(EclipseEventService, () => {
     });
 
     it("creates topocentric progressive events for solar and lunar eclipse ranges", () => {
-      const solarBeginning: Event = {
+      const solarBeginning: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -273,7 +273,7 @@ describe(EclipseEventService, () => {
         start: moment.utc("2024-04-08T18:00:00.000Z"),
         summary: "📍 ☀️🐉▶️ Solar Eclipse begins",
       };
-      const solarEnding: Event = {
+      const solarEnding: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -286,7 +286,7 @@ describe(EclipseEventService, () => {
         start: moment.utc("2024-04-08T19:00:00.000Z"),
         summary: "📍 ☀️🐉◀️ Solar Eclipse ends",
       };
-      const lunarBeginning: Event = {
+      const lunarBeginning: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -299,7 +299,7 @@ describe(EclipseEventService, () => {
         start: moment.utc("2024-09-18T02:00:00.000Z"),
         summary: "📍 🌙🐉▶️ Lunar Eclipse begins",
       };
-      const lunarEnding: Event = {
+      const lunarEnding: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",

@@ -12,8 +12,8 @@ import {
 } from "../caelundas/symbol-caelundas.constants";
 
 import type { AspectBodies } from "../aspects/aspects.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Aspect, AspectPhase, Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -115,9 +115,9 @@ export class StelliumService {
    * Builds progressive stellium event.
    */
   private buildProgressiveStelliumEvent(
-    forming: Event,
-    dissolving: Event,
-  ): Event {
+    forming: DetectedCalendarEvent,
+    dissolving: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return this.progressiveCompoundEventService.buildProgressiveCompoundEvent({
       descriptionCaseInsensitive: true,
       dissolving,
@@ -149,13 +149,13 @@ export class StelliumService {
     currentAspectBodies: AspectBodies[];
     minute: Moment;
     previousAspectBodies: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
     const unionEdges = [...currentAspectBodies, ...previousAspectBodies];
     const conjunctions =
       this.groupAspectsByType(unionEdges).get("conjunct") ?? [];
     if (conjunctions.length < 6) return [];
-    const events: Event[] = [];
+    const events: DetectedCalendarEvent[] = [];
     for (const cluster of this.buildConjunctionClusters(conjunctions)) {
       const bodies = [...cluster];
       if (!this.allPairsConjunct(bodies, unionEdges)) continue;
@@ -186,7 +186,7 @@ export class StelliumService {
     bodies: Body[];
     phase: AspectPhase;
     timestamp: Moment;
-  }): Event {
+  }): DetectedCalendarEvent {
     const { bodies, phase, timestamp } = parameters;
     const bodiesCapitalized = bodies.map((b) => _.startCase(b));
     const bodySymbols = bodies.map((b) => symbolByBody[b]);
@@ -249,8 +249,10 @@ export class StelliumService {
   /**
    * Pairs stellium group.
    */
-  private pairStelliumGroup(group: Event[]): Event[] {
-    const result: Event[] = [];
+  private pairStelliumGroup(
+    group: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
+    const result: DetectedCalendarEvent[] = [];
     const sortedEvents = _.sortBy(group, "start");
 
     for (let index = 0; index < sortedEvents.length; index++) {
@@ -283,7 +285,7 @@ export class StelliumService {
   /**
    * Handles stellium group key.
    */
-  private stelliumGroupKey(event: Event): string {
+  private stelliumGroupKey(event: DetectedCalendarEvent): string {
     const planets = _.sortBy(
       event.categories.filter((category) =>
         stelliumBodies.map((b) => _.startCase(b)).includes(category),
@@ -314,7 +316,7 @@ export class StelliumService {
     currentAspectBodies: AspectBodies[];
     minute: Moment;
     previousAspectBodies: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
     return [
       ...this.composeStelliums({
@@ -334,7 +336,7 @@ export class StelliumService {
    * boundary moments.
    *
    */
-  detectProgressive(events: Event[]): Event[] {
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
     const stelliumEvents = events.filter((event) =>
       event.categories.includes("Stellium"),
     );
@@ -343,7 +345,7 @@ export class StelliumService {
       this.stelliumGroupKey(event),
     );
 
-    const progressiveEvents: Event[] = [];
+    const progressiveEvents: DetectedCalendarEvent[] = [];
     for (const group of Object.values(groupedEvents)) {
       progressiveEvents.push(...this.pairStelliumGroup(group));
     }

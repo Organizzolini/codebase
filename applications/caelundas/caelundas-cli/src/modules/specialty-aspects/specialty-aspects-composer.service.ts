@@ -14,13 +14,13 @@ import {
 } from "../caelundas/symbol-caelundas.constants";
 import { EphemerisService } from "../ephemeris/ephemeris.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   AspectPhase,
   Body,
   SpecialtyAspect,
   SpecialtyAspectSymbol,
 } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 import type { Moment } from "moment-timezone";
 
@@ -57,7 +57,7 @@ export class SpecialtyAspectsComposerService {
     phaseEmoji: string;
     specialtyAspectSymbol: SpecialtyAspectSymbol;
     timestamp: Moment;
-  }): Event {
+  }): DetectedCalendarEvent {
     const {
       body1Symbol,
       body2Symbol,
@@ -160,7 +160,10 @@ export class SpecialtyAspectsComposerService {
   /**
    * Creates one specialty-aspect duration event from a forming/dissolving pair.
    */
-  getSpecialtyAspectProgressiveEvent(beginning: Event, ending: Event): Event {
+  getSpecialtyAspectProgressiveEvent(
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     const { aspectCapitalized, body1Capitalized, body2Capitalized } =
       this.extractAspectBodiesFromCategories(beginning.categories);
     const { aspect, body1, body2 } = this.extractTypedAspectValues({
@@ -230,7 +233,7 @@ export class SpecialtyAspectsComposerService {
   /**
    * Builds a stable grouping key from sorted bodies plus specialty-aspect label.
    */
-  specialtyAspectGroupKey(event: Event): string {
+  specialtyAspectGroupKey(event: DetectedCalendarEvent): string {
     const bodiesCapitalized = _.sortBy(
       event.categories.filter((category) =>
         specialtyAspectBodies.map((b) => _.startCase(b)).includes(category),

@@ -10,8 +10,8 @@ import { QuadrupleAspectsBaseService } from "./quadruple-aspects-base.service";
 import { QuadrupleAspectsComposerService } from "./quadruple-aspects-composer.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Aspect } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 
 describe(QuadrupleAspectsComposerService, () => {
   let service: QuadrupleAspectsComposerService;
@@ -62,15 +62,15 @@ describe(QuadrupleAspectsComposerService, () => {
   });
 
   it("collects progressive events from forming to dissolving while skipping sparse entries", () => {
-    const progressiveEvents: Event[] = [];
-    const forming: Event = {
+    const progressiveEvents: DetectedCalendarEvent[] = [];
+    const forming: DetectedCalendarEvent = {
       categories: ["Quadruple Aspect", "Grand Cross", "Forming"],
       description: "forming",
       end: moment.utc("2024-03-21T10:00:00.000Z"),
       start: moment.utc("2024-03-21T10:00:00.000Z"),
       summary: "forming",
     };
-    const dissolving: Event = {
+    const dissolving: DetectedCalendarEvent = {
       categories: ["Quadruple Aspect", "Grand Cross", "Dissolving"],
       description: "dissolving",
       end: moment.utc("2024-03-21T14:00:00.000Z"),
@@ -79,7 +79,7 @@ describe(QuadrupleAspectsComposerService, () => {
     };
 
     service.collectProgressiveEventsFromGroup(
-      [forming, undefined as unknown as Event, dissolving],
+      [forming, undefined as unknown as DetectedCalendarEvent, dissolving],
       progressiveEvents,
     );
 
@@ -89,22 +89,22 @@ describe(QuadrupleAspectsComposerService, () => {
   });
 
   it("skips non-dissolving candidates before pairing a dissolving boundary", () => {
-    const progressiveEvents: Event[] = [];
-    const forming: Event = {
+    const progressiveEvents: DetectedCalendarEvent[] = [];
+    const forming: DetectedCalendarEvent = {
       categories: ["Quadruple Aspect", "Grand Cross", "Forming"],
       description: "forming",
       end: moment.utc("2024-03-21T10:00:00.000Z"),
       start: moment.utc("2024-03-21T10:00:00.000Z"),
       summary: "forming",
     };
-    const perfective: Event = {
+    const perfective: DetectedCalendarEvent = {
       categories: ["Quadruple Aspect", "Grand Cross", "Perfective"],
       description: "perfective",
       end: moment.utc("2024-03-21T12:00:00.000Z"),
       start: moment.utc("2024-03-21T12:00:00.000Z"),
       summary: "perfective",
     };
-    const dissolving: Event = {
+    const dissolving: DetectedCalendarEvent = {
       categories: ["Quadruple Aspect", "Grand Cross", "Dissolving"],
       description: "dissolving",
       end: moment.utc("2024-03-21T14:00:00.000Z"),

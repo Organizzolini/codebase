@@ -45,8 +45,8 @@ import { AspectsService } from "./aspects.service";
 import { CompoundPhaseService } from "./compound-phase.service";
 import { ProgressiveCompoundEventService } from "./progressive-compound-event.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 import type {
   CompositeAspectDetector,
@@ -181,7 +181,7 @@ describe(AspectsService, () => {
       body1: string;
       body2: string;
       phase: "Dissolving" | "Forming" | "Perfective";
-    }): Event {
+    }): DetectedCalendarEvent {
       return {
         categories: [
           "Astronomy",
@@ -468,21 +468,21 @@ describe(AspectsService, () => {
         end: minute,
         start: minute,
         summary: "Sun forming conjunct Moon",
-      } satisfies Event;
+      } satisfies DetectedCalendarEvent;
       const compositeEvent = {
         categories: ["Astronomy", "Astrology", "Composite"],
         description: "Composite",
         end: minute,
         start: minute,
         summary: "Composite",
-      } satisfies Event;
+      } satisfies DetectedCalendarEvent;
       const progressiveEvent = {
         categories: ["Astronomy", "Astrology", "Progressive"],
         description: "Progressive",
         end: minute,
         start: minute,
         summary: "Progressive",
-      } satisfies Event;
+      } satisfies DetectedCalendarEvent;
 
       const mockSimpleAspectDetector = {
         detect: vi

@@ -19,7 +19,7 @@ import {
   SOLAR_RETREATING_SUMMARY,
 } from "./annual-solar-cycle.constants";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { DistanceEphemeris } from "../ephemeris/ephemeris.types";
 import type {
   DetectAnnualSolarCycleArguments,
@@ -58,9 +58,9 @@ export class AnnualSolarCycleService {
 
   /** Pairs aphelion-to-perihelion markers into Solar Advancing duration events. */
   private getAdvancingProgressiveEvents(
-    aphelionEvents: Event[],
-    perihelionEvents: Event[],
-  ): Event[] {
+    aphelionEvents: DetectedCalendarEvent[],
+    perihelionEvents: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     const advancingPairs =
       this.progressiveUtilitiesService.pairProgressiveEvents(
         aphelionEvents,
@@ -74,9 +74,9 @@ export class AnnualSolarCycleService {
 
   /** Pairs perihelion-to-aphelion markers into Solar Retreating duration events. */
   private getRetreatingProgressiveEvents(
-    perihelionEvents: Event[],
-    aphelionEvents: Event[],
-  ): Event[] {
+    perihelionEvents: DetectedCalendarEvent[],
+    aphelionEvents: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     const retreatingPairs =
       this.progressiveUtilitiesService.pairProgressiveEvents(
         perihelionEvents,
@@ -90,9 +90,9 @@ export class AnnualSolarCycleService {
 
   /** Builds the progressive span event for Earth moving from aphelion toward perihelion. */
   private getSolarAdvancingDurationEvent(
-    beginning: Event,
-    ending: Event,
-  ): Event {
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return {
       categories: [
         ...ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
@@ -132,9 +132,9 @@ export class AnnualSolarCycleService {
 
   /** Builds the progressive span event for Earth moving from perihelion toward aphelion. */
   private getSolarRetreatingDurationEvent(
-    beginning: Event,
-    ending: Event,
-  ): Event {
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return {
       categories: [
         ...ANNUAL_SOLAR_CYCLE_BASE_CATEGORIES,
@@ -178,7 +178,7 @@ export class AnnualSolarCycleService {
    * Returns [vernalEquinoxEvent] when Sun crosses 0° longitude
    * ```
    */
-  detect(args: DetectAnnualSolarCycleArguments): Event[] {
+  detect(args: DetectAnnualSolarCycleArguments): DetectedCalendarEvent[] {
     return [
       ...this.getAnnualSolarCycleEvents(args),
       ...this.getSolarApsisEvents(args),
@@ -198,7 +198,7 @@ export class AnnualSolarCycleService {
    * Based on Kepler's second law: planets sweep out equal areas in equal times,
    * so Earth moves faster when closer to the Sun (perihelion).
    */
-  detectProgressive(events: Event[]): Event[] {
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
     const solarApsisEvents = events.filter((event) =>
       event.categories.includes("Annual Solar Cycle"),
     );
@@ -224,7 +224,7 @@ export class AnnualSolarCycleService {
    */
   getAnnualSolarCycleEvents(
     args: DetectAnnualSolarCycleEventsArguments,
-  ): Event[] {
+  ): DetectedCalendarEvent[] {
     const { minute, sunCoordinateEphemeris: ephemeris } = args;
     const previousMinute = minute.clone().subtract(1, "minute");
     const currentLongitude = this.ephemerisService.getCoordinateFromEphemeris(
@@ -278,10 +278,12 @@ export class AnnualSolarCycleService {
    * // Returns [perihelionEvent] when Earth is closest to Sun
    * ```
    */
-  getSolarApsisEvents(args: DetectSolarApsisEventsArguments): Event[] {
+  getSolarApsisEvents(
+    args: DetectSolarApsisEventsArguments,
+  ): DetectedCalendarEvent[] {
     const { minute, sunDistanceEphemeris } = args;
     const distances = this.getSolarDistances(minute, sunDistanceEphemeris);
-    const solarApsisEvents: Event[] = [];
+    const solarApsisEvents: DetectedCalendarEvent[] = [];
     if (this.mathService.isMaximum({ ...distances })) {
       solarApsisEvents.push(
         this.annualSolarCycleEventsService.buildAphelionEvent(minute),

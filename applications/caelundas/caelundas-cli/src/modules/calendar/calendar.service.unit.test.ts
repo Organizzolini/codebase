@@ -2,6 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 
 import { ConfigService } from "@nestjs/config";
 import { Test } from "@nestjs/testing";
+import _ from "lodash";
 import moment from "moment-timezone";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
@@ -11,7 +12,7 @@ import { mockDates } from "../../../testing/mocks";
 
 import { CalendarService } from "./calendar.service";
 
-import type { Event } from "./calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 vi.mock("node:fs/promises", () => ({
   mkdir: vi.fn<typeof mkdir>(),
@@ -43,7 +44,7 @@ describe(CalendarService, () => {
   mockDates();
 
   describe("buildEventContent", () => {
-    const baseEvent: Event = {
+    const baseEvent: DetectedCalendarEvent = {
       categories: ["Astronomy", "Astrology", "Ingress", "Sun", "Aries"],
       description: "Sun ingress Aries",
       end: moment.utc("2025-03-20T09:06:00Z"),
@@ -71,7 +72,7 @@ describe(CalendarService, () => {
     });
 
     it("includes optional location when provided", () => {
-      const eventWithLocation: Event = {
+      const eventWithLocation: DetectedCalendarEvent = {
         ...baseEvent,
         location: "Philadelphia, PA",
       };
@@ -80,44 +81,26 @@ describe(CalendarService, () => {
       expect(vevent).toContain("LOCATION:Philadelphia, PA");
     });
 
-    it("includes geography when provided", () => {
-      const eventWithGeo: Event = {
-        ...baseEvent,
-        geography: { latitude: 39.9526, longitude: -75.1652 },
-      };
-      const vevent = service.buildEventContent(eventWithGeo);
-
-      expect(vevent).toContain("GEO:39.9526;-75.1652");
-    });
-
-    it("includes URL when provided", () => {
-      const eventWithUrl: Event = {
-        ...baseEvent,
-        url: "https://example.com/event",
-      };
-      const vevent = service.buildEventContent(eventWithUrl);
-
-      expect(vevent).toContain("URL:https://example.com/event");
-    });
-
-    it("includes priority when provided", () => {
-      const eventWithPriority: Event = {
-        ...baseEvent,
-        priority: 1,
-      };
-      const vevent = service.buildEventContent(eventWithPriority);
-
-      expect(vevent).toContain("PRIORITY:1");
-    });
-
     it("includes color when provided", () => {
-      const eventWithColor: Event = {
+      const eventWithColor: DetectedCalendarEvent = {
         ...baseEvent,
         color: "red",
       };
       const vevent = service.buildEventContent(eventWithColor);
 
       expect(vevent).toContain("COLOR:red");
+    });
+
+    it("leaves out a stored null location and color", () => {
+      const storedEvent: DetectedCalendarEvent = {
+        ...baseEvent,
+        color: null,
+        location: null,
+      };
+      const vevent = service.buildEventContent(storedEvent);
+
+      expect(vevent).not.toContain("LOCATION:");
+      expect(vevent).not.toContain("COLOR:");
     });
 
     it("generates unique UID based on event details", () => {
@@ -129,7 +112,7 @@ describe(CalendarService, () => {
     });
 
     it("handles events with different start and end times", () => {
-      const durationEvent: Event = {
+      const durationEvent: DetectedCalendarEvent = {
         ...baseEvent,
         end: moment.utc("2025-04-20T09:06:00Z"),
       };
@@ -160,7 +143,7 @@ describe(CalendarService, () => {
   });
 
   describe("buildFileContent", () => {
-    const sampleEvents: Event[] = [
+    const sampleEvents: DetectedCalendarEvent[] = [
       {
         categories: ["Astronomy", "Equinox"],
         description: "Sun enters Aries",
@@ -296,7 +279,7 @@ describe(CalendarService, () => {
     it("writes ICS output to configured directory", async () => {
       const infoSpy = vi.spyOn(logger, "info").mockReturnValue(undefined);
 
-      const events: Event[] = [
+      const events: DetectedCalendarEvent[] = [
         {
           categories: ["Astronomy"],
           description: "Sample event",
@@ -349,7 +332,7 @@ describe(CalendarService, () => {
       const writeFailure = new Error("disk full");
       vi.mocked(writeFile).mockRejectedValueOnce(writeFailure);
 
-      const events: Event[] = [
+      const events: DetectedCalendarEvent[] = [
         {
           categories: ["Astronomy"],
           description: "Sample event",
@@ -383,7 +366,7 @@ describe(CalendarService, () => {
       const errorSpy = vi.spyOn(logger, "error").mockReturnValue(undefined);
       vi.mocked(writeFile).mockRejectedValueOnce("disk full");
 
-      const events: Event[] = [
+      const events: DetectedCalendarEvent[] = [
         {
           categories: ["Astronomy"],
           description: "Sample event",
@@ -451,7 +434,7 @@ describe(CalendarService, () => {
       start: moment.tz("2025-03-20T00:00:00", "America/New_York"),
       timezone: "America/New_York",
     };
-    const events: Event[] = [
+    const events: DetectedCalendarEvent[] = [
       {
         categories: ["Astronomy"],
         color: "red",
@@ -488,11 +471,11 @@ describe(CalendarService, () => {
 
     it("writes null for a missing color and location", async () => {
       vi.spyOn(logger, "info").mockReturnValue(undefined);
-
-      await service.writeJson(
-        [{ ...events[0], color: undefined, location: undefined } as Event],
-        input,
+      const missing = events.map((event) =>
+        _.omit(event, ["color", "location"]),
       );
+
+      await service.writeJson(missing, input);
 
       const content = vi.mocked(writeFile).mock.calls.at(-1)?.[1];
       const [written] = JSON.parse(

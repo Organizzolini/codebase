@@ -12,7 +12,7 @@ import {
 } from "./phases.constants";
 import { VenusianPhaseService } from "./venusian-phase.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   DetectPlanetaryEventsArguments,
   MartianPhaseEventArguments,
@@ -49,7 +49,7 @@ export class PhasesService {
    * Combines detection from all three planets (Venus, Mercury, Mars).
    * @deprecated Use {@link getMartianPhaseEvents}, {@link getMercurianPhaseEvents}, or {@link getVenusianPhaseEvents} directly
    */
-  detect(args: DetectPlanetaryEventsArguments): Event[] {
+  detect(args: DetectPlanetaryEventsArguments): DetectedCalendarEvent[] {
     const {
       coordinateEphemerisByBody,
       distanceEphemerisByBody,
@@ -57,7 +57,7 @@ export class PhasesService {
       minute,
     } = args;
 
-    const events: Event[] = [
+    const events: DetectedCalendarEvent[] = [
       ...this.getMartianPhaseEvents({
         marsCoordinateEphemeris: coordinateEphemerisByBody.mars,
         marsDistanceEphemeris: distanceEphemerisByBody.mars,
@@ -101,8 +101,8 @@ export class PhasesService {
    *
    * @see {@link pairProgressiveEvents} for rise/set pairing logic
    */
-  detectProgressive(events: Event[]): Event[] {
-    const progressiveEvents: Event[] = [];
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
+    const progressiveEvents: DetectedCalendarEvent[] = [];
 
     // Filter to planetary phase events
     const planetaryPhaseEvents = events.filter((event) =>
@@ -151,21 +151,27 @@ export class PhasesService {
   /**
    * Produces Martian phase events for one minute using precomputed phase parameters.
    */
-  getMartianPhaseEvents(args: MartianPhaseEventArguments): Event[] {
+  getMartianPhaseEvents(
+    args: MartianPhaseEventArguments,
+  ): DetectedCalendarEvent[] {
     return this.martianPhaseService.getMartianPhaseEvents(args);
   }
 
   /**
    * Produces Mercurian morning/evening phase events for one minute.
    */
-  getMercurianPhaseEvents(args: MercurianPhaseEventArguments): Event[] {
+  getMercurianPhaseEvents(
+    args: MercurianPhaseEventArguments,
+  ): DetectedCalendarEvent[] {
     return this.mercurianPhaseService.getMercurianPhaseEvents(args);
   }
 
   /**
    * Produces Venusian morning/evening phase events for one minute.
    */
-  getVenusianPhaseEvents(args: VenusianPhaseEventArguments): Event[] {
+  getVenusianPhaseEvents(
+    args: VenusianPhaseEventArguments,
+  ): DetectedCalendarEvent[] {
     return this.venusianPhaseService.getVenusianPhaseEvents(args);
   }
 }

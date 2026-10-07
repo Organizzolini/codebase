@@ -23,8 +23,8 @@ import {
   VENUSIAN_CATEGORY,
 } from "./phases.constants";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { VenusianPhase } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type {
   BuildPlanetPhaseEventArguments,
   PhaseParameters,
@@ -61,8 +61,8 @@ export class VenusianPhaseService {
   private detectVenusianEveningPhases(
     parameters: PhaseParameters,
     minute: Moment,
-  ): Event[] {
-    const events: Event[] = [];
+  ): DetectedCalendarEvent[] {
+    const events: DetectedCalendarEvent[] = [];
     const checks: [boolean, VenusianPhase][] = [
       [this.phaseCalculationService.isEveningRise(parameters), "evening rise"],
       [
@@ -89,8 +89,8 @@ export class VenusianPhaseService {
   private detectVenusianMorningPhases(
     parameters: PhaseParameters,
     minute: Moment,
-  ): Event[] {
-    const events: Event[] = [];
+  ): DetectedCalendarEvent[] {
+    const events: DetectedCalendarEvent[] = [];
     const checks: [boolean, VenusianPhase][] = [
       [this.phaseCalculationService.isMorningRise(parameters), "morning rise"],
       [
@@ -130,7 +130,7 @@ export class VenusianPhaseService {
    */
   buildVenusianPhaseEvent(
     args: BuildPlanetPhaseEventArguments<VenusianPhase>,
-  ): Event {
+  ): DetectedCalendarEvent {
     const { phase, timestamp } = args;
 
     const phaseCapitalized = _.startCase(phase);
@@ -148,7 +148,7 @@ export class VenusianPhaseService {
       summary,
     });
 
-    const venusianPhaseEvent: Event = {
+    const venusianPhaseEvent: DetectedCalendarEvent = {
       categories: [
         ...VenusianPhaseService.categories,
         VENUSIAN_CATEGORY,
@@ -166,9 +166,9 @@ export class VenusianPhaseService {
    * Derives venus evening visibility duration event.
    */
   getVenusEveningVisibilityDurationEvent(
-    beginning: Event,
-    ending: Event,
-  ): Event {
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return {
       categories: [
         ...VenusianPhaseService.categories,
@@ -185,7 +185,9 @@ export class VenusianPhaseService {
   /**
    * Derives venusian evening progressive events.
    */
-  getVenusianEveningProgressiveEvents(events: Event[]): Event[] {
+  getVenusianEveningProgressiveEvents(
+    events: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     const pairs = this.progressiveUtilitiesService.pairProgressiveEvents(
       this.phaseCalculationService.filterByCategory(
         events,
@@ -205,7 +207,9 @@ export class VenusianPhaseService {
   /**
    * Derives venusian morning progressive events.
    */
-  getVenusianMorningProgressiveEvents(events: Event[]): Event[] {
+  getVenusianMorningProgressiveEvents(
+    events: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     const pairs = this.progressiveUtilitiesService.pairProgressiveEvents(
       this.phaseCalculationService.filterByCategory(
         events,
@@ -225,7 +229,9 @@ export class VenusianPhaseService {
   /**
    * Produces Venusian morning/evening phase events for one minute.
    */
-  getVenusianPhaseEvents(args: VenusianPhaseEventArguments): Event[] {
+  getVenusianPhaseEvents(
+    args: VenusianPhaseEventArguments,
+  ): DetectedCalendarEvent[] {
     const {
       minute,
       sunCoordinateEphemeris,
@@ -251,7 +257,9 @@ export class VenusianPhaseService {
   /**
    * Derives venusian phase progressive events.
    */
-  getVenusianPhaseProgressiveEvents(events: Event[]): Event[] {
+  getVenusianPhaseProgressiveEvents(
+    events: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     return [
       ...this.getVenusianMorningProgressiveEvents(events),
       ...this.getVenusianEveningProgressiveEvents(events),
@@ -262,9 +270,9 @@ export class VenusianPhaseService {
    * Derives venus morning visibility duration event.
    */
   getVenusMorningVisibilityDurationEvent(
-    beginning: Event,
-    ending: Event,
-  ): Event {
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return {
       categories: [
         ...VenusianPhaseService.categories,

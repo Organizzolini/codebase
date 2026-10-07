@@ -10,7 +10,7 @@ import { ProgressiveUtilitiesService } from "../progressive/progressive-utilitie
 
 import { MajorAspectProgressiveService } from "./major-aspect-progressive.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 vi.mock("fs", () => ({
   default: {
@@ -27,12 +27,15 @@ describe(MajorAspectProgressiveService, () => {
       body2Capitalized: string;
       categories: string[];
     }) => { aspect: string; body1: string; body2: string };
-    getAspectGroupKey: (event: Event) => string;
-    getMajorAspectProgressiveEvent: (beginning: Event, ending: Event) => Event;
+    getAspectGroupKey: (event: DetectedCalendarEvent) => string;
+    getMajorAspectProgressiveEvent: (
+      beginning: DetectedCalendarEvent,
+      ending: DetectedCalendarEvent,
+    ) => DetectedCalendarEvent;
     processAspectGroup: (
       aspectGroupKey: string,
-      aspectGroupEvents: Event[],
-    ) => Event[];
+      aspectGroupEvents: DetectedCalendarEvent[],
+    ) => DetectedCalendarEvent[];
   };
 
   beforeAll(async () => {
@@ -53,15 +56,15 @@ describe(MajorAspectProgressiveService, () => {
         body2Capitalized: string;
         categories: string[];
       }) => { aspect: string; body1: string; body2: string };
-      getAspectGroupKey: (event: Event) => string;
+      getAspectGroupKey: (event: DetectedCalendarEvent) => string;
       getMajorAspectProgressiveEvent: (
-        beginning: Event,
-        ending: Event,
-      ) => Event;
+        beginning: DetectedCalendarEvent,
+        ending: DetectedCalendarEvent,
+      ) => DetectedCalendarEvent;
       processAspectGroup: (
         aspectGroupKey: string,
-        aspectGroupEvents: Event[],
-      ) => Event[];
+        aspectGroupEvents: DetectedCalendarEvent[],
+      ) => DetectedCalendarEvent[];
     };
   });
 
@@ -76,7 +79,7 @@ describe(MajorAspectProgressiveService, () => {
       aspect: string,
       phase: string,
       timestamp: Moment,
-    ): Event => ({
+    ): DetectedCalendarEvent => ({
       categories: [
         "Astronomy",
         "Astrology",
@@ -229,7 +232,7 @@ describe(MajorAspectProgressiveService, () => {
         "Dissolving",
         moment.utc("2024-03-21T14:00:00.000Z"),
       );
-      const nonAspectEvent: Event = {
+      const nonAspectEvent: DetectedCalendarEvent = {
         categories: ["Solar", "Daily Cycle"],
         description: "Sunrise",
         end: moment.utc("2024-03-21T12:00:00.000Z"),
@@ -271,7 +274,7 @@ describe(MajorAspectProgressiveService, () => {
     });
 
     it("throws when categories cannot extract aspect info", () => {
-      const invalidEvent: Event = {
+      const invalidEvent: DetectedCalendarEvent = {
         categories: ["Astronomy", "Astrology", "Major Aspect", "Sun"],
         description: "invalid",
         end: moment.utc("2024-03-21T14:00:00.000Z"),
@@ -302,7 +305,7 @@ describe(MajorAspectProgressiveService, () => {
       const sortBySpy = vi
         .spyOn(_, "sortBy")
         .mockReturnValue([undefined, "Moon"] as unknown);
-      const eventWithAspect: Event = {
+      const eventWithAspect: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -330,7 +333,7 @@ describe(MajorAspectProgressiveService, () => {
       const sortBySpy = vi
         .spyOn(_, "sortBy")
         .mockReturnValue(["Moon", undefined] as unknown);
-      const eventWithAspect: Event = {
+      const eventWithAspect: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",

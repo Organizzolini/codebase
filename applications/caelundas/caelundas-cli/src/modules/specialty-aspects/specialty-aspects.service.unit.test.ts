@@ -16,8 +16,8 @@ import { SpecialtyAspectsEventService } from "./specialty-aspects-event.service"
 import { SpecialtyAspectsProgressiveService } from "./specialty-aspects-progressive.service";
 import { SpecialtyAspectsService } from "./specialty-aspects.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 
 vi.mock("fs", () => ({
@@ -463,7 +463,7 @@ describe(SpecialtyAspectsService, () => {
 
   describe("detectProgressive", () => {
     it("creates progressive events from forming and dissolving pairs", () => {
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -479,7 +479,7 @@ describe(SpecialtyAspectsService, () => {
         summary: "➡️ ☀️ ⬠ ☿ Sun forming quintile Mercury",
       };
 
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -510,7 +510,7 @@ describe(SpecialtyAspectsService, () => {
     });
 
     it("handles multiple aspect types for same body pair", () => {
-      const quintileForming: Event = {
+      const quintileForming: DetectedCalendarEvent = {
         categories: [
           "Specialty Aspect",
           "Sun",
@@ -524,7 +524,7 @@ describe(SpecialtyAspectsService, () => {
         summary: "forming",
       };
 
-      const quintileDissolving: Event = {
+      const quintileDissolving: DetectedCalendarEvent = {
         categories: [
           "Specialty Aspect",
           "Sun",
@@ -538,7 +538,7 @@ describe(SpecialtyAspectsService, () => {
         summary: "dissolving",
       };
 
-      const biquintileForming: Event = {
+      const biquintileForming: DetectedCalendarEvent = {
         categories: [
           "Specialty Aspect",
           "Sun",
@@ -552,7 +552,7 @@ describe(SpecialtyAspectsService, () => {
         summary: "forming",
       };
 
-      const biquintileDissolving: Event = {
+      const biquintileDissolving: DetectedCalendarEvent = {
         categories: [
           "Specialty Aspect",
           "Sun",
@@ -583,7 +583,7 @@ describe(SpecialtyAspectsService, () => {
     });
 
     it("handles multiple body pairs", () => {
-      const sunMercuryForming: Event = {
+      const sunMercuryForming: DetectedCalendarEvent = {
         categories: [
           "Specialty Aspect",
           "Sun",
@@ -597,7 +597,7 @@ describe(SpecialtyAspectsService, () => {
         summary: "forming",
       };
 
-      const sunMercuryDissolving: Event = {
+      const sunMercuryDissolving: DetectedCalendarEvent = {
         categories: [
           "Specialty Aspect",
           "Sun",
@@ -611,7 +611,7 @@ describe(SpecialtyAspectsService, () => {
         summary: "dissolving",
       };
 
-      const venusMarForming: Event = {
+      const venusMarForming: DetectedCalendarEvent = {
         categories: ["Specialty Aspect", "Venus", "Mars", "Septile", "Forming"],
         description: "Venus forming septile Mars",
         end: moment.utc("2024-03-21T11:00:00.000Z"),
@@ -619,7 +619,7 @@ describe(SpecialtyAspectsService, () => {
         summary: "forming",
       };
 
-      const venusMarDissolving: Event = {
+      const venusMarDissolving: DetectedCalendarEvent = {
         categories: [
           "Specialty Aspect",
           "Venus",
@@ -656,7 +656,7 @@ describe(SpecialtyAspectsService, () => {
     });
 
     it("filters out non-specialty-aspect events", () => {
-      const specialtyAspectEvent: Event = {
+      const specialtyAspectEvent: DetectedCalendarEvent = {
         categories: ["Specialty Aspect", "Sun", "Moon", "Quintile", "Forming"],
         description: "Sun forming quintile Moon",
         end: moment.utc("2024-03-21T10:00:00.000Z"),
@@ -664,7 +664,7 @@ describe(SpecialtyAspectsService, () => {
         summary: "forming",
       };
 
-      const nonSpecialtyAspectEvent: Event = {
+      const nonSpecialtyAspectEvent: DetectedCalendarEvent = {
         categories: ["Other"],
         description: "Some other event",
         end: moment.utc("2024-03-21T10:00:00.000Z"),
@@ -691,7 +691,7 @@ describe(SpecialtyAspectsService, () => {
     });
 
     it("sorts body names alphabetically in progressive event", () => {
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Specialty Aspect",
           "Venus",
@@ -705,7 +705,7 @@ describe(SpecialtyAspectsService, () => {
         summary: "forming",
       };
 
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Specialty Aspect",
           "Venus",

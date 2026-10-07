@@ -11,13 +11,13 @@ import {
 } from "../caelundas/symbol-caelundas.constants";
 
 import type { AspectBodies } from "../aspects/aspects.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   Aspect,
   AspectPhase,
   Body,
   SextupleAspect,
 } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type {
   BuildSextupleEventParameters,
   GetSextupleAspectEventArguments,
@@ -94,7 +94,7 @@ export class SextupleAspectsComposerService {
     hexagramBodies: Body[],
     phase: AspectPhase,
     eventMinute: Moment,
-  ): Event | null {
+  ): DetectedCalendarEvent | null {
     const body1 = hexagramBodies[0];
     const body2 = hexagramBodies[1];
     const body3 = hexagramBodies[2];
@@ -122,7 +122,10 @@ export class SextupleAspectsComposerService {
   /**
    * Converts a forming/dissolving sextuple pair into one duration event.
    */
-  buildProgressiveSextupleEvent(forming: Event, dissolving: Event): Event {
+  buildProgressiveSextupleEvent(
+    forming: DetectedCalendarEvent,
+    dissolving: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return this.progressiveCompoundEventService.buildProgressiveCompoundEvent({
       dissolving,
       forming,
@@ -169,7 +172,7 @@ export class SextupleAspectsComposerService {
    */
   buildSextupleEventFromParameters(
     eventArguments: BuildSextupleEventParameters,
-  ): Event {
+  ): DetectedCalendarEvent {
     const {
       aspectSymbol,
       bodiesSorted,
@@ -342,7 +345,7 @@ export class SextupleAspectsComposerService {
    */
   getSextupleAspectEvent(
     eventArguments: GetSextupleAspectEventArguments,
-  ): Event {
+  ): DetectedCalendarEvent {
     const {
       body1,
       body2,
@@ -381,7 +384,9 @@ export class SextupleAspectsComposerService {
   /**
    * Groups sextuple events by key.
    */
-  groupSextupleEventsByKey(events: Event[]): Record<string, Event[]> {
+  groupSextupleEventsByKey(
+    events: DetectedCalendarEvent[],
+  ): Record<string, DetectedCalendarEvent[]> {
     const sextupleAspectEvents = events.filter((event) =>
       event.categories.includes("Sextuple Aspect"),
     );

@@ -2,6 +2,10 @@ import { Column, Entity, Index, Unique } from "typeorm";
 
 import { UpdatableEntity } from "@codebase/database";
 
+import { createMomentTransformer } from "../caelundas-database.utilities";
+
+import type { Moment } from "moment-timezone";
+
 /**
  * One row of the `calendar_events` table, in the schema that
  * `CAELUNDAS_POSTGRES_SCHEMA` names: a single astronomical event as detected
@@ -14,8 +18,11 @@ import { UpdatableEntity } from "@codebase/database";
  * and longitude are `numeric` rather than floating point so that key compares
  * exactly; `pg` returns a `numeric` as a string, so read them as such.
  *
- * `start` and `end` are equal for an instantaneous event. `categories` is a
- * Postgres array with a GIN index, so a reader can filter on one in SQL.
+ * `start` and `end` are equal for an instantaneous event, and are carried as
+ * `Moment`s, read back in UTC, through {@link createMomentTransformer}. `color`
+ * and `location` are optional as well as nullable, so a detector may leave
+ * them out. `categories` is a Postgres array with a GIN index, so a reader
+ * can filter on one in SQL.
  */
 @Entity({ name: "calendar_events" })
 @Index("calendar_events_categories_gin", ["categories"], { type: "gin" })
@@ -36,13 +43,17 @@ export class CalendarEvent extends UpdatableEntity {
     comment: "Color hint for calendar display",
     nullable: true,
   })
-  color!: null | string;
+  color?: null | string;
 
   @Column("text", { comment: "Detailed description with additional context" })
   description!: string;
 
-  @Column("timestamptz", { comment: "When the event ends", name: "end" })
-  end!: Date;
+  @Column("timestamptz", {
+    comment: "When the event ends",
+    name: "end",
+    transformer: createMomentTransformer(),
+  })
+  end!: Moment;
 
   @Column("numeric", {
     comment: "Observer latitude in degrees the event was computed for",
@@ -55,7 +66,7 @@ export class CalendarEvent extends UpdatableEntity {
     comment: "Human-readable location of the event",
     nullable: true,
   })
-  location!: null | string;
+  location?: null | string;
 
   @Column("numeric", {
     comment: "Observer longitude in degrees the event was computed for",
@@ -64,8 +75,12 @@ export class CalendarEvent extends UpdatableEntity {
   })
   longitude!: string;
 
-  @Column("timestamptz", { comment: "When the event starts", name: "start" })
-  start!: Date;
+  @Column("timestamptz", {
+    comment: "When the event starts",
+    name: "start",
+    transformer: createMomentTransformer(),
+  })
+  start!: Moment;
 
   @Column("text", { comment: "Brief event title shown in calendar views" })
   summary!: string;

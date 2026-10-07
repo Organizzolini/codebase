@@ -7,8 +7,8 @@ import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { TripleAspectsComposerService } from "./triple-aspects-composer.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Aspect, Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -41,7 +41,7 @@ export class TripleAspectsDetectorService {
     minute: Moment;
     previousAspectBodies: AspectBodies[];
     trines: AspectBodies[];
-  }): Event | null {
+  }): DetectedCalendarEvent | null {
     const {
       body1,
       body2,
@@ -91,7 +91,7 @@ export class TripleAspectsDetectorService {
     minute: Moment;
     previousAspectBodies: AspectBodies[];
     unionEdges: AspectBodies[];
-  }): Event | null {
+  }): DetectedCalendarEvent | null {
     const {
       body1,
       body2,
@@ -142,7 +142,7 @@ export class TripleAspectsDetectorService {
     minute: Moment;
     previousAspectBodies: AspectBodies[];
     unionEdges: AspectBodies[];
-  }): Event | null {
+  }): DetectedCalendarEvent | null {
     const {
       apexBody,
       body1,
@@ -324,7 +324,7 @@ export class TripleAspectsDetectorService {
     currentAspectBodies: AspectBodies[];
     minute: Moment;
     previousAspectBodies: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
     const unionEdges = [...currentAspectBodies, ...previousAspectBodies];
     const trines = this.groupAspectsByType(unionEdges).get("trine") || [];
@@ -336,7 +336,7 @@ export class TripleAspectsDetectorService {
     }
 
     const bodiesArray = [...bodiesInTrines];
-    const events: Event[] = [];
+    const events: DetectedCalendarEvent[] = [];
 
     for (const [body1, body2, body3] of this.getUniqueBodyTriplets(
       bodiesArray,
@@ -365,13 +365,13 @@ export class TripleAspectsDetectorService {
     currentAspectBodies: AspectBodies[];
     minute: Moment;
     previousAspectBodies: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
     const unionEdges = [...currentAspectBodies, ...previousAspectBodies];
     const aspectsByType = this.groupAspectsByType(unionEdges);
     const oppositions = aspectsByType.get("opposite") || [];
     const squares = aspectsByType.get("square") || [];
-    const events: Event[] = [];
+    const events: DetectedCalendarEvent[] = [];
 
     for (const opposition of oppositions) {
       const body1 = opposition.bodies[0];
@@ -418,13 +418,13 @@ export class TripleAspectsDetectorService {
     currentAspectBodies: AspectBodies[];
     minute: Moment;
     previousAspectBodies: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
     const unionEdges = [...currentAspectBodies, ...previousAspectBodies];
     const aspectsByType = this.groupAspectsByType(unionEdges);
     const sextiles = aspectsByType.get("sextile") || [];
     const quincunxes = aspectsByType.get("quincunx") || [];
-    const events: Event[] = [];
+    const events: DetectedCalendarEvent[] = [];
 
     for (const sextile of sextiles) {
       const body1 = sextile.bodies[0];
