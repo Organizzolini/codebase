@@ -149,7 +149,7 @@ Call stacks traced through `packages/ic-suite/conformetry/conformetry-nx`, deepe
 | Measure | Value |
 | --- | --- |
 | Callables | 114 |
-| Files | 46 |
+| Files | 47 |
 | Calls traced | 137 |
 | Call stacks | 8 |
 | Deepest stack | 15 |
@@ -215,11 +215,11 @@ What this project is judged against, as declared in its own `callidescope.config
           └─> GeneratorService.map(…)(…): { content: string; filePath: string; } [packages/ic-suite/conformetry/conformetry-nx/src/modules/generator/generator.service.ts:238]
             └─> GeneratorService.resolveScopedProjectNames(…): string[] | undefined [packages/ic-suite/conformetry/conformetry-nx/src/modules/generator/generator.service.ts:180]
                ↳ The projects a generator's tagged groups admit, or nothing when it has none.
-              └─> ScopeService.resolveScopedProjectNames(…): string[] [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:134]
+              └─> ScopeService.resolveScopedProjectNames(…): string[] [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:135]
                  ↳ The projects a generator's groups admit, by name and sorted.
-                └─> ScopeService.filter(…)(project: ProjectScope): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:147]
-                  └─> ScopeService.some(…)(group: ConformetryInstanceGroup): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:148]
-                    └─> ScopeService.matchesProject(args: { group: ConformetryInstanceGroup; project: ProjectScope; }): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:52]
+                └─> ScopeService.filter(…)(project: ProjectScope): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:148]
+                  └─> ScopeService.some(…)(group: ConformetryInstanceGroup): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:149]
+                    └─> ScopeService.matchesProject(args: { group: ConformetryInstanceGroup; project: ProjectScope; }): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:53]
                        ↳ Returns whether a group applies to a project.
                       └─> ScopeService.isProjectGroup(group: ConformetryInstanceGroup): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:39]
                          ↳ Whether a group locates its instances by project tag.
@@ -241,11 +241,11 @@ What this project is judged against, as declared in its own `callidescope.config
       └─> GeneratorService.map(…)(…): { content: string; filePath: string; } [packages/ic-suite/conformetry/conformetry-nx/src/modules/generator/generator.service.ts:238]
         └─> GeneratorService.resolveScopedProjectNames(…): string[] | undefined [packages/ic-suite/conformetry/conformetry-nx/src/modules/generator/generator.service.ts:180]
            ↳ The projects a generator's tagged groups admit, or nothing when it has none.
-          └─> ScopeService.resolveScopedProjectNames(…): string[] [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:134]
+          └─> ScopeService.resolveScopedProjectNames(…): string[] [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:135]
              ↳ The projects a generator's groups admit, by name and sorted.
-            └─> ScopeService.filter(…)(project: ProjectScope): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:147]
-              └─> ScopeService.some(…)(group: ConformetryInstanceGroup): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:148]
-                └─> ScopeService.matchesProject(args: { group: ConformetryInstanceGroup; project: ProjectScope; }): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:52]
+            └─> ScopeService.filter(…)(project: ProjectScope): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:148]
+              └─> ScopeService.some(…)(group: ConformetryInstanceGroup): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:149]
+                └─> ScopeService.matchesProject(args: { group: ConformetryInstanceGroup; project: ProjectScope; }): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:53]
                    ↳ Returns whether a group applies to a project.
                   └─> ScopeService.isProjectGroup(group: ConformetryInstanceGroup): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:39]
                      ↳ Whether a group locates its instances by project tag.
@@ -268,11 +268,11 @@ What this project is judged against, as declared in its own `callidescope.config
     └─> GeneratorService.map(…)(…): { content: string; filePath: string; } [packages/ic-suite/conformetry/conformetry-nx/src/modules/generator/generator.service.ts:238]
       └─> GeneratorService.resolveScopedProjectNames(…): string[] | undefined [packages/ic-suite/conformetry/conformetry-nx/src/modules/generator/generator.service.ts:180]
          ↳ The projects a generator's tagged groups admit, or nothing when it has none.
-        └─> ScopeService.resolveScopedProjectNames(…): string[] [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:134]
+        └─> ScopeService.resolveScopedProjectNames(…): string[] [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:135]
            ↳ The projects a generator's groups admit, by name and sorted.
-          └─> ScopeService.filter(…)(project: ProjectScope): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:147]
-            └─> ScopeService.some(…)(group: ConformetryInstanceGroup): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:148]
-              └─> ScopeService.matchesProject(args: { group: ConformetryInstanceGroup; project: ProjectScope; }): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:52]
+          └─> ScopeService.filter(…)(project: ProjectScope): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:148]
+            └─> ScopeService.some(…)(group: ConformetryInstanceGroup): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:149]
+              └─> ScopeService.matchesProject(args: { group: ConformetryInstanceGroup; project: ProjectScope; }): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:53]
                  ↳ Returns whether a group applies to a project.
                 └─> ScopeService.isProjectGroup(group: ConformetryInstanceGroup): boolean [packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:39]
                    ↳ Whether a group locates its instances by project tag.
@@ -350,16 +350,16 @@ What this project is judged against, as declared in its own `callidescope.config
 | `PluginService.runValidation` | 6 | `PluginService.resolveOptions`, `PluginService.assertPluginInSync`, `ValidationService.validate`, `InstancesService.findProjectInstances`, `PluginService.resolveTemplates`, `ReportingService.formatReport` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/plugin/plugin.service.ts:391` |
 | `PathsService.resolveGenerationPath` | 5 | `PathsService.resolveNewProjectPath`, `InstancesService.findProjectInstances`, `PathsService.requireModulePath`, `PathsService.resolveScopedDirectory`, `PathsService.resolveModuleParentPath` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/paths/paths.service.ts:213` |
 | `PluginService.inferTargets` | 5 | `PluginService.resolveOptions`, `PluginService.resolveTemplateInputs`, `PluginService.filter(…)`, `ProjectsService.readProjectScope`, `InstancesService.findProjectInstances` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/plugin/plugin.service.ts:265` |
-| `ScopeService.resolveScopedProjectNames` | 4 | `ScopeService.filter(…)`, `ScopeService.toSorted(…)`, `ScopeService.map(…)`, `ScopeService.filter(…)` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:134` |
+| `ScopeService.resolveScopedProjectNames` | 4 | `ScopeService.filter(…)`, `ScopeService.toSorted(…)`, `ScopeService.map(…)`, `ScopeService.filter(…)` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:135` |
 | `ProjectsService.listWorkspaceProjects` | 4 | `ProjectsService.toSorted(…)`, `ProjectsService.map(…)`, `ProjectsService.listProjectConfigurationFiles`, `ProjectsService.readIgnoredPaths` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/projects/projects.service.ts:118` |
 | `anonymous` | 4 | `resolvePluginService`, `PluginService.inferTargets`, `filter(…)`, `map(…)` | `packages/ic-suite/conformetry/conformetry-nx/src/index.ts:49` |
-| `ScopeService.resolveGroup` | 3 | `ScopeService.matchesProject`, `ScopeService.isProjectGroup`, `ScopeService.map(…)` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:74` |
+| `ScopeService.resolveGroup` | 3 | `ScopeService.matchesProject`, `ScopeService.isProjectGroup`, `ScopeService.map(…)` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:75` |
 | `AdapterService.listDirectory` | 3 | `AdapterService.resolveTreePath`, `AdapterService.map(…)`, `AdapterService.map(…)` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/adapter/adapter.service.ts:42` |
 | `PathsService.resolveScopedDirectory` | 3 | `ConfigurationService.loadConformetryConfiguration`, `PathsService.find(…)`, `ScopeService.resolveScopedDirectory` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/paths/paths.service.ts:160` |
 | `PluginService.resolveOptions` | 3 | `OptionsService.resolveConfigurationPath`, `PluginService.readNxConfiguration`, `OptionsService.resolvePluginOptions` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/plugin/plugin.service.ts:189` |
 | `PluginService.resolveTemplateInputs` | 3 | `ConfigurationService.loadConformetryConfiguration`, `PluginService.map(…)`, `PluginService.map(…)` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/plugin/plugin.service.ts:219` |
-| `ScopeService.matchesProject` | 2 | `ScopeService.isProjectGroup`, `ScopeService.some(…)` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:52` |
-| `ScopeService.resolveScopedDirectory` | 2 | `ScopeService.find(…)`, `ScopeService.findIndex(…)` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:108` |
+| `ScopeService.matchesProject` | 2 | `ScopeService.isProjectGroup`, `ScopeService.every(…)` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:53` |
+| `ScopeService.resolveScopedDirectory` | 2 | `ScopeService.find(…)`, `ScopeService.findIndex(…)` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:109` |
 | `GeneratorService.buildSchema` | 2 | `GeneratorService.stringify`, `GeneratorService.buildSchemaProperties` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/generator/generator.service.ts:122` |
 | `GeneratorService.map(…)` | 2 | `GeneratorService.buildSchema`, `GeneratorService.resolveScopedProjectNames` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/generator/generator.service.ts:238` |
 | `OptionsService.readRegisteredConfigurationPath` | 2 | `OptionsService.isUnknownArray`, `OptionsService.readString` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/options/options.service.ts:38` |
@@ -372,10 +372,10 @@ What this project is judged against, as declared in its own `callidescope.config
 | `runConformetryGenerator` | 2 | `resolvePluginService`, `PluginService.runGenerator` | `packages/ic-suite/conformetry/conformetry-nx/src/index.ts:93` |
 | `validateExecutor` | 2 | `resolvePluginService`, `PluginService.runValidation` | `packages/ic-suite/conformetry/conformetry-nx/src/executors/validate/executor.ts:16` |
 | `ScopeService.isProjectGroup` | 1 | `ConfigurationService.isProjectScoped` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:39` |
-| `ScopeService.find(…)` | 1 | `ScopeService.isProjectGroup` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:111` |
-| `ScopeService.filter(…)` | 1 | `ScopeService.isProjectGroup` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:138` |
-| `ScopeService.filter(…)` | 1 | `ScopeService.some(…)` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:147` |
-| `ScopeService.some(…)` | 1 | `ScopeService.matchesProject` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:148` |
+| `ScopeService.find(…)` | 1 | `ScopeService.isProjectGroup` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:112` |
+| `ScopeService.filter(…)` | 1 | `ScopeService.isProjectGroup` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:139` |
+| `ScopeService.filter(…)` | 1 | `ScopeService.some(…)` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:148` |
+| `ScopeService.some(…)` | 1 | `ScopeService.matchesProject` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/scope/scope.service.ts:149` |
 | `GeneratorService.buildGeneratorsManifest` | 1 | `GeneratorService.stringify` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/generator/generator.service.ts:86` |
 | `GeneratorService.resolveScopedProjectNames` | 1 | `ScopeService.resolveScopedProjectNames` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/generator/generator.service.ts:180` |
 | `GeneratorService.map(…)` | 1 | `GeneratorService.buildGeneratorModule` | `packages/ic-suite/conformetry/conformetry-nx/src/modules/generator/generator.service.ts:229` |

@@ -29,8 +29,8 @@ import type { DrawCommandOptions } from "./draw.types";
  * - **`draw`** draws everything, in two halves that between them are the
  *   whole corpus. {@link DrawEnumerationService} walks the lattice's unit
  *   space — every shape the edge budget admits, every structurally distinct
- *   repeat within each — and writes a row per meander found, its family read
- *   off its own structure rather than off whichever generator drew it. Then
+ *   repeat within each — and writes a row per meander found, with every
+ *   Characteristic measured off its own structure. Then
  *   {@link CorpusService} ingests the historical corpus's
  *   hardcoded Code constants, which are exactly the meanders that lie
  *   *beyond* that budget — see `corpus.constants.ts` for how that
@@ -43,12 +43,12 @@ import type { DrawCommandOptions } from "./draw.types";
  * budget the database holds millions of rows, and it lives in Postgres
  * rather than in the repository.
  *
- * **The per-family SVG tree is gone for good.** The nine per-family
- * procedural motif services, the `output/<family>/*.svg` tree they wrote,
- * and the `--type`/`--modifier` flags that named one are all retired: a
- * meander is a database row, and a row has no path-length limit for a Code
- * to outgrow. One file write survives the retirement: `output/index.html`
- * and a page per family, rebuilt at the end of every draw run from the
+ * **The SVG file tree is gone for good.** The procedural motif services, the
+ * `output/` tree of SVG files they wrote, and the `--type`/`--modifier`
+ * flags that named one are all retired: a meander is a database row, and a
+ * row has no path-length limit for a Code to outgrow. One file write
+ * survives the retirement: `output/index.html` and a page per pattern
+ * characteristic, rebuilt at the end of every draw run from the
  * database's own rows — see {@link DrawIndexService}. They are gitignored
  * rather than committed: at the default edge budget they are gigabytes of
  * HTML, written a batch of rows at a time.
@@ -59,7 +59,7 @@ import type { DrawCommandOptions } from "./draw.types";
  */
 @Command({
   description:
-    "Draw meanders into the Postgres database MEANDERAW_POSTGRES_DATABASE names: with no flag, draw every meander the application can draw into it (the whole lattice's unit space, enumerated and classified into a family by each meander's own structure, plus the historical corpus's hardcoded constants beyond the enumeration's budget); with --rows, --columns, and --code, draw that one",
+    "Draw meanders into the Postgres database MEANDERAW_POSTGRES_DATABASE names: with no flag, draw every meander the application can draw into it (the whole lattice's unit space, enumerated and measured by each meander's own structure, plus the historical corpus's hardcoded constants beyond the enumeration's budget); with --rows, --columns, and --code, draw that one",
   name: "draw",
   options: { isDefault: true },
 })
@@ -98,7 +98,7 @@ export class DrawCommand extends CommandRunner {
    * lattice address. The hardcoded half is written first and the enumerated
    * half second, so the two are ordered rather than racing: an enumerated
    * meander whose Code a hardcoded row already holds is skipped, so the
-   * hardcoded row keeps it and its hand-filed family. Only enumerated
+   * hardcoded row keeps it. Only enumerated
    * meanders are folded by symmetry — a hardcoded mirror or flip of one is
    * a row of its own.
    *
@@ -159,7 +159,7 @@ export class DrawCommand extends CommandRunner {
   }
 
   /**
-   * Writes `output/index.html` and every family's page from the rows both
+   * Writes `output/index.html` and every pattern's page from the rows both
    * halves committed, each streamed to disk a batch of rows at a time.
    *
    * Last, once both halves have committed — a page built from a partial

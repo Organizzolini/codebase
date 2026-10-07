@@ -5,7 +5,7 @@ export default [
   ...baseConfig,
 
   // 🙈 Draw Run Output
-  // The draw run's index and family pages — gitignored, and gigabytes at the
+  // The draw run's index and pattern pages — gitignored, and gigabytes at the
   // default edge budget, past the 2 GiB a single file read can hold. The base
   // config's root-relative ignore cannot match them here, since this config
   // resolves its globs from the project directory.

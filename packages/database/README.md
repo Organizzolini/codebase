@@ -272,7 +272,16 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 ### Nx Neighborhood
 
 <!-- codependix:start name="codependix-nx-projects" -->
-_This project has no immediate Nx dependencies or dependents._
+```mermaid
+graph LR
+  caelundas_cli["caelundas-cli"]
+  database["database"]
+  meanderaw_cli["meanderaw-cli"]
+  caelundas_cli --> database
+  meanderaw_cli --> database
+  classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
+  class database subject
+```
 <!-- codependix:end name="codependix-nx-projects" -->
 
 ### NestJS Module Graph
@@ -383,3 +392,143 @@ graph LR
   file_testing_fixtures_widget_entity_ts --> file_src_modules_database_entities_deletable_entity_ts
 ```
 <!-- codependix:end name="codependix-file-imports" -->
+
+<!-- callidescope:start -->
+
+## 🔭 Callidescope
+
+Call stacks traced through `packages/database`, deepest first. Each frame shows what it takes, what it returns, and what its documentation says.
+
+| Measure | Value |
+| --- | --- |
+| Callables | 35 |
+| Files | 19 |
+| Calls traced | 34 |
+| Call stacks | 7 |
+| Deepest stack | 4 |
+| Stacks through recursion | 0 |
+| Unfollowable calls | 0 |
+
+### Limits
+
+What this project is judged against, as declared in its own `callidescope.config.ts`.
+
+| Limit | Value |
+| --- | --- |
+| `maximumDepth` | 4 |
+| `maximumBreadth` | 4 |
+
+### Call stacks (depth)
+
+**1. `postgresEnvironmentSchema`** — depth 4 · orphan-root
+
+```text
+🚀 postgresEnvironmentSchema(…): PostgresEnvironmentShape<Project> [packages/database/src/modules/database/database.utilities.ts:200]
+   ↳ The zod fragment for a project's `<PROJECT>_POSTGRES_*` variables, which each application spreads into its own…
+  └─> assertPostgresEnvironmentKeys(…): void [packages/database/src/modules/database/database.utilities.ts:35]
+     ↳ Holds `shape` to having a key for every one of `project`'s `<PROJECT>_POSTGRES_*` variables, which is what types {@link…
+    └─> postgresEnvironmentKeys(project: string): string[] [packages/database/src/modules/database/database.utilities.ts:176]
+       ↳ The `<PROJECT>_POSTGRES_*` variable names a project reads.
+      └─> postgresEnvironmentKey(project: string, field: PostgresConnectionField): string [packages/database/src/modules/database/database.utilities.ts:162]
+         ↳ The variable a project reads `field` from, for example `LEXICO_POSTGRES_DATABASE` for lexico's `database`.
+```
+
+**2. `DatabaseService.createTypeOrmOptions`** — depth 4 · orphan-root
+
+```text
+🚀 DatabaseService.createTypeOrmOptions(): PostgresDataSourceOptions [packages/database/src/modules/database/database.service.ts:76]
+   ↳ TypeORM's options for the project's connection, with no migrations: the runtime never runs them.
+  └─> DatabaseService.connection(): PostgresConnection [packages/database/src/modules/database/database.service.ts:61]
+     ↳ Where the project's database is, read from its prefixed variables and defaulted from its name.
+    └─> postgresConnection({ environment, project, }: PostgresConnectionSource): PostgresConnection [packages/database/src/modules/database/database.utilities.ts:86]
+       ↳ The connection a project's prefixed variables describe, defaulted the way `postgresEnvironmentSchema` defaults them.
+      └─> postgresEnvironmentKey(project: string, field: PostgresConnectionField): string [packages/database/src/modules/database/database.utilities.ts:162]
+         ↳ The variable a project reads `field` from, for example `LEXICO_POSTGRES_DATABASE` for lexico's `database`.
+```
+
+**3. `main`** — depth 3 · orphan-root
+
+```text
+🚀 main(): Promise<void> [packages/database/scripts/extract-migration-sql.ts:172]
+   ↳ Main.
+  └─> parseMode(): Mode [packages/database/scripts/extract-migration-sql.ts:211]
+     ↳ Parse mode.
+    └─> find(…)(argument: string): boolean [packages/database/scripts/extract-migration-sql.ts:212]
+```
+
+<details>
+<summary>4 more call stacks</summary>
+
+**4. `createDataSource`** — depth 3 · orphan-root
+
+```text
+🚀 createDataSource(…): DataSource [packages/database/src/modules/database/database.utilities.ts:69]
+   ↳ The `DataSource` a project's TypeORM command-line entry exports, built from the same options as…
+  └─> postgresDataSourceOptions(…): PostgresDataSourceOptions [packages/database/src/modules/database/database.utilities.ts:116]
+     ↳ The TypeORM options for `connection`, shared by every runtime module and command-line data source so a generated…
+    └─> postgresSearchPathOption(schema: string): string [packages/database/src/modules/database/database.utilities.ts:230]
+       ↳ The startup parameter pg sends as `options` on each pooled connection, setting the session's `search_path` to `schema`…
+```
+
+**5. `startPostgresContainer`** — depth 3 · orphan-root
+
+```text
+🚀 startPostgresContainer(…): Promise<StartedPostgresContainer> [packages/database/src/modules/database/postgres-container.utilities.ts:33]
+   ↳ Starts a throwaway Postgres 18 laid out the way the local Docker one is — a `<project>_username` role owning a…
+  └─> postgresConnection({ environment, project, }: PostgresConnectionSource): PostgresConnection [packages/database/src/modules/database/database.utilities.ts:86]
+     ↳ The connection a project's prefixed variables describe, defaulted the way `postgresEnvironmentSchema` defaults them.
+    └─> postgresEnvironmentKey(project: string, field: PostgresConnectionField): string [packages/database/src/modules/database/database.utilities.ts:162]
+       ↳ The variable a project reads `field` from, for example `LEXICO_POSTGRES_DATABASE` for lexico's `database`.
+```
+
+**6. `visit`** — depth 2 · orphan-root
+
+```text
+🚀 visit(node: ts.Node): void [packages/database/scripts/extract-migration-sql.ts:71]
+   ↳ Visit.
+  └─> extractSqlFromLiteral(argument: ts.Expression, sourceFile: ts.SourceFile): string | undefined [packages/database/scripts/extract-migration-sql.ts:42]
+     ↳ Extract sql from literal.
+```
+
+**7. `visit`** — depth 2 · orphan-root
+
+```text
+🚀 visit(node: ts.Node): void [packages/database/scripts/extract-migration-sql.ts:118]
+   ↳ Visit.
+  └─> extractSqlFromMethod(method: ts.MethodDeclaration, sourceFile: ts.SourceFile): string[] [packages/database/scripts/extract-migration-sql.ts:62]
+     ↳ Extract sql from method.
+```
+
+</details>
+
+### Breadth
+
+| Callable | Breadth | Calls directly | Location |
+| --- | --- | --- | --- |
+| `main` | 4 | `parseMode`, `parseDirectory`, `findMigrationFiles`, `processMigrationFile` | `packages/database/scripts/extract-migration-sql.ts:172` |
+| `DatabaseService.connection` | 4 | `DatabaseService.databaseOptions`, `postgresConnection`, `DatabaseService.map(…)`, `postgresEnvironmentKeys` | `packages/database/src/modules/database/database.service.ts:61` |
+| `startPostgresContainer` | 4 | `postgresConnection`, `startFirstAvailableImage`, `postgresDataSourceOptions`, `postgresEnvironment` | `packages/database/src/modules/database/postgres-container.utilities.ts:33` |
+
+<details>
+<summary>15 more callables</summary>
+
+| Callable | Breadth | Calls directly | Location |
+| --- | --- | --- | --- |
+| `postgresEnvironmentSchema` | 3 | `postgresSettingsSchema`, `postgresEnvironmentKey`, `assertPostgresEnvironmentKeys` | `packages/database/src/modules/database/database.utilities.ts:200` |
+| `DatabaseService.createTypeOrmOptions` | 3 | `postgresDataSourceOptions`, `DatabaseService.connection`, `DatabaseService.databaseOptions` | `packages/database/src/modules/database/database.service.ts:76` |
+| `findMigrationFiles` | 2 | `filter(…)`, `map(…)` | `packages/database/scripts/extract-migration-sql.ts:147` |
+| `createDataSource` | 2 | `postgresDataSourceOptions`, `postgresConnection` | `packages/database/src/modules/database/database.utilities.ts:69` |
+| `postgresConnection` | 2 | `postgresEnvironmentKey`, `postgresSettingsSchema` | `packages/database/src/modules/database/database.utilities.ts:86` |
+| `visit` | 1 | `extractSqlFromLiteral` | `packages/database/scripts/extract-migration-sql.ts:71` |
+| `visit` | 1 | `extractSqlFromMethod` | `packages/database/scripts/extract-migration-sql.ts:118` |
+| `parseDirectory` | 1 | `find(…)` | `packages/database/scripts/extract-migration-sql.ts:197` |
+| `parseMode` | 1 | `find(…)` | `packages/database/scripts/extract-migration-sql.ts:211` |
+| `processMigrationFile` | 1 | `extractSqlFromMigration` | `packages/database/scripts/extract-migration-sql.ts:221` |
+| `assertPostgresEnvironmentKeys` | 1 | `postgresEnvironmentKeys` | `packages/database/src/modules/database/database.utilities.ts:35` |
+| `postgresDataSourceOptions` | 1 | `postgresSearchPathOption` | `packages/database/src/modules/database/database.utilities.ts:116` |
+| `postgresEnvironment` | 1 | `postgresEnvironmentKey` | `packages/database/src/modules/database/database.utilities.ts:142` |
+| `postgresEnvironmentKeys` | 1 | `postgresEnvironmentKey` | `packages/database/src/modules/database/database.utilities.ts:176` |
+| `startFirstAvailableImage` | 1 | `postgresInitializationSql` | `packages/database/src/modules/database/postgres-container.utilities.ts:104` |
+
+</details>
+<!-- callidescope:end -->

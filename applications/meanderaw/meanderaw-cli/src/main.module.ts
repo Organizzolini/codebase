@@ -5,7 +5,6 @@ import { DiscoveryModule } from "@nestjs/core";
 import { LoggerModule } from "@codebase/logging";
 
 import { environmentSchema } from "./constants";
-import { ClassificationModule } from "./modules/classification/classification.module";
 import { DrawModule } from "./modules/draw/draw.module";
 import { DrawingModule } from "./modules/drawing/drawing.module";
 import { MatrixModule } from "./modules/matrix/matrix.module";
@@ -23,7 +22,6 @@ import { MatrixModule } from "./modules/matrix/matrix.module";
     }),
     DiscoveryModule,
     LoggerModule,
-    ClassificationModule,
     DrawModule,
     // 🏛️ Registered although `DrawModule` already pulls in the renderer it
     // needs, so that the *other* direction — the parser that reduces a

@@ -8,25 +8,24 @@ import {
   LETTER_CHARACTERISTIC_KEYS,
 } from "./characteristics.constants";
 import { CharacteristicsModule } from "./characteristics.module";
-import { IsArcadeCharacteristicService } from "./compound/family/is-arcade-characteristic.service";
-import { IsBarsCharacteristicService } from "./compound/family/is-bars-characteristic.service";
-import { IsBoxesCharacteristicService } from "./compound/family/is-boxes-characteristic.service";
-import { IsChainCharacteristicService } from "./compound/family/is-chain-characteristic.service";
-import { IsClaspsCharacteristicService } from "./compound/family/is-clasps-characteristic.service";
-import { IsCombCharacteristicService } from "./compound/family/is-comb-characteristic.service";
-import { IsCrossCharacteristicService } from "./compound/family/is-cross-characteristic.service";
-import { IsDotsCharacteristicService } from "./compound/family/is-dots-characteristic.service";
-import { IsDoubleChainCharacteristicService } from "./compound/family/is-double-chain-characteristic.service";
-import { IsForkCharacteristicService } from "./compound/family/is-fork-characteristic.service";
-import { IsLinesCharacteristicService } from "./compound/family/is-lines-characteristic.service";
-import { IsMeshCharacteristicService } from "./compound/family/is-mesh-characteristic.service";
-import { IsParallelCharacteristicService } from "./compound/family/is-parallel-characteristic.service";
-import { IsPureTreeCharacteristicService } from "./compound/family/is-pure-tree-characteristic.service";
-import { IsSnakeCharacteristicService } from "./compound/family/is-snake-characteristic.service";
-import { IsStippledCharacteristicService } from "./compound/family/is-stippled-characteristic.service";
-import { IsSwirlCharacteristicService } from "./compound/family/is-swirl-characteristic.service";
-import { IsWaterfallsCharacteristicService } from "./compound/family/is-waterfalls-characteristic.service";
-import { IsWhirlCharacteristicService } from "./compound/family/is-whirl-characteristic.service";
+import { IsArcadeCharacteristicService } from "./compound/pattern/is-arcade-characteristic.service";
+import { IsBarsCharacteristicService } from "./compound/pattern/is-bars-characteristic.service";
+import { IsBoxesCharacteristicService } from "./compound/pattern/is-boxes-characteristic.service";
+import { IsChainCharacteristicService } from "./compound/pattern/is-chain-characteristic.service";
+import { IsClaspsCharacteristicService } from "./compound/pattern/is-clasps-characteristic.service";
+import { IsCombCharacteristicService } from "./compound/pattern/is-comb-characteristic.service";
+import { IsCrossCharacteristicService } from "./compound/pattern/is-cross-characteristic.service";
+import { IsDotsCharacteristicService } from "./compound/pattern/is-dots-characteristic.service";
+import { IsDoubleChainCharacteristicService } from "./compound/pattern/is-double-chain-characteristic.service";
+import { IsForkCharacteristicService } from "./compound/pattern/is-fork-characteristic.service";
+import { IsLinesCharacteristicService } from "./compound/pattern/is-lines-characteristic.service";
+import { IsMeshCharacteristicService } from "./compound/pattern/is-mesh-characteristic.service";
+import { IsParallelCharacteristicService } from "./compound/pattern/is-parallel-characteristic.service";
+import { IsPureTreeCharacteristicService } from "./compound/pattern/is-pure-tree-characteristic.service";
+import { IsSnakeCharacteristicService } from "./compound/pattern/is-snake-characteristic.service";
+import { IsSwirlCharacteristicService } from "./compound/pattern/is-swirl-characteristic.service";
+import { IsWaterfallsCharacteristicService } from "./compound/pattern/is-waterfalls-characteristic.service";
+import { IsWhirlCharacteristicService } from "./compound/pattern/is-whirl-characteristic.service";
 import { IsClosedLoopCharacteristicService } from "./compound/structure/is-closed-loop-characteristic.service";
 import { IsSingleArcCharacteristicService } from "./compound/structure/is-single-arc-characteristic.service";
 import { EndsAreLatticeNeighborsCharacteristicService } from "./path/end/ends-are-lattice-neighbors-characteristic.service";
@@ -153,7 +152,6 @@ const CHARACTERISTIC_SERVICES: readonly Type<CharacteristicEvaluator>[] = [
   IsPureTreeCharacteristicService,
   IsSingleArcCharacteristicService,
   IsSnakeCharacteristicService,
-  IsStippledCharacteristicService,
   IsSwirlCharacteristicService,
   IsWaterfallsCharacteristicService,
   IsWhirlCharacteristicService,

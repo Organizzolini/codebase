@@ -115,11 +115,11 @@ digits where one exists and by walking the tile where none does. Characteristics
 are an open, growing set — adding one changes no other module.
 _Avoid_: Property, metric, trait
 
-**Family**:
-A combination of characteristics a meander's structure satisfies, possibly
-several at once, possibly none. Earned by what a meander measures as, never
-assigned by its proportions or carried over as metadata.
-_Avoid_: Style, kind, category, generative model
+**Pattern characteristic**:
+A compound boolean Characteristic built only from other Characteristics — a
+named shape such as a whirl or an arcade. A meander can hold several at once,
+or none; it is found by filtering on them, never by a stored label.
+_Avoid_: Family, style, kind, category, classification
 
 **Corner**:
 The direction a letter glyph's strokes run toward — Southeast, Southwest,

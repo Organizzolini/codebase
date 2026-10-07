@@ -6,7 +6,7 @@ import { MatrixModule } from "../matrix/matrix.module";
 
 import { CharacteristicContextService } from "./characteristic-context.service";
 import { CharacteristicsService } from "./characteristics.service";
-import { FamilyCharacteristicsModule } from "./compound/family/family-characteristics.module";
+import { PatternCharacteristicsModule } from "./compound/pattern/pattern-characteristics.module";
 import { StructureCharacteristicsModule } from "./compound/structure/structure-characteristics.module";
 import { EndCharacteristicsModule } from "./path/end/end-characteristics.module";
 import { TileCrossingCharacteristicsModule } from "./path/tile-crossing/tile-crossing-characteristics.module";
@@ -46,7 +46,7 @@ import { RunCharacteristicsModule } from "./submatrix/run/run-characteristics.mo
     CrossCharacteristicsModule,
     EmbeddedCharacteristicsModule,
     EndCharacteristicsModule,
-    FamilyCharacteristicsModule,
+    PatternCharacteristicsModule,
     ForkCharacteristicsModule,
     LetterCharacteristicsModule,
     PointCharacteristicsModule,
@@ -64,7 +64,7 @@ import { RunCharacteristicsModule } from "./submatrix/run/run-characteristics.mo
     DiscoveryModule,
     EmbeddedCharacteristicsModule,
     EndCharacteristicsModule,
-    FamilyCharacteristicsModule,
+    PatternCharacteristicsModule,
     ForkCharacteristicsModule,
     LetterCharacteristicsModule,
     MatrixModule,

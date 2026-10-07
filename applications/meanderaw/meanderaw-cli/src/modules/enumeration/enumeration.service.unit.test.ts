@@ -70,7 +70,7 @@ describe(EnumerationService, () => {
     // 🎯 The whole draw run, as the two numbers that decide it: the edge budget,
     // and the shallowest repeat worth walking. Eleven of these twenty-five
     // shapes are the ones the `mosaic` half of the corpus already commits;
-    // the rest are what a budget of twenty-four admits past that family's own
+    // the rest are what a budget of twenty-four admits past that generator's own
     // row and column ceilings — eight columns at two rows, and single
     // columns down to twelve rows.
     it("draws every shape the edge budget admits, from the shallowest repeat upward", () => {
@@ -192,8 +192,8 @@ describe(EnumerationService, () => {
   describe("enumerate", () => {
     // 🎯 The counts the `mosaic` half of the corpus is committed at, which
     // this enumeration reproduces exactly — the same walk over the same
-    // space, folded by the same symmetry group, now run for every family
-    // rather than for one.
+    // space, folded by the same symmetry group, now run across the whole
+    // lattice rather than for one generator.
     it.each([
       { columns: 1, count: 6, rows: 2 },
       { columns: 2, count: 21, rows: 2 },

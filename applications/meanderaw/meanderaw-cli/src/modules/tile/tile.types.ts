@@ -49,17 +49,16 @@ export interface EdgesDraft {
 }
 
 /**
- * One repeat tile of the `mosaic` family: a `columns` by `rows` grid of
+ * One repeat tile: a `columns` by `rows` grid of
  * lattice points, each carrying the four direction bits that say where ink
  * leaves it. The two border rules at y = 0 and y = `rows + 1` are the cap
  * ticks rather than tile points, so a point at the first row carries no
  * `north` and one at the last carries no `south`.
  *
  * A point on no edge at all *is* an inked dot, which is what makes every
- * mosaic space-filling for free: every point carries ink, and neighboring
+ * tile space-filling for free: every point carries ink, and neighboring
  * points sit one grid unit apart, so no blank is ever wider than the
- * stroke. `bars split`, `dots`, `dashes`, and `lines` are all members of
- * this one family.
+ * stroke.
  *
  * `points` is indexed `[row][column]`, `row` running `0…rows - 1`.
  */

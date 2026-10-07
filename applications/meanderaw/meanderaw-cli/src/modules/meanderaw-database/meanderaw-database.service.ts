@@ -8,9 +8,9 @@ import {
   MEANDER_READ_BATCH_SIZE,
 } from "./meanderaw-database.constants";
 
-import type { MeanderFamily } from "../classification/classification.types";
+import type { PatternCharacteristicKey } from "../characteristics/characteristics.types";
 import type {
-  MeanderFamilyShapeCount,
+  MeanderPatternShapeCount,
   MeanderRecord,
   MeanderShape,
 } from "./meanderaw-database.types";
@@ -90,16 +90,25 @@ export class MeanderawDatabaseService {
   }
 
   /**
-   * One family's rows in batches of `batchSize`, ordered by rows, then
-   * columns, then Code — the order its page lists them in.
+   * Finds one meander by its formatted Code, which is its identity: the
+   * Code already spells out its columns, rows, lattice, and repeats.
+   */
+  async findOneByCode(code: string): Promise<Meander | null> {
+    return this.meanderRepository.findOneBy({ code });
+  }
+
+  /**
+   * The rows one pattern characteristic holds for, in batches of
+   * `batchSize`, ordered by rows, then columns, then Code — the order its
+   * page lists them in.
    *
    * Each batch resumes after the last row of the one before, through the
-   * index over `(family, rows, columns, code)`, so reading a family of a
-   * million rows never holds more than one batch in memory or reads a row
-   * twice.
+   * index over `(rows, columns, code)`, so reading a pattern of a million
+   * rows never holds more than one batch in memory or reads a row twice. A
+   * stored boolean is present only when it holds, so `?` is the whole test.
    */
-  async *familyRows(
-    family: MeanderFamily,
+  async *patternRows(
+    key: PatternCharacteristicKey,
     batchSize = MEANDER_READ_BATCH_SIZE,
   ): AsyncGenerator<Meander[]> {
     let after: Meander | undefined;
@@ -107,7 +116,7 @@ export class MeanderawDatabaseService {
     do {
       const query = this.meanderRepository
         .createQueryBuilder("meander")
-        .where("meander.family = :family", { family })
+        .where("meander.characteristics ? :key", { key })
         .orderBy("meander.rows")
         .addOrderBy("meander.columns")
         .addOrderBy("meander.code")
@@ -135,42 +144,39 @@ export class MeanderawDatabaseService {
   }
 
   /**
-   * How many rows each family holds at each shape, so a page can print every
-   * count before it reads a row.
+   * How many rows each of `keys` holds for at each shape, in one pass over
+   * the table, so a page can print every count before it reads a row. A
+   * pattern that holds for no row is absent.
+   *
+   * Raw SQL rather than the query builder, because a set-returning function
+   * has to be joined laterally and the builder would quote it as a table.
    */
-  async familyShapeCounts(): Promise<MeanderFamilyShapeCount[]> {
-    const counted = await this.meanderRepository
-      .createQueryBuilder("meander")
-      .select("meander.family", "family")
-      .addSelect("meander.rows", "rows")
-      .addSelect("meander.columns", "columns")
-      .addSelect("COUNT(*)", "count")
-      .groupBy("meander.family")
-      .addGroupBy("meander.rows")
-      .addGroupBy("meander.columns")
-      .getRawMany<{
-        columns: string;
-        count: string;
-        family: MeanderFamily;
-        rows: string;
-      }>();
+  async patternShapeCounts(
+    keys: readonly PatternCharacteristicKey[],
+  ): Promise<MeanderPatternShapeCount[]> {
+    const { tablePath } = this.meanderRepository.metadata;
+    const counted: {
+      columns: string;
+      count: string;
+      key: PatternCharacteristicKey;
+      rows: string;
+    }[] = await this.meanderRepository.query(
+      `SELECT pattern AS key, meander.rows, meander.columns, COUNT(*) AS count
+       FROM ${tablePath} meander
+       CROSS JOIN LATERAL jsonb_object_keys(meander.characteristics) AS pattern
+       WHERE pattern = ANY($1)
+       GROUP BY pattern, meander.rows, meander.columns`,
+      [keys],
+    );
 
     // A raw row skips the entity's column transformers, and `pg` returns a
     // `bigint` as a string, so each number is converted here.
-    return counted.map(({ columns, count, family, rows }) => ({
+    return counted.map(({ columns, count, key, rows }) => ({
       columns: Number(columns),
       count: Number(count),
-      family,
+      key,
       rows: Number(rows),
     }));
-  }
-
-  /**
-   * Finds one meander by its formatted Code, which is its identity: the
-   * Code already spells out its columns, rows, lattice, and repeats.
-   */
-  async findOneByCode(code: string): Promise<Meander | null> {
-    return this.meanderRepository.findOneBy({ code });
   }
 
   /**

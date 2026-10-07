@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
-import { ClassificationModule } from "../classification/classification.module";
 import { CodeModule } from "../code/code.module";
 import { CorpusModule } from "../corpus/corpus.module";
 import { DrawingModule } from "../drawing/drawing.module";
@@ -27,7 +26,7 @@ import { DrawCommand } from "./draw.command";
  *
  * Every import here serves the one lattice-first pipeline both paths share:
  * `CodeModule` and `DrawingModule` are the generic
- * decoder and renderer every family's Code is drawn through,
+ * decoder and renderer every Code is drawn through,
  * `CharacteristicsModule` measures that same Code,
  * `EnumerationModule` walks the space the draw run covers, and
  * `MeanderawDatabaseModule` is the Postgres database all of it
@@ -36,8 +35,7 @@ import { DrawCommand } from "./draw.command";
  * `SymmetryModule` folds each symmetry class the draw run's worker threads draw
  * to its representative. `CorpusModule`
  * wraps the same decoder, renderer, and Characteristic computation beneath
- * one service `DrawCommand` calls once per draw run with the historical corpus,
- * trusting its family/subFamily rather than classifying them.
+ * one service `DrawCommand` calls once per draw run with the historical corpus.
  *
  * `MeanderawDatabaseModule` always connects to the database the `MEANDERAW_POSTGRES_*`
  * variables name — a test exercising `DrawCommand`, `DrawCodeService`,
@@ -51,7 +49,6 @@ import { DrawCommand } from "./draw.command";
   imports: [
     CorpusModule,
     CharacteristicsModule,
-    ClassificationModule,
     MeanderawDatabaseModule,
     CodeModule,
     EnumerationModule,

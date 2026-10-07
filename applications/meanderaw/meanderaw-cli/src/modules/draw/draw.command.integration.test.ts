@@ -16,7 +16,6 @@ import {
 import { LoggerService } from "@codebase/logging";
 
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
-import { ClassificationModule } from "../classification/classification.module";
 import { CodeModule } from "../code/code.module";
 import { CorpusService } from "../corpus/corpus.service";
 import { DrawingModule } from "../drawing/drawing.module";
@@ -26,6 +25,7 @@ import { MatrixModule } from "../matrix/matrix.module";
 import { Meander } from "../meanderaw-database/entities/meander.entity";
 import { MeanderawDatabaseModule } from "../meanderaw-database/meanderaw-database.module";
 import { Migration1791160950069 } from "../meanderaw-database/migrations/1791160950069-migration";
+import { Migration1791414023001 } from "../meanderaw-database/migrations/1791414023001-migration";
 import { SvgService } from "../svg/svg.service";
 import { TileService } from "../tile/tile.service";
 
@@ -57,14 +57,8 @@ describe("drawCommand --code mode", () => {
     database = await startDatabaseTestingModule({
       database: MeanderawDatabaseModule,
       entities: [Meander],
-      imports: [
-        CharacteristicsModule,
-        ClassificationModule,
-        CodeModule,
-        DrawingModule,
-        MatrixModule,
-      ],
-      migrations: [Migration1791160950069],
+      imports: [CharacteristicsModule, CodeModule, DrawingModule, MatrixModule],
+      migrations: [Migration1791160950069, Migration1791414023001],
       project: "meanderaw",
       providers: [
         DrawCommand,

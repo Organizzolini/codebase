@@ -7,7 +7,7 @@ import { SvgService } from "./svg.service";
  *
  * It used to wire a second one beside it, deciding the filename a set of
  * generation parameters was written under. That service retired with the
- * `output/<family>/*.svg` tree it named paths in: a meander is a database
+ * `output/` tree of SVG files it named paths in: a meander is a database
  * row now, addressed by its lattice address rather than by a path.
  */
 @Module({

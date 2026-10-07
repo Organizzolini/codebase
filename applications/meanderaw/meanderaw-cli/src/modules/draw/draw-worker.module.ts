@@ -3,7 +3,6 @@ import { ConfigModule } from "@nestjs/config";
 
 import { environmentSchema } from "../../constants";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
-import { ClassificationModule } from "../classification/classification.module";
 import { CodeModule } from "../code/code.module";
 import { DrawingModule } from "../drawing/drawing.module";
 import { EnumerationModule } from "../enumeration/enumeration.module";
@@ -32,7 +31,6 @@ import { DrawWorkerService } from "./draw-worker.service";
         environmentSchema.parse(config),
     }),
     CharacteristicsModule,
-    ClassificationModule,
     CodeModule,
     DrawingModule,
     EnumerationModule,

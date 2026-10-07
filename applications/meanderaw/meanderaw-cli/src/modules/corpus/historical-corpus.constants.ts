@@ -17,16 +17,10 @@ import type { CorpusEntry } from "./corpus.types";
 /**
  * Every drawing this repository used to commit under `output/`, read back
  * onto the lattice once and collapsed to one entry per Code — the whole
- * historical corpus, and the labelled fixture set every family rule is
- * measured against.
- *
- * **`filedUnder` is provenance, never a fact about the ink.** It says
- * which `output/<family>/` directories a Code's drawings sat in, in the
- * order the tree gave them up, and nothing more. The tree is known to be
- * wrong in places — see
- * `docs/adr/0013-hold-the-historical-corpus-as-a-test-set.md` — so a
- * family rule that disagrees with one of these labels is a disagreement to
- * adjudicate by looking at the drawing, not a rule that has failed.
+ * historical corpus. An entry carries its Code and shape and nothing else:
+ * the directory each drawing was filed under is gone with the families it
+ * named, so what a meander is follows only from what it measures as — see
+ * `docs/adr/0023-filter-meanders-by-characteristics-alone.md`.
  *
  * **Which of these the draw run ingests is computed, not listed.** A meander
  * the enumeration already reaches is reproduced by `EnumerationService`

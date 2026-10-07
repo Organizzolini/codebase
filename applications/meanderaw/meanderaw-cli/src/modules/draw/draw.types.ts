@@ -31,7 +31,7 @@ export interface CodeDrawingOptions {
  * The `--type`, `--modifier`, `--sub-family`, `--strands`, `--branches`,
  * `--direction`, `--flip`, `--offset`, `--repeat-count`, and
  * `--output-directory` flags this once carried are retired with the
- * per-family procedural pipeline they named a drawing in. A meander is now
+ * procedural pipeline they named a drawing in. A meander is now
  * addressed by its lattice address alone, and the database it is written to
  * is the one `MEANDERAW_POSTGRES_DATABASE` names rather than somewhere a flag points.
  */

@@ -2,7 +2,6 @@ import { startDatabaseTestingModule } from "@codebase/database/testing";
 
 import { environmentSchema } from "../src/constants";
 import { CharacteristicsModule } from "../src/modules/characteristics/characteristics.module";
-import { ClassificationModule } from "../src/modules/classification/classification.module";
 import { CodeModule } from "../src/modules/code/code.module";
 import { CorpusService } from "../src/modules/corpus/corpus.service";
 import { DrawEnumerationService } from "../src/modules/draw/draw-enumeration.service";
@@ -18,6 +17,7 @@ import { GeometryModule } from "../src/modules/geometry/geometry.module";
 import { Meander } from "../src/modules/meanderaw-database/entities/meander.entity";
 import { MeanderawDatabaseModule } from "../src/modules/meanderaw-database/meanderaw-database.module";
 import { Migration1791160950069 } from "../src/modules/meanderaw-database/migrations/1791160950069-migration";
+import { Migration1791414023001 } from "../src/modules/meanderaw-database/migrations/1791414023001-migration";
 import { SymmetryModule } from "../src/modules/symmetry/symmetry.module";
 
 import { DRAW_TEST_EDGE_BUDGET, DRAW_TEST_WORKERS } from "./draw-run-budget";
@@ -63,13 +63,12 @@ export async function startDrawRun(
     imports: [
       GeometryModule,
       CharacteristicsModule,
-      ClassificationModule,
       CodeModule,
       EnumerationModule,
       SymmetryModule,
       DrawingModule,
     ],
-    migrations: [Migration1791160950069],
+    migrations: [Migration1791160950069, Migration1791414023001],
     project: "meanderaw",
     providers: [
       DrawCommand,
