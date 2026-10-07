@@ -1,9 +1,11 @@
 import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
-import { beforeAll, describe, expect, it } from "vitest";
+import moment from "moment-timezone";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { LoggerService } from "@codebase/logging";
 
+import { CalendarEventsService } from "../calendar-events/calendar-events.service";
 import { CalendarService } from "../calendar/calendar.service";
 import { InputService } from "../input/input.service";
 import { PerfectiveService } from "../perfective/perfective.service";
@@ -11,46 +13,47 @@ import { ProgressiveService } from "../progressive/progressive.service";
 
 import { CaelundasCommand } from "./caelundas.command";
 
-interface EventWithStart {
-  start: {
-    valueOf: () => number;
-  };
-  type?: string;
-}
+import type { CalendarEvent } from "../caelundas-database/entities/calendar-event.entity";
+import type { Event } from "../calendar/calendar.types";
+import type { Input } from "../input/input.types";
 
-interface ParsedInputShape {
-  end: {
-    valueOf: () => number;
-  };
-  latitude: number;
-  longitude: number;
-  start: {
-    valueOf: () => number;
-  };
-  timezone: string;
-}
-
-const getWriteCallArguments = (
-  calendarService: CalendarService,
-): [EventWithStart[], ParsedInputShape] => {
-  const calendarServiceMock = calendarService as unknown as {
-    write: {
-      mock: {
-        calls: [EventWithStart[], ParsedInputShape][];
-      };
-    };
-  };
-
-  const firstCall = calendarServiceMock.write.mock.calls[0];
-
-  if (firstCall === undefined) {
-    throw new Error("Expected calendarService.write to be called once");
-  }
-
-  return firstCall;
+const input: Input = {
+  end: moment.utc("2026-02-01T00:00:00Z"),
+  latitude: 40.7128,
+  longitude: -74.006,
+  start: moment.utc("2026-01-01T00:00:00Z"),
+  timezone: "America/New_York",
 };
 
+function detectedEvent(summary: string, start: string): Event {
+  return {
+    categories: ["aspects"],
+    description: summary,
+    end: moment.utc(start),
+    start: moment.utc(start),
+    summary,
+  };
+}
+
+function storedEvent(summary: string, start: string): CalendarEvent {
+  return {
+    categories: ["aspects"],
+    color: null,
+    description: summary,
+    end: new Date(start),
+    location: null,
+    start: new Date(start),
+    summary,
+  } as CalendarEvent;
+}
+
 describe(CaelundasCommand, () => {
+  const callOrder: string[] = [];
+  const calendarService = createMock<CalendarService>();
+  const calendarEventsService = createMock<CalendarEventsService>();
+  const perfectiveService = createMock<PerfectiveService>();
+  const progressiveService = createMock<ProgressiveService>();
+  const inputService = createMock<InputService>();
   let command: CaelundasCommand;
 
   beforeAll(async () => {
@@ -58,20 +61,48 @@ describe(CaelundasCommand, () => {
       providers: [
         CaelundasCommand,
         { provide: LoggerService, useValue: createMock<LoggerService>() },
-        { provide: InputService, useValue: createMock<InputService>() },
-        {
-          provide: PerfectiveService,
-          useValue: createMock<PerfectiveService>(),
-        },
-        {
-          provide: ProgressiveService,
-          useValue: createMock<ProgressiveService>(),
-        },
-        { provide: CalendarService, useValue: createMock<CalendarService>() },
+        { provide: InputService, useValue: inputService },
+        { provide: PerfectiveService, useValue: perfectiveService },
+        { provide: ProgressiveService, useValue: progressiveService },
+        { provide: CalendarService, useValue: calendarService },
+        { provide: CalendarEventsService, useValue: calendarEventsService },
       ],
     }).compile();
 
     command = await module.resolve(CaelundasCommand);
+  });
+
+  beforeEach(() => {
+    callOrder.length = 0;
+    vi.clearAllMocks();
+    inputService.parse.mockReturnValue(input);
+    perfectiveService.detect.mockImplementation(() => {
+      callOrder.push("detect");
+      return [
+        detectedEvent("Later", "2026-01-20T00:00:00Z"),
+        detectedEvent("Earlier", "2026-01-10T00:00:00Z"),
+      ];
+    });
+    progressiveService.detect.mockReturnValue([
+      detectedEvent("Middle", "2026-01-15T00:00:00Z"),
+    ]);
+    calendarEventsService.upsert.mockImplementation(async () => {
+      callOrder.push("upsert");
+      await Promise.resolve();
+    });
+    calendarEventsService.findInRange.mockImplementation(async () => {
+      callOrder.push("findInRange");
+      await Promise.resolve();
+      return [storedEvent("Stored", "2026-01-12T00:00:00Z")];
+    });
+    calendarService.write.mockImplementation(async () => {
+      callOrder.push("write");
+      await Promise.resolve();
+    });
+    calendarService.writeJson.mockImplementation(async () => {
+      callOrder.push("writeJson");
+      await Promise.resolve();
+    });
   });
 
   it("is defined", () => {
@@ -86,22 +117,11 @@ describe(CaelundasCommand, () => {
           provide: LoggerService,
           useValue: createMock<LoggerService>(),
         },
-        {
-          provide: InputService,
-          useValue: createMock<InputService>(),
-        },
-        {
-          provide: PerfectiveService,
-          useValue: createMock<PerfectiveService>(),
-        },
-        {
-          provide: ProgressiveService,
-          useValue: createMock<ProgressiveService>(),
-        },
-        {
-          provide: CalendarService,
-          useValue: createMock<CalendarService>(),
-        },
+        { provide: InputService, useValue: inputService },
+        { provide: PerfectiveService, useValue: perfectiveService },
+        { provide: ProgressiveService, useValue: progressiveService },
+        { provide: CalendarService, useValue: calendarService },
+        { provide: CalendarEventsService, useValue: calendarEventsService },
       ],
     }).compile();
 
@@ -111,268 +131,68 @@ describe(CaelundasCommand, () => {
   });
 
   describe("run", () => {
-    it("orchestrates the complete calendar generation pipeline", async () => {
-      const mockInput = {
-        end: { valueOf: () => 2000 },
-        latitude: 40.7128,
-        longitude: -74.006,
-        start: { valueOf: () => 1000 },
-        timezone: "America/New_York",
-      };
+    it("detects, upserts, reads back, then writes both files", async () => {
+      await command.run();
 
-      const mockPerfectiveEvents = [
-        { start: { valueOf: () => 1100 } },
-        { start: { valueOf: () => 1500 } },
-      ];
-
-      const mockProgressiveEvents = [{ start: { valueOf: () => 1200 } }];
-
-      const module = await Test.createTestingModule({
-        providers: [
-          CaelundasCommand,
-          {
-            provide: LoggerService,
-            useValue: createMock<LoggerService>(),
-          },
-          {
-            provide: InputService,
-            useValue: createMock<InputService>({
-              parse: () => mockInput,
-            }),
-          },
-          {
-            provide: PerfectiveService,
-            useValue: createMock<PerfectiveService>({
-              detect: () => mockPerfectiveEvents,
-            }),
-          },
-          {
-            provide: ProgressiveService,
-            useValue: createMock<ProgressiveService>({
-              detect: () => mockProgressiveEvents,
-            }),
-          },
-          {
-            provide: CalendarService,
-            useValue: createMock<CalendarService>({
-              write: async () => {
-                await Promise.resolve();
-              },
-            }),
-          },
-        ],
-      }).compile();
-
-      const resolvedCommand = await module.resolve(CaelundasCommand);
-      const inputService = await module.resolve(InputService);
-      const perfectiveService = await module.resolve(PerfectiveService);
-      const progressiveService = await module.resolve(ProgressiveService);
-      const calendarService = await module.resolve(CalendarService);
-
-      await resolvedCommand.run();
-
-      expect(inputService.parse).toHaveBeenCalledWith();
-      expect(perfectiveService.detect).toHaveBeenCalledWith(mockInput);
-      expect(progressiveService.detect).toHaveBeenCalledWith(
-        mockPerfectiveEvents,
-      );
-      expect(calendarService.write).toHaveBeenCalledExactlyOnceWith(
-        expect.any(Array),
-        mockInput,
-      );
-
-      const [writtenEvents, writtenInput] =
-        getWriteCallArguments(calendarService);
-
-      expect(writtenEvents.map((event) => event.start.valueOf())).toStrictEqual(
-        [1100, 1200, 1500],
-      );
-      expect(writtenInput).toBe(mockInput);
+      expect(callOrder).toStrictEqual([
+        "detect",
+        "upsert",
+        "findInRange",
+        "write",
+        "writeJson",
+      ]);
     });
 
-    it("sorts events by start time before writing to calendar", async () => {
-      const mockInput = {
-        end: { valueOf: () => 2000 },
-        latitude: 40,
-        longitude: -74,
-        start: { valueOf: () => 1000 },
-        timezone: "America/New_York",
-      };
+    it("upserts every detected event, sorted by start, for the input location", async () => {
+      await command.run();
 
-      const mockEvents = [
-        { start: { valueOf: () => 1500 } },
-        { start: { valueOf: () => 1100 } },
-        { start: { valueOf: () => 1300 } },
-      ];
+      const [events, coordinates] =
+        calendarEventsService.upsert.mock.calls[0] ?? [];
 
-      const module = await Test.createTestingModule({
-        providers: [
-          CaelundasCommand,
-          {
-            provide: LoggerService,
-            useValue: createMock<LoggerService>(),
-          },
-          {
-            provide: InputService,
-            useValue: createMock<InputService>({
-              parse: () => mockInput,
-            }),
-          },
-          {
-            provide: PerfectiveService,
-            useValue: createMock<PerfectiveService>({
-              detect: () => mockEvents,
-            }),
-          },
-          {
-            provide: ProgressiveService,
-            useValue: createMock<ProgressiveService>({
-              detect: () => [],
-            }),
-          },
-          {
-            provide: CalendarService,
-            useValue: createMock<CalendarService>({
-              write: async () => {
-                await Promise.resolve();
-              },
-            }),
-          },
-        ],
-      }).compile();
+      expect(events?.map((event) => event.summary)).toStrictEqual([
+        "Earlier",
+        "Middle",
+        "Later",
+      ]);
+      expect(coordinates).toStrictEqual({
+        latitude: input.latitude,
+        longitude: input.longitude,
+      });
+    });
 
-      const resolvedCommand = await module.resolve(CaelundasCommand);
-      const calendarService = await module.resolve(CalendarService);
+    it("reads back the input's range and location", async () => {
+      await command.run();
 
-      await resolvedCommand.run();
-
-      const [writtenEvents] = getWriteCallArguments(calendarService);
-
-      expect(writtenEvents.map((event) => event.start.valueOf())).toStrictEqual(
-        [1100, 1300, 1500],
+      expect(calendarEventsService.findInRange).toHaveBeenCalledExactlyOnceWith(
+        {
+          end: input.end.clone().add(1, "day"),
+          latitude: input.latitude,
+          longitude: input.longitude,
+          start: input.start,
+        },
       );
     });
 
-    it("handles both perfective and progressive events when present", async () => {
-      const mockInput = {
-        end: { valueOf: () => 2000 },
-        latitude: 40,
-        longitude: -74,
-        start: { valueOf: () => 1000 },
-        timezone: "America/New_York",
-      };
+    it("renders the stored rows, not the detected events", async () => {
+      await command.run();
 
-      const perfectiveEvents = [
-        { start: { valueOf: () => 1200 }, type: "perfective" },
-      ];
+      const [written] = calendarService.write.mock.calls[0] ?? [];
+      const [writtenJson] = calendarService.writeJson.mock.calls[0] ?? [];
 
-      const progressiveEvents = [
-        { start: { valueOf: () => 1300 }, type: "progressive" },
-      ];
-
-      const module = await Test.createTestingModule({
-        providers: [
-          CaelundasCommand,
-          {
-            provide: LoggerService,
-            useValue: createMock<LoggerService>(),
-          },
-          {
-            provide: InputService,
-            useValue: createMock<InputService>({
-              parse: () => mockInput,
-            }),
-          },
-          {
-            provide: PerfectiveService,
-            useValue: createMock<PerfectiveService>({
-              detect: () => perfectiveEvents,
-            }),
-          },
-          {
-            provide: ProgressiveService,
-            useValue: createMock<ProgressiveService>({
-              detect: () => progressiveEvents,
-            }),
-          },
-          {
-            provide: CalendarService,
-            useValue: createMock<CalendarService>({
-              write: async () => {
-                await Promise.resolve();
-              },
-            }),
-          },
-        ],
-      }).compile();
-
-      const resolvedCommand = await module.resolve(CaelundasCommand);
-      const calendarService = await module.resolve(CalendarService);
-
-      await resolvedCommand.run();
-
-      const [writtenEvents] = getWriteCallArguments(calendarService);
-
-      expect(writtenEvents).toHaveLength(2);
-      expect(writtenEvents).toStrictEqual(
-        expect.arrayContaining([
-          expect.objectContaining({ type: "perfective" }),
-          expect.objectContaining({ type: "progressive" }),
-        ]),
-      );
+      expect(written?.map((event) => event.summary)).toStrictEqual(["Stored"]);
+      expect(writtenJson?.map((event) => event.summary)).toStrictEqual([
+        "Stored",
+      ]);
     });
 
-    it("handles empty event lists gracefully", async () => {
-      const mockInput = {
-        end: { valueOf: () => 2000 },
-        latitude: 40,
-        longitude: -74,
-        start: { valueOf: () => 1000 },
-        timezone: "America/New_York",
-      };
+    it("handles no detected events", async () => {
+      perfectiveService.detect.mockReturnValue([]);
+      progressiveService.detect.mockReturnValue([]);
+      calendarEventsService.findInRange.mockResolvedValue([]);
 
-      const module = await Test.createTestingModule({
-        providers: [
-          CaelundasCommand,
-          {
-            provide: LoggerService,
-            useValue: createMock<LoggerService>(),
-          },
-          {
-            provide: InputService,
-            useValue: createMock<InputService>({
-              parse: () => mockInput,
-            }),
-          },
-          {
-            provide: PerfectiveService,
-            useValue: createMock<PerfectiveService>({
-              detect: () => [],
-            }),
-          },
-          {
-            provide: ProgressiveService,
-            useValue: createMock<ProgressiveService>({
-              detect: () => [],
-            }),
-          },
-          {
-            provide: CalendarService,
-            useValue: createMock<CalendarService>({
-              write: async () => {
-                await Promise.resolve();
-              },
-            }),
-          },
-        ],
-      }).compile();
+      await command.run();
 
-      const resolvedCommand = await module.resolve(CaelundasCommand);
-      const calendarService = await module.resolve(CalendarService);
-
-      await resolvedCommand.run();
-
-      expect(calendarService.write).toHaveBeenCalledWith([], mockInput);
+      expect(calendarService.write).toHaveBeenCalledExactlyOnceWith([], input);
     });
   });
 });

@@ -10,7 +10,7 @@ import { SymmetryService } from "../symmetry/symmetry.service";
 import { DrawRecordService } from "./draw-record.service";
 import { DrawWorkerService } from "./draw-worker.service";
 
-import type { MeanderRecord } from "../database/database.types";
+import type { MeanderRecord } from "../meanderaw-database/meanderaw-database.types";
 
 describe(DrawWorkerService, () => {
   let service: DrawWorkerService;

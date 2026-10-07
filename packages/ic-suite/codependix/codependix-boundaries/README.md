@@ -680,14 +680,14 @@ What this project is judged against, as declared in its own `callidescope.config
 
 ```text
 🚀 BoundaryCheckService.buildGraph(project: NestjsProject): Promise<BoundaryGraph> [packages/ic-suite/codependix/codependix-boundaries/src/modules/boundary-check/boundary-check.service.ts:162]
-  └─> NestjsProjectService.exploreProject(project: NestjsProject): Promise<NestjsSpelunkedTree[]> [packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:190]
+  └─> NestjsProjectService.exploreProject(project: NestjsProject): Promise<NestjsExploredModule[]> [packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:232]
      ↳ Explores a project's container in preview mode and returns its tree.
-    └─> NestjsProjectService.buildSyntheticRootModule(project: NestjsProject): Promise<DynamicModule> [packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:57]
+    └─> NestjsProjectService.buildSyntheticRootModule(project: NestjsProject): Promise<DynamicModule> [packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:59]
        ↳ Roots a package that bootstraps nothing in every module it defines.
-      └─> NestjsProjectService.map(…)(file: string): Promise<Type<unknown>[]> [packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:64]
-        └─> NestjsProjectService.loadModuleClasses(file: string): Promise<Type<unknown>[]> [packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:124]
+      └─> NestjsProjectService.map(…)(file: string): Promise<Type<unknown>[]> [packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:66]
+        └─> NestjsProjectService.loadModuleClasses(file: string): Promise<Type<unknown>[]> [packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:166]
            ↳ Imports a module file and returns every module class it exports.
-          └─> NestjsProjectService.map(…)([, moduleClass]: [string, Type<unknown>]): Type<unknown> [packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:135]
+          └─> NestjsProjectService.map(…)([, moduleClass]: [string, Type<unknown>]): Type<unknown> [packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:177]
 ```
 
 </details>

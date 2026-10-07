@@ -2,13 +2,13 @@ import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
-import { DatabaseService } from "../database/database.service";
+import { MeanderawDatabaseService } from "../meanderaw-database/meanderaw-database.service";
 
 import { DrawCodeService } from "./draw-code.service";
 import { DrawRecordService } from "./draw-record.service";
 
-import type { MeanderRecord } from "../database/database.types";
-import type { Meander } from "../database/entities/Meander.entity";
+import type { Meander } from "../meanderaw-database/entities/meander.entity";
+import type { MeanderRecord } from "../meanderaw-database/meanderaw-database.types";
 
 // 🧪 Tests
 
@@ -22,7 +22,7 @@ import type { Meander } from "../database/entities/Meander.entity";
  */
 describe(DrawCodeService, () => {
   let drawRecordService: DrawRecordService;
-  let databaseService: DatabaseService;
+  let databaseService: MeanderawDatabaseService;
   let service: DrawCodeService;
 
   const record = createMock<MeanderRecord>({ code: "2" });
@@ -39,15 +39,15 @@ describe(DrawCodeService, () => {
           useValue: createMock<DrawRecordService>(),
         },
         {
-          provide: DatabaseService,
-          useValue: createMock<DatabaseService>(),
+          provide: MeanderawDatabaseService,
+          useValue: createMock<MeanderawDatabaseService>(),
         },
       ],
     }).compile();
 
     service = await module.resolve(DrawCodeService);
     drawRecordService = await module.resolve(DrawRecordService);
-    databaseService = await module.resolve(DatabaseService);
+    databaseService = await module.resolve(MeanderawDatabaseService);
 
     vi.mocked(drawRecordService.record).mockReturnValue(record);
     vi.mocked(databaseService.save).mockResolvedValue(savedMeander);

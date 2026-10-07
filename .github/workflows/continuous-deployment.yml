@@ -49,21 +49,19 @@ jobs:
             name: Devcontainer
             emoji: 🧑‍🏭
             timeout: 20
-          # v2.31.0 took 7m19s: 4 minutes to set up, build, trace, graph, and
-          # measure, and 3 for semantic-release, most of it the version
-          # commit's pre-commit hook. A cold Nx cache adds about 4 to the
-          # first part. `nx release version` makes a second version commit
-          # whose hook checks every bumped ic-suite package and its
-          # dependents (25 projects on the first release), none of them
-          # cached because each bump changes a manifest, so this leaves room
-          # for that hook and the npm publish. Re-size it from the first real
-          # release run. A timeout before the push leaves nothing behind; a
-          # later one is finished by the next run, whose publish skips
-          # versions already on npm.
+          # v2.33.7, which bumped no package, took 7 minutes. v2.33.6 bumped all
+          # 28 ic-suite packages and ran out of 24 minutes part way through
+          # publishing them: every build and report missed the Nx cache, and the
+          # release commit's pre-commit hook took 10 minutes over the 34
+          # projects whose manifests and changelogs it changed. With the faster
+          # lookups since, such a release should take 15 to 21 minutes, and
+          # this leaves headroom over that. A timeout before the push leaves
+          # nothing behind; a later one is finished by the next run, whose
+          # publish skips versions already on npm, though it cannot attest them.
           - id: push-releases
             name: Releases
             emoji: 🦸
-            timeout: 24
+            timeout: 32
 
     steps:
       # Decides from the GitHub API alone, before any checkout, so a run with
@@ -234,28 +232,50 @@ jobs:
           matrix.target.id == 'push-releases'
         run: bash scripts/git/check-commit-signing-configuration.sh
 
-      - name: 👷 Build Projects
+      # Versions the ic-suite packages and writes their changelogs, uncommitted,
+      # and leaves the remote carrying the release token. When `main` moves
+      # during the run, this step or a later one sets `RELEASE_SUPERSEDED` and
+      # every step after it skips, since the newer commit's run releases it all.
+      # `scripts/release/version-packages.sh` and `main-tip.sh` explain more.
+      #
+      # It precedes the build, so npm gets a `dist` built from the manifest it
+      # is published with, and the queued run on the release commit restores
+      # those builds from the cache this job saves. A package still rebuilds
+      # there when a report below rewrites its README or a dependency's.
+      - name: 🏷️ Version Packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
           matrix.target.id == 'push-releases'
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: bash scripts/release/version-packages.sh
+
+      - name: 👷 Build Projects
+        if: >-
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         run: pnpm exec nx run-many --target=build
 
       - name: 🔭 Trace Calls
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         run: pnpm exec nx run codebase:callidescope:write
 
       - name: 🕸️ Graph Dependencies
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         run: pnpm exec nx run codebase:codependix:write
 
       - name: 👔 Inventory Generators
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         run: |
           pnpm exec nx run-many \
             --target=conformetry-generators \
@@ -264,7 +284,8 @@ jobs:
       - name: 🔗 Synchronize
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         run: |
           pnpm exec nx run-many \
             --target=conventional-config \
@@ -276,25 +297,41 @@ jobs:
       - name: 📊 Measure Code
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         run: |
           pnpm exec nx run-many --target=codometer --configuration=write \
             --exclude=codebase
           pnpm exec nx run codebase:codometer:write
 
-      # Versions the ic-suite packages, writes each one's changelog, commits,
-      # tags and pushes, and leaves the remote carrying the release token for
-      # semantic-release's push below. `scripts/release/version-packages.sh`
-      # explains the push it makes.
-      - name: 🏷️ Version Packages
+      # semantic-release versions and tags the codebase itself, and creates the
+      # `v*` release the README badge shows, never an ic-suite package. Its one
+      # `chore(release): 🔖 tag codebase` commit also carries the package
+      # versions and changelogs the step above wrote, so it comes before
+      # anything is published.
+      - name: 🔖 Tag Codebase
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
           GIT_COMMITTER_EMAIL: jimmypaolini@gmail.com
           GIT_COMMITTER_NAME: Jimmy Paolini
-        run: bash scripts/release/version-packages.sh
+        run: bash scripts/release/tag-codebase.sh
+
+      # Tags each newly versioned package on the release commit and pushes the
+      # tags. `scripts/release/tag-packages.sh` explains the commit it makes
+      # when there was no codebase release to carry the versions.
+      - name: 🔖 Tag Packages
+        if: >-
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
+        env:
+          GIT_COMMITTER_EMAIL: jimmypaolini@gmail.com
+          GIT_COMMITTER_NAME: Jimmy Paolini
+        run: bash scripts/release/tag-packages.sh
 
       # Publishes each released package to npm with provenance, and to GitHub
       # Packages under the owner's scope.
@@ -303,9 +340,11 @@ jobs:
       # stopped part way. The workflow's own token publishes the copies, which
       # links each one to this repository; `packages: write` above allows it.
       - name: 📦 Publish Packages
+        id: publish-packages
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          matrix.target.id == 'push-releases' &&
+          env.RELEASE_SUPERSEDED != 'true'
         env:
           GITHUB_PACKAGES_TOKEN: ${{ github.token }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -314,12 +353,15 @@ jobs:
       # Lists each package published to npm on the organization's Linked
       # artifacts page, and names the ones this run published for the
       # attestation below. `scripts/release/link-packages.sh` explains why only
-      # those are attested.
+      # those are attested. It runs whenever publishing ran, even if that failed
+      # part way, such as on one GitHub Packages mirror: a version already on
+      # npm can only be attested by the run that published it, since a re-run
+      # skips it.
       - name: 🔗 Link Packages
         id: link-packages
         if: >-
-          steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
+          !cancelled() &&
+          contains(fromJSON('["success", "failure"]'), steps.publish-packages.outcome)
         env:
           GH_TOKEN: ${{ github.token }}
         run: bash scripts/release/link-packages.sh
@@ -327,31 +369,20 @@ jobs:
       # A GitHub build-provenance attestation for each npm tarball this run
       # published, which the Linked artifacts page shows beside its record.
       # The records themselves come from the step above, since this action
-      # creates them only for container registries.
+      # creates them only for container registries. Like the step above, it
+      # runs after a failure there too, for whatever that step found to attest.
       - name: 🔏 Attest Packages
         if: >-
-          steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases' &&
+          !cancelled() &&
           steps.link-packages.outputs.attest == 'true'
         uses: actions/attest@v4
         with:
           subject-checksums: ${{ runner.temp }}/attestation-subjects.txt
           create-storage-record: false
 
-      # semantic-release versions, tags and releases the codebase itself, the
-      # `v*` release the README badge shows, never an ic-suite package.
-      - name: 🦸 Release Codebase
-        if: >-
-          steps.check-skip.outputs.skip != 'true' &&
-          matrix.target.id == 'push-releases'
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-          GIT_COMMITTER_EMAIL: jimmypaolini@gmail.com
-          GIT_COMMITTER_NAME: Jimmy Paolini
-        run: pnpm semantic-release
-
       # The only save of this workflow's Nx cache, which the next release
-      # restores. Every project is built above, so it covers the whole graph.
+      # restores. Every project is built above, at the versions the release
+      # commit carries, so it covers the whole graph of that commit.
       - name: 🧹 Cleanup Codebase
         if: >-
           always() &&

@@ -28,25 +28,32 @@ readonly GITHUB_PACKAGES_REGISTRY="${GITHUB_PACKAGES_REGISTRY:-https://npm.pkg.g
 # rather than `nx release publish`, because pnpm honors provenance only as the
 # `--provenance` flag, which Nx cannot pass: `NPM_CONFIG_PROVENANCE` and
 # `publishConfig.provenance` are ignored. `setup-node` writes no registry
-# `.npmrc`, so the tokens go in the user config. What npm lacked beforehand
-# and has afterwards is what this run published, which is all the next step
-# may attest as built here.
+# `.npmrc`, so the tokens go in the user config.
+#
+# What this run published, which is all the next step may attest as built
+# here, comes from pnpm's own summary of it. Asking npm afterwards, as this
+# once did, missed 21 of 23 new versions in one run: a version npm has just
+# accepted can still read as missing for minutes after. A publish that fails
+# part way still records whatever pnpm reports, before the step fails.
 publish_to_npm() {
-  local root specifier filters=() missing=()
+  local root filters=()
   local published="${RUNNER_TEMP:?}/newly-published.txt"
   echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN:?}" >>~/.npmrc
   for root in "${roots[@]}"; do
     filters+=(--filter "./${root}")
-    specifier="$(package_specifier "${root}")"
-    is_on_npm "${specifier}" || missing+=("${specifier}")
   done
   echo "📦 Publishing the release group to npm"
-  pnpm -r "${filters[@]}" publish --provenance --no-git-checks \
-    --tag latest --registry https://registry.npmjs.org
+  rm -f pnpm-publish-summary.json
   : >"${published}"
-  for specifier in "${missing[@]}"; do
-    if is_on_npm "${specifier}"; then echo "${specifier}" >>"${published}"; fi
-  done
+  local status=0
+  pnpm -r "${filters[@]}" publish --provenance --no-git-checks \
+    --tag latest --registry https://registry.npmjs.org --report-summary || status=$?
+  if [[ -f pnpm-publish-summary.json ]]; then
+    jq -r '.publishedPackages[] | "\(.name)@\(.version)"' \
+      pnpm-publish-summary.json >"${published}"
+    rm pnpm-publish-summary.json
+  fi
+  return "${status}"
 }
 
 # Publishes every release-group package to GitHub Packages, under the
@@ -60,33 +67,40 @@ publish_to_npm() {
 # overrides `--registry` and would send it to npm instead. It goes last because
 # it is a copy: npm stays where the packages are installed from.
 mirror_to_github_packages() {
-  local root name version mirror tarball unpacked
   local scope="${GITHUB_REPOSITORY_OWNER:?}"
   local mirrors="${RUNNER_TEMP:?}/github-packages"
   echo "//${GITHUB_PACKAGES_REGISTRY#*://}/:_authToken=${GITHUB_PACKAGES_TOKEN:?}" >>~/.npmrc
   rm -rf "${mirrors}"
   mkdir -p "${mirrors}"
-  for root in "${roots[@]}"; do
-    name="$(jq -r .name "${root}/package.json")"
-    version="$(jq -r .version "${root}/package.json")"
-    mirror="@${scope,,}/$(basename "${root}")"
-    if npm view "${mirror}@${version}" version --registry "${GITHUB_PACKAGES_REGISTRY}" >/dev/null 2>&1; then
-      echo "🐙 ${mirror}@${version} is already on GitHub Packages"
-      continue
-    fi
-    tarball="${mirrors}/$(basename "${root}").tgz"
-    (cd "${root}" && pnpm pack --out "${tarball}" >/dev/null)
-    unpacked="${mirrors}/$(basename "${root}")"
-    mkdir -p "${unpacked}"
-    tar -xzf "${tarball}" -C "${unpacked}" --strip-components 1
-    jq --arg mirror "${mirror}" '.name = $mirror | del(.publishConfig)' \
-      "${unpacked}/package.json" >"${unpacked}/package.json.mirrored"
-    mv "${unpacked}/package.json.mirrored" "${unpacked}/package.json"
-    echo "🐙 Mirroring ${name}@${version} to GitHub Packages as ${mirror}"
-    npm publish "${unpacked}" --ignore-scripts --registry "${GITHUB_PACKAGES_REGISTRY}"
-  done
+  run_in_parallel mirror_package "${roots[@]}"
 }
 
-mapfile -t roots < <(release_group_roots)
+# Mirrors the package in the given directory, as mirror_to_github_packages
+# describes, using its `scope` and `mirrors`. Each package packs and unpacks
+# in a directory of its own, so several can mirror at once.
+mirror_package() {
+  local root="$1"
+  local name version mirror tarball unpacked
+  name="$(jq -r .name "${root}/package.json")"
+  version="$(jq -r .version "${root}/package.json")"
+  mirror="@${scope,,}/$(basename "${root}")"
+  if npm view "${mirror}@${version}" version --registry "${GITHUB_PACKAGES_REGISTRY}" >/dev/null 2>&1; then
+    echo "🐙 ${mirror}@${version} is already on GitHub Packages"
+    return 0
+  fi
+  tarball="${mirrors}/$(basename "${root}").tgz"
+  (cd "${root}" && pnpm pack --out "${tarball}" >/dev/null)
+  unpacked="${mirrors}/$(basename "${root}")"
+  mkdir -p "${unpacked}"
+  tar -xzf "${tarball}" -C "${unpacked}" --strip-components 1
+  jq --arg mirror "${mirror}" '.name = $mirror | del(.publishConfig)' \
+    "${unpacked}/package.json" >"${unpacked}/package.json.mirrored"
+  mv "${unpacked}/package.json.mirrored" "${unpacked}/package.json"
+  echo "🐙 Mirroring ${name}@${version} to GitHub Packages as ${mirror}"
+  npm publish "${unpacked}" --ignore-scripts --registry "${GITHUB_PACKAGES_REGISTRY}"
+}
+
+group_roots="$(release_group_roots)"
+mapfile -t roots <<<"${group_roots}"
 publish_to_npm
 mirror_to_github_packages

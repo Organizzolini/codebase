@@ -9,12 +9,14 @@ buildx
 bullmq
 burstable
 cves
+datname
 dbeaver
 dbname
 distroless
 dockerfiles
 dshm
 einvalidghtoken
+endgroup
 enochange
 ensurepath
 esockettimedout
@@ -87,6 +89,7 @@ upsert
 upserted
 upserting
 upserts
+usename
 uuidv
 Virtio
 vonage

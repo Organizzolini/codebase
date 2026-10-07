@@ -24,11 +24,23 @@ readonly REPOSITORY_NAME="${repository#*/}"
 # Prints the `sha256:…` digest of the tarball npm serves for a
 # `<name>@<version>`, which is what both a storage record and an attestation
 # identify the package by. npm itself reports only a sha512 integrity.
+#
+# The tarball's address is built rather than looked up, and fetched with
+# retries, because npm's metadata can trail a publish by minutes: a version
+# this run just published may not be listed yet.
 npm_tarball_digest() {
-  local tarball="${RUNNER_TEMP:?}/npm-tarball.tgz"
-  curl --silent --show-error --fail --location --output "${tarball}" \
-    "$(npm view "$1" dist.tarball --registry "${NPM_REGISTRY_URL}")"
+  local specifier="$1"
+  local name="${specifier%@*}" version="${specifier##*@}"
+  local tarball
+  tarball="$(mktemp "${RUNNER_TEMP:?}/npm-tarball.XXXXXX")"
+  if ! curl --silent --show-error --fail --location --output "${tarball}" \
+    --retry 6 --retry-all-errors --retry-delay 10 \
+    "${NPM_REGISTRY_URL}${name}/-/${name##*/}-${version}.tgz"; then
+    rm -f "${tarball}"
+    return 1
+  fi
   echo "sha256:$(sha256sum "${tarball}" | cut -d' ' -f1)"
+  rm -f "${tarball}"
 }
 
 # Reports whether the organization already has an npm storage record for a
@@ -62,28 +74,43 @@ create_npm_storage_record() {
 # lists the ones this run published in a checksums file for `actions/attest`.
 # Attesting only those keeps the provenance honest: an attestation says this
 # run built the package, which is untrue of a version an earlier run published.
+# A version this run published is known to be on npm without asking, which
+# matters while npm's metadata has yet to list it. One package failing to link
+# still lets the others be attested, before the step fails.
 link_npm_packages() {
-  local root specifier digest
   local published="${RUNNER_TEMP:?}/newly-published.txt"
   local subjects="${RUNNER_TEMP}/attestation-subjects.txt"
   : >"${subjects}"
   touch "${published}"
-  for root in "${roots[@]}"; do
-    specifier="$(package_specifier "${root}")"
-    is_on_npm "${specifier}" || continue
-    digest="$(npm_tarball_digest "${specifier}")"
-    if grep -qxF "${specifier}" "${published}"; then
-      echo "${digest#sha256:}  ${specifier}" >>"${subjects}"
-    fi
-    if has_npm_storage_record "${digest}"; then
-      echo "🔗 ${specifier} is already linked"
-      continue
-    fi
-    echo "🔗 Linking ${specifier} to ${repository}"
-    create_npm_storage_record "${specifier}" "${digest}"
-  done
+  local status=0
+  run_in_parallel link_npm_package "${roots[@]}" || status=$?
   if [[ -s "${subjects}" ]]; then echo "attest=true" >>"${GITHUB_OUTPUT:?}"; fi
+  return "${status}"
 }
 
-mapfile -t roots < <(release_group_roots)
+# Links the package in the given directory, as link_npm_packages describes,
+# using its `published` and `subjects`. Each line it adds to `subjects` is one
+# short append, so several packages can link at once.
+link_npm_package() {
+  local root="$1"
+  local specifier digest
+  specifier="$(package_specifier "${root}")"
+  if grep -qxF "${specifier}" "${published}"; then
+    digest="$(npm_tarball_digest "${specifier}")"
+    echo "${digest#sha256:}  ${specifier}" >>"${subjects}"
+  elif is_on_npm "${specifier}"; then
+    digest="$(npm_tarball_digest "${specifier}")"
+  else
+    return 0
+  fi
+  if has_npm_storage_record "${digest}"; then
+    echo "🔗 ${specifier} is already linked"
+    return 0
+  fi
+  echo "🔗 Linking ${specifier} to ${repository}"
+  create_npm_storage_record "${specifier}" "${digest}"
+}
+
+group_roots="$(release_group_roots)"
+mapfile -t roots <<<"${group_roots}"
 link_npm_packages

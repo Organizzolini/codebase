@@ -1,53 +1,39 @@
 import { createMock } from "@golevelup/ts-vitest";
-import { Test } from "@nestjs/testing";
-import {
-  PostgreSqlContainer,
-  type StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { LoggerService } from "@codebase/logging";
 
 import {
-  TEST_DATABASE_NAME,
-  TEST_POSTGRES_IMAGE,
-  TEST_SCHEMA_INITIALIZATION,
-} from "../../../testing/database";
-import {
   DRAW_RUN_TIMEOUT_MILLISECONDS,
   type DrawRunFixture,
-  drawRunFixture,
-  drawRunModuleMetadata,
+  startDrawRun,
 } from "../../../testing/draw-run";
 
 import { DrawCodeService } from "./draw-code.service";
+
+import type { Meander } from "../meanderaw-database/entities/meander.entity";
 
 vi.mock("node:fs/promises", () => ({
   mkdir: vi.fn<() => Promise<void>>(),
   writeFile: vi.fn<(path: string, data: unknown) => Promise<void>>(),
 }));
 
-/** Compiles a fresh draw run, over an emptied schema in `container`, with `--code` and logging mocked out. */
-async function compileDrawRun(
-  container: StartedPostgreSqlContainer,
-): Promise<DrawRunFixture> {
-  const module = await Test.createTestingModule(
-    drawRunModuleMetadata(container, [
-      { provide: DrawCodeService, useValue: createMock<DrawCodeService>() },
-      { provide: LoggerService, useValue: createMock<LoggerService>() },
-    ]),
-  ).compile();
+/** Starts a fresh draw run over an emptied `meanders` table, with `--code` and logging mocked out. */
+async function startMockedDrawRun(): Promise<DrawRunFixture> {
+  return startDrawRun([
+    { provide: DrawCodeService, useValue: createMock<DrawCodeService>() },
+    { provide: LoggerService, useValue: createMock<LoggerService>() },
+  ]);
+}
 
-  return drawRunFixture(module);
+/** A row without the columns the database assigns on each insert, so two draw runs' rows compare by what they describe. */
+function withoutRowIdentity({
+  createdAt: _createdAt,
+  id: _id,
+  updatedAt: _updatedAt,
+  ...row
+}: Meander): Omit<Meander, "createdAt" | "id" | "updatedAt"> {
+  return row;
 }
 
 /**
@@ -58,32 +44,19 @@ async function compileDrawRun(
  * parallel rather than after it.
  */
 describe("drawCommand draw run", () => {
-  let container: StartedPostgreSqlContainer;
-
-  beforeAll(async () => {
-    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
-      .withDatabase(TEST_DATABASE_NAME)
-      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
-      .start();
-  });
-
-  afterAll(async () => {
-    await container.stop();
-  });
-
   describe("over an already-populated database", () => {
     let drawRun: DrawRunFixture;
 
     beforeEach(async () => {
-      drawRun = await compileDrawRun(container);
+      drawRun = await startMockedDrawRun();
     });
 
     afterEach(async () => {
-      await drawRun.dataSource.destroy();
+      await drawRun.close();
     });
 
     it(
-      "regenerates an already-populated database into exactly the rows a fresh draw run writes, each under a new id",
+      "regenerates an already-populated database into exactly the rows a fresh draw run writes, each under a new id and timestamp",
       async () => {
         await drawRun.command.run([], {});
 
@@ -96,8 +69,8 @@ describe("drawCommand draw run", () => {
         });
 
         expect(regenerated).toHaveLength(fresh.length);
-        expect(regenerated.map(({ id: _id, ...row }) => row)).toStrictEqual(
-          fresh.map(({ id: _id, ...row }) => row),
+        expect(regenerated.map((row) => withoutRowIdentity(row))).toStrictEqual(
+          fresh.map((row) => withoutRowIdentity(row)),
         );
       },
       DRAW_RUN_TIMEOUT_MILLISECONDS,

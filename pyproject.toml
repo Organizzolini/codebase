@@ -74,3 +74,8 @@ capitalisation_policy = "lower"
 
 [tool.sqlfluff.rules.capitalisation.identifiers]
 extended_capitalisation_policy = "lower"
+
+# A column named after a keyword (`rows`, `code`) stays quoted, so RF06's fix
+# never strips the quotes RF04 then needs
+[tool.sqlfluff.rules.references.quoting]
+prefer_quoted_keywords = true

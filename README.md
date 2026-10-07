@@ -164,6 +164,8 @@
 
 </details>
 
+**🐘 [database](packages/database)** - Shared Postgres package: the `<PROJECT>_POSTGRES_*` environment fragment, TypeORM options and module, base entities, a Testcontainers harness, and the `migration` target
+
 <details>
 <summary><strong>🐺 lexico</strong> - Latin-English dictionary suite: the web application, its components, its schema, and the ingestion that fills it</summary>
 
@@ -285,6 +287,7 @@ graph LR
   conformetry_nx["conformetry-nx"]
   conformetry_output["conformetry-output"]
   conformetry_validation["conformetry-validation"]
+  database["database"]
   lexico["lexico"]
   lexico_api["lexico-api"]
   lexico_entities["lexico-entities"]
@@ -293,6 +296,7 @@ graph LR
   meanderaw_cli["meanderaw-cli"]
   synchronization["synchronization"]
   validation["validation"]
+  caelundas_cli --> database
   caelundas_cli --> logging
   callidescope_cli --> callidescope_configuration
   callidescope_cli --> callidescope_core
@@ -395,6 +399,7 @@ graph LR
   lexico_api --> logging
   lexico_ingestion --> lexico_entities
   lexico_ingestion --> logging
+  meanderaw_cli --> database
   meanderaw_cli --> logging
   synchronization --> conformetry_configuration
   synchronization --> logging
@@ -412,10 +417,13 @@ graph LR
   module_caelundas_cli_AnnualSolarCycleModule["caelundas-cli/AnnualSolarCycleModule"]
   module_caelundas_cli_AspectsModule["caelundas-cli/AspectsModule"]
   module_caelundas_cli_AspectsUtilitiesModule["caelundas-cli/AspectsUtilitiesModule"]
+  module_caelundas_cli_CaelundasDatabaseModule["caelundas-cli/CaelundasDatabaseModule"]
   module_caelundas_cli_CaelundasModule["caelundas-cli/CaelundasModule"]
+  module_caelundas_cli_CalendarEventsModule["caelundas-cli/CalendarEventsModule"]
   module_caelundas_cli_CalendarModule["caelundas-cli/CalendarModule"]
   module_caelundas_cli_ConfigModule["caelundas-cli/ConfigModule"]
   module_caelundas_cli_DailyCyclesModule["caelundas-cli/DailyCyclesModule"]
+  module_caelundas_cli_DatabaseModule["caelundas-cli/DatabaseModule"]
   module_caelundas_cli_DatetimeModule["caelundas-cli/DatetimeModule"]
   module_caelundas_cli_DiscoveryModule["caelundas-cli/DiscoveryModule"]
   module_caelundas_cli_EclipsesModule["caelundas-cli/EclipsesModule"]
@@ -440,6 +448,7 @@ graph LR
   module_caelundas_cli_StelliumModule["caelundas-cli/StelliumModule"]
   module_caelundas_cli_TripleAspectsModule["caelundas-cli/TripleAspectsModule"]
   module_caelundas_cli_TwilightsModule["caelundas-cli/TwilightsModule"]
+  module_caelundas_cli_TypeOrmModule["caelundas-cli/TypeOrmModule"]
   module_callidescope_cli_AddressLookupModule["callidescope-cli/AddressLookupModule"]
   module_callidescope_cli_AddressReportModule["callidescope-cli/AddressReportModule"]
   module_callidescope_cli_BreadthModule["callidescope-cli/BreadthModule"]
@@ -799,6 +808,7 @@ graph LR
   module_conformetry_validation_TextModule["conformetry-validation/TextModule"]
   module_conformetry_validation_TypescriptModule["conformetry-validation/TypescriptModule"]
   module_conformetry_validation_ValidationModule["conformetry-validation/ValidationModule"]
+  module_database_DatabaseModule["database/DatabaseModule"]
   module_lexico_api_DatabaseModule["lexico-api/DatabaseModule"]
   module_lexico_api_GraphQLModule["lexico-api/GraphQLModule"]
   module_lexico_api_GraphQLSchemaBuilderModule["lexico-api/GraphQLSchemaBuilderModule"]
@@ -863,6 +873,7 @@ graph LR
   module_meanderaw_cli_LoggerModule["meanderaw-cli/LoggerModule"]
   module_meanderaw_cli_MainModule["meanderaw-cli/MainModule"]
   module_meanderaw_cli_MatrixModule["meanderaw-cli/MatrixModule"]
+  module_meanderaw_cli_MeanderawDatabaseModule["meanderaw-cli/MeanderawDatabaseModule"]
   module_meanderaw_cli_PathUtilitiesModule["meanderaw-cli/PathUtilitiesModule"]
   module_meanderaw_cli_PatternCharacteristicsModule["meanderaw-cli/PatternCharacteristicsModule"]
   module_meanderaw_cli_PointCharacteristicsModule["meanderaw-cli/PointCharacteristicsModule"]
@@ -922,8 +933,12 @@ graph LR
   module_caelundas_cli_AspectsModule --> module_caelundas_cli_TripleAspectsModule
   module_caelundas_cli_AspectsUtilitiesModule --> module_caelundas_cli_EphemerisModule
   module_caelundas_cli_AspectsUtilitiesModule --> module_caelundas_cli_MathModule
+  module_caelundas_cli_CaelundasDatabaseModule --> module_caelundas_cli_DatabaseModule
+  module_caelundas_cli_CaelundasDatabaseModule --> module_caelundas_cli_TypeOrmModule
   module_caelundas_cli_CaelundasModule --> module_caelundas_cli_AnnualSolarCycleModule
   module_caelundas_cli_CaelundasModule --> module_caelundas_cli_AspectsModule
+  module_caelundas_cli_CaelundasModule --> module_caelundas_cli_CaelundasDatabaseModule
+  module_caelundas_cli_CaelundasModule --> module_caelundas_cli_CalendarEventsModule
   module_caelundas_cli_CaelundasModule --> module_caelundas_cli_CalendarModule
   module_caelundas_cli_CaelundasModule --> module_caelundas_cli_DailyCyclesModule
   module_caelundas_cli_CaelundasModule --> module_caelundas_cli_EclipsesModule
@@ -945,9 +960,11 @@ graph LR
   module_caelundas_cli_CaelundasModule --> module_caelundas_cli_StelliumModule
   module_caelundas_cli_CaelundasModule --> module_caelundas_cli_TripleAspectsModule
   module_caelundas_cli_CaelundasModule --> module_caelundas_cli_TwilightsModule
+  module_caelundas_cli_CalendarEventsModule --> module_caelundas_cli_CaelundasDatabaseModule
   module_caelundas_cli_DailyCyclesModule --> module_caelundas_cli_CalendarModule
   module_caelundas_cli_DailyCyclesModule --> module_caelundas_cli_EphemerisModule
   module_caelundas_cli_DailyCyclesModule --> module_caelundas_cli_MathModule
+  module_caelundas_cli_DatabaseModule --> module_caelundas_cli_TypeOrmModule
   module_caelundas_cli_EclipsesModule --> module_caelundas_cli_EphemerisModule
   module_caelundas_cli_EclipsesModule --> module_caelundas_cli_MathModule
   module_caelundas_cli_EclipsesModule --> module_caelundas_cli_ProgressiveUtilitiesModule
@@ -1597,10 +1614,9 @@ graph LR
   module_meanderaw_cli_CornerCharacteristicsModule --> module_meanderaw_cli_SubmatrixUtilitiesModule
   module_meanderaw_cli_CorpusModule --> module_meanderaw_cli_CharacteristicsModule
   module_meanderaw_cli_CorpusModule --> module_meanderaw_cli_CodeModule
-  module_meanderaw_cli_CorpusModule --> module_meanderaw_cli_DatabaseModule
   module_meanderaw_cli_CorpusModule --> module_meanderaw_cli_EnumerationModule
+  module_meanderaw_cli_CorpusModule --> module_meanderaw_cli_MeanderawDatabaseModule
   module_meanderaw_cli_CrossCharacteristicsModule --> module_meanderaw_cli_SubmatrixUtilitiesModule
-  module_meanderaw_cli_DatabaseModule --> module_meanderaw_cli_TypeOrmModule
   module_meanderaw_cli_DatabaseModule --> module_meanderaw_cli_TypeOrmModule
   module_meanderaw_cli_DrawingModule --> module_meanderaw_cli_CodeModule
   module_meanderaw_cli_DrawingModule --> module_meanderaw_cli_GeometryModule
@@ -1608,10 +1624,10 @@ graph LR
   module_meanderaw_cli_DrawModule --> module_meanderaw_cli_CharacteristicsModule
   module_meanderaw_cli_DrawModule --> module_meanderaw_cli_CodeModule
   module_meanderaw_cli_DrawModule --> module_meanderaw_cli_CorpusModule
-  module_meanderaw_cli_DrawModule --> module_meanderaw_cli_DatabaseModule
   module_meanderaw_cli_DrawModule --> module_meanderaw_cli_DrawingModule
   module_meanderaw_cli_DrawModule --> module_meanderaw_cli_EnumerationModule
   module_meanderaw_cli_DrawModule --> module_meanderaw_cli_GeometryModule
+  module_meanderaw_cli_DrawModule --> module_meanderaw_cli_MeanderawDatabaseModule
   module_meanderaw_cli_DrawModule --> module_meanderaw_cli_SymmetryModule
   module_meanderaw_cli_EmbeddedCharacteristicsModule --> module_meanderaw_cli_SubmatrixUtilitiesModule
   module_meanderaw_cli_EndCharacteristicsModule --> module_meanderaw_cli_ConnectivityModule
@@ -1625,6 +1641,8 @@ graph LR
   module_meanderaw_cli_MainModule --> module_meanderaw_cli_DrawModule
   module_meanderaw_cli_MainModule --> module_meanderaw_cli_MatrixModule
   module_meanderaw_cli_MatrixModule --> module_meanderaw_cli_CodeModule
+  module_meanderaw_cli_MeanderawDatabaseModule --> module_meanderaw_cli_DatabaseModule
+  module_meanderaw_cli_MeanderawDatabaseModule --> module_meanderaw_cli_TypeOrmModule
   module_meanderaw_cli_PatternCharacteristicsModule --> module_meanderaw_cli_CompoundUtilitiesModule
   module_meanderaw_cli_PatternCharacteristicsModule --> module_meanderaw_cli_CornerCharacteristicsModule
   module_meanderaw_cli_PatternCharacteristicsModule --> module_meanderaw_cli_CrossCharacteristicsModule
@@ -1737,6 +1755,14 @@ graph LR
   file_caelundas_cli_src_modules_aspects_compound_phase_service_unit_test_ts["caelundas-cli/src/modules/aspects/compound-phase.service.unit.test.ts"]
   file_caelundas_cli_src_modules_aspects_progressive_compound_event_service_ts["caelundas-cli/src/modules/aspects/progressive-compound-event.service.ts"]
   file_caelundas_cli_src_modules_aspects_progressive_compound_event_service_unit_test_ts["caelundas-cli/src/modules/aspects/progressive-compound-event.service.unit.test.ts"]
+  file_caelundas_cli_src_modules_caelundas_database_caelundas_database_constants_ts["caelundas-cli/src/modules/caelundas-database/caelundas-database.constants.ts"]
+  file_caelundas_cli_src_modules_caelundas_database_caelundas_database_module_ts["caelundas-cli/src/modules/caelundas-database/caelundas-database.module.ts"]
+  file_caelundas_cli_src_modules_caelundas_database_caelundas_database_service_ts["caelundas-cli/src/modules/caelundas-database/caelundas-database.service.ts"]
+  file_caelundas_cli_src_modules_caelundas_database_caelundas_database_service_unit_test_ts["caelundas-cli/src/modules/caelundas-database/caelundas-database.service.unit.test.ts"]
+  file_caelundas_cli_src_modules_caelundas_database_caelundas_database_types_ts["caelundas-cli/src/modules/caelundas-database/caelundas-database.types.ts"]
+  file_caelundas_cli_src_modules_caelundas_database_data_source_constants_ts["caelundas-cli/src/modules/caelundas-database/data-source.constants.ts"]
+  file_caelundas_cli_src_modules_caelundas_database_entities_calendar_event_entity_ts["caelundas-cli/src/modules/caelundas-database/entities/calendar-event.entity.ts"]
+  file_caelundas_cli_src_modules_caelundas_database_migrations_1791255787877_migration_ts["caelundas-cli/src/modules/caelundas-database/migrations/1791255787877-migration.ts"]
   file_caelundas_cli_src_modules_caelundas_caelundas_command_ts["caelundas-cli/src/modules/caelundas/caelundas.command.ts"]
   file_caelundas_cli_src_modules_caelundas_caelundas_command_unit_test_ts["caelundas-cli/src/modules/caelundas/caelundas.command.unit.test.ts"]
   file_caelundas_cli_src_modules_caelundas_caelundas_constants_ts["caelundas-cli/src/modules/caelundas/caelundas.constants.ts"]
@@ -1746,6 +1772,14 @@ graph LR
   file_caelundas_cli_src_modules_caelundas_caelundas_types_unit_test_ts["caelundas-cli/src/modules/caelundas/caelundas.types.unit.test.ts"]
   file_caelundas_cli_src_modules_caelundas_caelundas_utilities_ts["caelundas-cli/src/modules/caelundas/caelundas.utilities.ts"]
   file_caelundas_cli_src_modules_caelundas_symbol_caelundas_constants_ts["caelundas-cli/src/modules/caelundas/symbol-caelundas.constants.ts"]
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_constants_ts["caelundas-cli/src/modules/calendar-events/calendar-events.constants.ts"]
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_module_ts["caelundas-cli/src/modules/calendar-events/calendar-events.module.ts"]
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_integration_test_ts["caelundas-cli/src/modules/calendar-events/calendar-events.service.integration.test.ts"]
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_ts["caelundas-cli/src/modules/calendar-events/calendar-events.service.ts"]
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_unit_test_ts["caelundas-cli/src/modules/calendar-events/calendar-events.service.unit.test.ts"]
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_types_ts["caelundas-cli/src/modules/calendar-events/calendar-events.types.ts"]
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_utilities_ts["caelundas-cli/src/modules/calendar-events/calendar-events.utilities.ts"]
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_utilities_unit_test_ts["caelundas-cli/src/modules/calendar-events/calendar-events.utilities.unit.test.ts"]
   file_caelundas_cli_src_modules_calendar_calendar_constants_ts["caelundas-cli/src/modules/calendar/calendar.constants.ts"]
   file_caelundas_cli_src_modules_calendar_calendar_module_ts["caelundas-cli/src/modules/calendar/calendar.module.ts"]
   file_caelundas_cli_src_modules_calendar_calendar_service_ts["caelundas-cli/src/modules/calendar/calendar.service.ts"]
@@ -1942,6 +1976,9 @@ graph LR
   file_caelundas_cli_src_modules_twilights_twilights_types_ts["caelundas-cli/src/modules/twilights/twilights.types.ts"]
   file_caelundas_cli_src_repl_ts["caelundas-cli/src/repl.ts"]
   file_caelundas_cli_testing_aspect_test_utilities_ts["caelundas-cli/testing/aspect-test.utilities.ts"]
+  file_caelundas_cli_testing_calendar_command_types_ts["caelundas-cli/testing/calendar-command.types.ts"]
+  file_caelundas_cli_testing_calendar_command_utilities_ts["caelundas-cli/testing/calendar-command.utilities.ts"]
+  file_caelundas_cli_testing_major_aspects_utilities_ts["caelundas-cli/testing/major-aspects.utilities.ts"]
   file_caelundas_cli_testing_mocks_ts["caelundas-cli/testing/mocks.ts"]
   file_caelundas_cli_testing_setup_ts["caelundas-cli/testing/setup.ts"]
   file_caelundas_cli_vitest_config_ts["caelundas-cli/vitest.config.ts"]
@@ -3339,6 +3376,43 @@ graph LR
   file_conformetry_validation_testing_setup_ts["conformetry-validation/testing/setup.ts"]
   file_conformetry_validation_vite_config_ts["conformetry-validation/vite.config.ts"]
   file_conformetry_validation_vitest_config_ts["conformetry-validation/vitest.config.ts"]
+  file_database_callidescope_config_ts["database/callidescope.config.ts"]
+  file_database_codependix_config_ts["database/codependix.config.ts"]
+  file_database_codometer_config_ts["database/codometer.config.ts"]
+  file_database_eslint_config_ts["database/eslint.config.ts"]
+  file_database_scripts_extract_migration_sql_ts["database/scripts/extract-migration-sql.ts"]
+  file_database_src_index_ts["database/src/index.ts"]
+  file_database_src_modules_database_database_testing_utilities_integration_test_ts["database/src/modules/database/database-testing.utilities.integration.test.ts"]
+  file_database_src_modules_database_database_constants_ts["database/src/modules/database/database.constants.ts"]
+  file_database_src_modules_database_database_module_integration_test_ts["database/src/modules/database/database.module.integration.test.ts"]
+  file_database_src_modules_database_database_module_ts["database/src/modules/database/database.module.ts"]
+  file_database_src_modules_database_database_service_ts["database/src/modules/database/database.service.ts"]
+  file_database_src_modules_database_database_service_unit_test_ts["database/src/modules/database/database.service.unit.test.ts"]
+  file_database_src_modules_database_database_types_ts["database/src/modules/database/database.types.ts"]
+  file_database_src_modules_database_database_utilities_ts["database/src/modules/database/database.utilities.ts"]
+  file_database_src_modules_database_database_utilities_unit_test_ts["database/src/modules/database/database.utilities.unit.test.ts"]
+  file_database_src_modules_database_entities_creatable_entity_ts["database/src/modules/database/entities/creatable.entity.ts"]
+  file_database_src_modules_database_entities_deletable_entity_ts["database/src/modules/database/entities/deletable.entity.ts"]
+  file_database_src_modules_database_entities_identifiable_entity_ts["database/src/modules/database/entities/identifiable.entity.ts"]
+  file_database_src_modules_database_entities_updatable_entity_ts["database/src/modules/database/entities/updatable.entity.ts"]
+  file_database_src_modules_database_postgres_container_constants_ts["database/src/modules/database/postgres-container.constants.ts"]
+  file_database_src_modules_database_postgres_container_types_ts["database/src/modules/database/postgres-container.types.ts"]
+  file_database_src_modules_database_postgres_container_utilities_integration_test_ts["database/src/modules/database/postgres-container.utilities.integration.test.ts"]
+  file_database_src_modules_database_postgres_container_utilities_ts["database/src/modules/database/postgres-container.utilities.ts"]
+  file_database_testing_database_testing_types_ts["database/testing/database-testing.types.ts"]
+  file_database_testing_database_testing_utilities_ts["database/testing/database-testing.utilities.ts"]
+  file_database_testing_fixtures_fixture_database_module_ts["database/testing/fixtures/fixture-database.module.ts"]
+  file_database_testing_fixtures_gadget_entity_ts["database/testing/fixtures/gadget.entity.ts"]
+  file_database_testing_fixtures_migrations_1767225600000_create_widgets_ts["database/testing/fixtures/migrations/1767225600000-create-widgets.ts"]
+  file_database_testing_fixtures_sample_greeting_constants_ts["database/testing/fixtures/sample-greeting.constants.ts"]
+  file_database_testing_fixtures_sample_greeting_module_ts["database/testing/fixtures/sample-greeting.module.ts"]
+  file_database_testing_fixtures_sample_widgets_module_ts["database/testing/fixtures/sample-widgets.module.ts"]
+  file_database_testing_fixtures_sample_widgets_service_ts["database/testing/fixtures/sample-widgets.service.ts"]
+  file_database_testing_fixtures_widget_entity_ts["database/testing/fixtures/widget.entity.ts"]
+  file_database_testing_index_ts["database/testing/index.ts"]
+  file_database_testing_mocks_ts["database/testing/mocks.ts"]
+  file_database_testing_setup_ts["database/testing/setup.ts"]
+  file_database_vitest_config_ts["database/vitest.config.ts"]
   file_lexico_api_callidescope_config_ts["lexico-api/callidescope.config.ts"]
   file_lexico_api_codependix_config_ts["lexico-api/codependix.config.ts"]
   file_lexico_api_codometer_config_ts["lexico-api/codometer.config.ts"]
@@ -4056,16 +4130,6 @@ graph LR
   file_meanderaw_cli_src_modules_corpus_historical_corpus_8_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus-8.constants.ts"]
   file_meanderaw_cli_src_modules_corpus_historical_corpus_9_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus-9.constants.ts"]
   file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts["meanderaw-cli/src/modules/corpus/historical-corpus.constants.ts"]
-  file_meanderaw_cli_src_modules_database_database_patterns_service_integration_test_ts["meanderaw-cli/src/modules/database/database-patterns.service.integration.test.ts"]
-  file_meanderaw_cli_src_modules_database_database_constants_ts["meanderaw-cli/src/modules/database/database.constants.ts"]
-  file_meanderaw_cli_src_modules_database_database_factories_ts["meanderaw-cli/src/modules/database/database.factories.ts"]
-  file_meanderaw_cli_src_modules_database_database_module_integration_test_ts["meanderaw-cli/src/modules/database/database.module.integration.test.ts"]
-  file_meanderaw_cli_src_modules_database_database_module_ts["meanderaw-cli/src/modules/database/database.module.ts"]
-  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts["meanderaw-cli/src/modules/database/database.service.integration.test.ts"]
-  file_meanderaw_cli_src_modules_database_database_service_ts["meanderaw-cli/src/modules/database/database.service.ts"]
-  file_meanderaw_cli_src_modules_database_database_service_unit_test_ts["meanderaw-cli/src/modules/database/database.service.unit.test.ts"]
-  file_meanderaw_cli_src_modules_database_database_types_ts["meanderaw-cli/src/modules/database/database.types.ts"]
-  file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts["meanderaw-cli/src/modules/database/entities/Meander.entity.ts"]
   file_meanderaw_cli_src_modules_draw_draw_code_service_ts["meanderaw-cli/src/modules/draw/draw-code.service.ts"]
   file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts["meanderaw-cli/src/modules/draw/draw-code.service.unit.test.ts"]
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts["meanderaw-cli/src/modules/draw/draw-enumeration.service.integration.test.ts"]
@@ -4120,6 +4184,18 @@ graph LR
   file_meanderaw_cli_src_modules_matrix_matrix_service_ts["meanderaw-cli/src/modules/matrix/matrix.service.ts"]
   file_meanderaw_cli_src_modules_matrix_matrix_service_unit_test_ts["meanderaw-cli/src/modules/matrix/matrix.service.unit.test.ts"]
   file_meanderaw_cli_src_modules_matrix_matrix_types_ts["meanderaw-cli/src/modules/matrix/matrix.types.ts"]
+  file_meanderaw_cli_src_modules_meanderaw_database_data_source_constants_ts["meanderaw-cli/src/modules/meanderaw-database/data-source.constants.ts"]
+  file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts["meanderaw-cli/src/modules/meanderaw-database/entities/meander.entity.ts"]
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_patterns_service_integration_test_ts["meanderaw-cli/src/modules/meanderaw-database/meanderaw-database-patterns.service.integration.test.ts"]
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_constants_ts["meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.constants.ts"]
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts["meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.module.integration.test.ts"]
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_ts["meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.module.ts"]
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts["meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.service.integration.test.ts"]
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts["meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.service.ts"]
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_unit_test_ts["meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.service.unit.test.ts"]
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts["meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.types.ts"]
+  file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791160950069_migration_ts["meanderaw-cli/src/modules/meanderaw-database/migrations/1791160950069-migration.ts"]
+  file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791414023001_migration_ts["meanderaw-cli/src/modules/meanderaw-database/migrations/1791414023001-migration.ts"]
   file_meanderaw_cli_src_modules_svg_svg_constants_ts["meanderaw-cli/src/modules/svg/svg.constants.ts"]
   file_meanderaw_cli_src_modules_svg_svg_module_ts["meanderaw-cli/src/modules/svg/svg.module.ts"]
   file_meanderaw_cli_src_modules_svg_svg_service_ts["meanderaw-cli/src/modules/svg/svg.service.ts"]
@@ -4138,7 +4214,6 @@ graph LR
   file_meanderaw_cli_src_repl_ts["meanderaw-cli/src/repl.ts"]
   file_meanderaw_cli_src_worker_ts["meanderaw-cli/src/worker.ts"]
   file_meanderaw_cli_src_worker_unit_test_ts["meanderaw-cli/src/worker.unit.test.ts"]
-  file_meanderaw_cli_testing_database_ts["meanderaw-cli/testing/database.ts"]
   file_meanderaw_cli_testing_draw_run_budget_ts["meanderaw-cli/testing/draw-run-budget.ts"]
   file_meanderaw_cli_testing_draw_run_ts["meanderaw-cli/testing/draw-run.ts"]
   file_meanderaw_cli_testing_legacy_characteristics_ts["meanderaw-cli/testing/legacy-characteristics.ts"]
@@ -4336,14 +4411,19 @@ graph LR
   file_affirmancy_testing_test_prompts_py --> file_affirmancy_src_prompts_py
   file_affirmancy_testing_test_subjects_py --> file_affirmancy_src_subjects_py
   file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_constants_ts
+  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_caelundas_database_caelundas_database_module_ts
+  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_caelundas_database_entities_calendar_event_entity_ts
+  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_caelundas_database_migrations_1791255787877_migration_ts
   file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_calendar_calendar_service_ts
-  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_aggregation_service_ts
-  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_service_ts
-  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_coordinate_service_ts
-  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_horizon_service_ts
-  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_phenomena_service_ts
-  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_time_service_ts
+  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_service_ts
+  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_ingresses_ingresses_service_ts
+  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_input_input_constants_ts
   file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_input_input_types_ts
+  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_math_math_service_ts
+  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_src_modules_progressive_progressive_utilities_service_ts
+  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_testing_calendar_command_types_ts
+  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_testing_calendar_command_utilities_ts
+  file_caelundas_cli_src_main_end_to_end_test_ts --> file_caelundas_cli_testing_major_aspects_utilities_ts
   file_caelundas_cli_src_main_module_ts --> file_caelundas_cli_src_constants_ts
   file_caelundas_cli_src_main_module_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_module_ts
   file_caelundas_cli_src_main_ts --> file_caelundas_cli_src_main_module_ts
@@ -4479,20 +4559,34 @@ graph LR
   file_caelundas_cli_src_modules_aspects_compound_phase_service_unit_test_ts --> file_caelundas_cli_src_modules_aspects_compound_phase_service_ts
   file_caelundas_cli_src_modules_aspects_progressive_compound_event_service_ts --> file_caelundas_cli_src_modules_aspects_aspect_event_formatting_service_ts
   file_caelundas_cli_src_modules_aspects_progressive_compound_event_service_unit_test_ts --> file_caelundas_cli_src_modules_aspects_progressive_compound_event_service_ts
+  file_caelundas_cli_src_modules_caelundas_database_caelundas_database_constants_ts --> file_caelundas_cli_src_modules_caelundas_database_entities_calendar_event_entity_ts
+  file_caelundas_cli_src_modules_caelundas_database_caelundas_database_module_ts --> file_caelundas_cli_src_modules_caelundas_database_caelundas_database_constants_ts
+  file_caelundas_cli_src_modules_caelundas_database_caelundas_database_module_ts --> file_caelundas_cli_src_modules_caelundas_database_caelundas_database_service_ts
+  file_caelundas_cli_src_modules_caelundas_database_caelundas_database_module_ts --> file_caelundas_cli_src_modules_caelundas_database_entities_calendar_event_entity_ts
+  file_caelundas_cli_src_modules_caelundas_database_caelundas_database_service_unit_test_ts --> file_caelundas_cli_src_modules_caelundas_database_caelundas_database_service_ts
+  file_caelundas_cli_src_modules_caelundas_database_data_source_constants_ts --> file_caelundas_cli_src_modules_caelundas_database_caelundas_database_constants_ts
+  file_caelundas_cli_src_modules_caelundas_caelundas_command_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_service_ts
+  file_caelundas_cli_src_modules_caelundas_caelundas_command_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_utilities_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_command_ts --> file_caelundas_cli_src_modules_calendar_calendar_service_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_command_ts --> file_caelundas_cli_src_modules_input_input_service_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_command_ts --> file_caelundas_cli_src_modules_perfective_perfective_service_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_command_ts --> file_caelundas_cli_src_modules_progressive_progressive_service_ts
+  file_caelundas_cli_src_modules_caelundas_caelundas_command_unit_test_ts --> file_caelundas_cli_src_modules_caelundas_database_entities_calendar_event_entity_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_command_unit_test_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_command_ts
+  file_caelundas_cli_src_modules_caelundas_caelundas_command_unit_test_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_service_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_command_unit_test_ts --> file_caelundas_cli_src_modules_calendar_calendar_service_ts
+  file_caelundas_cli_src_modules_caelundas_caelundas_command_unit_test_ts --> file_caelundas_cli_src_modules_calendar_calendar_types_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_command_unit_test_ts --> file_caelundas_cli_src_modules_input_input_service_ts
+  file_caelundas_cli_src_modules_caelundas_caelundas_command_unit_test_ts --> file_caelundas_cli_src_modules_input_input_types_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_command_unit_test_ts --> file_caelundas_cli_src_modules_perfective_perfective_service_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_command_unit_test_ts --> file_caelundas_cli_src_modules_progressive_progressive_service_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_constants_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_utilities_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_constants_ts --> file_caelundas_cli_src_modules_caelundas_symbol_caelundas_constants_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_module_ts --> file_caelundas_cli_src_modules_annual_solar_cycle_annual_solar_cycle_module_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_module_ts --> file_caelundas_cli_src_modules_aspects_aspects_module_ts
+  file_caelundas_cli_src_modules_caelundas_caelundas_module_ts --> file_caelundas_cli_src_modules_caelundas_database_caelundas_database_module_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_module_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_command_ts
+  file_caelundas_cli_src_modules_caelundas_caelundas_module_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_module_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_module_ts --> file_caelundas_cli_src_modules_calendar_calendar_module_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_module_ts --> file_caelundas_cli_src_modules_daily_cycles_daily_cycles_module_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_module_ts --> file_caelundas_cli_src_modules_eclipses_eclipses_module_ts
@@ -4517,6 +4611,28 @@ graph LR
   file_caelundas_cli_src_modules_caelundas_caelundas_types_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_constants_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_types_ts --> file_caelundas_cli_src_modules_caelundas_symbol_caelundas_constants_ts
   file_caelundas_cli_src_modules_caelundas_caelundas_types_unit_test_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_types_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_module_ts --> file_caelundas_cli_src_modules_caelundas_database_caelundas_database_module_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_module_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_service_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_integration_test_ts --> file_caelundas_cli_src_constants_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_integration_test_ts --> file_caelundas_cli_src_modules_caelundas_database_caelundas_database_module_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_integration_test_ts --> file_caelundas_cli_src_modules_caelundas_database_entities_calendar_event_entity_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_integration_test_ts --> file_caelundas_cli_src_modules_caelundas_database_migrations_1791255787877_migration_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_integration_test_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_constants_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_integration_test_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_module_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_integration_test_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_service_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_integration_test_ts --> file_caelundas_cli_src_modules_calendar_calendar_types_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_ts --> file_caelundas_cli_src_modules_caelundas_database_entities_calendar_event_entity_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_constants_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_types_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_utilities_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_ts --> file_caelundas_cli_src_modules_calendar_calendar_types_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_unit_test_ts --> file_caelundas_cli_src_modules_caelundas_database_entities_calendar_event_entity_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_service_unit_test_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_service_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_utilities_ts --> file_caelundas_cli_src_modules_caelundas_database_entities_calendar_event_entity_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_utilities_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_constants_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_utilities_ts --> file_caelundas_cli_src_modules_calendar_calendar_types_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_utilities_unit_test_ts --> file_caelundas_cli_src_modules_caelundas_database_entities_calendar_event_entity_ts
+  file_caelundas_cli_src_modules_calendar_events_calendar_events_utilities_unit_test_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_utilities_ts
   file_caelundas_cli_src_modules_calendar_calendar_module_ts --> file_caelundas_cli_src_modules_calendar_calendar_service_ts
   file_caelundas_cli_src_modules_calendar_calendar_service_ts --> file_caelundas_cli_src_modules_calendar_calendar_types_ts
   file_caelundas_cli_src_modules_calendar_calendar_service_ts --> file_caelundas_cli_src_modules_input_input_types_ts
@@ -5399,6 +5515,25 @@ graph LR
   file_caelundas_cli_testing_aspect_test_utilities_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_types_ts
   file_caelundas_cli_testing_aspect_test_utilities_ts --> file_caelundas_cli_src_modules_calendar_calendar_types_ts
   file_caelundas_cli_testing_aspect_test_utilities_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_types_ts
+  file_caelundas_cli_testing_calendar_command_utilities_ts --> file_caelundas_cli_src_constants_ts
+  file_caelundas_cli_testing_calendar_command_utilities_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_command_ts
+  file_caelundas_cli_testing_calendar_command_utilities_ts --> file_caelundas_cli_src_modules_calendar_events_calendar_events_module_ts
+  file_caelundas_cli_testing_calendar_command_utilities_ts --> file_caelundas_cli_src_modules_calendar_calendar_module_ts
+  file_caelundas_cli_testing_calendar_command_utilities_ts --> file_caelundas_cli_src_modules_calendar_calendar_types_ts
+  file_caelundas_cli_testing_calendar_command_utilities_ts --> file_caelundas_cli_src_modules_input_input_module_ts
+  file_caelundas_cli_testing_calendar_command_utilities_ts --> file_caelundas_cli_src_modules_input_input_types_ts
+  file_caelundas_cli_testing_calendar_command_utilities_ts --> file_caelundas_cli_src_modules_perfective_perfective_service_ts
+  file_caelundas_cli_testing_calendar_command_utilities_ts --> file_caelundas_cli_src_modules_progressive_progressive_service_ts
+  file_caelundas_cli_testing_calendar_command_utilities_ts --> file_caelundas_cli_testing_calendar_command_types_ts
+  file_caelundas_cli_testing_major_aspects_utilities_ts --> file_caelundas_cli_src_modules_aspects_aspect_ephemeris_service_ts
+  file_caelundas_cli_testing_major_aspects_utilities_ts --> file_caelundas_cli_src_modules_aspects_aspects_utilities_service_ts
+  file_caelundas_cli_testing_major_aspects_utilities_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_service_ts
+  file_caelundas_cli_testing_major_aspects_utilities_ts --> file_caelundas_cli_src_modules_major_aspects_major_aspect_event_service_ts
+  file_caelundas_cli_testing_major_aspects_utilities_ts --> file_caelundas_cli_src_modules_major_aspects_major_aspect_progressive_service_ts
+  file_caelundas_cli_testing_major_aspects_utilities_ts --> file_caelundas_cli_src_modules_major_aspects_major_aspects_service_ts
+  file_caelundas_cli_testing_major_aspects_utilities_ts --> file_caelundas_cli_src_modules_math_math_service_ts
+  file_caelundas_cli_testing_major_aspects_utilities_ts --> file_caelundas_cli_src_modules_progressive_progressive_aspect_service_ts
+  file_caelundas_cli_testing_major_aspects_utilities_ts --> file_caelundas_cli_src_modules_progressive_progressive_utilities_service_ts
   file_callidescope_cli_src_main_end_to_end_test_ts --> file_callidescope_cli_src_constants_ts
   file_callidescope_cli_src_main_module_ts --> file_callidescope_cli_src_constants_ts
   file_callidescope_cli_src_main_module_ts --> file_callidescope_cli_src_modules_breadth_breadth_module_ts
@@ -7387,6 +7522,61 @@ graph LR
   file_conformetry_validation_src_modules_validation_validation_service_ts --> file_conformetry_validation_src_modules_validation_validation_types_ts
   file_conformetry_validation_src_modules_validation_validation_service_unit_test_ts --> file_conformetry_validation_src_modules_validation_validation_module_ts
   file_conformetry_validation_src_modules_validation_validation_service_unit_test_ts --> file_conformetry_validation_src_modules_validation_validation_service_ts
+  file_database_src_modules_database_database_testing_utilities_integration_test_ts --> file_database_src_modules_database_database_utilities_ts
+  file_database_src_modules_database_database_testing_utilities_integration_test_ts --> file_database_testing_database_testing_types_ts
+  file_database_src_modules_database_database_testing_utilities_integration_test_ts --> file_database_testing_database_testing_utilities_ts
+  file_database_src_modules_database_database_testing_utilities_integration_test_ts --> file_database_testing_fixtures_fixture_database_module_ts
+  file_database_src_modules_database_database_testing_utilities_integration_test_ts --> file_database_testing_fixtures_migrations_1767225600000_create_widgets_ts
+  file_database_src_modules_database_database_testing_utilities_integration_test_ts --> file_database_testing_fixtures_sample_greeting_constants_ts
+  file_database_src_modules_database_database_testing_utilities_integration_test_ts --> file_database_testing_fixtures_sample_greeting_module_ts
+  file_database_src_modules_database_database_testing_utilities_integration_test_ts --> file_database_testing_fixtures_sample_widgets_module_ts
+  file_database_src_modules_database_database_testing_utilities_integration_test_ts --> file_database_testing_fixtures_sample_widgets_service_ts
+  file_database_src_modules_database_database_testing_utilities_integration_test_ts --> file_database_testing_fixtures_widget_entity_ts
+  file_database_src_modules_database_database_module_integration_test_ts --> file_database_src_modules_database_database_module_ts
+  file_database_src_modules_database_database_module_integration_test_ts --> file_database_src_modules_database_database_utilities_ts
+  file_database_src_modules_database_database_module_integration_test_ts --> file_database_src_modules_database_postgres_container_types_ts
+  file_database_src_modules_database_database_module_integration_test_ts --> file_database_src_modules_database_postgres_container_utilities_ts
+  file_database_src_modules_database_database_module_integration_test_ts --> file_database_testing_fixtures_gadget_entity_ts
+  file_database_src_modules_database_database_module_integration_test_ts --> file_database_testing_fixtures_migrations_1767225600000_create_widgets_ts
+  file_database_src_modules_database_database_module_integration_test_ts --> file_database_testing_fixtures_widget_entity_ts
+  file_database_src_modules_database_database_module_ts --> file_database_src_modules_database_database_constants_ts
+  file_database_src_modules_database_database_module_ts --> file_database_src_modules_database_database_service_ts
+  file_database_src_modules_database_database_module_ts --> file_database_src_modules_database_database_types_ts
+  file_database_src_modules_database_database_service_ts --> file_database_src_modules_database_database_constants_ts
+  file_database_src_modules_database_database_service_ts --> file_database_src_modules_database_database_types_ts
+  file_database_src_modules_database_database_service_ts --> file_database_src_modules_database_database_utilities_ts
+  file_database_src_modules_database_database_service_unit_test_ts --> file_database_src_modules_database_database_constants_ts
+  file_database_src_modules_database_database_service_unit_test_ts --> file_database_src_modules_database_database_service_ts
+  file_database_src_modules_database_database_types_ts --> file_database_src_modules_database_database_constants_ts
+  file_database_src_modules_database_database_utilities_ts --> file_database_src_modules_database_database_constants_ts
+  file_database_src_modules_database_database_utilities_ts --> file_database_src_modules_database_database_types_ts
+  file_database_src_modules_database_database_utilities_unit_test_ts --> file_database_src_modules_database_database_types_ts
+  file_database_src_modules_database_database_utilities_unit_test_ts --> file_database_src_modules_database_database_utilities_ts
+  file_database_src_modules_database_entities_creatable_entity_ts --> file_database_src_modules_database_entities_identifiable_entity_ts
+  file_database_src_modules_database_entities_deletable_entity_ts --> file_database_src_modules_database_entities_updatable_entity_ts
+  file_database_src_modules_database_entities_updatable_entity_ts --> file_database_src_modules_database_entities_creatable_entity_ts
+  file_database_src_modules_database_postgres_container_types_ts --> file_database_src_modules_database_database_types_ts
+  file_database_src_modules_database_postgres_container_utilities_integration_test_ts --> file_database_src_modules_database_postgres_container_constants_ts
+  file_database_src_modules_database_postgres_container_utilities_integration_test_ts --> file_database_src_modules_database_postgres_container_utilities_ts
+  file_database_src_modules_database_postgres_container_utilities_integration_test_ts --> file_database_testing_fixtures_migrations_1767225600000_create_widgets_ts
+  file_database_src_modules_database_postgres_container_utilities_ts --> file_database_src_modules_database_database_types_ts
+  file_database_src_modules_database_postgres_container_utilities_ts --> file_database_src_modules_database_database_utilities_ts
+  file_database_src_modules_database_postgres_container_utilities_ts --> file_database_src_modules_database_postgres_container_constants_ts
+  file_database_src_modules_database_postgres_container_utilities_ts --> file_database_src_modules_database_postgres_container_types_ts
+  file_database_testing_database_testing_types_ts --> file_database_src_modules_database_database_types_ts
+  file_database_testing_database_testing_types_ts --> file_database_src_modules_database_postgres_container_types_ts
+  file_database_testing_database_testing_utilities_ts --> file_database_src_modules_database_database_module_ts
+  file_database_testing_database_testing_utilities_ts --> file_database_src_modules_database_postgres_container_utilities_ts
+  file_database_testing_database_testing_utilities_ts --> file_database_testing_database_testing_types_ts
+  file_database_testing_fixtures_fixture_database_module_ts --> file_database_src_modules_database_database_module_ts
+  file_database_testing_fixtures_fixture_database_module_ts --> file_database_testing_fixtures_widget_entity_ts
+  file_database_testing_fixtures_gadget_entity_ts --> file_database_src_modules_database_entities_identifiable_entity_ts
+  file_database_testing_fixtures_sample_greeting_module_ts --> file_database_testing_fixtures_sample_greeting_constants_ts
+  file_database_testing_fixtures_sample_widgets_module_ts --> file_database_testing_fixtures_fixture_database_module_ts
+  file_database_testing_fixtures_sample_widgets_module_ts --> file_database_testing_fixtures_sample_widgets_service_ts
+  file_database_testing_fixtures_sample_widgets_module_ts --> file_database_testing_fixtures_widget_entity_ts
+  file_database_testing_fixtures_sample_widgets_service_ts --> file_database_testing_fixtures_widget_entity_ts
+  file_database_testing_fixtures_widget_entity_ts --> file_database_src_modules_database_entities_deletable_entity_ts
   file_lexico_api_src_lexico_api_end_to_end_test_ts --> file_lexico_api_src_lexico_api_constants_ts
   file_lexico_api_src_lexico_api_module_ts --> file_lexico_api_src_lexico_api_constants_ts
   file_lexico_api_src_lexico_api_module_ts --> file_lexico_api_src_modules_health_health_module_ts
@@ -8038,7 +8228,6 @@ graph LR
   file_logging_src_modules_logger_logger_service_ts --> file_logging_src_modules_logger_logger_constants_ts
   file_logging_src_modules_logger_logger_service_ts --> file_logging_src_modules_logger_logger_types_ts
   file_logging_src_modules_logger_logger_service_unit_test_ts --> file_logging_src_modules_logger_logger_service_ts
-  file_meanderaw_cli_src_constants_ts --> file_meanderaw_cli_src_modules_database_database_constants_ts
   file_meanderaw_cli_src_constants_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_constants_ts
   file_meanderaw_cli_src_main_end_to_end_test_ts --> file_meanderaw_cli_src_constants_ts
   file_meanderaw_cli_src_main_module_ts --> file_meanderaw_cli_src_constants_ts
@@ -9520,24 +9709,24 @@ graph LR
   file_meanderaw_cli_src_modules_corpus_corpus_module_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
   file_meanderaw_cli_src_modules_corpus_corpus_module_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
   file_meanderaw_cli_src_modules_corpus_corpus_module_ts --> file_meanderaw_cli_src_modules_corpus_corpus_service_ts
-  file_meanderaw_cli_src_modules_corpus_corpus_module_ts --> file_meanderaw_cli_src_modules_database_database_module_ts
   file_meanderaw_cli_src_modules_corpus_corpus_module_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_module_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_ts
   file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts
   file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
   file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_corpus_corpus_constants_ts
   file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
-  file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_constants_ts
   file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
   file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts
   file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
   file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_corpus_corpus_constants_ts
   file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_corpus_corpus_service_ts
   file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
-  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
   file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_src_modules_tile_tile_types_ts
   file_meanderaw_cli_src_modules_corpus_corpus_service_unit_test_ts --> file_meanderaw_cli_testing_meanders_ts
   file_meanderaw_cli_src_modules_corpus_historical_corpus_1_constants_ts --> file_meanderaw_cli_src_modules_corpus_corpus_types_ts
@@ -9563,52 +9752,18 @@ graph LR
   file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_7_constants_ts
   file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_8_constants_ts
   file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_9_constants_ts
-  file_meanderaw_cli_src_modules_database_database_patterns_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_database_database_patterns_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_cli_src_modules_database_database_patterns_service_integration_test_ts --> file_meanderaw_cli_testing_database_ts
-  file_meanderaw_cli_src_modules_database_database_patterns_service_integration_test_ts --> file_meanderaw_cli_testing_meanders_ts
-  file_meanderaw_cli_src_modules_database_database_factories_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
-  file_meanderaw_cli_src_modules_database_database_factories_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_cli_src_modules_database_database_module_integration_test_ts --> file_meanderaw_cli_src_constants_ts
-  file_meanderaw_cli_src_modules_database_database_module_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_module_ts
-  file_meanderaw_cli_src_modules_database_database_module_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_database_database_module_integration_test_ts --> file_meanderaw_cli_testing_database_ts
-  file_meanderaw_cli_src_modules_database_database_module_integration_test_ts --> file_meanderaw_cli_testing_meanders_ts
-  file_meanderaw_cli_src_modules_database_database_module_ts --> file_meanderaw_cli_src_modules_database_database_factories_ts
-  file_meanderaw_cli_src_modules_database_database_module_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_database_database_module_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
-  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_constants_ts
-  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
-  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts --> file_meanderaw_cli_testing_database_ts
-  file_meanderaw_cli_src_modules_database_database_service_integration_test_ts --> file_meanderaw_cli_testing_meanders_ts
-  file_meanderaw_cli_src_modules_database_database_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_cli_src_modules_database_database_service_ts --> file_meanderaw_cli_src_modules_database_database_constants_ts
-  file_meanderaw_cli_src_modules_database_database_service_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
-  file_meanderaw_cli_src_modules_database_database_service_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_cli_src_modules_database_database_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_database_database_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
-  file_meanderaw_cli_src_modules_database_database_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_cli_src_modules_database_database_service_unit_test_ts --> file_meanderaw_cli_testing_meanders_ts
-  file_meanderaw_cli_src_modules_database_database_types_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_cli_src_modules_database_database_types_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
-  file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_cli_src_modules_draw_draw_code_service_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_code_service_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_cli_src_modules_draw_draw_code_service_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
   file_meanderaw_cli_src_modules_draw_draw_code_service_ts --> file_meanderaw_cli_src_modules_draw_draw_types_ts
-  file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
-  file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_code_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_code_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
   file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
   file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_code_service_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_constants_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_pool_service_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
@@ -9620,80 +9775,84 @@ graph LR
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_geometry_geometry_service_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_graph_graph_service_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791160950069_migration_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791414023001_migration_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_svg_svg_service_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_testing_database_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_meanderaw_cli_testing_draw_run_budget_ts
-  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_cli_src_modules_draw_draw_pool_service_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_pool_service_ts
   file_meanderaw_cli_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
-  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_index_service_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_drawing_drawing_service_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_geometry_geometry_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791160950069_migration_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791414023001_migration_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_svg_svg_service_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_testing_database_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_integration_test_ts --> file_meanderaw_cli_testing_meanders_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
-  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_draw_draw_index_constants_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_draw_draw_index_types_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_drawing_drawing_service_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_geometry_geometry_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_index_service_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_index_types_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_drawing_drawing_service_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_geometry_geometry_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
   file_meanderaw_cli_src_modules_draw_draw_index_service_unit_test_ts --> file_meanderaw_cli_testing_meanders_ts
   file_meanderaw_cli_src_modules_draw_draw_index_types_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
-  file_meanderaw_cli_src_modules_draw_draw_index_types_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
-  file_meanderaw_cli_src_modules_draw_draw_index_types_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_types_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_index_types_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_constants_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
-  file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_pool_service_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_service_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_drawing_drawing_module_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_integration_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_module_ts
-  file_meanderaw_cli_src_modules_draw_draw_pool_service_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_service_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_ts --> file_meanderaw_cli_src_modules_draw_draw_constants_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_ts --> file_meanderaw_cli_src_modules_draw_draw_types_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_types_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_pool_service_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_service_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_constants_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_types_ts
   file_meanderaw_cli_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_pool_service_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_record_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts
   file_meanderaw_cli_src_modules_draw_draw_record_service_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
   file_meanderaw_cli_src_modules_draw_draw_record_service_ts --> file_meanderaw_cli_src_modules_code_code_types_ts
-  file_meanderaw_cli_src_modules_draw_draw_record_service_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_record_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
   file_meanderaw_cli_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
   file_meanderaw_cli_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_service_ts
@@ -9703,15 +9862,13 @@ graph LR
   file_meanderaw_cli_src_modules_draw_draw_record_service_unit_test_ts --> file_meanderaw_cli_src_modules_drawing_drawing_module_ts
   file_meanderaw_cli_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts
   file_meanderaw_cli_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_cli_testing_database_ts
   file_meanderaw_cli_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_cli_testing_draw_run_ts
   file_meanderaw_cli_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_meanderaw_cli_testing_meanders_ts
   file_meanderaw_cli_src_modules_draw_draw_run_regeneration_command_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_run_regeneration_command_integration_test_ts --> file_meanderaw_cli_testing_database_ts
+  file_meanderaw_cli_src_modules_draw_draw_run_regeneration_command_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
   file_meanderaw_cli_src_modules_draw_draw_run_regeneration_command_integration_test_ts --> file_meanderaw_cli_testing_draw_run_ts
   file_meanderaw_cli_src_modules_draw_draw_run_command_integration_test_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts
   file_meanderaw_cli_src_modules_draw_draw_run_command_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_run_command_integration_test_ts --> file_meanderaw_cli_testing_database_ts
   file_meanderaw_cli_src_modules_draw_draw_run_command_integration_test_ts --> file_meanderaw_cli_testing_draw_run_ts
   file_meanderaw_cli_src_modules_draw_draw_worker_module_ts --> file_meanderaw_cli_src_constants_ts
   file_meanderaw_cli_src_modules_draw_draw_worker_module_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
@@ -9722,22 +9879,20 @@ graph LR
   file_meanderaw_cli_src_modules_draw_draw_worker_module_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts
   file_meanderaw_cli_src_modules_draw_draw_worker_module_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_module_ts
   file_meanderaw_cli_src_modules_draw_draw_worker_service_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_worker_service_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_worker_service_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
   file_meanderaw_cli_src_modules_draw_draw_worker_service_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_worker_service_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
   file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_record_service_ts
   file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_service_ts
   file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
   file_meanderaw_cli_src_modules_draw_draw_worker_service_unit_test_ts --> file_meanderaw_cli_testing_tiles_ts
   file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
   file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
   file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_corpus_corpus_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
   file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts
   file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_draw_draw_index_service_ts
@@ -9747,30 +9902,32 @@ graph LR
   file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_geometry_geometry_service_ts
   file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_graph_graph_service_ts
   file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791160950069_migration_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791414023001_migration_ts
   file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_svg_svg_service_ts
   file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_command_integration_test_ts --> file_meanderaw_cli_testing_database_ts
   file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_code_code_constants_ts
   file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_corpus_corpus_service_ts
   file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_corpus_historical_corpus_constants_ts
-  file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
   file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
   file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts
   file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_draw_draw_index_service_ts
   file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_draw_draw_constants_ts
   file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_draw_draw_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
   file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_corpus_corpus_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
   file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts
   file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_index_service_ts
   file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_index_types_ts
   file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_command_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_draw_draw_command_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
   file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
   file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
   file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_corpus_corpus_module_ts
-  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_database_database_module_ts
   file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_draw_draw_code_service_ts
   file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts
   file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_draw_draw_index_service_ts
@@ -9781,8 +9938,9 @@ graph LR
   file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_drawing_drawing_module_ts
   file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts
   file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_geometry_geometry_module_ts
+  file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_ts
   file_meanderaw_cli_src_modules_draw_draw_module_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_module_ts
-  file_meanderaw_cli_src_modules_draw_draw_types_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_src_modules_draw_draw_types_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_src_modules_drawing_drawing_module_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
   file_meanderaw_cli_src_modules_drawing_drawing_module_ts --> file_meanderaw_cli_src_modules_drawing_drawing_service_ts
   file_meanderaw_cli_src_modules_drawing_drawing_module_ts --> file_meanderaw_cli_src_modules_geometry_geometry_module_ts
@@ -9807,10 +9965,10 @@ graph LR
   file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_module_ts
   file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts --> file_meanderaw_cli_src_modules_tile_tile_module_ts
   file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
-  file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
   file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_constants_ts
   file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_types_ts
   file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_cli_src_modules_enumeration_tile_enumeration_service_ts
+  file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_constants_ts
   file_meanderaw_cli_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_code_code_service_ts
   file_meanderaw_cli_src_modules_enumeration_enumeration_service_unit_test_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts
@@ -9852,6 +10010,43 @@ graph LR
   file_meanderaw_cli_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_cli_src_modules_matrix_matrix_types_ts
   file_meanderaw_cli_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_service_ts
   file_meanderaw_cli_src_modules_matrix_matrix_service_unit_test_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_data_source_constants_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_constants_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_patterns_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_patterns_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_patterns_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_patterns_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791160950069_migration_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_patterns_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791414023001_migration_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_patterns_service_integration_test_ts --> file_meanderaw_cli_testing_meanders_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts --> file_meanderaw_cli_src_constants_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791160950069_migration_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791414023001_migration_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts --> file_meanderaw_cli_testing_meanders_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_constants_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791160950069_migration_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791414023001_migration_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_meanderaw_cli_testing_meanders_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_constants_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_service_unit_test_ts --> file_meanderaw_cli_testing_meanders_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
+  file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
   file_meanderaw_cli_src_modules_svg_svg_module_ts --> file_meanderaw_cli_src_modules_svg_svg_service_ts
   file_meanderaw_cli_src_modules_svg_svg_service_ts --> file_meanderaw_cli_src_modules_svg_svg_constants_ts
   file_meanderaw_cli_src_modules_svg_svg_service_ts --> file_meanderaw_cli_src_modules_svg_svg_types_ts
@@ -9875,15 +10070,12 @@ graph LR
   file_meanderaw_cli_src_worker_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_module_ts
   file_meanderaw_cli_src_worker_ts --> file_meanderaw_cli_src_modules_draw_draw_worker_service_ts
   file_meanderaw_cli_src_worker_ts --> file_meanderaw_cli_src_modules_draw_draw_types_ts
-  file_meanderaw_cli_src_worker_unit_test_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
   file_meanderaw_cli_src_worker_unit_test_ts --> file_meanderaw_cli_src_modules_draw_draw_types_ts
-  file_meanderaw_cli_testing_database_ts --> file_meanderaw_cli_src_modules_database_database_factories_ts
+  file_meanderaw_cli_src_worker_unit_test_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_constants_ts
   file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_module_ts
   file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_code_code_module_ts
   file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_corpus_corpus_service_ts
-  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_database_database_service_ts
-  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_database_entities_Meander_entity_ts
   file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_draw_draw_enumeration_service_ts
   file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_draw_draw_index_service_ts
   file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_draw_draw_pool_service_ts
@@ -9894,8 +10086,11 @@ graph LR
   file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_module_ts
   file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_enumeration_enumeration_service_ts
   file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_geometry_geometry_module_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_module_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791160950069_migration_ts
+  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_meanderaw_database_migrations_1791414023001_migration_ts
   file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_src_modules_symmetry_symmetry_module_ts
-  file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_testing_database_ts
   file_meanderaw_cli_testing_draw_run_ts --> file_meanderaw_cli_testing_draw_run_budget_ts
   file_meanderaw_cli_testing_letters_ts --> file_meanderaw_cli_src_modules_characteristics_characteristic_context_service_ts
   file_meanderaw_cli_testing_letters_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
@@ -9908,7 +10103,7 @@ graph LR
   file_meanderaw_cli_testing_meanders_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_constants_ts
   file_meanderaw_cli_testing_meanders_ts --> file_meanderaw_cli_src_modules_characteristics_characteristics_types_ts
   file_meanderaw_cli_testing_meanders_ts --> file_meanderaw_cli_src_modules_code_code_types_ts
-  file_meanderaw_cli_testing_meanders_ts --> file_meanderaw_cli_src_modules_database_database_types_ts
+  file_meanderaw_cli_testing_meanders_ts --> file_meanderaw_cli_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_meanderaw_cli_testing_tiles_ts --> file_meanderaw_cli_src_modules_tile_tile_service_ts
   file_meanderaw_cli_testing_tiles_ts --> file_meanderaw_cli_src_modules_tile_tile_types_ts
   file_synchronization_src_main_end_to_end_test_ts --> file_synchronization_src_constants_ts
@@ -10283,8 +10478,8 @@ Repository statistics measured by [codometer](packages/ic-suite/codometer/codome
 
 ### Repository
 
-![Lines of Code](https://img.shields.io/badge/Lines_of_Code-6167-22c55e?style=flat-square)
-![Repository Size](https://img.shields.io/badge/Repository_Size-2.16_MB-6b7280?style=flat-square)
+![Lines of Code](https://img.shields.io/badge/Lines_of_Code-6173-22c55e?style=flat-square)
+![Repository Size](https://img.shields.io/badge/Repository_Size-2.17_MB-6b7280?style=flat-square)
 ![Folders](https://img.shields.io/badge/Folders-76-4a4a4a?style=flat-square)
 ![Source Files](https://img.shields.io/badge/Source_Files-24-3178c6?style=flat-square)
 
@@ -10311,8 +10506,8 @@ Repository statistics measured by [codometer](packages/ic-suite/codometer/codome
 ![Constants](https://img.shields.io/badge/Constants-91-dc2626?style=flat-square)
 ![Imports](https://img.shields.io/badge/Imports-51-0284c7?style=flat-square)
 ![Exported Symbols](https://img.shields.io/badge/Exported_Symbols-12-ea580c?style=flat-square)
-![Comments](https://img.shields.io/badge/Comments-684-64748b?style=flat-square)
-![Comment Lines](https://img.shields.io/badge/Comment_Lines-1407-475569?style=flat-square)
+![Comments](https://img.shields.io/badge/Comments-686-64748b?style=flat-square)
+![Comment Lines](https://img.shields.io/badge/Comment_Lines-1411-475569?style=flat-square)
 ![TODO Comments](https://img.shields.io/badge/TODO_Comments-0-ca8a04?style=flat-square)
 
 ### Python
@@ -10333,30 +10528,30 @@ Repository statistics measured by [codometer](packages/ic-suite/codometer/codome
 ### JSON
 
 ![JSON Files](https://img.shields.io/badge/JSON_Files-23-a16207?style=flat-square)
-![JSON Lines](https://img.shields.io/badge/JSON_Lines-5967-ca8a04?style=flat-square)
-![JSON Objects](https://img.shields.io/badge/JSON_Objects-773-7c3aed?style=flat-square)
+![JSON Lines](https://img.shields.io/badge/JSON_Lines-5985-ca8a04?style=flat-square)
+![JSON Objects](https://img.shields.io/badge/JSON_Objects-780-7c3aed?style=flat-square)
 ![JSON Arrays](https://img.shields.io/badge/JSON_Arrays-313-8b5cf6?style=flat-square)
-![JSON Properties](https://img.shields.io/badge/JSON_Properties-1927-0284c7?style=flat-square)
-![JSON Strings](https://img.shields.io/badge/JSON_Strings-1962-16a34a?style=flat-square)
+![JSON Properties](https://img.shields.io/badge/JSON_Properties-1938-0284c7?style=flat-square)
+![JSON Strings](https://img.shields.io/badge/JSON_Strings-1964-16a34a?style=flat-square)
 ![JSON Numbers](https://img.shields.io/badge/JSON_Numbers-38-059669?style=flat-square)
-![JSON Booleans](https://img.shields.io/badge/JSON_Booleans-139-0ea5e9?style=flat-square)
+![JSON Booleans](https://img.shields.io/badge/JSON_Booleans-141-0ea5e9?style=flat-square)
 ![JSON Nulls](https://img.shields.io/badge/JSON_Nulls-0-64748b?style=flat-square)
 ![JSON Items](https://img.shields.io/badge/JSON_Items-1282-475569?style=flat-square)
-![JSON Nodes](https://img.shields.io/badge/JSON_Nodes-3225-dc2626?style=flat-square)
+![JSON Nodes](https://img.shields.io/badge/JSON_Nodes-3236-dc2626?style=flat-square)
 ![JSON Max Depth](https://img.shields.io/badge/JSON_Max_Depth-11-ea580c?style=flat-square)
 
 ### YAML
 
 ![YAML Files](https://img.shields.io/badge/YAML_Files-23-cb171e?style=flat-square)
-![YAML Lines](https://img.shields.io/badge/YAML_Lines-3106-e34c26?style=flat-square)
+![YAML Lines](https://img.shields.io/badge/YAML_Lines-3137-e34c26?style=flat-square)
 ![YAML Documents](https://img.shields.io/badge/YAML_Documents-23-f97316?style=flat-square)
-![YAML Mappings](https://img.shields.io/badge/YAML_Mappings-441-7c3aed?style=flat-square)
+![YAML Mappings](https://img.shields.io/badge/YAML_Mappings-443-7c3aed?style=flat-square)
 ![YAML Sequences](https://img.shields.io/badge/YAML_Sequences-91-8b5cf6?style=flat-square)
-![YAML Keys](https://img.shields.io/badge/YAML_Keys-1516-0284c7?style=flat-square)
-![YAML Scalars](https://img.shields.io/badge/YAML_Scalars-3025-16a34a?style=flat-square)
+![YAML Keys](https://img.shields.io/badge/YAML_Keys-1521-0284c7?style=flat-square)
+![YAML Scalars](https://img.shields.io/badge/YAML_Scalars-3034-16a34a?style=flat-square)
 ![YAML Anchors](https://img.shields.io/badge/YAML_Anchors-0-059669?style=flat-square)
 ![YAML Aliases](https://img.shields.io/badge/YAML_Aliases-0-10b981?style=flat-square)
-![YAML Comments](https://img.shields.io/badge/YAML_Comments-493-64748b?style=flat-square)
+![YAML Comments](https://img.shields.io/badge/YAML_Comments-508-64748b?style=flat-square)
 ![YAML Max Depth](https://img.shields.io/badge/YAML_Max_Depth-8-ea580c?style=flat-square)
 
 ### TOML
@@ -10371,17 +10566,17 @@ Repository statistics measured by [codometer](packages/ic-suite/codometer/codome
 
 ### Shell
 
-![Shell Files](https://img.shields.io/badge/Shell_Files-45-89e051?style=flat-square)
-![Shell Lines](https://img.shields.io/badge/Shell_Lines-3095-4eaa25?style=flat-square)
-![Shell Functions](https://img.shields.io/badge/Shell_Functions-37-16a34a?style=flat-square)
-![Shell Variables](https://img.shields.io/badge/Shell_Variables-274-0284c7?style=flat-square)
+![Shell Files](https://img.shields.io/badge/Shell_Files-48-89e051?style=flat-square)
+![Shell Lines](https://img.shields.io/badge/Shell_Lines-3359-4eaa25?style=flat-square)
+![Shell Functions](https://img.shields.io/badge/Shell_Functions-47-16a34a?style=flat-square)
+![Shell Variables](https://img.shields.io/badge/Shell_Variables-300-0284c7?style=flat-square)
 ![Shell Exports](https://img.shields.io/badge/Shell_Exports-11-ea580c?style=flat-square)
-![Shell Conditionals](https://img.shields.io/badge/Shell_Conditionals-198-7c3aed?style=flat-square)
+![Shell Conditionals](https://img.shields.io/badge/Shell_Conditionals-213-7c3aed?style=flat-square)
 ![Shell Loops](https://img.shields.io/badge/Shell_Loops-33-8b5cf6?style=flat-square)
-![Shell Pipelines](https://img.shields.io/badge/Shell_Pipelines-115-059669?style=flat-square)
-![Shebangs](https://img.shields.io/badge/Shebangs-45-6b7280?style=flat-square)
-![Shell Comments](https://img.shields.io/badge/Shell_Comments-749-64748b?style=flat-square)
-![Shell Comment Lines](https://img.shields.io/badge/Shell_Comment_Lines-749-475569?style=flat-square)
+![Shell Pipelines](https://img.shields.io/badge/Shell_Pipelines-118-059669?style=flat-square)
+![Shebangs](https://img.shields.io/badge/Shebangs-48-6b7280?style=flat-square)
+![Shell Comments](https://img.shields.io/badge/Shell_Comments-843-64748b?style=flat-square)
+![Shell Comment Lines](https://img.shields.io/badge/Shell_Comment_Lines-843-475569?style=flat-square)
 
 ### SQL
 
@@ -10468,23 +10663,23 @@ Repository statistics measured by [codometer](packages/ic-suite/codometer/codome
 ### Markdown
 
 ![Markdown Files](https://img.shields.io/badge/Markdown_Files-111-083fa1?style=flat-square)
-![Markdown Lines](https://img.shields.io/badge/Markdown_Lines-18828-1f6feb?style=flat-square)
+![Markdown Lines](https://img.shields.io/badge/Markdown_Lines-18838-1f6feb?style=flat-square)
 ![H1](https://img.shields.io/badge/H1-110-7c3aed?style=flat-square)
 ![H2](https://img.shields.io/badge/H2-653-8b5cf6?style=flat-square)
 ![H3](https://img.shields.io/badge/H3-526-a78bfa?style=flat-square)
 ![H4](https://img.shields.io/badge/H4-78-c4b5fd?style=flat-square)
 ![H5](https://img.shields.io/badge/H5-0-ddd6fe?style=flat-square)
 ![H6](https://img.shields.io/badge/H6-0-ede9fe?style=flat-square)
-![Paragraphs](https://img.shields.io/badge/Paragraphs-5365-64748b?style=flat-square)
+![Paragraphs](https://img.shields.io/badge/Paragraphs-5367-64748b?style=flat-square)
 ![Lists](https://img.shields.io/badge/Lists-850-16a34a?style=flat-square)
-![List Items](https://img.shields.io/badge/List_Items-4124-22c55e?style=flat-square)
+![List Items](https://img.shields.io/badge/List_Items-4125-22c55e?style=flat-square)
 ![Task List Items](https://img.shields.io/badge/Task_List_Items-57-4ade80?style=flat-square)
 ![Tables](https://img.shields.io/badge/Tables-223-0284c7?style=flat-square)
-![Table Rows](https://img.shields.io/badge/Table_Rows-1911-0ea5e9?style=flat-square)
-![Links](https://img.shields.io/badge/Links-683-059669?style=flat-square)
+![Table Rows](https://img.shields.io/badge/Table_Rows-1916-0ea5e9?style=flat-square)
+![Links](https://img.shields.io/badge/Links-684-059669?style=flat-square)
 ![Images](https://img.shields.io/badge/Images-22-10b981?style=flat-square)
 ![Code Blocks](https://img.shields.io/badge/Code_Blocks-402-dc2626?style=flat-square)
-![Inline Code](https://img.shields.io/badge/Inline_Code-10475-ef4444?style=flat-square)
+![Inline Code](https://img.shields.io/badge/Inline_Code-10493-ef4444?style=flat-square)
 ![Block Quotes](https://img.shields.io/badge/Block_Quotes-21-ca8a04?style=flat-square)
 ![Thematic Breaks](https://img.shields.io/badge/Thematic_Breaks-28-a16207?style=flat-square)
 <!-- codometer:end -->
@@ -10497,13 +10692,13 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 
 | Measure | Value |
 | --- | --- |
-| Callables | 5922 |
-| Files | 1690 |
-| Calls traced | 6226 |
-| Call stacks | 1864 |
+| Callables | 5932 |
+| Files | 1716 |
+| Calls traced | 6220 |
+| Call stacks | 1874 |
 | Deepest stack | 17 |
 | Stacks through recursion | 12 |
-| Unfollowable calls | 357 |
+| Unfollowable calls | 356 |
 
 ### Projects
 
@@ -10512,8 +10707,9 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 | `applications/caelundas/caelundas-cli` | 16 | 16 | 0 | 12 |
 | `applications/lexico` | 9 | 9 | 0 | 9 |
 | `applications/lexico-ingestion` | 17 | 17 | 0 | 8 |
-| `applications/meanderaw/meanderaw-cli` | 16 | 16 | 0 | 13 |
+| `applications/meanderaw/meanderaw-cli` | 16 | 16 | 0 | 12 |
 | `packages/components-web` | 3 | 3 | 0 | 7 |
+| `packages/database` | 4 | 4 | 0 | 4 |
 | `packages/ic-suite/callidescope/callidescope-cli` | 15 | 15 | 0 | 10 |
 | `packages/ic-suite/callidescope/callidescope-nx` | 17 | 17 | 0 | 7 |
 | `packages/ic-suite/codependix/codependix-boundaries` | 12 | 12 | 0 | 7 |
@@ -10554,7 +10750,7 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 | Headroom | Projects |
 | --- | --- |
 | over limit | 0 |
-| 0 — at limit | 17 |
+| 0 — at limit | 18 |
 | 1 | 0 |
 | 2–3 | 2 |
 | 4+ | 10 |

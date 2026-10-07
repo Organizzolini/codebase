@@ -2,23 +2,37 @@
 
 ```bash
 nx run codebase:postgres-container:up
+nx run meanderaw-cli:migration:run
 nx run meanderaw-cli:start
 ```
 
-The local Postgres container creates the `meanderaw_development` database, and the schema of
-the same name inside it, the first time its volume starts empty; on a volume that predates
-that, `nx run codebase:postgres-container:recreate` builds it, discarding what the volume
-held. The connection is the `MEANDERAW_POSTGRES_HOST`, `MEANDERAW_POSTGRES_PORT`,
-`MEANDERAW_POSTGRES_USER`, `MEANDERAW_POSTGRES_PASSWORD`, `MEANDERAW_POSTGRES_DB`, and
+Meanderaw follows the workspace's shared Postgres convention, from
+[`@codebase/database`](../../../packages/database/README.md): the `meanderaw_development`
+database holds a `meanderaw` schema, both owned by the `meanderaw_username` role. The local
+Postgres container creates all three the first time its volume starts empty; on a volume that
+predates that, [ADR 0022](../../../docs/adr/0022-give-every-database-project-its-own-database-schema-and-role.md)
+describes how to add them without discarding what the volume holds.
+
+The `meanders` table is built by a migration, never by synchronizing. Run the migrations
+before the first draw run, and again whenever a new one lands:
+
+```bash
+nx run meanderaw-cli:migration:run        # Build or update the meanders table
+nx run meanderaw-cli:migration:generate   # After editing the Meander entity, write the next migration
+```
+
+The connection is the `MEANDERAW_POSTGRES_HOST`, `MEANDERAW_POSTGRES_PORT`,
+`MEANDERAW_POSTGRES_USERNAME`, `MEANDERAW_POSTGRES_PASSWORD`, `MEANDERAW_POSTGRES_DATABASE`, and
 `MEANDERAW_POSTGRES_SCHEMA` variables, set in this project's `.env` (copied from
-`.env.default`) and defaulting to the local container — `meanderaw_development` for the last
-two. The `MEANDERAW_` prefix keeps them apart from the unprefixed `MEANDERAW_POSTGRES_*` variables the
-workspace root's `.env` sets for lexico, which Nx also loads into every task.
+`.env.default`) and defaulting to the local container's `meanderaw_username` role, its
+`meanderaw_development` database, and its `meanderaw` schema. The `MEANDERAW_` prefix keeps
+them apart from the unprefixed `POSTGRES_*` variables the workspace root's `.env` sets as the
+container's admin login, which Nx also loads into every task and which meanderaw never reads.
 
 ## 🖌️ One Command
 
 Meanderaw has one command, `draw`, and it is the default — so `nx run meanderaw-cli:start` runs it.
-Both of its modes write the Postgres database `MEANDERAW_POSTGRES_DB` names, and which one runs is
+Both of its modes write the Postgres database `MEANDERAW_POSTGRES_DATABASE` names, and which one runs is
 decided by whether a Code was named:
 
 | Invocation | What it does |
@@ -104,7 +118,7 @@ SQL — a bare `->>` is `NULL` for a missing key, and silently drops that row fr
 on zero or less-than:
 
 ```sql
-SELECT code FROM meanderaw_development.meanders -- the default MEANDERAW_POSTGRES_SCHEMA
+SELECT code FROM meanderaw.meanders -- the default MEANDERAW_POSTGRES_SCHEMA
 WHERE COALESCE((characteristics ->> 'crossCount')::numeric, 0) = 0
   AND characteristics @> '{"isBars": true}';
 ```
@@ -146,7 +160,7 @@ the directory alone.
 
 Every meander shares a set of properties that describe how it looks. The charter was
 measured over the ten generator families this project once drew, which are retired — see
-[ADR 0022](../../../docs/adr/0022-filter-meanders-by-characteristics-alone.md) — so the
+[ADR 0023](../../../docs/adr/0023-filter-meanders-by-characteristics-alone.md) — so the
 family names below record where each measurement came from. Three of those properties — orthogonality, space-filling channels, and the band
 model — are **guaranteed by construction**: no assignment of direction bits to a lattice
 can violate them, so no family gates them and none ever could. The other two — branching
@@ -313,13 +327,13 @@ Call stacks traced through `applications/meanderaw/meanderaw-cli`, deepest first
 
 | Measure | Value |
 | --- | --- |
-| Callables | 857 |
-| Files | 256 |
-| Calls traced | 751 |
-| Call stacks | 119 |
+| Callables | 819 |
+| Files | 251 |
+| Calls traced | 700 |
+| Call stacks | 112 |
 | Deepest stack | 16 |
 | Stacks through recursion | 0 |
-| Unfollowable calls | 26 |
+| Unfollowable calls | 25 |
 
 ### Limits
 
@@ -339,16 +353,16 @@ What this project is judged against, as declared in its own `callidescope.config
    ↳ Draws every meander into the database when no Code is named, or draws the one `--code` names.
   └─> DrawCommand.drawAll(): Promise<void> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw.command.ts:109]
      ↳ Draws every meander the application can draw, as rows in the local database.
-    └─> DrawEnumerationService.drawAll(): Promise<number> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-enumeration.service.ts:51]
+    └─> DrawEnumerationService.drawAll(): Promise<number> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-enumeration.service.ts:45]
        ↳ Every shape the budget admits, drawn and written — which is what `draw` with no drawing named now does.
-      └─> DrawEnumerationService.persist(shapes: readonly MeanderShape[]): Promise<number> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-enumeration.service.ts:73]
+      └─> DrawEnumerationService.persist(shapes: readonly MeanderShape[]): Promise<number> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-enumeration.service.ts:67]
          ↳ Draws the shapes named and writes every meander they hold, a batch of rows at a time as the pool hands them back,…
-        └─> DrawPoolService.batches(shape: MeanderShape): AsyncGenerator<readonly MeanderRecord[]> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:186]
+        └─> DrawPoolService.batches(shape: MeanderShape): AsyncGenerator<readonly MeanderRecord[]> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:189]
            ↳ Every meander of one shape as the rows the database holds for them, a batch at a time, one per symmetry class, in the…
-          └─> DrawWorkerService.records(shape: MeanderShape, masks: readonly number[]): MeanderRecord[] [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-worker.service.ts:48]
+          └─> DrawWorkerService.records(shape: MeanderShape, masks: readonly number[]): MeanderRecord[] [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-worker.service.ts:51]
              ↳ Every mask's meander as an enumerated row, in the order the masks were given.
-            └─> DrawWorkerService.map(…)(mask: number): MeanderRecord [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-worker.service.ts:49]
-              └─> DrawRecordService.record(…): MeanderRecord [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-record.service.ts:50]
+            └─> DrawWorkerService.map(…)(mask: number): MeanderRecord [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-worker.service.ts:52]
+              └─> DrawRecordService.record(…): MeanderRecord [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-record.service.ts:45]
                  ↳ The row one Code describes at one shape, every field of it derived from that Code alone.
                 └─> CharacteristicsService.compute(code: Code | CodeObject): Characteristics [applications/meanderaw/meanderaw-cli/src/modules/characteristics/characteristics.service.ts:219]
                    ↳ Every characteristic of a Code's repeating unit, computed by every evaluator from one shared context.
@@ -420,7 +434,7 @@ What this project is judged against, as declared in its own `callidescope.config
 ```
 
 <details>
-<summary>116 more call stacks</summary>
+<summary>109 more call stacks</summary>
 
 **4. `BehArabicLetterCharacteristicsService.constructor`** — depth ≥ 14 · orphan-root
 
@@ -844,10 +858,10 @@ What this project is judged against, as declared in its own `callidescope.config
 🚀 bootstrap(): Promise<void> [applications/meanderaw/meanderaw-cli/src/worker.ts:24]
    ↳ The entry point of one draw run worker thread, spawned by `DrawPoolService`: boots `DrawWorkerModule` once, then draws…
   └─> on(…)(task: DrawWorkerTask): void [applications/meanderaw/meanderaw-cli/src/worker.ts:36]
-    └─> DrawWorkerService.records(shape: MeanderShape, masks: readonly number[]): MeanderRecord[] [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-worker.service.ts:48]
+    └─> DrawWorkerService.records(shape: MeanderShape, masks: readonly number[]): MeanderRecord[] [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-worker.service.ts:51]
        ↳ Every mask's meander as an enumerated row, in the order the masks were given.
-      └─> DrawWorkerService.map(…)(mask: number): MeanderRecord [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-worker.service.ts:49]
-        └─> DrawRecordService.record(…): MeanderRecord [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-record.service.ts:50]
+      └─> DrawWorkerService.map(…)(mask: number): MeanderRecord [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-worker.service.ts:52]
+        └─> DrawRecordService.record(…): MeanderRecord [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-record.service.ts:45]
            ↳ The row one Code describes at one shape, every field of it derived from that Code alone.
           └─> CharacteristicsService.compute(code: Code | CodeObject): Characteristics [applications/meanderaw/meanderaw-cli/src/modules/characteristics/characteristics.service.ts:219]
              ↳ Every characteristic of a Code's repeating unit, computed by every evaluator from one shared context.
@@ -1970,38 +1984,10 @@ What this project is judged against, as declared in its own `callidescope.config
                       └─> LetterUtilitiesService.reduce(…)(sum: number, arm: number): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-utilities.service.ts:203]
 ```
 
-**69. `DrawIndexService.render`** — depth ≥ 12 · orphan-root
+**69. `EnumerationService.enumerate`** — depth ≥ 11 · orphan-root
 
 ```text
-🚀 DrawIndexService.render(meanders: readonly Meander[]): Promise<Record<string, string>> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:410]
-   ↳ The same pages from rows already in memory, each read into one string — the seam a test renders a handful of meanders…
-  └─> DrawIndexService.pages(source: MeanderPageSource): Record<string, MeanderPageContent> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:247]
-     ↳ Every page `source`'s rows make, each produced lazily as it is read.
-    └─> DrawIndexService.familyPage(…): AsyncGenerator<string, any, any> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:135]
-       ↳ One family's page, a batch of rows at a time.
-      └─> DrawIndexService.namedSection(label: string, total: number, rows: MeanderRowBatches): AsyncGenerator<string> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:226]
-         ↳ A named family's one section: its count, then every figure in one grid.
-        └─> DrawIndexService.map(…)(meander: Meander): string [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:238]
-          └─> DrawIndexService.renderFigure(meander: Meander): string [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:313]
-             ↳ Renders one meander's own figure: the band its tile repeats into, and its caption.
-            └─> DrawIndexService.renderBand(meander: Meander): string [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:293]
-               ↳ Lays one row's tile out along a band of `BAND_REPEAT_COUNT` repeats.
-              └─> DrawingService.render(code: CodeObject): string [applications/meanderaw/meanderaw-cli/src/modules/drawing/drawing.service.ts:125]
-                 ↳ Renders a Code to a complete SVG document: `rows` grid units tall — the same fixed canvas height every family draws…
-                └─> DrawingService.codeSegments(geometry: Geometry, code: CodeObject): string [applications/meanderaw/meanderaw-cli/src/modules/drawing/drawing.service.ts:54]
-                   ↳ The path data every point of the Code draws, in reading order.
-                  └─> DrawingService.pointSegments(geometry: Geometry, point: Directions, origin: CanvasPoint): string [applications/meanderaw/meanderaw-cli/src/modules/drawing/drawing.service.ts:95]
-                     ↳ The path data one point draws: the edges it owns, or a dot where it owns none.
-                    └─> DrawingService.format(value: number): string [applications/meanderaw/meanderaw-cli/src/modules/drawing/drawing.service.ts:85]
-                       ↳ Rounds and trims one pixel coordinate for interpolation into path data.
-                      └─> GeometryService.formatCoordinate(value: number): string [applications/meanderaw/meanderaw-cli/src/modules/geometry/geometry.service.ts:63]
-                         ↳ Rounds a coordinate to five decimal places and trims any trailing zeros.
-```
-
-**70. `EnumerationService.enumerate`** — depth ≥ 11 · orphan-root
-
-```text
-🚀 EnumerationService.enumerate(shape: MeanderShape): EnumeratedMeander[] [applications/meanderaw/meanderaw-cli/src/modules/enumeration/enumeration.service.ts:99]
+🚀 EnumerationService.enumerate(shape: MeanderShape): EnumeratedMeander[] [applications/meanderaw/meanderaw-cli/src/modules/enumeration/enumeration.service.ts:98]
    ↳ Every structurally distinct meander of one shape, one per symmetry class, each spelled by the Code of the class's own…
   └─> TileEnumerationService.enumerate(rows: number, columns: number): Tile[] [applications/meanderaw/meanderaw-cli/src/modules/enumeration/tile-enumeration.service.ts:165]
      ↳ Every distinct tile of the given size, one per symmetry class, ordered by canonical edge key so the draw run is stable…
@@ -2020,53 +2006,34 @@ What this project is judged against, as declared in its own `callidescope.config
                     └─> TileService.from(…)(): boolean [applications/meanderaw/meanderaw-cli/src/modules/tile/tile.service.ts:147]
 ```
 
-**71. `IsBoxesCharacteristicService.compute`** — depth ≥ 10 · orphan-root
+**70. `DrawIndexService.render`** — depth ≥ 11 · orphan-root
 
 ```text
-🚀 IsBoxesCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-boxes-characteristic.service.ts:56]
-   ↳ Checks the unit is a tile-crossing open arc at pitch `rows - 1` with its ends apart and no waterfall.
-  └─> IsWaterfallsCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-waterfalls-characteristic.service.ts:84]
-     ↳ Checks the unit is dot-free open strands stepping down across the tile edge to the border rules, ends apart, with no…
-    └─> IsWaterfallsCharacteristicService.isDotFreeOpenStrandSet(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-waterfalls-characteristic.service.ts:71]
-       ↳ Whether the ink is junction-free, dot-free, and acyclic, with two free ends per component.
-      └─> BettiNumber1CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-1-count-characteristic.service.ts:46]
-         ↳ Counts the independent loops of the wrapped repeat graph.
-        └─> ConnectivityService.connectivity(matrix: Matrix, unwrapped?: boolean): Connectivity [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133]
-           ↳ How many pieces one repeat's ink falls into, how many independent loops it closes, and how many of its points…
-          └─> ConnectivityService.adjacency(matrix: Matrix, edges: readonly CodeEdge[]): InkAdjacency<string> [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:61]
-             ↳ The Matrix's edges as an {@link InkAdjacency}, which is all {@link GraphService.components} needs of it.
-            └─> ConnectivityService.nodes(matrix: Matrix): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:114]
-               ↳ Every point the Matrix spells, inked dots included — a point on no edge at all is a component of its own.
-              └─> ConnectivityService.from(…)(_unused: unknown, row: number): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:117]
-                └─> ConnectivityService.from(…)(_column: unknown, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:118]
-                  └─> ConnectivityService.key(row: number, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:109]
-                     ↳ One point's identity in the graph, which is its position and nothing else.
+🚀 DrawIndexService.render(meanders: readonly Meander[]): Promise<Record<string, string>> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:363]
+   ↳ The same pages from rows already in memory, each read into one string — the seam a test renders a handful of meanders…
+  └─> DrawIndexService.pages(source: MeanderPageSource): Record<string, MeanderPageContent> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:183]
+     ↳ Every page `source`'s rows make, each produced lazily as it is read.
+    └─> DrawIndexService.patternPage(…): AsyncGenerator<string, any, any> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:213]
+       ↳ One pattern's page: every meander it holds for, one grid per shape, a batch of rows at a time.
+      └─> DrawIndexService.shapeSections(…): AsyncGenerator<string, any, any> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:301]
+         ↳ A pattern's one section: one grid per shape, each with its own count.
+        └─> DrawIndexService.renderFigure(meander: Meander): string [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:264]
+           ↳ Renders one meander's own figure: the band its tile repeats into, and its caption.
+          └─> DrawIndexService.renderBand(meander: Meander): string [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:244]
+             ↳ Lays one row's tile out along a band of `BAND_REPEAT_COUNT` repeats.
+            └─> DrawingService.render(code: CodeObject): string [applications/meanderaw/meanderaw-cli/src/modules/drawing/drawing.service.ts:125]
+               ↳ Renders a Code to a complete SVG document: `rows` grid units tall — the same fixed canvas height every Code draws…
+              └─> DrawingService.codeSegments(geometry: Geometry, code: CodeObject): string [applications/meanderaw/meanderaw-cli/src/modules/drawing/drawing.service.ts:54]
+                 ↳ The path data every point of the Code draws, in reading order.
+                └─> DrawingService.pointSegments(geometry: Geometry, point: Directions, origin: CanvasPoint): string [applications/meanderaw/meanderaw-cli/src/modules/drawing/drawing.service.ts:95]
+                   ↳ The path data one point draws: the edges it owns, or a dot where it owns none.
+                  └─> DrawingService.format(value: number): string [applications/meanderaw/meanderaw-cli/src/modules/drawing/drawing.service.ts:85]
+                     ↳ Rounds and trims one pixel coordinate for interpolation into path data.
+                    └─> GeometryService.formatCoordinate(value: number): string [applications/meanderaw/meanderaw-cli/src/modules/geometry/geometry.service.ts:62]
+                       ↳ Rounds a coordinate to five decimal places and trims any trailing zeros.
 ```
 
-**72. `IsWhirlCharacteristicService.compute`** — depth ≥ 10 · orphan-root
-
-```text
-🚀 IsWhirlCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-whirl-characteristic.service.ts:66]
-   ↳ Checks the unit is a tile-bound coil of one or two open strands at a whirl's pitch.
-  └─> IsWhirlCharacteristicService.isSingleWhirl(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-whirl-characteristic.service.ts:54]
-     ↳ Whether one open strand sits at pitch `rows + 1`, or at `rows` from four rows down.
-    └─> StrandUtilitiesService.hasStrandEnds(context: CharacteristicContext, strands: number): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/strand-utilities.service.ts:61]
-       ↳ Whether the unit has exactly `strands` components and two free ends per component.
-      └─> BettiNumber0CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.ts:46]
-         ↳ Counts the components of the wrapped repeat graph.
-        └─> ConnectivityService.connectivity(matrix: Matrix, unwrapped?: boolean): Connectivity [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133]
-           ↳ How many pieces one repeat's ink falls into, how many independent loops it closes, and how many of its points…
-          └─> ConnectivityService.adjacency(matrix: Matrix, edges: readonly CodeEdge[]): InkAdjacency<string> [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:61]
-             ↳ The Matrix's edges as an {@link InkAdjacency}, which is all {@link GraphService.components} needs of it.
-            └─> ConnectivityService.nodes(matrix: Matrix): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:114]
-               ↳ Every point the Matrix spells, inked dots included — a point on no edge at all is a component of its own.
-              └─> ConnectivityService.from(…)(_unused: unknown, row: number): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:117]
-                └─> ConnectivityService.from(…)(_column: unknown, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:118]
-                  └─> ConnectivityService.key(row: number, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:109]
-                     ↳ One point's identity in the graph, which is its position and nothing else.
-```
-
-**73. `CodeService.spellCanonical`** — depth 9 · orphan-root
+**71. `CodeService.spellCanonical`** — depth 9 · orphan-root
 
 ```text
 🚀 CodeService.spellCanonical(tile: Tile, repeats?: number): string [applications/meanderaw/meanderaw-cli/src/modules/code/code.service.ts:303]
@@ -2085,54 +2052,12 @@ What this project is judged against, as declared in its own `callidescope.config
                 └─> TileService.from(…)(): boolean [applications/meanderaw/meanderaw-cli/src/modules/tile/tile.service.ts:147]
 ```
 
-**74. `IsChainCharacteristicService.compute`** — depth ≥ 9 · orphan-root
+**72. `IsDoubleChainCharacteristicService.compute`** — depth ≥ 9 · orphan-root
 
 ```text
-🚀 IsChainCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-chain-characteristic.service.ts:57]
-   ↳ Checks the unit is a wrapping, reversing open arc at pitch `rows` with runs of the full width and `rows - 1`.
-  └─> IsSingleArcCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/structure/is-single-arc-characteristic.service.ts:53]
-     ↳ Checks the unit is one junction-free component with no cycle and two free ends.
-    └─> BettiNumber0CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.ts:46]
-       ↳ Counts the components of the wrapped repeat graph.
-      └─> ConnectivityService.connectivity(matrix: Matrix, unwrapped?: boolean): Connectivity [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133]
-         ↳ How many pieces one repeat's ink falls into, how many independent loops it closes, and how many of its points…
-        └─> ConnectivityService.adjacency(matrix: Matrix, edges: readonly CodeEdge[]): InkAdjacency<string> [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:61]
-           ↳ The Matrix's edges as an {@link InkAdjacency}, which is all {@link GraphService.components} needs of it.
-          └─> ConnectivityService.nodes(matrix: Matrix): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:114]
-             ↳ Every point the Matrix spells, inked dots included — a point on no edge at all is a component of its own.
-            └─> ConnectivityService.from(…)(_unused: unknown, row: number): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:117]
-              └─> ConnectivityService.from(…)(_column: unknown, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:118]
-                └─> ConnectivityService.key(row: number, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:109]
-                   ↳ One point's identity in the graph, which is its position and nothing else.
-```
-
-**75. `IsClaspsCharacteristicService.compute`** — depth ≥ 9 · orphan-root
-
-```text
-🚀 IsClaspsCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-clasps-characteristic.service.ts:50]
-   ↳ Checks the unit is a reversing tile-bound coil of two or four open strands at a clasp's pitch.
-  └─> StrandUtilitiesService.isTileBoundCoil(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/strand-utilities.service.ts:80]
-     ↳ Whether the ink is junction-free, acyclic, fully inked, dot-free, never crosses the tile edge, and runs `rows - 1` both…
-    └─> BettiNumber1CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-1-count-characteristic.service.ts:46]
-       ↳ Counts the independent loops of the wrapped repeat graph.
-      └─> ConnectivityService.connectivity(matrix: Matrix, unwrapped?: boolean): Connectivity [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133]
-         ↳ How many pieces one repeat's ink falls into, how many independent loops it closes, and how many of its points…
-        └─> ConnectivityService.adjacency(matrix: Matrix, edges: readonly CodeEdge[]): InkAdjacency<string> [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:61]
-           ↳ The Matrix's edges as an {@link InkAdjacency}, which is all {@link GraphService.components} needs of it.
-          └─> ConnectivityService.nodes(matrix: Matrix): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:114]
-             ↳ Every point the Matrix spells, inked dots included — a point on no edge at all is a component of its own.
-            └─> ConnectivityService.from(…)(_unused: unknown, row: number): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:117]
-              └─> ConnectivityService.from(…)(_column: unknown, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:118]
-                └─> ConnectivityService.key(row: number, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:109]
-                   ↳ One point's identity in the graph, which is its position and nothing else.
-```
-
-**76. `IsDoubleChainCharacteristicService.compute`** — depth ≥ 9 · orphan-root
-
-```text
-🚀 IsDoubleChainCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-double-chain-characteristic.service.ts:60]
+🚀 IsDoubleChainCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-double-chain-characteristic.service.ts:60]
    ↳ Checks the unit is two wrapping, reversing open strands at pitch `2 rows - 2` with runs of `width - 1` and `rows - 2`.
-  └─> StrandUtilitiesService.hasStrandEnds(context: CharacteristicContext, strands: number): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/strand-utilities.service.ts:61]
+  └─> StrandUtilitiesService.hasStrandEnds(context: CharacteristicContext, strands: number): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/strand-utilities.service.ts:48]
      ↳ Whether the unit has exactly `strands` components and two free ends per component.
     └─> BettiNumber0CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.ts:46]
        ↳ Counts the components of the wrapped repeat graph.
@@ -2148,11 +2073,53 @@ What this project is judged against, as declared in its own `callidescope.config
                    ↳ One point's identity in the graph, which is its position and nothing else.
 ```
 
-**77. `IsSnakeCharacteristicService.compute`** — depth ≥ 9 · orphan-root
+**73. `IsForkCharacteristicService.compute`** — depth ≥ 9 · orphan-root
 
 ```text
-🚀 IsSnakeCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-snake-characteristic.service.ts:45]
-   ↳ Checks the unit is one closed loop at pitch `rows - 1`.
+🚀 IsForkCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-fork-characteristic.service.ts:64]
+   ↳ Checks the unit is one acyclic single-fork component with three free ends, no dots, and no comb.
+  └─> IsCombCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-comb-characteristic.service.ts:57]
+     ↳ Checks the unit is one straight-toothed tree with at least two forks.
+    └─> BettiNumber0CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.ts:46]
+       ↳ Counts the components of the wrapped repeat graph.
+      └─> ConnectivityService.connectivity(matrix: Matrix, unwrapped?: boolean): Connectivity [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133]
+         ↳ How many pieces one repeat's ink falls into, how many independent loops it closes, and how many of its points…
+        └─> ConnectivityService.adjacency(matrix: Matrix, edges: readonly CodeEdge[]): InkAdjacency<string> [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:61]
+           ↳ The Matrix's edges as an {@link InkAdjacency}, which is all {@link GraphService.components} needs of it.
+          └─> ConnectivityService.nodes(matrix: Matrix): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:114]
+             ↳ Every point the Matrix spells, inked dots included — a point on no edge at all is a component of its own.
+            └─> ConnectivityService.from(…)(_unused: unknown, row: number): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:117]
+              └─> ConnectivityService.from(…)(_column: unknown, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:118]
+                └─> ConnectivityService.key(row: number, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:109]
+                   ↳ One point's identity in the graph, which is its position and nothing else.
+```
+
+**74. `IsPureTreeCharacteristicService.compute`** — depth ≥ 9 · orphan-root
+
+```text
+🚀 IsPureTreeCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-pure-tree-characteristic.service.ts:64]
+   ↳ Checks the unit is one acyclic multi-fork component with no cross, no dots, no comb, and no arcade.
+  └─> IsCombCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-comb-characteristic.service.ts:57]
+     ↳ Checks the unit is one straight-toothed tree with at least two forks.
+    └─> BettiNumber0CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.ts:46]
+       ↳ Counts the components of the wrapped repeat graph.
+      └─> ConnectivityService.connectivity(matrix: Matrix, unwrapped?: boolean): Connectivity [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133]
+         ↳ How many pieces one repeat's ink falls into, how many independent loops it closes, and how many of its points…
+        └─> ConnectivityService.adjacency(matrix: Matrix, edges: readonly CodeEdge[]): InkAdjacency<string> [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:61]
+           ↳ The Matrix's edges as an {@link InkAdjacency}, which is all {@link GraphService.components} needs of it.
+          └─> ConnectivityService.nodes(matrix: Matrix): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:114]
+             ↳ Every point the Matrix spells, inked dots included — a point on no edge at all is a component of its own.
+            └─> ConnectivityService.from(…)(_unused: unknown, row: number): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:117]
+              └─> ConnectivityService.from(…)(_column: unknown, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:118]
+                └─> ConnectivityService.key(row: number, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:109]
+                   ↳ One point's identity in the graph, which is its position and nothing else.
+```
+
+**75. `IsSnakeCharacteristicService.compute`** — depth ≥ 9 · orphan-root
+
+```text
+🚀 IsSnakeCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-snake-characteristic.service.ts:47]
+   ↳ Checks the unit is one loop stretched along the band.
   └─> IsClosedLoopCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/structure/is-closed-loop-characteristic.service.ts:53]
      ↳ Checks the unit is one junction-free component closing one cycle with no free ends.
     └─> BettiNumber0CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.ts:46]
@@ -2169,13 +2136,34 @@ What this project is judged against, as declared in its own `callidescope.config
                    ↳ One point's identity in the graph, which is its position and nothing else.
 ```
 
-**78. `IsSwirlCharacteristicService.compute`** — depth ≥ 9 · orphan-root
+**76. `IsWaterfallsCharacteristicService.compute`** — depth ≥ 9 · orphan-root
 
 ```text
-🚀 IsSwirlCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-swirl-characteristic.service.ts:50]
-   ↳ Checks the unit is a tile-bound coil off the border rules, of one or two open strands at a swirl's pitch.
-  └─> StrandUtilitiesService.isTileBoundCoil(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/strand-utilities.service.ts:80]
-     ↳ Whether the ink is junction-free, acyclic, fully inked, dot-free, never crosses the tile edge, and runs `rows - 1` both…
+🚀 IsWaterfallsCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-waterfalls-characteristic.service.ts:48]
+   ↳ Checks the unit is one arc that alternates every turn.
+  └─> IsSingleArcCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/structure/is-single-arc-characteristic.service.ts:53]
+     ↳ Checks the unit is one junction-free component with no cycle and two free ends.
+    └─> BettiNumber0CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.ts:46]
+       ↳ Counts the components of the wrapped repeat graph.
+      └─> ConnectivityService.connectivity(matrix: Matrix, unwrapped?: boolean): Connectivity [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133]
+         ↳ How many pieces one repeat's ink falls into, how many independent loops it closes, and how many of its points…
+        └─> ConnectivityService.adjacency(matrix: Matrix, edges: readonly CodeEdge[]): InkAdjacency<string> [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:61]
+           ↳ The Matrix's edges as an {@link InkAdjacency}, which is all {@link GraphService.components} needs of it.
+          └─> ConnectivityService.nodes(matrix: Matrix): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:114]
+             ↳ Every point the Matrix spells, inked dots included — a point on no edge at all is a component of its own.
+            └─> ConnectivityService.from(…)(_unused: unknown, row: number): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:117]
+              └─> ConnectivityService.from(…)(_column: unknown, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:118]
+                └─> ConnectivityService.key(row: number, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:109]
+                   ↳ One point's identity in the graph, which is its position and nothing else.
+```
+
+**77. `IsWhirlCharacteristicService.compute`** — depth ≥ 9 · orphan-root
+
+```text
+🚀 IsWhirlCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-whirl-characteristic.service.ts:81]
+   ↳ Checks every strand winds in and back out once per row, reversing once.
+  └─> IsWhirlCharacteristicService.isOpenStrandSet(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-whirl-characteristic.service.ts:68]
+     ↳ Whether the ink is dot-free, junction-free, acyclic strands with two free ends each.
     └─> BettiNumber1CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-1-count-characteristic.service.ts:46]
        ↳ Counts the independent loops of the wrapped repeat graph.
       └─> ConnectivityService.connectivity(matrix: Matrix, unwrapped?: boolean): Connectivity [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133]
@@ -2190,10 +2178,10 @@ What this project is judged against, as declared in its own `callidescope.config
                    ↳ One point's identity in the graph, which is its position and nothing else.
 ```
 
-**79. `DrawRecordService.scoreTileCrossing`** — depth ≥ 9 · orphan-root
+**78. `DrawRecordService.scoreTileCrossing`** — depth ≥ 9 · orphan-root
 
 ```text
-🚀 DrawRecordService.scoreTileCrossing(phase: CodeObject): number [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-record.service.ts:62]
+🚀 DrawRecordService.scoreTileCrossing(phase: CodeObject): number [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-record.service.ts:57]
   └─> CharacteristicsService.tileCrossingComponentDeltaCount(code: Code | CodeObject): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/characteristics.service.ts:290]
      ↳ The tile-crossing component delta of the Code exactly as filed, not of its repeating unit — the canonical-phase scorer,…
     └─> TileCrossingComponentDeltaCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/tile-crossing/tile-crossing-component-delta-count-characteristic.service.ts:45]
@@ -2210,7 +2198,7 @@ What this project is judged against, as declared in its own `callidescope.config
                    ↳ One point's identity in the graph, which is its position and nothing else.
 ```
 
-**80. `SymmetryService.variants`** — depth 8 · orphan-root
+**79. `SymmetryService.variants`** — depth 8 · orphan-root
 
 ```text
 🚀 SymmetryService.variants(tile: Tile): Tile[] [applications/meanderaw/meanderaw-cli/src/modules/symmetry/symmetry.service.ts:287]
@@ -2227,11 +2215,11 @@ What this project is judged against, as declared in its own `callidescope.config
               └─> TileService.from(…)(): boolean [applications/meanderaw/meanderaw-cli/src/modules/tile/tile.service.ts:147]
 ```
 
-**81. `IsForkCharacteristicService.compute`** — depth ≥ 8 · orphan-root
+**80. `IsBoxesCharacteristicService.compute`** — depth ≥ 8 · orphan-root
 
 ```text
-🚀 IsForkCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-fork-characteristic.service.ts:64]
-   ↳ Checks the unit is one acyclic single-fork component with three free ends, no dots, and no comb.
+🚀 IsBoxesCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-boxes-characteristic.service.ts:54]
+   ↳ Checks the unit winds far more than it inflects, one hairpin per component.
   └─> BettiNumber0CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.ts:46]
      ↳ Counts the components of the wrapped repeat graph.
     └─> ConnectivityService.connectivity(matrix: Matrix, unwrapped?: boolean): Connectivity [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133]
@@ -2246,13 +2234,13 @@ What this project is judged against, as declared in its own `callidescope.config
                  ↳ One point's identity in the graph, which is its position and nothing else.
 ```
 
-**82. `IsParallelCharacteristicService.compute`** — depth ≥ 8 · orphan-root
+**81. `IsChainCharacteristicService.compute`** — depth ≥ 8 · orphan-root
 
 ```text
-🚀 IsParallelCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-parallel-characteristic.service.ts:55]
-   ↳ Checks the unit is a junction-free, acyclic bundle of `pitch / 2 + 1` open strands at an even pitch.
-  └─> BettiNumber0CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.ts:46]
-     ↳ Counts the components of the wrapped repeat graph.
+🚀 IsChainCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-chain-characteristic.service.ts:51]
+   ↳ Checks the unit winds past its hairpins and links across the tile edge.
+  └─> TileCrossingComponentDeltaCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/tile-crossing/tile-crossing-component-delta-count-characteristic.service.ts:45]
+     ↳ Subtracts the band's component count from the lone tile's.
     └─> ConnectivityService.connectivity(matrix: Matrix, unwrapped?: boolean): Connectivity [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133]
        ↳ How many pieces one repeat's ink falls into, how many independent loops it closes, and how many of its points…
       └─> ConnectivityService.adjacency(matrix: Matrix, edges: readonly CodeEdge[]): InkAdjacency<string> [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:61]
@@ -2265,13 +2253,13 @@ What this project is judged against, as declared in its own `callidescope.config
                  ↳ One point's identity in the graph, which is its position and nothing else.
 ```
 
-**83. `IsPureTreeCharacteristicService.compute`** — depth ≥ 8 · orphan-root
+**82. `IsCrossCharacteristicService.compute`** — depth ≥ 8 · orphan-root
 
 ```text
-🚀 IsPureTreeCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-pure-tree-characteristic.service.ts:64]
-   ↳ Checks the unit is one acyclic multi-fork component with no cross, no dots, no comb, and no arcade.
-  └─> BettiNumber0CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.ts:46]
-     ↳ Counts the components of the wrapped repeat graph.
+🚀 IsCrossCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-cross-characteristic.service.ts:54]
+   ↳ Checks the unit crosses itself with no fork, loose end, or dot.
+  └─> FreeEndCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/free-end-count-characteristic.service.ts:46]
+     ↳ Counts the degree-one vertices of the wrapped repeat graph.
     └─> ConnectivityService.connectivity(matrix: Matrix, unwrapped?: boolean): Connectivity [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133]
        ↳ How many pieces one repeat's ink falls into, how many independent loops it closes, and how many of its points…
       └─> ConnectivityService.adjacency(matrix: Matrix, edges: readonly CodeEdge[]): InkAdjacency<string> [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:61]
@@ -2284,13 +2272,13 @@ What this project is judged against, as declared in its own `callidescope.config
                  ↳ One point's identity in the graph, which is its position and nothing else.
 ```
 
-**84. `IsStippledCharacteristicService.compute`** — depth ≥ 8 · orphan-root
+**83. `IsLinesCharacteristicService.compute`** — depth ≥ 8 · orphan-root
 
 ```text
-🚀 IsStippledCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-stippled-characteristic.service.ts:50]
-   ↳ Checks the unit has several components, a bare dot, and a fork.
-  └─> BettiNumber0CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-0-count-characteristic.service.ts:46]
-     ↳ Counts the components of the wrapped repeat graph.
+🚀 IsLinesCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-lines-characteristic.service.ts:47]
+   ↳ Checks the ink is horizontal only and every row wraps around the band.
+  └─> BettiNumber1CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-1-count-characteristic.service.ts:46]
+     ↳ Counts the independent loops of the wrapped repeat graph.
     └─> ConnectivityService.connectivity(matrix: Matrix, unwrapped?: boolean): Connectivity [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133]
        ↳ How many pieces one repeat's ink falls into, how many independent loops it closes, and how many of its points…
       └─> ConnectivityService.adjacency(matrix: Matrix, edges: readonly CodeEdge[]): InkAdjacency<string> [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:61]
@@ -2303,7 +2291,45 @@ What this project is judged against, as declared in its own `callidescope.config
                  ↳ One point's identity in the graph, which is its position and nothing else.
 ```
 
-**85. `CharacteristicsService.onApplicationBootstrap`** — depth ≥ 7 · lifecycle
+**84. `IsMeshCharacteristicService.compute`** — depth ≥ 8 · orphan-root
+
+```text
+🚀 IsMeshCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-mesh-characteristic.service.ts:60]
+   ↳ Checks the unit is crossing lines that span both directions with nothing loose.
+  └─> FreeEndCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/free-end-count-characteristic.service.ts:46]
+     ↳ Counts the degree-one vertices of the wrapped repeat graph.
+    └─> ConnectivityService.connectivity(matrix: Matrix, unwrapped?: boolean): Connectivity [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133]
+       ↳ How many pieces one repeat's ink falls into, how many independent loops it closes, and how many of its points…
+      └─> ConnectivityService.adjacency(matrix: Matrix, edges: readonly CodeEdge[]): InkAdjacency<string> [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:61]
+         ↳ The Matrix's edges as an {@link InkAdjacency}, which is all {@link GraphService.components} needs of it.
+        └─> ConnectivityService.nodes(matrix: Matrix): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:114]
+           ↳ Every point the Matrix spells, inked dots included — a point on no edge at all is a component of its own.
+          └─> ConnectivityService.from(…)(_unused: unknown, row: number): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:117]
+            └─> ConnectivityService.from(…)(_column: unknown, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:118]
+              └─> ConnectivityService.key(row: number, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:109]
+                 ↳ One point's identity in the graph, which is its position and nothing else.
+```
+
+**85. `IsSwirlCharacteristicService.compute`** — depth ≥ 8 · orphan-root
+
+```text
+🚀 IsSwirlCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-swirl-characteristic.service.ts:57]
+   ↳ Checks the unit winds one way for two turns per row, less two.
+  └─> BettiNumber1CountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/topology/betti-number-1-count-characteristic.service.ts:46]
+     ↳ Counts the independent loops of the wrapped repeat graph.
+    └─> ConnectivityService.connectivity(matrix: Matrix, unwrapped?: boolean): Connectivity [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133]
+       ↳ How many pieces one repeat's ink falls into, how many independent loops it closes, and how many of its points…
+      └─> ConnectivityService.adjacency(matrix: Matrix, edges: readonly CodeEdge[]): InkAdjacency<string> [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:61]
+         ↳ The Matrix's edges as an {@link InkAdjacency}, which is all {@link GraphService.components} needs of it.
+        └─> ConnectivityService.nodes(matrix: Matrix): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:114]
+           ↳ Every point the Matrix spells, inked dots included — a point on no edge at all is a component of its own.
+          └─> ConnectivityService.from(…)(_unused: unknown, row: number): string[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:117]
+            └─> ConnectivityService.from(…)(_column: unknown, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:118]
+              └─> ConnectivityService.key(row: number, column: number): string [applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:109]
+                 ↳ One point's identity in the graph, which is its position and nothing else.
+```
+
+**86. `CharacteristicsService.onApplicationBootstrap`** — depth ≥ 7 · lifecycle
 
 ```text
 🚀 CharacteristicsService.onApplicationBootstrap(): void [applications/meanderaw/meanderaw-cli/src/modules/characteristics/characteristics.service.ts:252]
@@ -2320,7 +2346,7 @@ What this project is judged against, as declared in its own `callidescope.config
                ↳ Whether a discovered provider has an evaluator's shape: a `compute` method and metadata naming a string key.
 ```
 
-**86. `CharacteristicsService.metadata`** — depth ≥ 7 · orphan-root
+**87. `CharacteristicsService.metadata`** — depth ≥ 7 · orphan-root
 
 ```text
 🚀 CharacteristicsService.metadata(): readonly CharacteristicMetadata[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/characteristics.service.ts:239]
@@ -2337,7 +2363,7 @@ What this project is judged against, as declared in its own `callidescope.config
                ↳ Whether a discovered provider has an evaluator's shape: a `compute` method and metadata naming a string key.
 ```
 
-**87. `TileCrossingCycleCountCharacteristicService.compute`** — depth ≥ 7 · orphan-root
+**88. `TileCrossingCycleCountCharacteristicService.compute`** — depth ≥ 7 · orphan-root
 
 ```text
 🚀 TileCrossingCycleCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/tile-crossing/tile-crossing-cycle-count-characteristic.service.ts:45]
@@ -2354,7 +2380,44 @@ What this project is judged against, as declared in its own `callidescope.config
                ↳ One point's identity in the graph, which is its position and nothing else.
 ```
 
-**88. `LetterUtilitiesService.compute`** — depth 7 · orphan-root
+**89. `IsClaspsCharacteristicService.compute`** — depth 7 · orphan-root
+
+```text
+🚀 IsClaspsCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-clasps-characteristic.service.ts:58]
+   ↳ Checks the unit is hooks that wind once per row, less one, and reverse tightly.
+  └─> ReversesAtItsTightestTurnCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.ts:317]
+     ↳ Walks every strand of a junction-free Code's wrapped repeat graph, reporting whether any turn lands exactly one step…
+    └─> ReversesAtItsTightestTurnCharacteristicService.tracePaths(adjacency: Map<string, string[]>, columns: number): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.ts:242]
+       ↳ Traces every disjoint path in the adjacency graph, reporting whether any of them turns tightly.
+      └─> ReversesAtItsTightestTurnCharacteristicService.traceSinglePath(…): void [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.ts:265]
+         ↳ Traces a single path starting from a node.
+        └─> ReversesAtItsTightestTurnCharacteristicService.advancePath(…): { currentNode: string; direction: number; nextNode: string | undefined; stepsSinceTurn: number; } [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.ts:56]
+           ↳ Advances one step along the path and updates tracking state.
+          └─> ReversesAtItsTightestTurnCharacteristicService.getDirection(from: string, to: string, columns: number): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.ts:197]
+             ↳ Returns 0=Up, 1=Right, 2=Down, 3=Left or -1 if invalid.
+            └─> ReversesAtItsTightestTurnCharacteristicService.parseKey(key: string): { column: number; row: number; } [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.ts:233]
+               ↳ Parses a node string key into column and row integers.
+```
+
+**90. `IsParallelCharacteristicService.compute`** — depth 7 · orphan-root
+
+```text
+🚀 IsParallelCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-parallel-characteristic.service.ts:55]
+   ↳ Checks the unit is junction-free strokes that turn back at most once in a row.
+  └─> MaxMonotonicTurnLengthCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/max-monotonic-turn-length-characteristic.service.ts:48]
+     ↳ Finds the longest same-handed run of turns over every strand.
+    └─> PathUtilitiesService.strands(edges: readonly CodeEdge[]): Strand[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:206]
+       ↳ Cuts one repeat's ink into strands — maximal runs through degree-two points — over the cyclic band `edges` describes.
+      └─> PathUtilitiesService.walk(graph: HalfEdgeGraph, start: HalfEdge, visited: Set<number>): Turn[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:108]
+         ↳ Walks one strand from `start` until it ends or returns to an edge already walked, marking every edge it crosses.
+        └─> PathUtilitiesService.continuation(graph: HalfEdgeGraph, arrival: HalfEdge): HalfEdge | undefined [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:39]
+           ↳ The half-edge a strand leaves by after arriving along `arrival`, or `undefined` when it arrives at a free end or a…
+          └─> PathUtilitiesService.find(…)(halfEdge: HalfEdge): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:47]
+            └─> PathUtilitiesService.opposite(heading: Heading): Heading [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:78]
+               ↳ The heading pointing the other way.
+```
+
+**91. `LetterUtilitiesService.compute`** — depth 7 · orphan-root
 
 ```text
 🚀 LetterUtilitiesService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-utilities.service.ts:151]
@@ -2370,71 +2433,7 @@ What this project is judged against, as declared in its own `callidescope.config
                ↳ The hexadecimal Code digit of the point at `(row, column)` — north 8, south 4, east 2, west 1 — with columns wrapping,…
 ```
 
-**89. `InflectionCountCharacteristicService.compute`** — depth 6 · orphan-root
-
-```text
-🚀 InflectionCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/inflection-count-characteristic.service.ts:49]
-   ↳ Counts neighboring turn pairs of opposite hand across every strand.
-  └─> PathUtilitiesService.strands(edges: readonly CodeEdge[]): Strand[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:206]
-     ↳ Cuts one repeat's ink into strands — maximal runs through degree-two points — over the cyclic band `edges` describes.
-    └─> PathUtilitiesService.walk(graph: HalfEdgeGraph, start: HalfEdge, visited: Set<number>): Turn[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:108]
-       ↳ Walks one strand from `start` until it ends or returns to an edge already walked, marking every edge it crosses.
-      └─> PathUtilitiesService.continuation(graph: HalfEdgeGraph, arrival: HalfEdge): HalfEdge | undefined [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:39]
-         ↳ The half-edge a strand leaves by after arriving along `arrival`, or `undefined` when it arrives at a free end or a…
-        └─> PathUtilitiesService.find(…)(halfEdge: HalfEdge): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:47]
-          └─> PathUtilitiesService.opposite(heading: Heading): Heading [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:78]
-             ↳ The heading pointing the other way.
-```
-
-**90. `MaxMonotonicTurnLengthCharacteristicService.compute`** — depth 6 · orphan-root
-
-```text
-🚀 MaxMonotonicTurnLengthCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/max-monotonic-turn-length-characteristic.service.ts:48]
-   ↳ Finds the longest same-handed run of turns over every strand.
-  └─> PathUtilitiesService.strands(edges: readonly CodeEdge[]): Strand[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:206]
-     ↳ Cuts one repeat's ink into strands — maximal runs through degree-two points — over the cyclic band `edges` describes.
-    └─> PathUtilitiesService.walk(graph: HalfEdgeGraph, start: HalfEdge, visited: Set<number>): Turn[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:108]
-       ↳ Walks one strand from `start` until it ends or returns to an edge already walked, marking every edge it crosses.
-      └─> PathUtilitiesService.continuation(graph: HalfEdgeGraph, arrival: HalfEdge): HalfEdge | undefined [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:39]
-         ↳ The half-edge a strand leaves by after arriving along `arrival`, or `undefined` when it arrives at a free end or a…
-        └─> PathUtilitiesService.find(…)(halfEdge: HalfEdge): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:47]
-          └─> PathUtilitiesService.opposite(heading: Heading): Heading [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:78]
-             ↳ The heading pointing the other way.
-```
-
-**91. `TightestTurnCountCharacteristicService.compute`** — depth 6 · orphan-root
-
-```text
-🚀 TightestTurnCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/tightest-turn-count-characteristic.service.ts:49]
-   ↳ Counts neighboring points that both turn the same way across every strand.
-  └─> PathUtilitiesService.strands(edges: readonly CodeEdge[]): Strand[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:206]
-     ↳ Cuts one repeat's ink into strands — maximal runs through degree-two points — over the cyclic band `edges` describes.
-    └─> PathUtilitiesService.walk(graph: HalfEdgeGraph, start: HalfEdge, visited: Set<number>): Turn[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:108]
-       ↳ Walks one strand from `start` until it ends or returns to an edge already walked, marking every edge it crosses.
-      └─> PathUtilitiesService.continuation(graph: HalfEdgeGraph, arrival: HalfEdge): HalfEdge | undefined [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:39]
-         ↳ The half-edge a strand leaves by after arriving along `arrival`, or `undefined` when it arrives at a free end or a…
-        └─> PathUtilitiesService.find(…)(halfEdge: HalfEdge): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:47]
-          └─> PathUtilitiesService.opposite(heading: Heading): Heading [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:78]
-             ↳ The heading pointing the other way.
-```
-
-**92. `TotalTurnCountCharacteristicService.compute`** — depth 6 · orphan-root
-
-```text
-🚀 TotalTurnCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/total-turn-count-characteristic.service.ts:48]
-   ↳ Counts the nonzero turns across every strand of the repeat.
-  └─> PathUtilitiesService.strands(edges: readonly CodeEdge[]): Strand[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:206]
-     ↳ Cuts one repeat's ink into strands — maximal runs through degree-two points — over the cyclic band `edges` describes.
-    └─> PathUtilitiesService.walk(graph: HalfEdgeGraph, start: HalfEdge, visited: Set<number>): Turn[] [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:108]
-       ↳ Walks one strand from `start` until it ends or returns to an edge already walked, marking every edge it crosses.
-      └─> PathUtilitiesService.continuation(graph: HalfEdgeGraph, arrival: HalfEdge): HalfEdge | undefined [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:39]
-         ↳ The half-edge a strand leaves by after arriving along `arrival`, or `undefined` when it arrives at a free end or a…
-        └─> PathUtilitiesService.find(…)(halfEdge: HalfEdge): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:47]
-          └─> PathUtilitiesService.opposite(heading: Heading): Heading [applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/path-utilities.service.ts:78]
-             ↳ The heading pointing the other way.
-```
-
-**93. `HorizontalRectangleCountCharacteristicService.compute`** — depth ≥ 6 · orphan-root
+**92. `HorizontalRectangleCountCharacteristicService.compute`** — depth ≥ 6 · orphan-root
 
 ```text
 🚀 HorizontalRectangleCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/rectangle/horizontal-rectangle-count-characteristic.service.ts:48]
@@ -2450,7 +2449,7 @@ What this project is judged against, as declared in its own `callidescope.config
              ↳ The hexadecimal Code digit of the point at `(row, column)` — north 8, south 4, east 2, west 1 — with columns wrapping,…
 ```
 
-**94. `VerticalRectangleCountCharacteristicService.compute`** — depth ≥ 6 · orphan-root
+**93. `VerticalRectangleCountCharacteristicService.compute`** — depth ≥ 6 · orphan-root
 
 ```text
 🚀 VerticalRectangleCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/rectangle/vertical-rectangle-count-characteristic.service.ts:48]
@@ -2464,6 +2463,20 @@ What this project is judged against, as declared in its own `callidescope.config
         └─> RectangleUtilitiesService.from(…)(_unused: unknown, offset: number): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/rectangle/rectangle-utilities.service.ts:80]
           └─> SubmatrixUtilitiesService.pointDigitAt(matrix: Matrix, row: number, column: number): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/submatrix-utilities.service.ts:246]
              ↳ The hexadecimal Code digit of the point at `(row, column)` — north 8, south 4, east 2, west 1 — with columns wrapping,…
+```
+
+**94. `IsBarsCharacteristicService.compute`** — depth 5 · orphan-root
+
+```text
+🚀 IsBarsCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-bars-characteristic.service.ts:53]
+   ↳ Checks the ink is vertical only, fully inked, and spans the band.
+  └─> LongestVerticalRunLengthCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/run/longest-vertical-run-length-characteristic.service.ts:46]
+     ↳ Finds the longest vertical run over every column.
+    └─> RunUtilitiesService.longestVerticalRunLength(matrix: Matrix): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/run/run-utilities.service.ts:84]
+       ↳ The longest straight vertical run of ink anywhere in the Code.
+      └─> RunUtilitiesService.from(…)(_unused: unknown, column: number): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/run/run-utilities.service.ts:91]
+        └─> RunUtilitiesService.longestColumnRunLength(matrix: Matrix, column: number): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/run/run-utilities.service.ts:24]
+           ↳ The longest straight run of ink in `column`, reading each row's south arm directly and never wrapping across rows.
 ```
 
 **95. `TileService.assertWellFormed`** — depth ≥ 4 · orphan-root
@@ -2502,11 +2515,11 @@ What this project is judged against, as declared in its own `callidescope.config
 **98. `DrawPoolService.onModuleDestroy`** — depth 3 · lifecycle
 
 ```text
-🚀 DrawPoolService.onModuleDestroy(): Promise<void> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:213]
+🚀 DrawPoolService.onModuleDestroy(): Promise<void> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:216]
    ↳ Ends the pool's threads with the application, so none outlives it.
-  └─> DrawPoolService.close(): Promise<void> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:205]
+  └─> DrawPoolService.close(): Promise<void> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:208]
      ↳ Ends every thread the pool spawned; the next shape spawns fresh ones.
-    └─> DrawPoolService.map(…)(worker: Worker): Promise<number> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:209]
+    └─> DrawPoolService.map(…)(worker: Worker): Promise<number> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:212]
 ```
 
 **99. `MatrixService.toCode`** — depth 3 · orphan-root
@@ -2540,33 +2553,33 @@ What this project is judged against, as declared in its own `callidescope.config
        ↳ The row and column a `row,column` point key names.
 ```
 
-**102. `IsCrossCharacteristicService.compute`** — depth 3 · orphan-root
+**102. `EmbeddedUCountCharacteristicService.compute`** — depth 3 · orphan-root
 
 ```text
-🚀 IsCrossCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-cross-characteristic.service.ts:49]
-   ↳ Checks the unit has a cross and is not the mesh template.
-  └─> CrossCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/cross/cross-count-characteristic.service.ts:45]
-     ↳ Counts the points that carry all four arms.
-    └─> SubmatrixUtilitiesService.countPointsWithExactArms(matrix: Matrix, arms: readonly MatrixPointArm[]): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/submatrix-utilities.service.ts:161]
-       ↳ Counts the points whose ink leaves by exactly `arms` — every named arm set and every other arm clear — which is the…
+🚀 EmbeddedUCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/embedded/embedded-u-count-characteristic.service.ts:92]
+   ↳ Counts every 2×2 window whose ink forms a U in any rotation.
+  └─> EmbeddedUCountCharacteristicService.windowDigits(…): { bl: number; br: number; tl: number; tr: number; } [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/embedded/embedded-u-count-characteristic.service.ts:72]
+     ↳ Every 2×2 window's four digits, read without wrapping past the last row.
+    └─> SubmatrixUtilitiesService.pointDigitAt(matrix: Matrix, row: number, column: number): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/submatrix-utilities.service.ts:246]
+       ↳ The hexadecimal Code digit of the point at `(row, column)` — north 8, south 4, east 2, west 1 — with columns wrapping,…
 ```
 
-**103. `CornerCountCharacteristicService.compute`** — depth 3 · orphan-root
+**103. `IsDotsCharacteristicService.compute`** — depth 3 · orphan-root
 
 ```text
-🚀 CornerCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/corner/corner-count-characteristic.service.ts:56]
-   ↳ Sums the four directional corner counts over the same context.
-  └─> NorthEastCornerCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/corner/north-east-corner-count-characteristic.service.ts:46]
-     ↳ Counts the points whose only arms are north and east.
-    └─> SubmatrixUtilitiesService.countPointsWithExactArms(matrix: Matrix, arms: readonly MatrixPointArm[]): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/submatrix-utilities.service.ts:161]
-       ↳ Counts the points whose ink leaves by exactly `arms` — every named arm set and every other arm clear — which is the…
+🚀 IsDotsCharacteristicService.compute(context: CharacteristicContext): boolean [applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-dots-characteristic.service.ts:43]
+   ↳ Checks no point of the unit is inked.
+  └─> InkPointCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/point/ink-point-count-characteristic.service.ts:45]
+     ↳ Counts the points that carry at least one arm.
+    └─> PointUtilitiesService.armCount(point: MatrixPoint): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/point/point-utilities.service.ts:31]
+       ↳ How many of a point's four arms carry ink — its raw digit degree, read directly off the point rather than through the…
 ```
 
 **104. `TileEnumerationService.isMatching`** — depth 3 · orphan-root
 
 ```text
 🚀 TileEnumerationService.isMatching(tile: Tile): boolean [applications/meanderaw/meanderaw-cli/src/modules/enumeration/tile-enumeration.service.ts:213]
-   ↳ Whether every point of a tile is touched by at most one edge — the family's original exact-cover rule, restated over…
+   ↳ Whether every point of a tile is touched by at most one edge — the retired `mosaic` generator's exact-cover rule,…
   └─> TileService.incidentEdges(tile: Tile, row: number, column: number): number [applications/meanderaw/meanderaw-cli/src/modules/tile/tile.service.ts:218]
      ↳ How many distinct edges touch a point, which differs from {@link degree} at one column and nowhere else: there a set…
     └─> TileService.degree(directions: Directions): number [applications/meanderaw/meanderaw-cli/src/modules/tile/tile.service.ts:188]
@@ -2576,29 +2589,13 @@ What this project is judged against, as declared in its own `callidescope.config
 **105. `DrawIndexService.rows`** — depth 3 · orphan-root
 
 ```text
-🚀 DrawIndexService.rows(family: MeanderFamily): (readonly Meander[])[] [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:426]
-  └─> DrawIndexService.heldRows(meanders: readonly Meander[], family: MeanderFamily): (readonly Meander[])[] [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:183]
-     ↳ A family's rows already in memory, in the order its page lists them.
-    └─> DrawIndexService.toSorted(…)(left: Meander, right: Meander): number [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:190]
+🚀 DrawIndexService.rows(…): (readonly Meander[])[] [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:383]
+  └─> DrawIndexService.heldRows(…): (readonly Meander[])[] [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:146]
+     ↳ A pattern's rows already in memory, in the order its page lists them.
+    └─> DrawIndexService.toSorted(…)(left: Meander, right: Meander): number [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:153]
 ```
 
-**106. `ClassificationService.matches`** — depth 2 · orphan-root
-
-```text
-🚀 ClassificationService.matches(structure: MeanderStructure): boolean [applications/meanderaw/meanderaw-cli/src/modules/classification/classification.service.ts:64]
-  └─> ClassificationService.holds(…): boolean [applications/meanderaw/meanderaw-cli/src/modules/classification/classification.service.ts:47]
-     ↳ Whether a repeat's family predicate holds and its band is deep enough for that family.
-```
-
-**107. `ClassificationService.matches`** — depth 2 · orphan-root
-
-```text
-🚀 ClassificationService.matches(structure: MeanderStructure): boolean [applications/meanderaw/meanderaw-cli/src/modules/classification/classification.service.ts:75]
-  └─> ClassificationService.holds(…): boolean [applications/meanderaw/meanderaw-cli/src/modules/classification/classification.service.ts:47]
-     ↳ Whether a repeat's family predicate holds and its band is deep enough for that family.
-```
-
-**108. `TileService.isBare`** — depth 2 · orphan-root
+**106. `TileService.isBare`** — depth 2 · orphan-root
 
 ```text
 🚀 TileService.isBare(directions: Directions): boolean [applications/meanderaw/meanderaw-cli/src/modules/tile/tile.service.ts:231]
@@ -2607,7 +2604,7 @@ What this project is judged against, as declared in its own `callidescope.config
      ↳ How many of a point's four direction bits are set — the point's degree as the drawing shows it.
 ```
 
-**109. `MatrixService.rotate`** — depth 2 · orphan-root
+**107. `MatrixService.rotate`** — depth 2 · orphan-root
 
 ```text
 🚀 MatrixService.rotate(matrix: Matrix, step: number): Matrix [applications/meanderaw/meanderaw-cli/src/modules/matrix/matrix.service.ts:101]
@@ -2615,16 +2612,7 @@ What this project is judged against, as declared in its own `callidescope.config
   └─> MatrixService.map(…)(row: readonly MatrixPoint[]): MatrixPoint[] [applications/meanderaw/meanderaw-cli/src/modules/matrix/matrix.service.ts:113]
 ```
 
-**110. `DoubleHorizontalEdgeCountCharacteristicService.compute`** — depth 2 · orphan-root
-
-```text
-🚀 DoubleHorizontalEdgeCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/point/double-horizontal-edge-count-characteristic.service.ts:47]
-   ↳ Counts the points whose only arms are east and west.
-  └─> SubmatrixUtilitiesService.countPointsWithExactArms(matrix: Matrix, arms: readonly MatrixPointArm[]): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/submatrix-utilities.service.ts:161]
-     ↳ Counts the points whose ink leaves by exactly `arms` — every named arm set and every other arm clear — which is the…
-```
-
-**111. `DoubleVerticalEdgeCountCharacteristicService.compute`** — depth 2 · orphan-root
+**108. `DoubleVerticalEdgeCountCharacteristicService.compute`** — depth 2 · orphan-root
 
 ```text
 🚀 DoubleVerticalEdgeCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/point/double-vertical-edge-count-characteristic.service.ts:47]
@@ -2633,34 +2621,7 @@ What this project is judged against, as declared in its own `callidescope.config
      ↳ Counts the points whose ink leaves by exactly `arms` — every named arm set and every other arm clear — which is the…
 ```
 
-**112. `EastEdgeCountCharacteristicService.compute`** — depth 2 · orphan-root
-
-```text
-🚀 EastEdgeCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/point/east-edge-count-characteristic.service.ts:46]
-   ↳ Counts the points with an east arm.
-  └─> SubmatrixUtilitiesService.countPointsWithArm(matrix: Matrix, arm: MatrixPointArm): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/submatrix-utilities.service.ts:141]
-     ↳ Counts the points whose ink leaves by `arm`, whatever other arms they carry — a lone arm, a straight edge, a corner, a…
-```
-
-**113. `EdgeCountCharacteristicService.compute`** — depth 2 · orphan-root
-
-```text
-🚀 EdgeCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/point/edge-count-characteristic.service.ts:48]
-   ↳ Sums every point's arm count and halves it.
-  └─> PointUtilitiesService.armCount(point: MatrixPoint): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/point/point-utilities.service.ts:31]
-     ↳ How many of a point's four arms carry ink — its raw digit degree, read directly off the point rather than through the…
-```
-
-**114. `NorthEdgeCountCharacteristicService.compute`** — depth 2 · orphan-root
-
-```text
-🚀 NorthEdgeCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/point/north-edge-count-characteristic.service.ts:46]
-   ↳ Counts the points with a north arm.
-  └─> SubmatrixUtilitiesService.countPointsWithArm(matrix: Matrix, arm: MatrixPointArm): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/submatrix-utilities.service.ts:141]
-     ↳ Counts the points whose ink leaves by `arm`, whatever other arms they carry — a lone arm, a straight edge, a corner, a…
-```
-
-**115. `SouthEdgeCountCharacteristicService.compute`** — depth 2 · orphan-root
+**109. `SouthEdgeCountCharacteristicService.compute`** — depth 2 · orphan-root
 
 ```text
 🚀 SouthEdgeCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/point/south-edge-count-characteristic.service.ts:46]
@@ -2669,7 +2630,7 @@ What this project is judged against, as declared in its own `callidescope.config
      ↳ Counts the points whose ink leaves by `arm`, whatever other arms they carry — a lone arm, a straight edge, a corner, a…
 ```
 
-**116. `WestEdgeCountCharacteristicService.compute`** — depth 2 · orphan-root
+**110. `WestEdgeCountCharacteristicService.compute`** — depth 2 · orphan-root
 
 ```text
 🚀 WestEdgeCountCharacteristicService.compute(context: CharacteristicContext): number [applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/point/west-edge-count-characteristic.service.ts:46]
@@ -2678,27 +2639,19 @@ What this project is judged against, as declared in its own `callidescope.config
      ↳ Counts the points whose ink leaves by `arm`, whatever other arms they carry — a lone arm, a straight edge, a corner, a…
 ```
 
-**117. `DatabaseModule.useFactory`** — depth 2 · orphan-root
+**111. `DrawPoolService.onMessage`** — depth ≥ 2 · orphan-root
 
 ```text
-🚀 DatabaseModule.useFactory(configurationService: ConfigService): TypeOrmModuleOptions [applications/meanderaw/meanderaw-cli/src/modules/database/database.module.ts:28]
-  └─> meanderDataSourceOptions(connection: MeanderDatabaseConnection): TypeOrmModuleOptions [applications/meanderaw/meanderaw-cli/src/modules/database/database.factories.ts:22]
-     ↳ The TypeORM options for the meander database at `connection`, shared by `DatabaseModule` and the integration suites so…
-```
-
-**118. `DrawPoolService.onMessage`** — depth ≥ 2 · orphan-root
-
-```text
-🚀 DrawPoolService.onMessage(reply: DrawWorkerReply): void [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:89]
+🚀 DrawPoolService.onMessage(reply: DrawWorkerReply): void [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:92]
   └─> DrawWorkerError.constructor(message: string): DrawWorkerError [applications/meanderaw/meanderaw-cli/src/modules/draw/draw.constants.ts:23]
 ```
 
-**119. `DrawIndexService.rows`** — depth 2 · orphan-root
+**112. `DrawIndexService.rows`** — depth 2 · orphan-root
 
 ```text
-🚀 DrawIndexService.rows(family: MeanderFamily): AsyncGenerator<Meander[], any, any> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:402]
-  └─> DatabaseService.familyRows(family: MeanderFamily, batchSize?: number): AsyncGenerator<Meander[]> [applications/meanderaw/meanderaw-cli/src/modules/database/database.service.ts:101]
-     ↳ One family's rows in batches of `batchSize`, ordered by rows, then columns, then Code — the order its page lists them…
+🚀 DrawIndexService.rows(…): AsyncGenerator<Meander[], any, any> [applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:355]
+  └─> MeanderawDatabaseService.patternRows(key: PatternCharacteristicKey, batchSize?: number): AsyncGenerator<Meander[]> [applications/meanderaw/meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.service.ts:110]
+     ↳ The rows one pattern characteristic holds for, in batches of `batchSize`, ordered by rows, then columns, then Code —…
 ```
 
 </details>
@@ -2707,32 +2660,34 @@ What this project is judged against, as declared in its own `callidescope.config
 
 | Callable | Breadth | Calls directly | Location |
 | --- | --- | --- | --- |
-| `CorpusService.ingestOne` | 13 | `CodeService.parse`, `CorpusService.canonicalPhase(…)`, `CodeService.canonicalPhase`, `CharacteristicsService.compute`, `CharacteristicsService.isReducible`, `CodeService.format`, `DatabaseService.findOneByCode`, `ClassificationService.classify`, `DatabaseService.save`, `CharacteristicsService.stored`, `CorpusService.symmetricalCodes(…)`, `CodeService.symmetricalCodes`, `DuplicateCorpusCodeError.constructor` | `applications/meanderaw/meanderaw-cli/src/modules/corpus/corpus.service.ts:89` |
-| `IsCombCharacteristicService.compute` | 8 | `FamilyUtilitiesService.hasValidDimensions`, `IsBarsCharacteristicService.compute`, `IsLinesCharacteristicService.compute`, `IsMeshCharacteristicService.compute`, `FamilyUtilitiesService.grid`, `IsCombCharacteristicService.isVerticalComb`, `IsCombCharacteristicService.isHorizontalComb`, `IsCombCharacteristicService.isReversingComb` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-comb-characteristic.service.ts:161` |
-| `DrawRecordService.record` | 8 | `CodeService.parse`, `CodeService.canonicalPhase`, `CharacteristicsService.compute`, `CharacteristicsService.isReducible`, `ClassificationService.classify`, `CharacteristicsService.stored`, `CodeService.format`, `CodeService.symmetricalCodes` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-record.service.ts:50` |
+| `CorpusService.ingestOne` | 12 | `CodeService.parse`, `CorpusService.canonicalPhase(…)`, `CodeService.canonicalPhase`, `CharacteristicsService.compute`, `CharacteristicsService.isReducible`, `CodeService.format`, `MeanderawDatabaseService.findOneByCode`, `MeanderawDatabaseService.save`, `CharacteristicsService.stored`, `CorpusService.symmetricalCodes(…)`, `CodeService.symmetricalCodes`, `DuplicateCorpusCodeError.constructor` | `applications/meanderaw/meanderaw-cli/src/modules/corpus/corpus.service.ts:76` |
+| `IsForkCharacteristicService.compute` | 7 | `BettiNumber0CountCharacteristicService.compute`, `BettiNumber1CountCharacteristicService.compute`, `ForkCountCharacteristicService.compute`, `CrossCountCharacteristicService.compute`, `FreeEndCountCharacteristicService.compute`, `DotCountCharacteristicService.compute`, `IsCombCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-fork-characteristic.service.ts:64` |
+| `IsPureTreeCharacteristicService.compute` | 7 | `BettiNumber0CountCharacteristicService.compute`, `BettiNumber1CountCharacteristicService.compute`, `ForkCountCharacteristicService.compute`, `CrossCountCharacteristicService.compute`, `DotCountCharacteristicService.compute`, `IsCombCharacteristicService.compute`, `IsArcadeCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-pure-tree-characteristic.service.ts:64` |
 
 <details>
-<summary>382 more callables</summary>
+<summary>362 more callables</summary>
 
 | Callable | Breadth | Calls directly | Location |
 | --- | --- | --- | --- |
-| `IsForkCharacteristicService.compute` | 7 | `BettiNumber0CountCharacteristicService.compute`, `BettiNumber1CountCharacteristicService.compute`, `ForkCountCharacteristicService.compute`, `CrossCountCharacteristicService.compute`, `FreeEndCountCharacteristicService.compute`, `DotCountCharacteristicService.compute`, `IsCombCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-fork-characteristic.service.ts:64` |
-| `IsPureTreeCharacteristicService.compute` | 7 | `BettiNumber0CountCharacteristicService.compute`, `BettiNumber1CountCharacteristicService.compute`, `ForkCountCharacteristicService.compute`, `CrossCountCharacteristicService.compute`, `DotCountCharacteristicService.compute`, `IsCombCharacteristicService.compute`, `IsArcadeCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-pure-tree-characteristic.service.ts:64` |
 | `TileEnumerationService.enumerate` | 7 | `TileEnumerationService.isAdmitted`, `OversizedTileError.constructor`, `TileEnumerationService.edges`, `TileEnumerationService.map(…)`, `TileEnumerationService.toSorted(…)`, `TileEnumerationService.map(…)`, `TileEnumerationService.orbitMinima` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/tile-enumeration.service.ts:165` |
-| `DrawIndexService.pages` | 7 | `DrawIndexService.group(…)`, `DrawIndexService.group`, `DrawIndexService.map(…)`, `DrawIndexService.toSorted(…)`, `DrawIndexService.map(…)`, `DrawIndexService.indexPage`, `DrawIndexService.familyPage` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:247` |
-| `IsArcadeCharacteristicService.compute` | 6 | `FamilyUtilitiesService.hasValidDimensions`, `IsBarsCharacteristicService.compute`, `IsMeshCharacteristicService.compute`, `IsCombCharacteristicService.compute`, `IsArcadeCharacteristicService.countPillars`, `FamilyUtilitiesService.grid` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-arcade-characteristic.service.ts:83` |
-| `IsWaterfallsCharacteristicService.compute` | 6 | `IsWaterfallsCharacteristicService.isDotFreeOpenStrandSet`, `TileCrossingCountCharacteristicService.compute`, `EndsOnBorderRulesCharacteristicService.compute`, `EndsAreLatticeNeighborsCharacteristicService.compute`, `EmbeddedUCountCharacteristicService.compute`, `LongestVerticalRunLengthCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-waterfalls-characteristic.service.ts:84` |
-| `StrandUtilitiesService.isTileBoundCoil` | 6 | `CompoundUtilitiesService.isJunctionFree`, `BettiNumber1CountCharacteristicService.compute`, `TileCrossingCountCharacteristicService.compute`, `StrandUtilitiesService.isFullInkWithoutDots`, `LongestHorizontalRunLengthCharacteristicService.compute`, `LongestVerticalRunLengthCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/strand-utilities.service.ts:80` |
-| `IsDoubleChainCharacteristicService.compute` | 6 | `CompoundUtilitiesService.isJunctionFree`, `StrandUtilitiesService.hasStrandEnds`, `BettiNumber1CountCharacteristicService.compute`, `StrandUtilitiesService.isWrappingReversal`, `LongestHorizontalRunLengthCharacteristicService.compute`, `LongestVerticalRunLengthCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-double-chain-characteristic.service.ts:60` |
+| `DrawRecordService.record` | 7 | `CodeService.parse`, `CodeService.canonicalPhase`, `CharacteristicsService.compute`, `CharacteristicsService.isReducible`, `CharacteristicsService.stored`, `CodeService.format`, `CodeService.symmetricalCodes` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-record.service.ts:45` |
+| `IsArcadeCharacteristicService.compute` | 6 | `ForkCountCharacteristicService.compute`, `CrossCountCharacteristicService.compute`, `DotCountCharacteristicService.compute`, `FreeEndCountCharacteristicService.compute`, `BettiNumber1CountCharacteristicService.compute`, `LongestVerticalRunLengthCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-arcade-characteristic.service.ts:61` |
+| `IsDoubleChainCharacteristicService.compute` | 6 | `CompoundUtilitiesService.isJunctionFree`, `StrandUtilitiesService.hasStrandEnds`, `BettiNumber1CountCharacteristicService.compute`, `StrandUtilitiesService.isWrappingReversal`, `LongestHorizontalRunLengthCharacteristicService.compute`, `LongestVerticalRunLengthCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-double-chain-characteristic.service.ts:60` |
+| `IsMeshCharacteristicService.compute` | 6 | `CrossCountCharacteristicService.compute`, `CornerCountCharacteristicService.compute`, `FreeEndCountCharacteristicService.compute`, `DotCountCharacteristicService.compute`, `TileCrossingCountCharacteristicService.compute`, `LongestVerticalRunLengthCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-mesh-characteristic.service.ts:60` |
+| `IsWhirlCharacteristicService.compute` | 6 | `BettiNumber0CountCharacteristicService.compute`, `IsWhirlCharacteristicService.isOpenStrandSet`, `MaxMonotonicTurnLengthCharacteristicService.compute`, `TotalTurnCountCharacteristicService.compute`, `InflectionCountCharacteristicService.compute`, `LongestHorizontalRunLengthCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-whirl-characteristic.service.ts:81` |
 | `TileEnumerationService.orbitMinima` | 6 | `TileEnumerationService.edges`, `TileEnumerationService.isAdmitted`, `OversizedTileError.constructor`, `TileEnumerationService.map(…)`, `SymmetryService.edgePermutations`, `TileEnumerationService.every(…)` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/tile-enumeration.service.ts:254` |
-| `DrawIndexService.familyPage` | 6 | `DrawIndexService.escape`, `DrawIndexService.label`, `DrawIndexService.reduce(…)`, `DrawIndexService.documentHead`, `DrawIndexService.unclassifiedSection`, `DrawIndexService.namedSection` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:135` |
-| `DrawIndexService.renderBand` | 6 | `GeometryService.compute`, `DrawIndexService.format`, `DrawIndexService.escape`, `CodeService.parse`, `DrawingService.render`, `DrawIndexService.renderRepeats` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:293` |
-| `IsWaterfallsCharacteristicService.isDotFreeOpenStrandSet` | 5 | `CompoundUtilitiesService.isJunctionFree`, `DotCountCharacteristicService.compute`, `BettiNumber1CountCharacteristicService.compute`, `FreeEndCountCharacteristicService.compute`, `BettiNumber0CountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-waterfalls-characteristic.service.ts:71` |
+| `DrawIndexService.pages` | 6 | `DrawIndexService.group(…)`, `DrawIndexService.group`, `DrawIndexService.flatMap(…)`, `DrawIndexService.indexPage`, `DrawIndexService.map(…)`, `DrawIndexService.patternPage` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:183` |
+| `DrawIndexService.renderBand` | 6 | `GeometryService.compute`, `DrawIndexService.format`, `DrawIndexService.escape`, `CodeService.parse`, `DrawingService.render`, `DrawIndexService.renderRepeats` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:244` |
+| `IsClaspsCharacteristicService.compute` | 5 | `CompoundUtilitiesService.isJunctionFree`, `ReversesAtItsTightestTurnCharacteristicService.compute`, `EndsAreLatticeNeighborsCharacteristicService.compute`, `LongestHorizontalRunLengthCharacteristicService.compute`, `MaxMonotonicTurnLengthCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-clasps-characteristic.service.ts:58` |
+| `IsCombCharacteristicService.compute` | 5 | `BettiNumber0CountCharacteristicService.compute`, `BettiNumber1CountCharacteristicService.compute`, `CrossCountCharacteristicService.compute`, `ForkCountCharacteristicService.compute`, `TotalTurnCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-comb-characteristic.service.ts:57` |
+| `IsSwirlCharacteristicService.compute` | 5 | `MaxMonotonicTurnLengthCharacteristicService.compute`, `CompoundUtilitiesService.isJunctionFree`, `BettiNumber1CountCharacteristicService.compute`, `TightestTurnCountCharacteristicService.compute`, `FreeEndCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-swirl-characteristic.service.ts:57` |
+| `IsWhirlCharacteristicService.isOpenStrandSet` | 5 | `CompoundUtilitiesService.isJunctionFree`, `DotCountCharacteristicService.compute`, `BettiNumber1CountCharacteristicService.compute`, `FreeEndCountCharacteristicService.compute`, `BettiNumber0CountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-whirl-characteristic.service.ts:68` |
 | `LetterUtilitiesService.orientation` | 5 | `LetterUtilitiesService.parse`, `LetterUtilitiesService.flips`, `LetterUtilitiesService.reduce(…)`, `LetterUtilitiesService.turnClockwise`, `SubmatrixUtilitiesService.glyphWindow` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-utilities.service.ts:208` |
 | `RectangleUtilitiesService.ringCloses` | 5 | `RectangleUtilitiesService.from(…)`, `RectangleUtilitiesService.from(…)`, `SubmatrixUtilitiesService.pointDigitAt`, `RectangleUtilitiesService.every(…)`, `RectangleUtilitiesService.every(…)` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/rectangle/rectangle-utilities.service.ts:73` |
 | `DrawingService.render` | 5 | `GeometryService.compute`, `DrawingService.codeSegments`, `GeometryService.borderPath`, `SvgService.render`, `DrawingService.format` | `applications/meanderaw/meanderaw-cli/src/modules/drawing/drawing.service.ts:125` |
-| `DrawEnumerationService.persist` | 5 | `DatabaseService.codes`, `DrawPoolService.batches`, `DatabaseService.saveAll`, `DrawEnumerationService.filter(…)`, `DrawPoolService.close` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-enumeration.service.ts:73` |
-| `DrawCommand.drawAll` | 5 | `DatabaseService.clear`, `CorpusService.ingest`, `DrawCommand.map(…)`, `DrawEnumerationService.drawAll`, `DrawCommand.writePages` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw.command.ts:109` |
+| `DrawEnumerationService.persist` | 5 | `MeanderawDatabaseService.codes`, `DrawPoolService.batches`, `MeanderawDatabaseService.saveAll`, `DrawEnumerationService.filter(…)`, `DrawPoolService.close` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-enumeration.service.ts:67` |
+| `DrawIndexService.shapeSections` | 5 | `DrawIndexService.reduce(…)`, `DrawIndexService.map(…)`, `DrawIndexService.sectionHead`, `DrawIndexService.renderFigure`, `DrawIndexService.shapeHead` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:301` |
+| `DrawCommand.drawAll` | 5 | `MeanderawDatabaseService.clear`, `CorpusService.ingest`, `DrawCommand.map(…)`, `DrawEnumerationService.drawAll`, `DrawCommand.writePages` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw.command.ts:109` |
 | `SymmetryService.transform` | 4 | `TileService.edges`, `TileService.blankEdges`, `SymmetryService.place`, `TileService.build` | `applications/meanderaw/meanderaw-cli/src/modules/symmetry/symmetry.service.ts:177` |
 | `CodeService.symmetricalCodes` | 4 | `CodeService.format`, `CodeService.map(…)`, `SymmetryService.reflections`, `CodeService.tile` | `applications/meanderaw/meanderaw-cli/src/modules/code/code.service.ts:339` |
 | `ConnectivityService.connectivity` | 4 | `ConnectivityService.edges`, `ConnectivityService.adjacency`, `GraphService.components`, `ConnectivityService.freeEnds` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/connectivity/connectivity.service.ts:133` |
@@ -2743,19 +2698,19 @@ What this project is judged against, as declared in its own `callidescope.config
 | `SubmatrixUtilitiesService.countIsolatedGlyphs` | 4 | `SubmatrixUtilitiesService.glyphCells`, `SubmatrixUtilitiesService.map(…)`, `SubmatrixUtilitiesService.digitGrid`, `SubmatrixUtilitiesService.matchesAt` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/submatrix-utilities.service.ts:112` |
 | `ReversesAtItsTightestTurnCharacteristicService.traceSinglePath` | 4 | `ReversesAtItsTightestTurnCharacteristicService.findStartNode`, `ReversesAtItsTightestTurnCharacteristicService.findNextNode`, `ReversesAtItsTightestTurnCharacteristicService.advancePath`, `ReversesAtItsTightestTurnCharacteristicService.checkFinalLoopTurn` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.ts:265` |
 | `ReversesAtItsTightestTurnCharacteristicService.compute` | 4 | `ReversesAtItsTightestTurnCharacteristicService.isJunctionFree`, `ConnectivityService.edges`, `ReversesAtItsTightestTurnCharacteristicService.buildAdjacencyGraph`, `ReversesAtItsTightestTurnCharacteristicService.tracePaths` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.ts:317` |
+| `CornerCountCharacteristicService.compute` | 4 | `NorthEastCornerCountCharacteristicService.compute`, `NorthWestCornerCountCharacteristicService.compute`, `SouthEastCornerCountCharacteristicService.compute`, `SouthWestCornerCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/corner/corner-count-characteristic.service.ts:56` |
 | `ForkCountCharacteristicService.compute` | 4 | `NorthForkCountCharacteristicService.compute`, `SouthForkCountCharacteristicService.compute`, `EastForkCountCharacteristicService.compute`, `WestForkCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/fork/fork-count-characteristic.service.ts:55` |
 | `IsClosedLoopCharacteristicService.compute` | 4 | `BettiNumber0CountCharacteristicService.compute`, `BettiNumber1CountCharacteristicService.compute`, `FreeEndCountCharacteristicService.compute`, `CompoundUtilitiesService.isJunctionFree` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/structure/is-closed-loop-characteristic.service.ts:53` |
 | `IsSingleArcCharacteristicService.compute` | 4 | `BettiNumber0CountCharacteristicService.compute`, `BettiNumber1CountCharacteristicService.compute`, `FreeEndCountCharacteristicService.compute`, `CompoundUtilitiesService.isJunctionFree` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/structure/is-single-arc-characteristic.service.ts:53` |
-| `IsBoxesCharacteristicService.compute` | 4 | `IsSingleArcCharacteristicService.compute`, `TileCrossingCountCharacteristicService.compute`, `EndsAreLatticeNeighborsCharacteristicService.compute`, `IsWaterfallsCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-boxes-characteristic.service.ts:56` |
-| `StrandUtilitiesService.isWrappingReversal` | 4 | `TileCrossingCountCharacteristicService.compute`, `ReversesAtItsTightestTurnCharacteristicService.compute`, `EndsOnBorderRulesCharacteristicService.compute`, `StrandUtilitiesService.isFullInkWithoutDots` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/strand-utilities.service.ts:94` |
-| `IsChainCharacteristicService.compute` | 4 | `IsSingleArcCharacteristicService.compute`, `StrandUtilitiesService.isWrappingReversal`, `LongestHorizontalRunLengthCharacteristicService.compute`, `LongestVerticalRunLengthCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-chain-characteristic.service.ts:57` |
-| `IsParallelCharacteristicService.compute` | 4 | `BettiNumber0CountCharacteristicService.compute`, `CompoundUtilitiesService.isJunctionFree`, `BettiNumber1CountCharacteristicService.compute`, `FreeEndCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-parallel-characteristic.service.ts:55` |
-| `CornerCountCharacteristicService.compute` | 4 | `NorthEastCornerCountCharacteristicService.compute`, `NorthWestCornerCountCharacteristicService.compute`, `SouthEastCornerCountCharacteristicService.compute`, `SouthWestCornerCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/corner/corner-count-characteristic.service.ts:56` |
-| `DatabaseService.saveAll` | 4 | `DatabaseService.filter(…)`, `DatabaseService.map(…)`, `DatabaseService.map(…)`, `DatabaseService.transaction(…)` | `applications/meanderaw/meanderaw-cli/src/modules/database/database.service.ts:221` |
+| `IsBarsCharacteristicService.compute` | 4 | `EdgeCountCharacteristicService.compute`, `EastEdgeCountCharacteristicService.compute`, `DotCountCharacteristicService.compute`, `LongestVerticalRunLengthCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-bars-characteristic.service.ts:53` |
+| `IsBoxesCharacteristicService.compute` | 4 | `MaxMonotonicTurnLengthCharacteristicService.compute`, `InflectionCountCharacteristicService.compute`, `TightestTurnCountCharacteristicService.compute`, `BettiNumber0CountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-boxes-characteristic.service.ts:54` |
+| `IsCrossCharacteristicService.compute` | 4 | `CrossCountCharacteristicService.compute`, `ForkCountCharacteristicService.compute`, `FreeEndCountCharacteristicService.compute`, `DotCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-cross-characteristic.service.ts:54` |
+| `StrandUtilitiesService.isWrappingReversal` | 4 | `TileCrossingCountCharacteristicService.compute`, `ReversesAtItsTightestTurnCharacteristicService.compute`, `EndsOnBorderRulesCharacteristicService.compute`, `StrandUtilitiesService.isFullInkWithoutDots` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/strand-utilities.service.ts:67` |
+| `IsParallelCharacteristicService.compute` | 4 | `CompoundUtilitiesService.isJunctionFree`, `DotCountCharacteristicService.compute`, `EdgeCountCharacteristicService.compute`, `MaxMonotonicTurnLengthCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-parallel-characteristic.service.ts:55` |
 | `TileEnumerationService.tile` | 4 | `TileService.blankEdges`, `TileEnumerationService.edges`, `TileEnumerationService.set`, `TileService.build` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/tile-enumeration.service.ts:282` |
-| `DrawWorkerService.map(…)` | 4 | `DrawRecordService.record`, `CodeService.spell`, `SymmetryService.canonicalTile`, `TileEnumerationService.tile` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-worker.service.ts:49` |
-| `DrawPoolService.batches` | 4 | `DrawPoolService.batchesOf`, `TileEnumerationService.orbitMinima`, `DrawWorkerService.records`, `DrawPoolService.waves` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:186` |
-| `DrawIndexService.unclassifiedSection` | 4 | `DrawIndexService.map(…)`, `DrawIndexService.sectionHead`, `DrawIndexService.renderFigure`, `DrawIndexService.shapeHead` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:351` |
+| `MeanderawDatabaseService.saveAll` | 4 | `MeanderawDatabaseService.filter(…)`, `MeanderawDatabaseService.map(…)`, `MeanderawDatabaseService.map(…)`, `MeanderawDatabaseService.transaction(…)` | `applications/meanderaw/meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.service.ts:229` |
+| `DrawWorkerService.map(…)` | 4 | `DrawRecordService.record`, `CodeService.spell`, `SymmetryService.canonicalTile`, `TileEnumerationService.tile` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-worker.service.ts:52` |
+| `DrawPoolService.batches` | 4 | `DrawPoolService.batchesOf`, `TileEnumerationService.orbitMinima`, `DrawWorkerService.records`, `DrawPoolService.waves` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:189` |
 | `CodeService.parse` | 3 | `CodeService.parseFormatted`, `CodeService.parseBare`, `InvalidCodeFormatError.constructor` | `applications/meanderaw/meanderaw-cli/src/modules/code/code.service.ts:215` |
 | `CodeService.map(…)` | 3 | `CodeService.format`, `CodeService.canonicalPhase`, `CodeService.spellDigits` | `applications/meanderaw/meanderaw-cli/src/modules/code/code.service.ts:347` |
 | `CharacteristicContextService.create` | 3 | `CharacteristicContextService.build`, `CodeService.reduceToUnit`, `CharacteristicContextService.parse` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/characteristic-context.service.ts:66` |
@@ -2773,17 +2728,11 @@ What this project is judged against, as declared in its own `callidescope.config
 | `ReversesAtItsTightestTurnCharacteristicService.findNextNode` | 3 | `ReversesAtItsTightestTurnCharacteristicService.getNeighbors`, `ReversesAtItsTightestTurnCharacteristicService.find(…)`, `ReversesAtItsTightestTurnCharacteristicService.find(…)` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.ts:156` |
 | `TightestTurnCountCharacteristicService.compute` | 3 | `TightestTurnCountCharacteristicService.reduce(…)`, `PathUtilitiesService.strands`, `ConnectivityService.edges` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/tightest-turn-count-characteristic.service.ts:49` |
 | `TotalTurnCountCharacteristicService.compute` | 3 | `TotalTurnCountCharacteristicService.reduce(…)`, `PathUtilitiesService.strands`, `ConnectivityService.edges` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/total-turn-count-characteristic.service.ts:48` |
-| `IsCombCharacteristicService.isVerticalComb` | 3 | `IsCombCharacteristicService.from(…)`, `IsCombCharacteristicService.map(…)`, `IsCombCharacteristicService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-comb-characteristic.service.ts:138` |
-| `IsClaspsCharacteristicService.compute` | 3 | `StrandUtilitiesService.isTileBoundCoil`, `ReversesAtItsTightestTurnCharacteristicService.compute`, `StrandUtilitiesService.hasStrandEnds` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-clasps-characteristic.service.ts:50` |
-| `IsStippledCharacteristicService.compute` | 3 | `BettiNumber0CountCharacteristicService.compute`, `DotCountCharacteristicService.compute`, `ForkCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-stippled-characteristic.service.ts:50` |
-| `IsSwirlCharacteristicService.compute` | 3 | `StrandUtilitiesService.isTileBoundCoil`, `EndsOnBorderRulesCharacteristicService.compute`, `StrandUtilitiesService.hasStrandEnds` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-swirl-characteristic.service.ts:50` |
-| `IsWhirlCharacteristicService.compute` | 3 | `StrandUtilitiesService.isTileBoundCoil`, `IsWhirlCharacteristicService.isSingleWhirl`, `IsWhirlCharacteristicService.isDoubleWhirl` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-whirl-characteristic.service.ts:66` |
+| `IsChainCharacteristicService.compute` | 3 | `MaxMonotonicTurnLengthCharacteristicService.compute`, `TightestTurnCountCharacteristicService.compute`, `TileCrossingComponentDeltaCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-chain-characteristic.service.ts:51` |
 | `LetterUtilitiesService.evaluator` | 3 | `LetterUtilitiesService.description`, `SubmatrixUtilitiesService.glyphFormula`, `LetterUtilitiesService.displayName` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-utilities.service.ts:142` |
 | `RectangleUtilitiesService.isIsolatedRectangleAt` | 3 | `SubmatrixUtilitiesService.pointDigitAt`, `RectangleUtilitiesService.sideLength`, `RectangleUtilitiesService.ringCloses` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/rectangle/rectangle-utilities.service.ts:32` |
 | `TileEnumerationService.map(…)` | 3 | `SymmetryService.canonicalTile`, `TileEnumerationService.tile`, `SymmetryService.edgeKey` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/tile-enumeration.service.ts:179` |
-| `DrawPoolService.waves` | 3 | `DrawPoolService.spawn`, `DrawPoolService.wave`, `DrawPoolService.catch(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:152` |
-| `DrawIndexService.indexPage` | 3 | `DrawIndexService.reduce(…)`, `DrawIndexService.map(…)`, `DrawIndexService.documentHead` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:200` |
-| `ClassificationService.rules` | 2 | `ClassificationService.rule`, `ClassificationService.unitRule` | `applications/meanderaw/meanderaw-cli/src/modules/classification/classification.service.ts:107` |
+| `DrawPoolService.waves` | 3 | `DrawPoolService.spawn`, `DrawPoolService.wave`, `DrawPoolService.catch(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:155` |
 | `TileService.assertPointAgrees` | 2 | `MalformedTileError.constructor`, `TileService.assertPointJoinsBelow` | `applications/meanderaw/meanderaw-cli/src/modules/tile/tile.service.ts:50` |
 | `TileService.assertWellFormed` | 2 | `MalformedTileError.constructor`, `TileService.assertPointAgrees` | `applications/meanderaw/meanderaw-cli/src/modules/tile/tile.service.ts:120` |
 | `TileService.from(…)` | 2 | `TileService.horizontal`, `TileService.vertical` | `applications/meanderaw/meanderaw-cli/src/modules/tile/tile.service.ts:168` |
@@ -2819,12 +2768,11 @@ What this project is judged against, as declared in its own `callidescope.config
 | `TopBorderTouchCountCharacteristicService.compute` | 2 | `PathUtilitiesService.rowTouchCount`, `ConnectivityService.edges` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/top-border-touch-count-characteristic.service.ts:49` |
 | `EmbeddedUCountCharacteristicService.compute` | 2 | `EmbeddedUCountCharacteristicService.isEmbeddedU`, `EmbeddedUCountCharacteristicService.windowDigits` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/embedded/embedded-u-count-characteristic.service.ts:92` |
 | `CompoundUtilitiesService.isJunctionFree` | 2 | `ForkCountCharacteristicService.compute`, `CrossCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/compound-utilities.service.ts:33` |
-| `IsCombCharacteristicService.isHorizontalComb` | 2 | `IsCombCharacteristicService.from(…)`, `IsCombCharacteristicService.filter(…)` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-comb-characteristic.service.ts:101` |
-| `IsCombCharacteristicService.isReversingComb` | 2 | `IsCombCharacteristicService.hasDownTeeth`, `IsCombCharacteristicService.hasUpTeeth` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-comb-characteristic.service.ts:120` |
-| `IsArcadeCharacteristicService.countPillars` | 2 | `IsArcadeCharacteristicService.reduce(…)`, `IsArcadeCharacteristicService.from(…)` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-arcade-characteristic.service.ts:57` |
-| `StrandUtilitiesService.hasStrandEnds` | 2 | `BettiNumber0CountCharacteristicService.compute`, `FreeEndCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/strand-utilities.service.ts:61` |
-| `StrandUtilitiesService.isFullInkWithoutDots` | 2 | `DensityCharacteristicService.compute`, `DotCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/strand-utilities.service.ts:72` |
-| `IsCrossCharacteristicService.compute` | 2 | `CrossCountCharacteristicService.compute`, `IsMeshCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-cross-characteristic.service.ts:49` |
+| `StrandUtilitiesService.hasStrandEnds` | 2 | `BettiNumber0CountCharacteristicService.compute`, `FreeEndCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/strand-utilities.service.ts:48` |
+| `StrandUtilitiesService.isFullInkWithoutDots` | 2 | `DensityCharacteristicService.compute`, `DotCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/strand-utilities.service.ts:59` |
+| `IsLinesCharacteristicService.compute` | 2 | `NorthEdgeCountCharacteristicService.compute`, `BettiNumber1CountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-lines-characteristic.service.ts:47` |
+| `IsSnakeCharacteristicService.compute` | 2 | `IsClosedLoopCharacteristicService.compute`, `DoubleHorizontalEdgeCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-snake-characteristic.service.ts:47` |
+| `IsWaterfallsCharacteristicService.compute` | 2 | `IsSingleArcCharacteristicService.compute`, `MaxMonotonicTurnLengthCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-waterfalls-characteristic.service.ts:48` |
 | `LetterUtilitiesService.count` | 2 | `LetterUtilitiesService.track`, `SubmatrixUtilitiesService.countIsolatedGlyphs` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-utilities.service.ts:85` |
 | `LetterUtilitiesService.mapArms` | 2 | `LetterUtilitiesService.reduce(…)`, `LetterUtilitiesService.filter(…)` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-utilities.service.ts:192` |
 | `LetterUtilitiesService.reduce(…)` | 2 | `LetterUtilitiesService.flipHorizontally`, `LetterUtilitiesService.flipVertically` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-utilities.service.ts:216` |
@@ -2839,28 +2787,25 @@ What this project is judged against, as declared in its own `callidescope.config
 | `LetterUtilitiesService.turnClockwise` | 2 | `LetterUtilitiesService.reduce(…)`, `LetterUtilitiesService.rectangular` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-utilities.service.ts:388` |
 | `HorizontalRectangleCountCharacteristicService.compute` | 2 | `HorizontalRectangleCountCharacteristicService.countIsolatedRectangles(…)`, `RectangleUtilitiesService.countIsolatedRectangles` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/rectangle/horizontal-rectangle-count-characteristic.service.ts:48` |
 | `VerticalRectangleCountCharacteristicService.compute` | 2 | `VerticalRectangleCountCharacteristicService.countIsolatedRectangles(…)`, `RectangleUtilitiesService.countIsolatedRectangles` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/rectangle/vertical-rectangle-count-characteristic.service.ts:48` |
-| `DatabaseService.transaction(…)` | 2 | `DatabaseService.flatMap(…)`, `DatabaseService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/database/database.service.ts:234` |
 | `TileEnumerationService.set` | 2 | `TileEnumerationService.address`, `TileService.mark` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/tile-enumeration.service.ts:141` |
-| `EnumerationService.enumerate` | 2 | `EnumerationService.map(…)`, `TileEnumerationService.enumerate` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/enumeration.service.ts:99` |
-| `EnumerationService.shapes` | 2 | `EnumerationService.isAdmitted`, `TileEnumerationService.maximumColumns` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/enumeration.service.ts:131` |
-| `CorpusService.ingest` | 2 | `CorpusService.filter(…)`, `CorpusService.ingestOne` | `applications/meanderaw/meanderaw-cli/src/modules/corpus/corpus.service.ts:155` |
+| `EnumerationService.enumerate` | 2 | `EnumerationService.map(…)`, `TileEnumerationService.enumerate` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/enumeration.service.ts:98` |
+| `EnumerationService.shapes` | 2 | `EnumerationService.isAdmitted`, `TileEnumerationService.maximumColumns` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/enumeration.service.ts:130` |
+| `MeanderawDatabaseService.transaction(…)` | 2 | `MeanderawDatabaseService.flatMap(…)`, `MeanderawDatabaseService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.service.ts:242` |
+| `CorpusService.ingest` | 2 | `CorpusService.filter(…)`, `CorpusService.ingestOne` | `applications/meanderaw/meanderaw-cli/src/modules/corpus/corpus.service.ts:126` |
 | `DrawingService.codeSegments` | 2 | `CodeService.directionsAt`, `DrawingService.pointSegments` | `applications/meanderaw/meanderaw-cli/src/modules/drawing/drawing.service.ts:54` |
 | `DrawingService.pointSegments` | 2 | `DrawingService.format`, `DrawingService.isBare` | `applications/meanderaw/meanderaw-cli/src/modules/drawing/drawing.service.ts:95` |
-| `DrawCodeService.draw` | 2 | `DatabaseService.save`, `DrawRecordService.record` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-code.service.ts:43` |
-| `DrawPoolService.wave` | 2 | `DrawPoolService.flatMap(…)`, `DrawPoolService.spawn` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:132` |
-| `DrawEnumerationService.drawAll` | 2 | `DrawEnumerationService.persist`, `EnumerationService.shapes` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-enumeration.service.ts:51` |
+| `DrawCodeService.draw` | 2 | `MeanderawDatabaseService.save`, `DrawRecordService.record` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-code.service.ts:43` |
+| `DrawPoolService.wave` | 2 | `DrawPoolService.flatMap(…)`, `DrawPoolService.spawn` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:135` |
+| `DrawEnumerationService.drawAll` | 2 | `DrawEnumerationService.persist`, `EnumerationService.shapes` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-enumeration.service.ts:45` |
 | `DrawIndexService.caption` | 2 | `DrawIndexService.filter(…)`, `DrawIndexService.escape` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:76` |
-| `DrawIndexService.heldRows` | 2 | `DrawIndexService.toSorted(…)`, `DrawIndexService.filter(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:183` |
-| `DrawIndexService.namedSection` | 2 | `DrawIndexService.sectionHead`, `DrawIndexService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:226` |
-| `DrawIndexService.map(…)` | 2 | `DrawIndexService.escape`, `DrawIndexService.reduce(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:256` |
-| `DrawIndexService.renderFigure` | 2 | `DrawIndexService.renderBand`, `DrawIndexService.caption` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:313` |
-| `DrawIndexService.build` | 2 | `DatabaseService.familyShapeCounts`, `DrawIndexService.pages` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:397` |
-| `DrawIndexService.render` | 2 | `DrawIndexService.pages`, `DrawIndexService.collect` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:410` |
+| `DrawIndexService.heldRows` | 2 | `DrawIndexService.toSorted(…)`, `DrawIndexService.filter(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:146` |
+| `DrawIndexService.indexPage` | 2 | `DrawIndexService.map(…)`, `DrawIndexService.documentHead` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:163` |
+| `DrawIndexService.patternPage` | 2 | `DrawIndexService.documentHead`, `DrawIndexService.shapeSections` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:213` |
+| `DrawIndexService.renderFigure` | 2 | `DrawIndexService.renderBand`, `DrawIndexService.caption` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:264` |
+| `DrawIndexService.build` | 2 | `MeanderawDatabaseService.patternShapeCounts`, `DrawIndexService.pages` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:348` |
+| `DrawIndexService.render` | 2 | `DrawIndexService.pages`, `DrawIndexService.collect` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:363` |
 | `DrawCommand.runCodeDrawing` | 2 | `IncompleteCodeDrawingError.constructor`, `DrawCodeService.draw` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw.command.ts:142` |
 | `DrawCommand.run` | 2 | `DrawCommand.drawAll`, `DrawCommand.runCodeDrawing` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw.command.ts:218` |
-| `ClassificationService.matches` | 1 | `ClassificationService.holds` | `applications/meanderaw/meanderaw-cli/src/modules/classification/classification.service.ts:64` |
-| `ClassificationService.matches` | 1 | `ClassificationService.holds` | `applications/meanderaw/meanderaw-cli/src/modules/classification/classification.service.ts:75` |
-| `ClassificationService.classify` | 1 | `ClassificationService.rules` | `applications/meanderaw/meanderaw-cli/src/modules/classification/classification.service.ts:86` |
 | `TileService.assertPointJoinsBelow` | 1 | `MalformedTileError.constructor` | `applications/meanderaw/meanderaw-cli/src/modules/tile/tile.service.ts:72` |
 | `TileService.blankEdges` | 1 | `TileService.grid` | `applications/meanderaw/meanderaw-cli/src/modules/tile/tile.service.ts:143` |
 | `TileService.grid` | 1 | `TileService.from(…)` | `applications/meanderaw/meanderaw-cli/src/modules/tile/tile.service.ts:145` |
@@ -2948,6 +2893,10 @@ What this project is judged against, as declared in its own `callidescope.config
 | `ReversesAtItsTightestTurnCharacteristicService.isJunctionFree` | 1 | `PointUtilitiesService.armCount` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.ts:223` |
 | `ReversesAtItsTightestTurnCharacteristicService.tracePaths` | 1 | `ReversesAtItsTightestTurnCharacteristicService.traceSinglePath` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/reverses-at-its-tightest-turn-characteristic.service.ts:242` |
 | `TotalTurnCountCharacteristicService.reduce(…)` | 1 | `PathUtilitiesService.signedTurns` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/path/turn/total-turn-count-characteristic.service.ts:52` |
+| `NorthEastCornerCountCharacteristicService.compute` | 1 | `SubmatrixUtilitiesService.countPointsWithExactArms` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/corner/north-east-corner-count-characteristic.service.ts:46` |
+| `NorthWestCornerCountCharacteristicService.compute` | 1 | `SubmatrixUtilitiesService.countPointsWithExactArms` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/corner/north-west-corner-count-characteristic.service.ts:46` |
+| `SouthEastCornerCountCharacteristicService.compute` | 1 | `SubmatrixUtilitiesService.countPointsWithExactArms` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/corner/south-east-corner-count-characteristic.service.ts:46` |
+| `SouthWestCornerCountCharacteristicService.compute` | 1 | `SubmatrixUtilitiesService.countPointsWithExactArms` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/corner/south-west-corner-count-characteristic.service.ts:46` |
 | `CrossCountCharacteristicService.compute` | 1 | `SubmatrixUtilitiesService.countPointsWithExactArms` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/cross/cross-count-characteristic.service.ts:45` |
 | `EmbeddedUCountCharacteristicService.windowDigits` | 1 | `SubmatrixUtilitiesService.pointDigitAt` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/embedded/embedded-u-count-characteristic.service.ts:72` |
 | `EastForkCountCharacteristicService.compute` | 1 | `SubmatrixUtilitiesService.countPointsWithExactArms` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/fork/east-fork-count-characteristic.service.ts:46` |
@@ -2960,19 +2909,7 @@ What this project is judged against, as declared in its own `callidescope.config
 | `RunUtilitiesService.from(…)` | 1 | `RunUtilitiesService.longestColumnRunLength` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/run/run-utilities.service.ts:91` |
 | `LongestHorizontalRunLengthCharacteristicService.compute` | 1 | `RunUtilitiesService.longestHorizontalRunLength` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/run/longest-horizontal-run-length-characteristic.service.ts:46` |
 | `LongestVerticalRunLengthCharacteristicService.compute` | 1 | `RunUtilitiesService.longestVerticalRunLength` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/run/longest-vertical-run-length-characteristic.service.ts:46` |
-| `FamilyUtilitiesService.grid` | 1 | `FamilyUtilitiesService.from(…)` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/family-utilities.service.ts:26` |
-| `IsBarsCharacteristicService.compute` | 1 | `FamilyUtilitiesService.matchesRails` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-bars-characteristic.service.ts:45` |
-| `IsMeshCharacteristicService.compute` | 1 | `FamilyUtilitiesService.matchesRails` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-mesh-characteristic.service.ts:45` |
-| `IsCombCharacteristicService.hasDownTeeth` | 1 | `IsCombCharacteristicService.from(…)` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-comb-characteristic.service.ts:53` |
-| `IsCombCharacteristicService.hasUpTeeth` | 1 | `IsCombCharacteristicService.from(…)` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-comb-characteristic.service.ts:77` |
-| `IsArcadeCharacteristicService.from(…)` | 1 | `IsArcadeCharacteristicService.every(…)` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-arcade-characteristic.service.ts:67` |
-| `IsSnakeCharacteristicService.compute` | 1 | `IsClosedLoopCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-snake-characteristic.service.ts:45` |
-| `IsWhirlCharacteristicService.isDoubleWhirl` | 1 | `StrandUtilitiesService.hasStrandEnds` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-whirl-characteristic.service.ts:44` |
-| `IsWhirlCharacteristicService.isSingleWhirl` | 1 | `StrandUtilitiesService.hasStrandEnds` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/family/is-whirl-characteristic.service.ts:54` |
-| `NorthEastCornerCountCharacteristicService.compute` | 1 | `SubmatrixUtilitiesService.countPointsWithExactArms` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/corner/north-east-corner-count-characteristic.service.ts:46` |
-| `NorthWestCornerCountCharacteristicService.compute` | 1 | `SubmatrixUtilitiesService.countPointsWithExactArms` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/corner/north-west-corner-count-characteristic.service.ts:46` |
-| `SouthEastCornerCountCharacteristicService.compute` | 1 | `SubmatrixUtilitiesService.countPointsWithExactArms` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/corner/south-east-corner-count-characteristic.service.ts:46` |
-| `SouthWestCornerCountCharacteristicService.compute` | 1 | `SubmatrixUtilitiesService.countPointsWithExactArms` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/corner/south-west-corner-count-characteristic.service.ts:46` |
+| `IsDotsCharacteristicService.compute` | 1 | `InkPointCountCharacteristicService.compute` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/compound/pattern/is-dots-characteristic.service.ts:43` |
 | `LetterUtilitiesService.characters` | 1 | `LetterUtilitiesService.from(…)` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-utilities.service.ts:74` |
 | `LetterUtilitiesService.description` | 1 | `LetterUtilitiesService.drawing` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-utilities.service.ts:109` |
 | `LetterUtilitiesService.compute` | 1 | `LetterUtilitiesService.count` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/letter/letter-utilities.service.ts:151` |
@@ -3056,45 +2993,41 @@ What this project is judged against, as declared in its own `callidescope.config
 | `RectangleUtilitiesService.from(…)` | 1 | `SubmatrixUtilitiesService.pointDigitAt` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/rectangle/rectangle-utilities.service.ts:87` |
 | `RectangleUtilitiesService.sideLength` | 1 | `SubmatrixUtilitiesService.pointDigitAt` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/rectangle/rectangle-utilities.service.ts:112` |
 | `RectangleUtilitiesService.countIsolatedRectangles` | 1 | `RectangleUtilitiesService.isIsolatedRectangleAt` | `applications/meanderaw/meanderaw-cli/src/modules/characteristics/submatrix/rectangle/rectangle-utilities.service.ts:158` |
-| `DatabaseService.codes` | 1 | `DatabaseService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/database/database.service.ts:83` |
-| `DatabaseService.familyShapeCounts` | 1 | `DatabaseService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/database/database.service.ts:141` |
-| `DatabaseService.flatMap(…)` | 1 | `DatabaseService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/database/database.service.ts:241` |
-| `DatabaseService.map(…)` | 1 | `DatabaseService.persistentValue` | `applications/meanderaw/meanderaw-cli/src/modules/database/database.service.ts:242` |
-| `DatabaseService.map(…)` | 1 | `DatabaseService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/database/database.service.ts:245` |
-| `DatabaseModule.useFactory` | 1 | `meanderDataSourceOptions` | `applications/meanderaw/meanderaw-cli/src/modules/database/database.module.ts:28` |
 | `TileEnumerationService.byteTables` | 1 | `TileEnumerationService.from(…)` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/tile-enumeration.service.ts:109` |
 | `TileEnumerationService.from(…)` | 1 | `TileEnumerationService.from(…)` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/tile-enumeration.service.ts:112` |
 | `TileEnumerationService.isAdmitted` | 1 | `TileEnumerationService.edges` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/tile-enumeration.service.ts:193` |
 | `TileEnumerationService.isMatching` | 1 | `TileService.incidentEdges` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/tile-enumeration.service.ts:213` |
 | `TileEnumerationService.map(…)` | 1 | `TileEnumerationService.byteTables` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/tile-enumeration.service.ts:265` |
 | `TileEnumerationService.every(…)` | 1 | `TileEnumerationService.image` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/tile-enumeration.service.ts:269` |
-| `EnumerationService.map(…)` | 1 | `CodeService.spell` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/enumeration.service.ts:102` |
-| `EnumerationService.isAdmitted` | 1 | `TileEnumerationService.isAdmitted` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/enumeration.service.ts:110` |
-| `CorpusService.canonicalPhase(…)` | 1 | `CharacteristicsService.tileCrossingComponentDeltaCount` | `applications/meanderaw/meanderaw-cli/src/modules/corpus/corpus.service.ts:95` |
-| `CorpusService.symmetricalCodes(…)` | 1 | `CharacteristicsService.tileCrossingComponentDeltaCount` | `applications/meanderaw/meanderaw-cli/src/modules/corpus/corpus.service.ts:134` |
-| `CorpusService.filter(…)` | 1 | `CorpusService.isPreserved` | `applications/meanderaw/meanderaw-cli/src/modules/corpus/corpus.service.ts:156` |
-| `CorpusService.isPreserved` | 1 | `TileEnumerationService.edges` | `applications/meanderaw/meanderaw-cli/src/modules/corpus/corpus.service.ts:176` |
-| `GeometryService.borderPath` | 1 | `GeometryService.formatCoordinate` | `applications/meanderaw/meanderaw-cli/src/modules/geometry/geometry.service.ts:41` |
+| `EnumerationService.map(…)` | 1 | `CodeService.spell` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/enumeration.service.ts:101` |
+| `EnumerationService.isAdmitted` | 1 | `TileEnumerationService.isAdmitted` | `applications/meanderaw/meanderaw-cli/src/modules/enumeration/enumeration.service.ts:109` |
+| `MeanderawDatabaseService.codes` | 1 | `MeanderawDatabaseService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.service.ts:83` |
+| `MeanderawDatabaseService.patternShapeCounts` | 1 | `MeanderawDatabaseService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.service.ts:154` |
+| `MeanderawDatabaseService.flatMap(…)` | 1 | `MeanderawDatabaseService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.service.ts:249` |
+| `MeanderawDatabaseService.map(…)` | 1 | `MeanderawDatabaseService.persistentValue` | `applications/meanderaw/meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.service.ts:250` |
+| `MeanderawDatabaseService.map(…)` | 1 | `MeanderawDatabaseService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/meanderaw-database/meanderaw-database.service.ts:253` |
+| `CorpusService.canonicalPhase(…)` | 1 | `CharacteristicsService.tileCrossingComponentDeltaCount` | `applications/meanderaw/meanderaw-cli/src/modules/corpus/corpus.service.ts:79` |
+| `CorpusService.symmetricalCodes(…)` | 1 | `CharacteristicsService.tileCrossingComponentDeltaCount` | `applications/meanderaw/meanderaw-cli/src/modules/corpus/corpus.service.ts:106` |
+| `CorpusService.filter(…)` | 1 | `CorpusService.isPreserved` | `applications/meanderaw/meanderaw-cli/src/modules/corpus/corpus.service.ts:127` |
+| `CorpusService.isPreserved` | 1 | `TileEnumerationService.edges` | `applications/meanderaw/meanderaw-cli/src/modules/corpus/corpus.service.ts:143` |
+| `GeometryService.borderPath` | 1 | `GeometryService.formatCoordinate` | `applications/meanderaw/meanderaw-cli/src/modules/geometry/geometry.service.ts:40` |
 | `SvgService.render` | 1 | `SvgService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/svg/svg.service.ts:27` |
 | `DrawingService.format` | 1 | `GeometryService.formatCoordinate` | `applications/meanderaw/meanderaw-cli/src/modules/drawing/drawing.service.ts:85` |
-| `DrawRecordService.scoreTileCrossing` | 1 | `CharacteristicsService.tileCrossingComponentDeltaCount` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-record.service.ts:62` |
-| `DrawWorkerService.records` | 1 | `DrawWorkerService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-worker.service.ts:48` |
-| `DrawPoolService.draw` | 1 | `DrawPoolService.anonymous` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:80` |
-| `DrawPoolService.onMessage` | 1 | `DrawWorkerError.constructor` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:89` |
-| `DrawPoolService.spawn` | 1 | `DrawPoolService.from(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:110` |
-| `DrawPoolService.flatMap(…)` | 1 | `DrawPoolService.draw` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:138` |
-| `DrawPoolService.close` | 1 | `DrawPoolService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:205` |
-| `DrawPoolService.onModuleDestroy` | 1 | `DrawPoolService.close` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:213` |
-| `DrawIndexService.compareFamilies` | 1 | `DrawIndexService.familyRank` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:103` |
-| `DrawIndexService.format` | 1 | `GeometryService.formatCoordinate` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:161` |
-| `DrawIndexService.map(…)` | 1 | `DrawIndexService.renderFigure` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:238` |
-| `DrawIndexService.toSorted(…)` | 1 | `DrawIndexService.compareFamilies` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:250` |
-| `DrawIndexService.map(…)` | 1 | `DrawIndexService.label` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:251` |
-| `DrawIndexService.renderRepeats` | 1 | `DrawIndexService.from(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:318` |
-| `DrawIndexService.from(…)` | 1 | `DrawIndexService.format` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:321` |
-| `DrawIndexService.shapeHead` | 1 | `DrawIndexService.sectionHead` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:335` |
-| `DrawIndexService.rows` | 1 | `DatabaseService.familyRows` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:402` |
-| `DrawIndexService.rows` | 1 | `DrawIndexService.heldRows` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:426` |
+| `DrawRecordService.scoreTileCrossing` | 1 | `CharacteristicsService.tileCrossingComponentDeltaCount` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-record.service.ts:57` |
+| `DrawWorkerService.records` | 1 | `DrawWorkerService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-worker.service.ts:51` |
+| `DrawPoolService.draw` | 1 | `DrawPoolService.anonymous` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:83` |
+| `DrawPoolService.onMessage` | 1 | `DrawWorkerError.constructor` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:92` |
+| `DrawPoolService.spawn` | 1 | `DrawPoolService.from(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:113` |
+| `DrawPoolService.flatMap(…)` | 1 | `DrawPoolService.draw` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:141` |
+| `DrawPoolService.close` | 1 | `DrawPoolService.map(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:208` |
+| `DrawPoolService.onModuleDestroy` | 1 | `DrawPoolService.close` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-pool.service.ts:216` |
+| `DrawIndexService.format` | 1 | `GeometryService.formatCoordinate` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:124` |
+| `DrawIndexService.map(…)` | 1 | `DrawIndexService.reduce(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:193` |
+| `DrawIndexService.renderRepeats` | 1 | `DrawIndexService.from(…)` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:269` |
+| `DrawIndexService.from(…)` | 1 | `DrawIndexService.format` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:272` |
+| `DrawIndexService.shapeHead` | 1 | `DrawIndexService.sectionHead` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:286` |
+| `DrawIndexService.rows` | 1 | `MeanderawDatabaseService.patternRows` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:355` |
+| `DrawIndexService.rows` | 1 | `DrawIndexService.heldRows` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw-index.service.ts:383` |
 | `DrawCommand.writePages` | 1 | `DrawIndexService.build` | `applications/meanderaw/meanderaw-cli/src/modules/draw/draw.command.ts:168` |
 | `bootstrap` | 1 | `on(…)` | `applications/meanderaw/meanderaw-cli/src/worker.ts:24` |
 | `on(…)` | 1 | `DrawWorkerService.records` | `applications/meanderaw/meanderaw-cli/src/worker.ts:36` |
@@ -3111,8 +3044,10 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 <!-- codependix:start name="codependix-nx-projects" -->
 ```mermaid
 graph LR
+  database["database"]
   logging["logging"]
   meanderaw_cli["meanderaw-cli"]
+  meanderaw_cli --> database
   meanderaw_cli --> logging
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class meanderaw_cli subject
@@ -3146,6 +3081,7 @@ flowchart LR
   LoggerModule([LoggerModule])
   MainModule
   MatrixModule
+  MeanderawDatabaseModule
   PathUtilitiesModule
   PatternCharacteristicsModule
   PointCharacteristicsModule
@@ -3184,10 +3120,9 @@ flowchart LR
   CornerCharacteristicsModule --> SubmatrixUtilitiesModule
   CorpusModule --> CharacteristicsModule
   CorpusModule --> CodeModule
-  CorpusModule --> DatabaseModule
   CorpusModule --> EnumerationModule
+  CorpusModule --> MeanderawDatabaseModule
   CrossCharacteristicsModule --> SubmatrixUtilitiesModule
-  DatabaseModule --> TypeOrmModule
   DatabaseModule --> TypeOrmModule
   DrawingModule --> CodeModule
   DrawingModule --> GeometryModule
@@ -3195,10 +3130,10 @@ flowchart LR
   DrawModule --> CharacteristicsModule
   DrawModule --> CodeModule
   DrawModule --> CorpusModule
-  DrawModule --> DatabaseModule
   DrawModule --> DrawingModule
   DrawModule --> EnumerationModule
   DrawModule --> GeometryModule
+  DrawModule --> MeanderawDatabaseModule
   DrawModule --> SymmetryModule
   EmbeddedCharacteristicsModule --> SubmatrixUtilitiesModule
   EndCharacteristicsModule --> ConnectivityModule
@@ -3212,6 +3147,8 @@ flowchart LR
   MainModule --> DrawModule
   MainModule --> MatrixModule
   MatrixModule --> CodeModule
+  MeanderawDatabaseModule --> DatabaseModule
+  MeanderawDatabaseModule --> TypeOrmModule
   PatternCharacteristicsModule --> CompoundUtilitiesModule
   PatternCharacteristicsModule --> CornerCharacteristicsModule
   PatternCharacteristicsModule --> CrossCharacteristicsModule
@@ -3589,16 +3526,6 @@ graph LR
   file_src_modules_corpus_historical_corpus_8_constants_ts["src/modules/corpus/historical-corpus-8.constants.ts"]
   file_src_modules_corpus_historical_corpus_9_constants_ts["src/modules/corpus/historical-corpus-9.constants.ts"]
   file_src_modules_corpus_historical_corpus_constants_ts["src/modules/corpus/historical-corpus.constants.ts"]
-  file_src_modules_database_database_patterns_service_integration_test_ts["src/modules/database/database-patterns.service.integration.test.ts"]
-  file_src_modules_database_database_constants_ts["src/modules/database/database.constants.ts"]
-  file_src_modules_database_database_factories_ts["src/modules/database/database.factories.ts"]
-  file_src_modules_database_database_module_integration_test_ts["src/modules/database/database.module.integration.test.ts"]
-  file_src_modules_database_database_module_ts["src/modules/database/database.module.ts"]
-  file_src_modules_database_database_service_integration_test_ts["src/modules/database/database.service.integration.test.ts"]
-  file_src_modules_database_database_service_ts["src/modules/database/database.service.ts"]
-  file_src_modules_database_database_service_unit_test_ts["src/modules/database/database.service.unit.test.ts"]
-  file_src_modules_database_database_types_ts["src/modules/database/database.types.ts"]
-  file_src_modules_database_entities_Meander_entity_ts["src/modules/database/entities/Meander.entity.ts"]
   file_src_modules_draw_draw_code_service_ts["src/modules/draw/draw-code.service.ts"]
   file_src_modules_draw_draw_code_service_unit_test_ts["src/modules/draw/draw-code.service.unit.test.ts"]
   file_src_modules_draw_draw_enumeration_service_integration_test_ts["src/modules/draw/draw-enumeration.service.integration.test.ts"]
@@ -3653,6 +3580,18 @@ graph LR
   file_src_modules_matrix_matrix_service_ts["src/modules/matrix/matrix.service.ts"]
   file_src_modules_matrix_matrix_service_unit_test_ts["src/modules/matrix/matrix.service.unit.test.ts"]
   file_src_modules_matrix_matrix_types_ts["src/modules/matrix/matrix.types.ts"]
+  file_src_modules_meanderaw_database_data_source_constants_ts["src/modules/meanderaw-database/data-source.constants.ts"]
+  file_src_modules_meanderaw_database_entities_meander_entity_ts["src/modules/meanderaw-database/entities/meander.entity.ts"]
+  file_src_modules_meanderaw_database_meanderaw_database_patterns_service_integration_test_ts["src/modules/meanderaw-database/meanderaw-database-patterns.service.integration.test.ts"]
+  file_src_modules_meanderaw_database_meanderaw_database_constants_ts["src/modules/meanderaw-database/meanderaw-database.constants.ts"]
+  file_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts["src/modules/meanderaw-database/meanderaw-database.module.integration.test.ts"]
+  file_src_modules_meanderaw_database_meanderaw_database_module_ts["src/modules/meanderaw-database/meanderaw-database.module.ts"]
+  file_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts["src/modules/meanderaw-database/meanderaw-database.service.integration.test.ts"]
+  file_src_modules_meanderaw_database_meanderaw_database_service_ts["src/modules/meanderaw-database/meanderaw-database.service.ts"]
+  file_src_modules_meanderaw_database_meanderaw_database_service_unit_test_ts["src/modules/meanderaw-database/meanderaw-database.service.unit.test.ts"]
+  file_src_modules_meanderaw_database_meanderaw_database_types_ts["src/modules/meanderaw-database/meanderaw-database.types.ts"]
+  file_src_modules_meanderaw_database_migrations_1791160950069_migration_ts["src/modules/meanderaw-database/migrations/1791160950069-migration.ts"]
+  file_src_modules_meanderaw_database_migrations_1791414023001_migration_ts["src/modules/meanderaw-database/migrations/1791414023001-migration.ts"]
   file_src_modules_svg_svg_constants_ts["src/modules/svg/svg.constants.ts"]
   file_src_modules_svg_svg_module_ts["src/modules/svg/svg.module.ts"]
   file_src_modules_svg_svg_service_ts["src/modules/svg/svg.service.ts"]
@@ -3671,7 +3610,6 @@ graph LR
   file_src_repl_ts["src/repl.ts"]
   file_src_worker_ts["src/worker.ts"]
   file_src_worker_unit_test_ts["src/worker.unit.test.ts"]
-  file_testing_database_ts["testing/database.ts"]
   file_testing_draw_run_budget_ts["testing/draw-run-budget.ts"]
   file_testing_draw_run_ts["testing/draw-run.ts"]
   file_testing_legacy_characteristics_ts["testing/legacy-characteristics.ts"]
@@ -3682,7 +3620,6 @@ graph LR
   file_testing_setup_ts["testing/setup.ts"]
   file_testing_tiles_ts["testing/tiles.ts"]
   file_vitest_config_ts["vitest.config.ts"]
-  file_src_constants_ts --> file_src_modules_database_database_constants_ts
   file_src_constants_ts --> file_src_modules_enumeration_enumeration_constants_ts
   file_src_main_end_to_end_test_ts --> file_src_constants_ts
   file_src_main_module_ts --> file_src_constants_ts
@@ -5164,24 +5101,24 @@ graph LR
   file_src_modules_corpus_corpus_module_ts --> file_src_modules_characteristics_characteristics_module_ts
   file_src_modules_corpus_corpus_module_ts --> file_src_modules_code_code_module_ts
   file_src_modules_corpus_corpus_module_ts --> file_src_modules_corpus_corpus_service_ts
-  file_src_modules_corpus_corpus_module_ts --> file_src_modules_database_database_module_ts
   file_src_modules_corpus_corpus_module_ts --> file_src_modules_enumeration_enumeration_module_ts
+  file_src_modules_corpus_corpus_module_ts --> file_src_modules_meanderaw_database_meanderaw_database_module_ts
   file_src_modules_corpus_corpus_service_ts --> file_src_modules_characteristics_characteristics_service_ts
   file_src_modules_corpus_corpus_service_ts --> file_src_modules_code_code_service_ts
   file_src_modules_corpus_corpus_service_ts --> file_src_modules_corpus_corpus_constants_ts
   file_src_modules_corpus_corpus_service_ts --> file_src_modules_corpus_corpus_types_ts
-  file_src_modules_corpus_corpus_service_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_corpus_corpus_service_ts --> file_src_modules_database_entities_Meander_entity_ts
   file_src_modules_corpus_corpus_service_ts --> file_src_modules_enumeration_enumeration_constants_ts
   file_src_modules_corpus_corpus_service_ts --> file_src_modules_enumeration_tile_enumeration_service_ts
+  file_src_modules_corpus_corpus_service_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_corpus_corpus_service_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
   file_src_modules_corpus_corpus_service_unit_test_ts --> file_src_modules_characteristics_characteristics_service_ts
   file_src_modules_corpus_corpus_service_unit_test_ts --> file_src_modules_code_code_service_ts
   file_src_modules_corpus_corpus_service_unit_test_ts --> file_src_modules_corpus_corpus_constants_ts
   file_src_modules_corpus_corpus_service_unit_test_ts --> file_src_modules_corpus_corpus_service_ts
   file_src_modules_corpus_corpus_service_unit_test_ts --> file_src_modules_corpus_corpus_types_ts
-  file_src_modules_corpus_corpus_service_unit_test_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_corpus_corpus_service_unit_test_ts --> file_src_modules_database_entities_Meander_entity_ts
   file_src_modules_corpus_corpus_service_unit_test_ts --> file_src_modules_enumeration_tile_enumeration_service_ts
+  file_src_modules_corpus_corpus_service_unit_test_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_corpus_corpus_service_unit_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
   file_src_modules_corpus_corpus_service_unit_test_ts --> file_src_modules_tile_tile_types_ts
   file_src_modules_corpus_corpus_service_unit_test_ts --> file_testing_meanders_ts
   file_src_modules_corpus_historical_corpus_1_constants_ts --> file_src_modules_corpus_corpus_types_ts
@@ -5207,52 +5144,18 @@ graph LR
   file_src_modules_corpus_historical_corpus_constants_ts --> file_src_modules_corpus_historical_corpus_7_constants_ts
   file_src_modules_corpus_historical_corpus_constants_ts --> file_src_modules_corpus_historical_corpus_8_constants_ts
   file_src_modules_corpus_historical_corpus_constants_ts --> file_src_modules_corpus_historical_corpus_9_constants_ts
-  file_src_modules_database_database_patterns_service_integration_test_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_database_database_patterns_service_integration_test_ts --> file_src_modules_database_entities_Meander_entity_ts
-  file_src_modules_database_database_patterns_service_integration_test_ts --> file_testing_database_ts
-  file_src_modules_database_database_patterns_service_integration_test_ts --> file_testing_meanders_ts
-  file_src_modules_database_database_factories_ts --> file_src_modules_database_database_types_ts
-  file_src_modules_database_database_factories_ts --> file_src_modules_database_entities_Meander_entity_ts
-  file_src_modules_database_database_module_integration_test_ts --> file_src_constants_ts
-  file_src_modules_database_database_module_integration_test_ts --> file_src_modules_database_database_module_ts
-  file_src_modules_database_database_module_integration_test_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_database_database_module_integration_test_ts --> file_testing_database_ts
-  file_src_modules_database_database_module_integration_test_ts --> file_testing_meanders_ts
-  file_src_modules_database_database_module_ts --> file_src_modules_database_database_factories_ts
-  file_src_modules_database_database_module_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_database_database_module_ts --> file_src_modules_database_entities_Meander_entity_ts
-  file_src_modules_database_database_service_integration_test_ts --> file_src_modules_characteristics_characteristics_constants_ts
-  file_src_modules_database_database_service_integration_test_ts --> file_src_modules_database_database_constants_ts
-  file_src_modules_database_database_service_integration_test_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_database_database_service_integration_test_ts --> file_src_modules_database_database_types_ts
-  file_src_modules_database_database_service_integration_test_ts --> file_src_modules_database_entities_Meander_entity_ts
-  file_src_modules_database_database_service_integration_test_ts --> file_testing_database_ts
-  file_src_modules_database_database_service_integration_test_ts --> file_testing_meanders_ts
-  file_src_modules_database_database_service_ts --> file_src_modules_characteristics_characteristics_types_ts
-  file_src_modules_database_database_service_ts --> file_src_modules_database_database_constants_ts
-  file_src_modules_database_database_service_ts --> file_src_modules_database_database_types_ts
-  file_src_modules_database_database_service_ts --> file_src_modules_database_entities_Meander_entity_ts
-  file_src_modules_database_database_service_unit_test_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_database_database_service_unit_test_ts --> file_src_modules_database_database_types_ts
-  file_src_modules_database_database_service_unit_test_ts --> file_src_modules_database_entities_Meander_entity_ts
-  file_src_modules_database_database_service_unit_test_ts --> file_testing_meanders_ts
-  file_src_modules_database_database_types_ts --> file_src_modules_characteristics_characteristics_types_ts
-  file_src_modules_database_database_types_ts --> file_src_modules_database_entities_Meander_entity_ts
-  file_src_modules_database_entities_Meander_entity_ts --> file_src_modules_characteristics_characteristics_types_ts
-  file_src_modules_draw_draw_code_service_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_draw_draw_code_service_ts --> file_src_modules_database_entities_Meander_entity_ts
   file_src_modules_draw_draw_code_service_ts --> file_src_modules_draw_draw_record_service_ts
   file_src_modules_draw_draw_code_service_ts --> file_src_modules_draw_draw_types_ts
-  file_src_modules_draw_draw_code_service_unit_test_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_draw_draw_code_service_unit_test_ts --> file_src_modules_database_database_types_ts
-  file_src_modules_draw_draw_code_service_unit_test_ts --> file_src_modules_database_entities_Meander_entity_ts
+  file_src_modules_draw_draw_code_service_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_draw_draw_code_service_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
   file_src_modules_draw_draw_code_service_unit_test_ts --> file_src_modules_draw_draw_code_service_ts
   file_src_modules_draw_draw_code_service_unit_test_ts --> file_src_modules_draw_draw_record_service_ts
+  file_src_modules_draw_draw_code_service_unit_test_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_draw_draw_code_service_unit_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_src_modules_draw_draw_code_service_unit_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_constants_ts
   file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_characteristics_characteristics_module_ts
   file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_code_code_service_ts
-  file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_database_entities_Meander_entity_ts
   file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_draw_draw_enumeration_service_ts
   file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_draw_draw_pool_service_ts
   file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_draw_draw_record_service_ts
@@ -5264,80 +5167,84 @@ graph LR
   file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_geometry_geometry_service_ts
   file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_graph_graph_service_ts
   file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_matrix_matrix_service_ts
+  file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_module_ts
+  file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_meanderaw_database_migrations_1791160950069_migration_ts
+  file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_meanderaw_database_migrations_1791414023001_migration_ts
   file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_svg_svg_service_ts
   file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_symmetry_symmetry_service_ts
   file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_src_modules_tile_tile_service_ts
-  file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_testing_database_ts
   file_src_modules_draw_draw_enumeration_service_integration_test_ts --> file_testing_draw_run_budget_ts
-  file_src_modules_draw_draw_enumeration_service_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_draw_draw_enumeration_service_ts --> file_src_modules_database_database_types_ts
   file_src_modules_draw_draw_enumeration_service_ts --> file_src_modules_draw_draw_pool_service_ts
   file_src_modules_draw_draw_enumeration_service_ts --> file_src_modules_enumeration_enumeration_service_ts
-  file_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_src_modules_database_database_types_ts
+  file_src_modules_draw_draw_enumeration_service_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_src_modules_draw_draw_enumeration_service_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_src_modules_draw_draw_enumeration_service_ts
   file_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_src_modules_draw_draw_pool_service_ts
   file_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_src_modules_enumeration_enumeration_service_ts
+  file_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_src_modules_draw_draw_enumeration_service_unit_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_code_code_service_ts
-  file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_database_database_types_ts
-  file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_database_entities_Meander_entity_ts
   file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_draw_draw_index_service_ts
   file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_drawing_drawing_service_ts
   file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_geometry_geometry_service_ts
+  file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_module_ts
+  file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
+  file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_meanderaw_database_migrations_1791160950069_migration_ts
+  file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_meanderaw_database_migrations_1791414023001_migration_ts
   file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_svg_svg_service_ts
   file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_symmetry_symmetry_service_ts
   file_src_modules_draw_draw_index_service_integration_test_ts --> file_src_modules_tile_tile_service_ts
-  file_src_modules_draw_draw_index_service_integration_test_ts --> file_testing_database_ts
   file_src_modules_draw_draw_index_service_integration_test_ts --> file_testing_meanders_ts
   file_src_modules_draw_draw_index_service_ts --> file_src_modules_characteristics_characteristics_constants_ts
   file_src_modules_draw_draw_index_service_ts --> file_src_modules_characteristics_characteristics_types_ts
   file_src_modules_draw_draw_index_service_ts --> file_src_modules_code_code_service_ts
-  file_src_modules_draw_draw_index_service_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_draw_draw_index_service_ts --> file_src_modules_database_database_types_ts
-  file_src_modules_draw_draw_index_service_ts --> file_src_modules_database_entities_Meander_entity_ts
   file_src_modules_draw_draw_index_service_ts --> file_src_modules_draw_draw_index_constants_ts
   file_src_modules_draw_draw_index_service_ts --> file_src_modules_draw_draw_index_types_ts
   file_src_modules_draw_draw_index_service_ts --> file_src_modules_drawing_drawing_service_ts
   file_src_modules_draw_draw_index_service_ts --> file_src_modules_geometry_geometry_service_ts
+  file_src_modules_draw_draw_index_service_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_draw_draw_index_service_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_src_modules_draw_draw_index_service_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_src_modules_draw_draw_index_service_unit_test_ts --> file_src_modules_characteristics_characteristics_constants_ts
   file_src_modules_draw_draw_index_service_unit_test_ts --> file_src_modules_code_code_service_ts
-  file_src_modules_draw_draw_index_service_unit_test_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_draw_draw_index_service_unit_test_ts --> file_src_modules_database_entities_Meander_entity_ts
   file_src_modules_draw_draw_index_service_unit_test_ts --> file_src_modules_draw_draw_index_service_ts
   file_src_modules_draw_draw_index_service_unit_test_ts --> file_src_modules_draw_draw_index_types_ts
   file_src_modules_draw_draw_index_service_unit_test_ts --> file_src_modules_drawing_drawing_service_ts
   file_src_modules_draw_draw_index_service_unit_test_ts --> file_src_modules_geometry_geometry_service_ts
+  file_src_modules_draw_draw_index_service_unit_test_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_draw_draw_index_service_unit_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
   file_src_modules_draw_draw_index_service_unit_test_ts --> file_testing_meanders_ts
   file_src_modules_draw_draw_index_types_ts --> file_src_modules_characteristics_characteristics_types_ts
-  file_src_modules_draw_draw_index_types_ts --> file_src_modules_database_database_types_ts
-  file_src_modules_draw_draw_index_types_ts --> file_src_modules_database_entities_Meander_entity_ts
+  file_src_modules_draw_draw_index_types_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_draw_draw_index_types_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_src_modules_draw_draw_pool_service_integration_test_ts --> file_src_constants_ts
   file_src_modules_draw_draw_pool_service_integration_test_ts --> file_src_modules_characteristics_characteristics_module_ts
   file_src_modules_draw_draw_pool_service_integration_test_ts --> file_src_modules_code_code_module_ts
-  file_src_modules_draw_draw_pool_service_integration_test_ts --> file_src_modules_database_database_types_ts
   file_src_modules_draw_draw_pool_service_integration_test_ts --> file_src_modules_draw_draw_pool_service_ts
   file_src_modules_draw_draw_pool_service_integration_test_ts --> file_src_modules_draw_draw_record_service_ts
   file_src_modules_draw_draw_pool_service_integration_test_ts --> file_src_modules_draw_draw_worker_service_ts
   file_src_modules_draw_draw_pool_service_integration_test_ts --> file_src_modules_drawing_drawing_module_ts
   file_src_modules_draw_draw_pool_service_integration_test_ts --> file_src_modules_enumeration_enumeration_module_ts
+  file_src_modules_draw_draw_pool_service_integration_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_src_modules_draw_draw_pool_service_integration_test_ts --> file_src_modules_symmetry_symmetry_module_ts
-  file_src_modules_draw_draw_pool_service_ts --> file_src_modules_database_database_types_ts
   file_src_modules_draw_draw_pool_service_ts --> file_src_modules_draw_draw_worker_service_ts
   file_src_modules_draw_draw_pool_service_ts --> file_src_modules_draw_draw_constants_ts
   file_src_modules_draw_draw_pool_service_ts --> file_src_modules_draw_draw_types_ts
   file_src_modules_draw_draw_pool_service_ts --> file_src_modules_enumeration_enumeration_types_ts
   file_src_modules_draw_draw_pool_service_ts --> file_src_modules_enumeration_tile_enumeration_service_ts
-  file_src_modules_draw_draw_pool_service_unit_test_ts --> file_src_modules_database_database_types_ts
+  file_src_modules_draw_draw_pool_service_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_src_modules_draw_draw_pool_service_unit_test_ts --> file_src_modules_draw_draw_pool_service_ts
   file_src_modules_draw_draw_pool_service_unit_test_ts --> file_src_modules_draw_draw_worker_service_ts
   file_src_modules_draw_draw_pool_service_unit_test_ts --> file_src_modules_draw_draw_constants_ts
   file_src_modules_draw_draw_pool_service_unit_test_ts --> file_src_modules_draw_draw_types_ts
   file_src_modules_draw_draw_pool_service_unit_test_ts --> file_src_modules_enumeration_tile_enumeration_service_ts
+  file_src_modules_draw_draw_pool_service_unit_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_src_modules_draw_draw_record_service_ts --> file_src_modules_characteristics_characteristics_service_ts
   file_src_modules_draw_draw_record_service_ts --> file_src_modules_code_code_service_ts
   file_src_modules_draw_draw_record_service_ts --> file_src_modules_code_code_types_ts
-  file_src_modules_draw_draw_record_service_ts --> file_src_modules_database_database_types_ts
+  file_src_modules_draw_draw_record_service_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_src_modules_draw_draw_record_service_unit_test_ts --> file_src_modules_characteristics_characteristics_constants_ts
   file_src_modules_draw_draw_record_service_unit_test_ts --> file_src_modules_characteristics_characteristics_module_ts
   file_src_modules_draw_draw_record_service_unit_test_ts --> file_src_modules_characteristics_characteristics_service_ts
@@ -5347,15 +5254,13 @@ graph LR
   file_src_modules_draw_draw_record_service_unit_test_ts --> file_src_modules_drawing_drawing_module_ts
   file_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_src_modules_corpus_historical_corpus_constants_ts
   file_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_src_modules_draw_draw_code_service_ts
-  file_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_testing_database_ts
   file_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_testing_draw_run_ts
   file_src_modules_draw_draw_run_collision_command_integration_test_ts --> file_testing_meanders_ts
   file_src_modules_draw_draw_run_regeneration_command_integration_test_ts --> file_src_modules_draw_draw_code_service_ts
-  file_src_modules_draw_draw_run_regeneration_command_integration_test_ts --> file_testing_database_ts
+  file_src_modules_draw_draw_run_regeneration_command_integration_test_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
   file_src_modules_draw_draw_run_regeneration_command_integration_test_ts --> file_testing_draw_run_ts
   file_src_modules_draw_draw_run_command_integration_test_ts --> file_src_modules_corpus_historical_corpus_constants_ts
   file_src_modules_draw_draw_run_command_integration_test_ts --> file_src_modules_draw_draw_code_service_ts
-  file_src_modules_draw_draw_run_command_integration_test_ts --> file_testing_database_ts
   file_src_modules_draw_draw_run_command_integration_test_ts --> file_testing_draw_run_ts
   file_src_modules_draw_draw_worker_module_ts --> file_src_constants_ts
   file_src_modules_draw_draw_worker_module_ts --> file_src_modules_characteristics_characteristics_module_ts
@@ -5366,22 +5271,20 @@ graph LR
   file_src_modules_draw_draw_worker_module_ts --> file_src_modules_enumeration_enumeration_module_ts
   file_src_modules_draw_draw_worker_module_ts --> file_src_modules_symmetry_symmetry_module_ts
   file_src_modules_draw_draw_worker_service_ts --> file_src_modules_code_code_service_ts
-  file_src_modules_draw_draw_worker_service_ts --> file_src_modules_database_database_types_ts
   file_src_modules_draw_draw_worker_service_ts --> file_src_modules_draw_draw_record_service_ts
   file_src_modules_draw_draw_worker_service_ts --> file_src_modules_enumeration_tile_enumeration_service_ts
+  file_src_modules_draw_draw_worker_service_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_src_modules_draw_draw_worker_service_ts --> file_src_modules_symmetry_symmetry_service_ts
   file_src_modules_draw_draw_worker_service_unit_test_ts --> file_src_modules_code_code_service_ts
-  file_src_modules_draw_draw_worker_service_unit_test_ts --> file_src_modules_database_database_types_ts
   file_src_modules_draw_draw_worker_service_unit_test_ts --> file_src_modules_draw_draw_record_service_ts
   file_src_modules_draw_draw_worker_service_unit_test_ts --> file_src_modules_draw_draw_worker_service_ts
   file_src_modules_draw_draw_worker_service_unit_test_ts --> file_src_modules_enumeration_tile_enumeration_service_ts
+  file_src_modules_draw_draw_worker_service_unit_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_src_modules_draw_draw_worker_service_unit_test_ts --> file_src_modules_symmetry_symmetry_service_ts
   file_src_modules_draw_draw_worker_service_unit_test_ts --> file_testing_tiles_ts
   file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_characteristics_characteristics_module_ts
   file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_code_code_module_ts
   file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_corpus_corpus_service_ts
-  file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_database_entities_Meander_entity_ts
   file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_draw_draw_code_service_ts
   file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_draw_draw_enumeration_service_ts
   file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_draw_draw_index_service_ts
@@ -5391,30 +5294,32 @@ graph LR
   file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_geometry_geometry_service_ts
   file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_graph_graph_service_ts
   file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_matrix_matrix_module_ts
+  file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_module_ts
+  file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_meanderaw_database_migrations_1791160950069_migration_ts
+  file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_meanderaw_database_migrations_1791414023001_migration_ts
   file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_svg_svg_service_ts
   file_src_modules_draw_draw_command_integration_test_ts --> file_src_modules_tile_tile_service_ts
-  file_src_modules_draw_draw_command_integration_test_ts --> file_testing_database_ts
   file_src_modules_draw_draw_command_ts --> file_src_modules_code_code_constants_ts
   file_src_modules_draw_draw_command_ts --> file_src_modules_corpus_corpus_service_ts
   file_src_modules_draw_draw_command_ts --> file_src_modules_corpus_historical_corpus_constants_ts
-  file_src_modules_draw_draw_command_ts --> file_src_modules_database_database_service_ts
   file_src_modules_draw_draw_command_ts --> file_src_modules_draw_draw_code_service_ts
   file_src_modules_draw_draw_command_ts --> file_src_modules_draw_draw_enumeration_service_ts
   file_src_modules_draw_draw_command_ts --> file_src_modules_draw_draw_index_service_ts
   file_src_modules_draw_draw_command_ts --> file_src_modules_draw_draw_constants_ts
   file_src_modules_draw_draw_command_ts --> file_src_modules_draw_draw_types_ts
+  file_src_modules_draw_draw_command_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
   file_src_modules_draw_draw_command_unit_test_ts --> file_src_modules_corpus_corpus_service_ts
-  file_src_modules_draw_draw_command_unit_test_ts --> file_src_modules_database_database_service_ts
-  file_src_modules_draw_draw_command_unit_test_ts --> file_src_modules_database_entities_Meander_entity_ts
   file_src_modules_draw_draw_command_unit_test_ts --> file_src_modules_draw_draw_code_service_ts
   file_src_modules_draw_draw_command_unit_test_ts --> file_src_modules_draw_draw_enumeration_service_ts
   file_src_modules_draw_draw_command_unit_test_ts --> file_src_modules_draw_draw_index_service_ts
   file_src_modules_draw_draw_command_unit_test_ts --> file_src_modules_draw_draw_index_types_ts
   file_src_modules_draw_draw_command_unit_test_ts --> file_src_modules_draw_draw_command_ts
+  file_src_modules_draw_draw_command_unit_test_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_draw_draw_command_unit_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
   file_src_modules_draw_draw_module_ts --> file_src_modules_characteristics_characteristics_module_ts
   file_src_modules_draw_draw_module_ts --> file_src_modules_code_code_module_ts
   file_src_modules_draw_draw_module_ts --> file_src_modules_corpus_corpus_module_ts
-  file_src_modules_draw_draw_module_ts --> file_src_modules_database_database_module_ts
   file_src_modules_draw_draw_module_ts --> file_src_modules_draw_draw_code_service_ts
   file_src_modules_draw_draw_module_ts --> file_src_modules_draw_draw_enumeration_service_ts
   file_src_modules_draw_draw_module_ts --> file_src_modules_draw_draw_index_service_ts
@@ -5425,8 +5330,9 @@ graph LR
   file_src_modules_draw_draw_module_ts --> file_src_modules_drawing_drawing_module_ts
   file_src_modules_draw_draw_module_ts --> file_src_modules_enumeration_enumeration_module_ts
   file_src_modules_draw_draw_module_ts --> file_src_modules_geometry_geometry_module_ts
+  file_src_modules_draw_draw_module_ts --> file_src_modules_meanderaw_database_meanderaw_database_module_ts
   file_src_modules_draw_draw_module_ts --> file_src_modules_symmetry_symmetry_module_ts
-  file_src_modules_draw_draw_types_ts --> file_src_modules_database_database_types_ts
+  file_src_modules_draw_draw_types_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_src_modules_drawing_drawing_module_ts --> file_src_modules_code_code_module_ts
   file_src_modules_drawing_drawing_module_ts --> file_src_modules_drawing_drawing_service_ts
   file_src_modules_drawing_drawing_module_ts --> file_src_modules_geometry_geometry_module_ts
@@ -5451,10 +5357,10 @@ graph LR
   file_src_modules_enumeration_enumeration_module_ts --> file_src_modules_symmetry_symmetry_module_ts
   file_src_modules_enumeration_enumeration_module_ts --> file_src_modules_tile_tile_module_ts
   file_src_modules_enumeration_enumeration_service_ts --> file_src_modules_code_code_service_ts
-  file_src_modules_enumeration_enumeration_service_ts --> file_src_modules_database_database_types_ts
   file_src_modules_enumeration_enumeration_service_ts --> file_src_modules_enumeration_enumeration_constants_ts
   file_src_modules_enumeration_enumeration_service_ts --> file_src_modules_enumeration_enumeration_types_ts
   file_src_modules_enumeration_enumeration_service_ts --> file_src_modules_enumeration_tile_enumeration_service_ts
+  file_src_modules_enumeration_enumeration_service_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_src_modules_enumeration_enumeration_service_unit_test_ts --> file_src_constants_ts
   file_src_modules_enumeration_enumeration_service_unit_test_ts --> file_src_modules_code_code_service_ts
   file_src_modules_enumeration_enumeration_service_unit_test_ts --> file_src_modules_enumeration_enumeration_service_ts
@@ -5496,6 +5402,43 @@ graph LR
   file_src_modules_matrix_matrix_service_unit_test_ts --> file_src_modules_matrix_matrix_types_ts
   file_src_modules_matrix_matrix_service_unit_test_ts --> file_src_modules_symmetry_symmetry_service_ts
   file_src_modules_matrix_matrix_service_unit_test_ts --> file_src_modules_tile_tile_service_ts
+  file_src_modules_meanderaw_database_data_source_constants_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_meanderaw_database_entities_meander_entity_ts --> file_src_modules_characteristics_characteristics_types_ts
+  file_src_modules_meanderaw_database_entities_meander_entity_ts --> file_src_modules_meanderaw_database_meanderaw_database_constants_ts
+  file_src_modules_meanderaw_database_meanderaw_database_patterns_service_integration_test_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_meanderaw_database_meanderaw_database_patterns_service_integration_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_module_ts
+  file_src_modules_meanderaw_database_meanderaw_database_patterns_service_integration_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_src_modules_meanderaw_database_meanderaw_database_patterns_service_integration_test_ts --> file_src_modules_meanderaw_database_migrations_1791160950069_migration_ts
+  file_src_modules_meanderaw_database_meanderaw_database_patterns_service_integration_test_ts --> file_src_modules_meanderaw_database_migrations_1791414023001_migration_ts
+  file_src_modules_meanderaw_database_meanderaw_database_patterns_service_integration_test_ts --> file_testing_meanders_ts
+  file_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts --> file_src_constants_ts
+  file_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_module_ts
+  file_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts --> file_src_modules_meanderaw_database_migrations_1791160950069_migration_ts
+  file_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts --> file_src_modules_meanderaw_database_migrations_1791414023001_migration_ts
+  file_src_modules_meanderaw_database_meanderaw_database_module_integration_test_ts --> file_testing_meanders_ts
+  file_src_modules_meanderaw_database_meanderaw_database_module_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_meanderaw_database_meanderaw_database_module_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_src_modules_characteristics_characteristics_constants_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_constants_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_module_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_src_modules_meanderaw_database_migrations_1791160950069_migration_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_src_modules_meanderaw_database_migrations_1791414023001_migration_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_integration_test_ts --> file_testing_meanders_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_ts --> file_src_modules_characteristics_characteristics_types_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_ts --> file_src_modules_meanderaw_database_meanderaw_database_constants_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_unit_test_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_unit_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_service_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_unit_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
+  file_src_modules_meanderaw_database_meanderaw_database_service_unit_test_ts --> file_testing_meanders_ts
+  file_src_modules_meanderaw_database_meanderaw_database_types_ts --> file_src_modules_characteristics_characteristics_types_ts
+  file_src_modules_meanderaw_database_meanderaw_database_types_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
   file_src_modules_svg_svg_module_ts --> file_src_modules_svg_svg_service_ts
   file_src_modules_svg_svg_service_ts --> file_src_modules_svg_svg_constants_ts
   file_src_modules_svg_svg_service_ts --> file_src_modules_svg_svg_types_ts
@@ -5519,15 +5462,12 @@ graph LR
   file_src_worker_ts --> file_src_modules_draw_draw_worker_module_ts
   file_src_worker_ts --> file_src_modules_draw_draw_worker_service_ts
   file_src_worker_ts --> file_src_modules_draw_draw_types_ts
-  file_src_worker_unit_test_ts --> file_src_modules_database_database_types_ts
   file_src_worker_unit_test_ts --> file_src_modules_draw_draw_types_ts
-  file_testing_database_ts --> file_src_modules_database_database_factories_ts
+  file_src_worker_unit_test_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_testing_draw_run_ts --> file_src_constants_ts
   file_testing_draw_run_ts --> file_src_modules_characteristics_characteristics_module_ts
   file_testing_draw_run_ts --> file_src_modules_code_code_module_ts
   file_testing_draw_run_ts --> file_src_modules_corpus_corpus_service_ts
-  file_testing_draw_run_ts --> file_src_modules_database_database_service_ts
-  file_testing_draw_run_ts --> file_src_modules_database_entities_Meander_entity_ts
   file_testing_draw_run_ts --> file_src_modules_draw_draw_enumeration_service_ts
   file_testing_draw_run_ts --> file_src_modules_draw_draw_index_service_ts
   file_testing_draw_run_ts --> file_src_modules_draw_draw_pool_service_ts
@@ -5538,8 +5478,11 @@ graph LR
   file_testing_draw_run_ts --> file_src_modules_enumeration_enumeration_module_ts
   file_testing_draw_run_ts --> file_src_modules_enumeration_enumeration_service_ts
   file_testing_draw_run_ts --> file_src_modules_geometry_geometry_module_ts
+  file_testing_draw_run_ts --> file_src_modules_meanderaw_database_entities_meander_entity_ts
+  file_testing_draw_run_ts --> file_src_modules_meanderaw_database_meanderaw_database_module_ts
+  file_testing_draw_run_ts --> file_src_modules_meanderaw_database_migrations_1791160950069_migration_ts
+  file_testing_draw_run_ts --> file_src_modules_meanderaw_database_migrations_1791414023001_migration_ts
   file_testing_draw_run_ts --> file_src_modules_symmetry_symmetry_module_ts
-  file_testing_draw_run_ts --> file_testing_database_ts
   file_testing_draw_run_ts --> file_testing_draw_run_budget_ts
   file_testing_letters_ts --> file_src_modules_characteristics_characteristic_context_service_ts
   file_testing_letters_ts --> file_src_modules_characteristics_characteristics_types_ts
@@ -5552,7 +5495,7 @@ graph LR
   file_testing_meanders_ts --> file_src_modules_characteristics_characteristics_constants_ts
   file_testing_meanders_ts --> file_src_modules_characteristics_characteristics_types_ts
   file_testing_meanders_ts --> file_src_modules_code_code_types_ts
-  file_testing_meanders_ts --> file_src_modules_database_database_types_ts
+  file_testing_meanders_ts --> file_src_modules_meanderaw_database_meanderaw_database_types_ts
   file_testing_tiles_ts --> file_src_modules_tile_tile_service_ts
   file_testing_tiles_ts --> file_src_modules_tile_tile_types_ts
 ```

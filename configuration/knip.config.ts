@@ -145,6 +145,12 @@ const config: KnipConfig = {
 
     // caelundas: Node.js CLI for astronomical calendar generation
     "applications/caelundas/caelundas-cli": {
+      // The data source and the migrations are read by the TypeORM command
+      // line the `migration` target runs, by path rather than by import.
+      entry: [
+        "src/modules/caelundas-database/data-source.constants.ts",
+        "src/modules/caelundas-database/migrations/**/*.ts",
+      ],
       ignore: [
         "output/**", // Generated calendar output files
         "testing/**", // Test fixtures and setup
@@ -211,6 +217,14 @@ const config: KnipConfig = {
       project: ["src/**/*.ts", "src/**/*.tsx"],
     },
 
+    // database: Shared Postgres package. The migration SQL extraction script
+    // is run by name from the `migration` target defaults in nx.json rather
+    // than imported, so knip is told it is an entry point.
+    "packages/database": {
+      entry: ["scripts/**/*.ts"],
+      project: ["src/**/*.ts", "scripts/**/*.ts"],
+    },
+
     // lexico-entities: Shared TypeORM entities
     "packages/lexico-entities": {
       entry: [
@@ -244,8 +258,16 @@ const config: KnipConfig = {
     // meanderaw: Greek meander (key/fret) SVG generator CLI
     "applications/meanderaw/meanderaw-cli": {
       // The CLI, the REPL its own target runs, and the sweep's worker
-      // thread — spawned by URL, so nothing imports it.
-      entry: ["src/main.ts", "src/repl.ts", "src/worker.ts"],
+      // thread — spawned by URL, so nothing imports it. The data source and
+      // the migrations are read by the TypeORM command line the `migration`
+      // target runs, by path rather than by import.
+      entry: [
+        "src/main.ts",
+        "src/repl.ts",
+        "src/worker.ts",
+        "src/modules/meanderaw-database/data-source.constants.ts",
+        "src/modules/meanderaw-database/migrations/**/*.ts",
+      ],
       project: "src/**/*.ts",
     },
 

@@ -234,4 +234,44 @@ END:VCALENDAR
       count: events.length,
     });
   }
+
+  /**
+   * Serializes calendar events to a JSON file beside the ICS file.
+   *
+   * The file is named like the ICS file, with a `.json` extension, and holds
+   * one object per event with its times in ISO 8601.
+   */
+  async writeJson(events: Event[], input: Input): Promise<void> {
+    const timespan = `${input.start.toISOString(true)} to ${input.end.toISOString(true)}`;
+    const jsonFilename = `caelundas_${timespan}.json`;
+    const outputDirectory =
+      this.configService.get<string>("OUTPUT_DIRECTORY") ?? "./output";
+    const outputPath = path.join(outputDirectory, jsonFilename);
+    const content = JSON.stringify(
+      events.map((event) => ({
+        categories: event.categories,
+        color: event.color ?? null,
+        description: event.description,
+        end: event.end.toISOString(),
+        location: event.location ?? null,
+        start: event.start.toISOString(),
+        summary: event.summary,
+      })),
+      undefined,
+      2,
+    );
+    try {
+      await writeFile(outputPath, new TextEncoder().encode(content));
+    } catch (error) {
+      this.logger.error("📝 Failed writing the JSON file", undefined, {
+        path: outputPath,
+        reason: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
+    this.logger.info("✏️ Wrote events to JSON file", undefined, {
+      count: events.length,
+      jsonFilename,
+    });
+  }
 }

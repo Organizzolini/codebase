@@ -1,13 +1,9 @@
-import { ConfigModule } from "@nestjs/config";
-import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import { DataSource, type Repository } from "typeorm";
+import { startDatabaseTestingModule } from "@codebase/database/testing";
 
 import { environmentSchema } from "../src/constants";
 import { CharacteristicsModule } from "../src/modules/characteristics/characteristics.module";
 import { CodeModule } from "../src/modules/code/code.module";
 import { CorpusService } from "../src/modules/corpus/corpus.service";
-import { DatabaseService } from "../src/modules/database/database.service";
-import { Meander } from "../src/modules/database/entities/Meander.entity";
 import { DrawEnumerationService } from "../src/modules/draw/draw-enumeration.service";
 import { DrawIndexService } from "../src/modules/draw/draw-index.service";
 import { DrawPoolService } from "../src/modules/draw/draw-pool.service";
@@ -18,17 +14,16 @@ import { DrawingModule } from "../src/modules/drawing/drawing.module";
 import { EnumerationModule } from "../src/modules/enumeration/enumeration.module";
 import { EnumerationService } from "../src/modules/enumeration/enumeration.service";
 import { GeometryModule } from "../src/modules/geometry/geometry.module";
+import { Meander } from "../src/modules/meanderaw-database/entities/meander.entity";
+import { MeanderawDatabaseModule } from "../src/modules/meanderaw-database/meanderaw-database.module";
+import { Migration1791160950069 } from "../src/modules/meanderaw-database/migrations/1791160950069-migration";
+import { Migration1791414023001 } from "../src/modules/meanderaw-database/migrations/1791414023001-migration";
 import { SymmetryModule } from "../src/modules/symmetry/symmetry.module";
 
-import { testDataSourceOptions } from "./database";
 import { DRAW_TEST_EDGE_BUDGET, DRAW_TEST_WORKERS } from "./draw-run-budget";
 
-import type { TestDatabaseContainer } from "./database";
-import type {
-  INestApplicationContext,
-  ModuleMetadata,
-  Provider,
-} from "@nestjs/common";
+import type { Provider } from "@nestjs/common";
+import type { Repository } from "typeorm";
 
 /**
  * How long one whole `DrawCommand` draw run may take: tens of thousands of rows
@@ -39,56 +34,33 @@ export const DRAW_RUN_TIMEOUT_MILLISECONDS = 300_000;
 
 /** Everything a draw-run case reads back from one compiled `DrawCommand`. */
 export interface DrawRunFixture {
+  /** Closes the module and stops its throwaway Postgres container. */
+  close: () => Promise<void>;
   command: DrawCommand;
   corpus: CorpusService;
-  dataSource: DataSource;
   enumeration: EnumerationService;
   repository: Repository<Meander>;
 }
 
-/** Reads a compiled draw run module back as the handles its cases assert through. */
-export async function drawRunFixture(
-  module: INestApplicationContext,
-): Promise<DrawRunFixture> {
-  return {
-    command: await module.resolve(DrawCommand),
-    corpus: module.get(CorpusService),
-    dataSource: module.get(DataSource),
-    enumeration: module.get(EnumerationService),
-    repository: module.get(getRepositoryToken(Meander)),
-  };
-}
-
 /**
- * The module `DrawCommand`'s draw run compiles into: the real enumeration,
- * ingestion, and index services over an emptied schema in `container`'s Postgres
- * database, plus whatever `mocks` the caller stands in for `--code` and
- * logging.
+ * Starts a throwaway Postgres container, migrated by the project's real
+ * migrations, and compiles the module `DrawCommand`'s draw run runs in over
+ * it: the real enumeration, ingestion, and index services, plus whatever
+ * `mocks` the caller stands in for `--code` and logging.
  *
  * Shared by the draw-run suites, which are split across files so vitest
  * runs their draw runs in parallel rather than one after another. Each caller
- * starts its own container, compiles this, and mocks `node:fs/promises`
- * itself: `vi.mock` is hoisted only within a test file, and the testing
- * packages are development dependencies this production-scoped folder
- * cannot import.
+ * mocks `node:fs/promises` itself: `vi.mock` is hoisted only within a test
+ * file, and the testing packages are development dependencies this
+ * production-scoped folder cannot import.
  */
-export function drawRunModuleMetadata(
-  container: TestDatabaseContainer,
+export async function startDrawRun(
   mocks: readonly Provider[],
-): ModuleMetadata {
-  return {
+): Promise<DrawRunFixture> {
+  const database = await startDatabaseTestingModule({
+    database: MeanderawDatabaseModule,
+    entities: [Meander],
     imports: [
-      ConfigModule.forRoot({
-        isGlobal: true,
-        validate: (config: Record<string, unknown>) =>
-          environmentSchema.parse({
-            ...config,
-            DRAW_EDGE_BUDGET: DRAW_TEST_EDGE_BUDGET,
-            DRAW_WORKERS: DRAW_TEST_WORKERS,
-          }),
-      }),
-      TypeOrmModule.forRoot(testDataSourceOptions(container)),
-      TypeOrmModule.forFeature([Meander]),
       GeometryModule,
       CharacteristicsModule,
       CodeModule,
@@ -96,6 +68,8 @@ export function drawRunModuleMetadata(
       SymmetryModule,
       DrawingModule,
     ],
+    migrations: [Migration1791160950069, Migration1791414023001],
+    project: "meanderaw",
     providers: [
       DrawCommand,
       DrawEnumerationService,
@@ -104,8 +78,21 @@ export function drawRunModuleMetadata(
       DrawRecordService,
       DrawWorkerService,
       CorpusService,
-      DatabaseService,
       ...mocks,
     ],
+    validate: (config) =>
+      environmentSchema.parse({
+        ...config,
+        DRAW_EDGE_BUDGET: DRAW_TEST_EDGE_BUDGET,
+        DRAW_WORKERS: DRAW_TEST_WORKERS,
+      }),
+  });
+
+  return {
+    close: database.close,
+    command: await database.module.resolve(DrawCommand),
+    corpus: database.module.get(CorpusService),
+    enumeration: database.module.get(EnumerationService),
+    repository: database.repository(Meander),
   };
 }

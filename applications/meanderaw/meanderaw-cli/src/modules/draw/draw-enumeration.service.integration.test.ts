@@ -1,19 +1,11 @@
 import { ConfigService } from "@nestjs/config";
-import { Test } from "@nestjs/testing";
-import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import {
-  PostgreSqlContainer,
-  type StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
-import { DataSource, type Repository } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import {
-  TEST_DATABASE_NAME,
-  TEST_POSTGRES_IMAGE,
-  TEST_SCHEMA_INITIALIZATION,
-  testDataSourceOptions,
-} from "../../../testing/database";
+  type DatabaseTestingModule,
+  startDatabaseTestingModule,
+} from "@codebase/database/testing";
+
 import {
   DRAW_TEST_EDGE_BUDGET,
   DRAW_TEST_WORKERS,
@@ -21,14 +13,16 @@ import {
 import { environmentSchema } from "../../constants";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
 import { CodeService } from "../code/code.service";
-import { DatabaseService } from "../database/database.service";
-import { Meander } from "../database/entities/Meander.entity";
 import { DrawingService } from "../drawing/drawing.service";
 import { EnumerationService } from "../enumeration/enumeration.service";
 import { TileEnumerationService } from "../enumeration/tile-enumeration.service";
 import { GeometryService } from "../geometry/geometry.service";
 import { GraphService } from "../graph/graph.service";
 import { MatrixService } from "../matrix/matrix.service";
+import { Meander } from "../meanderaw-database/entities/meander.entity";
+import { MeanderawDatabaseModule } from "../meanderaw-database/meanderaw-database.module";
+import { Migration1791160950069 } from "../meanderaw-database/migrations/1791160950069-migration";
+import { Migration1791414023001 } from "../meanderaw-database/migrations/1791414023001-migration";
 import { SvgService } from "../svg/svg.service";
 import { SymmetryService } from "../symmetry/symmetry.service";
 import { TileService } from "../tile/tile.service";
@@ -39,6 +33,7 @@ import { DrawRecordService } from "./draw-record.service";
 import { DrawWorkerService } from "./draw-worker.service";
 
 import type { Environment } from "../enumeration/enumeration.types";
+import type { Repository } from "typeorm";
 
 // 🔧 Configuration
 
@@ -60,32 +55,26 @@ const DRAW_RUN_TIMEOUT_MILLISECONDS = 300_000;
  * this is the highest seam, and it asserts on persisted rows rather than on
  * a mocked service graph.
  *
- * The connection is assembled inline rather than through
- * `DatabaseModule`, which always connects to the local database — this
- * suite needs a fresh, isolated database instead.
+ * The module is booted by `startDatabaseTestingModule`, which points
+ * `MeanderawDatabaseModule` at a fresh, isolated database instead of the
+ * local one.
  */
 describe(DrawEnumerationService, () => {
-  let container: StartedPostgreSqlContainer;
-  let dataSource: DataSource;
+  let database: DatabaseTestingModule;
   let repository: Repository<Meander>;
   let service: DrawEnumerationService;
 
   beforeAll(async () => {
-    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
-      .withDatabase(TEST_DATABASE_NAME)
-      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
-      .start();
-
     const environment = environmentSchema.parse({
       DRAW_EDGE_BUDGET: DRAW_TEST_EDGE_BUDGET,
       DRAW_WORKERS: DRAW_TEST_WORKERS,
     });
-    const module = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot(testDataSourceOptions(container)),
-        TypeOrmModule.forFeature([Meander]),
-        CharacteristicsModule,
-      ],
+    database = await startDatabaseTestingModule({
+      database: MeanderawDatabaseModule,
+      entities: [Meander],
+      imports: [CharacteristicsModule],
+      migrations: [Migration1791160950069, Migration1791414023001],
+      project: "meanderaw",
       providers: [
         DrawEnumerationService,
         DrawPoolService,
@@ -94,7 +83,6 @@ describe(DrawEnumerationService, () => {
         GeometryService,
         CodeService,
         MatrixService,
-        DatabaseService,
         CodeService,
         EnumerationService,
         DrawingService,
@@ -110,18 +98,16 @@ describe(DrawEnumerationService, () => {
           },
         },
       ],
-    }).compile();
+    });
 
-    service = await module.resolve(DrawEnumerationService);
-    dataSource = module.get(DataSource);
-    repository = module.get(getRepositoryToken(Meander));
+    service = await database.module.resolve(DrawEnumerationService);
+    repository = database.repository(Meander);
 
     await service.drawAll();
   }, DRAW_RUN_TIMEOUT_MILLISECONDS);
 
   afterAll(async () => {
-    await dataSource.destroy();
-    await container.stop();
+    await database.close();
   });
 
   it("is defined", () => {

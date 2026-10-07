@@ -9,7 +9,7 @@ import { DrawPoolService } from "./draw-pool.service";
 import { DrawWorkerService } from "./draw-worker.service";
 import { DRAW_POOL_BATCH_SIZE, DrawWorkerError } from "./draw.constants";
 
-import type { MeanderRecord } from "../database/database.types";
+import type { MeanderRecord } from "../meanderaw-database/meanderaw-database.types";
 import type { DrawWorkerTask } from "./draw.types";
 import type { EventEmitter } from "node:events";
 import type * as NodeUrl from "node:url";

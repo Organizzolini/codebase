@@ -4,7 +4,7 @@ import { CharacteristicsService } from "../characteristics/characteristics.servi
 import { CodeService } from "../code/code.service";
 
 import type { CodeObject } from "../code/code.types";
-import type { MeanderRecord } from "../database/database.types";
+import type { MeanderRecord } from "../meanderaw-database/meanderaw-database.types";
 
 /**
  * Turns one Code into the row the database holds for it: read once, then

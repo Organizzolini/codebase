@@ -1,14 +1,6 @@
 import { createMock } from "@golevelup/ts-vitest";
-import { Test } from "@nestjs/testing";
-import { getRepositoryToken, TypeOrmModule } from "@nestjs/typeorm";
-import {
-  PostgreSqlContainer,
-  type StartedPostgreSqlContainer,
-} from "@testcontainers/postgresql";
-import { DataSource, type Repository } from "typeorm";
 import {
   afterAll,
-  afterEach,
   beforeAll,
   beforeEach,
   describe,
@@ -17,23 +9,23 @@ import {
   vi,
 } from "vitest";
 
+import {
+  type DatabaseTestingModule,
+  startDatabaseTestingModule,
+} from "@codebase/database/testing";
 import { LoggerService } from "@codebase/logging";
 
-import {
-  TEST_DATABASE_NAME,
-  TEST_POSTGRES_IMAGE,
-  TEST_SCHEMA_INITIALIZATION,
-  testDataSourceOptions,
-} from "../../../testing/database";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
 import { CodeModule } from "../code/code.module";
 import { CorpusService } from "../corpus/corpus.service";
-import { DatabaseService } from "../database/database.service";
-import { Meander } from "../database/entities/Meander.entity";
 import { DrawingModule } from "../drawing/drawing.module";
 import { GeometryService } from "../geometry/geometry.service";
 import { GraphService } from "../graph/graph.service";
 import { MatrixModule } from "../matrix/matrix.module";
+import { Meander } from "../meanderaw-database/entities/meander.entity";
+import { MeanderawDatabaseModule } from "../meanderaw-database/meanderaw-database.module";
+import { Migration1791160950069 } from "../meanderaw-database/migrations/1791160950069-migration";
+import { Migration1791414023001 } from "../meanderaw-database/migrations/1791414023001-migration";
 import { SvgService } from "../svg/svg.service";
 import { TileService } from "../tile/tile.service";
 
@@ -43,6 +35,8 @@ import { DrawIndexService } from "./draw-index.service";
 import { DrawRecordService } from "./draw-record.service";
 import { DrawCommand } from "./draw.command";
 
+import type { Repository } from "typeorm";
+
 /**
  * Drives `DrawCommand`'s `--code` mode against a real TypeORM connection to
  * a throwaway Postgres container, per spec #813's Testing
@@ -50,39 +44,27 @@ import { DrawCommand } from "./draw.command";
  * path, and it asserts on persisted rows rather than on a mocked service
  * graph.
  *
- * The connection is assembled inline rather than through
- * `DatabaseModule`, which always connects to the local database — this
- * suite needs a fresh, emptied schema per test instead.
+ * The module is booted by `startDatabaseTestingModule`, which points
+ * `MeanderawDatabaseModule` at a fresh, migrated schema instead of the
+ * local database.
  */
 describe("drawCommand --code mode", () => {
   let command: DrawCommand;
-  let container: StartedPostgreSqlContainer;
-  let dataSource: DataSource;
+  let database: DatabaseTestingModule;
   let repository: Repository<Meander>;
 
   beforeAll(async () => {
-    container = await new PostgreSqlContainer(TEST_POSTGRES_IMAGE)
-      .withDatabase(TEST_DATABASE_NAME)
-      .withCopyContentToContainer([TEST_SCHEMA_INITIALIZATION])
-      .start();
-  });
-
-  beforeEach(async () => {
-    const module = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot(testDataSourceOptions(container)),
-        TypeOrmModule.forFeature([Meander]),
-        CharacteristicsModule,
-        CodeModule,
-        DrawingModule,
-        MatrixModule,
-      ],
+    database = await startDatabaseTestingModule({
+      database: MeanderawDatabaseModule,
+      entities: [Meander],
+      imports: [CharacteristicsModule, CodeModule, DrawingModule, MatrixModule],
+      migrations: [Migration1791160950069, Migration1791414023001],
+      project: "meanderaw",
       providers: [
         DrawCommand,
         DrawCodeService,
         DrawRecordService,
         GeometryService,
-        DatabaseService,
         GraphService,
         TileService,
         SvgService,
@@ -105,19 +87,20 @@ describe("drawCommand --code mode", () => {
           }),
         },
       ],
-    }).compile();
+    });
 
-    command = await module.resolve(DrawCommand);
-    dataSource = module.get(DataSource);
-    repository = module.get(getRepositoryToken(Meander));
+    command = await database.module.resolve(DrawCommand);
+    repository = database.repository(Meander);
   });
 
-  afterEach(async () => {
-    await dataSource.destroy();
+  beforeEach(async () => {
+    // The migrated schema persists across the cases one container serves,
+    // so each case starts from an empty table.
+    await repository.clear();
   });
 
   afterAll(async () => {
-    await container.stop();
+    await database.close();
   });
 
   it("writes exactly one row, decoded and rendered by the generic pipeline", async () => {

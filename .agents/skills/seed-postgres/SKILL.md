@@ -131,6 +131,26 @@ Restores are destructive by default. They use the clean flag (`-c`) to drop exis
 
    ```
 
+### Project Databases on an Existing Volume
+
+The Compose `postgres` service creates every database-backed project's
+`<project>_username` role, `<project>_development` database, and `<project>`
+schema from its `POSTGRES_PROJECTS` list, but only when the volume is empty.
+To add a project to a volume that already holds data, add its name to the
+list, recreate the container while keeping its volume, and run the same init
+script for that project alone:
+
+```bash
+nx run codebase:postgres-container:up
+docker exec -e POSTGRES_PROJECTS=<project> postgres sh /docker-entrypoint-initdb.d/databases.sh
+```
+
+The script stops at the first object that already exists, so name only the
+projects the volume lacks. Never use `postgres-container:recreate` for this:
+it deletes the volume and every row in it. See
+[ADR 0022](../../../docs/adr/0022-give-every-database-project-its-own-database-schema-and-role.md)
+for meanderaw's one exception.
+
 ## Notes
 
 - "Collections" in the context of this codebase typically map to PostgreSQL **tables**. Use the `table` commands when collections are requested.

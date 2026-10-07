@@ -13,7 +13,10 @@ import { DrawPoolService } from "./draw-pool.service";
 import { DrawRecordService } from "./draw-record.service";
 import { DrawWorkerService } from "./draw-worker.service";
 
-import type { MeanderRecord, MeanderShape } from "../database/database.types";
+import type {
+  MeanderRecord,
+  MeanderShape,
+} from "../meanderaw-database/meanderaw-database.types";
 
 /** Compiles a pool over the real drawing services, with `workers` threads. */
 async function compilePool(workers: number): Promise<DrawPoolService> {

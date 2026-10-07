@@ -11,7 +11,9 @@ export default mergeConfig(
         include: ["src/**/*.ts"],
       },
       /**
-       * A minute per `beforeAll` too, for {@link testTimeout}'s reason.
+       * Two minutes per `beforeAll`, where {@link testTimeout} allows a minute
+       * a test, for its reason and one more: the hook also pulls and boots a
+       * Postgres 18 image and runs the project's migrations.
        *
        * `testTimeout` does not reach a hook, and several of this project's
        * integration suites do their heaviest work in one: a single
@@ -21,7 +23,7 @@ export default mergeConfig(
        * shared ten-second default turns into a flake that skips the whole
        * suite rather than failing it.
        */
-      hookTimeout: 60_000,
+      hookTimeout: 120_000,
       /**
        * A minute per test, where the shared default is five seconds.
        *

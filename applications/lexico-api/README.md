@@ -310,42 +310,6 @@ graph LR
 
 <!-- callidescope:start -->
 
-### NestJS Module Graph
-
-<!-- codependix:start name="codependix-nestjs-modules" -->
-```mermaid
-flowchart LR
-  DatabaseModule
-  GraphQLModule
-  GraphQLSchemaBuilderModule
-  HealthModule
-  LexemesModule
-  LexicoApiModule
-  LiteratureModule
-  LoggerModule([LoggerModule])
-  MacronsModule
-  SearchModule
-  TypeOrmModule
-  WordsModule
-  DatabaseModule --> TypeOrmModule
-  GraphQLModule --> GraphQLSchemaBuilderModule
-  LexemesModule --> TypeOrmModule
-  LexicoApiModule --> DatabaseModule
-  LexicoApiModule --> GraphQLModule
-  LexicoApiModule --> HealthModule
-  LexicoApiModule --> LexemesModule
-  LexicoApiModule --> LiteratureModule
-  LexicoApiModule --> SearchModule
-  LexicoApiModule --> WordsModule
-  LiteratureModule --> TypeOrmModule
-  SearchModule --> MacronsModule
-  SearchModule --> TypeOrmModule
-  WordsModule --> TypeOrmModule
-```
-
-_Rounded modules are global: every module can inject them, so their edges are left out._
-<!-- codependix:end name="codependix-nestjs-modules" -->
-
 ## 🔭 Callidescope
 
 Call stacks traced through `applications/lexico-api`, deepest first. Each frame shows what it takes, what it returns, and what its documentation says.

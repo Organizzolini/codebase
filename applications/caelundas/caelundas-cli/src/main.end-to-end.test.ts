@@ -4,83 +4,71 @@ import path from "node:path";
 import { createMock } from "@golevelup/ts-vitest";
 import _ from "lodash";
 import moment from "moment-timezone";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
+import { startDatabaseTestingModule } from "@codebase/database/testing";
 import { LoggerService } from "@codebase/logging";
 
+import {
+  detectable,
+  runCalendarCommand,
+} from "../testing/calendar-command.utilities";
+import { createMajorAspectsService } from "../testing/major-aspects.utilities";
+
 import { environmentSchema } from "./constants";
+import { CaelundasDatabaseModule } from "./modules/caelundas-database/caelundas-database.module";
+import { CalendarEvent } from "./modules/caelundas-database/entities/calendar-event.entity";
+import { Migration1791255787877 } from "./modules/caelundas-database/migrations/1791255787877-migration";
 import { CalendarService } from "./modules/calendar/calendar.service";
+import { IngressesService } from "./modules/ingresses/ingresses.service";
+import { inputSchema } from "./modules/input/input.constants";
+import { MathService } from "./modules/math/math.service";
+import { ProgressiveUtilitiesService } from "./modules/progressive/progressive-utilities.service";
 
-import type { EphemerisAggregationService } from "./modules/ephemeris/ephemeris-aggregation.service";
-import type { EphemerisConstantsService } from "./modules/ephemeris/ephemeris-constants.service";
-import type { EphemerisCoordinateService } from "./modules/ephemeris/ephemeris-coordinate.service";
-import type { EphemerisHorizonService } from "./modules/ephemeris/ephemeris-horizon.service";
-import type { EphemerisPhenomenaService } from "./modules/ephemeris/ephemeris-phenomena.service";
-import type { EphemerisTimeService } from "./modules/ephemeris/ephemeris-time.service";
+import type { CalendarCommandOutput } from "../testing/calendar-command.types";
+import type { EphemerisService } from "./modules/ephemeris/ephemeris.service";
 import type { Environment } from "./modules/input/input.types";
+import type { DatabaseTestingModule } from "@codebase/database/testing";
 import type { ConfigService } from "@nestjs/config";
+import type { Repository } from "typeorm";
 
-// Mock environment for testing
 const TEST_OUTPUT_DIR = "./output/e2e-test";
 
-const logger = new LoggerService();
-const calendarService = new CalendarService(logger, {
+const calendarService = new CalendarService(new LoggerService(), {
   get: () => TEST_OUTPUT_DIR,
 } as unknown as ConfigService<Environment>);
 
 describe("main end-to-end suite", () => {
-  describe("environment schema e2e", () => {
-    it("allows an empty schema by default", () => {
-      expect.hasAssertions();
-      expect(environmentSchema.parse({})).toStrictEqual({
-        OUTPUT_DIRECTORY: "./output",
-      });
+  it("defaults the postgres connection and output directory", () => {
+    expect.hasAssertions();
+    expect(environmentSchema.parse({})).toStrictEqual({
+      CAELUNDAS_POSTGRES_DATABASE: "caelundas_development",
+      CAELUNDAS_POSTGRES_HOST: "localhost",
+      CAELUNDAS_POSTGRES_PASSWORD: "caelundas_password",
+      CAELUNDAS_POSTGRES_PORT: 5432,
+      CAELUNDAS_POSTGRES_SCHEMA: "caelundas",
+      CAELUNDAS_POSTGRES_USERNAME: "caelundas_username",
+      OUTPUT_DIRECTORY: "./output",
     });
   });
 
   describe("calendar generation e2e", { timeout: 10_000 }, () => {
-    // E2E tests may need more time
     beforeAll(() => {
-      // Ensure test output directory exists
-      if (!fs.existsSync(TEST_OUTPUT_DIR)) {
-        fs.mkdirSync(TEST_OUTPUT_DIR, { recursive: true });
-      }
+      fs.mkdirSync(TEST_OUTPUT_DIR, { recursive: true });
     });
 
     afterAll(() => {
-      // Clean up test files
-      if (fs.existsSync(TEST_OUTPUT_DIR)) {
-        const files = fs.readdirSync(TEST_OUTPUT_DIR);
-        for (const file of files) {
-          fs.unlinkSync(path.join(TEST_OUTPUT_DIR, file));
-        }
-        fs.rmdirSync(TEST_OUTPUT_DIR);
-      }
+      fs.rmSync(TEST_OUTPUT_DIR, { force: true, recursive: true });
     });
 
     describe("iCS file generation", () => {
       it("generates valid ICS file structure", () => {
-        const getCalendar =
-          calendarService.buildFileContent.bind(calendarService);
-
         const events = [
-          {
-            categories: ["Astronomy", "Astrology", "Ingress", "Sun", "Aries"],
-            description: "Vernal Equinox - Sun enters Aries",
-            end: moment.utc("2025-03-20T09:06:00Z"),
-            start: moment.utc("2025-03-20T09:06:00Z"),
-            summary: "☀️ → ♈ Sun ingress Aries",
-          },
-          {
-            categories: ["Astronomy", "Lunar Phase", "Moon"],
-            description: "Full Moon in Libra",
-            end: moment.utc("2025-03-29T10:58:00Z"),
-            start: moment.utc("2025-03-29T10:58:00Z"),
-            summary: "🌕 Full Moon",
-          },
+          detectable("☀️ → ♈ Sun ingress Aries", "2025-03-20T09:06:00Z"),
+          detectable("🌕 Full Moon", "2025-03-29T10:58:00Z"),
         ];
 
-        const calendar = getCalendar({
+        const calendar = calendarService.buildFileContent({
           description: "E2E test calendar",
           events,
           name: "Test Caelundas Calendar",
@@ -125,20 +113,9 @@ describe("main end-to-end suite", () => {
       });
 
       it("includes timezone definitions", () => {
-        const getCalendar =
-          calendarService.buildFileContent.bind(calendarService);
+        const events = [detectable("Summer Solstice", "2025-06-21T12:00:00Z")];
 
-        const events = [
-          {
-            categories: ["Astronomy"],
-            description: "Summer Solstice",
-            end: moment.utc("2025-06-21T12:00:00Z"),
-            start: moment.utc("2025-06-21T12:00:00Z"),
-            summary: "Summer Solstice",
-          },
-        ];
-
-        const calendar = getCalendar({
+        const calendar = calendarService.buildFileContent({
           description: "E2E timezone test calendar",
           events,
           name: "Timezone Test",
@@ -155,9 +132,6 @@ describe("main end-to-end suite", () => {
       });
 
       it("handles events with all optional fields", () => {
-        const getCalendar =
-          calendarService.buildFileContent.bind(calendarService);
-
         const events = [
           {
             categories: ["Astronomy", "Eclipse", "Solar"],
@@ -173,7 +147,7 @@ describe("main end-to-end suite", () => {
           },
         ];
 
-        const calendar = getCalendar({
+        const calendar = calendarService.buildFileContent({
           description: "E2E optional fields test calendar",
           events,
           name: "Eclipse Calendar",
@@ -188,17 +162,8 @@ describe("main end-to-end suite", () => {
       });
     });
 
-    describe("environment schema e2e", () => {
-      it("allows an empty schema by default", () => {
-        expect.hasAssertions();
-        expect(() => environmentSchema.parse({})).not.toThrow();
-      });
-    });
-
     describe("input validation e2e", () => {
-      it("validates and transform coordinates correctly", async () => {
-        const { inputSchema } = await import("./modules/input/input.constants");
-
+      it("validates and transform coordinates correctly", () => {
         const result = inputSchema.parse({
           endDate: "2025-03-31",
           latitude: "40.7128",
@@ -213,9 +178,7 @@ describe("main end-to-end suite", () => {
         expect(moment.isMoment(result.end)).toBe(true);
       });
 
-      it("infers correct timezone for different locations", async () => {
-        const { inputSchema } = await import("./modules/input/input.constants");
-
+      it("infers correct timezone for different locations", () => {
         // Tokyo
         const tokyoResult = inputSchema.parse({
           endDate: "2025-01-02",
@@ -249,10 +212,7 @@ describe("main end-to-end suite", () => {
     });
 
     describe("event detection e2e", () => {
-      it("correctly identify zodiac signs from longitude", async () => {
-        const { IngressesService } =
-          await import("./modules/ingresses/ingresses.service");
-
+      it("correctly identify zodiac signs from longitude", () => {
         // Test all 12 signs at their starting degrees
         expect(IngressesService.getSign(0)).toBe("aries");
         expect(IngressesService.getSign(30)).toBe("taurus");
@@ -268,57 +228,9 @@ describe("main end-to-end suite", () => {
         expect(IngressesService.getSign(330)).toBe("pisces");
       });
 
-      it("correctly identify aspects from angular separation", async () => {
-        const { MajorAspectsService } =
-          await import("./modules/major-aspects/major-aspects.service");
-        const { MajorAspectEventService } =
-          await import("./modules/major-aspects/major-aspect-event.service");
-        const { MajorAspectProgressiveService } =
-          await import("./modules/major-aspects/major-aspect-progressive.service");
-        const { AspectEphemerisService } =
-          await import("./modules/aspects/aspect-ephemeris.service");
-        const { AspectsUtilitiesService } =
-          await import("./modules/aspects/aspects-utilities.service");
-        const { EphemerisService } =
-          await import("./modules/ephemeris/ephemeris.service");
-        const { MathService } = await import("./modules/math/math.service");
-        const { ProgressiveUtilitiesService } =
-          await import("./modules/progressive/progressive-utilities.service");
-        const { ProgressiveAspectService } =
-          await import("./modules/progressive/progressive-aspect.service");
-        const mathService = new MathService();
-        const aspectsUtilitiesService = new AspectsUtilitiesService(
-          mathService,
-        );
-        const progressiveUtilitiesService = new ProgressiveUtilitiesService(
-          new LoggerService(),
-        );
-        const majorAspectEventService = new MajorAspectEventService(
-          new LoggerService(),
-          aspectsUtilitiesService,
-        );
-        const majorAspectProgressiveService = new MajorAspectProgressiveService(
-          new ProgressiveAspectService(new LoggerService()),
-          progressiveUtilitiesService,
-        );
-        const ephemerisService = new EphemerisService(
-          createMock<EphemerisAggregationService>(),
-          createMock<EphemerisCoordinateService>(),
-          createMock<EphemerisConstantsService>(),
-          createMock<EphemerisHorizonService>(),
-          createMock<EphemerisPhenomenaService>(),
-          createMock<EphemerisTimeService>(),
-        );
-        const aspectEphemerisService = new AspectEphemerisService(
-          ephemerisService,
-        );
-        const service = new MajorAspectsService(
-          new LoggerService(),
-          aspectEphemerisService,
-          aspectsUtilitiesService,
-          majorAspectEventService,
-          majorAspectProgressiveService,
-        );
+      it("correctly identify aspects from angular separation", () => {
+        const service =
+          createMajorAspectsService(createMock<EphemerisService>());
 
         // Test exact aspects
         expect(
@@ -346,42 +258,14 @@ describe("main end-to-end suite", () => {
         ).toBe("opposite"); // 5° orb
       });
 
-      it("calculates progressive event pairs correctly", async () => {
-        const { ProgressiveUtilitiesService } =
-          await import("./modules/progressive/progressive-utilities.service");
-
+      it("calculates progressive event pairs correctly", () => {
         const beginnings = [
-          {
-            categories: ["Test"],
-            description: "First forming",
-            end: moment.utc("2025-03-01T10:00:00Z"),
-            start: moment.utc("2025-03-01T10:00:00Z"),
-            summary: "Forming 1",
-          },
-          {
-            categories: ["Test"],
-            description: "Second forming",
-            end: moment.utc("2025-03-05T10:00:00Z"),
-            start: moment.utc("2025-03-05T10:00:00Z"),
-            summary: "Forming 2",
-          },
+          detectable("Forming 1", "2025-03-01T10:00:00Z"),
+          detectable("Forming 2", "2025-03-05T10:00:00Z"),
         ];
-
         const endings = [
-          {
-            categories: ["Test"],
-            description: "First dissolving",
-            end: moment.utc("2025-03-03T10:00:00Z"),
-            start: moment.utc("2025-03-03T10:00:00Z"),
-            summary: "Dissolving 1",
-          },
-          {
-            categories: ["Test"],
-            description: "Second dissolving",
-            end: moment.utc("2025-03-07T10:00:00Z"),
-            start: moment.utc("2025-03-07T10:00:00Z"),
-            summary: "Dissolving 2",
-          },
+          detectable("Dissolving 1", "2025-03-03T10:00:00Z"),
+          detectable("Dissolving 2", "2025-03-07T10:00:00Z"),
         ];
 
         const pairs = new ProgressiveUtilitiesService(
@@ -405,8 +289,7 @@ describe("main end-to-end suite", () => {
     });
 
     describe("math utilities e2e", () => {
-      it("normalizes degrees correctly across edge cases", async () => {
-        const { MathService } = await import("./modules/math/math.service");
+      it("normalizes degrees correctly across edge cases", () => {
         const mathService = new MathService();
         const normalizeDegrees = (d: number): number =>
           mathService.normalizeDegrees(d);
@@ -426,8 +309,7 @@ describe("main end-to-end suite", () => {
         expect(getAngle(10, 350)).toBe(20);
       });
 
-      it("generates correct combinations", async () => {
-        const { MathService } = await import("./modules/math/math.service");
+      it("generates correct combinations", () => {
         const mathService = new MathService();
         const getCombinations = <T>(array: T[], k: number): T[][] =>
           mathService.getCombinations(array, k);
@@ -450,6 +332,168 @@ describe("main end-to-end suite", () => {
 
         expect(uniquePairs.size).toBe(10);
       });
+    });
+  });
+
+  describe("stored calendar events", { timeout: 120_000 }, () => {
+    const output = "./output/e2e-postgres";
+    const philadelphia = { latitude: 39.949_309, longitude: -75.171_69 };
+    const sydney = { latitude: -33.8688, longitude: 151.2093 };
+    const marchFirstHalf = { endDate: "2026-03-16", startDate: "2026-03-01" };
+    const marchSecondHalf = { endDate: "2026-03-31", startDate: "2026-03-10" };
+    const sky = [
+      detectable("Early", "2026-03-02T12:00:00Z"),
+      detectable("Overlap", "2026-03-12T12:00:00Z"),
+      detectable("Late", "2026-03-20T12:00:00Z"),
+    ];
+    let database: DatabaseTestingModule;
+    let calendarEvents: Repository<CalendarEvent>;
+    let runs = 0;
+
+    const run = async (
+      place: { latitude: number; longitude: number },
+      range: { endDate: string; startDate: string },
+      detected = sky,
+    ): Promise<CalendarCommandOutput> =>
+      runCalendarCommand(
+        {
+          ...place,
+          ...range,
+          outputDirectory: path.join(output, String(runs++)),
+        },
+        detected,
+      );
+    const summaries = (rows: CalendarEvent[]): string[] =>
+      rows.map((row) => row.summary).toSorted();
+
+    beforeAll(async () => {
+      database = await startDatabaseTestingModule({
+        database: CaelundasDatabaseModule,
+        entities: [CalendarEvent],
+        migrations: [Migration1791255787877],
+        project: "caelundas",
+        validate: (config) => environmentSchema.parse(config),
+      });
+      calendarEvents = database.repository(CalendarEvent);
+    }, 120_000);
+
+    afterAll(async () => {
+      await database.close();
+      vi.unstubAllEnvs();
+      fs.rmSync(output, { force: true, recursive: true });
+    });
+
+    it("writes event rows and renders the files from them", async () => {
+      expect.hasAssertions();
+
+      // A row no detector reports can only reach the files through the table.
+      await calendarEvents.insert({
+        categories: ["e2e"],
+        description: "stored directly",
+        end: new Date("2026-03-05T00:00:00Z"),
+        latitude: "39.949309",
+        longitude: "-75.171690",
+        start: new Date("2026-03-05T00:00:00Z"),
+        summary: "Planted",
+      });
+      const { ics, json } = await run(philadelphia, marchFirstHalf);
+
+      expect(summaries(await calendarEvents.find())).toStrictEqual([
+        "Early",
+        "Overlap",
+        "Planted",
+      ]);
+      expect(json.map((event) => event.summary)).toStrictEqual([
+        "Early",
+        "Planted",
+        "Overlap",
+      ]);
+      expect(ics).toContain("SUMMARY:Planted");
+      expect(ics).toContain("SUMMARY:Overlap");
+    });
+
+    it("is idempotent when a range repeats", async () => {
+      expect.hasAssertions();
+
+      const before = await calendarEvents.find({ order: { summary: "ASC" } });
+      await run(philadelphia, marchFirstHalf);
+      const after = await calendarEvents.find({ order: { summary: "ASC" } });
+
+      expect(after.map((row) => row.id)).toStrictEqual(
+        before.map((row) => row.id),
+      );
+    });
+
+    it("updates an overlapping range in place and adds only new events", async () => {
+      expect.hasAssertions();
+
+      const [before] = await calendarEvents.findBy({ summary: "Overlap" });
+      const { json } = await run(philadelphia, marchSecondHalf);
+      const overlap = await calendarEvents.findBy({ summary: "Overlap" });
+
+      expect(overlap).toHaveLength(1);
+      expect(overlap[0]?.id).toBe(before?.id);
+      expect(overlap[0]?.createdAt).toStrictEqual(before?.createdAt);
+      expect(overlap[0]?.updatedAt.getTime()).toBeGreaterThan(
+        before?.updatedAt.getTime() ?? Number.POSITIVE_INFINITY,
+      );
+      await expect(calendarEvents.countBy({ summary: "Late" })).resolves.toBe(
+        1,
+      );
+      expect(json.map((event) => event.summary)).toStrictEqual([
+        "Overlap",
+        "Late",
+      ]);
+    });
+
+    it("adds separate rows for a second location", async () => {
+      expect.hasAssertions();
+
+      const total = await calendarEvents.count();
+      const { json } = await run(sydney, marchFirstHalf);
+
+      await expect(calendarEvents.count()).resolves.toBe(total + 2);
+      expect(json.map((event) => event.summary)).toStrictEqual([
+        "Early",
+        "Overlap",
+      ]);
+    });
+
+    it("includes an event spanning the edge of the range", async () => {
+      expect.hasAssertions();
+
+      const retrograde = detectable(
+        "Retrograde",
+        "2026-04-20T00:00:00Z",
+        "2026-05-10T00:00:00Z",
+      );
+      await run(
+        philadelphia,
+        { endDate: "2026-05-01", startDate: "2026-04-01" },
+        [retrograde],
+      );
+      // May's detector reports nothing, because the event started in April.
+      const { ics, json } = await run(
+        philadelphia,
+        { endDate: "2026-06-01", startDate: "2026-05-01" },
+        [],
+      );
+
+      expect(json.map((event) => event.summary)).toStrictEqual(["Retrograde"]);
+      expect(ics).toContain("SUMMARY:Retrograde");
+    });
+
+    it("includes events on the last requested day in both files", async () => {
+      expect.hasAssertions();
+
+      const { ics, json } = await run(
+        philadelphia,
+        { endDate: "2026-06-10", startDate: "2026-06-01" },
+        [detectable("Last day", "2026-06-10T12:00:00Z")],
+      );
+
+      expect(json.map((event) => event.summary)).toStrictEqual(["Last day"]);
+      expect(ics).toContain("SUMMARY:Last day");
     });
   });
 });

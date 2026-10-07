@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.33.7](https://github.com/organizzolini/codebase/compare/v2.33.6...v2.33.7) (2026-10-07)
+
+### 📝 Documentation
+
+* **documentation:** 📝 run deprecate-code in the root validation commands ([#1332](https://github.com/organizzolini/codebase/issues/1332)) ([e48a176](https://github.com/organizzolini/codebase/commit/e48a17695644b5f4c396aaa2d2cecd0a36761760))
+
+## [2.33.6](https://github.com/organizzolini/codebase/compare/v2.33.5...v2.33.6) (2026-10-06)
+
 ## [2.33.5](https://github.com/organizzolini/codebase/compare/v2.33.4...v2.33.5) (2026-10-05)
 
 ### ♻️ Code Refactoring

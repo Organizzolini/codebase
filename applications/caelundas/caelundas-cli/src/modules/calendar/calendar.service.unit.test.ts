@@ -426,4 +426,92 @@ describe(CalendarService, () => {
       expect(vi.mocked(writeFile).mock.calls.at(-1)?.[0]).toContain("output/");
     });
   });
+
+  describe("writeJson", () => {
+    const input = {
+      end: moment.tz("2025-03-21T00:00:00", "America/New_York"),
+      latitude: 40.7128,
+      longitude: -74.006,
+      start: moment.tz("2025-03-20T00:00:00", "America/New_York"),
+      timezone: "America/New_York",
+    };
+    const events: Event[] = [
+      {
+        categories: ["Astronomy"],
+        color: "red",
+        description: "Sample event",
+        end: moment.utc("2025-03-20T10:00:00Z"),
+        location: "Philadelphia",
+        start: moment.utc("2025-03-20T09:00:00Z"),
+        summary: "Sample event",
+      },
+    ];
+
+    it("writes the events as JSON beside the calendar", async () => {
+      vi.spyOn(logger, "info").mockReturnValue(undefined);
+
+      await service.writeJson(events, input);
+
+      const [filePath, content] = vi.mocked(writeFile).mock.calls.at(-1) ?? [];
+
+      expect(filePath).toMatch(/caelundas_.*\.json$/);
+      expect(
+        JSON.parse(new TextDecoder().decode(content as Uint8Array)),
+      ).toStrictEqual([
+        {
+          categories: ["Astronomy"],
+          color: "red",
+          description: "Sample event",
+          end: "2025-03-20T10:00:00.000Z",
+          location: "Philadelphia",
+          start: "2025-03-20T09:00:00.000Z",
+          summary: "Sample event",
+        },
+      ]);
+    });
+
+    it("writes null for a missing color and location", async () => {
+      vi.spyOn(logger, "info").mockReturnValue(undefined);
+
+      await service.writeJson(
+        [{ ...events[0], color: undefined, location: undefined } as Event],
+        input,
+      );
+
+      const content = vi.mocked(writeFile).mock.calls.at(-1)?.[1];
+      const [written] = JSON.parse(
+        new TextDecoder().decode(content as Uint8Array),
+      ) as { color: null; location: null }[];
+
+      expect(written).toMatchObject({ color: null, location: null });
+    });
+
+    it("falls back to the default output directory", async () => {
+      vi.spyOn(logger, "info").mockReturnValue(undefined);
+      configService.get.mockReturnValueOnce(undefined);
+
+      await service.writeJson(events, input);
+
+      expect(vi.mocked(writeFile).mock.calls.at(-1)?.[0]).toContain("output/");
+    });
+
+    it.each([
+      ["an error", new Error("disk full"), "disk full"],
+      ["a non-error", "disk full", "disk full"],
+    ])(
+      "logs and rethrows when writing fails with %s",
+      async (_name, failure, reason) => {
+        const errorSpy = vi.spyOn(logger, "error").mockReturnValue(undefined);
+        vi.mocked(writeFile).mockRejectedValueOnce(failure);
+
+        await expect(service.writeJson(events, input)).rejects.toBe(failure);
+
+        expect(errorSpy).toHaveBeenCalledWith(
+          "📝 Failed writing the JSON file",
+          undefined,
+          expect.objectContaining({ reason }),
+        );
+      },
+    );
+  });
 });

@@ -20,7 +20,7 @@ import type { CorpusEntry } from "./corpus.types";
  * historical corpus. An entry carries its Code and shape and nothing else:
  * the directory each drawing was filed under is gone with the families it
  * named, so what a meander is follows only from what it measures as — see
- * `docs/adr/0022-filter-meanders-by-characteristics-alone.md`.
+ * `docs/adr/0023-filter-meanders-by-characteristics-alone.md`.
  *
  * **Which of these the draw run ingests is computed, not listed.** A meander
  * the enumeration already reaches is reproduced by `EnumerationService`

@@ -2,7 +2,7 @@
 
 Supersedes the committed-pages decision in [ADR 0020](0020-store-meanders-in-postgres.md). The pipeline, the two halves of the corpus, Postgres storage, and the pages themselves stand.
 
-Superseded in part by [ADR 0022](0022-filter-meanders-by-characteristics-alone.md), which replaces the page per family with a page per pattern characteristic.
+Superseded in part by [ADR 0023](0023-filter-meanders-by-characteristics-alone.md), which replaces the page per family with a page per pattern characteristic.
 
 ## Context
 

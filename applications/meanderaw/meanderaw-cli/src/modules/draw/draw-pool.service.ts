@@ -10,8 +10,11 @@ import { TileEnumerationService } from "../enumeration/tile-enumeration.service"
 import { DrawWorkerService } from "./draw-worker.service";
 import { DRAW_POOL_BATCH_SIZE, DrawWorkerError } from "./draw.constants";
 
-import type { MeanderRecord, MeanderShape } from "../database/database.types";
 import type { Environment } from "../enumeration/enumeration.types";
+import type {
+  MeanderRecord,
+  MeanderShape,
+} from "../meanderaw-database/meanderaw-database.types";
 import type { DrawWorkerReply, DrawWorkerTask } from "./draw.types";
 
 /**
