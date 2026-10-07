@@ -1,14 +1,12 @@
 import { randomUUID } from "node:crypto";
 
-import { DataSource } from "typeorm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { Author, Line, Text, Token, Word } from "@codebase/lexico-entities";
 
 import {
   DATABASE_TIMEOUT_MILLISECONDS,
-  type LexicoTestDatabase,
-  startLexicoTestDatabase,
+  startLexicoDatabaseTestingModule,
 } from "../../../testing/database";
 import {
   parseIndex,
@@ -22,6 +20,7 @@ import { LiteratureService } from "./literature.service";
 
 import type { Connection } from "../../lexico-api.types";
 import type { LinesArguments } from "./line-arguments.entities";
+import type { DatabaseTestingModule } from "@codebase/database/testing";
 
 /** A page of lines, reduced to what a reader can observe of it. */
 interface LinesPage {
@@ -50,7 +49,7 @@ function summarize(connection: Connection<Line>): LinesPage {
  * resolver and service against a migrated Postgres database.
  */
 describe("lines resolver integration suite", () => {
-  let database: LexicoTestDatabase;
+  let database: DatabaseTestingModule;
   let passage: ReadingPassage;
   let resolver: LinesResolver;
 
@@ -64,8 +63,14 @@ describe("lines resolver integration suite", () => {
   }
 
   beforeAll(async () => {
-    database = await startLexicoTestDatabase([Author, Line, Text, Token, Word]);
-    passage = await seedReadingPassage(database.module.get(DataSource));
+    database = await startLexicoDatabaseTestingModule([
+      Author,
+      Line,
+      Text,
+      Token,
+      Word,
+    ]);
+    passage = await seedReadingPassage(database.dataSource);
     resolver = new LinesResolver(
       new LiteratureService(
         database.repository(Author),
@@ -78,7 +83,7 @@ describe("lines resolver integration suite", () => {
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
   afterAll(async () => {
-    await database.stop();
+    await database.close();
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
   it("lists only the text's lines, ordered by index rather than insertion", async () => {

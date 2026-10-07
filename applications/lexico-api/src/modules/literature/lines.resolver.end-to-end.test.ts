@@ -128,7 +128,7 @@ describe("lines resolver end-to-end suite", () => {
     variables: Record<string, unknown>,
   ): Promise<{ page: ReaderPage; statements: string[] }> {
     const logQuery = vi.spyOn(
-      application.module.get(DataSource).logger,
+      application.server.get(DataSource).logger,
       "logQuery",
     );
     const { lines } = await query<{ lines: ReaderPage }>(READER, variables);
@@ -144,7 +144,7 @@ describe("lines resolver end-to-end suite", () => {
    * singleton service every request-scoped resolver is handed.
    */
   function forceWordLoader(): TokenLookupSpy {
-    const service = application.module.get(LiteratureService);
+    const service = application.server.get(LiteratureService);
     const listTokensForLine = service.listTokensForLine.bind(service);
     vi.spyOn(service, "listTokensForLine").mockImplementation(
       async (lineId: string): Promise<Token[]> => {
@@ -173,7 +173,7 @@ describe("lines resolver end-to-end suite", () => {
   });
 
   afterAll(async () => {
-    await application.stop();
+    await application.close();
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
   it("reads every line's tokens in order, resolving words and leaving markers wordless", async () => {
@@ -237,7 +237,7 @@ describe("lines resolver end-to-end suite", () => {
     expect.hasAssertions();
 
     const findTokensByIds = vi.spyOn(
-      application.module.get(LiteratureService),
+      application.server.get(LiteratureService),
       "findTokensByIds",
     );
     const one = await readWithStatements({ range: { endIndex: 0 } });
