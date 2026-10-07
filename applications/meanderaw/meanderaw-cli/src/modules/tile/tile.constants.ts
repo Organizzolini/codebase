@@ -11,7 +11,7 @@
  *
  * It was 3 while the space at two rows held four tiles. The budget is
  * what makes two worth drawing: it admits five column spans there,
- * against one at five rows, so the shallowest band is where the family is
+ * against one at five rows, so the shallowest band is where the space is
  * widest.
  */
 

@@ -4,21 +4,19 @@
 
 import { Inject, Injectable } from "@nestjs/common";
 
-import { STORED_BOOLEAN_KEYS } from "../characteristics/characteristics.constants";
+import {
+  PATTERN_CHARACTERISTIC_KEYS,
+  STORED_BOOLEAN_KEYS,
+} from "../characteristics/characteristics.constants";
 import { CodeService } from "../code/code.service";
 import { DatabaseService } from "../database/database.service";
 import { DrawingService } from "../drawing/drawing.service";
 import { GeometryService } from "../geometry/geometry.service";
 
-import {
-  BAND_REPEAT_COUNT,
-  FAMILY_SORT_KEYS,
-  PAGE_STYLES,
-  UNCLASSIFIED_FAMILY_LABEL,
-} from "./draw-index.constants";
+import { BAND_REPEAT_COUNT, PAGE_STYLES } from "./draw-index.constants";
 
-import type { MeanderFamily } from "../classification/classification.types";
-import type { MeanderFamilyShapeCount } from "../database/database.types";
+import type { PatternCharacteristicKey } from "../characteristics/characteristics.types";
+import type { MeanderPatternShapeCount } from "../database/database.types";
 import type { Meander } from "../database/entities/Meander.entity";
 import type {
   MeanderPageContent,
@@ -27,8 +25,10 @@ import type {
 } from "./draw-index.types";
 
 /**
- * Renders the one page the whole committed corpus is looked through: every
- * meander the database holds, grouped by family and captioned.
+ * Renders the pages the corpus is looked through: one per pattern
+ * characteristic, listing every meander that pattern holds for, shape by
+ * shape and captioned, and an index linking them. A meander appears on
+ * every page whose pattern holds for it, and on none when none does.
  *
  * It embeds each meander's own SVG directly rather than linking to a file —
  * there is no file left to link to, since a meander is a database row now
@@ -45,7 +45,7 @@ import type {
  * that decides what one of them draws.
  *
  * Every page is produced a batch of rows at a time rather than as one
- * string: at the default edge budget a family holds over a million
+ * string: at the default edge budget a pattern can hold over a million
  * meanders, and its page outgrows the longest string JavaScript can hold.
  * Counts come first, from one grouped query, so every heading is written
  * before any row is read. The pages are written under the gitignored
@@ -72,7 +72,7 @@ export class DrawIndexService {
 
   // 🔏 Private Methods
 
-  /** One meander's own caption: its lattice address, and its subFamily where it earned one. */
+  /** One meander's own caption: its lattice address, and every boolean Characteristic that holds for it. */
   private caption(meander: Meander): string {
     const { characteristics, code, columns, rows } = meander;
     const address = `${rows}×${columns} · ${code}`;
@@ -94,17 +94,6 @@ export class DrawIndexService {
     }
 
     return page;
-  }
-
-  /**
-   * Orders families the way the index lists them: by their declared sort
-   * key, then alphabetically, with `unclassified` last.
-   */
-  private compareFamilies(left: string, right: string): number {
-    return (
-      this.familyRank(left) - this.familyRank(right) ||
-      left.localeCompare(right)
-    );
   }
 
   /** The opening every page shares, through its own heading. */
@@ -131,32 +120,6 @@ export class DrawIndexService {
       .replaceAll('"', "&quot;");
   }
 
-  /** One family's page, a batch of rows at a time. */
-  private async *familyPage(
-    family: MeanderFamily,
-    counts: readonly MeanderFamilyShapeCount[],
-    rows: MeanderRowBatches,
-  ): AsyncGenerator<string> {
-    const label = this.escape(this.label(family));
-    const total = counts.reduce((sum, { count }) => sum + count, 0);
-
-    yield this.documentHead(
-      `Meanderaw - ${label}`,
-      `<a href="../index.html">Meanderaw</a> / ${label}`,
-    );
-    yield* family === "unclassified"
-      ? this.unclassifiedSection(counts, total, rows)
-      : this.namedSection(label, total, rows);
-    yield "\n</body>\n</html>\n";
-  }
-
-  /** Where a family sits in the index: its declared sort key, unknown families after every known one, and `unclassified` last. */
-  private familyRank(family: string): number {
-    return family === "unclassified"
-      ? Number.POSITIVE_INFINITY
-      : (FAMILY_SORT_KEYS[family] ?? Number.MAX_SAFE_INTEGER);
-  }
-
   /** Rounds and trims one band coordinate the same way every drawn coordinate is. */
   private format(value: number): string {
     return this.geometryService.formatCoordinate(value);
@@ -179,13 +142,13 @@ export class DrawIndexService {
     return groups;
   }
 
-  /** A family's rows already in memory, in the order its page lists them. */
+  /** A pattern's rows already in memory, in the order its page lists them. */
   private heldRows(
     meanders: readonly Meander[],
-    family: MeanderFamily,
+    key: PatternCharacteristicKey,
   ): (readonly Meander[])[] {
     const rows = meanders
-      .filter((meander) => meander.family === family)
+      .filter((meander) => meander.characteristics[key] === true)
       .toSorted(
         (left, right) =>
           left.rows - right.rows ||
@@ -196,19 +159,18 @@ export class DrawIndexService {
     return [rows];
   }
 
-  /** The index page: every family, linked, with how many meanders it holds. */
+  /** The index page: every pattern that holds for some meander, linked, with how many it holds for. */
   private indexPage(
-    families: readonly { label: string; total: number }[],
+    patterns: readonly { key: string; total: number }[],
   ): string {
-    const total = families.reduce((sum, family) => sum + family.total, 0);
-    const contents = families
+    const contents = patterns
       .map(
-        ({ label, total: count }) =>
-          `<li><a href="families/${label}.html">${label}</a> <span>${count}</span></li>`,
+        ({ key, total }) =>
+          `<li><a href="patterns/${key}.html">${key}</a> <span>${total}</span></li>`,
       )
       .join("\n");
 
-    return `${this.documentHead("Meanderaw Index", "Meanderaw")}<p class="count">${total} meanders across ${families.length} families.</p>
+    return `${this.documentHead("Meanderaw Index", "Meanderaw")}<p class="count">${patterns.length} patterns. A meander is listed under every pattern that holds for it.</p>
 <nav><ul>
 ${contents}
 </ul></nav>
@@ -217,59 +179,48 @@ ${contents}
 `;
   }
 
-  /** The heading and slug a family group is shown and linked under. */
-  private label(family: string): string {
-    return family === "unclassified" ? UNCLASSIFIED_FAMILY_LABEL : family;
-  }
-
-  /** A named family's one section: its count, then every figure in one grid. */
-  private async *namedSection(
-    label: string,
-    total: number,
-    rows: MeanderRowBatches,
-  ): AsyncGenerator<string> {
-    let separator = "";
-
-    yield `${this.sectionHead(label, label, total)}<div class="grid">\n`;
-
-    for await (const batch of rows) {
-      yield (
-        separator +
-          batch.map((meander) => this.renderFigure(meander)).join("\n")
-      );
-      separator = "\n";
-    }
-
-    yield "\n</div>\n</section>";
-  }
-
   /** Every page `source`'s rows make, each produced lazily as it is read. */
   private pages(source: MeanderPageSource): Record<string, MeanderPageContent> {
-    const byFamily = this.group(source.counts, ({ family }) => family);
-    const families = [...byFamily]
-      .toSorted(([left], [right]) => this.compareFamilies(left, right))
-      .map(([family, counts]) => ({
-        counts,
-        family,
-        label: this.label(family),
-      }));
-    const summaries = families.map(({ counts, label }) => ({
-      label: this.escape(label),
-      total: counts.reduce((sum, { count }) => sum + count, 0),
-    }));
+    const byKey = this.group(source.counts, ({ key }) => key);
+    const patterns = PATTERN_CHARACTERISTIC_KEYS.flatMap((key) => {
+      const counts = byKey.get(key);
+
+      return counts === undefined ? [] : [{ counts, key }];
+    });
     const pages: Record<string, MeanderPageContent> = {
-      "index.html": [this.indexPage(summaries)],
+      "index.html": [
+        this.indexPage(
+          patterns.map(({ counts, key }) => ({
+            key,
+            total: counts.reduce((sum, { count }) => sum + count, 0),
+          })),
+        ),
+      ],
     };
 
-    for (const { counts, family, label } of families) {
-      pages[`families/${label}.html`] = this.familyPage(
-        family,
+    for (const { counts, key } of patterns) {
+      pages[`patterns/${key}.html`] = this.patternPage(
+        key,
         counts,
-        source.rows(family),
+        source.rows(key),
       );
     }
 
     return pages;
+  }
+
+  /** One pattern's page: every meander it holds for, one grid per shape, a batch of rows at a time. */
+  private async *patternPage(
+    key: PatternCharacteristicKey,
+    counts: readonly MeanderPatternShapeCount[],
+    rows: MeanderRowBatches,
+  ): AsyncGenerator<string> {
+    yield this.documentHead(
+      `Meanderaw - ${key}`,
+      `<a href="../index.html">Meanderaw</a> / ${key}`,
+    );
+    yield* this.shapeSections(key, counts, rows);
+    yield "\n</body>\n</html>\n";
   }
 
   /**
@@ -331,7 +282,7 @@ ${contents}
 `;
   }
 
-  /** One shape's grid within the unclassified section, opened as its first row arrives. */
+  /** One shape's grid within a pattern's section, opened as its first row arrives. */
   private shapeHead(
     previous: string | undefined,
     shape: string,
@@ -343,16 +294,16 @@ ${contents}
   }
 
   /**
-   * The unclassified section: one grid per shape, each with its own count,
-   * since a family of no shared structure reads best a shape at a time.
+   * A pattern's one section: one grid per shape, each with its own count.
    * Rows arrive ordered by shape, so each shape's grid opens as its first
    * row arrives and closes as the next shape's does.
    */
-  private async *unclassifiedSection(
-    counts: readonly MeanderFamilyShapeCount[],
-    total: number,
+  private async *shapeSections(
+    key: PatternCharacteristicKey,
+    counts: readonly MeanderPatternShapeCount[],
     rows: MeanderRowBatches,
   ): AsyncGenerator<string> {
+    const total = counts.reduce((sum, { count }) => sum + count, 0);
     const shapeCounts = new Map(
       counts.map(({ columns, count, rows: band }) => [
         `${band}×${columns}`,
@@ -361,7 +312,7 @@ ${contents}
     );
     let shape: string | undefined;
 
-    yield this.sectionHead("unclassified", "unclassified", total);
+    yield this.sectionHead(key, key, total);
 
     for await (const batch of rows) {
       const pieces: string[] = [];
@@ -392,14 +343,16 @@ ${contents}
    * Every page the database's rows make, keyed by its path under the output
    * directory. Each page is an async iterable of HTML pieces, read from the
    * database a batch of rows at a time only as the page is written, so no
-   * page — however many rows its family holds — is ever one string.
+   * page — however many rows its pattern holds for — is ever one string.
    */
   async build(): Promise<Record<string, MeanderPageContent>> {
-    const counts = await this.databaseService.familyShapeCounts();
+    const counts = await this.databaseService.patternShapeCounts(
+      PATTERN_CHARACTERISTIC_KEYS,
+    );
 
     return this.pages({
       counts,
-      rows: (family) => this.databaseService.familyRows(family),
+      rows: (key) => this.databaseService.patternRows(key),
     });
   }
 
@@ -408,22 +361,26 @@ ${contents}
    * the seam a test renders a handful of meanders through.
    */
   async render(meanders: readonly Meander[]): Promise<Record<string, string>> {
-    const counts = new Map<string, MeanderFamilyShapeCount>();
+    const counts = new Map<string, MeanderPatternShapeCount>();
 
-    for (const { columns, family, rows } of meanders) {
-      const key = `${family}|${rows}|${columns}`;
+    for (const { characteristics, columns, rows } of meanders) {
+      for (const key of PATTERN_CHARACTERISTIC_KEYS) {
+        if (characteristics[key] === true) {
+          const shape = `${key}|${rows}|${columns}`;
 
-      counts.set(key, {
-        columns,
-        count: (counts.get(key)?.count ?? 0) + 1,
-        family,
-        rows,
-      });
+          counts.set(shape, {
+            columns,
+            count: (counts.get(shape)?.count ?? 0) + 1,
+            key,
+            rows,
+          });
+        }
+      }
     }
 
     const pages = this.pages({
       counts: [...counts.values()],
-      rows: (family) => this.heldRows(meanders, family),
+      rows: (key) => this.heldRows(meanders, key),
     });
     const rendered: Record<string, string> = {};
 

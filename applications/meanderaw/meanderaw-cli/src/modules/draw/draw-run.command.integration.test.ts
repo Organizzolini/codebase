@@ -19,7 +19,6 @@ import {
   drawRunFixture,
   drawRunModuleMetadata,
 } from "../../../testing/draw-run";
-import { MEANDER_FAMILIES } from "../classification/classification.constants";
 import { HISTORICAL_CORPUS } from "../corpus/historical-corpus.constants";
 
 import { DrawCodeService } from "./draw-code.service";
@@ -81,7 +80,7 @@ async function compileDrawRun(
  * persists. It is spec
  * #813's highest seam for this command, and the direct successor to the
  * file-tree assertions `draw.command.unit.test.ts` made by mocking
- * `node:fs/promises` while the per-family procedural pipeline still wrote
+ * `node:fs/promises` while the procedural pipeline still wrote
  * one.
  *
  * The cases over a database already holding a hardcoded entry's address and
@@ -155,14 +154,18 @@ describe("drawCommand draw run", () => {
       ).resolves.toBe(expectedHardcoded);
     });
 
-    it("rebuilds output/index.html and a page per family from the draw run's own rows once both halves have committed", async () => {
-      const total = await drawRun.repository.count();
+    it("rebuilds output/index.html and a page per pattern from the draw run's own rows once both halves have committed", async () => {
+      const whirls = await drawRun.repository
+        .createQueryBuilder("meander")
+        .where("meander.characteristics ? 'isWhirl'")
+        .getCount();
 
+      expect(whirls).toBeGreaterThan(0);
       expect(writes.get("output/index.html")).toContain(
-        `${total} meanders across`,
+        `<a href="patterns/isWhirl.html">isWhirl</a> <span>${whirls}</span>`,
       );
-      expect(writes.get("output/families/unclassified.html")).toContain(
-        '<section id="unclassified">',
+      expect(writes.get("output/patterns/isWhirl.html")).toContain(
+        '<section id="isWhirl">',
       );
     });
 
@@ -172,13 +175,13 @@ describe("drawCommand draw run", () => {
       ).toHaveLength(HISTORICAL_CORPUS_PRESERVED);
     });
 
-    it("carries the family it was filed under, and isHardcoded, on every ingested corpus entry", async () => {
-      const rows = await drawRun.repository.findBy({ isHardcoded: true });
+    it("measures every ingested corpus entry rather than carrying a label over, so a hardcoded whirl holds isWhirl", async () => {
+      const whirl = await drawRun.repository.findOneByOrFail({
+        code: "04x03y6354c69c8a39",
+      });
 
-      const filed = new Set<string>(MEANDER_FAMILIES);
-
-      expect(rows.length).toBeGreaterThan(0);
-      expect(rows.every((row) => filed.has(row.family))).toBe(true);
+      expect(whirl.isHardcoded).toBe(true);
+      expect(whirl.characteristics.isWhirl).toBe(true);
     });
   });
 });

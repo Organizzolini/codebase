@@ -1,16 +1,13 @@
 import { Column, Entity, Index, PrimaryColumn } from "typeorm";
 
-import { MEANDER_FAMILIES } from "../../classification/classification.constants";
-
 import type { StoredCharacteristics } from "../../characteristics/characteristics.types";
-import type { MeanderFamily } from "../../classification/classification.types";
 
 /**
  * One row of the `meanders` table, in the schema
  * `MEANDERAW_POSTGRES_SCHEMA` names: a single meander addressed by its Code,
- * decoded and rendered by the generic, family-agnostic pipeline.
+ * decoded and rendered by the generic pipeline.
  *
- * `code` is unbounded text, because several families' full Codes outgrow
+ * `code` is unbounded text, because the widest full Codes outgrow
  * the 255-byte filesystem path component a file per Code once needed.
  *
  * A meander's identity is its formatted Code, `{columns}x{rows}y{lattice}`
@@ -22,15 +19,16 @@ import type { MeanderFamily } from "../../classification/classification.types";
  *
  * `isHardcoded` says whether the row was ingested from the historical corpus,
  * which is also how a Code named at the command line is recorded, rather
- * than found by the enumerator. `family` is `ClassificationService`'s
- * verdict for an enumerated row and the filed family for a hardcoded one.
+ * than found by the enumerator.
  *
  * Every column describes the row itself; every measured Characteristic
- * lives in the one {@link characteristics} map.
+ * lives in the one {@link characteristics} map, and a meander is found by
+ * filtering on that map rather than by any label stored beside it. The index
+ * over `(rows, columns, code)` is the order a page lists rows in.
  */
 @Entity({ name: "meanders" })
 @Index(["code"], { unique: true })
-@Index(["family", "rows", "columns", "code"])
+@Index(["rows", "columns", "code"])
 export class Meander {
   /**
    * Every Characteristic the meander has, as one sparse JSON object: see
@@ -52,9 +50,6 @@ export class Meander {
 
   @Column({ type: "int" })
   columns!: number;
-
-  @Column({ enum: MEANDER_FAMILIES, type: "simple-enum" })
-  family!: MeanderFamily;
 
   /**
    * A uuidv7 the database assigns on insert, so ids sort by when their rows

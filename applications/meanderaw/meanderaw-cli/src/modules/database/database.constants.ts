@@ -28,12 +28,12 @@ export const DEFAULT_DATABASE_NAME = "meanderaw_development";
 export const MEANDER_INSERT_CHUNK_SIZE = 500;
 
 /**
- * How many rows `DatabaseService.familyRows` reads at once.
+ * How many rows `DatabaseService.patternRows` reads at once.
  *
- * Enough that a family of a million rows is a couple of hundred queries
+ * Enough that a pattern of a million rows is a couple of hundred queries
  * rather than a million, few enough that one batch — every row's
  * Characteristics map included — is a few megabytes in memory rather than
- * the whole family at once, which is what lets the pages be written at any
+ * the whole pattern at once, which is what lets the pages be written at any
  * edge budget.
  */
 export const MEANDER_READ_BATCH_SIZE = 5000;

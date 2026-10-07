@@ -40,7 +40,7 @@ async function createService(
 /**
  * The eleven shapes the `mosaic` half of the corpus commits — every shape a
  * budget of sixteen admitted up to five rows — with the tile counts each
- * holds: how many the family enumerates now, and how many of those the
+ * holds: how many the walk enumerates now, and how many of those the
  * original exact-cover rule would have found. Today's budget admits all of
  * them and more; `enumeration.service.unit.test.ts` lists the rest.
  *
@@ -256,7 +256,7 @@ describe(TileEnumerationService, () => {
       }
     });
 
-    it("includes the three named members of the family at 5 rows", () => {
+    it("includes the three named members of the space at 5 rows", () => {
       const singleColumn = service
         .enumerate(5, 1)
         .map((tile) => codeService.spellCanonical(tile));
@@ -355,7 +355,7 @@ describe(TileEnumerationService, () => {
     /**
      * The claim that makes this a widening rather than a replacement.
      *
-     * The family's original rule was one incident edge per point — an exact
+     * The `mosaic` generator's original rule was one incident edge per point — an exact
      * cover of its cells. That is a region strictly inside a ceiling of two
      * direction bits, so filtering the wider enumeration down to it has to
      * return exactly the set the narrower rule returned, shape for shape.

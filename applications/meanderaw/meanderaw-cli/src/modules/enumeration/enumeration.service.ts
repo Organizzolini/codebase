@@ -19,17 +19,16 @@ import type { EnumeratedMeander, Environment } from "./enumeration.types";
  * `TileEnumerationService` already decides each of a repeat's edges in turn,
  * `2 ** edges` wide, folded by `SymmetryService`'s group so that a
  * shift or a mirror of one repeat is not another — and nothing in that walk
- * is about `mosaic`. It lives in that family's module because `mosaic` was
- * the only family whose corpus was drawn this way, not because the
+ * is about `mosaic`. It was written for the `mosaic` generator because that
+ * was the only generator whose corpus was drawn this way, not because the
  * enumeration knows what a `mosaic` is; its own doc comment says so
  * outright: "Nothing here knows what a tile is called." So the
  * generalization this ticket asks for is not nine more enumerators. It is
  * running the one that exists across the whole row range the budget reaches,
- * and deciding family membership afterwards, by its own structure
- * rather than by which generator drew
- * something.
+ * and measuring each meander afterwards, by its own structure rather than
+ * by which generator drew something.
  *
- * **The budget is the lattice's, not the family's.**
+ * **The budget is the lattice's, not any generator's.**
  * `EDGE_BUDGET` is read through `TileEnumerationService` rather than
  * restated here, so the workspace holds one budget rather than two that
  * could disagree about the same space. A repeat of `rows` by `columns` holds
@@ -40,11 +39,11 @@ import type { EnumeratedMeander, Environment } from "./enumeration.types";
  * `mosaic` half of the corpus already commits are reproduced rather than
  * recomputed differently.
  *
- * **No family filter is applied anywhere in here**, which is the point:
- * every repeat within budget is produced, and a repeat that satisfies no
- * family's combination is still a meander with a Code, recorded with a null
- * family. Enumerating a family's own members would need the definitions to
- * exist first, and the definitions are read off the enumeration.
+ * **No filter is applied anywhere in here**, which is the point: every
+ * repeat within budget is produced, and a repeat no pattern characteristic
+ * holds for is still a meander with a Code. Enumerating one pattern's own
+ * members would need its definition to exist first, and the definitions
+ * are read off the enumeration.
  */
 @Injectable()
 export class EnumerationService {
@@ -124,9 +123,9 @@ export class EnumerationService {
    * filter on top of those two ends — never past them, since a shape past
    * the budget is still refused — and default to unbounded, so an
    * unconfigured draw run is
-   * exactly this. A family's own row range is not consulted here and could
-   * not be: enumeration applies no per-family filter, and a repeat is drawn
-   * because it fits, not because some family was expecting it.
+   * exactly this. No pattern's own row range is consulted here, and none
+   * could be: enumeration applies no filter, and a repeat is drawn because
+   * it fits, not because some pattern was expecting it.
    */
   shapes(): MeanderShape[] {
     const shapes: MeanderShape[] = [];

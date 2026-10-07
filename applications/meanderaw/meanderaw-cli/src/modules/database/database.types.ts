@@ -1,6 +1,6 @@
 // 🏷️ Types
 
-import type { MeanderFamily } from "../classification/classification.types";
+import type { PatternCharacteristicKey } from "../characteristics/characteristics.types";
 import type { Meander } from "./entities/Meander.entity";
 
 /** Where the meander database is, who to sign in as, and which schema holds its table. */
@@ -13,11 +13,11 @@ export interface MeanderDatabaseConnection {
   readonly username: string;
 }
 
-/** How many rows one family holds at one shape. */
-export interface MeanderFamilyShapeCount {
+/** How many rows one pattern characteristic holds for at one shape. */
+export interface MeanderPatternShapeCount {
   readonly columns: number;
   readonly count: number;
-  readonly family: MeanderFamily;
+  readonly key: PatternCharacteristicKey;
   readonly rows: number;
 }
 

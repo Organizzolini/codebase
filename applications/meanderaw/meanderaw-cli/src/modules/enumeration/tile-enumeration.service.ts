@@ -36,7 +36,7 @@ import type { EdgeAddress, Environment } from "./enumeration.types";
  * not matter.
  *
  * Nothing here knows what a tile is called. The fold is keyed on
- * `SymmetryService.edgeKey`, so the naming this family's filenames use
+ * `SymmetryService.edgeKey`, so the naming a Code uses
  * can depend on this module without this module depending back on it.
  */
 @Injectable()
@@ -196,7 +196,7 @@ export class TileEnumerationService {
 
   /**
    * Whether every point of a tile is touched by at most one edge — the
-   * family's original exact-cover rule, restated over the lattice.
+   * retired `mosaic` generator's exact-cover rule, restated over the lattice.
    *
    * Each point claimed exactly once, by a dot on its own or by one half of a
    * dash, is exactly a matching: no two edges meet. The single-column
@@ -224,7 +224,7 @@ export class TileEnumerationService {
 
   /**
    * The widest column span the budget admits at a row count, which is at
-   * least one at every row count the family draws in.
+   * least one at every row count the draw run walks.
    *
    * The draw run asks per row rather than reading a column cap, which is what
    * makes the budget the single knob: five columns at two rows, one at

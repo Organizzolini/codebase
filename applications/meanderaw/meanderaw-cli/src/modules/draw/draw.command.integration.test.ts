@@ -26,7 +26,6 @@ import {
   testDataSourceOptions,
 } from "../../../testing/database";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
-import { ClassificationModule } from "../classification/classification.module";
 import { CodeModule } from "../code/code.module";
 import { CorpusService } from "../corpus/corpus.service";
 import { DatabaseService } from "../database/database.service";
@@ -74,7 +73,6 @@ describe("drawCommand --code mode", () => {
         TypeOrmModule.forRoot(testDataSourceOptions(container)),
         TypeOrmModule.forFeature([Meander]),
         CharacteristicsModule,
-        ClassificationModule,
         CodeModule,
         DrawingModule,
         MatrixModule,

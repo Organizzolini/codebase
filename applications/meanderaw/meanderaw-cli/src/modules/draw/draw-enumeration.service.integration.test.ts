@@ -20,7 +20,6 @@ import {
 } from "../../../testing/draw-run-budget";
 import { environmentSchema } from "../../constants";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
-import { ClassificationService } from "../classification/classification.service";
 import { CodeService } from "../code/code.service";
 import { DatabaseService } from "../database/database.service";
 import { Meander } from "../database/entities/Meander.entity";
@@ -95,7 +94,6 @@ describe(DrawEnumerationService, () => {
         GeometryService,
         CodeService,
         MatrixService,
-        ClassificationService,
         DatabaseService,
         CodeService,
         EnumerationService,
@@ -190,28 +188,13 @@ describe(DrawEnumerationService, () => {
       await expect(repository.countBy({ isHardcoded: true })).resolves.toBe(0);
     });
 
-    // 🎯 Family is decided by structure, not by which generator drew
-    // something — the whole point of this ticket. The histogram is pinned
-    // rather than described: 958 meanders belong to no family, which spec
-    // #813 asks for outright rather than filtering them from the draw run, and
-    // `stipple` and `cross` claim most of the rest. Families whose smallest
-    // member needs more than the pinned budget of 12 edges — `swirl` and
-    // `whirl` among them — claim nothing, because no shape this draw run walks
-    // admits one.
-    it("classifies each enumerated meander into a single family according to hierarchical precedence", async () => {
-      const counted = await repository
-        .createQueryBuilder("meander")
-        .select("meander.family", "family")
-        .addSelect("COUNT(*)::int", "count")
-        .groupBy("meander.family")
-        .getRawMany<{ count: number; family: string }>();
-
-      const totalCount = counted.reduce((sum, item) => sum + item.count, 0);
-
-      expect(totalCount).toBe(2079);
+    // 🎯 Every meander the pinned budget of 12 edges admits is written,
+    // whatever patterns hold for it — nothing is filtered from the draw run.
+    it("writes every enumerated meander within the budget", async () => {
+      await expect(repository.count()).resolves.toBe(2079);
     });
 
-    it("records a meander's Characteristics beside its family, so a structural question is answerable without re-deriving one", async () => {
+    it("records a meander's Characteristics with its row, so a structural question is answerable without re-deriving one", async () => {
       const row = await repository.findOneByOrFail({ lattice: "4488" });
 
       expect(row).toMatchObject({
@@ -226,7 +209,6 @@ describe(DrawEnumerationService, () => {
         },
         code: "02x02y4488",
         columns: 2,
-        family: "bars",
         isHardcoded: false,
         lattice: "4488",
         repeats: 1,

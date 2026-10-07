@@ -28,12 +28,11 @@ export class GeometryService {
    * whole repeat: one from the drawing's right edge back to its left along
    * the bottom, and one along the top.
    *
-   * Three families draw exactly this and differ in nothing but where their
-   * own right edge falls — `boxes`, `branch`, and `parallel` — so the run
-   * lives here and each of them passes its own `rightEdge` in. It is the
-   * shared geometry rather than any one family's shape, and a fourth family
-   * that closes its band the same way has one place to reach for rather than
-   * a fourth copy to keep in step.
+   * Every band that closes both borders draws exactly this and differs in
+   * nothing but where its own right edge falls, so the run lives here and
+   * each caller passes its own `rightEdge` in. It is shared geometry rather
+   * than any one shape's, and a new caller that closes its band the same way
+   * has one place to reach for rather than a copy to keep in step.
    *
    * `cross` is not one of them: its border draws a third run, the weft rail
    * between the two, so it composes its own.

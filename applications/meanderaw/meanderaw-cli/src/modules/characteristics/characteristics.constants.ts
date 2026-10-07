@@ -305,12 +305,38 @@ export const BOOLEAN_CHARACTERISTIC_KEYS = [
   "isPureTree",
   "isSingleArc",
   "isSnake",
-  "isStippled",
   "isSwirl",
   "isWaterfalls",
   "isWhirl",
   "reversesAtItsTightestTurn",
 ] as const;
+
+/**
+ * The key of every pattern characteristic, in alphabetical order — the
+ * compound booleans under `compound/pattern/`, each a named combination of
+ * other Characteristics a meander can be filtered by. The draw run writes
+ * one page per key, listing every meander the pattern holds for.
+ */
+export const PATTERN_CHARACTERISTIC_KEYS = [
+  "isArcade",
+  "isBars",
+  "isBoxes",
+  "isChain",
+  "isClasps",
+  "isComb",
+  "isCross",
+  "isDots",
+  "isDoubleChain",
+  "isFork",
+  "isLines",
+  "isMesh",
+  "isParallel",
+  "isPureTree",
+  "isSnake",
+  "isSwirl",
+  "isWaterfalls",
+  "isWhirl",
+] as const satisfies readonly (typeof BOOLEAN_CHARACTERISTIC_KEYS)[number][];
 
 /**
  * Every characteristic key, numeric keys first and boolean keys after, each

@@ -8,11 +8,10 @@
  * edge to join them, which is the shallowest tile that can hold one. Below
  * it the interior is a single row with nothing under it, so no southward edge
  * exists anywhere in it and the whole space is the horizontal necklaces. Not
- * one family's defining combination is about a repeat like that — every rule
- * `ClassificationService` states either counts a junction, a loop, or
- * a piece, and a band with no vertical ink can close nothing and fork
- * nowhere — so a draw run that included one row would be spending its widest
- * shape on the corner of the space no family lives in. The budget alone
+ * one pattern characteristic is about a repeat like that — every one counts
+ * a junction, a loop, or a piece, and a band with no vertical ink can close
+ * nothing and fork nowhere — so a draw run that included one row would be
+ * spending its widest shape on the corner of the space no pattern holds in. The budget alone
  * admits twenty-four columns there, which is 2 ** 24 assignments folded
  * through a symmetry group of 96 elements, and the largest single cost in the
  * draw run by some distance.
@@ -50,7 +49,7 @@ export const DRAW_MINIMUM_ROWS = 2;
  * It replaces a maximum column span, which was the knob while a degree
  * ceiling was doing most of the clamping. There is no degree ceiling now —
  * a point may carry any of the sixteen direction-bit patterns, junctions and
- * crossings included — so this is the only thing bounding the family, and it
+ * crossings included — so this is the only thing bounding the space, and it
  * has to be. At 5 rows adding one column multiplies the space by 2 ** 9,
  * which is about what removing the degree ceiling costs in total.
  *

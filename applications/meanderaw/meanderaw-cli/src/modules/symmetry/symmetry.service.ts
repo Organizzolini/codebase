@@ -15,8 +15,8 @@ import type { PointRank, Transform, TransformChoice } from "./symmetry.types";
  * through.
  *
  * What a representative is *called* is not here. `CodeService` spells a
- * tile out, because that spelling is the lattice's rather than this
- * family's, and it reaches this service for {@link canonicalTile} on its way
+ * tile out, because that spelling is the lattice's rather than the
+ * symmetry group's, and it reaches this service for {@link canonicalTile} on its way
  * to a canonical name. Nothing here reaches back.
  *
  * The group has order `4 × columns` — `columns` translations, times a
@@ -138,7 +138,7 @@ export class SymmetryService {
   }
 
   /**
-   * How a point is reached, ranked in the order the family's original
+   * How a point is reached, ranked in the order the retired `mosaic` generator's
    * exact-cover search discovered covers in: a bare point first, then one
    * anchoring a southward edge, then one anchoring an eastward edge, then
    * one reached only by a neighbor's edge.

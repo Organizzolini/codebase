@@ -10,9 +10,9 @@ import type { Directions } from "../tile/tile.types";
 import type { CanvasPoint } from "./drawing.types";
 
 /**
- * Draws a Code to SVG: the family-agnostic mechanical
- * rule generalized from the retired per-tile motif, so it applies to every
- * family's Code rather than only one family's tiles.
+ * Draws a Code to SVG: the mechanical rule generalized from the retired
+ * per-tile motif, so it applies to every Code rather than only one
+ * generator's tiles.
  *
  * Each point owns two of its four direction bits — an `east` bit draws one
  * unit right, a `south` bit one unit down — and a point owning neither is an
@@ -118,7 +118,7 @@ export class DrawingService {
 
   /**
    * Renders a Code to a complete SVG document: `rows` grid units tall — the
-   * same fixed canvas height every family draws against — and `columns` grid
+   * same fixed canvas height every Code draws against — and `columns` grid
    * units wide, with no repeat and no addressed window, since a Code names
    * one whole meander directly.
    */

@@ -84,7 +84,6 @@ describe(DatabaseModule, () => {
       "characteristics",
       "code",
       "columns",
-      "family",
       "id",
       "is_hardcoded",
       "lattice",

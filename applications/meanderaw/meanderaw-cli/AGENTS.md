@@ -18,12 +18,11 @@ nx run meanderaw-cli:start
 **A meander is a row in the Postgres database `MEANDERAW_POSTGRES_DB` names (`meanderaw_development`
 by default), addressed by its lattice address — its Code, its rows, and its columns — and nothing else.** The formatted
 Code spells out all three, so `code` alone is its identity; the row's `id` is a uuidv7
-the database assigns, which changes on every draw run and must never reach committed output. There is no `output/<family>/*.svg`
-tree, no per-family procedural motif service, and no `--type`/`--modifier` command line.
-Generation is lattice-first for every family: a budgeted enumeration produces every
-structurally distinct repeat within reach, one generic family-agnostic renderer draws each
-one from its decoded Code, and a family is _read off_ the result rather than chosen before
-it. See "One Command" and "Output Layout" in [README.md](./README.md).
+the database assigns, which changes on every draw run and must never reach committed output. There is no `output/` tree of SVG
+files, no procedural motif service, and no `--type`/`--modifier` command line.
+Generation is lattice-first: a budgeted enumeration produces every structurally distinct
+repeat within reach, one generic renderer draws each one from its decoded Code, and what a
+meander is gets _measured off_ the result rather than chosen before it. See "One Command" and "Output Layout" in [README.md](./README.md).
 
 **The corpus is two halves that partition it, and the partition is load-bearing.**
 Rows with `isHardcoded` true hold the 963 meanders of the historical corpus past the sixteen
@@ -33,7 +32,7 @@ edges it was extracted against, extracted once as Codes from the retired file tr
 `EDGE_BUDGET` never drops one. Rows with it false hold what `EnumerationService` walks — the
 twenty-five shapes the edge budget admits, one meander per symmetry class. The corpus is
 ingested first, and the draw run skips any Code a hardcoded row already holds, so a hardcoded
-row keeps its Code and hand-filed family. Only enumerated meanders are folded by
+row keeps its Code. Only enumerated meanders are folded by
 symmetry: a hardcoded mirror or flip of an enumerated meander stays a row of its own.
 `draw-run.command.integration.test.ts` pins how many entries are preserved.
 
@@ -63,24 +62,23 @@ through `DRAW_TEST_WORKERS`; `draw-pool.service.integration.test.ts` is the one 
 drives real threads.
 
 **A draw run commits nothing.** The rows live in Postgres, and `output/index.html` and a page
-per family are written on every draw run but gitignored — at the default budget they are
-gigabytes of HTML. `DrawIndexService.build` hands each page over as an async iterable of
-pieces, read from `DatabaseService.familyRows` a batch at a time, because a family page
-outgrows a JavaScript string; never build one as a single string or read every row first.
+per pattern characteristic (`output/patterns/<key>.html`) are written on every draw run but
+gitignored — at the default budget they are gigabytes of HTML. `DrawIndexService.build`
+hands each page over as an async iterable of pieces, read from `DatabaseService.patternRows`
+a batch at a time, because a page outgrows a JavaScript string; never build one as a single
+string or read every row first.
 
-**A family is a combination of Characteristics, not a label a generator attached.**
-`MeanderClassificationService` holds one predicate per family, read off a decoded grid's
-measured Characteristics and its shape; a meander matching none is recorded with a null
-`family`, which is most of the enumerated space and is the design rather than a gap.
-Adding a family means adding a rule there, never a motif service. The same is true one
-level down: `mosaic-naming` holds one predicate per sub-family, and **unbroken or broken
-is a question about edges, not points** — `lines` and `dashes` differ on it, and so do
-`bars` and `diamond`.
+**There are no families: a meander is filtered by its Characteristics.** No row stores a
+label. A _pattern characteristic_ is a compound boolean under `compound/pattern/` — `isWhirl`,
+`isArcade`, and so on — built only from other Characteristics, and listed in
+`PATTERN_CHARACTERISTIC_KEYS`. A meander can hold several patterns or none; most of the
+enumerated space holds none, which is the design rather than a gap. Adding a pattern means
+adding an evaluator there and its key to that list, never a motif service or a stored column.
+See [ADR 0022](../../../docs/adr/0022-filter-meanders-by-characteristics-alone.md).
 
-**A hardcoded row's `family` and `subFamily` are trusted, not classified.** Spec #813 puts
-reclassifying the historical corpus through the new predicates explicitly out of scope, so
-`HardcodedMeandersService` carries that metadata over rather than re-deriving it. Do not
-"fix" a hardcoded row whose structure would classify differently.
+**A hardcoded row is measured, never labelled.** The historical corpus keeps only each
+entry's Code and shape; the directory a drawing was once filed under is gone, so a hardcoded
+meander holds a pattern for exactly the reason an enumerated one does.
 
 **A duplicate lattice address within one half is a build failure.** The unique index over
 `code` refuses a second insert. Across the halves the hardcoded row wins by design: the
@@ -100,7 +98,7 @@ they are facts about output rather than intentions in source. The full charter, 
 measurements behind it, is in [README.md](./README.md), under "Meander Charter".
 
 **The property test that gated them is gone with the corpus it drawn.** It measured every
-drawing the per-family draw run produced, and that draw run no longer exists; the structural
+drawing the procedural draw run produced, and that draw run no longer exists; the structural
 facts it asserted are now computed per row by `CharacteristicsService` and stored in the
 row's one sparse `characteristics` JSON map, so they are queryable rather than gated.
 Rebuilding a gate over the database is open work, not something this project claims to
@@ -130,8 +128,9 @@ Two things that look like defects and are not:
 
 - **Gaps wider than one stroke where a band terminates** are expected, and owned by
   [#338](https://github.com/Organizzolini/codebase/issues/338). Do not chase them.
-- **Most enumerated rows carrying no family at all** is the design. Enumeration produces
-  every structurally distinct repeat within budget, and membership is decided afterwards.
+- **Most enumerated rows holding no pattern characteristic at all** is the design.
+  Enumeration produces every structurally distinct repeat within budget, and which patterns
+  hold is measured afterwards.
 
 ## Architecture Overview
 
@@ -219,7 +218,7 @@ nx run meanderaw-cli:oxfmt           # Formatting
 This application has **one command, `draw`**, and it is the default — so `start` runs it,
 and it always writes the database `MEANDERAW_POSTGRES_DB` names. With no arguments it clears that
 database's meander rows and draws every meander the application can draw back into it: the whole lattice's unit space, enumerated
-and classified, then the historical corpus's hardcoded Codes beyond that budget. With
+and measured, then the historical corpus's hardcoded Codes beyond that budget. With
 `--rows`, `--columns`, and `--code` it decodes, measures, and persists that one:
 
 ```bash

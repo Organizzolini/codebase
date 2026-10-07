@@ -4,7 +4,6 @@ import { DataSource, type Repository } from "typeorm";
 
 import { environmentSchema } from "../src/constants";
 import { CharacteristicsModule } from "../src/modules/characteristics/characteristics.module";
-import { ClassificationModule } from "../src/modules/classification/classification.module";
 import { CodeModule } from "../src/modules/code/code.module";
 import { CorpusService } from "../src/modules/corpus/corpus.service";
 import { DatabaseService } from "../src/modules/database/database.service";
@@ -92,7 +91,6 @@ export function drawRunModuleMetadata(
       TypeOrmModule.forFeature([Meander]),
       GeometryModule,
       CharacteristicsModule,
-      ClassificationModule,
       CodeModule,
       EnumerationModule,
       SymmetryModule,

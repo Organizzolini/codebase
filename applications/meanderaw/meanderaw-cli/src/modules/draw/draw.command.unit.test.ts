@@ -43,13 +43,13 @@ vi.mock("node:fs/promises", () => ({
  * instead — `draw-run.command.integration.test.ts` for the draw run and
  * `draw.command.integration.test.ts` for the `--code` path — per spec #813's
  * Testing Decisions. `node:fs/promises` is mocked here rather than left real,
- * the same way this file used to mock it while the per-family procedural
+ * the same way this file used to mock it while the procedural
  * pipeline still wrote a whole tree through it: a unit test has no business
  * touching a real file, and it is what says which pages are written.
  */
 /** Two pages as `DrawIndexService.build` hands them over: each an iterable of pieces. */
 const indexPage = ["<!doctype html>"];
-const familyPage = ["<section></section>"];
+const patternPage = ["<section></section>"];
 
 describe(DrawCommand, () => {
   let build: Mock<() => Promise<Record<string, MeanderPageContent>>>;
@@ -64,8 +64,8 @@ describe(DrawCommand, () => {
     build = vi
       .fn<() => Promise<Record<string, MeanderPageContent>>>()
       .mockResolvedValue({
-        "families/snake.html": familyPage,
         "index.html": indexPage,
+        "patterns/isSnake.html": patternPage,
       });
     clear = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
     draw = vi
@@ -221,8 +221,8 @@ describe(DrawCommand, () => {
       indexPage,
     );
     expect(writeFileMock).toHaveBeenCalledWith(
-      expect.stringMatching(/output\/families\/snake\.html$/),
-      familyPage,
+      expect.stringMatching(/output\/patterns\/isSnake\.html$/),
+      patternPage,
     );
 
     const [enumerated] = drawAll.mock.invocationCallOrder;

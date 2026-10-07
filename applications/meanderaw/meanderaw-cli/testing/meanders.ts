@@ -97,7 +97,6 @@ const FALSE_BOOLEAN_CHARACTERISTICS: Readonly<
   isPureTree: false,
   isSingleArc: false,
   isSnake: false,
-  isStippled: false,
   isSwirl: false,
   isWaterfalls: false,
   isWhirl: false,
@@ -124,7 +123,6 @@ export function meanderRecord(
   return {
     characteristics: {},
     columns: 1,
-    family: "unclassified",
     isHardcoded: true,
     lattice: "0",
     repeats: 1,
