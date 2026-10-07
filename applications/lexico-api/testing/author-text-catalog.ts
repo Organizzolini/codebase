@@ -2,7 +2,7 @@
 
 import { Author, Line, Text } from "@codebase/lexico-entities";
 
-import type { LexicoTestDatabase } from "./database";
+import type { DatabaseTestingModule } from "@codebase/database/testing";
 
 /** An id no seeded author, text, or line has. */
 export const UNKNOWN_ENTITY_ID = "00000000-0000-7000-8000-000000000000";
@@ -58,7 +58,7 @@ interface TextSeed {
  * order a query returns is the order the query imposed.
  */
 export async function seedAuthorTextCatalog(
-  database: LexicoTestDatabase,
+  database: DatabaseTestingModule,
 ): Promise<AuthorTextCatalog> {
   const authors = database.repository(Author);
   const texts = database.repository(Text);

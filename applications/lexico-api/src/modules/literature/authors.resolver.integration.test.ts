@@ -10,8 +10,7 @@ import {
 } from "../../../testing/author-text-catalog";
 import {
   DATABASE_TIMEOUT_MILLISECONDS,
-  type LexicoTestDatabase,
-  startLexicoTestDatabase,
+  startLexicoDatabaseTestingModule,
 } from "../../../testing/database";
 import {
   nodesOf,
@@ -22,6 +21,8 @@ import {
 import { AuthorsResolver } from "./authors.resolver";
 import { LiteratureService } from "./literature.service";
 
+import type { DatabaseTestingModule } from "@codebase/database/testing";
+
 /**
  * Resolves authors against a real `lexico_testing` database built by lexico's
  * migrations, so lookups, the `authors` connection, and `Author.texts` run the
@@ -29,11 +30,17 @@ import { LiteratureService } from "./literature.service";
  */
 describe("authors resolver integration suite", () => {
   let catalog: AuthorTextCatalog;
-  let database: LexicoTestDatabase;
+  let database: DatabaseTestingModule;
   let resolver: AuthorsResolver;
 
   beforeAll(async () => {
-    database = await startLexicoTestDatabase([Author, Line, Text, Token, Word]);
+    database = await startLexicoDatabaseTestingModule([
+      Author,
+      Line,
+      Text,
+      Token,
+      Word,
+    ]);
     catalog = await seedAuthorTextCatalog(database);
     resolver = new AuthorsResolver(
       new LiteratureService(
@@ -47,7 +54,7 @@ describe("authors resolver integration suite", () => {
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
   afterAll(async () => {
-    await database.stop();
+    await database.close();
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
   describe("author lookup", () => {

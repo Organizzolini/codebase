@@ -1,4 +1,4 @@
-import { Test } from "@nestjs/testing";
+import { NestFactory } from "@nestjs/core";
 import { z } from "zod";
 
 import { Author, Line, Text } from "@codebase/lexico-entities";
@@ -7,7 +7,7 @@ import {
   type AuthorTextCatalog,
   seedAuthorTextCatalog,
 } from "./author-text-catalog";
-import { startLexicoTestDatabase } from "./database";
+import { startLexicoDatabaseTestingModule } from "./database";
 
 import type { INestApplication } from "@nestjs/common";
 import type { Server } from "node:http";
@@ -38,19 +38,17 @@ export type AuthorTextResponse = z.infer<typeof authorTextResponseSchema>;
  * Stops the database again if seeding or booting fails.
  */
 export async function startAuthorTextApplication(): Promise<AuthorTextApplication> {
-  const database = await startLexicoTestDatabase([Author, Line, Text]);
+  const database = await startLexicoDatabaseTestingModule([Author, Line, Text]);
   try {
     const catalog = await seedAuthorTextCatalog(database);
 
     // ⏳ ConfigModule reads the environment when the module is imported, so the
     // root module is imported only once the database's login is stubbed.
     const { LexicoApiModule } = await import("../src/lexico-api.module");
-    const module = await Test.createTestingModule({
-      imports: [LexicoApiModule],
-    }).compile();
-    const application = module.createNestApplication<INestApplication<Server>>({
-      logger: false,
-    });
+    const application = await NestFactory.create<INestApplication<Server>>(
+      LexicoApiModule,
+      { logger: false },
+    );
     await application.listen(0, "127.0.0.1");
     const endpoint = `${await application.getUrl()}/graphql`;
 
@@ -69,12 +67,12 @@ export async function startAuthorTextApplication(): Promise<AuthorTextApplicatio
       },
       stop: async (): Promise<void> => {
         await application.close();
-        await database.stop();
+        await database.close();
       },
     };
   } catch (error) {
     // 🧹 A failed seed or boot would otherwise leave the container running.
-    await database.stop();
+    await database.close();
     throw error;
   }
 }

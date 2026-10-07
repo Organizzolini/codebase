@@ -13,8 +13,7 @@ import {
 } from "../../../testing/author-text-catalog";
 import {
   DATABASE_TIMEOUT_MILLISECONDS,
-  type LexicoTestDatabase,
-  startLexicoTestDatabase,
+  startLexicoDatabaseTestingModule,
 } from "../../../testing/database";
 import {
   nodesOf,
@@ -24,6 +23,8 @@ import {
 
 import { LiteratureService } from "./literature.service";
 import { TextsResolver } from "./texts.resolver";
+
+import type { DatabaseTestingModule } from "@codebase/database/testing";
 
 /** The titles of a list of texts, in the order given. */
 function titlesOf(texts: readonly Text[]): string[] {
@@ -37,11 +38,17 @@ function titlesOf(texts: readonly Text[]): string[] {
  */
 describe("texts resolver integration suite", () => {
   let catalog: AuthorTextCatalog;
-  let database: LexicoTestDatabase;
+  let database: DatabaseTestingModule;
   let resolver: TextsResolver;
 
   beforeAll(async () => {
-    database = await startLexicoTestDatabase([Author, Line, Text, Token, Word]);
+    database = await startLexicoDatabaseTestingModule([
+      Author,
+      Line,
+      Text,
+      Token,
+      Word,
+    ]);
     catalog = await seedAuthorTextCatalog(database);
     resolver = new TextsResolver(
       new LiteratureService(
@@ -55,7 +62,7 @@ describe("texts resolver integration suite", () => {
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
   afterAll(async () => {
-    await database.stop();
+    await database.close();
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
   describe("text lookup", () => {
