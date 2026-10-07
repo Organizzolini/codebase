@@ -147,8 +147,33 @@ describe(TextsResolver, () => {
       totalCount: 1,
     });
 
-    expect(textsResolver.parentText(text)).toBe(text.parentText);
-    expect(textsResolver.parentText(new Text())).toBeNull();
+    await expect(textsResolver.parentText(text)).resolves.toBe(text.parentText);
+    await expect(
+      textsResolver.parentText(Object.assign(new Text(), { parentText: null })),
+    ).resolves.toBeNull();
+  });
+
+  it("looks up the parent of a text whose parent was not joined", async () => {
+    expect.hasAssertions();
+
+    const grandparent = Object.assign(new Text(), { id: "text-0" });
+    const findTextByLookup = vi
+      .fn<LiteratureService["findTextByLookup"]>()
+      .mockResolvedValueOnce(
+        Object.assign(new Text(), { id: "text-1", parentText: grandparent }),
+      )
+      .mockResolvedValueOnce(null);
+    const textsResolver = new TextsResolver(
+      createMock<LiteratureService>({ findTextByLookup }),
+    );
+
+    await expect(
+      textsResolver.parentText(Object.assign(new Text(), { id: "text-1" })),
+    ).resolves.toBe(grandparent);
+    await expect(
+      textsResolver.parentText(Object.assign(new Text(), { id: "text-9" })),
+    ).resolves.toBeNull();
+    expect(findTextByLookup).toHaveBeenNthCalledWith(1, "text-1");
   });
 
   it("resolves nullable text lookups", async () => {
