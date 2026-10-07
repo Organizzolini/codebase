@@ -1,4 +1,4 @@
-import { writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { Injectable } from "@nestjs/common";
@@ -201,13 +201,13 @@ END:VCALENDAR
   /**
    * Serializes calendar events to an ICS file and writes it to the output directory.
    *
-   * The filename encodes the input date range in ISO 8601 format. The output directory
-   * is read from the `OUTPUT_DIRECTORY` environment variable, defaulting to `./output`.
+   * The filename encodes the input date range as `caelundas_<start>_<end>.ics` with
+   * `YYYY-MM-DD` dates. The output directory is read from the `OUTPUT_DIRECTORY`
+   * environment variable, defaulting to `./output`, and is created when missing.
    *
    */
   async write(events: Event[], input: Input): Promise<void> {
-    const timespan = `${input.start.toISOString(true)} to ${input.end.toISOString(true)}`;
-    const calendarFilename = `caelundas_${timespan}.ics`;
+    const calendarFilename = `caelundas_${input.start.format("YYYY-MM-DD")}_${input.end.format("YYYY-MM-DD")}.ics`;
     const calendarFileContent = this.buildFileContent({
       description: "Astronomical events and celestial phenomena",
       events,
@@ -218,6 +218,7 @@ END:VCALENDAR
       this.configService.get<string>("OUTPUT_DIRECTORY") ?? "./output";
     const outputPath = path.join(outputDirectory, calendarFilename);
     try {
+      await mkdir(outputDirectory, { recursive: true });
       await writeFile(
         outputPath,
         new TextEncoder().encode(calendarFileContent),

@@ -250,7 +250,7 @@ describe(TripleAspectsComposerService, () => {
           forming: {
             ...forming,
             categories: forming.categories.map((category) =>
-              category === "Mars" ? "Ceres" : category,
+              category === "Mars" ? "Eris" : category,
             ),
           },
         }),
@@ -377,7 +377,7 @@ describe(TripleAspectsComposerService, () => {
       ).toHaveLength(0);
       expect(internals.resolveAspectType("Mystery Aspect")).toBeNull();
       expect(
-        internals.resolveProgressiveMeta(["Sun", "Moon", "Ceres"], "yod"),
+        internals.resolveProgressiveMeta(["Sun", "Moon", "Eris"], "yod"),
       ).toBeNull();
     });
 
@@ -469,6 +469,42 @@ describe(TripleAspectsComposerService, () => {
 
       expect(progressiveEvent?.description).toBe("Mars, Moon, Sun t-square");
       expect(progressiveEvent?.summary).toContain("(focal: Mars)");
+    });
+
+    it("builds progressive spans for asteroids and lunar points", () => {
+      const minute = moment.utc("2026-10-01T12:00:00.000Z");
+      const forming = {
+        categories: [
+          "Astronomy",
+          "Astrology",
+          "Compound Aspect",
+          "Triple Aspect",
+          "Grand Trine",
+          "Forming",
+          "Juno",
+          "Lunar Apogee",
+          "North Lunar Node",
+        ],
+        description: "Juno, Lunar Apogee, North Lunar Node grand trine forming",
+        end: minute,
+        start: minute,
+        summary: "",
+      } as Event;
+      const dissolving = {
+        ...forming,
+        end: minute.clone().add(2, "hours"),
+        start: minute.clone().add(2, "hours"),
+      };
+
+      const progressiveEvent = service.buildProgressiveEvent({
+        aspectCapitalized: "Grand Trine",
+        dissolving,
+        forming,
+      });
+
+      expect(progressiveEvent?.description).toBe(
+        "Juno, Lunar Apogee, North Lunar Node grand trine",
+      );
     });
 
     it("skips push when a progressive pair resolves to null", () => {

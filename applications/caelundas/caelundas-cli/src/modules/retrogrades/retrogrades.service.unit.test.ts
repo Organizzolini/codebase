@@ -370,8 +370,45 @@ describe(RetrogradesService, () => {
         venusDirect,
       ]);
 
-      // Should have progressive events for both Mercury and Venus
-      expect(progressiveEvents.length).toBeGreaterThanOrEqual(2);
+      expect(
+        progressiveEvents.map(({ end, start, summary }) => ({
+          end: end.toISOString(),
+          start: start.toISOString(),
+          summary,
+        })),
+      ).toStrictEqual([
+        {
+          end: mercuryDirect.start.toISOString(),
+          start: mercuryRetrograde.start.toISOString(),
+          summary: "☿ ↩️ Mercury Retrograde",
+        },
+        {
+          end: venusDirect.start.toISOString(),
+          start: venusRetrograde.start.toISOString(),
+          summary: "♀️ ↩️ Venus Retrograde",
+        },
+      ]);
+    });
+
+    it("never pairs one planet's station with another planet's", () => {
+      const venusRetrograde: Event = {
+        categories: ["Astronomy", "Astrology", "Direction", "Retrograde"],
+        description: "Venus Stationary Retrograde",
+        end: moment.utc("2026-10-03T07:16:00.000Z"),
+        start: moment.utc("2026-10-03T07:16:00.000Z"),
+        summary: "♀️ ↩️ Venus Stationary Retrograde",
+      };
+      const plutoDirect: Event = {
+        categories: ["Astronomy", "Astrology", "Direction", "Direct"],
+        description: "Pluto Stationary Direct",
+        end: moment.utc("2026-10-16T02:40:00.000Z"),
+        start: moment.utc("2026-10-16T02:40:00.000Z"),
+        summary: "♇ ↪️ Pluto Stationary Direct",
+      };
+
+      expect(
+        service.detectProgressive([venusRetrograde, plutoDirect]),
+      ).toStrictEqual([]);
     });
   });
 

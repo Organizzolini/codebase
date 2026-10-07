@@ -1,4 +1,4 @@
-import { writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 
 import { ConfigService } from "@nestjs/config";
 import { Test } from "@nestjs/testing";
@@ -14,6 +14,7 @@ import { CalendarService } from "./calendar.service";
 import type { Event } from "./calendar.types";
 
 vi.mock("node:fs/promises", () => ({
+  mkdir: vi.fn<typeof mkdir>(),
   writeFile: vi.fn<typeof writeFile>(),
 }));
 
@@ -315,16 +316,31 @@ describe(CalendarService, () => {
 
       expect(configService.get).toHaveBeenCalledWith("OUTPUT_DIRECTORY");
       expect(writeFile).toHaveBeenCalledWith(
-        expect.stringContaining("caelundas_"),
+        "output/caelundas_2025-03-20_2025-03-21.ics",
         expect.any(Uint8Array),
       );
       expect(infoSpy).toHaveBeenCalledWith(
         "✏️ Wrote events to file",
         undefined,
         {
-          calendarFilename: expect.stringContaining("caelundas_") as string,
+          calendarFilename: "caelundas_2025-03-20_2025-03-21.ics",
           count: 1,
         },
+      );
+    });
+
+    it("creates the output directory before writing into it", async () => {
+      await service.write([], {
+        end: moment.tz("2025-03-21T00:00:00", "America/New_York"),
+        latitude: 40.7128,
+        longitude: -74.006,
+        start: moment.tz("2025-03-20T00:00:00", "America/New_York"),
+        timezone: "America/New_York",
+      });
+
+      expect(mkdir).toHaveBeenCalledWith("./output", { recursive: true });
+      expect(vi.mocked(mkdir).mock.invocationCallOrder.at(-1)).toBeLessThan(
+        vi.mocked(writeFile).mock.invocationCallOrder.at(-1) ?? 0,
       );
     });
 

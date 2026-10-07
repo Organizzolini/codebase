@@ -364,11 +364,14 @@ export class RetrogradesService {
 
     // Process each planet separately
     for (const planet of retrogradeBodies) {
-      const beginnings = retrogradeEvents.filter((event) =>
-        event.description.includes(`Retrograde`),
+      const planetCapitalized = capitalize(planet);
+      const beginnings = retrogradeEvents.filter(
+        (event) =>
+          event.description === `${planetCapitalized} Stationary Retrograde`,
       );
-      const endings = retrogradeEvents.filter((event) =>
-        event.description.includes(`Direct`),
+      const endings = retrogradeEvents.filter(
+        (event) =>
+          event.description === `${planetCapitalized} Stationary Direct`,
       );
 
       const pairs = this.progressiveUtilitiesService.pairProgressiveEvents(
