@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 
 import { RenderingService } from "../rendering/rendering.service";
+import { createPlaceholderValue } from "../rendering/rendering.utilities";
 import { TemplateDiscoveryService } from "../template-discovery/template-discovery.service";
 
 import {
@@ -59,6 +60,30 @@ export class InstanceDiscoveryMatchingService {
     }
 
     return left.template.name.localeCompare(right.template.name);
+  }
+
+  /**
+   * Gives every placeholder the substitutions leave out a random stand-in.
+   *
+   * Only validation matches instances, and there a missing value is something
+   * to infer from the instance rather than an error: generation renders
+   * without this and still refuses a placeholder nobody supplied. `name` and its
+   * variants are always supplied, so they are never stood in for.
+   */
+  private fillPlaceholders(args: {
+    substitutions: Substitutions;
+    template: TemplateDefinition;
+  }): Pick<TemplateMatch, "placeholderValues" | "substitutions"> {
+    const placeholderValues = Object.fromEntries(
+      (args.template.placeholderNames ?? [])
+        .filter((name) => !Object.hasOwn(args.substitutions, name))
+        .map((name) => [name, createPlaceholderValue()]),
+    );
+
+    return {
+      placeholderValues,
+      substitutions: { ...placeholderValues, ...args.substitutions },
+    };
   }
 
   // 🌎 Public Methods
@@ -132,7 +157,8 @@ export class InstanceDiscoveryMatchingService {
           return {
             instance,
             matchedFileCount: match.matchedFileCount,
-            substitutions,
+            placeholderValues: match.placeholderValues,
+            substitutions: match.substitutions,
             template: match.template,
           };
         }),
@@ -158,15 +184,20 @@ export class InstanceDiscoveryMatchingService {
   }): TemplateMatch[] {
     return args.templates
       .map((template) => {
+        const filled = this.fillPlaceholders({
+          substitutions: args.substitutions,
+          template,
+        });
         const matchedFileCount =
           this.templateDiscoveryService.countMatchingFiles({
             fileScope: args.instance.fileScope,
             instancePath: args.instance.path,
-            substitutions: args.substitutions,
+            substitutions: filled.substitutions,
             template,
           });
 
         return {
+          ...filled,
           matchedFileCount,
           matchRatio: matchedFileCount / template.filePaths.length,
           template,

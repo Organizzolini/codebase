@@ -8,6 +8,8 @@ export interface CompareChildrenArguments {
 
 /** The outcome of walking one level of two trees. */
 export interface CompareChildrenResult {
+  /** What each placeholder value stood for — see `DocumentValidationResult`. */
+  readonly captures?: Readonly<Record<string, string>>;
   readonly differences: MarkdownComparisonError[];
   /** Template nodes the level weighed the instance against. */
   readonly totalWeight: number;
@@ -26,6 +28,8 @@ export interface CompareNodeArguments {
 
 /** The outcome of matching one template node. */
 export interface CompareNodeResult {
+  /** What each placeholder value stood for — see `DocumentValidationResult`. */
+  readonly captures?: Readonly<Record<string, string>>;
   readonly differences: MarkdownComparisonError[];
   readonly lastMatchedNode: MarkdownNode | undefined;
   /** Template nodes this match or miss accounted for. */

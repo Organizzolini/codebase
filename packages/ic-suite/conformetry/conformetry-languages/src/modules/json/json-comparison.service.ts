@@ -1,3 +1,4 @@
+import { capturePlaceholderValues } from "@conformetry/configuration";
 import { Injectable } from "@nestjs/common";
 
 import { ScoringService } from "../scoring/scoring.service";
@@ -63,11 +64,33 @@ export class JsonComparisonService {
     };
   }
 
-  /** Merges sibling comparisons into one. */
+  /**
+   * Captures what a template string's placeholder values stand for in an
+   * instance value, or `undefined` when the two do not match as a pattern.
+   */
+  private captureString(args: {
+    instanceValue: JsonValue | undefined;
+    templateValue: JsonValue;
+  }): Record<string, string> | undefined {
+    if (
+      typeof args.templateValue !== "string" ||
+      typeof args.instanceValue !== "string"
+    ) {
+      return undefined;
+    }
+
+    return capturePlaceholderValues({
+      instanceText: args.instanceValue,
+      templateText: args.templateValue,
+    });
+  }
+
+  /** Merges sibling comparisons into one, keeping the first captures. */
   private combine(comparisons: JsonComparison[]): JsonComparison {
     return comparisons.reduce<JsonComparison>(
       (combined, comparison) => {
         return {
+          captures: { ...comparison.captures, ...combined.captures },
           differences: [...combined.differences, ...comparison.differences],
           totalWeight: combined.totalWeight + comparison.totalWeight,
         };
@@ -87,9 +110,20 @@ export class JsonComparisonService {
     const weight = this.countNodes(args.templateItem);
 
     if (this.isJsonPrimitive(args.templateItem)) {
-      return args.instanceArray.includes(args.templateItem)
-        ? { differences: [], totalWeight: weight }
-        : {
+      const { templateItem } = args;
+      const captures = args.instanceArray.includes(templateItem)
+        ? {}
+        : args.instanceArray
+            .map((instanceValue) => {
+              return this.captureString({
+                instanceValue,
+                templateValue: templateItem,
+              });
+            })
+            .find((captured) => captured !== undefined);
+
+      return captures === undefined
+        ? {
             differences: [
               this.buildError({
                 expected: JSON.stringify(args.templateItem),
@@ -101,7 +135,8 @@ export class JsonComparisonService {
               }),
             ],
             totalWeight: weight,
-          };
+          }
+        : { captures, differences: [], totalWeight: weight };
     }
 
     if (args.instanceArray.length === 0) {
@@ -299,8 +334,11 @@ export class JsonComparisonService {
 
     const weight = this.countNodes(args.templateValue);
 
-    if (args.templateValue === args.instanceValue) {
-      return { differences: [], totalWeight: weight };
+    const captures =
+      args.templateValue === args.instanceValue ? {} : this.captureString(args);
+
+    if (captures !== undefined) {
+      return { captures, differences: [], totalWeight: weight };
     }
 
     const pathValue = this.formatPath(pathSegments);

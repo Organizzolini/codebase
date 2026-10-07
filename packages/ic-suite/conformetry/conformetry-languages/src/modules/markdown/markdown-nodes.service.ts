@@ -1,3 +1,4 @@
+import { capturePlaceholderValues } from "@conformetry/configuration";
 import { Injectable } from "@nestjs/common";
 import { toString } from "mdast-util-to-string";
 
@@ -105,6 +106,42 @@ export class MarkdownNodesService {
   // 🌎 Public Methods
 
   /**
+   * Matches an instance node against a template node, returning what any
+   * placeholder value in the template node's text captured, or `undefined`
+   * when the instance node does not satisfy it.
+   *
+   * A node failing its ordinary rule is tried once more with its plain text
+   * as a pattern, provided the type and heading depth agree.
+   */
+  public capture(args: {
+    instanceNode: MarkdownNode;
+    templateNode: MarkdownNode;
+  }): Record<string, string> | undefined {
+    const { instanceNode, templateNode } = args;
+
+    if (templateNode.type !== instanceNode.type) {
+      return undefined;
+    }
+
+    const matcher = this.matchersByType[templateNode.type];
+    const matched =
+      matcher === undefined
+        ? this.readText(templateNode) === this.readText(instanceNode)
+        : matcher(templateNode, instanceNode);
+
+    if (matched) {
+      return {};
+    }
+
+    return templateNode.depth === instanceNode.depth
+      ? capturePlaceholderValues({
+          instanceText: this.readText(instanceNode),
+          templateText: this.readText(templateNode),
+        })
+      : undefined;
+  }
+
+  /**
    * Counts a node and every countable node beneath it.
    *
    * This is what a missing node costs. Comparison reports a vanished section
@@ -141,17 +178,7 @@ export class MarkdownNodesService {
     instanceNode: MarkdownNode;
     templateNode: MarkdownNode;
   }): boolean {
-    const { instanceNode, templateNode } = args;
-
-    if (templateNode.type !== instanceNode.type) {
-      return false;
-    }
-
-    const matcher = this.matchersByType[templateNode.type];
-
-    return matcher === undefined
-      ? this.readText(templateNode) === this.readText(instanceNode)
-      : matcher(templateNode, instanceNode);
+    return this.capture(args) !== undefined;
   }
 
   /** Reads a node's children, or an empty list for a leaf. */

@@ -50,6 +50,8 @@ input of the same key always wins.
 > validation render identically, both halves of the loop lost the same value and
 > agreed that nothing was wrong. A hole rendered into both sides of a comparison
 > is not something that comparison can report, so the renderer refuses instead.
+> Validation never renders the hole either: it reads the missing value from the
+> instance, and reports when it cannot.
 >
 > Section tags are exempt, deliberately: `{{#field}}` and `{{^field}}` are
 > conditionals, so an absent name is how a template asks for a block to be

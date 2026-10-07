@@ -14,6 +14,11 @@ import { deleteAccount, getGoogleSignInUrl, signOut } from "../lib/auth";
 
 import type { ReactNode } from "react";
 
+// 🧭 Route
+
+/**
+ * The signed-in reader's account settings.
+ */
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
 });
@@ -29,15 +34,21 @@ async function handleSignIn(): Promise<void> {
   }
 }
 
+// 🧩 Component
+
 /**
  * Settings page component for user account management.
  *
  * @returns React node.
  */
 function SettingsPage(): ReactNode {
+  // 🪝 Hooks
   const router = useRouter();
   const { user } = Route.useRouteContext();
 
+  // 🏗 Setup
+
+  // 💪 Handlers
   const handleSignOut = async (): Promise<void> => {
     await signOut();
     await router.invalidate();
@@ -49,6 +60,9 @@ function SettingsPage(): ReactNode {
     await router.navigate({ to: "/" });
   };
 
+  // ♻️ Lifecycle
+
+  // 🏁 Early Returns
   if (!user) {
     return (
       <div className="space-y-6">
@@ -74,8 +88,9 @@ function SettingsPage(): ReactNode {
     );
   }
 
+  // 🎨 Markup
   return (
-    <div className="space-y-6">
+    <section className="space-y-6">
       <h1 className="text-3xl font-bold">Settings</h1>
 
       <Card className="mx-auto max-w-2xl">
@@ -134,6 +149,6 @@ function SettingsPage(): ReactNode {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </section>
   );
 }

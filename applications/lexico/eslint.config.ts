@@ -40,6 +40,7 @@ export default [
           ignoredDependencies: ["vite", "@vitejs/plugin-react", "lodash"],
           ignoredFiles: [
             "{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}",
+            "{projectRoot}/testing/**",
             "{projectRoot}/vite.config.{js,ts,mjs,mts}",
           ],
         },

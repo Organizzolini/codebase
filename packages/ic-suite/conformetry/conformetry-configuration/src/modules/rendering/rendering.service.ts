@@ -49,6 +49,25 @@ export class RenderingService {
     }
   }
 
+  // 🌎 Public Methods
+
+  /**
+   * Derives the case variants every template can reference from one name.
+   *
+   * Callers merge their own inputs over this result, so an explicit input of
+   * the same key always wins over the derived variant.
+   */
+  public buildNameSubstitutions(name: string): Substitutions {
+    const camelCaseName = lodash.camelCase(name);
+
+    return {
+      nameCamelCase: camelCaseName,
+      nameKebabCase: lodash.kebabCase(name),
+      namePascalCase: lodash.upperFirst(camelCaseName),
+      nameSnakeCase: lodash.snakeCase(name),
+    };
+  }
+
   /**
    * Every placeholder a template interpolates, deduplicated.
    *
@@ -58,7 +77,7 @@ export class RenderingService {
    * `{{^field}}` are conditionals, so absence is an answer there — as is the
    * implicit iterator `{{.}}`, which names no field.
    */
-  private collectInterpolatedNames(template: string): string[] {
+  public collectInterpolatedNames(template: string): string[] {
     const names = new Set<string>();
     const walk = (spans: TemplateSpans): void => {
       for (const span of spans) {
@@ -81,25 +100,6 @@ export class RenderingService {
     walk(mustache.parse(template));
 
     return [...names];
-  }
-
-  // 🌎 Public Methods
-
-  /**
-   * Derives the case variants every template can reference from one name.
-   *
-   * Callers merge their own inputs over this result, so an explicit input of
-   * the same key always wins over the derived variant.
-   */
-  public buildNameSubstitutions(name: string): Substitutions {
-    const camelCaseName = lodash.camelCase(name);
-
-    return {
-      nameCamelCase: camelCaseName,
-      nameKebabCase: lodash.kebabCase(name),
-      namePascalCase: lodash.upperFirst(camelCaseName),
-      nameSnakeCase: lodash.snakeCase(name),
-    };
   }
 
   /**

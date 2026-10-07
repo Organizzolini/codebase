@@ -85,7 +85,15 @@ export class ValidationScoringService {
     return {
       failedWeight,
       instancePath: this.resolveInstancePath(args.instance),
-      ok: score >= threshold,
+      // A placeholder nothing revealed leaves the template unrendered, so no
+      // score can vouch for the instance.
+      ok:
+        score >= threshold &&
+        !args.fileResults.some((fileResult) => {
+          return fileResult.differences.some((difference) => {
+            return difference.differenceType === "placeholder";
+          });
+        }),
       score,
       templateName: args.instance.template.name,
       threshold,

@@ -33,4 +33,8 @@ export type {
 export type { ConformetryInstanceGroup } from "./modules/instance-group/instance-group.types";
 export { MissingSubstitutionError } from "./modules/rendering/rendering.constants";
 export type { Substitutions } from "./modules/rendering/rendering.types";
+export {
+  capturePlaceholderValues,
+  createPlaceholderValue,
+} from "./modules/rendering/rendering.utilities";
 export type { TemplateDefinition } from "./modules/template-discovery/template-discovery.types";

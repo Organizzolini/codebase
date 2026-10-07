@@ -67,6 +67,25 @@ export class TemplateDiscoveryService {
     return filePaths.toSorted();
   }
 
+  /** Every placeholder a template's file contents and paths interpolate. */
+  private collectPlaceholderNames(args: {
+    directoryPath: string;
+    filePaths: string[];
+  }): string[] {
+    return [
+      ...new Set(
+        args.filePaths.flatMap((filePath) => {
+          return [
+            path.relative(args.directoryPath, filePath),
+            fs.readFileSync(filePath, "utf8"),
+          ].flatMap((template) => {
+            return this.renderingService.collectInterpolatedNames(template);
+          });
+        }),
+      ),
+    ];
+  }
+
   // 🌎 Public Methods
 
   /**
@@ -80,10 +99,16 @@ export class TemplateDiscoveryService {
     templatePath: string;
     threshold?: number | undefined;
   }): TemplateDefinition {
+    const filePaths = this.collectFilePaths(args.templatePath);
+
     return {
       directoryPath: args.templatePath,
-      filePaths: this.collectFilePaths(args.templatePath),
+      filePaths,
       name: args.name,
+      placeholderNames: this.collectPlaceholderNames({
+        directoryPath: args.templatePath,
+        filePaths,
+      }),
       ...(args.threshold === undefined ? {} : { threshold: args.threshold }),
     };
   }

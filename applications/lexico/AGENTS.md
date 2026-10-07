@@ -44,7 +44,7 @@ User → OAuth Provider → Server Cookie
 - **Auth helpers**: [src/lib/auth.ts](src/lib/auth.ts)
 - **Route guards**: TanStack Router `beforeLoad`
 
-See [tanstack-start-ssr skill](../../.agents/skills/tanstack-start-ssr/SKILL.md) for SSR patterns.
+See the [write-react skill](../../.agents/skills/write-react/SKILL.md) for route, loader, and server function patterns, and the conformetry generators that scaffold them.
 
 ## Component Library Integration
 

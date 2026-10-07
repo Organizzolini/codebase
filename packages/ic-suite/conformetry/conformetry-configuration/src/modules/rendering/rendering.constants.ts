@@ -39,3 +39,13 @@ export class MissingSubstitutionError extends Error {
     this.name = "MissingSubstitutionError";
   }
 }
+
+/**
+ * Recognizes a placeholder value: the random stand-in validation renders for a
+ * placeholder nothing supplied, so a language can tell it from literal text.
+ * A letter first keeps the value a legal identifier wherever it lands.
+ */
+export const PLACEHOLDER_VALUE_PATTERN = /conformetry[0-9a-f]{32}/g;
+
+/** The letters every placeholder value starts with. */
+export const PLACEHOLDER_VALUE_PREFIX = "conformetry";

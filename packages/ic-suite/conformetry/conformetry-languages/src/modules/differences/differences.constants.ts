@@ -23,6 +23,7 @@ export const CONFORMETRY_ERROR_TYPES: readonly ConformetryDifferenceType[] = [
   "directory",
   "file",
   "instance",
+  "placeholder",
 ];
 
 /** Category used when an untrusted payload carries an unrecognized one. */
