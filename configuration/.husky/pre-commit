@@ -40,7 +40,12 @@ EXIT_CODE=0
 # plugin's NestJS constructor injection would silently resolve to `undefined`
 # and the project graph would fail to build. Node reads the TypeScript config
 # natively.
-env -u GIT_INDEX_FILE -u GIT_DIR -u GIT_WORK_TREE -u GIT_PREFIX NX_PERF_LOGGING=false lint-staged --config configuration/lint-staged.config.ts --continue-on-error > last-lint-staged-output.log 2>&1 || EXIT_CODE=$?
+#
+# In CI it also passes `--verbose`: lint-staged otherwise prints a command's
+# output only when it fails. The release job's log shows this hook only as the
+# file below, so there that output is the one record of what each task ran.
+# Locally it would run to thousands of lines on every commit.
+env -u GIT_INDEX_FILE -u GIT_DIR -u GIT_WORK_TREE -u GIT_PREFIX NX_PERF_LOGGING=false lint-staged --config configuration/lint-staged.config.ts --continue-on-error ${CI:+--verbose} > last-lint-staged-output.log 2>&1 || EXIT_CODE=$?
 
 # 💀 Explain a kill rather than leaving lint-staged's misleading wording
 # Exit 137 is SIGKILL. lint-staged reports every killed command as "Task failed
