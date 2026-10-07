@@ -48,6 +48,17 @@ To explore the database quickly, use `psql` meta-commands passed via the `-c` fl
 
   ```
 
+- **Connect as a project's own role:** each database-backed project reads
+  its own `<PROJECT>_POSTGRES_*` variables, defaulted from its name, so
+  `LEXICO_POSTGRES_USERNAME` is `lexico_username` and
+  `LEXICO_POSTGRES_DATABASE` is `lexico_development`, with the tables in the
+  `lexico` schema:
+
+  ```bash
+  PGPASSWORD=lexico_password psql -h localhost -p 5432 -U lexico_username -d lexico_development -c "\dt lexico.*"
+
+  ```
+
 ### 2. Query Execution
 
 **CRITICAL:** NEVER execute multiline or complex queries using the inline `-c` flag, as this often leads to shell escaping errors. Always use `notepads/notepad.sql` as a scratchpad.

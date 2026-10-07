@@ -62,6 +62,7 @@ PR titles **must** follow the same format as commit messages:
 | `caelundas`         | Node.js CLI for astronomical calendar generation (NASA JPL ephemeris)                                                                     |
 | `configuration`     | Workspace root config files (tsconfig, eslint, vitest, nx.json, etc.)                                                                     |
 | `conformetry`       | Code generator templates and validation tests for generated instances                                                                     |
+| `database`          | Shared Postgres package: environment, TypeORM module, base entities, test harness, and migrations                                         |
 | `dependencies`      | Dependency version changes (upgrades, additions, removals via pnpm)                                                                       |
 | `deployments`       | GitHub Actions workflows and CI/CD pipeline configuration                                                                                 |
 | `documentation`     | Markdown docs, skills, planning files, and AGENTS.md files                                                                                |

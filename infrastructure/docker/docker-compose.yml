@@ -27,13 +27,19 @@ services:
     image: postgres:18-alpine
     container_name: postgres
     env_file: ../../.env
+    environment:
+      # Every database-backed project: adding one is adding its name here.
+      POSTGRES_PROJECTS: caelundas lexico meanderaw
     ports:
       - 5432:5432
     volumes:
       - postgres_data:/var/lib/postgresql
     configs:
       - source: postgres-databases
-        target: /docker-entrypoint-initdb.d/databases.sql
+        target: /docker-entrypoint-initdb.d/databases.sh
+        # Executable, so the image runs it in its own shell rather than
+        # sourcing it: its `set -eu` and `exit` stay out of the entrypoint.
+        mode: "0555"
     healthcheck:
       test: [CMD-SHELL, "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 10s
@@ -67,11 +73,38 @@ configs:
   # Inline rather than a bind-mounted file, so the shared container never
   # depends on the checkout or worktree that last recreated it. Runs only
   # when the volume is empty: `nx run codebase:postgres-container:recreate`.
+  # For an existing volume, run it by hand for the new project instead:
+  # `docker exec -e POSTGRES_PROJECTS=<project> postgres sh
+  # /docker-entrypoint-initdb.d/databases.sh`, as the seed-postgres skill
+  # and docs/adr/0022-give-every-database-project-its-own-database-schema-and-role.md
+  # describe.
+  #
+  # For each project in `POSTGRES_PROJECTS`: a `<project>_username` role, a
+  # `<project>_development` database it owns, and, inside that database, a
+  # `<project>` schema it owns. The unprefixed `POSTGRES_*` in the root
+  # `.env` remain the container's admin login, which runs this script. `$$`
+  # escapes Compose's own interpolation, leaving `$` for the shell.
+  #
+  # The `meanderaw_development` schema is the one meanderaw still reads
+  # until it moves onto the `meanderaw` schema and its own role.
   postgres-databases:
     content: |
-      CREATE DATABASE meanderaw_development;
-      \connect meanderaw_development
-      CREATE SCHEMA meanderaw_development;
+      #!/bin/sh
+      set -eu
+
+      for project in $$POSTGRES_PROJECTS; do
+        case "$$project" in
+          '' | [!a-z]* | *[!a-z0-9_]*) echo "bad project: $$project" >&2; exit 1 ;;
+        esac
+        psql -v ON_ERROR_STOP=1 --username "$$POSTGRES_USER" --dbname "$$POSTGRES_DB" <<SQL
+      CREATE ROLE $${project}_username LOGIN PASSWORD '$${project}_password';
+      CREATE DATABASE $${project}_development OWNER $${project}_username;
+      \connect $${project}_development
+      CREATE SCHEMA $${project} AUTHORIZATION $${project}_username;
+      SQL
+      done
+
+      psql -v ON_ERROR_STOP=1 --username "$$POSTGRES_USER" --dbname meanderaw_development --command "CREATE SCHEMA IF NOT EXISTS meanderaw_development;"
 
 volumes:
   open-webui_data:

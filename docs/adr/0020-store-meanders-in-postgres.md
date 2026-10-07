@@ -4,6 +4,8 @@ Supersedes the storage half of [ADR 0012](0012-root-every-meander-in-a-committed
 
 Superseded in part by [ADR 0021](0021-stop-committing-the-meander-pages.md), which keeps writing the index pages but stops committing them.
 
+Partly superseded by [ADR 0022](0022-give-every-database-project-its-own-database-schema-and-role.md): meanderaw's schema is `meanderaw` rather than `meanderaw_development`, its role is `meanderaw_username`, and its schema is built by migrations rather than synchronize. Postgres over a committed SQLite file, the `uuidv7()` ids, snake case, and the Testcontainers suites stand.
+
 ## Context
 
 [ADR 0012](0012-root-every-meander-in-a-committed-sqlite-table.md) persisted every meander as a row in `output/meanders.sqlite`, a better-sqlite3 file committed to git. By the time of this decision the file was 21 MB and had been rewritten in 21 commits. Every rewrite added another copy of a binary that no pull request could review. [ADR 0017](0017-store-letter-counts-as-a-sparse-json-map.md) had already counted the file's size against git as a design constraint.

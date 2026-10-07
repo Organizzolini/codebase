@@ -9,6 +9,7 @@ buildx
 bullmq
 burstable
 cves
+datname
 dbeaver
 dbname
 distroless
@@ -88,6 +89,7 @@ upsert
 upserted
 upserting
 upserts
+usename
 uuidv
 Virtio
 vonage

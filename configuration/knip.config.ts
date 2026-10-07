@@ -211,6 +211,14 @@ const config: KnipConfig = {
       project: ["src/**/*.ts", "src/**/*.tsx"],
     },
 
+    // database: Shared Postgres package. The migration SQL extraction script
+    // is run by name from the `migration` target defaults in nx.json rather
+    // than imported, so knip is told it is an entry point.
+    "packages/database": {
+      entry: ["scripts/**/*.ts"],
+      project: ["src/**/*.ts", "scripts/**/*.ts"],
+    },
+
     // lexico-entities: Shared TypeORM entities
     "packages/lexico-entities": {
       entry: [

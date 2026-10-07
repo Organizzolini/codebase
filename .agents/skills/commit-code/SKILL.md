@@ -79,6 +79,7 @@ Keeping a branch scoped to one project or module (see the root [AGENTS.md](../..
 | `caelundas`         | Node.js CLI for astronomical calendar generation (NASA JPL ephemeris)                                                                     |
 | `configuration`     | Workspace root config files (tsconfig, eslint, vitest, nx.json, etc.)                                                                     |
 | `conformetry`       | Code generator templates and validation tests for generated instances                                                                     |
+| `database`          | Shared Postgres package: environment, TypeORM module, base entities, test harness, and migrations                                         |
 | `dependencies`      | Dependency version changes (upgrades, additions, removals via pnpm)                                                                       |
 | `deployments`       | GitHub Actions workflows and CI/CD pipeline configuration                                                                                 |
 | `documentation`     | Markdown docs, skills, planning files, and AGENTS.md files                                                                                |
