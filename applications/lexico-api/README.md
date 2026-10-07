@@ -337,7 +337,6 @@ flowchart LR
   SearchModule
   TypeOrmModule
   WordsModule
-  DatabaseModule --> DatabaseModule
   DatabaseModule --> TypeOrmModule
   GraphQLModule --> GraphQLSchemaBuilderModule
   LexemesModule --> TypeOrmModule

@@ -14,14 +14,14 @@ import { Author, Line, Text, Token, Word } from "@codebase/lexico-entities";
 
 import {
   DATABASE_TIMEOUT_MILLISECONDS,
-  type LexicoTestDatabase,
-  startLexicoTestDatabase,
+  startLexicoDatabaseTestingModule,
 } from "../../../testing/database";
 
 import { LiteratureService } from "./literature.service";
 import { TokenWordLoader } from "./token-word.loader";
 import { TokensResolver } from "./tokens.resolver";
 
+import type { DatabaseTestingModule } from "@codebase/database/testing";
 import type { Repository } from "typeorm";
 
 /** Each token of the seeded line, with the word it should resolve to. */
@@ -33,13 +33,19 @@ const LINE_TOKENS = [
 ] as const;
 
 describe("token word loader integration suite", () => {
-  let database: LexicoTestDatabase;
+  let database: DatabaseTestingModule;
   let service: LiteratureService;
   let tokenRepository: Repository<Token>;
   let line: Line;
 
   beforeAll(async () => {
-    database = await startLexicoTestDatabase([Author, Line, Text, Token, Word]);
+    database = await startLexicoDatabaseTestingModule([
+      Author,
+      Line,
+      Text,
+      Token,
+      Word,
+    ]);
     tokenRepository = database.repository(Token);
     service = new LiteratureService(
       database.repository(Author),
@@ -97,7 +103,7 @@ describe("token word loader integration suite", () => {
   });
 
   afterAll(async () => {
-    await database.stop();
+    await database.close();
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
   it("resolves every token of a line's words in one query", async () => {
