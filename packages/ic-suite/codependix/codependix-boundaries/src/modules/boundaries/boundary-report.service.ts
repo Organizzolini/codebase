@@ -34,14 +34,47 @@ export class BoundaryReportService {
    * sees the phrase in one report should find it unchanged in the other.
    * Says "in dependency" because the finding is real, and inherited, but it is
    * not theirs to fix and it did not fail their run.
+   *
+   * A failure charged to every one of `judgedProjects` is counted rather than
+   * listed — "all 200 judged projects" — since naming the whole workspace on
+   * every line says nothing a count does not. Only a failure can be: pass no
+   * `judgedProjects` for a finding whose charged names are the point.
    */
   public describeCharge(args: {
     isNote: boolean;
+    judgedProjects?: readonly string[];
     projects: readonly string[];
   }): string {
-    const projects = args.projects.join(", ");
+    if (args.isNote) {
+      return `in dependency ${args.projects.join(", ")}, not failing`;
+    }
 
-    return args.isNote ? `in dependency ${projects}, not failing` : projects;
+    return args.judgedProjects !== undefined &&
+      this.isChargedToEveryProject({
+        judgedProjects: args.judgedProjects,
+        projects: args.projects,
+      })
+      ? `all ${args.projects.length} judged projects`
+      : args.projects.join(", ");
+  }
+
+  /**
+   * Whether a charge names every one of several judged projects.
+   *
+   * Compared as sets, since neither list is promised to be sorted. A single
+   * judged project is never "all": naming it is shorter than counting it.
+   */
+  public isChargedToEveryProject(args: {
+    judgedProjects: readonly string[];
+    projects: readonly string[];
+  }): boolean {
+    const charged = new Set(args.projects);
+
+    return (
+      charged.size > 1 &&
+      charged.size === new Set(args.judgedProjects).size &&
+      args.judgedProjects.every((project) => charged.has(project))
+    );
   }
 
   /**
@@ -49,9 +82,8 @@ export class BoundaryReportService {
    * projects a run judges — marked as not failing.
    */
   public renderNotes(violations: readonly BoundaryViolation[]): string[] {
-    return violations.map(
-      (violation) =>
-        `${violation.level} ${this.describeCharge({ isNote: true, projects: violation.projects })}: ${violation.message}`,
+    return violations.map((violation) =>
+      this.renderViolation({ isNote: true, violation }),
     );
   }
 
@@ -75,6 +107,30 @@ export class BoundaryReportService {
   }
 
   /**
+   * One violation as the line the log and the Markdown report both print: its
+   * level, whom it is charged to, then the message.
+   *
+   * The one place that line's shape lives, so a run's failing lines, its
+   * notes, its failures, and the Markdown bullets cannot drift apart.
+   * `judgedProjects` is passed only by a failure, whose charge may be counted
+   * — see `describeCharge`.
+   */
+  public renderViolation(args: {
+    isNote: boolean;
+    judgedProjects?: readonly string[];
+    violation: Pick<BoundaryViolation, "level" | "message" | "projects">;
+  }): string {
+    const { isNote, judgedProjects, violation } = args;
+    const charge = this.describeCharge({
+      isNote,
+      ...(judgedProjects !== undefined && { judgedProjects }),
+      projects: violation.projects,
+    });
+
+    return `${violation.level} ${charge}: ${violation.message}`;
+  }
+
+  /**
    * One line per violation, each naming its level and the projects it is
    * charged to before the rule's own sentence.
    *
@@ -85,9 +141,8 @@ export class BoundaryReportService {
    * own it rather than the workspace it was found in.
    */
   public renderViolations(violations: readonly BoundaryViolation[]): string[] {
-    return violations.map(
-      (violation) =>
-        `${violation.level} ${this.describeCharge({ isNote: false, projects: violation.projects })}: ${violation.message}`,
+    return violations.map((violation) =>
+      this.renderViolation({ isNote: false, violation }),
     );
   }
 }

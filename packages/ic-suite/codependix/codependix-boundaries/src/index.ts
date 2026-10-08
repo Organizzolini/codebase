@@ -44,4 +44,7 @@ export { BoundaryGraphService } from "./modules/boundary-check/boundary-graph.se
 export { BoundaryOutcomeReportService } from "./modules/boundary-check/boundary-outcome-report.service";
 export { RunContextModule } from "./modules/run-context/run-context.module";
 export { RunContextService } from "./modules/run-context/run-context.service";
-export type { GraphRunContext } from "./modules/run-context/run-context.types";
+export type {
+  GraphRunContext,
+  UnmatchedSelection,
+} from "./modules/run-context/run-context.types";

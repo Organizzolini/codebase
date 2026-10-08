@@ -195,6 +195,10 @@ describe(MapCommand, () => {
     vi.mocked(runContextService.build).mockResolvedValue(
       buildContextWithInclude(["**"]),
     );
+    vi.mocked(runContextService.findUnmatchedSelection).mockReturnValue({
+      projects: [],
+      tags: [],
+    });
     vi.mocked(codependixService.run).mockResolvedValue(
       buildMapRun({ failures: [], results: [] }),
     );
@@ -742,6 +746,32 @@ describe(MapCommand, () => {
   // exactly the way every other rejected command line does, matching
   // callidescope's `depth.command.unit.test.ts` "reports a refused command
   // line instead of crashing".
+  describe("a selection matching only in part", () => {
+    beforeEach(() => {
+      selectMode({ checksBoundaries: true });
+      vi.mocked(runContextService.findUnmatchedSelection).mockReturnValue({
+        projects: ["typo"],
+        tags: ["scope:nothing"],
+      });
+    });
+
+    // The names that did match were judged, so the run is no worse for it.
+    it("warns naming each unmatched entry and leaves the exit code alone", async () => {
+      await run({ check: "boundaries", projects: "widgets,typo" });
+
+      expect(loggerService.warn).toHaveBeenCalledWith(
+        "🕸️ Ignored selection entries that matched no project",
+        undefined,
+        {
+          hint: "check the spelling — the run judged only the entries that matched",
+          projects: ["typo"],
+          tags: ["scope:nothing"],
+        },
+      );
+      expect(process.exitCode).toBe(0);
+    });
+  });
+
   it("reports an --include/--exclude refusal as a rejected command line", async () => {
     const error = new InputError(
       "--include overrides a value the configuration does not declare. Add `include` to the configuration this run reads, then use --include to change it.",

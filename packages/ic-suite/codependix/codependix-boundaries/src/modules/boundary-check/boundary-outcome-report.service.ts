@@ -2,6 +2,11 @@ import { Injectable } from "@nestjs/common";
 
 import { BoundaryReportService } from "../boundaries/boundary-report.service";
 
+import {
+  CONTINUATION_INDENT,
+  WORKSPACE_GROUP_HEADING,
+} from "./boundary-check.constants";
+
 import type {
   BoundaryCheckFailure,
   BoundaryReport,
@@ -32,28 +37,88 @@ export class BoundaryOutcomeReportService {
 
   // 🔏 Private Methods
 
-  /** One bullet: the verdict in bold, then the line the log prints. */
-  private renderBullet(verdict: string, line: string): string {
-    return `- **${verdict}** ${line}`;
+  /** Every failure of a report that is charged to some projects, not all. */
+  private findProjectFailures(
+    report: BoundaryReport,
+  ): readonly BoundaryReportFailure[] {
+    return report.failures.filter(
+      (failure) => !this.isWorkspaceWide(failure, report),
+    );
   }
 
-  /** One failure as the line the log and the Markdown report both print. */
-  private renderFailure(
-    failure: JudgedBoundaryFinding<BoundaryCheckFailure>,
-  ): string {
-    const charge = this.boundaryReportService.describeCharge({
-      isNote: failure.verdict === "note",
+  /** Every failure of a report charged to every project it judged. */
+  private findWorkspaceFailures(
+    report: BoundaryReport,
+  ): readonly BoundaryReportFailure[] {
+    return report.failures.filter((failure) =>
+      this.isWorkspaceWide(failure, report),
+    );
+  }
+
+  /** Whether a failure is charged to every project a report judged. */
+  private isWorkspaceWide(
+    failure: Pick<BoundaryReportFailure, "projects">,
+    report: BoundaryReport,
+  ): boolean {
+    return this.boundaryReportService.isChargedToEveryProject({
+      judgedProjects: report.judgedProjects,
       projects: failure.projects,
     });
+  }
+
+  /**
+   * One bullet: the verdict in bold, then the line the log prints.
+   *
+   * An error is whatever a library threw, so its text may run over several
+   * lines and carry `-->`. A continuation line is indented to stay inside the
+   * bullet, rather than ending the list, and `-->` is written as an entity,
+   * since it would close the HTML comment an anchor block lives in.
+   */
+  private renderBullet(verdict: string, line: string): string {
+    const text = line
+      .replaceAll(/\r\n?/g, "\n")
+      .replaceAll("-->", "--&gt;")
+      .split("\n")
+      .map((part, index) =>
+        index === 0 || part === "" ? part : `${CONTINUATION_INDENT}${part}`,
+      )
+      .join("\n");
+
+    return `- **${verdict}** ${text}`;
+  }
+
+  /**
+   * One failure as the line the log and the Markdown report both print: the
+   * shape of a violation's line, with the error as its message and, when the
+   * failing code belongs to another project, that project named last.
+   */
+  private renderFailure(args: {
+    failure: JudgedBoundaryFinding<BoundaryCheckFailure>;
+    judgedProjects: readonly string[];
+  }): string {
+    const { failure, judgedProjects } = args;
     const owner =
       failure.ownerProject === undefined
         ? ""
         : ` (failed in code owned by ${failure.ownerProject})`;
 
-    return `${failure.level} ${charge}: ${failure.error}${owner}`;
+    return this.boundaryReportService.renderViolation({
+      isNote: failure.verdict === "note",
+      judgedProjects,
+      violation: {
+        level: failure.level,
+        message: `${failure.error}${owner}`,
+        projects: failure.projects,
+      },
+    });
   }
 
-  /** The bullets of every finding charged to one project, violations first. */
+  /**
+   * The bullets of every finding charged to one project, violations first.
+   *
+   * A failure charged to every judged project is left out: it is listed once,
+   * in `renderWorkspaceGroup`, rather than under each of them.
+   */
   private renderProjectGroup(args: {
     project: string;
     report: BoundaryReport;
@@ -65,10 +130,16 @@ export class BoundaryOutcomeReportService {
         .map((violation) =>
           this.renderBullet(violation.verdict, this.renderViolation(violation)),
         ),
-      ...report.failures
+      ...this.findProjectFailures(report)
         .filter((failure) => failure.projects.includes(project))
         .map((failure) =>
-          this.renderBullet(failure.verdict, this.renderFailure(failure)),
+          this.renderBullet(
+            failure.verdict,
+            this.renderFailure({
+              failure,
+              judgedProjects: report.judgedProjects,
+            }),
+          ),
         ),
     ];
 
@@ -82,12 +153,25 @@ export class BoundaryOutcomeReportService {
       "level" | "message" | "projects" | "verdict"
     >,
   ): string {
-    const charge = this.boundaryReportService.describeCharge({
+    return this.boundaryReportService.renderViolation({
       isNote: violation.verdict === "note",
-      projects: violation.projects,
+      violation,
     });
+  }
 
-    return `${violation.level} ${charge}: ${violation.message}`;
+  /**
+   * The one group holding every failure charged to every judged project, in
+   * place of the same bullet under each of them.
+   */
+  private renderWorkspaceGroup(report: BoundaryReport): string {
+    const bullets = this.findWorkspaceFailures(report).map((failure) =>
+      this.renderBullet(
+        failure.verdict,
+        this.renderFailure({ failure, judgedProjects: report.judgedProjects }),
+      ),
+    );
+
+    return [`#### ${WORKSPACE_GROUP_HEADING}`, "", ...bullets].join("\n");
   }
 
   // 🌎 Public Methods
@@ -130,18 +214,24 @@ export class BoundaryOutcomeReportService {
   /**
    * One line per failure: its level, whom it is charged to, and the error —
    * then the project owning the code it broke on, when that is another
-   * project. A note says which dependency it lives in instead.
+   * project. A note says which dependency it lives in instead, and a failure
+   * charged to every one of `judgedProjects` says "all N judged projects".
    */
   renderFailures(
     failures: readonly JudgedBoundaryFinding<BoundaryCheckFailure>[],
+    judgedProjects: readonly string[],
   ): string[] {
-    return failures.map((failure) => this.renderFailure(failure));
+    return failures.map((failure) =>
+      this.renderFailure({ failure, judgedProjects }),
+    );
   }
 
   /**
    * Renders a report as the Markdown a combined document carries: the judged
    * projects, then every finding listed under each project it is charged to,
-   * a note marked as not failing under the dependency it lives in.
+   * a note marked as not failing under the dependency it lives in. A failure
+   * charged to every judged project is listed once, ahead of them, rather
+   * than under each. An error's line breaks stay inside its bullet.
    *
    * A run judging no project at all — a workspace holding nothing but its
    * root, since an unmatched selection is refused before the run — says
@@ -153,19 +243,25 @@ export class BoundaryOutcomeReportService {
         ? "none"
         : report.judgedProjects.join(", ")
     }.`;
+    const workspaceFailures = this.findWorkspaceFailures(report);
     const charged = [
       ...new Set([
         ...report.violations.flatMap((violation) => violation.projects),
-        ...report.failures.flatMap((failure) => failure.projects),
+        ...this.findProjectFailures(report).flatMap(
+          (failure) => failure.projects,
+        ),
       ]),
     ].toSorted();
 
-    if (charged.length === 0) {
+    if (charged.length === 0 && workspaceFailures.length === 0) {
       return `${judged}\n\nNo boundary findings.`;
     }
 
     return [
       judged,
+      ...(workspaceFailures.length === 0
+        ? []
+        : [this.renderWorkspaceGroup(report)]),
       ...charged.map((project) => this.renderProjectGroup({ project, report })),
     ].join("\n\n");
   }

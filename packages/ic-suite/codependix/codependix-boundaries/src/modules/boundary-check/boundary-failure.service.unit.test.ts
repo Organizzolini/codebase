@@ -146,6 +146,29 @@ describe(BoundaryFailureService, () => {
     expect(failure.ownerProject).toBe("lexico-entities");
   });
 
+  // A `file:` URL naming a host is not a path on this machine, and
+  // `fileURLToPath` throws on it — which must cost the frame, not the run.
+  it("reads a malformed file URL frame as no owner instead of throwing", () => {
+    const error = buildError([
+      "file://elsewhere/workspace/packages/lexico-entities/src/index.ts:1:1",
+      "file:///workspace/packages/lexico-entities/a%2Fb.ts:1:1",
+    ]);
+
+    expect(() => collect(error)).not.toThrow();
+    expect(collect(error)).not.toHaveProperty("ownerProject");
+  });
+
+  it("keeps reading the stack past a malformed file URL frame", () => {
+    const failure = collect(
+      buildError([
+        "file://elsewhere/workspace/packages/lexico-entities/src/index.ts:1:1",
+        "/workspace/packages/lexico-entities/src/word.entity.ts:3:1",
+      ]),
+    );
+
+    expect(failure.ownerProject).toBe("lexico-entities");
+  });
+
   it("skips frames inside node_modules and Node's own internals", () => {
     const failure = collect(
       buildError([

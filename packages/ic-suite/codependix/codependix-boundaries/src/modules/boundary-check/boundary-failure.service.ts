@@ -94,13 +94,20 @@ export class BoundaryFailureService {
 
   /**
    * The absolute file path one stack line names, or nothing for a line that
-   * is not a frame or names no file — a `node:` internal, say.
+   * is not a frame or names no file — a `node:` internal, say, or a `file:`
+   * URL that is no path on this machine, which `fileURLToPath` throws on.
+   * The frame is dropped rather than the failure it belongs to: a stack is
+   * library input, and a malformed line must not hide what broke.
    */
   private readFramePath(line: string): string | undefined {
     const location = this.readFrameLocation(line);
 
     if (location?.startsWith("file:") === true) {
-      return fileURLToPath(location);
+      try {
+        return fileURLToPath(location);
+      } catch {
+        return undefined;
+      }
     }
 
     return location !== undefined && path.isAbsolute(location)
