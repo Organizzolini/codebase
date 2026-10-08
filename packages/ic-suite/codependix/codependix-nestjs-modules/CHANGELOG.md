@@ -1,3 +1,7 @@
+## 0.0.7 (2026-10-08)
+
+This was a version bump only for codependix-nestjs-modules to align it with other projects, there were no code changes.
+
 ## 0.0.6 (2026-10-08)
 
 This was a version bump only for codependix-nestjs-modules to align it with other projects, there were no code changes.

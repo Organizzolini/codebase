@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.35.0](https://github.com/organizzolini/codebase/compare/v2.34.2...v2.35.0) (2026-10-08)
+
+### ✨ Features
+
+* **caelundas,configuration:** ✨ scaffold the caelundas-web tanstack application ([#1397](https://github.com/organizzolini/codebase/issues/1397)) ([4759fff](https://github.com/organizzolini/codebase/commit/4759fff2089db64cdf4f26a1acdffda1b3dcf7d0)), closes [#1396](https://github.com/organizzolini/codebase/issues/1396) [#1395](https://github.com/organizzolini/codebase/issues/1395) [#1394](https://github.com/organizzolini/codebase/issues/1394)
+* **meanderaw,configuration:** ✨ scaffold meanderaw-web from the tanstack-application template ([#1396](https://github.com/organizzolini/codebase/issues/1396)) ([f723c45](https://github.com/organizzolini/codebase/commit/f723c45bbe281d766a2c6a2bf71d4b79f4e9164b)), closes [Organizzolini/codebase#1301](https://github.com/Organizzolini/codebase/issues/1301) [Organizzolini/codebase#1309](https://github.com/Organizzolini/codebase/issues/1309)
+
+### 🐛 Bug Fixes
+
+* **configuration:** 🐛 measure every application three folders deep with the right path ([#1440](https://github.com/organizzolini/codebase/issues/1440)) ([a805b41](https://github.com/organizzolini/codebase/commit/a805b41c255628a5c404188f757a8316be160653))
+* **deployments:** 🐛 wait for new npm tarballs and never link an empty digest ([#1398](https://github.com/organizzolini/codebase/issues/1398)) ([745a902](https://github.com/organizzolini/codebase/commit/745a9029bd9c0db2eefa57bd84b007b28aacb71d)), closes [#1327](https://github.com/organizzolini/codebase/issues/1327) [#1327](https://github.com/organizzolini/codebase/issues/1327)
+* **scripts:** 🐛 bootstrap .env from every .env.default outside the conformetry templates ([#1443](https://github.com/organizzolini/codebase/issues/1443)) ([f42bfdc](https://github.com/organizzolini/codebase/commit/f42bfdc5a3398994088a3d1dcb33815943aa6b8e))
+
+### ⚡ Performance Improvements
+
+* **lexico,lexico-entities:** ⚡️ page reader relations as batched relay connections ([#1435](https://github.com/organizzolini/codebase/issues/1435)) ([b110cd5](https://github.com/organizzolini/codebase/commit/b110cd5a1363cdea1e9ea1dd8ec4e7ec12d2f669)), closes [1181/#1182](https://github.com/1181/codebase/issues/1182) [#1321](https://github.com/organizzolini/codebase/issues/1321) [#1336](https://github.com/organizzolini/codebase/issues/1336) [#1170](https://github.com/organizzolini/codebase/issues/1170) [#1321](https://github.com/organizzolini/codebase/issues/1321) [#1322](https://github.com/organizzolini/codebase/issues/1322) [#1323](https://github.com/organizzolini/codebase/issues/1323) [#1331](https://github.com/organizzolini/codebase/issues/1331)
+
+### ♻️ Code Refactoring
+
+* **lexico-entities,lexico:** ♻️ move lexico's graphql types into lexico-api, checked against its entities ([#1399](https://github.com/organizzolini/codebase/issues/1399)) ([6657d0d](https://github.com/organizzolini/codebase/commit/6657d0d678f8183ee76452d899831b3ef042634b)), closes [#1339](https://github.com/organizzolini/codebase/issues/1339) [#1263](https://github.com/organizzolini/codebase/issues/1263) [#1311](https://github.com/organizzolini/codebase/issues/1311)
+
 ## [2.34.2](https://github.com/organizzolini/codebase/compare/v2.34.1...v2.34.2) (2026-10-08)
 
 ### ♻️ Code Refactoring

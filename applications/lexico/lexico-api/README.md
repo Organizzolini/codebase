@@ -865,13 +865,13 @@ Call stacks traced through `applications/lexico/lexico-api`, deepest first. Each
 
 | Measure | Value |
 | --- | --- |
-| Callables | 255 |
-| Files | 69 |
-| Calls traced | 128 |
-| Call stacks | 31 |
-| Deepest stack | 7 |
+| Callables | 400 |
+| Files | 108 |
+| Calls traced | 234 |
+| Call stacks | 54 |
+| Deepest stack | 8 |
 | Stacks through recursion | 0 |
-| Unfollowable calls | 11 |
+| Unfollowable calls | 15 |
 
 ### Limits
 
@@ -884,223 +884,554 @@ What this project is judged against, as declared in its own `callidescope.config
 
 ### Call stacks (depth)
 
-**1. `LiteratureResolver.searchLiterature`** — depth ≥ 7 · decorated-method
+**1. `LiteratureResolver.searchLiterature`** — depth ≥ 8 · decorated-method
 
 ```text
-🚀 LiteratureResolver.searchLiterature(arguments_: SearchLiteratureArguments): Promise<LiteratureSearchResult> [applications/lexico/lexico-api/src/modules/literature/literature.resolver.ts:23]
+🚀 LiteratureResolver.searchLiterature(arguments_: SearchLiteratureArguments): Promise<LiteratureSearchResult> [applications/lexico/lexico-api/src/modules/literature/literature.resolver.ts:24]
    ↳ Searches authors, texts, and lines together.
-  └─> LiteratureService.searchLiterature(…): Promise<{ authors: Author[]; lines: Line[]; texts: Text[]; }> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:355]
+  └─> LiteratureService.searchLiterature(…): Promise<{ authors: Author[]; lines: Line[]; texts: Text[]; }> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:259]
      ↳ Aggregates author, text, and line search hits into a single response.
-    └─> LiteratureService.searchAuthors(query: string, pagination?: PaginationArguments): Promise<Connection<Author>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:298]
+    └─> LiteratureService.searchAuthors(query: string, pagination?: PaginationArguments): Promise<Connection<Author>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:202]
        ↳ Searches authors by name or slug with a simple substring filter.
-      └─> paginateQuery(…): Promise<Connection<Entity>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:38]
+      └─> paginateQuery(…): Promise<Connection<Node>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:53]
          ↳ Pages a filtered query into a Relay connection in SQL: the cursors become keyset bounds on the sort key and id, `first`…
-        └─> findCursorPosition(…): Promise<CursorPosition | null> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:117]
-           ↳ Resolves a cursor to the sort key of the row it names within the filtered set, or null when it is absent, malformed, or…
-          └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:113]
-             ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
-            └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:99]
-               ↳ Decodes an opaque Base64 cursor string into structured data.
+        └─> decodeCursor(…): CursorClaim | null [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:181]
+           ↳ Reads the row a cursor claims to name, or null when the cursor is absent or not one the connection hands out.
+          └─> readCursorId(cursor: null | string | undefined): null | string [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:97]
+             ↳ Reads the entity id a cursor names, or null when it is absent, malformed, or not the canonical encoding of that id,…
+            └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
+               ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
+              └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
+                 ↳ Decodes an opaque Base64 cursor string into structured data.
 ```
 
-**2. `SearchResolver.searchLatin`** — depth ≥ 7 · decorated-method
+**2. `SearchResolver.searchEnglish`** — depth ≥ 8 · decorated-method
 
 ```text
-🚀 SearchResolver.searchLatin(arguments_: SearchLatinArguments): Promise<Connection<LexemeSearchResult>> [applications/lexico/lexico-api/src/modules/search/search.resolver.ts:41]
+🚀 SearchResolver.searchEnglish(arguments_: SearchEnglishArguments): Promise<Connection<LexemeSearchResult>> [applications/lexico/lexico-api/src/modules/search/search.resolver.ts:31]
+   ↳ Searches English definitions and translations using full-text and substring matching.
+  └─> SearchService.searchEnglish(…): Promise<Connection<LexemeSearchMatch>> [applications/lexico/lexico-api/src/modules/search/search.service.ts:387]
+     ↳ Searches English translations and definitions using full-text and substring matching.
+    └─> SearchService.paginateRankedLexemes(…): Promise<Connection<LexemeSearchMatch>> [applications/lexico/lexico-api/src/modules/search/search.service.ts:207]
+       ↳ Pages ranked lexemes in SQL, best score first and then by id: the ranking is joined to the lexemes, the cursors bound…
+      └─> paginateQuery(…): Promise<Connection<Node>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:53]
+         ↳ Pages a filtered query into a Relay connection in SQL: the cursors become keyset bounds on the sort key and id, `first`…
+        └─> decodeCursor(…): CursorClaim | null [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:181]
+           ↳ Reads the row a cursor claims to name, or null when the cursor is absent or not one the connection hands out.
+          └─> readCursorId(cursor: null | string | undefined): null | string [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:97]
+             ↳ Reads the entity id a cursor names, or null when it is absent, malformed, or not the canonical encoding of that id,…
+            └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
+               ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
+              └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
+                 ↳ Decodes an opaque Base64 cursor string into structured data.
+```
+
+**3. `SearchResolver.searchLatin`** — depth ≥ 8 · decorated-method
+
+```text
+🚀 SearchResolver.searchLatin(arguments_: SearchLatinArguments): Promise<Connection<LexemeSearchResult>> [applications/lexico/lexico-api/src/modules/search/search.resolver.ts:47]
    ↳ Searches Latin lemmas and inflected forms with enclitic parsing and fuzzy matching.
-  └─> SearchService.searchLatin(…): Promise<Connection<LexemeSearchResult>> [applications/lexico/lexico-api/src/modules/search/search.service.ts:380]
+  └─> SearchService.searchLatin(…): Promise<Connection<LexemeSearchMatch>> [applications/lexico/lexico-api/src/modules/search/search.service.ts:416]
      ↳ Performs tiered Latin dictionary search with enclitic parsing and fuzzy matching.
-    └─> SearchService.findWordMatches(…): Promise<void> [applications/lexico/lexico-api/src/modules/search/search.service.ts:240]
-       ↳ Queries exact inflected word forms and maps their morphological identifiers.
-      └─> SearchService.map(…)(wf: WordForm): string | null [applications/lexico/lexico-api/src/modules/search/search.service.ts:262]
-        └─> formatFormIdentifier(form: Form): null | string [applications/lexico/lexico-api/src/modules/search/search.utilities.ts:48]
-           ↳ Formats grammatical and morphological description strings from a lexical Form.
-          └─> formatDeclinedForm(form: Form): null | string [applications/lexico/lexico-api/src/modules/search/search.utilities.ts:107]
-             ↳ Formats nominal, adjectival, and participial declined forms.
-            └─> formatNonFiniteForm(form: Form): null | string [applications/lexico/lexico-api/src/modules/search/search.utilities.ts:123]
-               ↳ Formats non-finite verb and uninflected forms like infinitives, gerunds, supines, and adverbs.
-```
-
-**3. `AuthorsResolver.authors`** — depth ≥ 6 · decorated-method
-
-```text
-🚀 AuthorsResolver.authors(arguments_: PaginationArguments): Promise<Connection<Author>> [applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:55]
-   ↳ Lists authors with Relay pagination.
-  └─> LiteratureService.listAuthorsConnection(pagination?: PaginationArguments): Promise<Connection<Author>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:108]
-     ↳ Lists authors by name using Relay pagination.
-    └─> paginateQuery(…): Promise<Connection<Entity>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:38]
-       ↳ Pages a filtered query into a Relay connection in SQL: the cursors become keyset bounds on the sort key and id, `first`…
-      └─> findCursorPosition(…): Promise<CursorPosition | null> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:117]
-         ↳ Resolves a cursor to the sort key of the row it names within the filtered set, or null when it is absent, malformed, or…
-        └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:113]
-           ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
-          └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:99]
-             ↳ Decodes an opaque Base64 cursor string into structured data.
+    └─> SearchService.paginateRankedLexemes(…)(scored: ScoredLexeme[]): Promise<LexemeSearchMatch[]> [applications/lexico/lexico-api/src/modules/search/search.service.ts:436]
+      └─> SearchService.describeLatinMatches(…): Promise<LexemeSearchMatch[]> [applications/lexico/lexico-api/src/modules/search/search.service.ts:102]
+         ↳ Describes each Latin match on a page the way merging its tiers would: the morphological identifiers of every matched…
+        └─> SearchService.map(…)(wordForm: WordForm): string | null [applications/lexico/lexico-api/src/modules/search/search.service.ts:133]
+          └─> formatFormIdentifier(form: Form): null | string [applications/lexico/lexico-api/src/modules/search/search.utilities.ts:59]
+             ↳ Formats grammatical and morphological description strings from a lexical Form.
+            └─> formatDeclinedForm(form: Form): null | string [applications/lexico/lexico-api/src/modules/search/search.utilities.ts:127]
+               ↳ Formats nominal, adjectival, and participial declined forms.
+              └─> formatNonFiniteForm(form: Form): null | string [applications/lexico/lexico-api/src/modules/search/search.utilities.ts:143]
+                 ↳ Formats non-finite verb and uninflected forms like infinitives, gerunds, supines, and adverbs.
 ```
 
 <details>
-<summary>28 more call stacks</summary>
+<summary>51 more call stacks</summary>
 
-**4. `AuthorsResolver.searchAuthors`** — depth ≥ 6 · decorated-method
+**4. `AuthorsResolver.authors`** — depth ≥ 7 · decorated-method
 
 ```text
-🚀 AuthorsResolver.searchAuthors(arguments_: SearchAuthorsArguments): Promise<Connection<Author>> [applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:73]
+🚀 AuthorsResolver.authors(arguments_: PaginationArguments): Promise<Connection<AuthorType>> [applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:67]
+   ↳ Lists authors with Relay pagination.
+  └─> LiteratureService.listAuthorsConnection(pagination?: PaginationArguments): Promise<Connection<Author>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:87]
+     ↳ Lists authors by name using Relay pagination.
+    └─> paginateQuery(…): Promise<Connection<Node>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:53]
+       ↳ Pages a filtered query into a Relay connection in SQL: the cursors become keyset bounds on the sort key and id, `first`…
+      └─> decodeCursor(…): CursorClaim | null [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:181]
+         ↳ Reads the row a cursor claims to name, or null when the cursor is absent or not one the connection hands out.
+        └─> readCursorId(cursor: null | string | undefined): null | string [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:97]
+           ↳ Reads the entity id a cursor names, or null when it is absent, malformed, or not the canonical encoding of that id,…
+          └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
+             ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
+            └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
+               ↳ Decodes an opaque Base64 cursor string into structured data.
+```
+
+**5. `AuthorsResolver.searchAuthors`** — depth ≥ 7 · decorated-method
+
+```text
+🚀 AuthorsResolver.searchAuthors(arguments_: SearchAuthorsArguments): Promise<Connection<AuthorType>> [applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:98]
    ↳ Searches authors by name or slug.
-  └─> LiteratureService.searchAuthors(query: string, pagination?: PaginationArguments): Promise<Connection<Author>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:298]
+  └─> LiteratureService.searchAuthors(query: string, pagination?: PaginationArguments): Promise<Connection<Author>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:202]
      ↳ Searches authors by name or slug with a simple substring filter.
-    └─> paginateQuery(…): Promise<Connection<Entity>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:38]
+    └─> paginateQuery(…): Promise<Connection<Node>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:53]
        ↳ Pages a filtered query into a Relay connection in SQL: the cursors become keyset bounds on the sort key and id, `first`…
-      └─> findCursorPosition(…): Promise<CursorPosition | null> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:117]
-         ↳ Resolves a cursor to the sort key of the row it names within the filtered set, or null when it is absent, malformed, or…
-        └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:113]
-           ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
-          └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:99]
-             ↳ Decodes an opaque Base64 cursor string into structured data.
+      └─> decodeCursor(…): CursorClaim | null [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:181]
+         ↳ Reads the row a cursor claims to name, or null when the cursor is absent or not one the connection hands out.
+        └─> readCursorId(cursor: null | string | undefined): null | string [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:97]
+           ↳ Reads the entity id a cursor names, or null when it is absent, malformed, or not the canonical encoding of that id,…
+          └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
+             ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
+            └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
+               ↳ Decodes an opaque Base64 cursor string into structured data.
 ```
 
-**5. `LinesResolver.lines`** — depth ≥ 6 · decorated-method
+**6. `LinesResolver.lines`** — depth ≥ 7 · decorated-method
 
 ```text
-🚀 LinesResolver.lines(arguments_: LinesArguments): Promise<Connection<Line>> [applications/lexico/lexico-api/src/modules/literature/lines.resolver.ts:36]
+🚀 LinesResolver.lines(arguments_: LinesArguments): Promise<Connection<LineType>> [applications/lexico/lexico-api/src/modules/literature/lines.resolver.ts:46]
    ↳ Lists lines with optional range bounds.
-  └─> LiteratureService.listLinesConnection(…): Promise<Connection<Line>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:157]
+  └─> LiteratureService.listLinesConnection(…): Promise<Connection<Line>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:103]
      ↳ Retrieves paginated lines for a text with optional range bounds.
-    └─> paginateQuery(…): Promise<Connection<Entity>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:38]
+    └─> paginateQuery(…): Promise<Connection<Node>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:53]
        ↳ Pages a filtered query into a Relay connection in SQL: the cursors become keyset bounds on the sort key and id, `first`…
-      └─> findCursorPosition(…): Promise<CursorPosition | null> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:117]
-         ↳ Resolves a cursor to the sort key of the row it names within the filtered set, or null when it is absent, malformed, or…
-        └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:113]
-           ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
-          └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:99]
-             ↳ Decodes an opaque Base64 cursor string into structured data.
+      └─> decodeCursor(…): CursorClaim | null [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:181]
+         ↳ Reads the row a cursor claims to name, or null when the cursor is absent or not one the connection hands out.
+        └─> readCursorId(cursor: null | string | undefined): null | string [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:97]
+           ↳ Reads the entity id a cursor names, or null when it is absent, malformed, or not the canonical encoding of that id,…
+          └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
+             ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
+            └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
+               ↳ Decodes an opaque Base64 cursor string into structured data.
 ```
 
-**6. `LinesResolver.searchLines`** — depth ≥ 6 · decorated-method
+**7. `LinesResolver.searchLines`** — depth ≥ 7 · decorated-method
 
 ```text
-🚀 LinesResolver.searchLines(arguments_: SearchLinesArguments): Promise<Connection<Line>> [applications/lexico/lexico-api/src/modules/literature/lines.resolver.ts:51]
+🚀 LinesResolver.searchLines(arguments_: SearchLinesArguments): Promise<Connection<LineType>> [applications/lexico/lexico-api/src/modules/literature/lines.resolver.ts:62]
    ↳ Searches lines by content.
-  └─> LiteratureService.searchLines(…): Promise<Connection<Line>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:324]
+  └─> LiteratureService.searchLines(…): Promise<Connection<Line>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:228]
      ↳ Searches lines by content within a text or globally.
-    └─> paginateQuery(…): Promise<Connection<Entity>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:38]
+    └─> paginateQuery(…): Promise<Connection<Node>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:53]
        ↳ Pages a filtered query into a Relay connection in SQL: the cursors become keyset bounds on the sort key and id, `first`…
-      └─> findCursorPosition(…): Promise<CursorPosition | null> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:117]
-         ↳ Resolves a cursor to the sort key of the row it names within the filtered set, or null when it is absent, malformed, or…
-        └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:113]
-           ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
-          └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:99]
-             ↳ Decodes an opaque Base64 cursor string into structured data.
+      └─> decodeCursor(…): CursorClaim | null [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:181]
+         ↳ Reads the row a cursor claims to name, or null when the cursor is absent or not one the connection hands out.
+        └─> readCursorId(cursor: null | string | undefined): null | string [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:97]
+           ↳ Reads the entity id a cursor names, or null when it is absent, malformed, or not the canonical encoding of that id,…
+          └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
+             ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
+            └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
+               ↳ Decodes an opaque Base64 cursor string into structured data.
 ```
 
-**7. `TextsResolver.searchTexts`** — depth ≥ 6 · decorated-method
+**8. `TextsResolver.searchTexts`** — depth ≥ 7 · decorated-method
 
 ```text
-🚀 TextsResolver.searchTexts(arguments_: SearchTextsArguments): Promise<Connection<Text>> [applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:72]
+🚀 TextsResolver.searchTexts(arguments_: SearchTextsArguments): Promise<Connection<TextType>> [applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:101]
    ↳ Searches texts by title or slug.
-  └─> LiteratureService.searchTexts(…): Promise<Connection<Text>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:385]
+  └─> LiteratureService.searchTexts(…): Promise<Connection<Text>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:289]
      ↳ Searches texts by title or slug with optional author filter.
-    └─> paginateQuery(…): Promise<Connection<Entity>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:38]
+    └─> paginateQuery(…): Promise<Connection<Node>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:53]
        ↳ Pages a filtered query into a Relay connection in SQL: the cursors become keyset bounds on the sort key and id, `first`…
-      └─> findCursorPosition(…): Promise<CursorPosition | null> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:117]
-         ↳ Resolves a cursor to the sort key of the row it names within the filtered set, or null when it is absent, malformed, or…
-        └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:113]
-           ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
-          └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:99]
-             ↳ Decodes an opaque Base64 cursor string into structured data.
+      └─> decodeCursor(…): CursorClaim | null [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:181]
+         ↳ Reads the row a cursor claims to name, or null when the cursor is absent or not one the connection hands out.
+        └─> readCursorId(cursor: null | string | undefined): null | string [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:97]
+           ↳ Reads the entity id a cursor names, or null when it is absent, malformed, or not the canonical encoding of that id,…
+          └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
+             ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
+            └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
+               ↳ Decodes an opaque Base64 cursor string into structured data.
 ```
 
-**8. `TextsResolver.texts`** — depth ≥ 6 · decorated-method
+**9. `TextsResolver.texts`** — depth ≥ 7 · decorated-method
 
 ```text
-🚀 TextsResolver.texts(arguments_: TextsArguments): Promise<Connection<Text>> [applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:101]
+🚀 TextsResolver.texts(arguments_: TextsArguments): Promise<Connection<TextType>> [applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:135]
    ↳ Lists texts with optional author and parent filters.
-  └─> LiteratureService.listTextsConnection(…): Promise<Connection<Text>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:221]
+  └─> LiteratureService.listTextsConnection(…): Promise<Connection<Text>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:147]
      ↳ Lists texts using Relay pagination with the same author and parent text filters.
-    └─> paginateQuery(…): Promise<Connection<Entity>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:38]
+    └─> paginateQuery(…): Promise<Connection<Node>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:53]
        ↳ Pages a filtered query into a Relay connection in SQL: the cursors become keyset bounds on the sort key and id, `first`…
-      └─> findCursorPosition(…): Promise<CursorPosition | null> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:117]
-         ↳ Resolves a cursor to the sort key of the row it names within the filtered set, or null when it is absent, malformed, or…
-        └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:113]
-           ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
-          └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:99]
-             ↳ Decodes an opaque Base64 cursor string into structured data.
+      └─> decodeCursor(…): CursorClaim | null [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:181]
+         ↳ Reads the row a cursor claims to name, or null when the cursor is absent or not one the connection hands out.
+        └─> readCursorId(cursor: null | string | undefined): null | string [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:97]
+           ↳ Reads the entity id a cursor names, or null when it is absent, malformed, or not the canonical encoding of that id,…
+          └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
+             ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
+            └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
+               ↳ Decodes an opaque Base64 cursor string into structured data.
 ```
 
-**9. `TokensResolver.tokens`** — depth ≥ 6 · decorated-method
+**10. `TokensResolver.tokens`** — depth ≥ 7 · decorated-method
 
 ```text
-🚀 TokensResolver.tokens(arguments_: TokensArguments): Promise<Connection<Token>> [applications/lexico/lexico-api/src/modules/literature/tokens.resolver.ts:52]
+🚀 TokensResolver.tokens(arguments_: TokensArguments): Promise<Connection<TokenType>> [applications/lexico/lexico-api/src/modules/literature/tokens.resolver.ts:29]
    ↳ Lists tokens for a line.
-  └─> LiteratureService.listTokensForLineConnection(lineId: string, pagination?: PaginationArguments): Promise<Connection<Token>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:265]
+  └─> LiteratureService.listTokensForLineConnection(lineId: string, pagination?: PaginationArguments): Promise<Connection<Token>> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:180]
      ↳ Lists tokens for a line with Relay pagination.
-    └─> paginateQuery(…): Promise<Connection<Entity>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:38]
+    └─> paginateQuery(…): Promise<Connection<Node>> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:53]
        ↳ Pages a filtered query into a Relay connection in SQL: the cursors become keyset bounds on the sort key and id, `first`…
-      └─> findCursorPosition(…): Promise<CursorPosition | null> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:117]
-         ↳ Resolves a cursor to the sort key of the row it names within the filtered set, or null when it is absent, malformed, or…
-        └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:113]
-           ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
-          └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:99]
-             ↳ Decodes an opaque Base64 cursor string into structured data.
+      └─> decodeCursor(…): CursorClaim | null [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:181]
+         ↳ Reads the row a cursor claims to name, or null when the cursor is absent or not one the connection hands out.
+        └─> readCursorId(cursor: null | string | undefined): null | string [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:97]
+           ↳ Reads the entity id a cursor names, or null when it is absent, malformed, or not the canonical encoding of that id,…
+          └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
+             ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
+            └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
+               ↳ Decodes an opaque Base64 cursor string into structured data.
 ```
 
-**10. `SearchResolver.searchEnglish`** — depth ≥ 6 · decorated-method
+**11. `LiteratureRelationsLoader.createConnectionLoader(…)`** — depth ≥ 7 · orphan-root
 
 ```text
-🚀 SearchResolver.searchEnglish(arguments_: SearchEnglishArguments): Promise<Connection<LexemeSearchResult>> [applications/lexico/lexico-api/src/modules/search/search.resolver.ts:28]
-   ↳ Searches English definitions and translations using full-text and substring matching.
-  └─> SearchService.searchEnglish(…): Promise<Connection<LexemeSearchResult>> [applications/lexico/lexico-api/src/modules/search/search.service.ts:336]
-     ↳ Searches English translations and definitions using full-text and substring matching.
-    └─> SearchService.paginateSearchResults(…): Connection<LexemeSearchResult> [applications/lexico/lexico-api/src/modules/search/search.service.ts:300]
-       ↳ Deterministically orders and paginates aggregated search results.
-      └─> paginateArray(…): { edges: Edge<T>[]; hasNextPage: boolean; hasPreviousPage: boolean; } [applications/lexico/lexico-api/src/lexico-api.utilities.ts:130]
-         ↳ Slices an array of items according to forward (first, after) and backward (last, before) Relay pagination parameters.
-        └─> getPaginationBounds(…): { endIndex: number; startIndex: number; } [applications/lexico/lexico-api/src/lexico-api.utilities.ts:193]
-           ↳ Computes start and end slice indices based on after and before cursors.
-          └─> findIndex(…)(item: T): boolean [applications/lexico/lexico-api/src/lexico-api.utilities.ts:202]
+🚀 LiteratureRelationsLoader.createConnectionLoader(…)(…): Promise<Map<string, Connection<Text>>> [applications/lexico/lexico-api/src/modules/literature/literature-relations.loader.ts:31]
+  └─> LiteratureRelationsService.listChildTextsByParent(…): Promise<Map<string, Connection<Text>>> [applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:75]
+     ↳ Pages the child texts of many parent texts at once, in title order.
+    └─> paginateQueryByParent(…): Promise<Map<string, Connection<Entity>>> [applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:90]
+       ↳ Pages the children of many parents at once, each parent's page exactly as `paginateQuery` would page that parent alone.
+      └─> findCursorPositions(…): Promise<PartitionBounds> [applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:208]
+         ↳ Resolves the `after` and `before` cursors to the rows they name among the parents' children, in one statement, or to…
+        └─> readCursorId(cursor: null | string | undefined): null | string [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:97]
+           ↳ Reads the entity id a cursor names, or null when it is absent, malformed, or not the canonical encoding of that id,…
+          └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
+             ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
+            └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
+               ↳ Decodes an opaque Base64 cursor string into structured data.
 ```
 
-**11. `WordsResolver.words`** — depth 3 · decorated-method
+**12. `LiteratureRelationsLoader.createConnectionLoader(…)`** — depth ≥ 7 · orphan-root
 
 ```text
-🚀 WordsResolver.words(arguments_: WordsArguments): Promise<Word[]> [applications/lexico/lexico-api/src/modules/words/words.resolver.ts:40]
+🚀 LiteratureRelationsLoader.createConnectionLoader(…)(…): Promise<Map<string, Connection<Line>>> [applications/lexico/lexico-api/src/modules/literature/literature-relations.loader.ts:40]
+  └─> LiteratureRelationsService.listLinesByText(…): Promise<Map<string, Connection<Line>>> [applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:94]
+     ↳ Pages the lines of many texts at once, in index order.
+    └─> paginateQueryByParent(…): Promise<Map<string, Connection<Entity>>> [applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:90]
+       ↳ Pages the children of many parents at once, each parent's page exactly as `paginateQuery` would page that parent alone.
+      └─> findCursorPositions(…): Promise<PartitionBounds> [applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:208]
+         ↳ Resolves the `after` and `before` cursors to the rows they name among the parents' children, in one statement, or to…
+        └─> readCursorId(cursor: null | string | undefined): null | string [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:97]
+           ↳ Reads the entity id a cursor names, or null when it is absent, malformed, or not the canonical encoding of that id,…
+          └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
+             ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
+            └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
+               ↳ Decodes an opaque Base64 cursor string into structured data.
+```
+
+**13. `LiteratureRelationsLoader.createConnectionLoader(…)`** — depth ≥ 7 · orphan-root
+
+```text
+🚀 LiteratureRelationsLoader.createConnectionLoader(…)(…): Promise<Map<string, Connection<Text>>> [applications/lexico/lexico-api/src/modules/literature/literature-relations.loader.ts:56]
+  └─> LiteratureRelationsService.listTextsByAuthor(…): Promise<Map<string, Connection<Text>>> [applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:118]
+     ↳ Pages the texts of many authors at once, in title order.
+    └─> paginateQueryByParent(…): Promise<Map<string, Connection<Entity>>> [applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:90]
+       ↳ Pages the children of many parents at once, each parent's page exactly as `paginateQuery` would page that parent alone.
+      └─> findCursorPositions(…): Promise<PartitionBounds> [applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:208]
+         ↳ Resolves the `after` and `before` cursors to the rows they name among the parents' children, in one statement, or to…
+        └─> readCursorId(cursor: null | string | undefined): null | string [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:97]
+           ↳ Reads the entity id a cursor names, or null when it is absent, malformed, or not the canonical encoding of that id,…
+          └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
+             ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
+            └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
+               ↳ Decodes an opaque Base64 cursor string into structured data.
+```
+
+**14. `LiteratureRelationsLoader.createConnectionLoader(…)`** — depth ≥ 7 · orphan-root
+
+```text
+🚀 LiteratureRelationsLoader.createConnectionLoader(…)(…): Promise<Map<string, Connection<Token>>> [applications/lexico/lexico-api/src/modules/literature/literature-relations.loader.ts:62]
+  └─> LiteratureRelationsService.listTokensByLine(…): Promise<Map<string, Connection<Token>>> [applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:140]
+     ↳ Pages the tokens of many lines at once, in index order, joining each token's dictionary word into the same statement.
+    └─> paginateQueryByParent(…): Promise<Map<string, Connection<Entity>>> [applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:90]
+       ↳ Pages the children of many parents at once, each parent's page exactly as `paginateQuery` would page that parent alone.
+      └─> findCursorPositions(…): Promise<PartitionBounds> [applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:208]
+         ↳ Resolves the `after` and `before` cursors to the rows they name among the parents' children, in one statement, or to…
+        └─> readCursorId(cursor: null | string | undefined): null | string [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:97]
+           ↳ Reads the entity id a cursor names, or null when it is absent, malformed, or not the canonical encoding of that id,…
+          └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
+             ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
+            └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
+               ↳ Decodes an opaque Base64 cursor string into structured data.
+```
+
+**15. `LexemesResolver.lexemes`** — depth ≥ 6 · decorated-method
+
+```text
+🚀 LexemesResolver.lexemes(arguments_: LexemesArguments): Promise<LexemeType[]> [applications/lexico/lexico-api/src/modules/lexemes/lexemes.resolver.ts:41]
+   ↳ Retrieves multiple dictionary lexemes by ID.
+  └─> LexemesResolver.map(…)(lexeme: Lexeme): LexemeType [applications/lexico/lexico-api/src/modules/lexemes/lexemes.resolver.ts:49]
+    └─> toLexemeType(lexeme: Lexeme): LexemeType [applications/lexico/lexico-api/src/modules/lexemes/lexemes.utilities.ts:25]
+       ↳ Maps a lexeme entity, and each relation it loaded, to its GraphQL type.
+      └─> mapNullableRelations(…): Mapped[] | null | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:162]
+         ↳ Maps a nullable to-many relation to its GraphQL types, keeping `null`, and leaving one its query did not join unset, as…
+        └─> mapRelations(…): Mapped[] | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:186]
+           ↳ Maps each row of a to-many relation to its GraphQL type, leaving one its query did not join unset, as {@link…
+          └─> map(…)(relation: Entity): Mapped [applications/lexico/lexico-api/src/lexico-api.utilities.ts:190]
+```
+
+**16. `LexemesResolver.lexeme`** — depth ≥ 5 · decorated-method
+
+```text
+🚀 LexemesResolver.lexeme(arguments_: LexemeArguments): Promise<LexemeType | null> [applications/lexico/lexico-api/src/modules/lexemes/lexemes.resolver.ts:26]
+   ↳ Retrieves a single dictionary lexeme by ID.
+  └─> toLexemeType(lexeme: Lexeme): LexemeType [applications/lexico/lexico-api/src/modules/lexemes/lexemes.utilities.ts:25]
+     ↳ Maps a lexeme entity, and each relation it loaded, to its GraphQL type.
+    └─> mapNullableRelations(…): Mapped[] | null | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:162]
+       ↳ Maps a nullable to-many relation to its GraphQL types, keeping `null`, and leaving one its query did not join unset, as…
+      └─> mapRelations(…): Mapped[] | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:186]
+         ↳ Maps each row of a to-many relation to its GraphQL type, leaving one its query did not join unset, as {@link…
+        └─> map(…)(relation: Entity): Mapped [applications/lexico/lexico-api/src/lexico-api.utilities.ts:190]
+```
+
+**17. `WordsResolver.words`** — depth ≥ 5 · decorated-method
+
+```text
+🚀 WordsResolver.words(arguments_: WordsArguments): Promise<WordType[]> [applications/lexico/lexico-api/src/modules/words/words.resolver.ts:41]
    ↳ Retrieves multiple surface words by a batch of normalized input strings.
-  └─> WordsService.findByDataList(data: string[]): Promise<Word[]> [applications/lexico/lexico-api/src/modules/words/words.service.ts:63]
-     ↳ Returns multiple surface words in the input order, each once, omitting any spelling no word has.
-    └─> WordsService.map(…)(word: Word): [string, Word] [applications/lexico/lexico-api/src/modules/words/words.service.ts:86]
+  └─> WordsResolver.map(…)(word: Word): WordType [applications/lexico/lexico-api/src/modules/words/words.resolver.ts:49]
+    └─> toWordType(word: Word): WordType [applications/lexico/lexico-api/src/modules/words/words.utilities.ts:38]
+       ↳ Maps a word, and each link it loaded, to its GraphQL type.
+      └─> mapRelations(…): Mapped[] | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:186]
+         ↳ Maps each row of a to-many relation to its GraphQL type, leaving one its query did not join unset, as {@link…
+        └─> map(…)(relation: Entity): Mapped [applications/lexico/lexico-api/src/lexico-api.utilities.ts:190]
 ```
 
-**12. `decodeOffsetCursor`** — depth ≥ 3 · orphan-root
+**18. `createConnectionLoader`** — depth ≥ 5 · orphan-root
 
 ```text
-🚀 decodeOffsetCursor(cursor?: null | string, defaultOffset?: number): number [applications/lexico/lexico-api/src/lexico-api.utilities.ts:71]
+🚀 createConnectionLoader(…): DataLoader<ConnectionRequest, Connection<Node>, string> [applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:38]
+   ↳ Batches relation connections into one DataLoader: every request for the same page arguments made in the same tick is…
+  └─> anonymous(requests: readonly ConnectionRequest[]): Promise<Connection<Node>[]> [applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:45]
+    └─> map(…)(…): Promise<void> [applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:65]
+      └─> createEmptyConnection<T>(): Connection<T> [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:36]
+         ↳ Returns a connection holding no edges and counting nothing.
+        └─> createConnection(…): Connection<T> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:17]
+           ↳ Creates a Relay Connection containing edges, page info, and total count.
+```
+
+**19. `toLexemeSearchResult`** — depth ≥ 5 · orphan-root
+
+```text
+🚀 toLexemeSearchResult(match: LexemeSearchMatch): LexemeSearchResult [applications/lexico/lexico-api/src/modules/search/search.utilities.ts:104]
+   ↳ Maps a search match, and the lexeme it matched, to the result the API returns.
+  └─> toLexemeType(lexeme: Lexeme): LexemeType [applications/lexico/lexico-api/src/modules/lexemes/lexemes.utilities.ts:25]
+     ↳ Maps a lexeme entity, and each relation it loaded, to its GraphQL type.
+    └─> mapNullableRelations(…): Mapped[] | null | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:162]
+       ↳ Maps a nullable to-many relation to its GraphQL types, keeping `null`, and leaving one its query did not join unset, as…
+      └─> mapRelations(…): Mapped[] | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:186]
+         ↳ Maps each row of a to-many relation to its GraphQL type, leaving one its query did not join unset, as {@link…
+        └─> map(…)(relation: Entity): Mapped [applications/lexico/lexico-api/src/lexico-api.utilities.ts:190]
+```
+
+**20. `AuthorsResolver.resolveAuthorTexts`** — depth ≥ 4 · decorated-method
+
+```text
+🚀 AuthorsResolver.resolveAuthorTexts(…): Promise<Connection<TextType>> [applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:81]
+   ↳ Pages an author's texts in title order. The texts of every author in a response are loaded together.
+  └─> mapConnection(…): Connection<Mapped> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:134]
+     ↳ Maps each node of a connection, keeping its cursors and page information.
+    └─> map(…)(edge: Edge<Node>): Edge<Mapped> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:139]
+      └─> createEdge<T>(node: T, cursor: string): Edge<T> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:41]
+         ↳ Creates a Relay Edge from a node and an encoded cursor string.
+```
+
+**21. `LinesResolver.tokensForLine`** — depth ≥ 4 · decorated-method
+
+```text
+🚀 LinesResolver.tokensForLine(…): Promise<Connection<TokenType>> [applications/lexico/lexico-api/src/modules/literature/lines.resolver.ts:83]
+   ↳ Pages a line's tokens in index order, each with its dictionary word.
+  └─> mapConnection(…): Connection<Mapped> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:134]
+     ↳ Maps each node of a connection, keeping its cursors and page information.
+    └─> map(…)(edge: Edge<Node>): Edge<Mapped> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:139]
+      └─> createEdge<T>(node: T, cursor: string): Edge<T> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:41]
+         ↳ Creates a Relay Edge from a node and an encoded cursor string.
+```
+
+**22. `TextsResolver.childTexts`** — depth ≥ 4 · decorated-method
+
+```text
+🚀 TextsResolver.childTexts(text: TextType, arguments_: PaginationArguments): Promise<Connection<TextType>> [applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:48]
+   ↳ Pages the child texts under the current text, ordered like the `texts` query.
+  └─> mapConnection(…): Connection<Mapped> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:134]
+     ↳ Maps each node of a connection, keeping its cursors and page information.
+    └─> map(…)(edge: Edge<Node>): Edge<Mapped> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:139]
+      └─> createEdge<T>(node: T, cursor: string): Edge<T> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:41]
+         ↳ Creates a Relay Edge from a node and an encoded cursor string.
+```
+
+**23. `TextsResolver.linesForText`** — depth ≥ 4 · decorated-method
+
+```text
+🚀 TextsResolver.linesForText(text: TextType, arguments_: PaginationArguments): Promise<Connection<LineType>> [applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:66]
+   ↳ Pages the current text's lines in index order.
+  └─> mapConnection(…): Connection<Mapped> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:134]
+     ↳ Maps each node of a connection, keeping its cursors and page information.
+    └─> map(…)(edge: Edge<Node>): Edge<Mapped> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:139]
+      └─> createEdge<T>(node: T, cursor: string): Edge<T> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:41]
+         ↳ Creates a Relay Edge from a node and an encoded cursor string.
+```
+
+**24. `TextsResolver.text`** — depth ≥ 4 · decorated-method
+
+```text
+🚀 TextsResolver.text(arguments_: TextArguments): Promise<null | TextType> [applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:116]
+   ↳ Finds a text by ID or slug.
+  └─> toTextType(text: Text): TextType [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:152]
+     ↳ Maps a text, and each relation it loaded, to its GraphQL type.
+    └─> mapNullableRelation(…): Mapped | null | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:151]
+       ↳ Maps a nullable to-one relation to its GraphQL type, keeping `null`, and leaving one its query did not join unset, as…
+      └─> mapRelation(…): Mapped | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:175]
+         ↳ Maps a to-one relation to its GraphQL type.
+```
+
+**25. `WordFormResolver.word`** — depth ≥ 4 · decorated-method
+
+```text
+🚀 WordFormResolver.word(wordForm: WordFormType): Promise<WordType> [applications/lexico/lexico-api/src/modules/words/word-form.resolver.ts:28]
+   ↳ Resolves the word side of a word-form link, batched per request.
+  └─> toWordType(word: Word): WordType [applications/lexico/lexico-api/src/modules/words/words.utilities.ts:38]
+     ↳ Maps a word, and each link it loaded, to its GraphQL type.
+    └─> mapRelations(…): Mapped[] | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:186]
+       ↳ Maps each row of a to-many relation to its GraphQL type, leaving one its query did not join unset, as {@link…
+      └─> map(…)(relation: Entity): Mapped [applications/lexico/lexico-api/src/lexico-api.utilities.ts:190]
+```
+
+**26. `WordLexemeResolver.word`** — depth ≥ 4 · decorated-method
+
+```text
+🚀 WordLexemeResolver.word(wordLexeme: WordLexemeType): Promise<WordType> [applications/lexico/lexico-api/src/modules/words/word-lexeme.resolver.ts:29]
+   ↳ Resolves the word side of a word-lexeme link, batched per request.
+  └─> toWordType(word: Word): WordType [applications/lexico/lexico-api/src/modules/words/words.utilities.ts:38]
+     ↳ Maps a word, and each link it loaded, to its GraphQL type.
+    └─> mapRelations(…): Mapped[] | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:186]
+       ↳ Maps each row of a to-many relation to its GraphQL type, leaving one its query did not join unset, as {@link…
+      └─> map(…)(relation: Entity): Mapped [applications/lexico/lexico-api/src/lexico-api.utilities.ts:190]
+```
+
+**27. `WordsResolver.word`** — depth ≥ 4 · decorated-method
+
+```text
+🚀 WordsResolver.word(arguments_: WordArguments): Promise<null | WordType> [applications/lexico/lexico-api/src/modules/words/words.resolver.ts:26]
+   ↳ Retrieves a single surface word by normalized input string.
+  └─> toWordType(word: Word): WordType [applications/lexico/lexico-api/src/modules/words/words.utilities.ts:38]
+     ↳ Maps a word, and each link it loaded, to its GraphQL type.
+    └─> mapRelations(…): Mapped[] | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:186]
+       ↳ Maps each row of a to-many relation to its GraphQL type, leaving one its query did not join unset, as {@link…
+      └─> map(…)(relation: Entity): Mapped [applications/lexico/lexico-api/src/lexico-api.utilities.ts:190]
+```
+
+**28. `AuthorsResolver.author`** — depth 3 · decorated-method
+
+```text
+🚀 AuthorsResolver.author(arguments_: AuthorArguments): Promise<AuthorType | null> [applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:46]
+   ↳ Finds an author by ID or slug.
+  └─> toAuthorType(author: Author): AuthorType [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:131]
+     ↳ Maps an author to its GraphQL type.
+    └─> toDeletableFields(entity: DeletableEntity): GraphQLFields<DeletableType> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:233]
+       ↳ Copies the shared base columns every soft-deletable entity exposes.
+```
+
+**29. `TextsResolver.parentText`** — depth ≥ 3 · decorated-method
+
+```text
+🚀 TextsResolver.parentText(text: TextType): Promise<null | TextType> [applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:84]
+   ↳ Resolves the parent text for a nested text.
+  └─> mapNullableRelation(…): Mapped | null | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:151]
+     ↳ Maps a nullable to-one relation to its GraphQL type, keeping `null`, and leaving one its query did not join unset, as…
+    └─> mapRelation(…): Mapped | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:175]
+       ↳ Maps a to-one relation to its GraphQL type.
+```
+
+**30. `decodeOffsetCursor`** — depth ≥ 3 · orphan-root
+
+```text
+🚀 decodeOffsetCursor(cursor?: null | string, defaultOffset?: number): number [applications/lexico/lexico-api/src/lexico-api.utilities.ts:75]
    ↳ Decodes an offset-based cursor, returning the specified default offset if missing or invalid.
-  └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:113]
+  └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
      ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
-    └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:99]
+    └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
        ↳ Decodes an opaque Base64 cursor string into structured data.
 ```
 
-**13. `Paginated`** — depth ≥ 3 · orphan-root
+**31. `Paginated`** — depth ≥ 3 · orphan-root
 
 ```text
-🚀 Paginated<T>(classReference: ClassConstructor<T>): ClassConstructor<Connection<T>> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:158]
-   ↳ Mixin type factory producing a Relay Connection ObjectType for GraphQL schema generation.
-  └─> createEdgeType<T>(classReference: ClassConstructor<T>): ClassConstructor<Edge<T>> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:46]
-     ↳ Mixin type factory producing a Relay Edge ObjectType for GraphQL schema generation.
-    └─> Field(…)(): StringConstructor [applications/lexico/lexico-api/src/lexico-api.utilities.ts:56]
+🚀 Paginated(…): ClassConstructor<Connection<T>> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:197]
+   ↳ Mixin type factory producing a Relay Connection ObjectType for GraphQL schema generation, named after the node's…
+  └─> createEdgeType(…): ClassConstructor<Edge<T>> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:49]
+     ↳ Mixin type factory producing a Relay Edge ObjectType for GraphQL schema generation, named after the node's GraphQL type…
+    └─> Field(…)(): StringConstructor [applications/lexico/lexico-api/src/lexico-api.utilities.ts:60]
 ```
 
-**14. `TokenWordLoader.anonymous`** — depth 3 · orphan-root
+**32. `toFormType`** — depth 3 · orphan-root
 
 ```text
-🚀 TokenWordLoader.anonymous(tokenIds: readonly string[]): Promise<(Word | null)[]> [applications/lexico/lexico-api/src/modules/literature/token-word.loader.ts:27]
-  └─> TokenWordLoader.loadTokenWords(tokenIds: readonly string[]): Promise<(null | Word)[]> [applications/lexico/lexico-api/src/modules/literature/token-word.loader.ts:33]
-     ↳ Loads token word mappings for a batch of token IDs, in request order.
-    └─> LiteratureService.findTokensByIds(tokenIds: string[]): Promise<Token[]> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:94]
-       ↳ Loads token rows by ID, preserving their word relation for DataLoader batching.
+🚀 toFormType(form: Form): FormType [applications/lexico/lexico-api/src/modules/lexemes/forms/forms.utilities.ts:29]
+   ↳ Maps a form entity to the GraphQL type of its own kind, the class the `Form` interface resolves a returned form by.
+  └─> toNonFiniteFormType(form: Form): FormType [applications/lexico/lexico-api/src/modules/lexemes/forms/forms.utilities.ts:59]
+     ↳ Maps the verbal-noun, participle, infinitive, and adverb forms.
+    └─> toVerbalNounFormType(form: Form): FormType [applications/lexico/lexico-api/src/modules/lexemes/forms/forms.utilities.ts:78]
+       ↳ Maps the gerund, supine, and adverb forms, the last of the kinds.
 ```
 
-**15. `HealthResolver.health`** — depth 2 · decorated-method
+**33. `toTokenType`** — depth ≥ 3 · orphan-root
+
+```text
+🚀 toTokenType(token: Token): TokenType [applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:164]
+   ↳ Maps a token, and each relation it loaded, to its GraphQL type.
+  └─> mapNullableRelation(…): Mapped | null | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:151]
+     ↳ Maps a nullable to-one relation to its GraphQL type, keeping `null`, and leaving one its query did not join unset, as…
+    └─> mapRelation(…): Mapped | undefined [applications/lexico/lexico-api/src/lexico-api.utilities.ts:175]
+       ↳ Maps a to-one relation to its GraphQL type.
+```
+
+**34. `LiteratureRelationsLoader.anonymous`** — depth 3 · orphan-root
+
+```text
+🚀 LiteratureRelationsLoader.anonymous(textIds: readonly string[]): Promise<(Text | null)[]> [applications/lexico/lexico-api/src/modules/literature/literature-relations.loader.ts:46]
+  └─> LiteratureRelationsService.findParentTexts(textIds: readonly string[]): Promise<Map<string, null | Text>> [applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:60]
+     ↳ Finds each text's parent text, with that parent's author, in one statement: null for a top-level text, and absent for…
+    └─> LiteratureRelationsService.map(…)(text: Text): [string, Text | null] [applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:71]
+```
+
+**35. `readSearchCursor`** — depth ≥ 3 · orphan-root
+
+```text
+🚀 readSearchCursor(cursor: string): CursorClaim | null [applications/lexico/lexico-api/src/modules/search/search.utilities.ts:79]
+   ↳ Reads the lexeme and score a search cursor names, as the row it claims: its id, and its negated score as the sort key…
+  └─> fromCursorSafe<T = unknown>(cursor?: null | string, parse?: (value: unknown) => T): null | T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:117]
+     ↳ Safely decodes a cursor string, returning null if invalid, null, or undefined.
+    └─> fromCursor<T = unknown>(cursor: string, parse?: (value: unknown) => T): T [applications/lexico/lexico-api/src/lexico-api.utilities.ts:103]
+       ↳ Decodes an opaque Base64 cursor string into structured data.
+```
+
+**36. `SearchService.load`** — depth ≥ 3 · orphan-root
+
+```text
+🚀 SearchService.load(…): Promise<{ id: string; enclitic: string | null; identifiers: string[]; lexeme: Lexeme; score: number; source: SearchMatchSource; }[]> [applications/lexico/lexico-api/src/modules/search/search.service.ts:233]
+  └─> SearchService.map(…)(lexeme: Lexeme): { lexeme: Lexeme; score: number; } [applications/lexico/lexico-api/src/modules/search/search.service.ts:238]
+    └─> toRankedScore(key: unknown): number [applications/lexico/lexico-api/src/modules/search/search.utilities.ts:120]
+       ↳ Reads a ranked row's score back from the sort key it pages by, which is the score negated so the best score sorts first.
+```
+
+**37. `WordLinkLoader.anonymous`** — depth 3 · orphan-root
+
+```text
+🚀 WordLinkLoader.anonymous(wordFormIds: readonly string[]): Promise<(Error | Word)[]> [applications/lexico/lexico-api/src/modules/words/word-link.loader.ts:28]
+  └─> WordLinkLoader.loadWords(…): (Error | Word)[] [applications/lexico/lexico-api/src/modules/words/word-link.loader.ts:49]
+     ↳ Orders the words of a batch of links by the link IDs requested, with an error in place of a link that no longer…
+    └─> WordLinkLoader.map(…)(link: { readonly id: string; readonly word: Word; }): [string, Word] [applications/lexico/lexico-api/src/modules/words/word-link.loader.ts:53]
+```
+
+**38. `WordLinkLoader.anonymous`** — depth 3 · orphan-root
+
+```text
+🚀 WordLinkLoader.anonymous(wordLexemeIds: readonly string[]): Promise<(Error | Word)[]> [applications/lexico/lexico-api/src/modules/words/word-link.loader.ts:36]
+  └─> WordLinkLoader.loadWords(…): (Error | Word)[] [applications/lexico/lexico-api/src/modules/words/word-link.loader.ts:49]
+     ↳ Orders the words of a batch of links by the link IDs requested, with an error in place of a link that no longer…
+    └─> WordLinkLoader.map(…)(link: { readonly id: string; readonly word: Word; }): [string, Word] [applications/lexico/lexico-api/src/modules/words/word-link.loader.ts:53]
+```
+
+**39. `HealthResolver.health`** — depth 2 · decorated-method
 
 ```text
 🚀 HealthResolver.health(): boolean [applications/lexico/lexico-api/src/modules/health/health.resolver.ts:22]
@@ -1109,139 +1440,128 @@ What this project is judged against, as declared in its own `callidescope.config
      ↳ Returns true if the service is operational.
 ```
 
-**16. `LexemesResolver.lexeme`** — depth 2 · decorated-method
-
-```text
-🚀 LexemesResolver.lexeme(arguments_: LexemeArguments): Promise<Lexeme | null> [applications/lexico/lexico-api/src/modules/lexemes/lexemes.resolver.ts:26]
-   ↳ Retrieves a single dictionary lexeme by ID.
-  └─> LexemesService.findById(id: string): Promise<Lexeme | null> [applications/lexico/lexico-api/src/modules/lexemes/lexemes.service.ts:33]
-     ↳ Finds a single lexeme by its unique identifier, with relations eagerly joined.
-```
-
-**17. `LexemesResolver.lexemes`** — depth 2 · decorated-method
-
-```text
-🚀 LexemesResolver.lexemes(arguments_: LexemesArguments): Promise<Lexeme[]> [applications/lexico/lexico-api/src/modules/lexemes/lexemes.resolver.ts:40]
-   ↳ Retrieves multiple dictionary lexemes by ID.
-  └─> LexemesService.findByIds(ids: string[]): Promise<Lexeme[]> [applications/lexico/lexico-api/src/modules/lexemes/lexemes.service.ts:49]
-     ↳ Finds multiple lexemes by their unique identifiers, with relations eagerly joined.
-```
-
-**18. `AuthorsResolver.author`** — depth 2 · decorated-method
-
-```text
-🚀 AuthorsResolver.author(arguments_: AuthorArguments): Promise<Author | null> [applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:38]
-   ↳ Finds an author by ID or slug.
-  └─> LiteratureService.findAuthorByLookup(id?: null | string, slug?: null | string): Promise<Author | null> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:48]
-     ↳ Finds an author by id or slug.
-```
-
-**19. `AuthorsResolver.resolveAuthorTexts`** — depth 2 · decorated-method
-
-```text
-🚀 AuthorsResolver.resolveAuthorTexts(author: Author): Promise<Text[]> [applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:63]
-   ↳ Resolves the text list associated with an author.
-  └─> LiteratureService.listTexts(authorId?: null | string, parentTextId?: null | string): Promise<Text[]> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:201]
-     ↳ Lists texts by author with optional parent filter.
-```
-
-**20. `LinesResolver.tokensForLine`** — depth 2 · decorated-method
-
-```text
-🚀 LinesResolver.tokensForLine(line: Line): Promise<Token[]> [applications/lexico/lexico-api/src/modules/literature/lines.resolver.ts:67]
-   ↳ Resolves every token attached to a line.
-  └─> LiteratureService.listTokensForLine(lineId: string): Promise<Token[]> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:254]
-     ↳ Finds tokens for a line with word relations eager-loaded.
-```
-
-**21. `TextsResolver.childTexts`** — depth 2 · decorated-method
-
-```text
-🚀 TextsResolver.childTexts(text: Text): Promise<Text[]> [applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:38]
-   ↳ Lists the child texts under the current text, ordered like the `texts` query.
-  └─> LiteratureService.listTexts(authorId?: null | string, parentTextId?: null | string): Promise<Text[]> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:201]
-     ↳ Lists texts by author with optional parent filter.
-```
-
-**22. `TextsResolver.linesForText`** — depth 2 · decorated-method
-
-```text
-🚀 TextsResolver.linesForText(text: Text): Promise<Line[]> [applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:47]
-   ↳ Lists the current text's lines in index order.
-  └─> LiteratureService.listLines(…): Promise<Line[]> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:128]
-     ↳ Retrieves lines for a text, optionally clipped to index bounds.
-```
-
-**23. `TextsResolver.parentText`** — depth 2 · decorated-method
-
-```text
-🚀 TextsResolver.parentText(text: Text): Promise<null | Text> [applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:57]
-   ↳ Resolves the parent text for a nested text.
-  └─> LiteratureService.findTextByLookup(id?: null | string, slug?: null | string): Promise<null | Text> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:68]
-     ↳ Finds a text by id or slug.
-```
-
-**24. `TextsResolver.text`** — depth 2 · decorated-method
-
-```text
-🚀 TextsResolver.text(arguments_: TextArguments): Promise<null | Text> [applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:86]
-   ↳ Finds a text by ID or slug.
-  └─> LiteratureService.findTextByLookup(id?: null | string, slug?: null | string): Promise<null | Text> [applications/lexico/lexico-api/src/modules/literature/literature.service.ts:68]
-     ↳ Finds a text by id or slug.
-```
-
-**25. `WordsResolver.word`** — depth 2 · decorated-method
-
-```text
-🚀 WordsResolver.word(arguments_: WordArguments): Promise<null | Word> [applications/lexico/lexico-api/src/modules/words/words.resolver.ts:26]
-   ↳ Retrieves a single surface word by normalized input string.
-  └─> WordsService.findByData(data: string): Promise<null | Word> [applications/lexico/lexico-api/src/modules/words/words.service.ts:39]
-     ↳ Returns a single surface word and all of its morphological and lexical links.
-```
-
-**26. `transform(…)`** — depth 2 · orphan-root
+**40. `transform(…)`** — depth 2 · orphan-root
 
 ```text
 🚀 transform(…)(origins: string): string[] [applications/lexico/lexico-api/src/lexico-api.constants.ts:14]
   └─> filter(…)(origin: string): boolean [applications/lexico/lexico-api/src/lexico-api.constants.ts:18]
 ```
 
-**27. `encodeOffsetCursor`** — depth 2 · orphan-root
+**41. `encodeOffsetCursor`** — depth 2 · orphan-root
 
 ```text
-🚀 encodeOffsetCursor(offset: number): string [applications/lexico/lexico-api/src/lexico-api.utilities.ts:92]
+🚀 encodeOffsetCursor(offset: number): string [applications/lexico/lexico-api/src/lexico-api.utilities.ts:96]
    ↳ Encodes an offset-based integer cursor.
-  └─> toCursor(data: unknown): string [applications/lexico/lexico-api/src/lexico-api.utilities.ts:186]
+  └─> toCursor(data: unknown): string [applications/lexico/lexico-api/src/lexico-api.utilities.ts:226]
      ↳ Encodes structured data into an opaque Base64 cursor string.
 ```
 
-**28. `SearchService.getCursor`** — depth 2 · orphan-root
+**42. `toInflectionType`** — depth 2 · orphan-root
 
 ```text
-🚀 SearchService.getCursor(item: LexemeSearchResult): string [applications/lexico/lexico-api/src/modules/search/search.service.ts:315]
-  └─> toCursor(data: unknown): string [applications/lexico/lexico-api/src/lexico-api.utilities.ts:186]
+🚀 toInflectionType(inflection: Inflection): InflectionType [applications/lexico/lexico-api/src/modules/lexemes/inflections/inflections.utilities.ts:25]
+   ↳ Maps an inflection entity to the GraphQL type of its own part of speech, the class the `Inflection` interface resolves…
+  └─> toInvariableInflectionType(inflection: Inflection): InflectionType [applications/lexico/lexico-api/src/modules/lexemes/inflections/inflections.utilities.ts:51]
+     ↳ Maps the adverb, preposition, and uninflected inflections.
+```
+
+**43. `toPrincipalPartType`** — depth 2 · orphan-root
+
+```text
+🚀 toPrincipalPartType(principalPart: PrincipalPart): PrincipalPartType [applications/lexico/lexico-api/src/modules/lexemes/lexemes.utilities.ts:44]
+   ↳ Maps a principal part entity to its GraphQL type.
+  └─> toDeletableFields(entity: DeletableEntity): GraphQLFields<DeletableType> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:233]
+     ↳ Copies the shared base columns every soft-deletable entity exposes.
+```
+
+**44. `toPronunciationType`** — depth 2 · orphan-root
+
+```text
+🚀 toPronunciationType(pronunciation: Pronunciation): PronunciationType [applications/lexico/lexico-api/src/modules/lexemes/lexemes.utilities.ts:55]
+   ↳ Maps a pronunciation entity to its GraphQL type.
+  └─> toDeletableFields(entity: DeletableEntity): GraphQLFields<DeletableType> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:233]
+     ↳ Copies the shared base columns every soft-deletable entity exposes.
+```
+
+**45. `toTranslationType`** — depth 2 · orphan-root
+
+```text
+🚀 toTranslationType(translation: Translation): TranslationType [applications/lexico/lexico-api/src/modules/lexemes/lexemes.utilities.ts:68]
+   ↳ Maps a translation entity to its GraphQL type.
+  └─> toDeletableFields(entity: DeletableEntity): GraphQLFields<DeletableType> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:233]
+     ↳ Copies the shared base columns every soft-deletable entity exposes.
+```
+
+**46. `toWordFormType`** — depth ≥ 2 · orphan-root
+
+```text
+🚀 toWordFormType(wordForm: WordForm): WordFormType [applications/lexico/lexico-api/src/modules/words/words.utilities.ts:22]
+   ↳ Maps a word-form link, and the form it loaded, to its GraphQL type.
+  └─> toDeletableFields(entity: DeletableEntity): GraphQLFields<DeletableType> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:233]
+     ↳ Copies the shared base columns every soft-deletable entity exposes.
+```
+
+**47. `toWordLexemeType`** — depth ≥ 2 · orphan-root
+
+```text
+🚀 toWordLexemeType(wordLexeme: WordLexeme): WordLexemeType [applications/lexico/lexico-api/src/modules/words/words.utilities.ts:30]
+   ↳ Maps a word-lexeme link, and the lexeme it loaded, to its GraphQL type.
+  └─> toDeletableFields(entity: DeletableEntity): GraphQLFields<DeletableType> [applications/lexico/lexico-api/src/lexico-api.utilities.ts:233]
+     ↳ Copies the shared base columns every soft-deletable entity exposes.
+```
+
+**48. `toRequestKey`** — depth 2 · orphan-root
+
+```text
+🚀 toRequestKey(request: ConnectionRequest): string [applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:310]
+   ↳ Keys one parent's page request, which the loader caches its answer under.
+  └─> toPaginationKey(pagination: PaginationArguments): string [applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:300]
+     ↳ Keys one page's arguments, so requests asking the same page share a batch.
+```
+
+**49. `LiteratureRelationsService.load`** — depth 2 · orphan-root
+
+```text
+🚀 LiteratureRelationsService.load(): SelectQueryBuilder<Text> [applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:82]
+  └─> LiteratureRelationsService.selectTexts(): ReturnType<Repository<Text>["createQueryBuilder"]> [applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:46]
+     ↳ Selects texts with the relations a text connection exposes — the author, and the parent text with its own author — as a…
+```
+
+**50. `LiteratureRelationsService.load`** — depth 2 · orphan-root
+
+```text
+🚀 LiteratureRelationsService.load(): SelectQueryBuilder<Text> [applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:125]
+  └─> LiteratureRelationsService.selectTexts(): ReturnType<Repository<Text>["createQueryBuilder"]> [applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:46]
+     ↳ Selects texts with the relations a text connection exposes — the author, and the parent text with its own author — as a…
+```
+
+**51. `SearchService.encode`** — depth 2 · orphan-root
+
+```text
+🚀 SearchService.encode(position: CursorPosition): string [applications/lexico/lexico-api/src/modules/search/search.service.ts:218]
+  └─> toCursor(data: unknown): string [applications/lexico/lexico-api/src/lexico-api.utilities.ts:226]
      ↳ Encodes structured data into an opaque Base64 cursor string.
 ```
 
-**29. `WordsService.findFormsByData`** — depth 2 · orphan-root
+**52. `WordsService.findFormsByData`** — depth 2 · orphan-root
 
 ```text
-🚀 WordsService.findFormsByData(data: string): Promise<WordForm[]> [applications/lexico/lexico-api/src/modules/words/words.service.ts:130]
+🚀 WordsService.findFormsByData(data: string): Promise<WordForm[]> [applications/lexico/lexico-api/src/modules/words/words.service.ts:93]
    ↳ Returns every morphological form linked to the given word surface.
-  └─> WordsService.findByData(data: string): Promise<null | Word> [applications/lexico/lexico-api/src/modules/words/words.service.ts:39]
+  └─> WordsService.findByData(data: string): Promise<null | Word> [applications/lexico/lexico-api/src/modules/words/words.service.ts:41]
      ↳ Returns a single surface word and all of its morphological and lexical links.
 ```
 
-**30. `WordsService.findLexemeLinksByData`** — depth 2 · orphan-root
+**53. `WordsService.findLexemeLinksByData`** — depth 2 · orphan-root
 
 ```text
-🚀 WordsService.findLexemeLinksByData(data: string): Promise<WordLexeme[]> [applications/lexico/lexico-api/src/modules/words/words.service.ts:138]
+🚀 WordsService.findLexemeLinksByData(data: string): Promise<WordLexeme[]> [applications/lexico/lexico-api/src/modules/words/words.service.ts:101]
    ↳ Returns the word-lexeme junction rows for the given surface word.
-  └─> WordsService.findByData(data: string): Promise<null | Word> [applications/lexico/lexico-api/src/modules/words/words.service.ts:39]
+  └─> WordsService.findByData(data: string): Promise<null | Word> [applications/lexico/lexico-api/src/modules/words/words.service.ts:41]
      ↳ Returns a single surface word and all of its morphological and lexical links.
 ```
 
-**31. `main`** — depth 2 · orphan-root
+**54. `main`** — depth 2 · orphan-root
 
 ```text
 🚀 main(): Promise<void> [applications/lexico/lexico-api/src/lexico-api.ts:16]
@@ -1255,79 +1575,130 @@ What this project is judged against, as declared in its own `callidescope.config
 
 | Callable | Breadth | Calls directly | Location |
 | --- | --- | --- | --- |
-| `SearchService.searchLatin` | 10 | `MacronsService.removeMacrons`, `SearchService.paginateSearchResults`, `decomposeEnclitic`, `SearchService.findExactLemmas`, `SearchService.findWordMatches`, `SearchService.findEncliticLexemes`, `SearchService.findPrefixLemmas`, `SearchService.findFuzzyLemmas`, `SearchService.filter(…)`, `SearchService.logSearch` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:380` |
-| `paginateQuery` | 8 | `readCount`, `findCursorPosition`, `findWindowIds`, `slicePage`, `loadInOrder`, `hasRowBefore`, `createConnection`, `map(…)` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:38` |
-| `LiteratureService.searchLiterature` | 7 | `createEmptyConnection`, `LiteratureService.searchAuthors`, `LiteratureService.searchTexts`, `LiteratureService.searchLines`, `LiteratureService.map(…)`, `LiteratureService.map(…)`, `LiteratureService.map(…)` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:355` |
+| `SearchService.describeLatinMatches` | 10 | `SearchService.map(…)`, `SearchService.filter(…)`, `SearchService.filter(…)`, `SearchService.map(…)`, `SearchService.forEach(…)`, `SearchService.map(…)`, `SearchService.filter(…)`, `SearchService.flatMap(…)`, `SearchService.filter(…)`, `SearchService.map(…)` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:102` |
+| `paginateQuery` | 8 | `readCount`, `readPage`, `decodeCursor`, `slicePage`, `loadInOrder`, `map(…)`, `createConnection`, `map(…)` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:53` |
+| `LiteratureService.searchLiterature` | 7 | `createEmptyConnection`, `LiteratureService.searchAuthors`, `LiteratureService.searchTexts`, `LiteratureService.searchLines`, `LiteratureService.map(…)`, `LiteratureService.map(…)`, `LiteratureService.map(…)` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:259` |
 
 <details>
-<summary>65 more callables</summary>
+<summary>116 more callables</summary>
 
 | Callable | Breadth | Calls directly | Location |
 | --- | --- | --- | --- |
-| `SearchService.searchEnglish` | 7 | `SearchService.paginateSearchResults`, `SearchService.findEnglishMatches`, `SearchService.createLexemeQuery`, `SearchService.map(…)`, `SearchService.map(…)`, `SearchService.flatMap(…)`, `SearchService.logSearch` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:336` |
-| `paginateArray` | 3 | `getPaginationBounds`, `sliceWithLimits`, `map(…)` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:130` |
-| `loadInOrder` | 3 | `map(…)`, `map(…)`, `flatMap(…)` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:185` |
-| `TokenWordLoader.loadTokenWords` | 3 | `LiteratureService.findTokensByIds`, `TokenWordLoader.map(…)`, `TokenWordLoader.map(…)` | `applications/lexico/lexico-api/src/modules/literature/token-word.loader.ts:33` |
-| `SearchService.findEncliticLexemes` | 3 | `SearchService.some(…)`, `SearchService.createLexemeQuery`, `mergeSearchResult` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:93` |
-| `SearchService.findWordMatches` | 3 | `SearchService.filter(…)`, `SearchService.map(…)`, `mergeSearchResult` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:240` |
-| `SearchService.paginateSearchResults` | 3 | `SearchService.toSorted(…)`, `paginateArray`, `createConnection` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:300` |
+| `SearchService.searchLatin` | 7 | `MacronsService.removeMacrons`, `createEmptyConnection`, `decomposeEnclitic`, `SearchService.paginateRankedLexemes(…)`, `SearchService.paginateRankedLexemes`, `SearchService.rankLatinMatches`, `SearchService.logSearch` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:416` |
+| `paginateQueryByParent` | 5 | `readCount`, `findCursorPositions`, `countPartitions`, `loadPartitionPages`, `assembleConnection` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:90` |
+| `SearchService.searchEnglish` | 5 | `createEmptyConnection`, `SearchService.paginateRankedLexemes(…)`, `SearchService.paginateRankedLexemes`, `SearchService.rankEnglishMatches`, `SearchService.logSearch` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:387` |
+| `toLexemeType` | 4 | `toDeletableFields`, `mapRelations`, `mapNullableRelation`, `mapNullableRelations` | `applications/lexico/lexico-api/src/modules/lexemes/lexemes.utilities.ts:25` |
+| `LiteratureResolver.searchLiterature` | 4 | `LiteratureService.searchLiterature`, `LiteratureResolver.map(…)`, `LiteratureResolver.map(…)`, `LiteratureResolver.map(…)` | `applications/lexico/lexico-api/src/modules/literature/literature.resolver.ts:24` |
+| `SearchService.rankLatinMatches` | 4 | `SearchService.headwordOrWordMatches`, `SearchService.translatedCondition`, `SearchService.rankLemmaPattern`, `SearchService.map(…)` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:306` |
+| `toTextType` | 3 | `toDeletableFields`, `mapRelation`, `mapNullableRelation` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:152` |
+| `toTokenType` | 3 | `toDeletableFields`, `mapRelation`, `mapNullableRelation` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:164` |
+| `loadInOrder` | 3 | `map(…)`, `map(…)`, `flatMap(…)` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:209` |
+| `countPartitions` | 3 | `windowCondition`, `toRowKey`, `map(…)` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:168` |
+| `findCursorPositions` | 3 | `readCursorId`, `filter(…)`, `map(…)` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:208` |
+| `SearchService.paginateRankedLexemes` | 3 | `paginateQuery`, `SearchService.mapConnection(…)`, `mapConnection` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:207` |
+| `SearchService.load` | 3 | `SearchService.createLexemeQuery`, `SearchService.map(…)`, `SearchService.map(…)` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:233` |
 | `transform(…)` | 2 | `filter(…)`, `map(…)` | `applications/lexico/lexico-api/src/lexico-api.constants.ts:14` |
-| `createEdgeType` | 2 | `Field(…)`, `Field(…)` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:46` |
-| `getPaginationBounds` | 2 | `findIndex(…)`, `findIndex(…)` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:193` |
-| `map(…)` | 2 | `createEdge`, `toCursor` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:58` |
-| `findCursorPosition` | 2 | `fromCursorSafe`, `toCursor` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:117` |
-| `findWindowIds` | 2 | `boundWindow`, `map(…)` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:145` |
-| `LiteratureService.listLinesConnection` | 2 | `createEmptyConnection`, `paginateQuery` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:157` |
-| `LiteratureService.searchAuthors` | 2 | `createEmptyConnection`, `paginateQuery` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:298` |
-| `LiteratureService.searchLines` | 2 | `createEmptyConnection`, `paginateQuery` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:324` |
-| `LiteratureService.searchTexts` | 2 | `createEmptyConnection`, `paginateQuery` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:385` |
-| `SearchService.findExactLemmas` | 2 | `SearchService.createLexemeQuery`, `mergeSearchResult` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:163` |
-| `SearchService.findFuzzyLemmas` | 2 | `SearchService.createLexemeQuery`, `mergeSearchResult` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:188` |
-| `SearchService.findPrefixLemmas` | 2 | `SearchService.createLexemeQuery`, `mergeSearchResult` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:215` |
-| `WordsService.findByDataList` | 2 | `WordsService.map(…)`, `WordsService.flatMap(…)` | `applications/lexico/lexico-api/src/modules/words/words.service.ts:63` |
+| `createEdgeType` | 2 | `Field(…)`, `Field(…)` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:49` |
+| `LexemesResolver.lexeme` | 2 | `LexemesService.findById`, `toLexemeType` | `applications/lexico/lexico-api/src/modules/lexemes/lexemes.resolver.ts:26` |
+| `LexemesResolver.lexemes` | 2 | `LexemesService.findByIds`, `LexemesResolver.map(…)` | `applications/lexico/lexico-api/src/modules/lexemes/lexemes.resolver.ts:41` |
+| `toWordFormType` | 2 | `toDeletableFields`, `mapRelation` | `applications/lexico/lexico-api/src/modules/words/words.utilities.ts:22` |
+| `toWordLexemeType` | 2 | `toDeletableFields`, `mapRelation` | `applications/lexico/lexico-api/src/modules/words/words.utilities.ts:30` |
+| `toWordType` | 2 | `toDeletableFields`, `mapRelations` | `applications/lexico/lexico-api/src/modules/words/words.utilities.ts:38` |
+| `map(…)` | 2 | `createEdge`, `encodeCursor` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:76` |
+| `readCursorId` | 2 | `fromCursorSafe`, `toCursor` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:97` |
+| `toLineType` | 2 | `toDeletableFields`, `mapRelation` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:140` |
+| `map(…)` | 2 | `map(…)`, `map(…)` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:225` |
+| `anonymous` | 2 | `toPaginationKey`, `map(…)` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:45` |
+| `map(…)` | 2 | `map(…)`, `createEmptyConnection` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:65` |
+| `assembleConnection` | 2 | `createConnection`, `map(…)` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:138` |
+| `map(…)` | 2 | `createEdge`, `toCursor` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:154` |
+| `loadPartitionPages` | 2 | `windowCondition`, `pageCondition` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:245` |
+| `LiteratureRelationsLoader.anonymous` | 2 | `LiteratureRelationsService.findParentTexts`, `LiteratureRelationsLoader.map(…)` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.loader.ts:46` |
+| `LiteratureService.listLinesConnection` | 2 | `createEmptyConnection`, `paginateQuery` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:103` |
+| `LiteratureService.searchAuthors` | 2 | `createEmptyConnection`, `paginateQuery` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:202` |
+| `LiteratureService.searchLines` | 2 | `createEmptyConnection`, `paginateQuery` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:228` |
+| `LiteratureService.searchTexts` | 2 | `createEmptyConnection`, `paginateQuery` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:289` |
+| `AuthorsResolver.author` | 2 | `LiteratureService.findAuthorByLookup`, `toAuthorType` | `applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:46` |
+| `AuthorsResolver.authors` | 2 | `mapConnection`, `LiteratureService.listAuthorsConnection` | `applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:67` |
+| `AuthorsResolver.searchAuthors` | 2 | `mapConnection`, `LiteratureService.searchAuthors` | `applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:98` |
+| `LinesResolver.lines` | 2 | `LiteratureService.listLinesConnection`, `mapConnection` | `applications/lexico/lexico-api/src/modules/literature/lines.resolver.ts:46` |
+| `LinesResolver.searchLines` | 2 | `LiteratureService.searchLines`, `mapConnection` | `applications/lexico/lexico-api/src/modules/literature/lines.resolver.ts:62` |
+| `TextsResolver.searchTexts` | 2 | `LiteratureService.searchTexts`, `mapConnection` | `applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:101` |
+| `TextsResolver.text` | 2 | `LiteratureService.findTextByLookup`, `toTextType` | `applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:116` |
+| `TextsResolver.texts` | 2 | `LiteratureService.listTextsConnection`, `mapConnection` | `applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:135` |
+| `TokensResolver.tokens` | 2 | `LiteratureService.listTokensForLineConnection`, `mapConnection` | `applications/lexico/lexico-api/src/modules/literature/tokens.resolver.ts:29` |
+| `readSearchCursor` | 2 | `fromCursorSafe`, `toCursor` | `applications/lexico/lexico-api/src/modules/search/search.utilities.ts:79` |
+| `SearchService.encode` | 2 | `toCursor`, `toRankedScore` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:218` |
+| `SearchResolver.searchEnglish` | 2 | `mapConnection`, `SearchService.searchEnglish` | `applications/lexico/lexico-api/src/modules/search/search.resolver.ts:31` |
+| `SearchResolver.searchLatin` | 2 | `mapConnection`, `SearchService.searchLatin` | `applications/lexico/lexico-api/src/modules/search/search.resolver.ts:47` |
+| `WordsService.findByDataList` | 2 | `WordsService.map(…)`, `WordsService.flatMap(…)` | `applications/lexico/lexico-api/src/modules/words/words.service.ts:52` |
+| `WordLinkLoader.anonymous` | 2 | `WordLinkLoader.loadWords`, `WordsService.findWordFormsByIds` | `applications/lexico/lexico-api/src/modules/words/word-link.loader.ts:28` |
+| `WordLinkLoader.anonymous` | 2 | `WordLinkLoader.loadWords`, `WordsService.findWordLexemesByIds` | `applications/lexico/lexico-api/src/modules/words/word-link.loader.ts:36` |
+| `WordLinkLoader.loadWords` | 2 | `WordLinkLoader.map(…)`, `WordLinkLoader.map(…)` | `applications/lexico/lexico-api/src/modules/words/word-link.loader.ts:49` |
+| `WordsResolver.word` | 2 | `WordsService.findByData`, `toWordType` | `applications/lexico/lexico-api/src/modules/words/words.resolver.ts:26` |
+| `WordsResolver.words` | 2 | `WordsService.findByDataList`, `WordsResolver.map(…)` | `applications/lexico/lexico-api/src/modules/words/words.resolver.ts:41` |
+| `decodeOffsetCursor` | 1 | `fromCursorSafe` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:75` |
+| `encodeOffsetCursor` | 1 | `toCursor` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:96` |
+| `fromCursorSafe` | 1 | `fromCursor` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:117` |
+| `mapConnection` | 1 | `map(…)` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:134` |
+| `map(…)` | 1 | `createEdge` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:139` |
+| `mapNullableRelation` | 1 | `mapRelation` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:151` |
+| `mapNullableRelations` | 1 | `mapRelations` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:162` |
+| `mapRelations` | 1 | `map(…)` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:186` |
+| `Paginated` | 1 | `createEdgeType` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:197` |
+| `toFormType` | 1 | `toNonFiniteFormType` | `applications/lexico/lexico-api/src/modules/lexemes/forms/forms.utilities.ts:29` |
+| `toNonFiniteFormType` | 1 | `toVerbalNounFormType` | `applications/lexico/lexico-api/src/modules/lexemes/forms/forms.utilities.ts:59` |
+| `toInflectionType` | 1 | `toInvariableInflectionType` | `applications/lexico/lexico-api/src/modules/lexemes/inflections/inflections.utilities.ts:25` |
+| `toPrincipalPartType` | 1 | `toDeletableFields` | `applications/lexico/lexico-api/src/modules/lexemes/lexemes.utilities.ts:44` |
+| `toPronunciationType` | 1 | `toDeletableFields` | `applications/lexico/lexico-api/src/modules/lexemes/lexemes.utilities.ts:55` |
+| `toTranslationType` | 1 | `toDeletableFields` | `applications/lexico/lexico-api/src/modules/lexemes/lexemes.utilities.ts:68` |
+| `LexemesResolver.map(…)` | 1 | `toLexemeType` | `applications/lexico/lexico-api/src/modules/lexemes/lexemes.resolver.ts:49` |
+| `createEmptyConnection` | 1 | `createConnection` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:36` |
+| `toAuthorType` | 1 | `toDeletableFields` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:131` |
+| `decodeCursor` | 1 | `readCursorId` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:181` |
+| `encodeCursor` | 1 | `toCursor` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:196` |
+| `readPage` | 1 | `selectClaimedRow` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:247` |
+| `createConnectionLoader` | 1 | `anonymous` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:38` |
+| `toRequestKey` | 1 | `toPaginationKey` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:310` |
+| `windowCondition` | 1 | `toRowKey` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.utilities.ts:325` |
+| `LiteratureRelationsService.findParentTexts` | 1 | `LiteratureRelationsService.map(…)` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:60` |
+| `LiteratureRelationsService.listChildTextsByParent` | 1 | `paginateQueryByParent` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:75` |
+| `LiteratureRelationsService.load` | 1 | `LiteratureRelationsService.selectTexts` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:82` |
+| `LiteratureRelationsService.listLinesByText` | 1 | `paginateQueryByParent` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:94` |
+| `LiteratureRelationsService.listTextsByAuthor` | 1 | `paginateQueryByParent` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:118` |
+| `LiteratureRelationsService.load` | 1 | `LiteratureRelationsService.selectTexts` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:125` |
+| `LiteratureRelationsService.listTokensByLine` | 1 | `paginateQueryByParent` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.service.ts:140` |
+| `LiteratureRelationsLoader.createConnectionLoader(…)` | 1 | `LiteratureRelationsService.listChildTextsByParent` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.loader.ts:31` |
+| `LiteratureRelationsLoader.createConnectionLoader(…)` | 1 | `LiteratureRelationsService.listLinesByText` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.loader.ts:40` |
+| `LiteratureRelationsLoader.createConnectionLoader(…)` | 1 | `LiteratureRelationsService.listTextsByAuthor` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.loader.ts:56` |
+| `LiteratureRelationsLoader.createConnectionLoader(…)` | 1 | `LiteratureRelationsService.listTokensByLine` | `applications/lexico/lexico-api/src/modules/literature/literature-relations.loader.ts:62` |
+| `LiteratureService.listAuthorsConnection` | 1 | `paginateQuery` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:87` |
+| `LiteratureService.listTextsConnection` | 1 | `paginateQuery` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:147` |
+| `LiteratureService.listTokensForLineConnection` | 1 | `paginateQuery` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:180` |
+| `AuthorsResolver.resolveAuthorTexts` | 1 | `mapConnection` | `applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:81` |
+| `LinesResolver.tokensForLine` | 1 | `mapConnection` | `applications/lexico/lexico-api/src/modules/literature/lines.resolver.ts:83` |
+| `LiteratureResolver.map(…)` | 1 | `toAuthorType` | `applications/lexico/lexico-api/src/modules/literature/literature.resolver.ts:33` |
+| `LiteratureResolver.map(…)` | 1 | `toLineType` | `applications/lexico/lexico-api/src/modules/literature/literature.resolver.ts:34` |
+| `LiteratureResolver.map(…)` | 1 | `toTextType` | `applications/lexico/lexico-api/src/modules/literature/literature.resolver.ts:35` |
+| `TextsResolver.childTexts` | 1 | `mapConnection` | `applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:48` |
+| `TextsResolver.linesForText` | 1 | `mapConnection` | `applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:66` |
+| `TextsResolver.parentText` | 1 | `mapNullableRelation` | `applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:84` |
+| `formatFormIdentifier` | 1 | `formatDeclinedForm` | `applications/lexico/lexico-api/src/modules/search/search.utilities.ts:59` |
+| `toLexemeSearchResult` | 1 | `toLexemeType` | `applications/lexico/lexico-api/src/modules/search/search.utilities.ts:104` |
+| `formatDeclinedForm` | 1 | `formatNonFiniteForm` | `applications/lexico/lexico-api/src/modules/search/search.utilities.ts:127` |
+| `SearchService.map(…)` | 1 | `formatFormIdentifier` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:133` |
+| `SearchService.flatMap(…)` | 1 | `SearchService.map(…)` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:148` |
+| `SearchService.map(…)` | 1 | `toLatinMatchSource` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:151` |
+| `SearchService.logSearch` | 1 | `SearchService.map(…)` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:187` |
+| `SearchService.map(…)` | 1 | `toRankedScore` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:238` |
+| `SearchService.paginateRankedLexemes(…)` | 1 | `SearchService.map(…)` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:400` |
+| `SearchService.paginateRankedLexemes(…)` | 1 | `SearchService.describeLatinMatches` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:436` |
+| `WordsService.findFormsByData` | 1 | `WordsService.findByData` | `applications/lexico/lexico-api/src/modules/words/words.service.ts:93` |
+| `WordsService.findLexemeLinksByData` | 1 | `WordsService.findByData` | `applications/lexico/lexico-api/src/modules/words/words.service.ts:101` |
+| `WordFormResolver.word` | 1 | `toWordType` | `applications/lexico/lexico-api/src/modules/words/word-form.resolver.ts:28` |
+| `WordLexemeResolver.word` | 1 | `toWordType` | `applications/lexico/lexico-api/src/modules/words/word-lexeme.resolver.ts:29` |
+| `WordsResolver.map(…)` | 1 | `toWordType` | `applications/lexico/lexico-api/src/modules/words/words.resolver.ts:49` |
 | `HealthResolver.health` | 1 | `HealthService.isHealthy` | `applications/lexico/lexico-api/src/modules/health/health.resolver.ts:22` |
-| `LexemesResolver.lexeme` | 1 | `LexemesService.findById` | `applications/lexico/lexico-api/src/modules/lexemes/lexemes.resolver.ts:26` |
-| `LexemesResolver.lexemes` | 1 | `LexemesService.findByIds` | `applications/lexico/lexico-api/src/modules/lexemes/lexemes.resolver.ts:40` |
-| `decodeOffsetCursor` | 1 | `fromCursorSafe` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:71` |
-| `encodeOffsetCursor` | 1 | `toCursor` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:92` |
-| `fromCursorSafe` | 1 | `fromCursor` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:113` |
-| `map(…)` | 1 | `createEdge` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:149` |
-| `Paginated` | 1 | `createEdgeType` | `applications/lexico/lexico-api/src/lexico-api.utilities.ts:158` |
-| `createEmptyConnection` | 1 | `createConnection` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:21` |
-| `hasRowBefore` | 1 | `boundWindow` | `applications/lexico/lexico-api/src/modules/literature/literature.utilities.ts:168` |
-| `LiteratureService.listAuthorsConnection` | 1 | `paginateQuery` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:108` |
-| `LiteratureService.listTextsConnection` | 1 | `paginateQuery` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:221` |
-| `LiteratureService.listTokensForLineConnection` | 1 | `paginateQuery` | `applications/lexico/lexico-api/src/modules/literature/literature.service.ts:265` |
-| `AuthorsResolver.author` | 1 | `LiteratureService.findAuthorByLookup` | `applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:38` |
-| `AuthorsResolver.authors` | 1 | `LiteratureService.listAuthorsConnection` | `applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:55` |
-| `AuthorsResolver.resolveAuthorTexts` | 1 | `LiteratureService.listTexts` | `applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:63` |
-| `AuthorsResolver.searchAuthors` | 1 | `LiteratureService.searchAuthors` | `applications/lexico/lexico-api/src/modules/literature/authors.resolver.ts:73` |
-| `LinesResolver.lines` | 1 | `LiteratureService.listLinesConnection` | `applications/lexico/lexico-api/src/modules/literature/lines.resolver.ts:36` |
-| `LinesResolver.searchLines` | 1 | `LiteratureService.searchLines` | `applications/lexico/lexico-api/src/modules/literature/lines.resolver.ts:51` |
-| `LinesResolver.tokensForLine` | 1 | `LiteratureService.listTokensForLine` | `applications/lexico/lexico-api/src/modules/literature/lines.resolver.ts:67` |
-| `LiteratureResolver.searchLiterature` | 1 | `LiteratureService.searchLiterature` | `applications/lexico/lexico-api/src/modules/literature/literature.resolver.ts:23` |
-| `TextsResolver.childTexts` | 1 | `LiteratureService.listTexts` | `applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:38` |
-| `TextsResolver.linesForText` | 1 | `LiteratureService.listLines` | `applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:47` |
-| `TextsResolver.parentText` | 1 | `LiteratureService.findTextByLookup` | `applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:57` |
-| `TextsResolver.searchTexts` | 1 | `LiteratureService.searchTexts` | `applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:72` |
-| `TextsResolver.text` | 1 | `LiteratureService.findTextByLookup` | `applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:86` |
-| `TextsResolver.texts` | 1 | `LiteratureService.listTextsConnection` | `applications/lexico/lexico-api/src/modules/literature/texts.resolver.ts:101` |
-| `TokenWordLoader.anonymous` | 1 | `TokenWordLoader.loadTokenWords` | `applications/lexico/lexico-api/src/modules/literature/token-word.loader.ts:27` |
-| `TokensResolver.tokens` | 1 | `LiteratureService.listTokensForLineConnection` | `applications/lexico/lexico-api/src/modules/literature/tokens.resolver.ts:52` |
-| `formatFormIdentifier` | 1 | `formatDeclinedForm` | `applications/lexico/lexico-api/src/modules/search/search.utilities.ts:48` |
-| `formatDeclinedForm` | 1 | `formatNonFiniteForm` | `applications/lexico/lexico-api/src/modules/search/search.utilities.ts:107` |
-| `SearchService.some(…)` | 1 | `hasTranslations` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:103` |
-| `SearchService.findEnglishMatches` | 1 | `SearchService.map(…)` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:128` |
-| `SearchService.map(…)` | 1 | `formatFormIdentifier` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:262` |
-| `SearchService.logSearch` | 1 | `SearchService.map(…)` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:282` |
-| `SearchService.getCursor` | 1 | `toCursor` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:315` |
-| `SearchService.filter(…)` | 1 | `hasTranslations` | `applications/lexico/lexico-api/src/modules/search/search.service.ts:405` |
-| `SearchResolver.searchEnglish` | 1 | `SearchService.searchEnglish` | `applications/lexico/lexico-api/src/modules/search/search.resolver.ts:28` |
-| `SearchResolver.searchLatin` | 1 | `SearchService.searchLatin` | `applications/lexico/lexico-api/src/modules/search/search.resolver.ts:41` |
-| `WordsService.findFormsByData` | 1 | `WordsService.findByData` | `applications/lexico/lexico-api/src/modules/words/words.service.ts:130` |
-| `WordsService.findLexemeLinksByData` | 1 | `WordsService.findByData` | `applications/lexico/lexico-api/src/modules/words/words.service.ts:138` |
-| `WordsResolver.word` | 1 | `WordsService.findByData` | `applications/lexico/lexico-api/src/modules/words/words.resolver.ts:26` |
-| `WordsResolver.words` | 1 | `WordsService.findByDataList` | `applications/lexico/lexico-api/src/modules/words/words.resolver.ts:40` |
 | `main` | 1 | `registerShutdownHandler(…)` | `applications/lexico/lexico-api/src/lexico-api.ts:16` |
 
 </details>
@@ -1339,36 +1710,36 @@ What this project is judged against, as declared in its own `callidescope.config
 
 ### Project
 
-![Lines of Code](https://img.shields.io/badge/Lines_of_Code-13565-22c55e?style=flat-square)
-![Repository Size](https://img.shields.io/badge/Repository_Size-413.59_kB-6b7280?style=flat-square)
-![Folders](https://img.shields.io/badge/Folders-9-4a4a4a?style=flat-square)
-![Source Files](https://img.shields.io/badge/Source_Files-126-3178c6?style=flat-square)
+![Lines of Code](https://img.shields.io/badge/Lines_of_Code-18407-22c55e?style=flat-square)
+![Repository Size](https://img.shields.io/badge/Repository_Size-569.45_kB-6b7280?style=flat-square)
+![Folders](https://img.shields.io/badge/Folders-11-4a4a4a?style=flat-square)
+![Source Files](https://img.shields.io/badge/Source_Files-177-3178c6?style=flat-square)
 
 ### TypeScript
 
-![TypeScript Files](https://img.shields.io/badge/TypeScript_Files-126-3178c6?style=flat-square)
-![Interfaces](https://img.shields.io/badge/Interfaces-41-0ea5e9?style=flat-square)
-![Generic Declarations](https://img.shields.io/badge/Generic_Declarations-38-0369a1?style=flat-square)
+![TypeScript Files](https://img.shields.io/badge/TypeScript_Files-177-3178c6?style=flat-square)
+![Interfaces](https://img.shields.io/badge/Interfaces-62-0ea5e9?style=flat-square)
+![Generic Declarations](https://img.shields.io/badge/Generic_Declarations-73-0369a1?style=flat-square)
 ![Enums](https://img.shields.io/badge/Enums-1-f97316?style=flat-square)
-![Decorators](https://img.shields.io/badge/Decorators-195-db2777?style=flat-square)
-![Doc Comments](https://img.shields.io/badge/Doc_Comments-274-6366f1?style=flat-square)
+![Decorators](https://img.shields.io/badge/Decorators-318-db2777?style=flat-square)
+![Doc Comments](https://img.shields.io/badge/Doc_Comments-452-6366f1?style=flat-square)
 ![Static Methods](https://img.shields.io/badge/Static_Methods-0-166534?style=flat-square)
 
 ### JavaScript
 
 ![JavaScript Files](https://img.shields.io/badge/JavaScript_Files-0-f7df1e?style=flat-square)
-![Test Files](https://img.shields.io/badge/Test_Files-44-10b981?style=flat-square)
+![Test Files](https://img.shields.io/badge/Test_Files-55-10b981?style=flat-square)
 ![External Packages](https://img.shields.io/badge/External_Packages-26-8b5cf6?style=flat-square)
-![Classes](https://img.shields.io/badge/Classes-52-7c3aed?style=flat-square)
-![Functions](https://img.shields.io/badge/Functions-815-16a34a?style=flat-square)
-![Methods](https://img.shields.io/badge/Methods-201-15803d?style=flat-square)
-![Sync Functions](https://img.shields.io/badge/Sync_Functions-589-4ade80?style=flat-square)
-![Async Functions](https://img.shields.io/badge/Async_Functions-427-059669?style=flat-square)
-![Constants](https://img.shields.io/badge/Constants-926-dc2626?style=flat-square)
-![Imports](https://img.shields.io/badge/Imports-533-0284c7?style=flat-square)
-![Exported Symbols](https://img.shields.io/badge/Exported_Symbols-150-ea580c?style=flat-square)
-![Comments](https://img.shields.io/badge/Comments-389-64748b?style=flat-square)
-![Comment Lines](https://img.shields.io/badge/Comment_Lines-621-475569?style=flat-square)
+![Classes](https://img.shields.io/badge/Classes-85-7c3aed?style=flat-square)
+![Functions](https://img.shields.io/badge/Functions-1032-16a34a?style=flat-square)
+![Methods](https://img.shields.io/badge/Methods-303-15803d?style=flat-square)
+![Sync Functions](https://img.shields.io/badge/Sync_Functions-851-4ade80?style=flat-square)
+![Async Functions](https://img.shields.io/badge/Async_Functions-484-059669?style=flat-square)
+![Constants](https://img.shields.io/badge/Constants-1069-dc2626?style=flat-square)
+![Imports](https://img.shields.io/badge/Imports-955-0284c7?style=flat-square)
+![Exported Symbols](https://img.shields.io/badge/Exported_Symbols-251-ea580c?style=flat-square)
+![Comments](https://img.shields.io/badge/Comments-591-64748b?style=flat-square)
+![Comment Lines](https://img.shields.io/badge/Comment_Lines-1014-475569?style=flat-square)
 ![TODO Comments](https://img.shields.io/badge/TODO_Comments-0-ca8a04?style=flat-square)
 
 ### Python
@@ -1480,15 +1851,15 @@ What this project is judged against, as declared in its own `callidescope.config
 ### Conventions
 
 ![Module Files](https://img.shields.io/badge/Module_Files-7-7c3aed?style=flat-square)
-![Service Files](https://img.shields.io/badge/Service_Files-6-0284c7?style=flat-square)
+![Service Files](https://img.shields.io/badge/Service_Files-7-0284c7?style=flat-square)
 ![Command Files](https://img.shields.io/badge/Command_Files-0-16a34a?style=flat-square)
 ![Constants Files](https://img.shields.io/badge/Constants_Files-7-ea580c?style=flat-square)
-![Types Files](https://img.shields.io/badge/Types_Files-7-db2777?style=flat-square)
-![Utilities Files](https://img.shields.io/badge/Utilities_Files-3-0ea5e9?style=flat-square)
+![Types Files](https://img.shields.io/badge/Types_Files-9-db2777?style=flat-square)
+![Utilities Files](https://img.shields.io/badge/Utilities_Files-8-0ea5e9?style=flat-square)
 ![TypeORM Entities](https://img.shields.io/badge/TypeORM_Entities-0-059669?style=flat-square)
-![Unit Tests](https://img.shields.io/badge/Unit_Tests-28-ca8a04?style=flat-square)
+![Unit Tests](https://img.shields.io/badge/Unit_Tests-38-ca8a04?style=flat-square)
 ![Integration Tests](https://img.shields.io/badge/Integration_Tests-10-7c3aed?style=flat-square)
-![End To End Tests](https://img.shields.io/badge/End_To_End_Tests-6-0284c7?style=flat-square)
+![End To End Tests](https://img.shields.io/badge/End_To_End_Tests-7-0284c7?style=flat-square)
 ![CSS Comment Budget](https://img.shields.io/badge/CSS_Comment_Budget-0-16a34a?style=flat-square)
 ![HCL Comment Budget](https://img.shields.io/badge/HCL_Comment_Budget-0-ea580c?style=flat-square)
 ![Python Comment Budget](https://img.shields.io/badge/Python_Comment_Budget-0-db2777?style=flat-square)
