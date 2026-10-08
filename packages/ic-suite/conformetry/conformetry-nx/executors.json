@@ -3,7 +3,7 @@
   "executors": {
     "validate": {
       "description": "Validate a project's conformetry instances against their templates.",
-      "implementation": "./src/executors/validate/executor",
+      "implementation": "@conformetry/nx/src/executors/validate/executor",
       "schema": "./src/executors/validate/schema.json"
     }
   }
