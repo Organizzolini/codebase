@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.35.3](https://github.com/organizzolini/codebase/compare/v2.35.2...v2.35.3) (2026-10-08)
+
+### 🐛 Bug Fixes
+
+* **caelundas:** 🐛 end calendar lines with CRLF and fold them at 75 octets ([#1431](https://github.com/organizzolini/codebase/issues/1431)) ([0d86d6a](https://github.com/organizzolini/codebase/commit/0d86d6a35ff75f4111d945c87bae10593b7dca56)), closes [#1406](https://github.com/organizzolini/codebase/issues/1406) [#1406](https://github.com/organizzolini/codebase/issues/1406) [#1341](https://github.com/organizzolini/codebase/issues/1341)
+* **deployments:** 🐛 finish a partly tagged release instead of versioning it again ([#1476](https://github.com/organizzolini/codebase/issues/1476)) ([4400e0d](https://github.com/organizzolini/codebase/commit/4400e0dd505076c1a19591ecae407bd491f8b820))
+* **ic-suite:** 🐛 keep class and function names in the published ic-suite bundles ([#1472](https://github.com/organizzolini/codebase/issues/1472)) ([029082e](https://github.com/organizzolini/codebase/commit/029082e72981d16b634998b2a75156452e7b6ddd)), closes [#1208](https://github.com/organizzolini/codebase/issues/1208) [#1451](https://github.com/organizzolini/codebase/issues/1451) [#1221](https://github.com/organizzolini/codebase/issues/1221) [#1455](https://github.com/organizzolini/codebase/issues/1455) [#1456](https://github.com/organizzolini/codebase/issues/1456) [.github/CONTRIBUTING.md#release-process](https://github.com/.github/CONTRIBUTING.md/issues/release-process)
+* **synchronization:** 🐛 exit non-zero when a synchronization command throws ([#1485](https://github.com/organizzolini/codebase/issues/1485)) ([de6102f](https://github.com/organizzolini/codebase/commit/de6102f314ca664df013f0ba95ffc2aeb733dc57)), closes [#1477](https://github.com/organizzolini/codebase/issues/1477) [#1478](https://github.com/organizzolini/codebase/issues/1478) [#1477](https://github.com/organizzolini/codebase/issues/1477)
+* **validation:** 🐛 exit non-zero when a validation command throws ([#1477](https://github.com/organizzolini/codebase/issues/1477)) ([ce4ad45](https://github.com/organizzolini/codebase/commit/ce4ad450198c304da1ef86c017e4113d2c83eb97)), closes [#1475](https://github.com/organizzolini/codebase/issues/1475)
+
 ## [2.35.2](https://github.com/organizzolini/codebase/compare/v2.35.1...v2.35.2) (2026-10-08)
 
 ### 🐛 Bug Fixes
