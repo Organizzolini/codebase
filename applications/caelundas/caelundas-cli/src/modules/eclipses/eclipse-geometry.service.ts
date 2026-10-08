@@ -12,6 +12,7 @@ import {
   DANJON_SHADOW_ENLARGEMENT,
   DEGREES_PER_RADIAN,
   EARTH_EQUATORIAL_RADIUS_KILOMETERS,
+  HORIZON_REFRACTION_DEGREES,
 } from "./eclipses.constants";
 
 import type {
@@ -22,6 +23,9 @@ import type {
 import type {
   EclipseContactGeometry,
   EclipseCoordinates,
+  TopocentricDisc,
+  TopocentricSample,
+  TopocentricWindow,
 } from "./eclipses.types";
 import type { Moment } from "moment-timezone";
 
@@ -120,34 +124,32 @@ export class EclipseGeometryService {
   }
 
   /**
-   * Derives topocentric visibility for a single minute.
+   * Reads one body's topocentric disc at one minute from its horizon ephemeris.
    */
-  private getTopocentricVisibility(args: {
-    minuteIso: string;
-    moonAzimuthElevationEphemeris: AzimuthElevationEphemeris;
-    sunAzimuthElevationEphemeris: AzimuthElevationEphemeris;
-  }): { isLunarVisible: boolean; isSolarVisible: boolean } {
-    const {
-      minuteIso,
-      moonAzimuthElevationEphemeris,
-      sunAzimuthElevationEphemeris,
-    } = args;
-
-    const moonElevation =
+  private getTopocentricDisc(
+    ephemeris: AzimuthElevationEphemeris,
+    minuteIso: string,
+  ): TopocentricDisc {
+    const field = (
+      name:
+        | "eclipticLatitude"
+        | "eclipticLongitude"
+        | "semidiameter"
+        | "trueElevation",
+    ): number =>
       this.ephemerisService.getAzimuthElevationFromEphemeris(
-        moonAzimuthElevationEphemeris,
+        ephemeris,
         minuteIso,
-        "elevation",
+        name,
       );
-    const sunElevation = this.ephemerisService.getAzimuthElevationFromEphemeris(
-      sunAzimuthElevationEphemeris,
-      minuteIso,
-      "elevation",
-    );
+    const semidiameter = field("semidiameter");
 
     return {
-      isLunarVisible: moonElevation > 0,
-      isSolarVisible: sunElevation > 0 && moonElevation > 0,
+      clearance:
+        field("trueElevation") + HORIZON_REFRACTION_DEGREES + semidiameter,
+      latitude: field("eclipticLatitude"),
+      longitude: field("eclipticLongitude"),
+      semidiameter,
     };
   }
 
@@ -192,39 +194,31 @@ export class EclipseGeometryService {
   }
 
   /**
-   * Derives all topocentric visibilities around the current minute.
+   * Samples the topocentric Sun and Moon around the current minute.
    */
-  getAllTopocentricVisibilities(args: {
+  getAllTopocentricSamples(args: {
     minute: Moment;
     moonAzimuthElevationEphemeris: AzimuthElevationEphemeris;
     sunAzimuthElevationEphemeris: AzimuthElevationEphemeris;
-  }): {
-    currentVisibility: { isLunarVisible: boolean; isSolarVisible: boolean };
-    nextVisibility: { isLunarVisible: boolean; isSolarVisible: boolean };
-    previousVisibility: { isLunarVisible: boolean; isSolarVisible: boolean };
-  } {
-    const minuteIso = args.minute.toISOString();
-    const previousIso = args.minute.clone().subtract(1, "minute").toISOString();
-    const nextIso = args.minute.clone().add(1, "minute").toISOString();
-
-    const common = {
-      moonAzimuthElevationEphemeris: args.moonAzimuthElevationEphemeris,
-      sunAzimuthElevationEphemeris: args.sunAzimuthElevationEphemeris,
+  }): TopocentricWindow {
+    const sample = (minute: Moment): TopocentricSample => {
+      const minuteIso = minute.toISOString();
+      return {
+        moon: this.getTopocentricDisc(
+          args.moonAzimuthElevationEphemeris,
+          minuteIso,
+        ),
+        sun: this.getTopocentricDisc(
+          args.sunAzimuthElevationEphemeris,
+          minuteIso,
+        ),
+      };
     };
 
     return {
-      currentVisibility: this.getTopocentricVisibility({
-        minuteIso,
-        ...common,
-      }),
-      nextVisibility: this.getTopocentricVisibility({
-        minuteIso: nextIso,
-        ...common,
-      }),
-      previousVisibility: this.getTopocentricVisibility({
-        minuteIso: previousIso,
-        ...common,
-      }),
+      current: sample(args.minute),
+      next: sample(args.minute.clone().add(1, "minute")),
+      previous: sample(args.minute.clone().subtract(1, "minute")),
     };
   }
 
@@ -329,6 +323,23 @@ export class EclipseGeometryService {
     return {
       latitude: coordinates.latitudeSun,
       longitude: coordinates.longitudeSun,
+    };
+  }
+
+  /**
+   * Solar eclipse geometry as one observer sees it: the topocentric Moon's
+   * separation from the topocentric Sun, and the separation at which their
+   * limbs touch (C1/C4), s☉ + s☾. The discs overlap while it is below that.
+   */
+  getTopocentricSolarContactGeometry(
+    sample: TopocentricSample,
+  ): EclipseContactGeometry {
+    return {
+      contactLimit: sample.sun.semidiameter + sample.moon.semidiameter,
+      separation: EclipseGeometryService.getAngularSeparation(
+        sample.moon,
+        sample.sun,
+      ),
     };
   }
 }

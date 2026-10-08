@@ -132,12 +132,16 @@ describe(TwilightsDetectorService, () => {
       const ephemeris: AzimuthElevationEphemeris = {
         [minute.toISOString()]: {
           azimuth: 86,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: -5.9,
           semidiameter: 0.27,
           trueElevation: -5.9,
         },
         [previousMinute.toISOString()]: {
           azimuth: 85,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: -6.1,
           semidiameter: 0.27,
           trueElevation: -6.1,

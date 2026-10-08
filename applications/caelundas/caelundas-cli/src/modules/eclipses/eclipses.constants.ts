@@ -23,5 +23,11 @@ export const eclipseTypeLabelByType: Record<EclipseType, string> = {
   total: "Total",
 };
 
+/**
+ * Standard refraction at the horizon, 34′ in degrees, as the US Naval
+ * Observatory and the rise and set events use it.
+ */
+export const HORIZON_REFRACTION_DEGREES = 34 / 60;
+
 /** Milliseconds between two consecutive minutes of a sweep. */
 export const MILLISECONDS_PER_MINUTE = 60_000;

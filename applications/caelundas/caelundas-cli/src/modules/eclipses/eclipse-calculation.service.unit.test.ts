@@ -259,10 +259,9 @@ describe(EclipseCalculationService, () => {
 
       expect(topocentricService.getTopocentricEvents).toHaveBeenCalledWith(
         expect.objectContaining({
+          isLunarMaximum: true,
           lunarEclipseType: "total",
-          lunarPhase: "maximum",
           solarEclipseType: "partial",
-          solarPhase: null,
         }),
       );
     });

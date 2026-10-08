@@ -107,8 +107,12 @@ export interface Ephemerides {
  * Where a body sits in one observer's sky at one minute, from its topocentric position.
  */
 export interface HorizonPosition {
-  /** Degrees, as Swiss Ephemeris `azalt` measures it. */
+  /** Degrees from North, clockwise through East (0° North, 90° East, 180° South, 270° West). */
   azimuth: number;
+  /** Topocentric apparent ecliptic latitude of date, degrees. */
+  eclipticLatitude: number;
+  /** Topocentric apparent ecliptic longitude of date, degrees. */
+  eclipticLongitude: number;
   /** Apparent (refracted) elevation of the center, degrees; refraction is dropped below the horizon. */
   elevation: number;
   /** Topocentric angular radius, degrees: half the disc the observer sees. */

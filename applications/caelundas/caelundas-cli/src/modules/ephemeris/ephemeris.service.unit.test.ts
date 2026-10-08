@@ -175,6 +175,8 @@ describe(EphemerisService, () => {
               .mockReturnValue({
                 "2024-03-21T00:00:00.000Z": {
                   azimuth: 180,
+                  eclipticLatitude: 0,
+                  eclipticLongitude: 0,
                   elevation: 44.8,
                   semidiameter: 0.27,
                   trueElevation: 44.8,
@@ -249,6 +251,8 @@ describe(EphemerisService, () => {
       const ephemeris: AzimuthElevationEphemeris = {
         "2024-03-21T00:00:00.000Z": {
           azimuth: 180,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: 44.8,
           semidiameter: 0.27,
           trueElevation: 44.8,
@@ -268,6 +272,8 @@ describe(EphemerisService, () => {
       const ephemeris: AzimuthElevationEphemeris = {
         "2024-03-21T00:00:00.000Z": {
           azimuth: 180,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: 44.8,
           semidiameter: 0.27,
           trueElevation: 44.79,

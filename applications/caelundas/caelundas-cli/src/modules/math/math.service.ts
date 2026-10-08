@@ -42,6 +42,23 @@ export class MathService {
   // 🌎 Public Methods
 
   /**
+   * Whether a value crosses zero upward nearest the current minute: a
+   * crossing between the previous minute and this one belongs here when it
+   * falls in its second half, and one between this minute and the next when
+   * it falls in its first half. Each crossing lands on exactly one minute.
+   */
+  crossesUpwardNearCurrent(args: NeighborValues): boolean {
+    const { current, next, previous } = args;
+    if (previous < 0 && current >= 0) {
+      return previous / (previous - current) >= 0.5;
+    }
+    if (current < 0 && next >= 0) {
+      return current / (current - next) < 0.5;
+    }
+    return false;
+  }
+
+  /**
    * Calculates the shortest angular distance between two ecliptic longitudes.
    *
    * This function computes the minimum arc length between two positions on the

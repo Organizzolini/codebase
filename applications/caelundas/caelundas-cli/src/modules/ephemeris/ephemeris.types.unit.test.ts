@@ -83,12 +83,16 @@ describe("ephemeris.types", () => {
       const ephemeris: AzimuthElevationEphemeris = {
         "2024-03-21T00:00:00.000Z": {
           azimuth: 90.5,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: 45.2,
           semidiameter: 0.27,
           trueElevation: 45.2,
         },
         "2024-03-21T00:01:00.000Z": {
           azimuth: 91,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: 46,
           semidiameter: 0.27,
           trueElevation: 46,
@@ -103,6 +107,8 @@ describe("ephemeris.types", () => {
       const ephemeris: AzimuthElevationEphemeris = {
         "2024-03-21T00:00:00.000Z": {
           azimuth: 180,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: -15.5,
           semidiameter: 0.27,
           trueElevation: -15.5,
