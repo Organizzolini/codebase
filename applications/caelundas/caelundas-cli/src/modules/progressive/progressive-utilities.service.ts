@@ -28,31 +28,49 @@ export class ProgressiveUtilitiesService {
   // 🌎 Public Methods
 
   /**
-   * Pairs beginning and ending events into tuples.
+   * Pairs each beginning with the earliest unused ending at or after it.
+   *
+   * Both lists are ordered by start time first, so an ending that comes before
+   * the first beginning (a window opening mid-occurrence) is dropped instead of
+   * shifting every later span, and no span can end before it starts. A
+   * beginning with no ending after it (a window closing mid-occurrence) is
+   * dropped too, and any unpaired event logs a warning.
    */
   pairProgressiveEvents(
     beginnings: DetectedCalendarEvent[],
     endings: DetectedCalendarEvent[],
     label: string,
   ): [DetectedCalendarEvent, DetectedCalendarEvent][] {
-    const pairCount = Math.min(beginnings.length, endings.length);
+    const byStart = (
+      first: DetectedCalendarEvent,
+      second: DetectedCalendarEvent,
+    ): number => first.start.valueOf() - second.start.valueOf();
+    const orderedEndings = endings.toSorted(byStart);
 
-    if (beginnings.length !== endings.length) {
+    const pairs: [DetectedCalendarEvent, DetectedCalendarEvent][] = [];
+    let endingIndex = 0;
+
+    for (const beginning of beginnings.toSorted(byStart)) {
+      let ending = orderedEndings[endingIndex];
+      while (ending !== undefined && byStart(ending, beginning) < 0) {
+        endingIndex++;
+        ending = orderedEndings[endingIndex];
+      }
+
+      if (ending === undefined) {
+        break;
+      }
+
+      pairs.push([beginning, ending]);
+      endingIndex++;
+    }
+
+    if (pairs.length !== beginnings.length || pairs.length !== endings.length) {
       this.logger.warn("🔀 Mismatched progressive event counts", undefined, {
         beginnings: beginnings.length,
         endings: endings.length,
         label,
       });
-    }
-
-    const pairs: [DetectedCalendarEvent, DetectedCalendarEvent][] = [];
-
-    for (let index = 0; index < pairCount; index++) {
-      const beginning = beginnings[index];
-      const ending = endings[index];
-      if (beginning !== undefined && ending !== undefined) {
-        pairs.push([beginning, ending]);
-      }
     }
 
     return pairs;
