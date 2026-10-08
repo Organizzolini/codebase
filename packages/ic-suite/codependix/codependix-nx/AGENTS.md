@@ -16,7 +16,7 @@ The executor runs `codependix map --check boundaries --projects <project>`
 in-process call, because the boundary check boots NestJS containers from
 their TypeScript sources and constructor injection there needs the decorator
 metadata only `@swc-node/register` emits — `tsx` and esbuild silently break
-it. `src/executors/gate/loader.ts` registers those hooks resolved from this
+it. `src/executors/gate/loader.mjs` registers those hooks resolved from this
 package's own dependencies, never the consumer's root. The command line's
 entry is resolved through `@codependix/cli`'s `./main` package export, so an
 installed copy runs `dist/src/main.js`.
@@ -64,7 +64,7 @@ src/
   executors/gate/
     executor.ts                     # Nx executor → GateService.run
     hasher.ts                       # Nx hasher → GateService.hashTask
-    loader.ts                       # Registers the swc hooks; passed to --import
+    loader.mjs                      # Registers the swc hooks; passed to --import
     schema.json                     # Executor options; shipped as-is in the tarball
   modules/
     gate/                           # GateService: arguments, selection, spawn, hashing
@@ -132,7 +132,7 @@ See the [testing-strategy skill](../../../../.agents/skills/testing-strategy/SKI
 - [src/index.ts](src/index.ts): Plugin entry Nx loads
 - [src/modules/gate/gate.service.ts](src/modules/gate/gate.service.ts): The gate run and its hashing
 - [src/modules/plugin/plugin-inputs.utilities.ts](src/modules/plugin/plugin-inputs.utilities.ts): Tool inputs
-- [src/executors/gate/loader.ts](src/executors/gate/loader.ts): The `--import` shim
+- [src/executors/gate/loader.mjs](src/executors/gate/loader.mjs): The `--import` shim
 - [executors.json](executors.json): Executor, hasher, and schema
 - [project.json](project.json): Nx targets
 
