@@ -776,7 +776,7 @@ describe(StelliumService, () => {
     });
   });
 
-  it("derives dissolving phase timestamp from previous-minute pattern", () => {
+  it("stamps dissolving at the first minute the pattern is gone", () => {
     const minute = moment.utc("2024-03-21T12:00:00.000Z");
     const result = compoundPhaseService.determineCompoundPhaseFromSnapshots({
       checkPatternExists: (edges) => edges.length > 0,
@@ -787,7 +787,7 @@ describe(StelliumService, () => {
     });
 
     expect(result?.phase).toBe("dissolving");
-    expect(result?.eventMinute.toISOString()).toBe("2024-03-21T11:59:00.000Z");
+    expect(result?.eventMinute.toISOString()).toBe("2024-03-21T12:00:00.000Z");
   });
 
   it("returns perfective phase marker", () => {

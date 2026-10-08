@@ -107,9 +107,7 @@ describe("triple-aspects.events integration", () => {
         "Mars, Moon, Sun t-square dissolving (Mars focal)",
       );
       expect(events[0]?.summary).toContain("⬅️");
-      expect(events[0]?.start).toStrictEqual(
-        currentMinute.clone().subtract(1, "minute"),
-      );
+      expect(events[0]?.start).toStrictEqual(currentMinute);
     });
 
     it("produces a progressive T-Square event spanning from forming to dissolving", () => {
@@ -245,9 +243,7 @@ describe("triple-aspects.events integration", () => {
         "Jupiter, Saturn, Venus yod dissolving (Saturn focal)",
       );
       expect(events[0]?.summary).toContain("⬅️");
-      expect(events[0]?.start).toStrictEqual(
-        currentMinute.clone().subtract(1, "minute"),
-      );
+      expect(events[0]?.start).toStrictEqual(currentMinute);
     });
   });
 
@@ -314,9 +310,7 @@ describe("triple-aspects.events integration", () => {
         "Mars, Moon, Sun grand trine dissolving",
       );
       expect(events[0]?.summary).toContain("⬅️");
-      expect(events[0]?.start).toStrictEqual(
-        currentMinute.clone().subtract(1, "minute"),
-      );
+      expect(events[0]?.start).toStrictEqual(currentMinute);
     });
 
     it("produces a progressive Grand Trine event spanning from forming to dissolving", () => {

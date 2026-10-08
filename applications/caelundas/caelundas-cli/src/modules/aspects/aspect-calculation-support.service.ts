@@ -59,11 +59,10 @@ export class AspectCalculationSupportService {
       return { eventMinute: currentMinute, phase: "forming" };
     }
 
+    // A leg's simple dissolving event marks its last minute in orb, and the
+    // registry drops the leg on that same minute, so the pattern dissolves then.
     if (!currentExists && previousExists) {
-      return {
-        eventMinute: currentMinute.clone().subtract(1, "minute"),
-        phase: "dissolving",
-      };
+      return { eventMinute: currentMinute, phase: "dissolving" };
     }
 
     return null;

@@ -118,6 +118,33 @@ describe(TripleAspectsService, () => {
       ]);
     });
 
+    it("stamps a T-square dissolving at the minute its leg leaves orb", () => {
+      const minute = moment.utc("2026-02-21T02:30:00.000Z");
+      const currentAspectBodies: AspectBodies[] = [
+        { aspect: "opposite", bodies: ["moon", "lunar apogee"] },
+        { aspect: "square", bodies: ["venus", "lunar apogee"] },
+      ];
+      const previousAspectBodies: AspectBodies[] = [
+        ...currentAspectBodies,
+        { aspect: "square", bodies: ["moon", "venus"] },
+      ];
+
+      const events = service.detect({
+        currentAspectBodies,
+        minute,
+        previousAspectBodies,
+      });
+
+      expect(
+        events.map((event) => [event.description, event.start.toISOString()]),
+      ).toStrictEqual([
+        [
+          "Lunar Apogee, Moon, Venus t-square dissolving (Venus focal)",
+          "2026-02-21T02:30:00.000Z",
+        ],
+      ]);
+    });
+
     it("discovers a grand trine once with the same title in any edge order", () => {
       const minute = moment.utc("2026-02-20T08:00:00.000Z");
       const trines: AspectBodies[] = [

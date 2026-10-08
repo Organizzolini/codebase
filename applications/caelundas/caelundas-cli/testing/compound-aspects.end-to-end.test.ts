@@ -35,6 +35,11 @@ function compoundBoundaries(
   );
 }
 
+/** Lower-cased category labels, since simple and compound events case body names differently. */
+function lowerCategories(event: DetectedCalendarEvent): string[] {
+  return event.categories.map((category) => category.toLowerCase());
+}
+
 describe(
   "compound aspects over a real window",
   { timeout: PIPELINE_TEST_TIMEOUT_MILLISECONDS },
@@ -67,6 +72,38 @@ describe(
       expect(tSquareEvents[0]?.start.toISOString()).toBe(
         "2026-10-10T06:45:00.000Z",
       );
+    });
+
+    it("dissolves each compound on the minute one of its legs dissolves", async () => {
+      expect.hasAssertions();
+
+      const { events } = await runPipelineWindow(octoberWindow);
+      const legEndings = events.filter(
+        (event) =>
+          event.categories.includes("Simple Aspect") &&
+          event.categories.includes("Dissolving"),
+      );
+      const compoundEndings = compoundBoundaries(events).filter((event) =>
+        event.categories.includes("Dissolving"),
+      );
+      const unmatched = compoundEndings.filter((compound) => {
+        const compoundCategories = lowerCategories(compound);
+        return !legEndings.some((leg) => {
+          // A simple aspect lists its two bodies fifth and sixth.
+          const legBodies = lowerCategories(leg).slice(4, 6);
+          return (
+            leg.start.isSame(compound.start) &&
+            legBodies.every((body) => compoundCategories.includes(body))
+          );
+        });
+      });
+
+      expect(compoundEndings.length).toBeGreaterThan(0);
+      expect(
+        unmatched.map(
+          (event) => `${event.start.toISOString()} ${event.description}`,
+        ),
+      ).toStrictEqual([]);
     });
   },
 );

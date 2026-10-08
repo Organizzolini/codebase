@@ -117,9 +117,7 @@ describe("quadruple-aspects.events integration", () => {
         "Jupiter, Mars, Moon, Sun grand cross dissolving",
       );
       expect(events[0]?.summary).toContain("⬅️");
-      expect(events[0]?.start).toStrictEqual(
-        currentMinute.clone().subtract(1, "minute"),
-      );
+      expect(events[0]?.start).toStrictEqual(currentMinute);
     });
 
     it("produces a progressive Grand Cross event spanning from forming to dissolving", () => {
@@ -265,9 +263,7 @@ describe("quadruple-aspects.events integration", () => {
         "Mars, Moon, Sun, Venus kite dissolving (Venus focal)",
       );
       expect(events[0]?.summary).toContain("⬅️");
-      expect(events[0]?.start).toStrictEqual(
-        currentMinute.clone().subtract(1, "minute"),
-      );
+      expect(events[0]?.start).toStrictEqual(currentMinute);
     });
 
     it("produces a progressive Kite event spanning from forming to dissolving", () => {
