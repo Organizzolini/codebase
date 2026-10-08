@@ -1,0 +1,72 @@
+import { describe, expect, it } from "vitest";
+
+import { PIPELINE_TEST_TIMEOUT_MILLISECONDS } from "./pipeline-window.constants";
+import { runPipelineWindow } from "./pipeline-window.functions";
+
+import type { DetectedCalendarEvent } from "../src/modules/caelundas-database/caelundas-database.types";
+
+/**
+ * Philadelphia, 8–10 October 2026. Ceres comes into opposition with the Lunar
+ * Apogee on the 8th, and on the 10th the Moon squares both, completing a
+ * T-square that was emitted twice at the minute it formed.
+ */
+const octoberWindow = {
+  endDate: "2026-10-10",
+  latitude: 39.949_309,
+  longitude: -75.171_69,
+  startDate: "2026-10-08",
+};
+
+const tSquareTitle = "Ceres, Lunar Apogee, Moon t-square";
+
+/** Identifies a compound boundary by its minute, bodies, pattern, phase and focal body. */
+function boundaryKey(event: DetectedCalendarEvent): string {
+  return [event.start.toISOString(), ...event.categories.toSorted()].join("|");
+}
+
+/** Compound events that mark one minute rather than a span. */
+function compoundBoundaries(
+  events: DetectedCalendarEvent[],
+): DetectedCalendarEvent[] {
+  return events.filter(
+    (event) =>
+      event.categories.includes("Compound Aspect") &&
+      event.end.isSame(event.start),
+  );
+}
+
+describe(
+  "compound aspects over a real window",
+  { timeout: PIPELINE_TEST_TIMEOUT_MILLISECONDS },
+  () => {
+    it("emits each compound boundary once", async () => {
+      expect.hasAssertions();
+
+      const { events } = await runPipelineWindow(octoberWindow);
+      const keys = compoundBoundaries(events).map((event) =>
+        boundaryKey(event),
+      );
+
+      expect(keys.length).toBeGreaterThan(0);
+      expect(
+        keys.filter((key, index) => keys.indexOf(key) !== index),
+      ).toStrictEqual([]);
+    });
+
+    it("emits one T-square occurrence as one boundary pair and one span", async () => {
+      expect.hasAssertions();
+
+      const { events } = await runPipelineWindow(octoberWindow);
+      const tSquareEvents = events.filter((event) =>
+        event.description.startsWith(tSquareTitle),
+      );
+
+      expect(
+        tSquareEvents.map((event) => event.categories.includes("Forming")),
+      ).toStrictEqual([true, false, false]);
+      expect(tSquareEvents[0]?.start.toISOString()).toBe(
+        "2026-10-10T06:45:00.000Z",
+      );
+    });
+  },
+);

@@ -10,6 +10,7 @@ import {
   symbolByBody,
   symbolByTripleAspect,
 } from "../caelundas/symbol-caelundas.constants";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
@@ -33,6 +34,7 @@ export class TripleAspectsComposerService {
     private readonly aspectGraphService: AspectGraphService,
     private readonly aspectPhaseEmojiService: AspectPhaseEmojiService,
     private readonly logger: LoggerService,
+    private readonly progressiveUtilitiesService: ProgressiveUtilitiesService,
   ) {
     this.logger.setContext(TripleAspectsComposerService.name);
   }
@@ -158,51 +160,6 @@ export class TripleAspectsComposerService {
    */
   private getPhaseEmoji(phase: AspectPhase): string {
     return this.aspectPhaseEmojiService.getPhaseEmoji(phase);
-  }
-
-  /**
-   * Pairs progressive group pairs.
-   */
-  private pairProgressiveGroupPairs(
-    formingEvents: DetectedCalendarEvent[],
-    dissolvingEvents: DetectedCalendarEvent[],
-  ): DetectedCalendarEvent[] {
-    const results: DetectedCalendarEvent[] = [];
-
-    for (
-      let index = 0;
-      index < Math.min(formingEvents.length, dissolvingEvents.length);
-      index++
-    ) {
-      const forming = formingEvents[index];
-      const dissolving = dissolvingEvents[index];
-
-      if (
-        !forming ||
-        !dissolving ||
-        dissolving.start.valueOf() <= forming.start.valueOf()
-      ) {
-        continue;
-      }
-
-      const aspectCapitalized = forming.categories.find((category) =>
-        ["Grand Trine", "T Square", "Yod"].includes(category),
-      );
-      if (!aspectCapitalized) {
-        continue;
-      }
-
-      const event = this.buildProgressiveEvent({
-        aspectCapitalized,
-        dissolving,
-        forming,
-      });
-      if (event) {
-        results.push(event);
-      }
-    }
-
-    return results;
   }
 
   /**
@@ -420,18 +377,43 @@ export class TripleAspectsComposerService {
   }
 
   /**
-   * Pairs sorted forming/dissolving events for one triple-aspect group key.
+   * Pairs one triple-aspect group's boundaries into spans, one per occurrence.
+   *
+   * A repeated boundary at the same minute is the same boundary, so each phase
+   * keeps one event per minute before the shared occurrence pairing runs.
    */
   pairProgressiveGroup(
     groupEvents: DetectedCalendarEvent[],
   ): DetectedCalendarEvent[] {
-    const formingEvents = groupEvents
-      .filter((event) => event.categories.includes("Forming"))
-      .toSorted((left, right) => left.start.valueOf() - right.start.valueOf());
-    const dissolvingEvents = groupEvents
-      .filter((event) => event.categories.includes("Dissolving"))
-      .toSorted((left, right) => left.start.valueOf() - right.start.valueOf());
+    const boundariesFor = (phase: string): DetectedCalendarEvent[] =>
+      _.uniqBy(
+        groupEvents.filter((event) => event.categories.includes(phase)),
+        (event) => event.start.valueOf(),
+      );
+    const [firstEvent] = groupEvents;
+    const groupKey = firstEvent ? this.getProgressiveGroupKey(firstEvent) : "";
+    const pairs = this.progressiveUtilitiesService.pairProgressiveEvents(
+      boundariesFor("Forming"),
+      boundariesFor("Dissolving"),
+      `Triple Aspect ${groupKey}`,
+    );
 
-    return this.pairProgressiveGroupPairs(formingEvents, dissolvingEvents);
+    return pairs.flatMap(([forming, dissolving]) => {
+      if (!dissolving.start.isAfter(forming.start)) {
+        return [];
+      }
+      const aspectCapitalized = forming.categories.find((category) =>
+        ["Grand Trine", "T Square", "Yod"].includes(category),
+      );
+      const event =
+        aspectCapitalized === undefined
+          ? null
+          : this.buildProgressiveEvent({
+              aspectCapitalized,
+              dissolving,
+              forming,
+            });
+      return event ? [event] : [];
+    });
   }
 }

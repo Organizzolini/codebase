@@ -8,6 +8,7 @@ import { LoggerService } from "@codebase/logging";
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { TripleAspectsComposerService } from "./triple-aspects-composer.service";
 
@@ -23,6 +24,7 @@ describe(TripleAspectsComposerService, () => {
         TripleAspectsComposerService,
         AspectGraphService,
         AspectPhaseEmojiService,
+        ProgressiveUtilitiesService,
         { provide: LoggerService, useValue: createMock<LoggerService>() },
       ],
     }).compile();
@@ -333,10 +335,6 @@ describe(TripleAspectsComposerService, () => {
 
     it("skips sparse progressive pairs", () => {
       const internals = service as unknown as {
-        pairProgressiveGroupPairs: (
-          formingEvents: (DetectedCalendarEvent | undefined)[],
-          dissolvingEvents: (DetectedCalendarEvent | undefined)[],
-        ) => DetectedCalendarEvent[];
         resolveAspectType: (aspectCapitalized: string) => null;
         resolveProgressiveMeta: (
           bodiesCapitalized: string[],
@@ -372,9 +370,8 @@ describe(TripleAspectsComposerService, () => {
         summary: "⬅️ ✶ Sun-Moon-Mars",
       };
 
-      expect(
-        internals.pairProgressiveGroupPairs([undefined], [dissolving]),
-      ).toHaveLength(0);
+      expect(service.pairProgressiveGroup([dissolving])).toHaveLength(0);
+      expect(service.pairProgressiveGroup([forming])).toHaveLength(0);
       expect(internals.resolveAspectType("Mystery Aspect")).toBeNull();
       expect(
         internals.resolveProgressiveMeta(["Sun", "Moon", "Eris"], "yod"),
@@ -541,14 +538,7 @@ describe(TripleAspectsComposerService, () => {
         .spyOn(service, "buildProgressiveEvent")
         .mockReturnValueOnce(null);
 
-      const results = (
-        service as unknown as {
-          pairProgressiveGroupPairs: (
-            formingEvents: DetectedCalendarEvent[],
-            dissolvingEvents: DetectedCalendarEvent[],
-          ) => DetectedCalendarEvent[];
-        }
-      ).pairProgressiveGroupPairs([forming], [dissolving]);
+      const results = service.pairProgressiveGroup([forming, dissolving]);
 
       expect(results).toStrictEqual([]);
       expect(buildProgressiveEventSpy).toHaveBeenCalledTimes(1);
@@ -611,40 +601,22 @@ describe(TripleAspectsComposerService, () => {
         summary: "earlier dissolving",
       };
 
-      const internals = service as unknown as {
-        pairProgressiveGroupPairs: (
-          formingEvents: DetectedCalendarEvent[],
-          dissolvingEvents: DetectedCalendarEvent[],
-        ) => DetectedCalendarEvent[];
-      };
-      const pairSpy = vi
-        .spyOn(internals, "pairProgressiveGroupPairs")
-        .mockReturnValueOnce([]);
+      const spans = service
+        .pairProgressiveGroup([
+          formingLater,
+          dissolvingLater,
+          formingEarlier,
+          dissolvingEarlier,
+        ])
+        .map((span) => [span.start.toISOString(), span.end.toISOString()]);
 
-      service.pairProgressiveGroup([
-        formingLater,
-        dissolvingLater,
-        formingEarlier,
-        dissolvingEarlier,
+      expect(spans).toStrictEqual([
+        [
+          formingEarlier.start.toISOString(),
+          dissolvingEarlier.start.toISOString(),
+        ],
+        [formingLater.start.toISOString(), dissolvingLater.start.toISOString()],
       ]);
-
-      expect(pairSpy).toHaveBeenCalledTimes(1);
-
-      const firstCall = pairSpy.mock.calls[0] as
-        | [DetectedCalendarEvent[], DetectedCalendarEvent[]]
-        | undefined;
-
-      expect(firstCall).toBeDefined();
-      expect(firstCall?.[0].map((event) => event.description)).toStrictEqual([
-        "earlier forming",
-        "later forming",
-      ]);
-      expect(firstCall?.[1].map((event) => event.description)).toStrictEqual([
-        "earlier dissolving",
-        "later dissolving",
-      ]);
-
-      pairSpy.mockRestore();
     });
   });
 });

@@ -3,9 +3,12 @@ import _ from "lodash";
 import moment from "moment-timezone";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
+import { LoggerService } from "@codebase/logging";
+
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { QuadrupleAspectsBaseService } from "./quadruple-aspects-base.service";
 import { QuadrupleAspectsComposerService } from "./quadruple-aspects-composer.service";
@@ -13,6 +16,62 @@ import { QuadrupleAspectsService } from "./quadruple-aspects.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
+import type { AspectPhase } from "../caelundas/caelundas.types";
+
+/** Moon–Mars–Jupiter grand trine with Venus opposite the Moon and sextile the other two. */
+const kiteEdges: AspectBodies[] = [
+  { aspect: "trine", bodies: ["moon", "mars"] },
+  { aspect: "trine", bodies: ["mars", "jupiter"] },
+  { aspect: "trine", bodies: ["moon", "jupiter"] },
+  { aspect: "opposite", bodies: ["moon", "venus"] },
+  { aspect: "sextile", bodies: ["venus", "mars"] },
+  { aspect: "sextile", bodies: ["venus", "jupiter"] },
+];
+
+/** Sun opposite Moon and Mars opposite Jupiter, each squaring the other pair. */
+const grandCrossEdges: AspectBodies[] = [
+  { aspect: "opposite", bodies: ["sun", "moon"] },
+  { aspect: "opposite", bodies: ["mars", "jupiter"] },
+  { aspect: "square", bodies: ["sun", "mars"] },
+  { aspect: "square", bodies: ["sun", "jupiter"] },
+  { aspect: "square", bodies: ["moon", "mars"] },
+  { aspect: "square", bodies: ["moon", "jupiter"] },
+];
+
+/** Builds a Jupiter–Mars–Moon–Venus kite boundary event, Venus focal. */
+function buildKiteBoundary(
+  phase: AspectPhase,
+  isoMinute: string,
+): DetectedCalendarEvent {
+  const minute = moment.utc(isoMinute);
+  return {
+    categories: [
+      "Astronomy",
+      "Astrology",
+      "Compound Aspect",
+      "Quadruple Aspect",
+      "Kite",
+      phase === "forming" ? "Forming" : "Dissolving",
+      "Moon",
+      "Mars",
+      "Jupiter",
+      "Venus",
+      "Venus Focal",
+    ],
+    description: `Jupiter, Mars, Moon, Venus kite ${phase} (Venus focal)`,
+    end: minute,
+    start: minute,
+    summary: `➡️ 🪁 🌙-♂️-♃-♀️ Jupiter, Mars, Moon, Venus kite ${phase} (Venus focal)`,
+  };
+}
+
+/** Reverses edge order and each edge's body order. */
+function reorderEdges(edges: AspectBodies[]): AspectBodies[] {
+  return edges.toReversed().map(({ aspect, bodies: [first, second] }) => ({
+    aspect,
+    bodies: [second, first],
+  }));
+}
 
 describe(QuadrupleAspectsService, () => {
   let service: QuadrupleAspectsService;
@@ -23,6 +82,8 @@ describe(QuadrupleAspectsService, () => {
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        LoggerService,
+        ProgressiveUtilitiesService,
         CompoundPhaseService,
         AspectGraphService,
         AspectPhaseEmojiService,
@@ -38,6 +99,45 @@ describe(QuadrupleAspectsService, () => {
   });
 
   describe("detect", () => {
+    describe("each configuration once", () => {
+      const minute = moment.utc("2026-10-20T12:00:00.000Z");
+
+      it.each([
+        ["kite", kiteEdges],
+        ["grand cross", grandCrossEdges],
+      ])(
+        "emits a forming %s once when its legs are in both snapshots",
+        (_name, edges) => {
+          const events = service.detect({
+            currentAspectBodies: edges,
+            minute,
+            previousAspectBodies: edges.slice(1),
+          });
+
+          expect(events).toHaveLength(1);
+          expect(events[0]?.categories).toContain("Forming");
+        },
+      );
+
+      it.each([
+        ["kite", kiteEdges],
+        ["grand cross", grandCrossEdges],
+      ])("titles a %s the same in any edge order", (_name, edges) => {
+        const summaries = [edges, reorderEdges(edges)].map((ordered) =>
+          service
+            .detect({
+              currentAspectBodies: ordered,
+              minute,
+              previousAspectBodies: [],
+            })
+            .map((event) => event.summary),
+        );
+
+        expect(summaries[0]).toHaveLength(1);
+        expect(summaries[1]).toStrictEqual(summaries[0]);
+      });
+    });
+
     describe("grand Cross composition", () => {
       it("detects Grand Cross from 2 oppositions and 4 squares", () => {
         const currentMinute = moment.utc("2024-03-21T12:00:00.000Z");
@@ -270,6 +370,28 @@ describe(QuadrupleAspectsService, () => {
   });
 
   describe("detectProgressive", () => {
+    it("pairs two occurrences of one kite into two spans despite duplicate boundaries", () => {
+      const boundaries = [
+        ["forming", "2026-10-20T08:00:00.000Z"],
+        ["dissolving", "2026-10-20T19:30:00.000Z"],
+        ["forming", "2026-10-27T03:15:00.000Z"],
+        ["dissolving", "2026-10-27T11:45:00.000Z"],
+      ] as const;
+      const events = boundaries.flatMap(([phase, isoMinute]) => [
+        buildKiteBoundary(phase, isoMinute),
+        buildKiteBoundary(phase, isoMinute),
+      ]);
+
+      const spans = service
+        .detectProgressive(events)
+        .map((span) => [span.start.toISOString(), span.end.toISOString()]);
+
+      expect(spans).toStrictEqual([
+        ["2026-10-20T08:00:00.000Z", "2026-10-20T19:30:00.000Z"],
+        ["2026-10-27T03:15:00.000Z", "2026-10-27T11:45:00.000Z"],
+      ]);
+    });
+
     it("creates progressive events from forming and dissolving pairs", () => {
       const formingEvent: DetectedCalendarEvent = {
         categories: [
@@ -956,49 +1078,6 @@ describe(QuadrupleAspectsService, () => {
       });
 
       expect(events).toStrictEqual([]);
-    });
-
-    it("handles undefined sorted events while collecting progressive group events", () => {
-      const progressiveEvents: DetectedCalendarEvent[] = [];
-      const sortBySpy = vi.spyOn(_, "sortBy").mockReturnValue([
-        {
-          categories: [
-            "Quadruple Aspect",
-            "Grand Cross",
-            "Forming",
-            "Sun",
-            "Moon",
-            "Mars",
-            "Jupiter",
-          ],
-          description: "Sun, Moon, Mars, Jupiter grand cross forming",
-          end: moment.utc("2024-03-21T10:00:00.000Z"),
-          start: moment.utc("2024-03-21T10:00:00.000Z"),
-          summary: "➡️ Grand Cross forming",
-        },
-        undefined,
-        {
-          categories: [
-            "Quadruple Aspect",
-            "Grand Cross",
-            "Dissolving",
-            "Sun",
-            "Moon",
-            "Mars",
-            "Jupiter",
-          ],
-          description: "Sun, Moon, Mars, Jupiter grand cross dissolving",
-          end: moment.utc("2024-03-21T14:00:00.000Z"),
-          start: moment.utc("2024-03-21T14:00:00.000Z"),
-          summary: "⬅️ Grand Cross dissolving",
-        },
-      ] as unknown);
-
-      composerService.collectProgressiveEventsFromGroup([], progressiveEvents);
-
-      expect(progressiveEvents).toHaveLength(1);
-
-      sortBySpy.mockRestore();
     });
 
     it("returns null from tryBuildKite when focal body is already in grand-trine set", () => {

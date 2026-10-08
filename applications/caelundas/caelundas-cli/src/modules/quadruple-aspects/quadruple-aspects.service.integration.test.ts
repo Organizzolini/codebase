@@ -1,9 +1,12 @@
 import moment from "moment-timezone";
 import { describe, expect, it } from "vitest";
 
+import { LoggerService } from "@codebase/logging";
+
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { QuadrupleAspectsBaseService } from "./quadruple-aspects-base.service";
 import { QuadrupleAspectsComposerService } from "./quadruple-aspects-composer.service";
@@ -32,6 +35,7 @@ const service = new QuadrupleAspectsService(
   new QuadrupleAspectsComposerService(
     new CompoundPhaseService(),
     quadrupleAspectsBaseService,
+    new ProgressiveUtilitiesService(new LoggerService()),
   ),
 );
 

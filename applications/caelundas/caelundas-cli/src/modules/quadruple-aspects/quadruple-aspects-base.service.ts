@@ -91,6 +91,14 @@ export class QuadrupleAspectsBaseService {
   }
 
   /**
+   * Returns the bodies in canonical order, so a pattern is titled the same
+   * whatever order its edges arrived in.
+   */
+  canonicalBodyOrder(patternBodies: readonly Body[]): Body[] {
+    return this.aspectGraphService.canonicalBodyOrder(patternBodies);
+  }
+
+  /**
    * Checks grand cross pattern.
    */
   checkGrandCrossPattern(args: {
@@ -222,13 +230,14 @@ export class QuadrupleAspectsBaseService {
   }
 
   /**
-   * Finds grand trines.
+   * Finds each grand trine once, its bodies in canonical order, however many
+   * trine triples close the same triangle.
    */
   findGrandTrines(
     trines: AspectBodies[],
     unionEdges: AspectBodies[],
   ): Set<Body>[] {
-    const grandTrines: Set<Body>[] = [];
+    const grandTrinesByKey = new Map<string, Set<Body>>();
 
     for (let index = 0; index < trines.length; index++) {
       const trineI = trines[index];
@@ -245,12 +254,14 @@ export class QuadrupleAspectsBaseService {
             trineK,
             unionEdges,
           });
-          if (grandTrine) grandTrines.push(grandTrine);
+          if (!grandTrine) continue;
+          const ordered = this.canonicalBodyOrder([...grandTrine]);
+          grandTrinesByKey.set(ordered.join("\u001F"), new Set(ordered));
         }
       }
     }
 
-    return grandTrines;
+    return [...grandTrinesByKey.values()];
   }
 
   /**
@@ -398,6 +409,19 @@ export class QuadrupleAspectsBaseService {
       categories.push(`${_.startCase(focalOrApexBody)} Focal`);
     }
     return categories;
+  }
+
+  /**
+   * Merges both registries into one edge set with each edge present once.
+   */
+  unionAspectBodies(
+    currentAspectBodies: AspectBodies[],
+    previousAspectBodies: AspectBodies[],
+  ): AspectBodies[] {
+    return this.aspectGraphService.unionAspectBodies(
+      currentAspectBodies,
+      previousAspectBodies,
+    );
   }
 
   /**
