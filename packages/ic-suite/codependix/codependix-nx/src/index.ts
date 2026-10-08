@@ -5,6 +5,7 @@ import { logger } from "@nx/devkit";
 
 import { resolvePluginService } from "./modules/plugin/plugin-context.utilities";
 import { resolveToolInputs } from "./modules/plugin/plugin-inputs.utilities";
+import { resolveTsconfigInputs } from "./modules/plugin/plugin-tsconfig.utilities";
 import { PROJECT_CONFIGURATION_GLOB } from "./modules/plugin/plugin.constants";
 
 import type {
@@ -32,6 +33,10 @@ export type { CodependixPluginOptions } from "./modules/plugin/plugin.types";
 /**
  * Infers the gate onto every project but the workspace root.
  *
+ * The command line's inputs and its loader's compiler options are resolved
+ * apart, so a command line that cannot be resolved still leaves the gate
+ * hashing the tsconfig chain it compiles with.
+ *
  * Nx hands this every matched file at once, which is why inference reads the
  * plugin options a single time rather than once per project.
  */
@@ -46,26 +51,33 @@ const createNodes: CreateNodes = [
     const targetsByProjectRoot = pluginService.inferTargets({
       options,
       projectConfigurationFiles,
-      toolInputs: resolveToolInputs({
-        logger,
-        workspaceRoot: context.workspaceRoot,
-      }),
+      toolInputs: [
+        ...resolveToolInputs({ logger, workspaceRoot: context.workspaceRoot }),
+        ...resolveTsconfigInputs({
+          logger,
+          workspaceRoot: context.workspaceRoot,
+        }),
+      ],
       workspaceRoot: context.workspaceRoot,
     });
 
-    return projectConfigurationFiles
-      .map((projectConfigurationFile): CreateNodesResultArray[number] => {
+    // One pass that drops a file inference gave no targets, rather than a
+    // map then a filter, which would put this callback past its breadth.
+    return projectConfigurationFiles.flatMap(
+      (projectConfigurationFile): CreateNodesResultArray => {
         const projectRoot = path.dirname(projectConfigurationFile);
         const targets = targetsByProjectRoot.get(projectRoot);
 
-        return [
-          projectConfigurationFile,
-          targets === undefined
-            ? {}
-            : { projects: { [projectRoot]: { targets } } },
-        ];
-      })
-      .filter(([, result]) => Object.keys(result).length > 0);
+        return targets === undefined
+          ? []
+          : [
+              [
+                projectConfigurationFile,
+                { projects: { [projectRoot]: { targets } } },
+              ],
+            ];
+      },
+    );
   },
 ];
 

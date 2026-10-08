@@ -8,7 +8,6 @@ import {
   CLI_PACKAGE_NAME,
   TOOL_PACKAGE_GLOBS,
   WORKSPACE_PROTOCOL,
-  WORKSPACE_TSCONFIG_INPUT,
 } from "./plugin.constants";
 
 import type {
@@ -19,6 +18,36 @@ import type {
 } from "./plugin.types";
 
 /**
+ * Whether a real path sits in the workspace rather than an install: under its
+ * root, and under no `node_modules` on the way.
+ */
+export function isInsideWorkspace(args: {
+  directory: string;
+  workspaceRoot: string;
+}): boolean {
+  const relative = path.relative(
+    realpathSync(args.workspaceRoot),
+    args.directory,
+  );
+
+  return !(
+    relative.startsWith("..") ||
+    path.isAbsolute(relative) ||
+    relative.split(path.sep).includes("node_modules")
+  );
+}
+
+/** Every dependency a package's manifest declares, in either map. */
+export function readDependencies(directory: string): [string, unknown][] {
+  const manifest = readManifest(directory);
+
+  return Object.entries({
+    ...toRecord(manifest["dependencies"]),
+    ...toRecord(manifest["devDependencies"]),
+  });
+}
+
+/**
  * The cache inputs that tie a gate to the codependix command line it runs.
  *
  * A gate's verdict is decided by `@codependix/cli` and the packages beneath
@@ -27,8 +56,7 @@ import type {
  * workspace they are `{workspaceRoot}` globs over each package's sources,
  * which is the input form Nx's affected computation follows as well as
  * hashes; an installed command line is pinned by its npm version instead.
- * Either way the workspace root's `tsconfig.json` follows, which the loader
- * reads.
+ * The compiler options its loader reads are `resolveTsconfigInputs`'s.
  *
  * Nothing here throws: inference runs while Nx builds the project graph,
  * where a throw stops every command in the workspace. What cannot be resolved
@@ -49,14 +77,12 @@ export function resolveToolInputs(
       return [];
     }
 
-    const inputs = isInsideWorkspace({
+    return isInsideWorkspace({
       directory: cliDirectory,
       workspaceRoot: args.workspaceRoot,
     })
       ? resolveWorkspaceInputs({ ...args, cliDirectory })
       : resolveExternalInputs(cliDirectory);
-
-    return [...inputs, WORKSPACE_TSCONFIG_INPUT];
   } catch (error) {
     args.logger.warn(
       `🕸️ Skipped the cache inputs of ${CLI_PACKAGE_NAME}, so a change to it will not invalidate a cached codependix gate: ${String(error)}`,
@@ -108,23 +134,6 @@ function collectWorkspacePackages(cliDirectory: string): WorkspacePackages {
   return { directories, unresolved: [...unresolved].toSorted() };
 }
 
-/** Whether a real directory sits in the workspace rather than an install. */
-function isInsideWorkspace(args: {
-  directory: string;
-  workspaceRoot: string;
-}): boolean {
-  const relative = path.relative(
-    realpathSync(args.workspaceRoot),
-    args.directory,
-  );
-
-  return !(
-    relative.startsWith("..") ||
-    path.isAbsolute(relative) ||
-    relative.split(path.sep).includes("node_modules")
-  );
-}
-
 /**
  * Finds the real directory of the package a file would import by name, or
  * nothing when it cannot.
@@ -155,16 +164,6 @@ function locatePackage(args: {
       return undefined;
     }
   }
-}
-
-/** Every dependency a package's manifest declares, in either map. */
-function readDependencies(directory: string): [string, unknown][] {
-  const manifest = readManifest(directory);
-
-  return Object.entries({
-    ...toRecord(manifest["dependencies"]),
-    ...toRecord(manifest["devDependencies"]),
-  });
 }
 
 /**
