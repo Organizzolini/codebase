@@ -276,8 +276,9 @@ export class EclipseCalculationService {
   }
 
   /**
-   * Computes the observer's eclipse events, with the geocentric types and
-   * lunar maximum; an unsettled type falls back as for geocentric events.
+   * Computes the observer's eclipse events, with the geocentric lunar type
+   * and maximum; an unsettled type falls back as for geocentric events.
+   * The observer's solar type is their own, judged from their sky.
    */
   getTopocentricEventsForDetect(args: {
     coordinates: {
@@ -288,7 +289,6 @@ export class EclipseCalculationService {
     geocentricPhases: {
       lunarPhases: EclipsePhase[];
       lunarType: LunarEclipseType | null;
-      solarType: null | SolarEclipseType;
     };
     minute: Moment;
     moonAzimuthElevationEphemeris: AzimuthElevationEphemeris;
@@ -309,7 +309,6 @@ export class EclipseCalculationService {
       moonAzimuthElevationEphemeris,
       nextCoordinates: coordinates.nextCoordinates,
       previousCoordinates: coordinates.previousCoordinates,
-      solarEclipseType: geocentricPhases.solarType ?? "partial",
       sunAzimuthElevationEphemeris,
     });
   }

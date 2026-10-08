@@ -147,6 +147,54 @@ describe(EclipseGeometryService, () => {
     expect(result.next.moon.latitude).toBeCloseTo(1.41, 9);
   });
 
+  describe("getTopocentricSample", () => {
+    const minute = moment.utc("2026-08-12T17:54:00.000Z");
+    const position = {
+      azimuth: 200,
+      eclipticLatitude: 0.4,
+      eclipticLongitude: 140,
+      elevation: 63,
+      semidiameter: 0.25,
+      trueElevation: 62.99,
+    };
+
+    it("reads the observer's Sun and Moon at one minute", () => {
+      ephemerisService.getAzimuthElevationFromEphemeris.mockImplementation(
+        (ephemeris, minuteIso, field) => {
+          const value = ephemeris[minuteIso]?.[field];
+          if (value === undefined) {
+            throw new Error(`Missing ${field} at ${minuteIso}`);
+          }
+          return value;
+        },
+      );
+      const ephemeris = { [minute.toISOString()]: position };
+
+      expect(
+        service.getTopocentricSample({
+          minute,
+          moonAzimuthElevationEphemeris: ephemeris,
+          sunAzimuthElevationEphemeris: ephemeris,
+        })?.sun,
+      ).toStrictEqual({
+        clearance: expect.closeTo(62.99 + 34 / 60 + 0.25, 9) as number,
+        latitude: 0.4,
+        longitude: 140,
+        semidiameter: 0.25,
+      });
+    });
+
+    it("is null past the end of either body's ephemeris", () => {
+      expect(
+        service.getTopocentricSample({
+          minute,
+          moonAzimuthElevationEphemeris: { [minute.toISOString()]: position },
+          sunAzimuthElevationEphemeris: {},
+        }),
+      ).toBeNull();
+    });
+  });
+
   describe("getTopocentricSolarContactGeometry", () => {
     /** One body seen from the ground, with its upper limb well above the horizon. */
     const disc = (

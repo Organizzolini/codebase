@@ -327,6 +327,34 @@ export class EclipseGeometryService {
   }
 
   /**
+   * The observer's Sun and Moon at one minute, or null when the minute
+   * lies past the end of either body's horizon ephemeris.
+   */
+  getTopocentricSample(args: {
+    minute: Moment;
+    moonAzimuthElevationEphemeris: AzimuthElevationEphemeris;
+    sunAzimuthElevationEphemeris: AzimuthElevationEphemeris;
+  }): null | TopocentricSample {
+    const minuteIso = args.minute.toISOString();
+    if (
+      !(minuteIso in args.moonAzimuthElevationEphemeris) ||
+      !(minuteIso in args.sunAzimuthElevationEphemeris)
+    ) {
+      return null;
+    }
+    return {
+      moon: this.getTopocentricDisc(
+        args.moonAzimuthElevationEphemeris,
+        minuteIso,
+      ),
+      sun: this.getTopocentricDisc(
+        args.sunAzimuthElevationEphemeris,
+        minuteIso,
+      ),
+    };
+  }
+
+  /**
    * Solar eclipse geometry as one observer sees it: the topocentric Moon's
    * separation from the topocentric Sun, and the separation at which their
    * limbs touch (C1/C4), s☉ + s☾. The discs overlap while it is below that.

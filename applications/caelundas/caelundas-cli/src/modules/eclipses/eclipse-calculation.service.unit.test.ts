@@ -231,7 +231,7 @@ describe(EclipseCalculationService, () => {
   });
 
   describe("getTopocentricEventsForDetect", () => {
-    it("passes on the geocentric maximum and type, the weakest type when unknown", () => {
+    it("passes on the geocentric lunar maximum and type", () => {
       const window = getTrackWindow({
         crossTrack: 0.6,
         kind: "lunar",
@@ -249,7 +249,6 @@ describe(EclipseCalculationService, () => {
         geocentricPhases: {
           lunarPhases: ["maximum"],
           lunarType: "total",
-          solarType: null,
         },
         minute,
         moonAzimuthElevationEphemeris: {},
@@ -260,7 +259,6 @@ describe(EclipseCalculationService, () => {
         expect.objectContaining({
           isLunarMaximum: true,
           lunarEclipseType: "total",
-          solarEclipseType: "partial",
         }),
       );
     });

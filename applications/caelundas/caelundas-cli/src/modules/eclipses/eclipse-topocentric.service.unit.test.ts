@@ -19,9 +19,11 @@ import { EclipseTopocentricService } from "./eclipse-topocentric.service";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   EclipseCoordinates,
+  SolarEclipseType,
   TopocentricSample,
   TopocentricWindow,
 } from "./eclipses.types";
+import type { Moment } from "moment-timezone";
 
 /** Three consecutive minutes of one value: previous, current, next. */
 type Triple = [previous: number, current: number, next: number];
@@ -81,6 +83,41 @@ function getTopocentricWindow(args: {
     },
   });
   return { current: sample(1), next: sample(2), previous: sample(0) };
+}
+
+/** The minute nearest first contact in each test passage. */
+const PASSAGE_START = moment.utc("2026-08-12T17:11:00.000Z");
+
+/** The topocentric Moon's speed past the Sun in each test passage, degrees per minute. */
+const PASSAGE_SPEED = 0.01;
+
+/**
+ * The observer's Sun and Moon during a straight passage of the Moon past
+ * the Sun, `minutes` after {@link PASSAGE_START}: the Moon `crossTrack`
+ * degrees north of the Sun's path, 0.527° behind it along the ecliptic at
+ * the start, so the limbs of 0.26° and 0.27° discs touch just before it.
+ */
+function getPassageSample(args: {
+  crossTrack: number;
+  minutes: number;
+  moonSemidiameter: number;
+  sunClearance: (minutes: number) => number;
+  sunSemidiameter: number;
+}): TopocentricSample {
+  return {
+    moon: {
+      clearance: 30,
+      latitude: args.crossTrack,
+      longitude: 100 - 0.527 + PASSAGE_SPEED * args.minutes,
+      semidiameter: args.moonSemidiameter,
+    },
+    sun: {
+      clearance: args.sunClearance(args.minutes),
+      latitude: 0,
+      longitude: 100,
+      semidiameter: args.sunSemidiameter,
+    },
+  };
 }
 
 describe(EclipseTopocentricService, () => {
@@ -281,10 +318,10 @@ describe(EclipseTopocentricService, () => {
       description: "Solar Eclipse begins",
       end: moment.utc("2026-08-12T17:11:00.000Z"),
       start: moment.utc("2026-08-12T17:11:00.000Z"),
-      summary: "📍 ☀️🐉▶️ Total Solar Eclipse begins",
+      summary: "📍 ☀️🐉▶️ Partial Solar Eclipse begins",
     };
 
-    it("builds topocentric events with the eclipse's type", () => {
+    it("titles a local solar event partial when no sample ahead can be read", () => {
       vi.spyOn(
         eclipseGeometryService,
         "getAllTopocentricSamples",
@@ -306,7 +343,6 @@ describe(EclipseTopocentricService, () => {
         moonAzimuthElevationEphemeris: {},
         nextCoordinates: solarInProgress,
         previousCoordinates: solarInProgress,
-        solarEclipseType: "total",
         sunAzimuthElevationEphemeris: {},
       });
 
@@ -315,7 +351,7 @@ describe(EclipseTopocentricService, () => {
         date: moment.utc("2026-08-12T17:11:00.000Z"),
         frame: "topocentric",
         phase: "beginning",
-        type: "total",
+        type: "partial",
       });
       expect(eclipseEventService.buildLunarEclipseEvent).not.toHaveBeenCalled();
     });
@@ -334,12 +370,194 @@ describe(EclipseTopocentricService, () => {
         moonAzimuthElevationEphemeris: {},
         nextCoordinates: noEclipse,
         previousCoordinates: noEclipse,
-        solarEclipseType: "total",
         sunAzimuthElevationEphemeris: {},
       });
 
       expect(events).toStrictEqual([]);
       expect(sampleSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("local solar eclipse type", () => {
+    /**
+     * Sweeps a test passage minute by minute, as the perfective pass does,
+     * and returns the phase and type of each local solar event it built.
+     */
+    function sweepPassage(args: {
+      crossTrack: number;
+      moonSemidiameter: number;
+      sunClearance?: (minutes: number) => number;
+      sunSemidiameter: number;
+    }): { phase: string; type: SolarEclipseType }[] {
+      const { sunClearance = (): number => 30 } = args;
+      const sample = (minute: Moment): TopocentricSample =>
+        getPassageSample({
+          ...args,
+          minutes: minute.diff(PASSAGE_START, "minutes"),
+          sunClearance,
+        });
+      vi.spyOn(
+        eclipseGeometryService,
+        "getAllTopocentricSamples",
+      ).mockImplementation(({ minute }) => ({
+        current: sample(minute),
+        next: sample(minute.clone().add(1, "minute")),
+        previous: sample(minute.clone().subtract(1, "minute")),
+      }));
+      vi.spyOn(
+        eclipseGeometryService,
+        "getTopocentricSample",
+      ).mockImplementation(({ minute }) => sample(minute));
+
+      for (let minutes = -3; minutes <= 120; minutes += 1) {
+        service.getTopocentricEvents({
+          currentCoordinates: solarInProgress,
+          isLunarMaximum: false,
+          lunarEclipseType: "partial",
+          minute: PASSAGE_START.clone().add(minutes, "minutes"),
+          moonAzimuthElevationEphemeris: {},
+          nextCoordinates: solarInProgress,
+          previousCoordinates: solarInProgress,
+          sunAzimuthElevationEphemeris: {},
+        });
+      }
+      return eclipseEventService.buildSolarEclipseEvent.mock.calls.map(
+        ([{ phase, type }]) => ({ phase, type }),
+      );
+    }
+
+    it("is partial when the discs never fully overlap", () => {
+      // The 12 August 2026 total eclipse from Philadelphia: magnitude 0.151.
+      expect(
+        sweepPassage({
+          crossTrack: 0.3,
+          moonSemidiameter: 0.27,
+          sunSemidiameter: 0.26,
+        }),
+      ).toStrictEqual([
+        { phase: "beginning", type: "partial" },
+        { phase: "maximum", type: "partial" },
+        { phase: "ending", type: "partial" },
+      ]);
+    });
+
+    it("is total when the Moon's disc covers the Sun's", () => {
+      expect(
+        sweepPassage({
+          crossTrack: 0.005,
+          moonSemidiameter: 0.27,
+          sunSemidiameter: 0.26,
+        }),
+      ).toStrictEqual([
+        { phase: "beginning", type: "total" },
+        { phase: "maximum", type: "total" },
+        { phase: "ending", type: "total" },
+      ]);
+    });
+
+    it("is annular when the Sun's disc rings the Moon's", () => {
+      expect(
+        sweepPassage({
+          crossTrack: 0.005,
+          moonSemidiameter: 0.25,
+          sunSemidiameter: 0.26,
+        }),
+      ).toStrictEqual([
+        { phase: "beginning", type: "annular" },
+        { phase: "maximum", type: "annular" },
+        { phase: "ending", type: "annular" },
+      ]);
+    });
+
+    it("is partial when the Moon covers the Sun only off its rim", () => {
+      // Central to within 0.015°, but the Moon is 0.01° larger: its limb
+      // leaves a sliver of the Sun uncovered.
+      expect(
+        sweepPassage({
+          crossTrack: 0.015,
+          moonSemidiameter: 0.27,
+          sunSemidiameter: 0.26,
+        }),
+      ).toStrictEqual([
+        { phase: "beginning", type: "partial" },
+        { phase: "maximum", type: "partial" },
+        { phase: "ending", type: "partial" },
+      ]);
+    });
+
+    it("is partial at both ends when the Sun sets before totality", () => {
+      // The Sun's upper limb sets 30 minutes in, 23 minutes before the
+      // discs are concentric.
+      expect(
+        sweepPassage({
+          crossTrack: 0.005,
+          moonSemidiameter: 0.27,
+          sunClearance: (minutes) => 0.3 - PASSAGE_SPEED * minutes,
+          sunSemidiameter: 0.26,
+        }),
+      ).toStrictEqual([
+        { phase: "beginning", type: "partial" },
+        { phase: "ending", type: "partial" },
+      ]);
+    });
+
+    it("stays total from sunrise to last contact when the Sun rises before totality", () => {
+      // The Sun's upper limb rises 45 minutes in, 8 minutes before the
+      // discs are concentric.
+      expect(
+        sweepPassage({
+          crossTrack: 0.005,
+          moonSemidiameter: 0.27,
+          sunClearance: (minutes) => PASSAGE_SPEED * (minutes - 45),
+          sunSemidiameter: 0.26,
+        }),
+      ).toStrictEqual([
+        { phase: "beginning", type: "total" },
+        { phase: "maximum", type: "total" },
+        { phase: "ending", type: "total" },
+      ]);
+    });
+
+    it("judges a passage running past the ephemeris by the part it holds", () => {
+      const passage = (minutes: number): TopocentricSample =>
+        getPassageSample({
+          crossTrack: 0.005,
+          minutes,
+          moonSemidiameter: 0.27,
+          sunClearance: () => 30,
+          sunSemidiameter: 0.26,
+        });
+      vi.spyOn(
+        eclipseGeometryService,
+        "getAllTopocentricSamples",
+      ).mockReturnValueOnce({
+        current: passage(0),
+        next: passage(1),
+        previous: passage(-1),
+      });
+      // The ephemeris ends 20 minutes in, long before the discs are concentric.
+      vi.spyOn(
+        eclipseGeometryService,
+        "getTopocentricSample",
+      ).mockImplementation(({ minute }) => {
+        const minutes = minute.diff(PASSAGE_START, "minutes");
+        return minutes > 20 ? null : passage(minutes);
+      });
+
+      service.getTopocentricEvents({
+        currentCoordinates: solarInProgress,
+        isLunarMaximum: false,
+        lunarEclipseType: "partial",
+        minute: PASSAGE_START,
+        moonAzimuthElevationEphemeris: {},
+        nextCoordinates: solarInProgress,
+        previousCoordinates: solarInProgress,
+        sunAzimuthElevationEphemeris: {},
+      });
+
+      expect(eclipseEventService.buildSolarEclipseEvent).toHaveBeenCalledWith(
+        expect.objectContaining({ phase: "beginning", type: "partial" }),
+      );
     });
   });
 });
