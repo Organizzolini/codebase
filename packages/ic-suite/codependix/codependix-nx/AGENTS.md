@@ -97,7 +97,7 @@ The schema is named by path and listed in `files`, so the tarball ships it.
   tsconfig. Each workspace file in that chain is a `{workspaceRoot}` input,
   missing or unparsable ones included; a base under `node_modules`, named by
   package or by path, is an `externalDependencies` entry only when the root
-  `package.json` declares its package, since Nx fails a task naming an
+  `package.json` declares its package from a registry, since Nx fails a task naming an
   external dependency outside its graph.
   Resolved apart from the tool inputs, so either failing keeps the other.
   What it cannot name, it warns about. Never throws.

@@ -75,6 +75,18 @@ export const CLI_PACKAGE_NAME = "@codependix/cli";
 export const WORKSPACE_PROTOCOL = "workspace:";
 
 /**
+ * The dependency specifier prefixes marking a package that comes from this
+ * workspace's own files rather than a registry, which Nx's graph need not
+ * hold as an external node.
+ */
+export const LOCAL_DEPENDENCY_PROTOCOLS = [
+  "file:",
+  "link:",
+  "portal:",
+  WORKSPACE_PROTOCOL,
+] as const;
+
+/**
  * The files of a workspace package that change what a gate decides.
  *
  * Its manifest and its sources — not its tests, nor its README, which

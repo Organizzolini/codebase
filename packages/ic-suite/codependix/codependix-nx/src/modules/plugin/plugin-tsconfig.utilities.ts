@@ -1,6 +1,6 @@
 // 🛠️ Utilities
 
-import { existsSync, realpathSync } from "node:fs";
+import { existsSync, realpathSync, statSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 
@@ -8,6 +8,7 @@ import { readJsonFile } from "@nx/devkit";
 
 import { isInsideWorkspace, readDependencies } from "./plugin-inputs.utilities";
 import {
+  LOCAL_DEPENDENCY_PROTOCOLS,
   PACKAGE_TSCONFIG_FILENAME,
   SKIPPED_BASE_REASONS,
   WORKSPACE_TSCONFIG_INPUT,
@@ -71,7 +72,7 @@ function describeSkippedBase(
   base: Exclude<ExtendedBase, { kind: "file" | "package" }>,
 ): string {
   return base.kind === "undeclared"
-    ? `the root package.json does not declare ${base.name}`
+    ? `the root package.json does not declare ${base.name} from a registry`
     : SKIPPED_BASE_REASONS[base.kind];
 }
 
@@ -90,9 +91,7 @@ function followExtendsChain(args: {
   workspaceRoot: string;
 }): ExtendsChain {
   const rootFile = path.join(args.workspaceRoot, "tsconfig.json");
-  const declared = new Set(
-    readDependencies(args.workspaceRoot).map(([name]) => name),
-  );
+  const declared = readRegistryDependencies(args.workspaceRoot);
   const files = new Set([rootFile]);
   const packages = new Set<string>();
   const pending = existsSync(rootFile) ? [rootFile] : [];
@@ -173,6 +172,25 @@ function readInstalledPackageName(file: string): string | undefined {
 }
 
 /**
+ * The packages the root manifest declares from a registry, which Nx's
+ * lockfile parsing puts in its graph. One it declares through `workspace:`,
+ * `file:`, `link:`, or `portal:` is local, and may be no external node at
+ * all — naming it would fail every gate.
+ */
+function readRegistryDependencies(workspaceRoot: string): Set<string> {
+  return new Set(
+    readDependencies(workspaceRoot)
+      .filter(
+        ([, specifier]) =>
+          !LOCAL_DEPENDENCY_PROTOCOLS.some((protocol) =>
+            String(specifier).startsWith(protocol),
+          ),
+      )
+      .map(([name]) => name),
+  );
+}
+
+/**
  * Resolves one `extends` entry to the base it names, as TypeScript does, and
  * sorts it by where that base lives.
  *
@@ -189,13 +207,14 @@ function resolveExtendedBase(args: {
   specifier: string;
   workspaceRoot: string;
 }): ExtendedBase {
-  const { specifier } = args;
+  // TypeScript reads either separator, on every platform.
+  const specifier = args.specifier.replaceAll("\\", "/");
   const file =
     path.isAbsolute(specifier) ||
     specifier.startsWith("./") ||
     specifier.startsWith("../")
-      ? resolvePathBase(args)
-      : resolvePackageBase(args);
+      ? resolvePathBase({ file: args.file, specifier })
+      : resolvePackageBase({ file: args.file, specifier });
 
   if (file === undefined) {
     return { kind: "unresolved" };
@@ -220,8 +239,10 @@ function resolveExtendedBase(args: {
 /**
  * Resolves an entry naming a package, from the extending file, as Node
  * resolves a module: the path inside the package it names, with `.json`
- * appended when that names no file, or the package's own `tsconfig.json`
- * when it names no path inside the package.
+ * appended when that names no file. One naming no path inside the package
+ * is its own `tsconfig.json`, or whatever its `exports` map the package to —
+ * TypeScript tries the latter first, and a package exporting only that
+ * refuses the former. Only a JSON file counts, since only one can be a base.
  */
 function resolvePackageBase(args: {
   file: string;
@@ -231,13 +252,15 @@ function resolvePackageBase(args: {
   const candidates =
     specifier.split("/").length > (specifier.startsWith("@") ? 2 : 1)
       ? [specifier, `${specifier}.json`]
-      : [`${specifier}/${PACKAGE_TSCONFIG_FILENAME}`];
+      : [`${specifier}/${PACKAGE_TSCONFIG_FILENAME}`, specifier];
   const resolver = createRequire(args.file);
 
   // Every candidate is tried, at most two, so none needs a sentinel.
   const [file] = candidates.flatMap((candidate) => {
     try {
-      return [realpathSync(resolver.resolve(candidate))];
+      const resolved = realpathSync(resolver.resolve(candidate));
+
+      return resolved.endsWith(".json") ? [resolved] : [];
     } catch {
       return [];
     }
@@ -248,13 +271,18 @@ function resolvePackageBase(args: {
 
 /**
  * Resolves an entry naming a path, from the extending file's directory, with
- * `.json` appended when it names no file. A missing file is still named, at
- * the path it would have, so the edit that creates it invalidates the gate.
+ * `.json` appended when it names no file — a directory of that name is no
+ * file, so `./configuration` beside a `configuration/` folder still means
+ * `configuration.json`. A missing file is still named, at the path it would
+ * have, so the edit that creates it invalidates the gate.
  */
 function resolvePathBase(args: { file: string; specifier: string }): string {
   const named = path.resolve(path.dirname(args.file), args.specifier);
   const target =
-    existsSync(named) || named.endsWith(".json") ? named : `${named}.json`;
+    statSync(named, { throwIfNoEntry: false })?.isFile() === true ||
+    named.endsWith(".json")
+      ? named
+      : `${named}.json`;
 
   return existsSync(target) ? realpathSync(target) : target;
 }

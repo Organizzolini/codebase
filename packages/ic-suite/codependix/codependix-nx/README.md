@@ -119,8 +119,11 @@ verdict, a change to that code would otherwise replay every cached pass:
   compile — from `SWC_NODE_PROJECT` or `TS_NODE_PROJECT`, else from the
   `tsconfig.json` in the gate's working directory, the workspace root, and
   never from a package's own. That file reaches its bases through `extends`,
-  so inference follows the chain as TypeScript does — a string or an array,
-  through every level, comments and trailing commas allowed:
+  so inference follows the chain much as TypeScript resolves it — a string
+  or an array, through every level, comments and trailing commas allowed,
+  `.json` appended to a path naming no file, and a bare package name taken
+  to its `tsconfig.json` or its `exports` (not to a `tsconfig` field in its
+  manifest, which is rare):
   - A base in the workspace, by relative path or through a package of the
     same workspace, is another `{workspaceRoot}` input. So is one that is
     missing or cannot be parsed — the edit that fixes it invalidates the
@@ -129,15 +132,19 @@ verdict, a change to that code would otherwise replay every cached pass:
   - A base an installed package provides, such as `@tsconfig/node24` —
     named by package or by a path into `node_modules` — is named in an
     `externalDependencies` input, so a version bump invalidates the cache,
-    but only when the root `package.json` declares the package. Nx fails
-    every task whose `externalDependencies` names a package missing from its
-    graph, so an undeclared one is skipped with a warning instead: declare it
-    in the root `package.json` to have it hashed.
+    but only when the root `package.json` declares the package from a
+    registry. Nx fails every task whose `externalDependencies` names a
+    package missing from its graph, so one declared only by another package,
+    or through `workspace:`, `file:`, `link:`, or `portal:`, is skipped with
+    a warning instead: declare it in the root `package.json` to have it
+    hashed.
   - A base outside the workspace, or a package base that resolves to no file,
     cannot be named by any input, and is skipped with a warning.
 
   A `SWC_NODE_PROJECT` or `TS_NODE_PROJECT` pointing elsewhere is not
-  followed: add that file to the target's inputs yourself.
+  followed: add that file to the target's inputs yourself. Nor does a
+  gitignored base, such as a generated framework tsconfig, invalidate
+  anything: it is named, but Nx's file map leaves ignored files out.
 
 Each workspace package is resolved on its own, through its entry rather than
 its manifest, so one that cannot be resolved costs only its own inputs: Nx's

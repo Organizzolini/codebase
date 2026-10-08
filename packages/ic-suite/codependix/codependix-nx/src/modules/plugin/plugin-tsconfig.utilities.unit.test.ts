@@ -125,6 +125,26 @@ describe(resolveTsconfigInputs, () => {
     expect(logger.warn).not.toHaveBeenCalled();
   });
 
+  it("appends .json to a relative path naming a directory, as TypeScript does, and reads a Windows separator", () => {
+    expect.hasAssertions();
+
+    const { inputs, logger } = resolveWorkspace({
+      "configuration.json": JSON.stringify({
+        extends: String.raw`.\shared\base`,
+      }),
+      "configuration/tsconfig.json": "{}",
+      "shared/base.json": "{}",
+      "tsconfig.json": JSON.stringify({ extends: "./configuration" }),
+    });
+
+    expect(inputs).toStrictEqual([
+      "{workspaceRoot}/configuration.json",
+      "{workspaceRoot}/shared/base.json",
+      "{workspaceRoot}/tsconfig.json",
+    ]);
+    expect(logger.warn).not.toHaveBeenCalled();
+  });
+
   it("follows every entry of an array extends", () => {
     expect.hasAssertions();
 
@@ -254,6 +274,98 @@ describe(resolveTsconfigInputs, () => {
     expect(logger.warn).not.toHaveBeenCalled();
   });
 
+  it("resolves a package base by its exports, as TypeScript does, when the package exports no subpath", () => {
+    expect.hasAssertions();
+
+    // A subpath request is refused here, so only the bare name resolves.
+    const { inputs, logger } = resolveWorkspace({
+      "node_modules/@fixture/exported/package.json": JSON.stringify({
+        exports: "./tsconfig.json",
+        name: "@fixture/exported",
+      }),
+      "node_modules/@fixture/exported/tsconfig.json": "{}",
+      "package.json": JSON.stringify({
+        devDependencies: { "@fixture/exported": "1.0.0" },
+      }),
+      "tsconfig.json": JSON.stringify({ extends: "@fixture/exported" }),
+    });
+
+    expect(inputs).toStrictEqual([
+      "{workspaceRoot}/tsconfig.json",
+      { externalDependencies: ["@fixture/exported"] },
+    ]);
+    expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  it("skips a package base whose name resolves only to code, which no tsconfig can extend, and says so", () => {
+    expect.hasAssertions();
+
+    const { inputs, logger } = resolveWorkspace({
+      "node_modules/@fixture/code/index.js": "",
+      "node_modules/@fixture/code/package.json": JSON.stringify({
+        main: "./index.js",
+        name: "@fixture/code",
+      }),
+      "package.json": JSON.stringify({
+        devDependencies: { "@fixture/code": "1.0.0" },
+      }),
+      "tsconfig.json": JSON.stringify({ extends: "@fixture/code" }),
+    });
+
+    expect(inputs).toStrictEqual(["{workspaceRoot}/tsconfig.json"]);
+    expect(logger.warn).toHaveBeenCalledExactlyOnceWith(
+      expect.stringContaining("resolves to no file"),
+    );
+  });
+
+  it("names a package base from pnpm's store by the package, not the store", () => {
+    expect.hasAssertions();
+
+    const { inputs, logger } = resolveWorkspace(
+      {
+        "node_modules/.pnpm/@fixture+base@1.0.0/node_modules/@fixture/base/tsconfig.json":
+          "{}",
+        "package.json": JSON.stringify({
+          devDependencies: { "@fixture/base": "1.0.0" },
+        }),
+        "tsconfig.json": JSON.stringify({
+          extends: "@fixture/base/tsconfig.json",
+        }),
+      },
+      {
+        "node_modules/@fixture/base":
+          "node_modules/.pnpm/@fixture+base@1.0.0/node_modules/@fixture/base",
+      },
+    );
+
+    expect(inputs).toStrictEqual([
+      "{workspaceRoot}/tsconfig.json",
+      { externalDependencies: ["@fixture/base"] },
+    ]);
+    expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  it("skips an installed package base the root manifest declares from the workspace itself, which Nx's graph need not hold, and says so", () => {
+    expect.hasAssertions();
+
+    // An injected workspace package is copied under node_modules, yet is no
+    // registry package Nx would find.
+    const { inputs, logger } = resolveWorkspace({
+      "node_modules/@fixture/injected/tsconfig.json": "{}",
+      "package.json": JSON.stringify({
+        devDependencies: { "@fixture/injected": "workspace:*" },
+      }),
+      "tsconfig.json": JSON.stringify({
+        extends: "@fixture/injected/tsconfig.json",
+      }),
+    });
+
+    expect(inputs).toStrictEqual(["{workspaceRoot}/tsconfig.json"]);
+    expect(logger.warn).toHaveBeenCalledExactlyOnceWith(
+      expect.stringContaining("@fixture/injected"),
+    );
+  });
+
   it("skips a package base the root manifest does not declare, rather than naming a dependency Nx cannot find, and says so", () => {
     expect.hasAssertions();
 
@@ -377,14 +489,18 @@ describe(resolveTsconfigInputs, () => {
   it("follows this workspace's own root tsconfig into the base every project shares", () => {
     expect.hasAssertions();
 
+    // Contained rather than equal, so reshaping this repository's tsconfig
+    // layout does not fail a test of the plugin.
     expect(
       resolveTsconfigInputs({
         logger: createMock<ToolInputsLogger>(),
         workspaceRoot: WORKSPACE_ROOT,
       }),
-    ).toStrictEqual([
-      "{workspaceRoot}/configuration/tsconfig.json",
-      "{workspaceRoot}/tsconfig.json",
-    ]);
+    ).toStrictEqual(
+      expect.arrayContaining([
+        "{workspaceRoot}/configuration/tsconfig.json",
+        "{workspaceRoot}/tsconfig.json",
+      ]),
+    );
   });
 });
