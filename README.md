@@ -2696,6 +2696,7 @@ graph LR
   file_codometer_cli_testing_mocks_ts["codometer-cli/testing/mocks.ts"]
   file_codometer_cli_testing_setup_ts["codometer-cli/testing/setup.ts"]
   file_codometer_cli_testing_target_tree_ts["codometer-cli/testing/target-tree.ts"]
+  file_codometer_cli_testing_vite_library_config_integration_test_ts["codometer-cli/testing/vite-library-config.integration.test.ts"]
   file_codometer_cli_vite_config_ts["codometer-cli/vite.config.ts"]
   file_codometer_cli_vitest_config_ts["codometer-cli/vitest.config.ts"]
   file_codometer_configuration_callidescope_config_ts["codometer-configuration/callidescope.config.ts"]
@@ -6687,6 +6688,7 @@ graph LR
   file_codometer_cli_src_modules_measure_measure_command_unit_test_ts --> file_codometer_cli_testing_mocks_ts
   file_codometer_cli_src_modules_measure_measure_module_ts --> file_codometer_cli_src_modules_measure_measure_command_ts
   file_codometer_cli_src_repl_ts --> file_codometer_cli_src_main_module_ts
+  file_codometer_cli_testing_vite_library_config_integration_test_ts --> file_codometer_cli_vite_config_ts
   file_codometer_configuration_src_index_unit_test_ts --> file_codometer_configuration_src_index_ts
   file_codometer_configuration_src_modules_configuration_configuration_flags_service_ts --> file_codometer_configuration_src_modules_configuration_configuration_flags_constants_ts
   file_codometer_configuration_src_modules_configuration_configuration_flags_service_ts --> file_codometer_configuration_src_modules_configuration_configuration_types_ts
