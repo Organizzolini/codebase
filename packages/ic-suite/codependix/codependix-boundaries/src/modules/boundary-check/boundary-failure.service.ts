@@ -1,6 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { NeighborhoodService } from "@codependix/nx-projects";
 import { Injectable } from "@nestjs/common";
 
 import {
@@ -22,14 +23,19 @@ import type { NxProject } from "@codependix/nx-projects";
  * What the message alone cannot say is whose class that was: NestJS
  * containers are booted by `import()`, and a module that fails evaluation in
  * a dependency rethrows the same error into every project importing it. The
- * stack still holds the frame that threw, so the first frame inside a known
- * project root names the project that owns the failing code.
+ * stack still holds the frame that threw, so the first frame inside the root
+ * of a project the charged ones depend on names the project that owns the
+ * failing code.
+ *
+ * Only their dependency closure: when codependix runs from source, its own
+ * packages are workspace projects too, and an error it raises itself would
+ * otherwise blame whichever of them threw.
  */
 @Injectable()
 export class BoundaryFailureService {
   // 🏗 Dependency Injection
 
-  constructor() {}
+  constructor(private readonly neighborhoodService: NeighborhoodService) {}
 
   // 🔐 Private Fields
 
@@ -75,23 +81,34 @@ export class BoundaryFailureService {
   }
 
   /**
-   * The project owning the first stack frame inside a known project root.
+   * The project owning the first stack frame inside the root of a project
+   * the charged ones transitively depend on, themselves included.
    *
    * The first such frame rather than any: frames below it are whatever was
    * importing the failing module, which is every project that depends on it.
+   * A frame in any other project is skipped — that project is not something
+   * the charged ones are built from, so it cannot be what broke them.
    */
   private resolveOwnerProject(
-    error: unknown,
-    workspaceProjects: readonly NxProject[],
+    args: CollectFailureArguments,
   ): string | undefined {
-    const stack = error instanceof Error ? (error.stack ?? "") : "";
+    const closure = new Set(
+      this.neighborhoodService.resolveDependencyClosure(
+        args.graph,
+        args.projects,
+      ),
+    );
+    const candidates = args.workspaceProjects.filter((project) =>
+      closure.has(project.name),
+    );
+    const stack = args.error instanceof Error ? (args.error.stack ?? "") : "";
 
     for (const line of stack.split("\n")) {
       const framePath = this.readFramePath(line);
       const owner =
         framePath === undefined
           ? undefined
-          : this.findProjectHolding(framePath, workspaceProjects);
+          : this.findProjectHolding(framePath, candidates);
 
       if (owner !== undefined) {
         return owner;
@@ -111,7 +128,7 @@ export class BoundaryFailureService {
    * nothing, and naming a guess would blame a project that did nothing wrong.
    */
   public collect(args: CollectFailureArguments): BoundaryCheckFailure {
-    const owner = this.resolveOwnerProject(args.error, args.workspaceProjects);
+    const owner = this.resolveOwnerProject(args);
 
     return {
       error:

@@ -66,8 +66,8 @@ export interface BoundaryCheckFailure {
   readonly error: string;
   readonly level: CodependixBoundaryLevel;
   /**
-   * The project owning the first stack frame inside a known project root,
-   * when that is not a charged project. Absent when no frame resolves to a
+   * The project owning the first stack frame inside the root of a project
+   * the charged ones depend on, when that is not a charged project. Absent when no frame resolves to a
    * project: a guessed owner would blame a project that did nothing wrong.
    */
   readonly ownerProject?: string | undefined;
@@ -108,6 +108,11 @@ export type BoundaryVerdict = "fail" | "note";
 /** Arguments accepted when collecting one graph's failure. */
 export interface CollectFailureArguments {
   readonly error: unknown;
+  /**
+   * The whole Nx project graph, rather than the build set, so an owner is
+   * still found in a dependency `--no-dependencies` left out of the build.
+   */
+  readonly graph: NxProjectGraph;
   readonly level: CodependixBoundaryLevel;
   /** The projects the failing graph was being built for. */
   readonly projects: readonly string[];

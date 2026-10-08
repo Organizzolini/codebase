@@ -255,6 +255,7 @@ flowchart LR
   WorkspaceGraphsModule
   BoundaryCheckModule --> BoundariesModule
   BoundaryCheckModule --> ModuleGraphModule
+  BoundaryCheckModule --> NeighborhoodModule
   BoundaryCheckModule --> NestjsProjectModule
   BoundaryCheckModule --> PythonModule
   BoundaryCheckModule --> TypescriptModule

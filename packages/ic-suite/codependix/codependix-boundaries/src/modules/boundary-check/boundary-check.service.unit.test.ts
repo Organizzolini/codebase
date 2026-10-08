@@ -3,7 +3,10 @@ import {
   ModuleGraphService,
   NestjsProjectService,
 } from "@codependix/nestjs-modules";
-import { WorkspaceGraphService } from "@codependix/nx-projects";
+import {
+  NeighborhoodService,
+  WorkspaceGraphService,
+} from "@codependix/nx-projects";
 import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -133,6 +136,7 @@ describe(BoundaryCheckService, () => {
         BoundaryCheckService,
         BoundaryFailureService,
         BoundaryGraphService,
+        NeighborhoodService,
         { provide: BoundariesService, useValue: boundariesService },
         { provide: ModuleGraphService, useValue: moduleGraphService },
         { provide: NestjsProjectService, useValue: nestjsProjectService },
@@ -534,6 +538,13 @@ describe(BoundaryCheckService, () => {
       return {
         ...buildContext(boundaries),
         buildProjects: [...PROJECTS, DEPENDENCY],
+        graph: {
+          dependencies: { a: [{ source: "a", target: "b", type: "static" }] },
+          nodes: {
+            a: { data: { root: "packages/a" }, name: "a", type: "lib" },
+            b: { data: { root: "packages/b" }, name: "b", type: "lib" },
+          },
+        },
         projects: [...PROJECTS, DEPENDENCY],
         selectedProjects: PROJECTS,
       };

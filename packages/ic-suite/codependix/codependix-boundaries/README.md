@@ -191,6 +191,7 @@ flowchart LR
   WorkspaceGraphModule
   BoundaryCheckModule --> BoundariesModule
   BoundaryCheckModule --> ModuleGraphModule
+  BoundaryCheckModule --> NeighborhoodModule
   BoundaryCheckModule --> NestjsProjectModule
   BoundaryCheckModule --> PythonModule
   BoundaryCheckModule --> TypescriptModule
@@ -297,6 +298,7 @@ graph LR
   file_src_modules_boundary_check_boundary_check_types_ts --> file_src_modules_boundaries_boundaries_types_ts
   file_src_modules_boundary_check_boundary_failure_service_ts --> file_src_modules_boundary_check_boundary_check_constants_ts
   file_src_modules_boundary_check_boundary_failure_service_ts --> file_src_modules_boundary_check_boundary_check_types_ts
+  file_src_modules_boundary_check_boundary_failure_service_unit_test_ts --> file_src_modules_boundary_check_boundary_check_types_ts
   file_src_modules_boundary_check_boundary_failure_service_unit_test_ts --> file_src_modules_boundary_check_boundary_failure_service_ts
   file_src_modules_boundary_check_boundary_graph_service_ts --> file_src_modules_boundaries_boundaries_types_ts
   file_src_modules_boundary_check_boundary_graph_service_unit_test_ts --> file_src_modules_boundary_check_boundary_graph_service_ts

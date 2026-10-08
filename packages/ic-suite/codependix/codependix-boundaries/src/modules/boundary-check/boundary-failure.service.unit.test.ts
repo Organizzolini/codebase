@@ -1,15 +1,28 @@
+import { NeighborhoodService } from "@codependix/nx-projects";
 import { Test } from "@nestjs/testing";
 import { beforeAll, describe, expect, it } from "vitest";
 
 import { BoundaryFailureService } from "./boundary-failure.service";
 
-import type { NxProject } from "@codependix/nx-projects";
+import type { BoundaryCheckFailure } from "./boundary-check.types";
+import type { NxProject, NxProjectGraph } from "@codependix/nx-projects";
 
 /** Every project the stacks below can land in, one nested inside another. */
 const PROJECTS: NxProject[] = [
   {
+    absoluteRoot: "/workspace/applications/lexico/lexico-api",
+    name: "lexico-api",
+    tags: [],
+  },
+  {
     absoluteRoot: "/workspace/applications/lexico/lexico-cli",
     name: "lexico-cli",
+    tags: [],
+  },
+  {
+    absoluteRoot:
+      "/workspace/packages/ic-suite/codependix/codependix-file-imports",
+    name: "codependix-file-imports",
     tags: [],
   },
   {
@@ -23,6 +36,37 @@ const PROJECTS: NxProject[] = [
     tags: [],
   },
 ];
+
+/**
+ * Both lexico applications depend on the entities, which depend on their
+ * fixtures. `codependix-file-imports` is in the workspace but no lexico
+ * project depends on it — it is the tool running the check.
+ */
+const GRAPH: NxProjectGraph = {
+  dependencies: {
+    "lexico-api": [
+      { source: "lexico-api", target: "lexico-entities", type: "static" },
+    ],
+    "lexico-cli": [
+      { source: "lexico-cli", target: "lexico-entities", type: "static" },
+    ],
+    "lexico-entities": [
+      { source: "lexico-entities", target: "lexico-fixtures", type: "static" },
+    ],
+  },
+  nodes: Object.fromEntries(
+    PROJECTS.map((project) => [
+      project.name,
+      {
+        data: {
+          root: project.absoluteRoot.replace("/workspace/", ""),
+        },
+        name: project.name,
+        type: "lib" as const,
+      },
+    ]),
+  ),
+};
 
 /** Builds an error whose stack is exactly the given frames. */
 function buildError(frames: string[]): Error {
@@ -41,9 +85,23 @@ function buildError(frames: string[]): Error {
 describe(BoundaryFailureService, () => {
   let service: BoundaryFailureService;
 
+  /** Collects a NestJS-level failure charged to the given projects. */
+  function collect(
+    error: unknown,
+    projects: readonly string[] = ["lexico-cli"],
+  ): BoundaryCheckFailure {
+    return service.collect({
+      error,
+      graph: GRAPH,
+      level: "nestjsModules",
+      projects,
+      workspaceProjects: PROJECTS,
+    });
+  }
+
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      providers: [BoundaryFailureService],
+      providers: [BoundaryFailureService, NeighborhoodService],
     }).compile();
 
     service = await module.resolve(BoundaryFailureService);
@@ -54,14 +112,7 @@ describe(BoundaryFailureService, () => {
   });
 
   it("charges a failure to the projects it was collected for", () => {
-    expect(
-      service.collect({
-        error: new Error("boom"),
-        level: "nestjsModules",
-        projects: ["lexico-cli"],
-        workspaceProjects: PROJECTS,
-      }),
-    ).toStrictEqual({
+    expect(collect(new Error("boom"))).toStrictEqual({
       error: "boom",
       level: "nestjsModules",
       projects: ["lexico-cli"],
@@ -69,97 +120,110 @@ describe(BoundaryFailureService, () => {
   });
 
   it("records a non-Error rejection as its string form", () => {
-    expect(
-      service.collect({
-        error: "boom",
-        level: "typescript",
-        projects: ["lexico-cli"],
-        workspaceProjects: PROJECTS,
-      }).error,
-    ).toBe("boom");
+    expect(collect("boom").error).toBe("boom");
   });
 
   // D3: a container that cannot boot fails its own project, and says which
   // project owns the class it could not evaluate.
   it("names the project owning the first frame of a file URL stack", () => {
-    const failure = service.collect({
-      error: buildError([
+    const failure = collect(
+      buildError([
         "file:///workspace/packages/lexico-entities/src/WordForm.entity.ts:12:3",
         "ModuleJob.run (node:internal/modules/esm/module_job:271:25)",
       ]),
-      level: "nestjsModules",
-      projects: ["lexico-cli"],
-      workspaceProjects: PROJECTS,
-    });
+    );
 
     expect(failure.ownerProject).toBe("lexico-entities");
   });
 
   it("names the owner from a frame written as a path in parentheses", () => {
-    const failure = service.collect({
-      error: buildError([
+    const failure = collect(
+      buildError([
         "Object.<anonymous> (/workspace/packages/lexico-entities/src/index.ts:4:1)",
       ]),
-      level: "nestjsModules",
-      projects: ["lexico-cli"],
-      workspaceProjects: PROJECTS,
-    });
+    );
 
     expect(failure.ownerProject).toBe("lexico-entities");
   });
 
   it("skips frames inside node_modules and Node's own internals", () => {
-    const failure = service.collect({
-      error: buildError([
+    const failure = collect(
+      buildError([
         "node:internal/modules/esm/module_job:271:25",
         "Reflect.decorate (/workspace/packages/lexico-entities/node_modules/typeorm/index.js:1:1)",
-        "/workspace/applications/lexico/lexico-cli/src/main.ts:3:1",
+        "/workspace/packages/lexico-entities/src/word.entity.ts:3:1",
       ]),
-      level: "nestjsModules",
-      projects: ["lexico-api"],
-      workspaceProjects: PROJECTS,
-    });
+      ["lexico-api"],
+    );
 
-    expect(failure.ownerProject).toBe("lexico-cli");
+    expect(failure.ownerProject).toBe("lexico-entities");
   });
 
   it("names the innermost project when one root nests inside another", () => {
-    const failure = service.collect({
-      error: buildError([
+    const failure = collect(
+      buildError([
         "/workspace/packages/lexico-entities/fixtures/word.fixture.ts:1:1",
       ]),
-      level: "nestjsModules",
-      projects: ["lexico-cli"],
-      workspaceProjects: PROJECTS,
-    });
+    );
 
     expect(failure.ownerProject).toBe("lexico-fixtures");
   });
 
   it("names no owner when the owner is a project already charged", () => {
-    const failure = service.collect({
-      error: buildError([
+    const failure = collect(
+      buildError([
         "/workspace/packages/lexico-entities/src/WordForm.entity.ts:12:3",
       ]),
-      level: "nestjsModules",
-      projects: ["lexico-entities"],
-      workspaceProjects: PROJECTS,
-    });
+      ["lexico-entities"],
+    );
+
+    expect(failure).not.toHaveProperty("ownerProject");
+  });
+
+  // An error codependix raises itself throws from codependix's own source,
+  // which is a workspace project too when it runs from source — but nothing
+  // the charged project depends on, so it cannot own the failure.
+  it("names no owner when the first project frame is in an unrelated project", () => {
+    const failure = collect(
+      buildError([
+        "TypescriptProjectService.read (/workspace/packages/ic-suite/codependix/codependix-file-imports/src/typescript-project.service.ts:64:11)",
+        "/workspace/applications/lexico/lexico-cli/src/main.ts:1:1",
+      ]),
+    );
+
+    expect(failure).not.toHaveProperty("ownerProject");
+  });
+
+  it("skips an unrelated project's frame to reach a dependency's", () => {
+    const failure = collect(
+      buildError([
+        "/workspace/packages/ic-suite/codependix/codependix-file-imports/src/index.ts:1:1",
+        "file:///workspace/packages/lexico-entities/src/WordForm.entity.ts:12:3",
+      ]),
+    );
+
+    expect(failure.ownerProject).toBe("lexico-entities");
+  });
+
+  // Another project the charged one does not depend on is not its owner,
+  // even when that project's code is what threw.
+  it("never names a project that only depends on the charged one", () => {
+    const failure = collect(
+      buildError(["/workspace/applications/lexico/lexico-api/src/main.ts:1:1"]),
+      ["lexico-entities"],
+    );
 
     expect(failure).not.toHaveProperty("ownerProject");
   });
 
   // Guessing would name a project that did nothing wrong.
   it("names no owner when no frame lands inside a known project", () => {
-    const failure = service.collect({
-      error: buildError([
+    const failure = collect(
+      buildError([
         "/elsewhere/script.ts:1:1",
         "/workspace/packages/lexico-entities-legacy/src/index.ts:1:1",
       ]),
-      level: "nestjsModules",
-      projects: ["lexico-cli"],
-      workspaceProjects: PROJECTS,
-    });
+    );
 
     expect(failure).not.toHaveProperty("ownerProject");
   });
@@ -169,13 +233,6 @@ describe(BoundaryFailureService, () => {
 
     delete error.stack;
 
-    expect(
-      service.collect({
-        error,
-        level: "nestjsModules",
-        projects: ["lexico-cli"],
-        workspaceProjects: PROJECTS,
-      }),
-    ).not.toHaveProperty("ownerProject");
+    expect(collect(error)).not.toHaveProperty("ownerProject");
   });
 });

@@ -228,6 +228,7 @@ export class BoundaryCheckService {
         failures: [
           this.boundaryFailureService.collect({
             error,
+            graph: context.graph,
             level,
             projects: context.selectedProjects.map((project) => project.name),
             workspaceProjects: context.projects,
@@ -267,6 +268,7 @@ export class BoundaryCheckService {
         failures.push(
           this.boundaryFailureService.collect({
             error,
+            graph: context.graph,
             level,
             projects: [project.name],
             workspaceProjects: context.projects,

@@ -3,7 +3,10 @@ import {
   ModuleGraphModule,
   NestjsProjectModule,
 } from "@codependix/nestjs-modules";
-import { WorkspaceGraphModule } from "@codependix/nx-projects";
+import {
+  NeighborhoodModule,
+  WorkspaceGraphModule,
+} from "@codependix/nx-projects";
 import { Module } from "@nestjs/common";
 
 import { BoundariesModule } from "../boundaries/boundaries.module";
@@ -24,6 +27,7 @@ import { BoundaryGraphService } from "./boundary-graph.service";
   imports: [
     BoundariesModule,
     ModuleGraphModule,
+    NeighborhoodModule,
     NestjsProjectModule,
     PythonModule,
     TypescriptModule,
