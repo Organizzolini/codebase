@@ -60,6 +60,7 @@ prograde
 quincunx
 samhain
 SEFLG
+semidiameter
 semisextile
 semisquare
 semo
@@ -72,12 +73,15 @@ stellium
 stelliums
 sweph
 SWIEPH
+topo
 topocentric
+TOPOCTR
 tredecile
 tredicile
 trine
 undecile
 undecuple
+unrefracted
 USNO
 yods
 zodiac

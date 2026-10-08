@@ -45,8 +45,18 @@ describe(TwilightsService, () => {
       const currentMinute = moment.utc("2024-03-21T06:00:00.000Z");
       const previousMinute = currentMinute.clone().subtract(1, "minute");
       const sunAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-        [currentMinute.toISOString()]: { azimuth: 86, elevation: -5.9 },
-        [previousMinute.toISOString()]: { azimuth: 85, elevation: -6.1 },
+        [currentMinute.toISOString()]: {
+          azimuth: 86,
+          elevation: -5.9,
+          semidiameter: 0.27,
+          trueElevation: -5.9,
+        },
+        [previousMinute.toISOString()]: {
+          azimuth: 85,
+          elevation: -6.1,
+          semidiameter: 0.27,
+          trueElevation: -6.1,
+        },
       };
 
       const events = service.detect({
@@ -62,8 +72,18 @@ describe(TwilightsService, () => {
       const currentMinute = moment.utc("2024-03-21T12:00:00.000Z");
       const previousMinute = currentMinute.clone().subtract(1, "minute");
       const sunAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-        [currentMinute.toISOString()]: { azimuth: 161, elevation: 45 },
-        [previousMinute.toISOString()]: { azimuth: 160, elevation: 44 },
+        [currentMinute.toISOString()]: {
+          azimuth: 161,
+          elevation: 45,
+          semidiameter: 0.27,
+          trueElevation: 45,
+        },
+        [previousMinute.toISOString()]: {
+          azimuth: 160,
+          elevation: 44,
+          semidiameter: 0.27,
+          trueElevation: 44,
+        },
       };
 
       const events = service.detect({
@@ -333,7 +353,12 @@ describe(TwilightsService, () => {
       );
       const minute = moment.utc("2024-03-21T06:00:00.000Z");
       const sunAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-        [minute.toISOString()]: { azimuth: 180, elevation: -6 },
+        [minute.toISOString()]: {
+          azimuth: 180,
+          elevation: -6,
+          semidiameter: 0.27,
+          trueElevation: -6,
+        },
       };
 
       expect(
