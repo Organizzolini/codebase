@@ -57,6 +57,9 @@ describe(EphemerisAggregationService, () => {
     vi.mocked(
       constantsService.getSwissEphemerisConstantForBody,
     ).mockReturnValue(0);
+    vi.mocked(constantsService.isHorizonBody).mockImplementation(
+      (body: string) => body === "sun" || body === "moon",
+    );
     vi.mocked(constantsService.isNode).mockImplementation(
       (body: string) => body.includes("node") || body === "lunar perigee",
     );
@@ -73,6 +76,8 @@ describe(EphemerisAggregationService, () => {
     vi.mocked(horizonService.computeAzimuthElevationForMinute).mockReturnValue({
       azimuth: 180,
       elevation: 44.8,
+      semidiameter: 0.27,
+      trueElevation: 45,
     });
     vi.mocked(timeService.dateToJulianDays).mockReturnValue({
       julianDayEphemerisTime: 2_460_395.5,

@@ -3,12 +3,16 @@ import { azalt } from "sweph";
 
 import { EphemerisCoordinateService } from "./ephemeris-coordinate.service";
 import { EphemerisTimeService } from "./ephemeris-time.service";
-import { ECLIPTIC_TO_HORIZONTAL_FLAG } from "./ephemeris.constants";
+import {
+  ECLIPTIC_TO_HORIZONTAL_FLAG,
+  KILOMETERS_PER_ASTRONOMICAL_UNIT,
+  radiusKilometersByHorizonBody,
+} from "./ephemeris.constants";
 
-import type { Body, Node } from "../caelundas/caelundas.types";
 import type {
   AzimuthElevationEphemeris,
   AzimuthElevationEphemerisBody,
+  HorizonPosition,
 } from "./ephemeris.types";
 import type { Moment } from "moment-timezone";
 
@@ -51,17 +55,10 @@ export class EphemerisHorizonService {
     for (const date of this.time.generateMinutes(start, end)) {
       const { julianDayEphemerisTime, julianDayUniversalTime } =
         this.time.dateToJulianDays(date);
-      const { distance, latitude, longitude } =
-        this.coordinate.getBodyCoordinatesWithDistance(
-          body,
-          julianDayEphemerisTime,
-        );
       ephemeris[date.toISOString()] = this.computeAzimuthElevationForMinute({
         body,
-        distance,
+        julianDayEphemerisTime,
         julianDayUniversalTime,
-        latitude,
-        longitude,
         observerLatitude,
         observerLongitude,
       });
@@ -70,26 +67,31 @@ export class EphemerisHorizonService {
   }
 
   /**
-   * Computes horizontal coordinates (azimuth, elevation) for a single body at a specific moment.
-   * Used internally by aggregation service. Returns azimuth and elevation angles.
+   * Computes horizontal coordinates for a single body at a specific moment, from its
+   * topocentric position: parallax is applied, so the Moon sits where the observer sees it.
+   * Returns azimuth, apparent and true elevation, and the topocentric semidiameter.
    */
   public computeAzimuthElevationForMinute(args: {
-    body: Exclude<Body, Node>;
-    distance: number;
+    body: AzimuthElevationEphemerisBody;
+    julianDayEphemerisTime: number;
     julianDayUniversalTime: number;
-    latitude: number;
-    longitude: number;
     observerLatitude: number;
     observerLongitude: number;
-  }): { azimuth: number; elevation: number } {
+  }): HorizonPosition {
     const {
-      distance,
+      body,
+      julianDayEphemerisTime,
       julianDayUniversalTime,
-      latitude,
-      longitude,
       observerLatitude,
       observerLongitude,
     } = args;
+    const { distance, latitude, longitude } =
+      this.coordinate.getTopocentricBodyCoordinates({
+        body,
+        julianDayEphemerisTime,
+        observerLatitude,
+        observerLongitude,
+      });
     const azaltResult = azalt(
       julianDayUniversalTime,
       ECLIPTIC_TO_HORIZONTAL_FLAG,
@@ -98,6 +100,24 @@ export class EphemerisHorizonService {
       0,
       [longitude, latitude, distance],
     );
-    return { azimuth: azaltResult[0], elevation: azaltResult[2] };
+    return {
+      azimuth: azaltResult[0],
+      elevation: azaltResult[2],
+      semidiameter: this.computeSemidiameter({ body, distance }),
+      trueElevation: azaltResult[1],
+    };
+  }
+
+  /**
+   * Computes the Sun's or the Moon's angular radius, in degrees, from its distance in AU.
+   */
+  public computeSemidiameter(args: {
+    body: AzimuthElevationEphemerisBody;
+    distance: number;
+  }): number {
+    const { body, distance } = args;
+    const radius = radiusKilometersByHorizonBody[body];
+    const distanceKilometers = distance * KILOMETERS_PER_ASTRONOMICAL_UNIT;
+    return (Math.asin(radius / distanceKilometers) * 180) / Math.PI;
   }
 }

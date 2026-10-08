@@ -131,14 +131,12 @@ export class EphemerisAggregationService {
       );
     accumulators.coordinateEphemeris[timestamp] = { latitude, longitude };
     if (needsDistance) accumulators.distanceEphemeris[timestamp] = { distance };
-    if (needsAzimuth) {
+    if (needsAzimuth && this.constant.isHorizonBody(body)) {
       accumulators.azimuthElevationEphemeris[timestamp] =
         this.horizon.computeAzimuthElevationForMinute({
           body,
-          distance,
+          julianDayEphemerisTime,
           julianDayUniversalTime,
-          latitude,
-          longitude,
           observerLatitude,
           observerLongitude,
         });

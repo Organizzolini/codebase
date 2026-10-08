@@ -170,7 +170,12 @@ describe(EphemerisService, () => {
                 }) => AzimuthElevationEphemeris
               >()
               .mockReturnValue({
-                "2024-03-21T00:00:00.000Z": { azimuth: 180, elevation: 44.8 },
+                "2024-03-21T00:00:00.000Z": {
+                  azimuth: 180,
+                  elevation: 44.8,
+                  semidiameter: 0.27,
+                  trueElevation: 44.8,
+                },
               }),
           }),
         },
@@ -239,7 +244,12 @@ describe(EphemerisService, () => {
   describe("accessors", () => {
     it("returns azimuth/elevation values", () => {
       const ephemeris: AzimuthElevationEphemeris = {
-        "2024-03-21T00:00:00.000Z": { azimuth: 180, elevation: 44.8 },
+        "2024-03-21T00:00:00.000Z": {
+          azimuth: 180,
+          elevation: 44.8,
+          semidiameter: 0.27,
+          trueElevation: 44.8,
+        },
       };
 
       expect(
@@ -249,6 +259,32 @@ describe(EphemerisService, () => {
           "azimuth",
         ),
       ).toBe(180);
+    });
+
+    it("returns true elevation and semidiameter values", () => {
+      const ephemeris: AzimuthElevationEphemeris = {
+        "2024-03-21T00:00:00.000Z": {
+          azimuth: 180,
+          elevation: 44.8,
+          semidiameter: 0.27,
+          trueElevation: 44.79,
+        },
+      };
+
+      expect(
+        service.getAzimuthElevationFromEphemeris(
+          ephemeris,
+          "2024-03-21T00:00:00.000Z",
+          "trueElevation",
+        ),
+      ).toBe(44.79);
+      expect(
+        service.getAzimuthElevationFromEphemeris(
+          ephemeris,
+          "2024-03-21T00:00:00.000Z",
+          "semidiameter",
+        ),
+      ).toBe(0.27);
     });
 
     it("returns coordinate values", () => {

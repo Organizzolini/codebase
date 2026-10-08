@@ -2,9 +2,26 @@
 import { constants, set_ephe_path } from "sweph";
 
 import type { Asteroid, Node, Planet } from "../caelundas/caelundas.types";
+import type { AzimuthElevationEphemerisBody } from "./ephemeris.types";
 
+/** Kilometers in one astronomical unit (IAU 2012). */
+export const KILOMETERS_PER_ASTRONOMICAL_UNIT = 149_597_870.7;
+/**
+ * Mean radius of each horizon body in kilometers: the Sun's IAU 2015 nominal
+ * radius and the Moon's IAU mean radius. With the topocentric distance they
+ * give the semidiameter that rise and set thresholds use.
+ */
+export const radiusKilometersByHorizonBody: Record<
+  AzimuthElevationEphemerisBody,
+  number
+> = { moon: 1737.4, sun: 695_700 };
 /** Swiss Ephemeris flag for converting ecliptic coordinates to horizontal (azimuth/elevation). */
 export const ECLIPTIC_TO_HORIZONTAL_FLAG: number = constants.SE_ECL2HOR;
+/**
+ * Observer height above sea level, in meters, for topocentric positions.
+ * Sea level matches the US Naval Observatory, which ignores site elevation.
+ */
+export const OBSERVER_ELEVATION_METERS = 0;
 /** Swiss Ephemeris flag selecting the proleptic Gregorian calendar for Julian Day conversions. */
 export const GREGORIAN_CALENDAR_FLAG: number = constants.SE_GREG_CAL;
 /** Swiss Ephemeris flag requesting osculating (instantaneous) orbital elements for the Moon. */
@@ -17,6 +34,12 @@ export const OSCULATING_ORBITAL_ELEMENTS_FLAG: number =
  */
 export const SWISS_EPHEMERIS_FLAGS: number =
   constants.SEFLG_SWIEPH | constants.SEFLG_SPEED;
+/**
+ * {@link SWISS_EPHEMERIS_FLAGS} plus `SEFLG_TOPOCTR`: the position seen from
+ * the observer that `set_topo` placed, parallax included, not from Earth's center.
+ */
+export const TOPOCENTRIC_EPHEMERIS_FLAGS: number =
+  SWISS_EPHEMERIS_FLAGS | constants.SEFLG_TOPOCTR;
 
 /** Maps each planet name to its Swiss Ephemeris integer body identifier. */
 export const swissEphemerisConstantByPlanet: Record<Planet, number> = {

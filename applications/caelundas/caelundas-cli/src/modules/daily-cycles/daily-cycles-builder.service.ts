@@ -7,7 +7,10 @@ import { EphemerisService } from "../ephemeris/ephemeris.service";
 import { MathService } from "../math/math.service";
 
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
-import type { AzimuthElevationEphemeris } from "../ephemeris/ephemeris.types";
+import type {
+  AzimuthElevationEphemeris,
+  AzimuthElevationEphemerisBody,
+} from "../ephemeris/ephemeris.types";
 import type { Moment } from "moment-timezone";
 
 /** Event building and elevation detection helpers for {@link DailyCyclesService}. */
@@ -25,6 +28,9 @@ export class DailyCyclesBuilderService {
 
   // 🔐 Private Fields
 
+  /** Standard atmospheric refraction at the horizon, 34′, as the US Naval Observatory uses. */
+  private static readonly horizonRefractionDegrees =
+    34 / MathService.arcminutesPerDegree;
   private static readonly lunarCategories = [
     "Astronomy",
     "Astrology",
@@ -37,12 +43,38 @@ export class DailyCyclesBuilderService {
     "Daily Solar Cycle",
     "Solar",
   ];
-  private static readonly sunRadiusDegrees =
+  /**
+   * The Sun's conventional semidiameter, 16′. With refraction it gives the
+   * standard sunrise and sunset altitude of −0.8333°.
+   */
+  private static readonly sunSemidiameterDegrees =
     16 / MathService.arcminutesPerDegree;
 
   // 🔑 Public Fields
 
   // 🔏 Private Methods
+
+  /**
+   * Whether an upward zero crossing of `previous → current → next` rounds to
+   * the current minute: a crossing between the previous minute and this one
+   * belongs here when it falls in its second half, and one between this
+   * minute and the next when it falls in its first half. Each crossing
+   * therefore lands on exactly one minute, the nearest one.
+   */
+  private static crossesUpwardNearCurrent(args: {
+    current: number;
+    next: number;
+    previous: number;
+  }): boolean {
+    const { current, next, previous } = args;
+    if (previous < 0 && current >= 0) {
+      return previous / (previous - current) >= 0.5;
+    }
+    if (current < 0 && next >= 0) {
+      return current / (current - next) < 0.5;
+    }
+    return false;
+  }
 
   // 🌎 Public Methods
 
@@ -375,24 +407,66 @@ export class DailyCyclesBuilderService {
   }
 
   /**
-   * Detects upward crossing of the effective horizon at -sunRadiusDegrees.
+   * Returns how far the body's upper limb stands above the horizon, in
+   * degrees, at the previous, current and next minute. Zero is the moment of
+   * rise or set: the true elevation equals the standard altitude
+   * −(34′ refraction + semidiameter), so the Sun uses −0.8333° and the Moon
+   * its own topocentric semidiameter (its parallax is already in the
+   * topocentric elevation).
    */
-  isRise(args: { current: number; previous: number }): boolean {
-    const { current, previous } = args;
-    return (
-      current > -DailyCyclesBuilderService.sunRadiusDegrees &&
-      previous < -DailyCyclesBuilderService.sunRadiusDegrees
-    );
+  getHorizonClearanceWindow(args: {
+    body: AzimuthElevationEphemerisBody;
+    ephemeris: AzimuthElevationEphemeris;
+    minute: Moment;
+  }): { current: number; next: number; previous: number } {
+    const { body, ephemeris, minute } = args;
+    const clearanceAt = (timestamp: Moment): number => {
+      const isoTimestamp = timestamp.toISOString();
+      const trueElevation =
+        this.ephemerisService.getAzimuthElevationFromEphemeris(
+          ephemeris,
+          isoTimestamp,
+          "trueElevation",
+        );
+      const semidiameter =
+        body === "sun"
+          ? DailyCyclesBuilderService.sunSemidiameterDegrees
+          : this.ephemerisService.getAzimuthElevationFromEphemeris(
+              ephemeris,
+              isoTimestamp,
+              "semidiameter",
+            );
+      return (
+        trueElevation +
+        DailyCyclesBuilderService.horizonRefractionDegrees +
+        semidiameter
+      );
+    };
+    return {
+      current: clearanceAt(minute),
+      next: clearanceAt(minute.clone().add(1, "minute")),
+      previous: clearanceAt(minute.clone().subtract(1, "minute")),
+    };
   }
 
   /**
-   * Detects downward crossing of the effective horizon at -sunRadiusDegrees.
+   * Detects a rise at this minute: the upper limb's clearance crosses zero
+   * upward, and the crossing rounds to this minute rather than a neighbor.
    */
-  isSet(args: { current: number; previous: number }): boolean {
-    const { current, previous } = args;
-    return (
-      current < -DailyCyclesBuilderService.sunRadiusDegrees &&
-      previous > -DailyCyclesBuilderService.sunRadiusDegrees
-    );
+  isRise(args: { current: number; next: number; previous: number }): boolean {
+    return DailyCyclesBuilderService.crossesUpwardNearCurrent(args);
+  }
+
+  /**
+   * Detects a set at this minute: the upper limb's clearance crosses zero
+   * downward, and the crossing rounds to this minute rather than a neighbor.
+   */
+  isSet(args: { current: number; next: number; previous: number }): boolean {
+    const { current, next, previous } = args;
+    return DailyCyclesBuilderService.crossesUpwardNearCurrent({
+      current: -current,
+      next: -next,
+      previous: -previous,
+    });
   }
 }
