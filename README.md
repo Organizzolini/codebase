@@ -4648,10 +4648,13 @@ graph LR
   file_caelundas_cli_src_modules_aspects_aspects_utilities_module_ts --> file_caelundas_cli_src_modules_aspects_progressive_compound_event_service_ts
   file_caelundas_cli_src_modules_aspects_aspects_utilities_module_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_module_ts
   file_caelundas_cli_src_modules_aspects_aspects_utilities_module_ts --> file_caelundas_cli_src_modules_math_math_module_ts
+  file_caelundas_cli_src_modules_aspects_aspects_utilities_service_ts --> file_caelundas_cli_src_modules_aspects_aspects_types_ts
   file_caelundas_cli_src_modules_aspects_aspects_utilities_service_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_constants_ts
   file_caelundas_cli_src_modules_aspects_aspects_utilities_service_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_types_ts
   file_caelundas_cli_src_modules_aspects_aspects_utilities_service_ts --> file_caelundas_cli_src_modules_math_math_service_ts
   file_caelundas_cli_src_modules_aspects_aspects_utilities_service_unit_test_ts --> file_caelundas_cli_src_modules_aspects_aspects_utilities_service_ts
+  file_caelundas_cli_src_modules_aspects_aspects_utilities_service_unit_test_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_constants_ts
+  file_caelundas_cli_src_modules_aspects_aspects_utilities_service_unit_test_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_types_ts
   file_caelundas_cli_src_modules_aspects_aspects_utilities_service_unit_test_ts --> file_caelundas_cli_src_modules_math_math_service_ts
   file_caelundas_cli_src_modules_aspects_aspects_module_ts --> file_caelundas_cli_src_modules_aspects_aspects_constants_ts
   file_caelundas_cli_src_modules_aspects_aspects_module_ts --> file_caelundas_cli_src_modules_aspects_aspects_service_ts
@@ -11418,7 +11421,7 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 | --- | --- |
 | Callables | 6178 |
 | Files | 1772 |
-| Calls traced | 6553 |
+| Calls traced | 6555 |
 | Call stacks | 1939 |
 | Deepest stack | 17 |
 | Stacks through recursion | 12 |

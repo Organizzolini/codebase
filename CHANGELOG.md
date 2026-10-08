@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.1](https://github.com/organizzolini/codebase/compare/v3.0.0...v3.0.1) (2026-10-08)
+
+### 🐛 Bug Fixes
+
+* **caelundas:** 🐛 detect exact conjunctions and oppositions by sign change ([#1413](https://github.com/organizzolini/codebase/issues/1413)) ([2318faf](https://github.com/organizzolini/codebase/commit/2318faf39ee303fb6b75bcb669131736c959589d)), closes [#1353](https://github.com/organizzolini/codebase/issues/1353) [#1354](https://github.com/organizzolini/codebase/issues/1354) [#1355](https://github.com/organizzolini/codebase/issues/1355) [#1341](https://github.com/organizzolini/codebase/issues/1341) [#1408](https://github.com/organizzolini/codebase/issues/1408)
+
 ## [3.0.0](https://github.com/organizzolini/codebase/compare/v2.35.5...v3.0.0) (2026-10-08)
 
 ### ⚠ BREAKING CHANGES
