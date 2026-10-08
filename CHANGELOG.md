@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.35.4](https://github.com/organizzolini/codebase/compare/v2.35.3...v2.35.4) (2026-10-08)
+
+### 🐛 Bug Fixes
+
+* **caelundas:** 🐛 compute rise and set with topocentric parallax and standard altitude ([#1412](https://github.com/organizzolini/codebase/issues/1412)) ([191d6c2](https://github.com/organizzolini/codebase/commit/191d6c25159e5c0017b5ac2f4780ecd9f0027e5a)), closes [#1372](https://github.com/organizzolini/codebase/issues/1372) [#1366](https://github.com/organizzolini/codebase/issues/1366) [#1367](https://github.com/organizzolini/codebase/issues/1367) [#1368](https://github.com/organizzolini/codebase/issues/1368) [#1341](https://github.com/organizzolini/codebase/issues/1341) [#1408](https://github.com/organizzolini/codebase/issues/1408)
+
 ## [2.35.3](https://github.com/organizzolini/codebase/compare/v2.35.2...v2.35.3) (2026-10-08)
 
 ### 🐛 Bug Fixes

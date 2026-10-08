@@ -1840,6 +1840,7 @@ graph LR
   file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_service_unit_test_ts["caelundas-cli/src/modules/ephemeris/ephemeris-constants.service.unit.test.ts"]
   file_caelundas_cli_src_modules_ephemeris_ephemeris_coordinate_service_ts["caelundas-cli/src/modules/ephemeris/ephemeris-coordinate.service.ts"]
   file_caelundas_cli_src_modules_ephemeris_ephemeris_coordinate_service_unit_test_ts["caelundas-cli/src/modules/ephemeris/ephemeris-coordinate.service.unit.test.ts"]
+  file_caelundas_cli_src_modules_ephemeris_ephemeris_horizon_service_integration_test_ts["caelundas-cli/src/modules/ephemeris/ephemeris-horizon.service.integration.test.ts"]
   file_caelundas_cli_src_modules_ephemeris_ephemeris_horizon_service_ts["caelundas-cli/src/modules/ephemeris/ephemeris-horizon.service.ts"]
   file_caelundas_cli_src_modules_ephemeris_ephemeris_horizon_service_unit_test_ts["caelundas-cli/src/modules/ephemeris/ephemeris-horizon.service.unit.test.ts"]
   file_caelundas_cli_src_modules_ephemeris_ephemeris_phenomena_service_ts["caelundas-cli/src/modules/ephemeris/ephemeris-phenomena.service.ts"]
@@ -4896,6 +4897,7 @@ graph LR
   file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_service_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_constants_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_service_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_types_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_service_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_ts
+  file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_service_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_types_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_service_unit_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_service_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_coordinate_service_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_types_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_coordinate_service_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_service_ts
@@ -4906,8 +4908,12 @@ graph LR
   file_caelundas_cli_src_modules_ephemeris_ephemeris_coordinate_service_unit_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_service_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_coordinate_service_unit_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_coordinate_service_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_coordinate_service_unit_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_time_service_ts
+  file_caelundas_cli_src_modules_ephemeris_ephemeris_coordinate_service_unit_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_coordinate_service_unit_test_ts --> file_caelundas_cli_src_modules_math_math_service_ts
-  file_caelundas_cli_src_modules_ephemeris_ephemeris_horizon_service_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_types_ts
+  file_caelundas_cli_src_modules_ephemeris_ephemeris_horizon_service_integration_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_ts
+  file_caelundas_cli_src_modules_ephemeris_ephemeris_horizon_service_integration_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_module_ts
+  file_caelundas_cli_src_modules_ephemeris_ephemeris_horizon_service_integration_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_service_ts
+  file_caelundas_cli_src_modules_ephemeris_ephemeris_horizon_service_integration_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_types_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_horizon_service_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_coordinate_service_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_horizon_service_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_time_service_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_horizon_service_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_ts
@@ -4927,6 +4933,7 @@ graph LR
   file_caelundas_cli_src_modules_ephemeris_ephemeris_time_service_ts --> file_caelundas_cli_src_modules_ephemeris_internal_ephemeris_types_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_time_service_unit_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_time_service_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_ts --> file_caelundas_cli_src_modules_caelundas_caelundas_types_ts
+  file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_types_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_unit_test_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_module_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_aggregation_service_ts
   file_caelundas_cli_src_modules_ephemeris_ephemeris_module_ts --> file_caelundas_cli_src_modules_ephemeris_ephemeris_constants_service_ts
@@ -11209,15 +11216,15 @@ Repository statistics measured by [codometer](packages/ic-suite/codometer/codome
 ### YAML
 
 ![YAML Files](https://img.shields.io/badge/YAML_Files-23-cb171e?style=flat-square)
-![YAML Lines](https://img.shields.io/badge/YAML_Lines-3170-e34c26?style=flat-square)
+![YAML Lines](https://img.shields.io/badge/YAML_Lines-3174-e34c26?style=flat-square)
 ![YAML Documents](https://img.shields.io/badge/YAML_Documents-23-f97316?style=flat-square)
 ![YAML Mappings](https://img.shields.io/badge/YAML_Mappings-444-7c3aed?style=flat-square)
 ![YAML Sequences](https://img.shields.io/badge/YAML_Sequences-91-8b5cf6?style=flat-square)
 ![YAML Keys](https://img.shields.io/badge/YAML_Keys-1523-0284c7?style=flat-square)
-![YAML Scalars](https://img.shields.io/badge/YAML_Scalars-3040-16a34a?style=flat-square)
+![YAML Scalars](https://img.shields.io/badge/YAML_Scalars-3043-16a34a?style=flat-square)
 ![YAML Anchors](https://img.shields.io/badge/YAML_Anchors-0-059669?style=flat-square)
 ![YAML Aliases](https://img.shields.io/badge/YAML_Aliases-0-10b981?style=flat-square)
-![YAML Comments](https://img.shields.io/badge/YAML_Comments-522-64748b?style=flat-square)
+![YAML Comments](https://img.shields.io/badge/YAML_Comments-523-64748b?style=flat-square)
 ![YAML Max Depth](https://img.shields.io/badge/YAML_Max_Depth-8-ea580c?style=flat-square)
 
 ### TOML
@@ -11358,9 +11365,9 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 
 | Measure | Value |
 | --- | --- |
-| Callables | 6114 |
+| Callables | 6120 |
 | Files | 1770 |
-| Calls traced | 6473 |
+| Calls traced | 6485 |
 | Call stacks | 1933 |
 | Deepest stack | 17 |
 | Stacks through recursion | 12 |
