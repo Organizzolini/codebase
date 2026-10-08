@@ -81,7 +81,7 @@ async function buildFixture(fixtureDirectory: string): Promise<FixtureBundle> {
       outDir: outputDirectory,
     },
     configFile: false,
-    logLevel: "silent",
+    logLevel: "error",
     plugins: [],
     root: fixtureDirectory,
   });
@@ -104,7 +104,7 @@ function readLibraryOptions(configuration: UserConfig): LibraryOptions {
 }
 
 describe("the published library build", () => {
-  let fixtureDirectory: string;
+  let fixtureDirectory = "";
   let bundle: FixtureBundle;
 
   beforeAll(async () => {
@@ -118,7 +118,11 @@ describe("the published library build", () => {
   }, 120_000);
 
   afterAll(() => {
-    rmSync(fixtureDirectory, { force: true, recursive: true });
+    // Left empty when the directory was never created, so a failure there
+    // surfaces as itself rather than as a cleanup error.
+    if (fixtureDirectory) {
+      rmSync(fixtureDirectory, { force: true, recursive: true });
+    }
   });
 
   it("keeps the name of an exported class", () => {
