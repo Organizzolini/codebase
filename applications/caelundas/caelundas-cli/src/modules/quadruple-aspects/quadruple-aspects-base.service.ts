@@ -10,13 +10,13 @@ import {
 } from "../caelundas/symbol-caelundas.constants";
 
 import type { AspectBodies } from "../aspects/aspects.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   Aspect,
   AspectPhase,
   Body,
   QuadrupleAspect,
 } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { GetQuadrupleAspectEventArguments } from "./quadruple-aspects.types";
 
 /** Primitive helper methods for quadruple-aspect pattern detection and event shaping. */
@@ -55,7 +55,10 @@ export class QuadrupleAspectsBaseService {
   /**
    * Collapses forming+dissolving boundary events into one duration event.
    */
-  buildProgressiveEvent(formingEvent: Event, dissolvingEvent: Event): Event {
+  buildProgressiveEvent(
+    formingEvent: DetectedCalendarEvent,
+    dissolvingEvent: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     const categories = formingEvent.categories.filter(
       (c) => c !== "Forming" && c !== "Perfective" && c !== "Dissolving",
     );
@@ -275,7 +278,7 @@ export class QuadrupleAspectsBaseService {
    */
   getQuadrupleAspectEvent(
     eventArguments: GetQuadrupleAspectEventArguments,
-  ): Event {
+  ): DetectedCalendarEvent {
     const {
       body1,
       body2,
@@ -344,7 +347,7 @@ export class QuadrupleAspectsBaseService {
   /**
    * Makes progressive group key.
    */
-  makeProgressiveGroupKey(event: Event): string {
+  makeProgressiveGroupKey(event: DetectedCalendarEvent): string {
     const planets = _.sortBy(
       event.categories.filter((category) =>
         quadrupleAspectBodies

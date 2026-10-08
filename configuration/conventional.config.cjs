@@ -159,7 +159,7 @@ const scopes = [
   },
   {
     description: "Data ingestion scripts for Lexico",
-    name: "lexico-ingestion",
+    name: "lexico-cli",
   },
   {
     description:

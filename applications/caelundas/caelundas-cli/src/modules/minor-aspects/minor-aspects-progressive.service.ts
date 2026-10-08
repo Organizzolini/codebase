@@ -12,8 +12,8 @@ import {
 import { ProgressiveAspectService } from "../progressive/progressive-aspect.service";
 import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Body, MinorAspect } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 
 /**
  * Builds progressive minor-aspect duration events by pairing forming and dissolving boundaries.
@@ -38,7 +38,7 @@ export class MinorAspectsProgressiveService {
   /**
    * Builds a stable grouping key from sorted bodies plus aspect name for pairing.
    */
-  buildGroupKey(event: Event): string {
+  buildGroupKey(event: DetectedCalendarEvent): string {
     return this.progressiveAspectService.buildAspectGroupKeyFromCategories({
       aspects: minorAspects,
       bodies: minorAspectBodies,
@@ -75,7 +75,7 @@ export class MinorAspectsProgressiveService {
   /**
    * Builds progressive minor-aspect events from detected minute-level events.
    */
-  detectProgressive(events: Event[]): Event[] {
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
     return this.progressiveAspectService.buildSimpleAspectFamilyProgressiveEvents(
       {
         aspectCategory: "Minor Aspect",
@@ -97,7 +97,10 @@ export class MinorAspectsProgressiveService {
   /**
    * Creates one minor-aspect duration event from a matched forming/dissolving pair.
    */
-  getMinorAspectProgressiveEvent(beginning: Event, ending: Event): Event {
+  getMinorAspectProgressiveEvent(
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return this.progressiveAspectService.createSimpleAspectProgressiveEvent({
       aspectCategory: "Minor Aspect",
       aspects: minorAspects,
@@ -116,8 +119,8 @@ export class MinorAspectsProgressiveService {
    */
   processAspectGroup(
     aspectGroupKey: string,
-    aspectGroupEvents: Event[],
-  ): Event[] {
+    aspectGroupEvents: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     return this.progressiveAspectService.buildSimpleAspectFamilyProgressiveEvents(
       {
         aspectCategory: "Minor Aspect",

@@ -55,7 +55,7 @@ body:
         - lexico
         - components-web
         - lexico-entities
-        - lexico-ingestion
+        - lexico-cli
         - meanderaw
         - sempientor
         - callidescope

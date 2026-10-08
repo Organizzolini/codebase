@@ -151,7 +151,7 @@ graph LR
   conformetry_cli["conformetry-cli"]
   conformetry_nx["conformetry-nx"]
   lexico_api["lexico-api"]
-  lexico_ingestion["lexico-ingestion"]
+  lexico_cli["lexico-cli"]
   logging["logging"]
   meanderaw_cli["meanderaw-cli"]
   synchronization["synchronization"]
@@ -172,7 +172,7 @@ graph LR
   conformetry_cli --> logging
   conformetry_nx --> logging
   lexico_api --> logging
-  lexico_ingestion --> logging
+  lexico_cli --> logging
   meanderaw_cli --> logging
   synchronization --> logging
   validation --> logging

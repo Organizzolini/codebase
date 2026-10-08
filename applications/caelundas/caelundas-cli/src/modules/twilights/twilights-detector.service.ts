@@ -4,7 +4,7 @@ import { EphemerisService } from "../ephemeris/ephemeris.service";
 
 import { TwilightsBuilderService } from "./twilights-builder.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { AzimuthElevationEphemeris } from "../ephemeris/ephemeris.types";
 import type { Twilight } from "./twilights.types";
 import type { Moment } from "moment-timezone";
@@ -41,8 +41,8 @@ export class TwilightsDetectorService {
   buildTwilightTransitionEvents(
     elevations: { currentElevation: number; previousElevation: number },
     date: Moment,
-  ): Event[] {
-    const detectedTransitionEvents: Event[] = [];
+  ): DetectedCalendarEvent[] {
+    const detectedTransitionEvents: DetectedCalendarEvent[] = [];
 
     if (this.isAstronomicalDawn({ ...elevations })) {
       detectedTransitionEvents.push(

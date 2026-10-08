@@ -19,7 +19,7 @@ import { TwilightsService } from "../twilights/twilights.service";
 
 import { PerfectiveService } from "./perfective.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Input } from "../input/input.types";
 import type {
   MartianPhaseEventArguments,
@@ -78,14 +78,14 @@ describe(PerfectiveService, () => {
   };
   const twilightsMock = { detect: vi.fn<TwilightsService["detect"]>() };
   const phasesMock = {
-    getMartianPhaseEvents: vi.fn<(args: MartianPhaseEventArguments) => Event[]>(
-      () => [],
-    ),
+    getMartianPhaseEvents: vi.fn<
+      (args: MartianPhaseEventArguments) => DetectedCalendarEvent[]
+    >(() => []),
     getMercurianPhaseEvents: vi.fn<
-      (args: MercurianPhaseEventArguments) => Event[]
+      (args: MercurianPhaseEventArguments) => DetectedCalendarEvent[]
     >(() => []),
     getVenusianPhaseEvents: vi.fn<
-      (args: VenusianPhaseEventArguments) => Event[]
+      (args: VenusianPhaseEventArguments) => DetectedCalendarEvent[]
     >(() => []),
   };
 

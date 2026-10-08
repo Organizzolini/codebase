@@ -8,12 +8,12 @@ import { AspectsUtilitiesService } from "../aspects/aspects-utilities.service";
 import { minorAspects } from "../caelundas/caelundas.constants";
 import { symbolByMinorAspect } from "../caelundas/symbol-caelundas.constants";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   AspectPhase,
   Body,
   MinorAspect,
 } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 import type { Moment } from "moment-timezone";
 
@@ -50,7 +50,7 @@ export class MinorAspectsEventService {
     minorAspect: MinorAspect;
     phase: AspectPhase;
     timestamp: Moment;
-  }): Event {
+  }): DetectedCalendarEvent {
     const { body1, body2, minorAspect, phase, timestamp } = args;
     return this.aspectEventFormattingService.assembleSimpleAspectEvent({
       aspectCategory: "Minor Aspect",

@@ -4,14 +4,14 @@
 
 A collection of accessible, customizable UI components for the codebase, providing a consistent design system across applications. Built with Tailwind CSS, TypeScript, and shadcn/ui (New York style).
 
-The interface half of the [Lexico](../../applications/lexico/README.md) suite:
+The interface half of the [Lexico](../../applications/lexico/lexico-web/README.md) suite:
 
 | Project | Role |
 | ------- | ---- |
-| 🐺 [lexico](../../applications/lexico/README.md) | The SSR web application |
+| 🐺 [lexico-web](../../applications/lexico/lexico-web/README.md) | The SSR web application |
 | 🎨 [components-web](README.md) | This package — shared React components |
 | 📖 [lexico-entities](../lexico-entities/README.md) | TypeORM entities and migrations |
-| 🚰 [lexico-ingestion](../../applications/lexico-ingestion/README.md) | Dictionary and literature ingestion |
+| 🚰 [lexico-cli](../../applications/lexico/lexico-cli/README.md) | Dictionary and literature ingestion |
 
 ## Features
 
@@ -29,7 +29,7 @@ The interface half of the [Lexico](../../applications/lexico/README.md) suite:
 This package is already available in the codebase via workspace protocol. Import from consuming applications:
 
 ```tsx
-// In applications/lexico/src/routes/example.tsx
+// In applications/lexico/lexico-web/src/routes/example.tsx
 import { Button, Card, Input } from "@codebase/components-web";
 import "@codebase/components-web/styles/globals.css"; // Import once in root layout
 
@@ -53,7 +53,7 @@ function ExamplePage() {
 Add global CSS import to your root layout:
 
 ```tsx
-// applications/lexico/src/routes/__root.tsx
+// applications/lexico/lexico-web/src/routes/__root.tsx
 import "@codebase/components-web/styles/globals.css";
 ```
 
@@ -423,7 +423,7 @@ For detailed architecture, component patterns, and development workflows:
 
 - **[AGENTS.md](AGENTS.md)**: Complete architectural documentation
 - **[Main AGENTS.md](../../AGENTS.md)**: Codebase architecture and Nx workflows
-- **[lexico](../../applications/lexico/README.md)**: The application these components build
+- **[lexico-web](../../applications/lexico/lexico-web/README.md)**: The application these components build
 
 External resources:
 
@@ -2259,8 +2259,8 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 ```mermaid
 graph LR
   components_web["components-web"]
-  lexico["lexico"]
-  lexico --> components_web
+  lexico_web["lexico-web"]
+  lexico_web --> components_web
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class components_web subject
 ```
@@ -2414,7 +2414,7 @@ graph LR
 ### Project
 
 ![Lines of Code](https://img.shields.io/badge/Lines_of_Code-373-22c55e?style=flat-square)
-![Repository Size](https://img.shields.io/badge/Repository_Size-22.92_kB-6b7280?style=flat-square)
+![Repository Size](https://img.shields.io/badge/Repository_Size-22.93_kB-6b7280?style=flat-square)
 ![Folders](https://img.shields.io/badge/Folders-2-4a4a4a?style=flat-square)
 ![Source Files](https://img.shields.io/badge/Source_Files-8-3178c6?style=flat-square)
 

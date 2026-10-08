@@ -6,8 +6,8 @@ import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { QuadrupleAspectsBaseService } from "./quadruple-aspects-base.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -41,7 +41,7 @@ export class QuadrupleAspectsComposerService {
     previous: AspectBodies[];
     startIndex: number;
     unionEdges: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const {
       current,
       minute,
@@ -51,7 +51,7 @@ export class QuadrupleAspectsComposerService {
       startIndex,
       unionEdges,
     } = args;
-    const events: Event[] = [];
+    const events: DetectedCalendarEvent[] = [];
     for (let index_ = startIndex; index_ < oppositions.length; index_++) {
       const opp2 = oppositions[index_];
       if (!opp2) continue;
@@ -78,10 +78,10 @@ export class QuadrupleAspectsComposerService {
     oppositions: AspectBodies[];
     previous: AspectBodies[];
     unionEdges: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { current, gtBodies, minute, oppositions, previous, unionEdges } =
       args;
-    const events: Event[] = [];
+    const events: DetectedCalendarEvent[] = [];
     const gtList = [...gtBodies];
 
     for (const baseBody of gtList) {
@@ -108,8 +108,8 @@ export class QuadrupleAspectsComposerService {
    * Collects progressive events from group.
    */
   collectProgressiveEventsFromGroup(
-    group: Event[],
-    progressiveEvents: Event[],
+    group: DetectedCalendarEvent[],
+    progressiveEvents: DetectedCalendarEvent[],
   ): void {
     const sortedEvents = _.sortBy(group, "start");
 
@@ -166,9 +166,9 @@ export class QuadrupleAspectsComposerService {
     currentAspectBodies: AspectBodies[];
     minute: Moment;
     previousAspectBodies: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
-    const events: Event[] = [];
+    const events: DetectedCalendarEvent[] = [];
     const unionEdges = [...currentAspectBodies, ...previousAspectBodies];
     const aspectsByType =
       this.quadrupleAspectsBaseService.groupAspectsByType(unionEdges);
@@ -226,9 +226,9 @@ export class QuadrupleAspectsComposerService {
     currentAspectBodies: AspectBodies[];
     minute: Moment;
     previousAspectBodies: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
-    const events: Event[] = [];
+    const events: DetectedCalendarEvent[] = [];
     const unionEdges = [...currentAspectBodies, ...previousAspectBodies];
     const aspectsByType =
       this.quadrupleAspectsBaseService.groupAspectsByType(unionEdges);
@@ -277,7 +277,7 @@ export class QuadrupleAspectsComposerService {
     opp1: AspectBodies;
     opp2: AspectBodies;
     previous: AspectBodies[];
-  }): Event | null {
+  }): DetectedCalendarEvent | null {
     const { bodyList, current, minute, opp1, opp2, previous } = args;
     const result =
       this.compoundPhaseService.determineCompoundPhaseFromSnapshots({
@@ -321,7 +321,7 @@ export class QuadrupleAspectsComposerService {
     other0: Body;
     other1: Body;
     previous: AspectBodies[];
-  }): Event | null {
+  }): DetectedCalendarEvent | null {
     const {
       baseBody,
       bodies,
@@ -374,7 +374,7 @@ export class QuadrupleAspectsComposerService {
     opp2: AspectBodies;
     previous: AspectBodies[];
     unionEdges: AspectBodies[];
-  }): Event | null {
+  }): DetectedCalendarEvent | null {
     const { current, minute, opp1, opp2, previous, unionEdges } = args;
     const bodies = new Set<Body>([
       opp1.bodies[0],
@@ -422,7 +422,7 @@ export class QuadrupleAspectsComposerService {
     otherTwo: Body[];
     previous: AspectBodies[];
     unionEdges: AspectBodies[];
-  }): Event | null {
+  }): DetectedCalendarEvent | null {
     const {
       baseBody,
       current,

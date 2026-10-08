@@ -13,11 +13,12 @@ import {
 } from "./calendar-events.constants";
 import { formatCoordinate } from "./calendar-events.utilities";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   Coordinates,
   FindInRangeParameters,
 } from "./calendar-events.types";
+import type { UpdatableEntity } from "@codebase/database";
 
 /**
  * Persists the events a run detects and reads them back for rendering.
@@ -45,29 +46,18 @@ export class CalendarEventsService {
 
   /** The row an event becomes for one location. */
   private toRow(
-    event: Event,
+    event: DetectedCalendarEvent,
     coordinates: Coordinates,
-  ): Pick<
-    CalendarEvent,
-    | "categories"
-    | "color"
-    | "description"
-    | "end"
-    | "latitude"
-    | "location"
-    | "longitude"
-    | "start"
-    | "summary"
-  > {
+  ): Omit<CalendarEvent, keyof UpdatableEntity> {
     return {
       categories: event.categories,
       color: event.color ?? null,
       description: event.description,
-      end: event.end.toDate(),
+      end: event.end,
       latitude: formatCoordinate(coordinates.latitude),
       location: event.location ?? null,
       longitude: formatCoordinate(coordinates.longitude),
-      start: event.start.toDate(),
+      start: event.start,
       summary: event.summary,
     };
   }
@@ -107,7 +97,10 @@ export class CalendarEventsService {
    * limit, and a repeated key within the input keeps its last occurrence, as
    * one statement may not update the same row twice.
    */
-  async upsert(events: Event[], coordinates: Coordinates): Promise<void> {
+  async upsert(
+    events: DetectedCalendarEvent[],
+    coordinates: Coordinates,
+  ): Promise<void> {
     const rowsByKey = new Map<string, ReturnType<typeof this.toRow>>();
     for (const event of events) {
       const row = this.toRow(event, coordinates);

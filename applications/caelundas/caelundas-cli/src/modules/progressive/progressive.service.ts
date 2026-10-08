@@ -9,7 +9,7 @@ import { PhasesService } from "../phases/phases.service";
 import { RetrogradesService } from "../retrogrades/retrogrades.service";
 import { TwilightsService } from "../twilights/twilights.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 /**
  * Aggregates progressive event detection from all sub-services.
@@ -44,7 +44,7 @@ export class ProgressiveService {
   /**
    * Runs progressive event detection across all domain services and merges the results.
    */
-  detect(perfectiveEvents: Event[]): Event[] {
+  detect(perfectiveEvents: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
     return [
       ...this.aspectsService.detectProgressive(perfectiveEvents),
       ...this.retrogradesService.detectProgressive(perfectiveEvents),

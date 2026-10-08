@@ -13,14 +13,18 @@ import { CALENDAR_EVENT_BATCH_SIZE } from "./calendar-events.constants";
 import { CalendarEventsModule } from "./calendar-events.module";
 import { CalendarEventsService } from "./calendar-events.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { DatabaseTestingModule } from "@codebase/database/testing";
 import type { Repository } from "typeorm";
 
 const philadelphia = { latitude: 39.949_309, longitude: -75.171_69 };
 const sydney = { latitude: -33.8688, longitude: 151.2093 };
 
-function event(summary: string, start: string, end = start): Event {
+function event(
+  summary: string,
+  start: string,
+  end = start,
+): DetectedCalendarEvent {
   return {
     categories: ["aspects", "moon"],
     description: `${summary} description`,

@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@config "../../../../applications/lexico/tailwind.config.cjs";
+@config "../../../../applications/lexico/lexico-web/tailwind.config.cjs";
 
 /*
  * Lexico Theme

@@ -29,7 +29,7 @@ setup_env_file() {
 
 echo "🔍 Setting up environment files..."
 setup_env_file "." "Root"
-setup_env_file "applications/lexico" "Lexico"
+setup_env_file "applications/lexico/lexico-web" "Lexico"
 setup_env_file "applications/caelundas/caelundas-cli" "Caelundas"
 
 # Ensure LOCAL_WORKSPACE_FOLDER is set for docker-compose volume mounts

@@ -12,8 +12,8 @@ import {
 import { ProgressiveAspectService } from "../progressive/progressive-aspect.service";
 import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Body, SpecialtyAspect } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 
 /**
  * Builds progressive specialty-aspect duration events by pairing forming and dissolving boundaries.
@@ -38,7 +38,7 @@ export class SpecialtyAspectsProgressiveService {
   /**
    * Builds progressive specialty-aspect events from detected minute-level events.
    */
-  detectProgressive(events: Event[]): Event[] {
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
     return this.progressiveAspectService.buildSimpleAspectFamilyProgressiveEvents(
       {
         aspectCategory: "Specialty Aspect",
@@ -86,7 +86,10 @@ export class SpecialtyAspectsProgressiveService {
   /**
    * Creates one specialty-aspect duration event from a forming/dissolving pair.
    */
-  getSpecialtyAspectProgressiveEvent(beginning: Event, ending: Event): Event {
+  getSpecialtyAspectProgressiveEvent(
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return this.progressiveAspectService.createSimpleAspectProgressiveEvent({
       aspectCategory: "Specialty Aspect",
       aspects: specialtyAspects,
@@ -105,8 +108,8 @@ export class SpecialtyAspectsProgressiveService {
    */
   processAspectGroup(
     aspectGroupKey: string,
-    aspectGroupEvents: Event[],
-  ): Event[] {
+    aspectGroupEvents: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     return this.progressiveAspectService.buildSimpleAspectFamilyProgressiveEvents(
       {
         aspectCategory: "Specialty Aspect",
@@ -129,7 +132,7 @@ export class SpecialtyAspectsProgressiveService {
   /**
    * Builds a stable grouping key from sorted bodies plus specialty-aspect label.
    */
-  specialtyAspectGroupKey(event: Event): string {
+  specialtyAspectGroupKey(event: DetectedCalendarEvent): string {
     return this.progressiveAspectService.buildAspectGroupKeyFromCategories({
       aspects: specialtyAspects,
       bodies: specialtyAspectBodies,

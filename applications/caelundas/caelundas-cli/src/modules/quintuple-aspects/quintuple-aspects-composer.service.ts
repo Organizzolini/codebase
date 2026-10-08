@@ -13,13 +13,13 @@ import {
 import { MathService } from "../math/math.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   Aspect,
   AspectPhase,
   Body,
   QuintupleAspect,
 } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type {
   BuildQuintupleEventParameters,
   ComposePentagramsArguments,
@@ -54,7 +54,7 @@ export class QuintupleAspectsComposerService {
     pentagramBodies: Body[],
     phase: AspectPhase,
     eventMinute: Moment,
-  ): Event | null {
+  ): DetectedCalendarEvent | null {
     const body1 = pentagramBodies[0];
     const body2 = pentagramBodies[1];
     const body3 = pentagramBodies[2];
@@ -80,7 +80,10 @@ export class QuintupleAspectsComposerService {
   /**
    * Converts a forming/dissolving pentagram pair into one duration event.
    */
-  buildProgressiveQuintupleEvent(forming: Event, dissolving: Event): Event {
+  buildProgressiveQuintupleEvent(
+    forming: DetectedCalendarEvent,
+    dissolving: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return this.progressiveCompoundEventService.buildProgressiveCompoundEvent({
       dissolving,
       forming,
@@ -154,7 +157,7 @@ export class QuintupleAspectsComposerService {
    */
   buildQuintupleEventFromParameters(
     eventArguments: BuildQuintupleEventParameters,
-  ): Event {
+  ): DetectedCalendarEvent {
     const {
       aspectSymbol,
       bodiesSorted,
@@ -206,7 +209,7 @@ export class QuintupleAspectsComposerService {
    * A Pentagram is an extremely rare configuration of 5 bodies forming
    * a 5-pointed star with 5 quintile aspects (72° each).
    */
-  composePentagrams(args: ComposePentagramsArguments): Event[] {
+  composePentagrams(args: ComposePentagramsArguments): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
     const unionEdges = [...currentAspectBodies, ...previousAspectBodies];
     const quintiles = this.groupAspectsByType(unionEdges).get("quintile") || [];
@@ -284,7 +287,7 @@ export class QuintupleAspectsComposerService {
   /** Creates one quintuple-aspect boundary event for the provided five bodies. */
   getQuintupleAspectEvent(
     eventArguments: GetQuintupleAspectEventArguments,
-  ): Event {
+  ): DetectedCalendarEvent {
     const {
       body1,
       body2,
@@ -322,7 +325,9 @@ export class QuintupleAspectsComposerService {
   /**
    * Groups quintuple events by key.
    */
-  groupQuintupleEventsByKey(events: Event[]): Record<string, Event[]> {
+  groupQuintupleEventsByKey(
+    events: DetectedCalendarEvent[],
+  ): Record<string, DetectedCalendarEvent[]> {
     const quintupleAspectEvents = events.filter((event) =>
       event.categories.includes("Quintuple Aspect"),
     );
@@ -347,7 +352,7 @@ export class QuintupleAspectsComposerService {
     minute: Moment;
     previousAspectBodies: AspectBodies[];
     unionEdges: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const {
       combinations,
       currentAspectBodies,
@@ -355,7 +360,7 @@ export class QuintupleAspectsComposerService {
       previousAspectBodies,
       unionEdges,
     } = args;
-    const events: Event[] = [];
+    const events: DetectedCalendarEvent[] = [];
     for (const bodyCombination of combinations) {
       const pentagramBodies = this.findPentagramPattern(
         bodyCombination,

@@ -7,6 +7,7 @@ import type {
   CHARACTERISTIC_KEYS,
   LETTER_CHARACTERISTIC_KEYS,
   NUMERIC_CHARACTERISTIC_KEYS,
+  PATTERN_CHARACTERISTIC_KEYS,
   STORED_BOOLEAN_KEYS,
 } from "./characteristics.constants";
 
@@ -149,6 +150,10 @@ export type NumericCharacteristicKey =
 export type NumericCharacteristicRecord = Readonly<
   Record<NumericCharacteristicKey, number>
 >;
+
+/** The key of a pattern characteristic: see {@link PATTERN_CHARACTERISTIC_KEYS}. */
+export type PatternCharacteristicKey =
+  (typeof PATTERN_CHARACTERISTIC_KEYS)[number];
 
 /** A key a stored row's `characteristics` map may hold `true` under: see {@link STORED_BOOLEAN_KEYS}. */
 export type StoredBooleanKey = (typeof STORED_BOOLEAN_KEYS)[number];

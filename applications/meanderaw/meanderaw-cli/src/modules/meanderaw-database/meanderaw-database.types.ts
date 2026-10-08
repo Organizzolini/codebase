@@ -1,14 +1,14 @@
 // 🏷️ Types
 
-import type { MeanderFamily } from "../classification/classification.types";
+import type { PatternCharacteristicKey } from "../characteristics/characteristics.types";
 import type { Meander } from "./entities/meander.entity";
 import type { UpdatableEntity } from "@codebase/database";
 
-/** How many rows one family holds at one shape. */
-export interface MeanderFamilyShapeCount {
+/** How many rows one pattern characteristic holds for at one shape. */
+export interface MeanderPatternShapeCount {
   readonly columns: number;
   readonly count: number;
-  readonly family: MeanderFamily;
+  readonly key: PatternCharacteristicKey;
   readonly rows: number;
 }
 

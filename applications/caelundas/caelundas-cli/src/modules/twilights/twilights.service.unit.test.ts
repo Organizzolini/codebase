@@ -13,7 +13,7 @@ import { TwilightsComposerService } from "./twilights-composer.service";
 import { TwilightsDetectorService } from "./twilights-detector.service";
 import { TwilightsService } from "./twilights.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { AzimuthElevationEphemeris } from "../ephemeris/ephemeris.types";
 import type { Moment } from "moment-timezone";
 
@@ -77,28 +77,28 @@ describe(TwilightsService, () => {
 
   describe("detectProgressive", () => {
     it("builds Daylight and Night progressive spans", () => {
-      const astronomicalDawn: Event = {
+      const astronomicalDawn: DetectedCalendarEvent = {
         categories: ["Astronomy", "Astrology", "Twilight", "Astronomical Dawn"],
         description: "Astronomical Dawn",
         end: moment.utc("2024-03-22T05:00:00.000Z"),
         start: moment.utc("2024-03-22T05:00:00.000Z"),
         summary: "🌠 Astronomical Dawn",
       };
-      const civilDawn: Event = {
+      const civilDawn: DetectedCalendarEvent = {
         categories: ["Astronomy", "Astrology", "Twilight", "Civil Dawn"],
         description: "Civil Dawn",
         end: moment.utc("2024-03-21T06:00:00.000Z"),
         start: moment.utc("2024-03-21T06:00:00.000Z"),
         summary: "🌄 Civil Dawn",
       };
-      const civilDusk: Event = {
+      const civilDusk: DetectedCalendarEvent = {
         categories: ["Astronomy", "Astrology", "Twilight", "Civil Dusk"],
         description: "Civil Dusk",
         end: moment.utc("2024-03-21T19:00:00.000Z"),
         start: moment.utc("2024-03-21T19:00:00.000Z"),
         summary: "🌇 Civil Dusk",
       };
-      const astronomicalDusk: Event = {
+      const astronomicalDusk: DetectedCalendarEvent = {
         categories: ["Astronomy", "Astrology", "Twilight", "Astronomical Dusk"],
         description: "Astronomical Dusk",
         end: moment.utc("2024-03-21T20:00:00.000Z"),
@@ -135,7 +135,7 @@ describe(TwilightsService, () => {
   });
 
   describe("detect delegation", () => {
-    const buildEvent = (description: string): Event => {
+    const buildEvent = (description: string): DetectedCalendarEvent => {
       const timestamp = moment.utc("2024-03-21T00:00:00.000Z");
       return {
         categories: ["Twilight"],
@@ -149,52 +149,55 @@ describe(TwilightsService, () => {
     it("delegates builder methods to the wrapped service", () => {
       const mockBuilderService = {
         buildAstronomicalDawnEvent: vi
-          .fn<(date: Moment) => Event>()
+          .fn<(date: Moment) => DetectedCalendarEvent>()
           .mockReturnValue(buildEvent("AD")),
         buildAstronomicalDuskEvent: vi
-          .fn<(date: Moment) => Event>()
+          .fn<(date: Moment) => DetectedCalendarEvent>()
           .mockReturnValue(buildEvent("ADK")),
         buildCivilDawnEvent: vi
-          .fn<(date: Moment) => Event>()
+          .fn<(date: Moment) => DetectedCalendarEvent>()
           .mockReturnValue(buildEvent("CD")),
         buildCivilDuskEvent: vi
-          .fn<(date: Moment) => Event>()
+          .fn<(date: Moment) => DetectedCalendarEvent>()
           .mockReturnValue(buildEvent("CDK")),
         buildNauticalDawnEvent: vi
-          .fn<(date: Moment) => Event>()
+          .fn<(date: Moment) => DetectedCalendarEvent>()
           .mockReturnValue(buildEvent("ND")),
         buildNauticalDuskEvent: vi
-          .fn<(date: Moment) => Event>()
+          .fn<(date: Moment) => DetectedCalendarEvent>()
           .mockReturnValue(buildEvent("NDK")),
       };
       const mockComposerService = {
         buildDawnProgressiveEvents: vi
           .fn<
             (
-              astronomicalDawnEvents: Event[],
-              nauticalDawnEvents: Event[],
-              civilDawnEvents: Event[],
-            ) => Event[]
+              astronomicalDawnEvents: DetectedCalendarEvent[],
+              nauticalDawnEvents: DetectedCalendarEvent[],
+              civilDawnEvents: DetectedCalendarEvent[],
+            ) => DetectedCalendarEvent[]
           >()
           .mockReturnValue([buildEvent("dawn")]),
         buildDuskProgressiveEvents: vi
           .fn<
             (args: {
-              astronomicalDuskEvents: Event[];
-              civilDawnEvents: Event[];
-              civilDuskEvents: Event[];
-              nauticalDuskEvents: Event[];
-            }) => Event[]
+              astronomicalDuskEvents: DetectedCalendarEvent[];
+              civilDawnEvents: DetectedCalendarEvent[];
+              civilDuskEvents: DetectedCalendarEvent[];
+              nauticalDuskEvents: DetectedCalendarEvent[];
+            }) => DetectedCalendarEvent[]
           >()
           .mockReturnValue([buildEvent("dusk")]),
         pairAndBuild: vi
           .fn<
             (args: {
-              beginnings: Event[];
-              builder: (beginning: Event, ending: Event) => Event;
-              endings: Event[];
+              beginnings: DetectedCalendarEvent[];
+              builder: (
+                beginning: DetectedCalendarEvent,
+                ending: DetectedCalendarEvent,
+              ) => DetectedCalendarEvent;
+              endings: DetectedCalendarEvent[];
               label: string;
-            }) => Event[]
+            }) => DetectedCalendarEvent[]
           >()
           .mockReturnValue([buildEvent("pair")]),
       };
@@ -207,7 +210,7 @@ describe(TwilightsService, () => {
                 previousElevation: number;
               },
               date: Moment,
-            ) => Event[]
+            ) => DetectedCalendarEvent[]
           >()
           .mockReturnValue([buildEvent("transition")]),
         getSunElevations: vi
@@ -255,42 +258,49 @@ describe(TwilightsService, () => {
 
     it("delegates detection and progressive pairing", () => {
       const mockBuilderService = {
-        buildAstronomicalDawnEvent: vi.fn<(date: Moment) => Event>(),
-        buildAstronomicalDuskEvent: vi.fn<(date: Moment) => Event>(),
-        buildCivilDawnEvent: vi.fn<(date: Moment) => Event>(),
-        buildCivilDuskEvent: vi.fn<(date: Moment) => Event>(),
-        buildNauticalDawnEvent: vi.fn<(date: Moment) => Event>(),
-        buildNauticalDuskEvent: vi.fn<(date: Moment) => Event>(),
+        buildAstronomicalDawnEvent:
+          vi.fn<(date: Moment) => DetectedCalendarEvent>(),
+        buildAstronomicalDuskEvent:
+          vi.fn<(date: Moment) => DetectedCalendarEvent>(),
+        buildCivilDawnEvent: vi.fn<(date: Moment) => DetectedCalendarEvent>(),
+        buildCivilDuskEvent: vi.fn<(date: Moment) => DetectedCalendarEvent>(),
+        buildNauticalDawnEvent:
+          vi.fn<(date: Moment) => DetectedCalendarEvent>(),
+        buildNauticalDuskEvent:
+          vi.fn<(date: Moment) => DetectedCalendarEvent>(),
       };
       const mockTransitionEvents = [buildEvent("transition")];
       const mockComposerService = {
         buildDawnProgressiveEvents: vi
           .fn<
             (
-              astronomicalDawnEvents: Event[],
-              nauticalDawnEvents: Event[],
-              civilDawnEvents: Event[],
-            ) => Event[]
+              astronomicalDawnEvents: DetectedCalendarEvent[],
+              nauticalDawnEvents: DetectedCalendarEvent[],
+              civilDawnEvents: DetectedCalendarEvent[],
+            ) => DetectedCalendarEvent[]
           >()
           .mockReturnValue([buildEvent("dawn")]),
         buildDuskProgressiveEvents: vi
           .fn<
             (args: {
-              astronomicalDuskEvents: Event[];
-              civilDawnEvents: Event[];
-              civilDuskEvents: Event[];
-              nauticalDuskEvents: Event[];
-            }) => Event[]
+              astronomicalDuskEvents: DetectedCalendarEvent[];
+              civilDawnEvents: DetectedCalendarEvent[];
+              civilDuskEvents: DetectedCalendarEvent[];
+              nauticalDuskEvents: DetectedCalendarEvent[];
+            }) => DetectedCalendarEvent[]
           >()
           .mockReturnValue([buildEvent("dusk")]),
         pairAndBuild: vi
           .fn<
             (args: {
-              beginnings: Event[];
-              builder: (beginning: Event, ending: Event) => Event;
-              endings: Event[];
+              beginnings: DetectedCalendarEvent[];
+              builder: (
+                beginning: DetectedCalendarEvent,
+                ending: DetectedCalendarEvent,
+              ) => DetectedCalendarEvent;
+              endings: DetectedCalendarEvent[];
               label: string;
-            }) => Event[]
+            }) => DetectedCalendarEvent[]
           >()
           .mockReturnValue([buildEvent("pair")]),
       };
@@ -303,7 +313,7 @@ describe(TwilightsService, () => {
                 previousElevation: number;
               },
               date: Moment,
-            ) => Event[]
+            ) => DetectedCalendarEvent[]
           >()
           .mockReturnValue(mockTransitionEvents),
         getSunElevations: vi

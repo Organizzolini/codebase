@@ -4,7 +4,6 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { environmentSchema } from "../../constants";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
-import { ClassificationModule } from "../classification/classification.module";
 import { CodeModule } from "../code/code.module";
 import { DrawingModule } from "../drawing/drawing.module";
 import { EnumerationModule } from "../enumeration/enumeration.module";
@@ -29,7 +28,6 @@ async function compilePool(workers: number): Promise<DrawPoolService> {
         validate: () => environmentSchema.parse({ DRAW_WORKERS: workers }),
       }),
       CharacteristicsModule,
-      ClassificationModule,
       CodeModule,
       DrawingModule,
       EnumerationModule,

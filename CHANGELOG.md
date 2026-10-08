@@ -2,6 +2,50 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.34.2](https://github.com/organizzolini/codebase/compare/v2.34.1...v2.34.2) (2026-10-08)
+
+### ♻️ Code Refactoring
+
+* **lexico-cli:** ♻️ rename lexico-ingestion to lexico-cli under the applications/lexico group ([#1334](https://github.com/organizzolini/codebase/issues/1334)) ([f4b8261](https://github.com/organizzolini/codebase/commit/f4b82618cda1fae61a3c768dd6c84c5845660572)), closes [#1313](https://github.com/organizzolini/codebase/issues/1313) [#1333](https://github.com/organizzolini/codebase/issues/1333) [#1329](https://github.com/organizzolini/codebase/issues/1329) [#1313](https://github.com/organizzolini/codebase/issues/1313)
+* **lexico:** ♻️ move lexico-api under the applications/lexico group ([#1333](https://github.com/organizzolini/codebase/issues/1333)) ([9b140ae](https://github.com/organizzolini/codebase/commit/9b140aee1f76b757c4c0ae7b66f1c2a4df9a6977)), closes [#1329](https://github.com/organizzolini/codebase/issues/1329) [#1329](https://github.com/organizzolini/codebase/issues/1329) [#1334](https://github.com/organizzolini/codebase/issues/1334)
+* **lexico:** ♻️ rename lexico to lexico-web under an applications/lexico group ([#1329](https://github.com/organizzolini/codebase/issues/1329)) ([4fb87a4](https://github.com/organizzolini/codebase/commit/4fb87a4aec90f6b3bdc4ba6bd79453a612e6355c)), closes [#1302](https://github.com/organizzolini/codebase/issues/1302) [#1304](https://github.com/organizzolini/codebase/issues/1304) [organizzolini/codebase#1301](https://github.com/organizzolini/codebase/issues/1301) [#1302](https://github.com/organizzolini/codebase/issues/1302) [#1304](https://github.com/organizzolini/codebase/issues/1304)
+
+## [2.34.1](https://github.com/organizzolini/codebase/compare/v2.34.0...v2.34.1) (2026-10-08)
+
+### ⚡ Performance Improvements
+
+* **lexico:** ⚡️ paginate literature connections in sql instead of in memory ([#1322](https://github.com/organizzolini/codebase/issues/1322)) ([d9e3d6b](https://github.com/organizzolini/codebase/commit/d9e3d6bf79c2cfa585ef8981b5848b7e24974c27)), closes [#1320](https://github.com/organizzolini/codebase/issues/1320) [#1180](https://github.com/organizzolini/codebase/issues/1180) [#1179](https://github.com/organizzolini/codebase/issues/1179) [#1170](https://github.com/organizzolini/codebase/issues/1170) [#1311](https://github.com/organizzolini/codebase/issues/1311) [#1320](https://github.com/organizzolini/codebase/issues/1320)
+
+### ♻️ Code Refactoring
+
+* **caelundas:** ♻️ use the CalendarEvent entity as caelundas' only event type ([#1393](https://github.com/organizzolini/codebase/issues/1393)) ([17e5a2e](https://github.com/organizzolini/codebase/commit/17e5a2ea8c06fd696083b4992c05edafa50ba800)), closes [#1340](https://github.com/organizzolini/codebase/issues/1340) [#1263](https://github.com/organizzolini/codebase/issues/1263) [#1310](https://github.com/organizzolini/codebase/issues/1310) [#1278](https://github.com/organizzolini/codebase/issues/1278)
+
+## [2.34.0](https://github.com/organizzolini/codebase/compare/v2.33.7...v2.34.0) (2026-10-08)
+
+### ✨ Features
+
+* **caelundas:** ✨ store detected events in postgres and render calendars from them ([#1310](https://github.com/organizzolini/codebase/issues/1310)) ([a766d71](https://github.com/organizzolini/codebase/commit/a766d711fbc7474737b5820d3ceee6ed2ecd4ec6)), closes [#1278](https://github.com/organizzolini/codebase/issues/1278) [#1279](https://github.com/organizzolini/codebase/issues/1279) [#1280](https://github.com/organizzolini/codebase/issues/1280) [#1281](https://github.com/organizzolini/codebase/issues/1281) [#1305](https://github.com/organizzolini/codebase/issues/1305)
+* **conformetry,lexico:** ✨ add frontend conformetry templates and infer validation inputs ([#1301](https://github.com/organizzolini/codebase/issues/1301)) ([d26a7bc](https://github.com/organizzolini/codebase/commit/d26a7bc4424cfa17a36570ca1a3ae147fa58a089))
+* **database,infrastructure:** ✨ add a shared postgres package and a database per project ([#1305](https://github.com/organizzolini/codebase/issues/1305)) ([75d9a21](https://github.com/organizzolini/codebase/commit/75d9a218e9a4bcbcc94b383bf8431dfe3275ac84)), closes [#1273](https://github.com/organizzolini/codebase/issues/1273) [#1278](https://github.com/organizzolini/codebase/issues/1278) [#1283](https://github.com/organizzolini/codebase/issues/1283) [#1273](https://github.com/organizzolini/codebase/issues/1273) [#1264](https://github.com/organizzolini/codebase/issues/1264) [#1263](https://github.com/organizzolini/codebase/issues/1263) [#1260](https://github.com/organizzolini/codebase/issues/1260) [#1309](https://github.com/organizzolini/codebase/issues/1309) [#1310](https://github.com/organizzolini/codebase/issues/1310) [#1311](https://github.com/organizzolini/codebase/issues/1311)
+* **meanderaw:** ✨ replace families with pattern characteristics ([#1335](https://github.com/organizzolini/codebase/issues/1335)) ([2f44269](https://github.com/organizzolini/codebase/commit/2f44269f392919982352dea38b5c335759a5a6fa))
+
+### 🐛 Bug Fixes
+
+* **caelundas:** 🐛 write the calendar reliably and stop cross-planet retrograde pairing ([#1337](https://github.com/organizzolini/codebase/issues/1337)) ([fa7cf03](https://github.com/organizzolini/codebase/commit/fa7cf03ce6d798a4118c3453346f5a486e381f5c))
+* **lexico:** 🐛 apply searchTexts' author filter to title matches and cover literature search ([#1320](https://github.com/organizzolini/codebase/issues/1320)) ([38b0700](https://github.com/organizzolini/codebase/commit/38b0700efcaec0056128b7a1cf37f66265e2bf08)), closes [#1186](https://github.com/organizzolini/codebase/issues/1186) [#1183](https://github.com/organizzolini/codebase/issues/1183) [#1170](https://github.com/organizzolini/codebase/issues/1170) [#1311](https://github.com/organizzolini/codebase/issues/1311)
+* **lexico:** 🐛 batch token word lookups with a request-scoped dataloader ([#1323](https://github.com/organizzolini/codebase/issues/1323)) ([6384530](https://github.com/organizzolini/codebase/commit/6384530ad86e8baf491c10832a5c6939e949bde5)), closes [#1181](https://github.com/organizzolini/codebase/issues/1181) [#1179](https://github.com/organizzolini/codebase/issues/1179) [#1170](https://github.com/organizzolini/codebase/issues/1170) [#1311](https://github.com/organizzolini/codebase/issues/1311)
+* **lexico:** 🐛 resolve nested parent texts and test author and text queries ([#1321](https://github.com/organizzolini/codebase/issues/1321)) ([a3f8003](https://github.com/organizzolini/codebase/commit/a3f8003969a90d06f4818a6f84d51bd30156ce72)), closes [#1178](https://github.com/organizzolini/codebase/issues/1178) [#1175](https://github.com/organizzolini/codebase/issues/1175) [#1170](https://github.com/organizzolini/codebase/issues/1170) [#1311](https://github.com/organizzolini/codebase/issues/1311)
+* **lexico:** 🐛 return batched words in request order and test word lookups end to end ([#1319](https://github.com/organizzolini/codebase/issues/1319)) ([f1b03e6](https://github.com/organizzolini/codebase/commit/f1b03e6beef8d2e9446183e8e0e9d5937fef693d)), closes [#1174](https://github.com/organizzolini/codebase/issues/1174) [#1171](https://github.com/organizzolini/codebase/issues/1171) [#1170](https://github.com/organizzolini/codebase/issues/1170) [#1311](https://github.com/organizzolini/codebase/issues/1311)
+
+### 📝 Documentation
+
+* **documentation:** 📝 record that packages version by everything a commit affects ([#1392](https://github.com/organizzolini/codebase/issues/1392)) ([6167e9e](https://github.com/organizzolini/codebase/commit/6167e9e57e3eed7bfccdcca57890fb37efdd311e)), closes [#1312](https://github.com/organizzolini/codebase/issues/1312)
+
+### ♻️ Code Refactoring
+
+* **lexico-entities,lexico-ingestion,lexico:** ♻️ move lexico onto the shared postgres convention ([#1311](https://github.com/organizzolini/codebase/issues/1311)) ([e7366c8](https://github.com/organizzolini/codebase/commit/e7366c8438b5610be1ad52d3c1a9fe4656e4bc6a)), closes [#1283](https://github.com/organizzolini/codebase/issues/1283) [#1263](https://github.com/organizzolini/codebase/issues/1263) [#1305](https://github.com/organizzolini/codebase/issues/1305) [#1263](https://github.com/organizzolini/codebase/issues/1263)
+* **meanderaw:** ♻️ move meanderaw onto the shared postgres convention ([#1309](https://github.com/organizzolini/codebase/issues/1309)) ([af56be3](https://github.com/organizzolini/codebase/commit/af56be35d6f7e128a29891f08d483fefe2b1e157)), closes [#1305](https://github.com/organizzolini/codebase/issues/1305) [#1273](https://github.com/organizzolini/codebase/issues/1273) [#1274](https://github.com/organizzolini/codebase/issues/1274) [#1275](https://github.com/organizzolini/codebase/issues/1275) [#1276](https://github.com/organizzolini/codebase/issues/1276) [#1277](https://github.com/organizzolini/codebase/issues/1277) [#1263](https://github.com/organizzolini/codebase/issues/1263) [#1305](https://github.com/organizzolini/codebase/issues/1305) [#1264](https://github.com/organizzolini/codebase/issues/1264)
+
 ## [2.33.7](https://github.com/organizzolini/codebase/compare/v2.33.6...v2.33.7) (2026-10-07)
 
 ### 📝 Documentation

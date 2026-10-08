@@ -127,7 +127,7 @@ export class ConnectivityService {
    *
    * `cycles` is `edges - nodes + components`, the first Betti number — the
    * same arithmetic `InkConnectivity` states as the equality a forest
-   * satisfies, reported as a count here because a family is told from another
+   * satisfies, reported as a count here because one pattern is told from another
    * by how many loops it closes rather than only by whether it closes one.
    */
   connectivity(matrix: Matrix, unwrapped = false): Connectivity {

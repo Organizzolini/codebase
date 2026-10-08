@@ -1,7 +1,7 @@
 // 🏷️ Types
 
 /**
- * How a point is reached, ranked in the order the family's original
+ * How a point is reached, ranked in the order the retired `mosaic` generator's
  * exact-cover search discovered covers in: `0` a bare point, `1` one
  * anchoring a southward edge, `2` one anchoring an eastward edge, `3` one
  * reached only by a neighbor's edge.

@@ -7,13 +7,13 @@ import { LoggerService } from "@codebase/logging";
 
 import { ProgressiveUtilitiesService } from "./progressive-utilities.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 describe(ProgressiveUtilitiesService, () => {
   let service: ProgressiveUtilitiesService;
   let logger: DeepMocked<LoggerService>;
 
-  const createEvent = (iso: string): Event => ({
+  const createEvent = (iso: string): DetectedCalendarEvent => ({
     categories: ["Astronomy"],
     description: "Event",
     end: moment.utc(iso),
@@ -62,7 +62,7 @@ describe(ProgressiveUtilitiesService, () => {
     const thirdEnding = createEvent("2024-03-21T14:00:00.000Z");
 
     const pairs = service.pairProgressiveEvents(
-      [beginning, undefined as unknown as Event],
+      [beginning, undefined as unknown as DetectedCalendarEvent],
       [ending, extraEnding, thirdEnding],
       "unequal",
     );

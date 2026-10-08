@@ -1,7 +1,6 @@
-import { Field, ID, InterfaceType } from "@nestjs/graphql";
 import { Entity, Index, ManyToOne, OneToMany, TableInheritance } from "typeorm";
 
-import { AuditableEntity } from "../../base/Auditable.entity";
+import { DeletableEntity } from "@codebase/database";
 
 import type { Lexeme } from "../Lexeme.entity";
 import type { WordForm } from "../WordForm.entity";
@@ -13,14 +12,9 @@ import type { WordForm } from "../WordForm.entity";
   comment:
     "Abstract base table for normalized inflected forms using single-table inheritance",
   name: "forms",
-  schema: "public",
 })
-@InterfaceType()
 @TableInheritance({ column: { name: "type", type: "text" } })
-export class Form extends AuditableEntity {
-  @Field(() => ID)
-  declare id: string;
-
+export class Form extends DeletableEntity {
   @Index()
   @ManyToOne("Lexeme", "forms", {
     nullable: false,

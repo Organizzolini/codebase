@@ -1,7 +1,7 @@
 // 🏷️ Types
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Aspect, Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 import type { Moment } from "moment-timezone";
 
@@ -17,7 +17,7 @@ export interface AspectBodies {
  * Detects multi-body aspect patterns from already-detected simple aspect edges.
  */
 export interface CompositeAspectDetector {
-  detect(arguments_: CompositeAspectDetectorArguments): Event[];
+  detect(arguments_: CompositeAspectDetectorArguments): DetectedCalendarEvent[];
 }
 
 /**
@@ -33,14 +33,14 @@ export interface CompositeAspectDetectorArguments {
  * Converts instantaneous aspect events into duration spans by pairing boundaries.
  */
 export interface ProgressiveAspectDetector {
-  detectProgressive(events: Event[]): Event[];
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[];
 }
 
 /**
  * Detects pairwise (2-body) aspect events directly from ephemeris snapshots.
  */
 export interface SimpleAspectDetector {
-  detect(arguments_: SimpleAspectDetectorArguments): Event[];
+  detect(arguments_: SimpleAspectDetectorArguments): DetectedCalendarEvent[];
 }
 
 /**

@@ -12,7 +12,7 @@ import { QuintupleAspectsComposerService } from "./quintuple-aspects-composer.se
 import { QuintupleAspectsService } from "./quintuple-aspects.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 describe(QuintupleAspectsService, () => {
   let service: QuintupleAspectsService;
@@ -221,7 +221,7 @@ describe(QuintupleAspectsService, () => {
 
   describe("detectProgressive", () => {
     it("creates progressive events from forming and dissolving pairs", () => {
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -241,7 +241,7 @@ describe(QuintupleAspectsService, () => {
         summary: "Pentagram forming",
       };
 
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -274,7 +274,7 @@ describe(QuintupleAspectsService, () => {
     });
 
     it("handles multiple body quintets", () => {
-      const quintet1Forming: Event = {
+      const quintet1Forming: DetectedCalendarEvent = {
         categories: [
           "Quintuple Aspect",
           "Pentagram",
@@ -291,7 +291,7 @@ describe(QuintupleAspectsService, () => {
         summary: "Pentagram forming",
       };
 
-      const quintet1Dissolving: Event = {
+      const quintet1Dissolving: DetectedCalendarEvent = {
         categories: [
           "Quintuple Aspect",
           "Pentagram",
@@ -308,7 +308,7 @@ describe(QuintupleAspectsService, () => {
         summary: "Pentagram dissolving",
       };
 
-      const quintet2Forming: Event = {
+      const quintet2Forming: DetectedCalendarEvent = {
         categories: [
           "Quintuple Aspect",
           "Pentagram",
@@ -326,7 +326,7 @@ describe(QuintupleAspectsService, () => {
         summary: "Pentagram forming",
       };
 
-      const quintet2Dissolving: Event = {
+      const quintet2Dissolving: DetectedCalendarEvent = {
         categories: [
           "Quintuple Aspect",
           "Pentagram",
@@ -375,7 +375,7 @@ describe(QuintupleAspectsService, () => {
     });
 
     it("filters out non-quintuple-aspect events", () => {
-      const quintupleAspectEvent: Event = {
+      const quintupleAspectEvent: DetectedCalendarEvent = {
         categories: [
           "Quintuple Aspect",
           "Pentagram",
@@ -392,7 +392,7 @@ describe(QuintupleAspectsService, () => {
         summary: "Pentagram forming",
       };
 
-      const nonQuintupleAspectEvent: Event = {
+      const nonQuintupleAspectEvent: DetectedCalendarEvent = {
         categories: ["Other"],
         description: "Not a quintuple aspect",
         end: moment.utc("2024-03-21T10:00:00.000Z"),
@@ -419,7 +419,7 @@ describe(QuintupleAspectsService, () => {
     });
 
     it("skips undefined candidate events in grouped progressive pairing", () => {
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Quintuple Aspect",
           "Pentagram",
@@ -435,7 +435,7 @@ describe(QuintupleAspectsService, () => {
         start: moment.utc("2024-03-21T10:00:00.000Z"),
         summary: "Pentagram forming",
       };
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Quintuple Aspect",
           "Pentagram",
@@ -463,7 +463,11 @@ describe(QuintupleAspectsService, () => {
       const groupSpy = vi
         .spyOn(composer, "groupQuintupleEventsByKey")
         .mockReturnValue({
-          key: [formingEvent, undefined, dissolvingEvent] as unknown as Event[],
+          key: [
+            formingEvent,
+            undefined,
+            dissolvingEvent,
+          ] as unknown as DetectedCalendarEvent[],
         });
       const progressiveBuilderSpy = vi
         .spyOn(composer, "buildProgressiveQuintupleEvent")
@@ -492,7 +496,7 @@ describe(QuintupleAspectsService, () => {
     });
 
     it("skips progressive when dissolving comes before forming", () => {
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Quintuple Aspect",
           "Pentagram",
@@ -509,7 +513,7 @@ describe(QuintupleAspectsService, () => {
         summary: "Pentagram dissolving",
       };
 
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Quintuple Aspect",
           "Pentagram",
@@ -535,7 +539,7 @@ describe(QuintupleAspectsService, () => {
     });
 
     it("ignores non-dissolving follow-up events in progressive pairing", () => {
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Quintuple Aspect",
           "Pentagram",
@@ -551,7 +555,7 @@ describe(QuintupleAspectsService, () => {
         start: moment.utc("2024-03-21T10:00:00.000Z"),
         summary: "Pentagram forming",
       };
-      const nonDissolvingEvent: Event = {
+      const nonDissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Quintuple Aspect",
           "Pentagram",
@@ -581,7 +585,9 @@ describe(QuintupleAspectsService, () => {
         caseName: "removes phase emojis from summary",
         dissolvingSummary: "⬅️ Pentagram dissolving",
         formingSummary: "➡️ Pentagram forming",
-        validateProgressiveEvent: (event: Event | undefined): void => {
+        validateProgressiveEvent: (
+          event: DetectedCalendarEvent | undefined,
+        ): void => {
           expect(event?.summary).toBe("Pentagram forming");
         },
       },
@@ -589,7 +595,9 @@ describe(QuintupleAspectsService, () => {
         caseName: "removes phase text from description",
         dissolvingSummary: "Pentagram dissolving",
         formingSummary: "Pentagram forming",
-        validateProgressiveEvent: (event: Event | undefined): void => {
+        validateProgressiveEvent: (
+          event: DetectedCalendarEvent | undefined,
+        ): void => {
           expect(event?.description).not.toMatch(
             /(forming|dissolving|exact)$/i,
           );
@@ -599,7 +607,7 @@ describe(QuintupleAspectsService, () => {
     ])(
       "$caseName",
       ({ dissolvingSummary, formingSummary, validateProgressiveEvent }) => {
-        const formingEvent: Event = {
+        const formingEvent: DetectedCalendarEvent = {
           categories: [
             "Quintuple Aspect",
             "Pentagram",
@@ -616,7 +624,7 @@ describe(QuintupleAspectsService, () => {
           summary: formingSummary,
         };
 
-        const dissolvingEvent: Event = {
+        const dissolvingEvent: DetectedCalendarEvent = {
           categories: [
             "Quintuple Aspect",
             "Pentagram",

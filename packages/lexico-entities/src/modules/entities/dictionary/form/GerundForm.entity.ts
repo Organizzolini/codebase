@@ -1,16 +1,14 @@
-import { Field, ObjectType } from "@nestjs/graphql";
 import { ChildEntity, Column } from "typeorm";
 
 import {
   type FormGerundCase,
   formGerundCaseValues,
-} from "../../../database/database.constants";
+} from "../../../lexico-database/lexico-database.constants";
 
 import { Form } from "./Form.entity";
 
 /** A verbal noun gerund form (genitive, dative, accusative, or ablative case). */
 @ChildEntity("gerund")
-@ObjectType({ implements: Form })
 export class GerundForm extends Form {
   @Column({
     comment:
@@ -19,6 +17,5 @@ export class GerundForm extends Form {
     name: "form_case",
     type: "enum",
   })
-  @Field(() => String)
   case!: FormGerundCase;
 }

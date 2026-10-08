@@ -1,4 +1,4 @@
-import { writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import { Injectable } from "@nestjs/common";
@@ -7,17 +7,17 @@ import moment from "moment-timezone";
 
 import { LoggerService } from "@codebase/logging";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Environment, Input } from "../input/input.types";
 import type {
   BuildCalendarFileContentParameters,
   BuildInstantEventArguments,
-  Event,
 } from "./calendar.types";
 
 /**
  * NestJS service responsible for building and writing astronomical event calendars.
  *
- * Converts an array of {@link Event} objects into RFC 5545-compliant iCalendar (ICS) files
+ * Converts an array of {@link DetectedCalendarEvent} objects into RFC 5545-compliant iCalendar (ICS) files
  * and persists them to the configured output directory.
  */
 @Injectable()
@@ -37,22 +37,13 @@ export class CalendarService {
 
   // 🔏 Private Methods
 
-  /** Builds VEVENT property lines, including optional location, GEO, URL, and metadata fields. */
-  private buildEventProperties(event: Event): string {
+  /** Builds VEVENT property lines, including the optional location and color. */
+  private buildEventProperties(event: DetectedCalendarEvent): string {
     let properties = `SUMMARY:${event.summary}\nDESCRIPTION:${event.description}\nSTATUS:CONFIRMED\nCLASS:PUBLIC\nTRANSP:TRANSPARENT\nCATEGORIES:${event.categories.join(
       ",",
     )}`;
     if (event.location) {
       properties += `\nLOCATION:${event.location}`;
-    }
-    if (event.geography) {
-      properties += `\nGEO:${String(event.geography.latitude)};${String(event.geography.longitude)}`;
-    }
-    if (event.url) {
-      properties += `\nURL:${event.url}`;
-    }
-    if (event.priority !== undefined) {
-      properties += `\nPRIORITY:${String(event.priority)}`;
     }
     if (event.color) {
       properties += `\nCOLOR:${event.color}`;
@@ -95,7 +86,7 @@ END:VTIMEZONE`;
   }
 
   /** Generates a deterministic event identity string used as the VEVENT UID source. */
-  private generateUid(event: Event): string {
+  private generateUid(event: DetectedCalendarEvent): string {
     let id = `${event.summary}::${event.description}::${event.start.toISOString()}`;
     if (!event.end.isSame(event.start)) {
       id += `::${event.end.toISOString()}`;
@@ -104,14 +95,17 @@ END:VTIMEZONE`;
   }
 
   /**
-   * Converts a single Event to VEVENT format for iCalendar inclusion.
+   * Converts a single event to VEVENT format for iCalendar inclusion.
    *
    * Generates an RFC 5545-compliant VEVENT component. UIDs are deterministic based on
    * event content to ensure idempotent imports.
    *
    * @see {@link buildFileContent} for VCALENDAR container generation
    */
-  buildEventContent(event: Event, timezone = "America/New_York"): string {
+  buildEventContent(
+    event: DetectedCalendarEvent,
+    timezone = "America/New_York",
+  ): string {
     const createdAt = moment().format("YYYYMMDDTHHmmss");
     const start = moment.tz(event.start, timezone).format("YYYYMMDDTHHmmss");
     const end = moment.tz(event.end, timezone).format("YYYYMMDDTHHmmss");
@@ -181,7 +175,7 @@ END:VCALENDAR
   /**
    * Builds a one-minute-point event where start and end are the same timestamp.
    */
-  buildInstantEvent(args: BuildInstantEventArguments): Event {
+  buildInstantEvent(args: BuildInstantEventArguments): DetectedCalendarEvent {
     const { categories, date, description, logger, summary, timezone } = args;
     const dateString = date.clone().tz(timezone).toISOString(true);
     logger.info("🗓️ Built a calendar event", undefined, {
@@ -201,13 +195,13 @@ END:VCALENDAR
   /**
    * Serializes calendar events to an ICS file and writes it to the output directory.
    *
-   * The filename encodes the input date range in ISO 8601 format. The output directory
-   * is read from the `OUTPUT_DIRECTORY` environment variable, defaulting to `./output`.
+   * The filename encodes the input date range as `caelundas_<start>_<end>.ics` with
+   * `YYYY-MM-DD` dates. The output directory is read from the `OUTPUT_DIRECTORY`
+   * environment variable, defaulting to `./output`, and is created when missing.
    *
    */
-  async write(events: Event[], input: Input): Promise<void> {
-    const timespan = `${input.start.toISOString(true)} to ${input.end.toISOString(true)}`;
-    const calendarFilename = `caelundas_${timespan}.ics`;
+  async write(events: DetectedCalendarEvent[], input: Input): Promise<void> {
+    const calendarFilename = `caelundas_${input.start.format("YYYY-MM-DD")}_${input.end.format("YYYY-MM-DD")}.ics`;
     const calendarFileContent = this.buildFileContent({
       description: "Astronomical events and celestial phenomena",
       events,
@@ -218,6 +212,7 @@ END:VCALENDAR
       this.configService.get<string>("OUTPUT_DIRECTORY") ?? "./output";
     const outputPath = path.join(outputDirectory, calendarFilename);
     try {
+      await mkdir(outputDirectory, { recursive: true });
       await writeFile(
         outputPath,
         new TextEncoder().encode(calendarFileContent),
@@ -241,7 +236,10 @@ END:VCALENDAR
    * The file is named like the ICS file, with a `.json` extension, and holds
    * one object per event with its times in ISO 8601.
    */
-  async writeJson(events: Event[], input: Input): Promise<void> {
+  async writeJson(
+    events: DetectedCalendarEvent[],
+    input: Input,
+  ): Promise<void> {
     const timespan = `${input.start.toISOString(true)} to ${input.end.toISOString(true)}`;
     const jsonFilename = `caelundas_${timespan}.json`;
     const outputDirectory =

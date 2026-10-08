@@ -1,4 +1,3 @@
-import { Field, ObjectType } from "@nestjs/graphql";
 import { ChildEntity, Column } from "typeorm";
 
 import {
@@ -12,20 +11,18 @@ import {
   formTenseValues,
   type FormVoice,
   formVoiceValues,
-} from "../../../database/database.constants";
+} from "../../../lexico-database/lexico-database.constants";
 
 import { Form } from "./Form.entity";
 
 /** A finite verb form (indicative, subjunctive, or imperative). */
 @ChildEntity("finite-verb")
-@ObjectType({ implements: Form })
 export class FiniteVerbForm extends Form {
   @Column({
     comment: "Grammatical mood (indicative, subjunctive, imperative)",
     enum: formMoodValues,
     type: "enum",
   })
-  @Field(() => String)
   mood!: FormMood;
 
   @Column({
@@ -33,7 +30,6 @@ export class FiniteVerbForm extends Form {
     enum: formNumberValues,
     type: "enum",
   })
-  @Field(() => String)
   number!: FormNumber;
 
   @Column({
@@ -41,7 +37,6 @@ export class FiniteVerbForm extends Form {
     enum: formPersonValues,
     type: "enum",
   })
-  @Field(() => String)
   person!: FormPerson;
 
   @Column({
@@ -49,7 +44,6 @@ export class FiniteVerbForm extends Form {
     enum: formTenseValues,
     type: "enum",
   })
-  @Field(() => String)
   tense!: FormTense;
 
   @Column({
@@ -57,6 +51,5 @@ export class FiniteVerbForm extends Form {
     enum: formVoiceValues,
     type: "enum",
   })
-  @Field(() => String)
   voice!: FormVoice;
 }

@@ -8,9 +8,12 @@ import { EclipseCalculationService } from "./eclipse-calculation.service";
 import { EclipseEventService } from "./eclipse-event.service";
 import { EclipsesService } from "./eclipses.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
-const createEvent = (description: string, categories: string[]): Event => {
+const createEvent = (
+  description: string,
+  categories: string[],
+): DetectedCalendarEvent => {
   const timestamp = moment.utc("2024-04-08T18:00:00.000Z");
   return {
     categories,

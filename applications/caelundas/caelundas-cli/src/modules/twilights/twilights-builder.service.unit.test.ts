@@ -7,7 +7,7 @@ import { LoggerService } from "@codebase/logging";
 
 import { TwilightsBuilderService } from "./twilights-builder.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 describe(TwilightsBuilderService, () => {
   let service: TwilightsBuilderService;
@@ -24,14 +24,14 @@ describe(TwilightsBuilderService, () => {
     await module.resolve(LoggerService);
   });
 
-  const beginningEvent: Event = {
+  const beginningEvent: DetectedCalendarEvent = {
     categories: ["Twilight"],
     description: "Beginning",
     end: moment.utc("2024-03-21T05:00:00.000Z"),
     start: moment.utc("2024-03-21T05:00:00.000Z"),
     summary: "Beginning",
   };
-  const endingEvent: Event = {
+  const endingEvent: DetectedCalendarEvent = {
     categories: ["Twilight"],
     description: "Ending",
     end: moment.utc("2024-03-21T06:00:00.000Z"),

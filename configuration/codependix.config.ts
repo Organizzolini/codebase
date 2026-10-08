@@ -140,7 +140,7 @@ const codependixConfiguration: CodependixConfiguration = {
    * would trade that away, so both run.
    *
    * One was drafted and dropped — "no `*.command.ts` imports another
-   * `*.command.ts`". It does not hold: `lexico-ingestion` and
+   * `*.command.ts`". It does not hold: `lexico-cli` and
    * `synchronization` both compose an aggregate command out of the commands
    * beneath it, which is nest-commander's own subcommand arrangement rather
    * than a layering mistake. Fourteen edges is a backlog, so it is written

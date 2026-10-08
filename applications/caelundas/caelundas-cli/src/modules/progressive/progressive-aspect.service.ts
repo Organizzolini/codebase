@@ -3,7 +3,7 @@ import _ from "lodash";
 
 import { LoggerService } from "@codebase/logging";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { TypedAspectParts } from "./progressive.types";
 
 /**
@@ -67,15 +67,18 @@ export class ProgressiveAspectService {
   }: {
     aspectCategory: string;
     categoryLabel: string;
-    events: Event[];
-    getAspectGroupKey: (event: Event) => string;
-    getProgressiveEvent: (beginning: Event, ending: Event) => Event;
+    events: DetectedCalendarEvent[];
+    getAspectGroupKey: (event: DetectedCalendarEvent) => string;
+    getProgressiveEvent: (
+      beginning: DetectedCalendarEvent,
+      ending: DetectedCalendarEvent,
+    ) => DetectedCalendarEvent;
     pairProgressiveEvents: (
-      beginnings: Event[],
-      endings: Event[],
+      beginnings: DetectedCalendarEvent[],
+      endings: DetectedCalendarEvent[],
       label: string,
-    ) => [Event, Event][];
-  }): Event[] {
+    ) => [DetectedCalendarEvent, DetectedCalendarEvent][];
+  }): DetectedCalendarEvent[] {
     const aspectEvents = events.filter((event) =>
       event.categories.includes(aspectCategory),
     );
@@ -84,7 +87,7 @@ export class ProgressiveAspectService {
       getAspectGroupKey(event),
     );
 
-    const progressiveEvents: Event[] = [];
+    const progressiveEvents: DetectedCalendarEvent[] = [];
     for (const [aspectGroupKey, aspectGroupEvents] of Object.entries(
       groupedAspectEvents,
     )) {
@@ -129,16 +132,19 @@ export class ProgressiveAspectService {
   }: {
     aspectCategory: string;
     categoryLabel: string;
-    events: Event[];
+    events: DetectedCalendarEvent[];
     fixedAspectGroupKey?: string;
-    getAspectGroupKey: (event: Event) => string;
-    getProgressiveEvent: (beginning: Event, ending: Event) => Event;
+    getAspectGroupKey: (event: DetectedCalendarEvent) => string;
+    getProgressiveEvent: (
+      beginning: DetectedCalendarEvent,
+      ending: DetectedCalendarEvent,
+    ) => DetectedCalendarEvent;
     pairProgressiveEvents: (
-      beginnings: Event[],
-      endings: Event[],
+      beginnings: DetectedCalendarEvent[],
+      endings: DetectedCalendarEvent[],
       label: string,
-    ) => [Event, Event][];
-  }): Event[] {
+    ) => [DetectedCalendarEvent, DetectedCalendarEvent][];
+  }): DetectedCalendarEvent[] {
     return this.buildProgressiveAspectEvents({
       aspectCategory,
       categoryLabel,
@@ -171,14 +177,14 @@ export class ProgressiveAspectService {
   }: {
     aspectCategory: string;
     aspects: readonly TAspect[];
-    beginning: Event;
+    beginning: DetectedCalendarEvent;
     bodies: readonly TBody[];
-    ending: Event;
+    ending: DetectedCalendarEvent;
     isAspect: (value: string) => value is TAspect;
     isBody: (value: string) => value is TBody;
     symbolByAspect: Readonly<Record<TAspect, string>>;
     symbolByBody: Readonly<Record<TBody, string>>;
-  }): Event {
+  }): DetectedCalendarEvent {
     const {
       aspect,
       aspectCapitalized,

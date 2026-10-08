@@ -11,7 +11,7 @@ import { ProgressiveUtilitiesService } from "../progressive/progressive-utilitie
 
 import { MinorAspectsProgressiveService } from "./minor-aspects-progressive.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 describe(MinorAspectsProgressiveService, () => {
   let service: MinorAspectsProgressiveService;
@@ -47,11 +47,14 @@ describe(MinorAspectsProgressiveService, () => {
       body2Capitalized: string;
       categories: string[];
     }) => { aspect: string; body1: string; body2: string };
-    getMinorAspectProgressiveEvent: (beginning: Event, ending: Event) => Event;
+    getMinorAspectProgressiveEvent: (
+      beginning: DetectedCalendarEvent,
+      ending: DetectedCalendarEvent,
+    ) => DetectedCalendarEvent;
     processAspectGroup: (
       aspectGroupKey: string,
-      aspectGroupEvents: Event[],
-    ) => Event[];
+      aspectGroupEvents: DetectedCalendarEvent[],
+    ) => DetectedCalendarEvent[];
   };
 
   beforeEach(() => {
@@ -63,7 +66,7 @@ describe(MinorAspectsProgressiveService, () => {
   });
 
   it("builds progressive events from forming and dissolving minor aspects", () => {
-    const formingEvent: Event = {
+    const formingEvent: DetectedCalendarEvent = {
       categories: [
         "Astronomy",
         "Astrology",
@@ -79,7 +82,7 @@ describe(MinorAspectsProgressiveService, () => {
       start: moment.utc("2024-03-21T10:00:00.000Z"),
       summary: "Sun semisquare Moon",
     };
-    const dissolvingEvent: Event = {
+    const dissolvingEvent: DetectedCalendarEvent = {
       categories: [
         "Astronomy",
         "Astrology",
@@ -126,7 +129,7 @@ describe(MinorAspectsProgressiveService, () => {
   });
 
   it("throws when categories do not contain a complete minor aspect", () => {
-    const invalidEvent: Event = {
+    const invalidEvent: DetectedCalendarEvent = {
       categories: ["Astronomy", "Minor Aspect", "Sun"],
       description: "invalid",
       end: moment.utc("2024-03-21T10:00:00.000Z"),
@@ -154,7 +157,7 @@ describe(MinorAspectsProgressiveService, () => {
     const sortBySpy = vi
       .spyOn(_, "sortBy")
       .mockReturnValue([undefined, "Moon"] as unknown);
-    const invalidEvent: Event = {
+    const invalidEvent: DetectedCalendarEvent = {
       categories: [
         "Astronomy",
         "Astrology",
@@ -179,7 +182,7 @@ describe(MinorAspectsProgressiveService, () => {
     const sortBySpy = vi
       .spyOn(_, "sortBy")
       .mockReturnValue(["Moon", undefined] as unknown);
-    const invalidEvent: Event = {
+    const invalidEvent: DetectedCalendarEvent = {
       categories: [
         "Astronomy",
         "Astrology",

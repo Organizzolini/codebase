@@ -1,4 +1,3 @@
-import { Field, ObjectType } from "@nestjs/graphql";
 import { ChildEntity, Column } from "typeorm";
 
 import {
@@ -6,7 +5,7 @@ import {
   type NounDeclension,
   type NounGender,
   nounGenders,
-} from "../../../database/database.constants";
+} from "../../../lexico-database/lexico-database.constants";
 
 import { Inflection } from "./Inflection.entity";
 
@@ -14,7 +13,6 @@ import { Inflection } from "./Inflection.entity";
  * Inflection metadata for noun lexemes.
  */
 @ChildEntity("noun")
-@ObjectType({ implements: Inflection })
 export class NounInflection extends Inflection {
   @Column({
     comment: "Noun declension class (first through fifth)",
@@ -22,7 +20,6 @@ export class NounInflection extends Inflection {
     enum: inflectionDeclensionValues,
     type: "enum",
   })
-  @Field(() => String)
   declension!: NounDeclension;
 
   @Column({
@@ -31,6 +28,5 @@ export class NounInflection extends Inflection {
     enum: nounGenders,
     type: "enum",
   })
-  @Field(() => String)
   gender!: NounGender;
 }

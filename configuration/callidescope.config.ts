@@ -168,7 +168,7 @@ export const workspaceLimits = {
    * rather than a gate, and a red pipeline nobody can act on teaches people to
    * ignore it. It came down from 19 by removing three frames that were not
    * layers: a `FormsService` method that forwarded its arguments unchanged to
-   * the forms builder, a rung of lexico-ingestion's finite-verb cascade whose
+   * the forms builder, a rung of lexico-cli's finite-verb cascade whose
    * whole body re-ran three guards the rungs above had already applied, and a
    * caelundas method that destructured six fields and passed the same six on.
    * Nothing was merged that was doing work.

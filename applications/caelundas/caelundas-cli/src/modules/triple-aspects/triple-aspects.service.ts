@@ -7,8 +7,8 @@ import { TripleAspectsComposerService } from "./triple-aspects-composer.service"
 import { TripleAspectsDetectorService } from "./triple-aspects-detector.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Aspect, Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -83,7 +83,7 @@ export class TripleAspectsService {
     currentAspectBodies: AspectBodies[];
     minute: Moment;
     previousAspectBodies: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
 
     return [
@@ -108,7 +108,7 @@ export class TripleAspectsService {
   /**
    * Builds duration events by pairing forming/dissolving events per triple-aspect group key.
    */
-  detectProgressive(events: Event[]): Event[] {
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
     const tripleAspectEvents = events.filter((event) =>
       event.categories.includes("Triple Aspect"),
     );
@@ -116,7 +116,7 @@ export class TripleAspectsService {
       this.tripleAspectsComposerService.getProgressiveGroupKey(event),
     );
 
-    const progressiveEvents: Event[] = [];
+    const progressiveEvents: DetectedCalendarEvent[] = [];
     for (const [key, groupEvents] of Object.entries(groupedEvents)) {
       if (!key) {
         continue;

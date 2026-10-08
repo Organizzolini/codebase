@@ -8,8 +8,8 @@ import { EclipseEventService } from "./eclipse-event.service";
 import { EclipseGeometryService } from "./eclipse-geometry.service";
 import { EclipseTopocentricService } from "./eclipse-topocentric.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { EclipsePhase } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type {
   AzimuthElevationEphemeris,
   CoordinateEphemeris,
@@ -48,8 +48,8 @@ export class EclipseCalculationService {
     minute: Moment,
     solarPhase: EclipsePhase | null,
     lunarPhase: EclipsePhase | null,
-  ): Event[] {
-    const events: Event[] = [];
+  ): DetectedCalendarEvent[] {
+    const events: DetectedCalendarEvent[] = [];
 
     if (solarPhase) {
       events.push(
@@ -230,7 +230,7 @@ export class EclipseCalculationService {
     nextCoordinates: EclipseCoordinates;
     previousCoordinates: EclipseCoordinates;
   }): {
-    events: Event[];
+    events: DetectedCalendarEvent[];
     lunarPhase: EclipsePhase | null;
     solarPhase: EclipsePhase | null;
   } {
@@ -269,7 +269,7 @@ export class EclipseCalculationService {
     minute: Moment;
     moonAzimuthElevationEphemeris: AzimuthElevationEphemeris;
     sunAzimuthElevationEphemeris: AzimuthElevationEphemeris;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const {
       coordinates,
       geocentricPhases,

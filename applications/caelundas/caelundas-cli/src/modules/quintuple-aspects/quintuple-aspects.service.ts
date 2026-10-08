@@ -4,7 +4,7 @@ import _ from "lodash";
 import { QuintupleAspectsComposerService } from "./quintuple-aspects-composer.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -37,7 +37,7 @@ export class QuintupleAspectsService {
     currentAspectBodies: AspectBodies[];
     minute: Moment;
     previousAspectBodies: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
     return this.quintupleAspectsComposerService.composePentagrams({
       currentAspectBodies,
@@ -53,8 +53,8 @@ export class QuintupleAspectsService {
    * pattern type to create events spanning the entire active period.
    *
    */
-  detectProgressive(events: Event[]): Event[] {
-    const progressiveEvents: Event[] = [];
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
+    const progressiveEvents: DetectedCalendarEvent[] = [];
     const groupedEvents =
       this.quintupleAspectsComposerService.groupQuintupleEventsByKey(events);
 

@@ -11,7 +11,7 @@
  * a tile rather than the shape of the meander it tiles into — which of two
  * adjacent tiles a stroke belongs to only becomes readable once the repeat
  * has happened a few times. Six is wide enough for the eye to pick the
- * period out and short enough that a whole family's grid of them still fits
+ * period out and short enough that a whole pattern's grid of them still fits
  * a column.
  */
 export const BAND_REPEAT_COUNT = 6;
@@ -25,39 +25,6 @@ export const BAND_REPEAT_COUNT = 6;
  * primary key already is, and the prefix keeps it from colliding with any
  * other kind of identifier the page might grow.
  */
-
-/**
- * The label a null-`family` row's section is headed and jump-linked with.
- *
- * Roughly a ninth of the enumerated corpus matches no family's defining
- * combination — spec #813 asks for that to be a real, expected outcome shown
- * on the page rather than a row the draw run excludes, so it earns a section of
- * its own rather than being folded into whichever family sorts last.
- */
-export const UNCLASSIFIED_FAMILY_LABEL = "unclassified";
-
-/** Sort order for each family on the index page. */
-export const FAMILY_SORT_KEYS: Record<string, number> = {
-  arcade: 1,
-  bars: 2,
-  boxes: 3,
-  chain: 4,
-  clasps: 5,
-  comb: 6,
-  cross: 7,
-  dots: 8,
-  "double-chain": 9,
-  fork: 10,
-  lines: 11,
-  mesh: 12,
-  parallel: 13,
-  snake: 14,
-  stipple: 15,
-  swirl: 16,
-  tree: 17,
-  waterfalls: 18,
-  whirl: 19,
-};
 
 /**
  * The page's own stylesheet, held here rather than inline in

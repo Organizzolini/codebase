@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
-import { ClassificationModule } from "../classification/classification.module";
 import { CodeModule } from "../code/code.module";
 import { EnumerationModule } from "../enumeration/enumeration.module";
 import { MeanderawDatabaseModule } from "../meanderaw-database/meanderaw-database.module";
@@ -16,15 +15,13 @@ import { CorpusService } from "./corpus.service";
  * the same "decode, measure, persist" pipeline
  * run over extracted constants instead of one command-line Code — plus the
  * enumeration, which decides which entries are beyond the draw run's reach and
- * so have to be preserved at all, and the classification, which names an
- * ingested tile's family exactly as it names an enumerated one's.
+ * so have to be preserved at all.
  */
 @Module({
   controllers: [],
   exports: [CorpusService],
   imports: [
     CharacteristicsModule,
-    ClassificationModule,
     CodeModule,
     MeanderawDatabaseModule,
     EnumerationModule,

@@ -7,7 +7,7 @@ import { EphemerisService } from "../ephemeris/ephemeris.service";
 import { MathService } from "../math/math.service";
 import { TwilightsService } from "../twilights/twilights.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   BrightnessArguments,
   BrightnessesArguments,
@@ -88,7 +88,10 @@ export class PhaseCalculationService {
   /**
    * Filters events by category.
    */
-  filterByCategory(events: Event[], category: string): Event[] {
+  filterByCategory(
+    events: DetectedCalendarEvent[],
+    category: string,
+  ): DetectedCalendarEvent[] {
     return events.filter((event) => event.categories.includes(category));
   }
 

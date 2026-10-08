@@ -9,7 +9,6 @@ import {
 } from "../characteristics/characteristics.constants";
 import { CharacteristicsModule } from "../characteristics/characteristics.module";
 import { CharacteristicsService } from "../characteristics/characteristics.service";
-import { ClassificationModule } from "../classification/classification.module";
 import { CodeModule } from "../code/code.module";
 import { CodeService } from "../code/code.service";
 import { DrawingModule } from "../drawing/drawing.module";
@@ -30,12 +29,7 @@ describe(DrawRecordService, () => {
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      imports: [
-        CharacteristicsModule,
-        ClassificationModule,
-        CodeModule,
-        DrawingModule,
-      ],
+      imports: [CharacteristicsModule, CodeModule, DrawingModule],
       providers: [DrawRecordService],
     }).compile();
 
@@ -49,7 +43,7 @@ describe(DrawRecordService, () => {
   });
 
   describe("record", () => {
-    it("derives every field of a row from the Code alone, the family and sub-family among them", () => {
+    it("derives every field of a row from the Code alone", () => {
       const record = service.record("4488", { columns: 2, rows: 2 }, false);
 
       expect(record).toMatchObject({
@@ -68,7 +62,6 @@ describe(DrawRecordService, () => {
         },
         code: "02x02y4488",
         columns: 2,
-        family: "bars",
         isHardcoded: false,
         lattice: "4488",
         repeats: 1,
@@ -123,14 +116,14 @@ describe(DrawRecordService, () => {
       ).toBeLessThan(LETTER_CHARACTERISTIC_KEYS.length);
     });
 
-    it("records family and specific characteristics where a Code's structure earns them", () => {
+    it("records the pattern characteristics a Code's structure earns", () => {
       const record = service.record(
         "2335635cc29ca339",
         { columns: 4, rows: 4 },
         true,
       );
 
-      expect(record.family).toBe("whirl");
+      expect(record.characteristics.isBoxes).toBe(true);
       expect(record.characteristics).not.toHaveProperty("crossCount");
       expect(record.characteristics).not.toHaveProperty("forkCount");
 
@@ -140,7 +133,6 @@ describe(DrawRecordService, () => {
         true,
       );
 
-      expect(waterfallRecord.family).toBe("waterfalls");
       expect(waterfallRecord.characteristics.isWaterfalls).toBe(true);
 
       const wideWaterfallRecord = service.record(
@@ -149,7 +141,6 @@ describe(DrawRecordService, () => {
         true,
       );
 
-      expect(wideWaterfallRecord.family).toBe("waterfalls");
       expect(wideWaterfallRecord.characteristics.isWaterfalls).toBe(true);
     });
 

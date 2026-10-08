@@ -2,8 +2,8 @@ import moment, { type Moment } from "moment-timezone";
 
 import { bodies } from "../src/modules/caelundas/caelundas.constants";
 
+import type { DetectedCalendarEvent } from "../src/modules/caelundas-database/caelundas-database.types";
 import type { Body } from "../src/modules/caelundas/caelundas.types";
-import type { Event } from "../src/modules/calendar/calendar.types";
 import type { CoordinateEphemeris } from "../src/modules/ephemeris/ephemeris.types";
 
 /**
@@ -304,7 +304,7 @@ export function createProgressiveAspectEvent({
   body2: string;
   phase: "Dissolving" | "Forming" | "Perfective";
   timestamp: Moment;
-}): Event {
+}): DetectedCalendarEvent {
   return {
     categories: [
       "Astronomy",

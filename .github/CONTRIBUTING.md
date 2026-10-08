@@ -203,7 +203,7 @@ git checkout -b feat/lexico-your-feature
 
 ```bash
 # Run an application — target names differ by project
-pnpm exec nx run lexico:develop           # Vite dev server with hot reload
+pnpm exec nx run lexico-web:develop           # Vite dev server with hot reload
 pnpm exec nx run caelundas-cli:start          # CLI entry point
 pnpm exec nx run meanderaw-cli:repl           # Interactive REPL
 ```
@@ -447,7 +447,7 @@ Commits are validated by commitlint through Husky. See [commit-code](.agents/ski
 | `lexico`            | TanStack Start SSR Latin dictionary web app with Supabase backend                                                                         |
 | `components-web`    | Shared React/shadcn component library                                                                                                     |
 | `lexico-entities`   | Shared TypeORM entities and GraphQL types                                                                                                 |
-| `lexico-ingestion`  | Data ingestion scripts for Lexico                                                                                                         |
+| `lexico-cli`        | Data ingestion scripts for Lexico                                                                                                         |
 | `meanderaw`         | Greek meander (key/fret) SVG generator CLI and the composable motif/modifier library it reads                                             |
 | `sempientor`        | Lexical gap discovery CLI that surveys English for morphological, phonotactic, and semantic gaps and coins words to fill them             |
 | `callidescope`      | Call stack tracing and linting CLI, the configuration package it reads, and the packages that build and render its call graph             |

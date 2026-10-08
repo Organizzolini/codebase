@@ -13,6 +13,7 @@ import { Meander } from "./entities/meander.entity";
 import { MeanderawDatabaseModule } from "./meanderaw-database.module";
 import { MeanderawDatabaseService } from "./meanderaw-database.service";
 import { Migration1791160950069 } from "./migrations/1791160950069-migration";
+import { Migration1791414023001 } from "./migrations/1791414023001-migration";
 
 // 🧪 Tests
 
@@ -35,7 +36,7 @@ describe(MeanderawDatabaseModule, () => {
     database = await startDatabaseTestingModule({
       database: MeanderawDatabaseModule,
       entities: [Meander],
-      migrations: [Migration1791160950069],
+      migrations: [Migration1791160950069, Migration1791414023001],
       project: "meanderaw",
       validate: (config) => environmentSchema.parse(config),
     });
@@ -64,7 +65,6 @@ describe(MeanderawDatabaseModule, () => {
       "columns",
       "created_at",
       "created_by",
-      "family",
       "id",
       "is_hardcoded",
       "lattice",
@@ -86,8 +86,11 @@ describe(MeanderawDatabaseModule, () => {
   it("builds the table by migration alone, never by synchronizing", async () => {
     const migrations: unknown[] = await database.module
       .get(DataSource)
-      .query(`SELECT 1 FROM "meanderaw"."migrations"`);
+      .query(`SELECT name FROM "meanderaw"."migrations" ORDER BY timestamp`);
 
-    expect(migrations).toHaveLength(1);
+    expect(migrations).toStrictEqual([
+      { name: "Migration1791160950069" },
+      { name: "Migration1791414023001" },
+    ]);
   });
 });

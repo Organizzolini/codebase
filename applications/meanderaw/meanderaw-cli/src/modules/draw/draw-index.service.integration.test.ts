@@ -12,6 +12,7 @@ import { GeometryService } from "../geometry/geometry.service";
 import { Meander } from "../meanderaw-database/entities/meander.entity";
 import { MeanderawDatabaseModule } from "../meanderaw-database/meanderaw-database.module";
 import { Migration1791160950069 } from "../meanderaw-database/migrations/1791160950069-migration";
+import { Migration1791414023001 } from "../meanderaw-database/migrations/1791414023001-migration";
 import { SvgService } from "../svg/svg.service";
 import { SymmetryService } from "../symmetry/symmetry.service";
 import { TileService } from "../tile/tile.service";
@@ -40,7 +41,7 @@ describe(DrawIndexService, () => {
     database = await startDatabaseTestingModule({
       database: MeanderawDatabaseModule,
       entities: [Meander],
-      migrations: [Migration1791160950069],
+      migrations: [Migration1791160950069, Migration1791414023001],
       project: "meanderaw",
       providers: [
         DrawIndexService,
@@ -70,25 +71,22 @@ describe(DrawIndexService, () => {
     expect(service).toBeDefined();
   });
 
-  it("builds pages from the committed rows, grouped by family with a section for the unclassified ones", async () => {
+  it("builds one page per held pattern from the committed rows, and an index linking them", async () => {
     await repository.save(
       record({
+        characteristics: { isSnake: true },
         code: "01x01y0",
-        family: "snake",
         lattice: "0",
       }),
     );
     await repository.save(
       record({
-        characteristics: { isDots: true },
+        characteristics: { isDots: true, isWhirl: true },
         code: "01x01y1",
-        family: "whirl",
         lattice: "1",
       }),
     );
-    await repository.save(
-      record({ code: "01x01y2", family: "unclassified", lattice: "2" }),
-    );
+    await repository.save(record({ code: "01x01y2", lattice: "2" }));
 
     const built = await service.build();
     const pages: Record<string, string> = {};
@@ -101,24 +99,32 @@ describe(DrawIndexService, () => {
       }
     }
 
-    expect(pages["families/snake.html"]).toContain('<section id="snake">');
-    expect(pages["families/whirl.html"]).toContain('<section id="whirl">');
-    expect(pages["families/unclassified.html"]).toContain(
-      '<section id="unclassified">',
+    expect(Object.keys(pages).toSorted()).toStrictEqual([
+      "index.html",
+      "patterns/isDots.html",
+      "patterns/isSnake.html",
+      "patterns/isWhirl.html",
+    ]);
+    expect(pages["patterns/isSnake.html"]).toContain('<section id="isSnake">');
+    expect(pages["patterns/isSnake.html"]).toContain(
+      "<figcaption>1×1 · 01x01y0 (isSnake)</figcaption>",
     );
-    expect(pages["families/snake.html"]).toContain(
-      "<figcaption>1×1 · 01x01y0</figcaption>",
-    );
-    expect(pages["families/whirl.html"]).toContain("(isDots)");
+    expect(pages["patterns/isDots.html"]).toContain("01x01y1");
+    expect(pages["patterns/isWhirl.html"]).toContain("01x01y1");
+    expect(pages["patterns/isWhirl.html"]).toContain("(isDots, isWhirl)");
+    expect(Object.values(pages).join("")).not.toContain("01x01y2");
 
     const indexPage = pages["index.html"] ?? "";
 
-    expect(indexPage.indexOf("snake.html")).toBeLessThan(
-      indexPage.indexOf("whirl.html"),
+    expect(indexPage).toContain(
+      '<a href="patterns/isSnake.html">isSnake</a> <span>1</span>',
     );
-    expect(indexPage.indexOf("whirl.html")).toBeLessThan(
-      indexPage.indexOf("unclassified.html"),
+    expect(indexPage.indexOf("isDots.html")).toBeLessThan(
+      indexPage.indexOf("isSnake.html"),
     );
-    expect(pages["families/snake.html"]).toContain('<path d="M7.5 37.5H7.5"');
+    expect(indexPage.indexOf("isSnake.html")).toBeLessThan(
+      indexPage.indexOf("isWhirl.html"),
+    );
+    expect(pages["patterns/isSnake.html"]).toContain('<path d="M7.5 37.5H7.5"');
   });
 });

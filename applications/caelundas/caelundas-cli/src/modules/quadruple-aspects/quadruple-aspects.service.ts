@@ -5,8 +5,8 @@ import { QuadrupleAspectsBaseService } from "./quadruple-aspects-base.service";
 import { QuadrupleAspectsComposerService } from "./quadruple-aspects-composer.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -47,7 +47,7 @@ export class QuadrupleAspectsService {
     currentAspectBodies: AspectBodies[];
     minute: Moment;
     previousAspectBodies: AspectBodies[];
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
     return [
       ...this.quadrupleAspectsComposerService.composeGrandCrosses({
@@ -72,8 +72,8 @@ export class QuadrupleAspectsService {
    * boundary moments.
    *
    */
-  detectProgressive(events: Event[]): Event[] {
-    const progressiveEvents: Event[] = [];
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
+    const progressiveEvents: DetectedCalendarEvent[] = [];
 
     const quadrupleAspectEvents = events.filter((event) =>
       event.categories.includes("Quadruple Aspect"),

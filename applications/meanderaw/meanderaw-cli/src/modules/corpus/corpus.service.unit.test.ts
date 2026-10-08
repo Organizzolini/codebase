@@ -4,7 +4,6 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { characteristicRecord } from "../../../testing/meanders";
 import { CharacteristicsService } from "../characteristics/characteristics.service";
-import { ClassificationService } from "../classification/classification.service";
 import { CodeService } from "../code/code.service";
 import { TileEnumerationService } from "../enumeration/tile-enumeration.service";
 import { MeanderawDatabaseService } from "../meanderaw-database/meanderaw-database.service";
@@ -21,7 +20,6 @@ import type { CorpusEntry } from "./corpus.types";
 describe(CorpusService, () => {
   let service: CorpusService;
   let characteristicsService: CharacteristicsService;
-  let classificationService: ClassificationService;
   let databaseService: MeanderawDatabaseService;
   let codeService: CodeService;
   let tileEnumerationService: TileEnumerationService;
@@ -53,10 +51,6 @@ describe(CorpusService, () => {
           useValue: createMock<CharacteristicsService>(),
         },
         {
-          provide: ClassificationService,
-          useValue: createMock<ClassificationService>(),
-        },
-        {
           provide: MeanderawDatabaseService,
           useValue: createMock<MeanderawDatabaseService>(),
         },
@@ -73,7 +67,6 @@ describe(CorpusService, () => {
 
     service = await module.resolve(CorpusService);
     characteristicsService = await module.resolve(CharacteristicsService);
-    classificationService = await module.resolve(ClassificationService);
     databaseService = await module.resolve(MeanderawDatabaseService);
     codeService = await module.resolve(CodeService);
     tileEnumerationService = await module.resolve(TileEnumerationService);
@@ -100,7 +93,6 @@ describe(CorpusService, () => {
       (_characteristics, isReducible) =>
         isReducible ? { ...stored, isReducible: true } : stored,
     );
-    vi.mocked(classificationService.classify).mockReturnValue("snake");
     vi.mocked(tileEnumerationService.edges).mockReturnValue(17);
     vi.mocked(databaseService.findOneByCode).mockResolvedValue(null);
     vi.mocked(databaseService.save).mockResolvedValue(savedMeander);
@@ -114,7 +106,6 @@ describe(CorpusService, () => {
     const entry: CorpusEntry = {
       code: "2",
       columns: 1,
-      filedUnder: ["boxes"],
       rows: 4,
     };
 
@@ -149,17 +140,14 @@ describe(CorpusService, () => {
       );
     });
 
-    it("persists each entry's stored characteristics, as hardcoded, under the first family it was filed under", async () => {
-      await service.ingest([
-        { code: "3", columns: 3, filedUnder: ["boxes", "parallel"], rows: 4 },
-      ]);
+    it("persists each entry's stored characteristics, as hardcoded", async () => {
+      await service.ingest([{ code: "3", columns: 3, rows: 4 }]);
 
       expect(databaseService.save).toHaveBeenCalledWith(
         expect.objectContaining({
           characteristics: stored,
           code: "03x04y3",
           columns: 3,
-          family: "boxes",
           isHardcoded: true,
           lattice: "3",
           repeats: 1,
@@ -179,19 +167,6 @@ describe(CorpusService, () => {
       expect(saved).not.toHaveProperty("bettiNumber0Count");
     });
 
-    it("tells the classifier an entry filed under branch reduces when its Code is wider than its unit", async () => {
-      vi.mocked(characteristicsService.isReducible).mockReturnValue(true);
-
-      await service.ingest([
-        { code: "3", columns: 3, filedUnder: ["branch"], rows: 4 },
-      ]);
-
-      expect(classificationService.classify).toHaveBeenCalledWith(record, {
-        isReducible: true,
-        rows: 4,
-      });
-    });
-
     it("stores isReducible when the filed Code reduces to a narrower unit", async () => {
       vi.mocked(characteristicsService.isReducible).mockReturnValue(true);
 
@@ -202,20 +177,6 @@ describe(CorpusService, () => {
         expect.objectContaining({
           characteristics: { ...stored, isReducible: true },
         }),
-      );
-    });
-
-    it("classifies an entry filed under branch from its computed record and filed shape", async () => {
-      await service.ingest([
-        { code: "3", columns: 3, filedUnder: ["branch"], rows: 4 },
-      ]);
-
-      expect(classificationService.classify).toHaveBeenCalledWith(record, {
-        isReducible: false,
-        rows: 4,
-      });
-      expect(databaseService.save).toHaveBeenCalledWith(
-        expect.objectContaining({ family: "snake" }),
       );
     });
 
@@ -265,7 +226,7 @@ describe(CorpusService, () => {
       ).resolves.toStrictEqual([savedMeander]);
     });
 
-    it("ingests family by family in the order the retired file tree gave them up", async () => {
+    it("ingests in the corpus's own order", async () => {
       const second = createMock<Meander>({
         id: "01a107d6-cff8-7238-8684-a2a863bc6929",
       });
@@ -275,13 +236,13 @@ describe(CorpusService, () => {
         .mockResolvedValueOnce(second);
 
       await service.ingest([
-        { code: "5", columns: 1, filedUnder: ["snake"], rows: 4 },
-        { code: "6", columns: 1, filedUnder: ["boxes"], rows: 4 },
+        { code: "5", columns: 1, rows: 4 },
+        { code: "6", columns: 1, rows: 4 },
       ]);
 
       expect(
         vi.mocked(databaseService.save).mock.calls.map(([row]) => row.lattice),
-      ).toStrictEqual(["6", "5"]);
+      ).toStrictEqual(["5", "6"]);
     });
 
     it("resolves with every saved row", async () => {
@@ -294,10 +255,7 @@ describe(CorpusService, () => {
         .mockResolvedValueOnce(second);
 
       await expect(
-        service.ingest([
-          entry,
-          { code: "3", columns: 3, filedUnder: ["branch"], rows: 4 },
-        ]),
+        service.ingest([entry, { code: "3", columns: 3, rows: 4 }]),
       ).resolves.toStrictEqual([savedMeander, second]);
     });
 

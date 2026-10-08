@@ -11,8 +11,8 @@ import { objectEntries } from "../caelundas/caelundas.types";
 
 import { IngressesComposerService } from "./ingresses-composer.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Body, Sign } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 import type { Moment } from "moment-timezone";
 
@@ -92,7 +92,7 @@ export class IngressesService {
     body: Body;
     date: Moment;
     longitude: number;
-  }): Event {
+  }): DetectedCalendarEvent {
     return this.ingressesComposerService.buildDecanIngressEvent(args);
   }
 
@@ -107,7 +107,7 @@ export class IngressesService {
     body: Body;
     date: Moment;
     longitude: number;
-  }): Event {
+  }): DetectedCalendarEvent {
     return this.ingressesComposerService.buildPeakIngressEvent(args);
   }
 
@@ -120,7 +120,7 @@ export class IngressesService {
     body: Body;
     date: Moment;
     longitude: number;
-  }): Event {
+  }): DetectedCalendarEvent {
     return this.ingressesComposerService.buildSignIngressEvent(args);
   }
 
@@ -131,7 +131,7 @@ export class IngressesService {
   detect(args: {
     coordinateEphemerisByBody: Record<Body, CoordinateEphemeris>;
     minute: Moment;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const events = [
       ...this.getSignIngressEvents(args),
       ...this.getDecanIngressEvents(args),
@@ -150,8 +150,8 @@ export class IngressesService {
    * calendar entries representing the full transit through each zodiac sign.
    *
    */
-  detectProgressive(events: Event[]): Event[] {
-    const progressiveEvents: Event[] = [];
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
+    const progressiveEvents: DetectedCalendarEvent[] = [];
 
     const signIngressEvents =
       this.ingressesComposerService.filterSignIngressEvents(events);
@@ -195,12 +195,12 @@ export class IngressesService {
   getDecanIngressEvents(args: {
     coordinateEphemerisByBody: Record<Body, CoordinateEphemeris>;
     minute: Moment;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { coordinateEphemerisByBody, minute } = args;
 
     const previousMinute = minute.clone().subtract(1, "minute");
 
-    const decanIngressEvents: Event[] = [];
+    const decanIngressEvents: DetectedCalendarEvent[] = [];
 
     for (const body of decanIngressBodies) {
       const coordinateEphemeris = coordinateEphemerisByBody[body];
@@ -252,12 +252,12 @@ export class IngressesService {
   getPeakIngressEvents(args: {
     coordinateEphemerisByBody: Record<Body, CoordinateEphemeris>;
     minute: Moment;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { coordinateEphemerisByBody, minute } = args;
 
     const previousMinute = minute.clone().subtract(1, "minute");
 
-    const peakIngressEvents: Event[] = [];
+    const peakIngressEvents: DetectedCalendarEvent[] = [];
 
     for (const body of peakIngressBodies) {
       const coordinateEphemeris = coordinateEphemerisByBody[body];
@@ -309,12 +309,12 @@ export class IngressesService {
   getSignIngressEvents(args: {
     coordinateEphemerisByBody: Record<Body, CoordinateEphemeris>;
     minute: Moment;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { coordinateEphemerisByBody, minute } = args;
 
     const previousMinute = minute.clone().subtract(1, "minute");
 
-    const signIngressEvents: Event[] = [];
+    const signIngressEvents: DetectedCalendarEvent[] = [];
 
     for (const body of signIngressBodies) {
       const coordinateEphemeris = coordinateEphemerisByBody[body];

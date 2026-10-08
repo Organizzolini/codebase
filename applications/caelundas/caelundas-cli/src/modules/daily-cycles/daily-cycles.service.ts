@@ -6,7 +6,7 @@ import { MathService } from "../math/math.service";
 
 import { DailyCyclesBuilderService } from "./daily-cycles-builder.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { AzimuthElevationEphemeris } from "../ephemeris/ephemeris.types";
 import type { Moment } from "moment-timezone";
 
@@ -79,56 +79,56 @@ export class DailyCyclesService {
   /**
    * Creates a lunar nadir calendar event.
    */
-  buildLunarNadirEvent(date: Moment): Event {
+  buildLunarNadirEvent(date: Moment): DetectedCalendarEvent {
     return this.dailyCyclesBuilderService.buildLunarNadirEvent(date);
   }
 
   /**
    * Creates a lunar zenith (culmination) calendar event.
    */
-  buildLunarZenithEvent(date: Moment): Event {
+  buildLunarZenithEvent(date: Moment): DetectedCalendarEvent {
     return this.dailyCyclesBuilderService.buildLunarZenithEvent(date);
   }
 
   /**
    * Creates a moonrise calendar event.
    */
-  buildMoonriseEvent(date: Moment): Event {
+  buildMoonriseEvent(date: Moment): DetectedCalendarEvent {
     return this.dailyCyclesBuilderService.buildMoonriseEvent(date);
   }
 
   /**
    * Creates a moonset calendar event.
    */
-  buildMoonsetEvent(date: Moment): Event {
+  buildMoonsetEvent(date: Moment): DetectedCalendarEvent {
     return this.dailyCyclesBuilderService.buildMoonsetEvent(date);
   }
 
   /**
    * Creates a formatted calendar event for solar nadir (solar midnight).
    */
-  buildSolarNadirEvent(date: Moment): Event {
+  buildSolarNadirEvent(date: Moment): DetectedCalendarEvent {
     return this.dailyCyclesBuilderService.buildSolarNadirEvent(date);
   }
 
   /**
    * Creates a formatted calendar event for solar zenith (solar noon).
    */
-  buildSolarZenithEvent(date: Moment): Event {
+  buildSolarZenithEvent(date: Moment): DetectedCalendarEvent {
     return this.dailyCyclesBuilderService.buildSolarZenithEvent(date);
   }
 
   /**
    * Creates a formatted calendar event for sunrise.
    */
-  buildSunriseEvent(date: Moment): Event {
+  buildSunriseEvent(date: Moment): DetectedCalendarEvent {
     return this.dailyCyclesBuilderService.buildSunriseEvent(date);
   }
 
   /**
    * Creates a formatted calendar event for sunset.
    */
-  buildSunsetEvent(date: Moment): Event {
+  buildSunsetEvent(date: Moment): DetectedCalendarEvent {
     return this.dailyCyclesBuilderService.buildSunsetEvent(date);
   }
 
@@ -139,7 +139,7 @@ export class DailyCyclesService {
     minute: Moment;
     moonAzimuthElevationEphemeris: AzimuthElevationEphemeris;
     sunAzimuthElevationEphemeris: AzimuthElevationEphemeris;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const events = [
       ...this.getDailySolarCycleEvents(args),
       ...this.getDailyLunarCycleEvents(args),
@@ -175,9 +175,9 @@ export class DailyCyclesService {
   getDailyLunarCycleEvents(args: {
     minute: Moment;
     moonAzimuthElevationEphemeris: AzimuthElevationEphemeris;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { minute, moonAzimuthElevationEphemeris } = args;
-    const dailyLunarCycleEvents: Event[] = [];
+    const dailyLunarCycleEvents: DetectedCalendarEvent[] = [];
     const elevationWindow = this.dailyCyclesBuilderService.getElevationWindow({
       ephemeris: moonAzimuthElevationEphemeris,
       minute,
@@ -218,9 +218,9 @@ export class DailyCyclesService {
   getDailySolarCycleEvents(args: {
     minute: Moment;
     sunAzimuthElevationEphemeris: AzimuthElevationEphemeris;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { minute, sunAzimuthElevationEphemeris } = args;
-    const dailySolarCycleEvents: Event[] = [];
+    const dailySolarCycleEvents: DetectedCalendarEvent[] = [];
     const elevationWindow = this.dailyCyclesBuilderService.getElevationWindow({
       ephemeris: sunAzimuthElevationEphemeris,
       minute,

@@ -16,9 +16,9 @@ import { TwilightsService } from "../twilights/twilights.service";
 import { ProgressiveUtilitiesService } from "./progressive-utilities.service";
 import { ProgressiveService } from "./progressive.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
-function makeEvent(summary: string): Event {
+function makeEvent(summary: string): DetectedCalendarEvent {
   return {
     categories: [],
     description: summary,

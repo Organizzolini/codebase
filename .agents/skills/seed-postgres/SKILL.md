@@ -36,14 +36,14 @@ Files are exported using the custom format (`-Fc`) and saved as `.dump` files in
 
    ```
 
-2. **Dictionary Tables Only:**
+2. **Dictionary Tables Only** (from `lexico_development`, schema `lexico`):
 
    ```bash
    nx run codebase:postgres-data:dump-dictionary
 
    ```
 
-3. **Literature Tables Only:**
+3. **Literature Tables Only** (from `lexico_development`, schema `lexico`):
 
    ```bash
    nx run codebase:postgres-data:dump-literature
@@ -89,14 +89,14 @@ Restores are destructive by default. They use the clean flag (`-c`) to drop exis
 
    ```
 
-2. **Dictionary Tables Only:**
+2. **Dictionary Tables Only** (into `lexico_development`, schema `lexico`):
 
    ```bash
    nx run codebase:postgres-data:restore-dictionary
 
    ```
 
-3. **Literature Tables Only:**
+3. **Literature Tables Only** (into `lexico_development`, schema `lexico`):
 
    ```bash
    nx run codebase:postgres-data:restore-literature
@@ -152,6 +152,10 @@ it deletes the volume and every row in it. See
 for meanderaw's one exception.
 
 ## Notes
+
+- Every database-backed project has its own database, schema, and role ([ADR 0022](../../../docs/adr/0022-give-every-database-project-its-own-database-schema-and-role.md)): `lexico_development`.`lexico`, `meanderaw_development`.`meanderaw`, and `caelundas_development`.`caelundas`. The dictionary and literature targets always read and write `lexico_development` with `-n lexico`; the other targets act on the database the root `.env`'s `POSTGRES_DB` names, `postgres` by default, unless given `--database`. Every target connects with the root's unprefixed `POSTGRES_*`, the shared container's admin login.
+- To dump a whole project, dump its database: `nx run codebase:postgres-data:dump-database --database=lexico_development`.
+- Lexico's tables used to live in `postgres`.`public`. A volume from before the move still holds that copy until the maintainer drops it; the [lexico-entities README](../../../packages/lexico-entities/README.md) documents the one-time move.
 
 - "Collections" in the context of this codebase typically map to PostgreSQL **tables**. Use the `table` commands when collections are requested.
 - Dumps created using these targets are saved to the `data/` folder, which is intentionally gitignored to prevent accidental commits of local database structures or sensitive data.

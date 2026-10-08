@@ -4,8 +4,8 @@ import _ from "lodash";
 import { capitalize } from "../caelundas/caelundas.types";
 import { symbolByBody } from "../caelundas/symbol-caelundas.constants";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { AspectPhase, Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { LogData } from "@codebase/logging";
 import type { Moment } from "moment-timezone";
 
@@ -79,7 +79,7 @@ export class AspectEventFormattingService {
     log: (message: string, data?: LogData) => void;
     phase: AspectPhase;
     timestamp: Moment;
-  }): Event {
+  }): DetectedCalendarEvent {
     const {
       aspectCategory,
       aspectName,
@@ -130,9 +130,9 @@ export class AspectEventFormattingService {
    */
   buildProgressiveCompoundEvent(args: {
     descriptionCaseInsensitive?: boolean;
-    dissolving: Event;
-    forming: Event;
-  }): Event {
+    dissolving: DetectedCalendarEvent;
+    forming: DetectedCalendarEvent;
+  }): DetectedCalendarEvent {
     const { descriptionCaseInsensitive = false, dissolving, forming } = args;
     const descriptionPattern = descriptionCaseInsensitive
       ? / (forming|exact|dissolving)$/i

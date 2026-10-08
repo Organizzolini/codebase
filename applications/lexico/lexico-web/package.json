@@ -1,0 +1,45 @@
+{
+  "dependencies": {
+    "@codebase/components-web": "workspace:*",
+    "@tanstack/react-router": "catalog:",
+    "@tanstack/react-router-devtools": "catalog:",
+    "@tanstack/react-start": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "lodash": "catalog:",
+    "lucide-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/lodash": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "autoprefixer": "catalog:",
+    "postcss": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "name": "lexico-web",
+  "private": true,
+  "type": "module",
+  "typeCoverage": {
+    "atLeast": 99.36,
+    "ignoreCatch": true,
+    "ignoreFiles": [
+      "**/*.spec.ts",
+      "**/*.spec.tsx",
+      "**/*.test.ts",
+      "**/*.test.tsx",
+      "**/routeTree.gen.ts"
+    ],
+    "strict": true
+  },
+  "version": "0.0.1"
+}

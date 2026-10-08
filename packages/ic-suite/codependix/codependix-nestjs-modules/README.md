@@ -119,9 +119,9 @@ Call stacks traced through `packages/ic-suite/codependix/codependix-nestjs-modul
 
 | Measure | Value |
 | --- | --- |
-| Callables | 55 |
+| Callables | 59 |
 | Files | 20 |
-| Calls traced | 54 |
+| Calls traced | 58 |
 | Call stacks | 0 |
 | Deepest stack | 0 |
 | Stacks through recursion | 0 |
@@ -134,7 +134,7 @@ What this project is judged against, as declared in its own `callidescope.config
 | Limit | Value |
 | --- | --- |
 | `maximumDepth` | 5 |
-| `maximumBreadth` | 5 |
+| `maximumBreadth` | 7 |
 
 ### Call stacks (depth)
 
@@ -144,28 +144,29 @@ None.
 
 | Callable | Breadth | Calls directly | Location |
 | --- | --- | --- | --- |
-| `ModuleGraphService.buildGraph` | 7 | `ModuleGraphService.findAmbientModuleNames`, `ModuleGraphService.collectEdgesAndNodes`, `ModuleGraphService.toSorted(…)`, `ModuleGraphService.sortNames`, `ModuleGraphService.map(…)`, `ModuleGraphService.toSorted(…)`, `ModuleGraphService.filter(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:169` |
+| `ModuleGraphService.buildGraph` | 7 | `ModuleGraphService.findAmbientModuleNames`, `ModuleGraphService.collectEdgesAndNodes`, `ModuleGraphService.toSorted(…)`, `ModuleGraphService.sortNames`, `ModuleGraphService.map(…)`, `ModuleGraphService.toSorted(…)`, `ModuleGraphService.filter(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:168` |
+| `NestjsProjectService.exploreProject` | 5 | `NestjsProjectService.buildSyntheticRootModule`, `NestjsProjectService.loadRootModule`, `NestjsProjectService.discoverModuleDeclaringFiles`, `NestjsProjectService.exploreContainer`, `NestjsProjectService.map(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:232` |
 | `NestjsModulesWorkspaceGraphService.buildWorkspaceGraph` | 4 | `NestjsModulesWorkspaceGraphService.sortNames`, `NestjsModulesWorkspaceGraphService.flatMap(…)`, `NestjsModulesWorkspaceGraphService.toSorted(…)`, `NestjsModulesWorkspaceGraphService.flatMap(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-modules-workspace-graph/nestjs-modules-workspace-graph.service.ts:80` |
-| `NestjsProjectService.exploreProject` | 4 | `NestjsProjectService.buildSyntheticRootModule`, `NestjsProjectService.loadRootModule`, `NestjsProjectService.discoverModuleDeclaringFiles`, `NestjsProjectService.map(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:190` |
 
 <details>
-<summary>26 more callables</summary>
+<summary>27 more callables</summary>
 
 | Callable | Breadth | Calls directly | Location |
 | --- | --- | --- | --- |
-| `NestjsProjectService.buildSyntheticRootModule` | 3 | `NestjsProjectService.findModuleFiles`, `NestjsProjectService.map(…)`, `SyntheticRootModule.forModules` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:57` |
-| `ModuleGraphService.collectEdgesAndNodes` | 2 | `ModuleGraphService.addNode`, `ModuleGraphService.find(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:50` |
-| `ModuleGraphService.renderMermaid` | 2 | `ModuleGraphService.map(…)`, `ModuleGraphService.map(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:204` |
+| `NestjsProjectService.buildSyntheticRootModule` | 3 | `NestjsProjectService.findModuleFiles`, `NestjsProjectService.map(…)`, `SyntheticRootModule.forModules` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:59` |
+| `NestjsProjectService.exploreContainer` | 3 | `NestjsProjectService.some(…)`, `NestjsProjectService.filter(…)`, `NestjsProjectService.map(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:117` |
+| `ModuleGraphService.collectEdgesAndNodes` | 2 | `ModuleGraphService.addNode`, `ModuleGraphService.find(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:49` |
+| `ModuleGraphService.renderMermaid` | 2 | `ModuleGraphService.map(…)`, `ModuleGraphService.map(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:203` |
 | `NestjsModulesWorkspaceGraphService.renderMermaid` | 2 | `NestjsModulesWorkspaceGraphService.map(…)`, `NestjsModulesWorkspaceGraphService.map(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-modules-workspace-graph/nestjs-modules-workspace-graph.service.ts:103` |
-| `NestjsProjectService.discoverModuleDeclaringFiles` | 2 | `NestjsProjectService.findModuleFiles`, `NestjsProjectService.loadModuleClasses` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:74` |
-| `NestjsProjectService.loadModuleClasses` | 2 | `NestjsProjectService.map(…)`, `NestjsProjectService.filter(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:124` |
-| `NestjsProjectService.discoverProjects` | 2 | `NestjsProjectService.map(…)`, `NestjsProjectService.filter(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:179` |
-| `ModuleGraphService.addNode` | 1 | `ModuleGraphService.some(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:62` |
-| `ModuleGraphService.findAmbientModuleNames` | 1 | `ModuleGraphService.countInboundEdges` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:138` |
-| `ModuleGraphService.sortNames` | 1 | `ModuleGraphService.toSorted(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:162` |
-| `ModuleGraphService.toSorted(…)` | 1 | `ModuleGraphService.compareNodes` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:178` |
-| `ModuleGraphService.toSorted(…)` | 1 | `ModuleGraphService.compareEdges` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:187` |
-| `ModuleGraphService.map(…)` | 1 | `ModuleGraphService.renderNode` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:212` |
+| `NestjsProjectService.discoverModuleDeclaringFiles` | 2 | `NestjsProjectService.findModuleFiles`, `NestjsProjectService.loadModuleClasses` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:76` |
+| `NestjsProjectService.loadModuleClasses` | 2 | `NestjsProjectService.map(…)`, `NestjsProjectService.filter(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:166` |
+| `NestjsProjectService.discoverProjects` | 2 | `NestjsProjectService.map(…)`, `NestjsProjectService.filter(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:221` |
+| `ModuleGraphService.addNode` | 1 | `ModuleGraphService.some(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:61` |
+| `ModuleGraphService.findAmbientModuleNames` | 1 | `ModuleGraphService.countInboundEdges` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:137` |
+| `ModuleGraphService.sortNames` | 1 | `ModuleGraphService.toSorted(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:161` |
+| `ModuleGraphService.toSorted(…)` | 1 | `ModuleGraphService.compareNodes` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:177` |
+| `ModuleGraphService.toSorted(…)` | 1 | `ModuleGraphService.compareEdges` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:186` |
+| `ModuleGraphService.map(…)` | 1 | `ModuleGraphService.renderNode` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/module-graph/module-graph.service.ts:211` |
 | `NestjsModulesWorkspaceGraphService.renderNode` | 1 | `NestjsModulesWorkspaceGraphService.toNodeIdentifier` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-modules-workspace-graph/nestjs-modules-workspace-graph.service.ts:60` |
 | `NestjsModulesWorkspaceGraphService.sortNames` | 1 | `NestjsModulesWorkspaceGraphService.toSorted(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-modules-workspace-graph/nestjs-modules-workspace-graph.service.ts:65` |
 | `NestjsModulesWorkspaceGraphService.flatMap(…)` | 1 | `NestjsModulesWorkspaceGraphService.map(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-modules-workspace-graph/nestjs-modules-workspace-graph.service.ts:84` |
@@ -175,10 +176,10 @@ None.
 | `NestjsModulesWorkspaceGraphService.toSorted(…)` | 1 | `NestjsModulesWorkspaceGraphService.compareEdges` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-modules-workspace-graph/nestjs-modules-workspace-graph.service.ts:97` |
 | `NestjsModulesWorkspaceGraphService.map(…)` | 1 | `NestjsModulesWorkspaceGraphService.renderNode` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-modules-workspace-graph/nestjs-modules-workspace-graph.service.ts:111` |
 | `NestjsModulesWorkspaceGraphService.map(…)` | 1 | `NestjsModulesWorkspaceGraphService.toNodeIdentifier` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-modules-workspace-graph/nestjs-modules-workspace-graph.service.ts:115` |
-| `NestjsProjectService.map(…)` | 1 | `NestjsProjectService.loadModuleClasses` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:64` |
-| `NestjsProjectService.findModuleFiles` | 1 | `NestjsProjectService.toSorted(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:105` |
-| `NestjsProjectService.filter(…)` | 1 | `NestjsProjectService.isNestjsProject` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:183` |
-| `NestjsProjectService.map(…)` | 1 | `NestjsProjectService.describeProject` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:184` |
+| `NestjsProjectService.map(…)` | 1 | `NestjsProjectService.loadModuleClasses` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:66` |
+| `NestjsProjectService.findModuleFiles` | 1 | `NestjsProjectService.toSorted(…)` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:147` |
+| `NestjsProjectService.filter(…)` | 1 | `NestjsProjectService.isNestjsProject` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:225` |
+| `NestjsProjectService.map(…)` | 1 | `NestjsProjectService.describeProject` | `packages/ic-suite/codependix/codependix-nestjs-modules/src/modules/nestjs-project/nestjs-project.service.ts:226` |
 
 </details>
 <!-- callidescope:end -->

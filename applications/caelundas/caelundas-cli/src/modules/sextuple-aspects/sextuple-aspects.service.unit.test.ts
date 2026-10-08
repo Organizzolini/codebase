@@ -12,7 +12,7 @@ import { SextupleAspectsComposerService } from "./sextuple-aspects-composer.serv
 import { SextupleAspectsService } from "./sextuple-aspects.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 describe(SextupleAspectsService, () => {
   let service: SextupleAspectsService;
@@ -281,7 +281,7 @@ describe(SextupleAspectsService, () => {
     });
 
     it("returns empty array when no sextuple aspect events exist", () => {
-      const events: Event[] = [
+      const events: DetectedCalendarEvent[] = [
         {
           categories: ["Astronomy", "Astrology", "Simple Aspect"],
           description: "Sun conjunct Moon",
@@ -297,7 +297,7 @@ describe(SextupleAspectsService, () => {
     });
 
     it("creates progressive event from forming to dissolving pair", () => {
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -319,7 +319,7 @@ describe(SextupleAspectsService, () => {
           "➡️ ✡ ☉-☽-♂-♃-♀-♄ Jupiter, Mars, Moon, Saturn, Sun, Venus hexagram forming",
       };
 
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -363,7 +363,7 @@ describe(SextupleAspectsService, () => {
     });
 
     it("does not create progressive event when only forming exists", () => {
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -391,7 +391,7 @@ describe(SextupleAspectsService, () => {
     });
 
     it("does not create progressive event when only dissolving exists", () => {
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -420,7 +420,7 @@ describe(SextupleAspectsService, () => {
     });
 
     it("handles multiple forming/dissolving pairs", () => {
-      const events: Event[] = [
+      const events: DetectedCalendarEvent[] = [
         {
           categories: [
             "Astronomy",
@@ -529,7 +529,7 @@ describe(SextupleAspectsService, () => {
     });
 
     it("handles different body combinations separately", () => {
-      const events: Event[] = [
+      const events: DetectedCalendarEvent[] = [
         // First body combination
         {
           categories: [
@@ -648,7 +648,7 @@ describe(SextupleAspectsService, () => {
         end: moment.utc("2024-03-21T12:00:00.000Z"),
         start: moment.utc("2024-03-21T12:00:00.000Z"),
         summary: "forming",
-      } as Event;
+      } as DetectedCalendarEvent;
       const dissolvingEvent = {
         categories: [
           "Sextuple Aspect",
@@ -665,7 +665,7 @@ describe(SextupleAspectsService, () => {
         end: moment.utc("2024-03-21T13:00:00.000Z"),
         start: moment.utc("2024-03-21T13:00:00.000Z"),
         summary: "dissolving",
-      } as Event;
+      } as DetectedCalendarEvent;
       const sortBySpy = vi
         .spyOn(_, "sortBy")
         .mockReturnValue([formingEvent, undefined, dissolvingEvent]);
@@ -697,7 +697,7 @@ describe(SextupleAspectsService, () => {
         end: moment.utc("2024-03-21T12:00:00.000Z"),
         start: moment.utc("2024-03-21T12:00:00.000Z"),
         summary: "forming",
-      } as Event;
+      } as DetectedCalendarEvent;
       const dissolvingEvent = {
         categories: [
           "Sextuple Aspect",
@@ -714,14 +714,14 @@ describe(SextupleAspectsService, () => {
         end: moment.utc("2024-03-21T13:00:00.000Z"),
         start: moment.utc("2024-03-21T13:00:00.000Z"),
         summary: "dissolving",
-      } as Event;
+      } as DetectedCalendarEvent;
       const progressiveEvent = {
         categories: ["Sextuple Aspect", "Hexagram"],
         description: "progressive",
         end: moment.utc("2024-03-21T13:00:00.000Z"),
         start: moment.utc("2024-03-21T12:00:00.000Z"),
         summary: "progressive",
-      } as Event;
+      } as DetectedCalendarEvent;
       const groupedSpy = vi
         .spyOn(composerService, "groupSextupleEventsByKey")
         .mockReturnValue({ hexagram: [formingEvent, dissolvingEvent] });
@@ -752,7 +752,7 @@ describe(SextupleAspectsService, () => {
         end: moment.utc("2024-03-21T12:00:00.000Z"),
         start: moment.utc("2024-03-21T12:00:00.000Z"),
         summary: "forming",
-      } as Event;
+      } as DetectedCalendarEvent;
       const nonDissolvingEvent = {
         categories: [
           "Sextuple Aspect",
@@ -769,7 +769,7 @@ describe(SextupleAspectsService, () => {
         end: moment.utc("2024-03-21T13:00:00.000Z"),
         start: moment.utc("2024-03-21T13:00:00.000Z"),
         summary: "perfective",
-      } as Event;
+      } as DetectedCalendarEvent;
       const groupedSpy = vi
         .spyOn(composerService, "groupSextupleEventsByKey")
         .mockReturnValue({ hexagram: [formingEvent, nonDissolvingEvent] });
@@ -922,7 +922,7 @@ describe(SextupleAspectsService, () => {
               minute: Moment;
               previousAspectBodies: AspectBodies[];
               unionEdges: AspectBodies[];
-            }) => Event[];
+            }) => DetectedCalendarEvent[];
           }
         ).processHexagramCombinations.bind(service);
         const findPatternSpy = vi
@@ -977,7 +977,7 @@ describe(SextupleAspectsService, () => {
               minute: Moment;
               previousAspectBodies: AspectBodies[];
               unionEdges: AspectBodies[];
-            }) => Event[];
+            }) => DetectedCalendarEvent[];
           }
         ).processHexagramCombinations.bind(service);
         const findPatternSpy = vi

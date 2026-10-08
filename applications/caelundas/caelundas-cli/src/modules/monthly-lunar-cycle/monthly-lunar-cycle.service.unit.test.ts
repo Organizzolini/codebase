@@ -14,8 +14,8 @@ import { MathService } from "../math/math.service";
 
 import { MonthlyLunarCycleService } from "./monthly-lunar-cycle.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { LunarPhase } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { IlluminationEphemeris } from "../ephemeris/ephemeris.types";
 import type { LogData } from "@codebase/logging";
 
@@ -26,15 +26,17 @@ vi.mock("fs", () => ({
 }));
 
 interface ServicePrivate {
-  detectProgressive: (events: Event[]) => Event[];
+  detectProgressive: (
+    events: DetectedCalendarEvent[],
+  ) => DetectedCalendarEvent[];
   extractLunarPhaseFromCategories: (
     categories: string[],
     enteringSummary: string,
   ) => LunarPhase | null;
   getMonthlyLunarCycleProgressiveEvent: (
-    entering: Event,
-    exiting: Event,
-  ) => Event | null;
+    entering: DetectedCalendarEvent,
+    exiting: DetectedCalendarEvent,
+  ) => DetectedCalendarEvent | null;
   isFullMoon: (args: {
     currentIllumination: number;
     nextIlluminations: number[];
@@ -83,7 +85,7 @@ describe(MonthlyLunarCycleService, () => {
               };
               summary: string;
               timezone: string;
-            }): Event => {
+            }): DetectedCalendarEvent => {
               const {
                 categories,
                 date,
@@ -289,7 +291,7 @@ describe(MonthlyLunarCycleService, () => {
 
   describe("detectProgressive", () => {
     it("creates progressive events between consecutive lunar phases", () => {
-      const newMoon: Event = {
+      const newMoon: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -302,7 +304,7 @@ describe(MonthlyLunarCycleService, () => {
         start: moment.utc("2024-03-10T09:00:00.000Z"),
         summary: "🌙 🌑 New Moon",
       };
-      const waxingCrescent: Event = {
+      const waxingCrescent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -315,7 +317,7 @@ describe(MonthlyLunarCycleService, () => {
         start: moment.utc("2024-03-13T12:00:00.000Z"),
         summary: "🌙 🌒 Waxing Crescent Moon",
       };
-      const firstQuarter: Event = {
+      const firstQuarter: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -359,7 +361,7 @@ describe(MonthlyLunarCycleService, () => {
     });
 
     it("filters out non-lunar cycle events", () => {
-      const nonLunarEvent: Event = {
+      const nonLunarEvent: DetectedCalendarEvent = {
         categories: ["Astronomy", "Something Else"],
         description: "Not a lunar event",
         end: moment.utc("2024-03-10T09:00:00.000Z"),
@@ -398,14 +400,14 @@ describe(MonthlyLunarCycleService, () => {
     });
 
     it("warns and skip events with invalid categories", () => {
-      const invalidEvent: Event = {
+      const invalidEvent: DetectedCalendarEvent = {
         categories: ["Monthly Lunar Cycle"], // Missing lunar phase category
         description: "Invalid",
         end: moment.utc("2024-03-10T09:00:00.000Z"),
         start: moment.utc("2024-03-10T09:00:00.000Z"),
         summary: "Invalid event",
       };
-      const validEvent: Event = {
+      const validEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -872,7 +874,7 @@ describe(MonthlyLunarCycleService, () => {
           end: moment.utc("2024-01-01T00:00:00.000Z"),
           start: moment.utc("2024-01-01T00:00:00.000Z"),
           summary: "🌑 New Moon",
-        } as Event;
+        } as DetectedCalendarEvent;
         const exiting = {
           ...entering,
           end: moment.utc("2024-01-08T00:00:00.000Z"),
@@ -945,7 +947,7 @@ describe(MonthlyLunarCycleService, () => {
 
     describe("detectProgressive", () => {
       it("skips sparse entries when pairing monthly lunar events", () => {
-        const sparseEvents = [] as Event[];
+        const sparseEvents = [] as DetectedCalendarEvent[];
         sparseEvents[1] = {
           categories: [
             "Astronomy",

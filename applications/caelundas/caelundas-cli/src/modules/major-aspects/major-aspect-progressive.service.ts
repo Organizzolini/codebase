@@ -12,8 +12,8 @@ import {
 import { ProgressiveAspectService } from "../progressive/progressive-aspect.service";
 import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Body, MajorAspect } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 
 /**
  * Builds progressive major-aspect duration events by pairing forming and dissolving boundaries.
@@ -36,7 +36,7 @@ export class MajorAspectProgressiveService {
   /**
    * Builds a stable grouping key from sorted bodies plus major-aspect label.
    */
-  private getAspectGroupKey(event: Event): string {
+  private getAspectGroupKey(event: DetectedCalendarEvent): string {
     return this.progressiveAspectService.buildAspectGroupKeyFromCategories({
       aspects: majorAspects,
       bodies: majorAspectBodies,
@@ -48,9 +48,9 @@ export class MajorAspectProgressiveService {
    * Builds one progressive duration event from a forming/dissolving pair.
    */
   private getMajorAspectProgressiveEvent(
-    beginning: Event,
-    ending: Event,
-  ): Event {
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return this.progressiveAspectService.createSimpleAspectProgressiveEvent({
       aspectCategory: "Major Aspect",
       aspects: majorAspects,
@@ -95,7 +95,7 @@ export class MajorAspectProgressiveService {
   /**
    * Builds progressive major-aspect events from detected minute-level events.
    */
-  detectProgressive(events: Event[]): Event[] {
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
     return this.progressiveAspectService.buildSimpleAspectFamilyProgressiveEvents(
       {
         aspectCategory: "Major Aspect",
@@ -119,8 +119,8 @@ export class MajorAspectProgressiveService {
    */
   processAspectGroup(
     aspectGroupKey: string,
-    aspectGroupEvents: Event[],
-  ): Event[] {
+    aspectGroupEvents: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     return this.progressiveAspectService.buildSimpleAspectFamilyProgressiveEvents(
       {
         aspectCategory: "Major Aspect",

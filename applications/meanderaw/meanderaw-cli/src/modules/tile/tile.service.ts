@@ -210,7 +210,7 @@ export class TileService {
    * edge is a single edge looping from the point back to itself, so it
    * counts once here and twice there.
    *
-   * This is the quantity the family's original exact-cover rule bounded at
+   * This is the quantity the retired `mosaic` generator's exact-cover rule bounded at
    * one — every cell claimed exactly once, by a dot alone or by one half of
    * a dash — so it is what a caller asks for to recover that region of the
    * space.

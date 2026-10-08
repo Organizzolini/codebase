@@ -1,0 +1,137 @@
+import { Injectable } from "@nestjs/common";
+
+import {
+  In,
+  InjectRepository,
+  type Repository,
+  Word,
+  WordForm,
+  WordLexeme,
+} from "@codebase/lexico-entities";
+
+import { WORD_RELATIONS } from "./words.constants";
+
+/**
+ * Service for resolving surface Latin words and their lexical/morphological mapping.
+ */
+@Injectable()
+export class WordsService {
+  // 🏗 Dependency Injection
+
+  public constructor(
+    @InjectRepository(Word)
+    private readonly wordRepository: Repository<Word>,
+    @InjectRepository(WordForm)
+    private readonly wordFormRepository: Repository<WordForm>,
+    @InjectRepository(WordLexeme)
+    private readonly wordLexemeRepository: Repository<WordLexeme>,
+  ) {}
+
+  // 🔐 Private Fields
+
+  // 🔑 Public Fields
+
+  // 🔏 Private Methods
+
+  // 🌎 Public Methods
+
+  /**
+   * Returns a single surface word and all of its morphological and lexical links.
+   */
+  public async findByData(data: string): Promise<null | Word> {
+    return this.wordRepository.findOne({
+      relations: WORD_RELATIONS,
+      where: { data },
+    });
+  }
+
+  /**
+   * Returns multiple surface words in the input order, each once, omitting
+   * any spelling no word has.
+   */
+  public async findByDataList(data: string[]): Promise<Word[]> {
+    if (data.length === 0) {
+      return [];
+    }
+
+    const words = await this.wordRepository.find({
+      relations: WORD_RELATIONS,
+      where: { data: In(data) },
+    });
+
+    const wordsByData = new Map(words.map((word) => [word.data, word]));
+    return [...new Set(data)].flatMap((entry) => wordsByData.get(entry) ?? []);
+  }
+
+  /**
+   * Finds all stored word rows by their identifiers.
+   */
+  public async findByIds(ids: string[]): Promise<Word[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    return this.wordRepository.find({
+      relations: WORD_RELATIONS,
+      where: { id: In(ids) },
+    });
+  }
+
+  /**
+   * Returns all word-form rows for a given word identifier.
+   */
+  public async findFormRowsByWordId(wordId: string): Promise<WordForm[]> {
+    return this.wordFormRepository.find({
+      relations: { form: true, word: true },
+      where: { word: { id: wordId } },
+    });
+  }
+
+  /**
+   * Returns every morphological form linked to the given word surface.
+   */
+  public async findFormsByData(data: string): Promise<WordForm[]> {
+    const foundWord = await this.findByData(data);
+    return foundWord?.wordForms ?? [];
+  }
+
+  /**
+   * Returns the word-lexeme junction rows for the given surface word.
+   */
+  public async findLexemeLinksByData(data: string): Promise<WordLexeme[]> {
+    const foundWord = await this.findByData(data);
+    return foundWord?.wordLexemes ?? [];
+  }
+
+  /**
+   * Returns all word-lexeme rows for a given word identifier.
+   */
+  public async findLexemeRowsByWordId(wordId: string): Promise<WordLexeme[]> {
+    return this.wordLexemeRepository.find({
+      relations: { lexeme: true, word: true },
+      where: { word: { id: wordId } },
+    });
+  }
+
+  /**
+   * Finds word-form links by their identifiers, each with its word joined the
+   * way a word lookup joins it.
+   */
+  public async findWordFormsByIds(ids: string[]): Promise<WordForm[]> {
+    return this.wordFormRepository.find({
+      relations: { word: WORD_RELATIONS },
+      where: { id: In(ids) },
+    });
+  }
+
+  /**
+   * Finds word-lexeme links by their identifiers, each with its word joined
+   * the way a word lookup joins it.
+   */
+  public async findWordLexemesByIds(ids: string[]): Promise<WordLexeme[]> {
+    return this.wordLexemeRepository.find({
+      relations: { word: WORD_RELATIONS },
+      where: { id: In(ids) },
+    });
+  }
+}

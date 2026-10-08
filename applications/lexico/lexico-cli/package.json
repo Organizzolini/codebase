@@ -1,0 +1,60 @@
+{
+  "dependencies": {
+    "@codebase/database": "workspace:*",
+    "@codebase/lexico-entities": "workspace:*",
+    "@codebase/logging": "workspace:*",
+    "@nestjs/common": "catalog:",
+    "@nestjs/config": "catalog:",
+    "@nestjs/core": "catalog:",
+    "@nestjs/testing": "catalog:",
+    "@nestjs/typeorm": "catalog:",
+    "cheerio": "catalog:",
+    "cheerio-tableparser": "catalog:",
+    "domhandler": "catalog:",
+    "lodash": "catalog:",
+    "mdast": "catalog:",
+    "mdast-util-to-string": "catalog:",
+    "nest-commander": "catalog:",
+    "number-to-words": "catalog:",
+    "pg": "catalog:",
+    "prompts": "catalog:",
+    "reflect-metadata": "catalog:",
+    "remark": "catalog:",
+    "remark-frontmatter": "catalog:",
+    "remark-gfm": "catalog:",
+    "tslib": "catalog:",
+    "typeorm": "catalog:",
+    "vitest": "catalog:",
+    "yaml": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@golevelup/ts-vitest": "catalog:",
+    "@nestjs/testing": "catalog:",
+    "@nx/eslint-plugin": "catalog:",
+    "@swc-node/register": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/helpers": "catalog:",
+    "@types/cheerio-tableparser": "catalog:",
+    "@types/lodash": "catalog:",
+    "@types/mdast": "catalog:",
+    "@types/node": "catalog:",
+    "@types/number-to-words": "catalog:",
+    "@types/prompts": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "name": "lexico-cli",
+  "type": "module",
+  "typeCoverage": {
+    "atLeast": 100,
+    "ignoreCatch": true,
+    "ignoreFiles": [
+      "**/*.spec.ts",
+      "**/*.test.ts"
+    ],
+    "strict": true
+  },
+  "version": "0.0.1"
+}

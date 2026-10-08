@@ -14,8 +14,8 @@ import { EphemerisService } from "../ephemeris/ephemeris.service";
 import { IngressesComposerService } from "./ingresses-composer.service";
 import { IngressesService } from "./ingresses.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { EphemerisAggregationService } from "../ephemeris/ephemeris-aggregation.service";
 import type { EphemerisConstantsService } from "../ephemeris/ephemeris-constants.service";
 import type { EphemerisCoordinateService } from "../ephemeris/ephemeris-coordinate.service";
@@ -208,7 +208,7 @@ describe("ingresses.events integration", () => {
 
   describe("detectProgressive", () => {
     it("creates progressive events from consecutive sign ingresses", () => {
-      const events: Event[] = [
+      const events: DetectedCalendarEvent[] = [
         {
           categories: ["Astronomy", "Astrology", "Ingress", "Sun", "Aries"],
           description: "Sun ingress Aries",
@@ -256,7 +256,7 @@ describe("ingresses.events integration", () => {
     });
 
     it("handles events for multiple bodies separately", () => {
-      const events: Event[] = [
+      const events: DetectedCalendarEvent[] = [
         {
           categories: ["Astronomy", "Astrology", "Ingress", "Sun", "Aquarius"],
           description: "Sun ingress Aquarius",

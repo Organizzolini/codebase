@@ -138,12 +138,9 @@ describe("main end-to-end suite", () => {
             color: "red",
             description: "Total Solar Eclipse visible from North America",
             end: moment.utc("2025-04-08T20:00:00Z"),
-            geography: { latitude: 32.7767, longitude: -96.797 },
             location: "Dallas, Texas, USA",
-            priority: 1,
             start: moment.utc("2025-04-08T18:00:00Z"),
             summary: "Total Solar Eclipse",
-            url: "https://eclipse.nasa.gov",
           },
         ];
 
@@ -155,9 +152,6 @@ describe("main end-to-end suite", () => {
         });
 
         expect(calendar).toContain("LOCATION:Dallas, Texas, USA");
-        expect(calendar).toContain("GEO:32.7767;-96.797");
-        expect(calendar).toContain("URL:https://eclipse.nasa.gov");
-        expect(calendar).toContain("PRIORITY:1");
         expect(calendar).toContain("COLOR:red");
       });
     });
@@ -390,10 +384,10 @@ describe("main end-to-end suite", () => {
       await calendarEvents.insert({
         categories: ["e2e"],
         description: "stored directly",
-        end: new Date("2026-03-05T00:00:00Z"),
+        end: moment.utc("2026-03-05T00:00:00Z"),
         latitude: "39.949309",
         longitude: "-75.171690",
-        start: new Date("2026-03-05T00:00:00Z"),
+        start: moment.utc("2026-03-05T00:00:00Z"),
         summary: "Planted",
       });
       const { ics, json } = await run(philadelphia, marchFirstHalf);

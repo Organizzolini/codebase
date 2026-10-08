@@ -13,8 +13,8 @@ import { ProgressiveService } from "../progressive/progressive.service";
 
 import { CaelundasCommand } from "./caelundas.command";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { CalendarEvent } from "../caelundas-database/entities/calendar-event.entity";
-import type { Event } from "../calendar/calendar.types";
 import type { Input } from "../input/input.types";
 
 const input: Input = {
@@ -25,7 +25,7 @@ const input: Input = {
   timezone: "America/New_York",
 };
 
-function detectedEvent(summary: string, start: string): Event {
+function detectedEvent(summary: string, start: string): DetectedCalendarEvent {
   return {
     categories: ["aspects"],
     description: summary,
@@ -37,14 +37,13 @@ function detectedEvent(summary: string, start: string): Event {
 
 function storedEvent(summary: string, start: string): CalendarEvent {
   return {
-    categories: ["aspects"],
-    color: null,
-    description: summary,
-    end: new Date(start),
-    location: null,
-    start: new Date(start),
-    summary,
-  } as CalendarEvent;
+    ...detectedEvent(summary, start),
+    createdAt: new Date(start),
+    id: "0192f0c4-5b1e-7c66-8a3d-2f4e6b8c9d10",
+    latitude: "40.712800",
+    longitude: "-74.006000",
+    updatedAt: new Date(start),
+  };
 }
 
 describe(CaelundasCommand, () => {

@@ -71,7 +71,7 @@ PR titles **must** follow the same format as commit messages:
 | `lexico`            | TanStack Start SSR Latin dictionary web app with Supabase backend                                                                         |
 | `components-web`    | Shared React/shadcn component library                                                                                                     |
 | `lexico-entities`   | Shared TypeORM entities and GraphQL types                                                                                                 |
-| `lexico-ingestion`  | Data ingestion scripts for Lexico                                                                                                         |
+| `lexico-cli`        | Data ingestion scripts for Lexico                                                                                                         |
 | `meanderaw`         | Greek meander (key/fret) SVG generator CLI and the composable motif/modifier library it reads                                             |
 | `sempientor`        | Lexical gap discovery CLI that surveys English for morphological, phonotactic, and semantic gaps and coins words to fill them             |
 | `callidescope`      | Call stack tracing and linting CLI, the configuration package it reads, and the packages that build and render its call graph             |
@@ -199,8 +199,8 @@ Adds a user profile page where users can view and edit their information.
 ## 🧪 Testing
 
 ```bash
-nx run lexico:vitest
-nx run lexico:develop  # Navigate to /profile
+nx run lexico-web:vitest
+nx run lexico-web:develop  # Navigate to /profile
 ```
 
 ## 🔗 Related
@@ -384,8 +384,8 @@ Adds autocomplete suggestions to the dictionary search input.
 ## 🧪 Testing
 
 ```bash
-nx run lexico:vitest
-nx run lexico:develop
+nx run lexico-web:vitest
+nx run lexico-web:develop
 ```
 
 1. Navigate to search page and type a query.
@@ -464,8 +464,8 @@ Updates TanStack Router to latest version with bug fixes.
 ## 🧪 Testing
 
 ```bash
-nx run lexico:vitest
-nx run lexico:develop
+nx run lexico-web:vitest
+nx run lexico-web:develop
 ```
 
 1. All routes should work as before.

@@ -1,0 +1,46 @@
+{
+  "dependencies": {
+    "@apollo/server": "catalog:",
+    "@as-integrations/express5": "catalog:",
+    "@codebase/database": "workspace:*",
+    "@codebase/lexico-entities": "workspace:*",
+    "@codebase/logging": "workspace:*",
+    "@nestjs/apollo": "catalog:",
+    "@nestjs/common": "catalog:",
+    "@nestjs/config": "catalog:",
+    "@nestjs/core": "catalog:",
+    "@nestjs/graphql": "catalog:",
+    "@nestjs/platform-express": "catalog:",
+    "dataloader": "catalog:",
+    "graphql": "catalog:",
+    "lightship": "catalog:",
+    "reflect-metadata": "catalog:",
+    "tslib": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@golevelup/ts-vitest": "catalog:",
+    "@nestjs/testing": "catalog:",
+    "@nestjs/typeorm": "catalog:",
+    "@swc-node/register": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/helpers": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "typeorm": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "name": "lexico-api",
+  "type": "module",
+  "typeCoverage": {
+    "atLeast": 100,
+    "ignoreCatch": true,
+    "ignoreFiles": [
+      "**/*.test.ts",
+      "src/lexico-api.ts"
+    ],
+    "strict": true
+  },
+  "version": "0.0.1"
+}

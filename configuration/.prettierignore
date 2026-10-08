@@ -28,10 +28,10 @@ yarn.lock
 **/meanderaw-cli/output
 **/data/wiktionary
 **/data/wikipedia
-**/applications/lexico-ingestion/data
-**/applications/lexico-ingestion/data/library/**
-**/applications/lexico-ingestion/src/modules/literature/literature.constants.ts
-**/applications/lexico-ingestion/src/modules/library/library.constants.ts
+**/applications/lexico/lexico-cli/data
+**/applications/lexico/lexico-cli/data/library/**
+**/applications/lexico/lexico-cli/src/modules/literature/literature.constants.ts
+**/applications/lexico/lexico-cli/src/modules/library/library.constants.ts
 **/library.json
 
 # 👔 Conformetry example fixtures

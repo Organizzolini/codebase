@@ -163,7 +163,7 @@ const config: KnipConfig = {
     // `vite.config.mts` rather than imported, so knip is told where they are;
     // both sit under `src/lib/` because `codebase-structure.json` restricts a
     // `src/` root to entry-point names.
-    "applications/lexico": {
+    "applications/lexico/lexico-web": {
       entry: [
         "src/lib/client.tsx",
         "src/lib/routeTree.gen.ts",
@@ -180,12 +180,11 @@ const config: KnipConfig = {
     },
 
     // lexico-api: NestJS GraphQL API
-    "applications/lexico-api": {
+    "applications/lexico/lexico-api": {
       ignoreDependencies: [
         // Apollo 5's Express integration, which @nestjs/apollo resolves by
         // name at startup; without it GraphQLModule refuses to boot.
         "@as-integrations/express5",
-        "typeorm", // Used by testing/mocks.ts for repository mocks
       ],
       project: "src/**/*.ts",
     },
@@ -229,22 +228,17 @@ const config: KnipConfig = {
     "packages/lexico-entities": {
       entry: [
         "src/index.ts",
-        "scripts/**/*.ts",
-        "src/modules/database/data-source.constants.ts",
-        "src/modules/database/migrations/**/*.ts",
+        "src/modules/lexico-database/data-source.constants.ts",
+        "src/modules/lexico-database/migrations/**/*.ts",
       ],
       ignore: [
-        "src/modules/database/database.module.ts", // Conformance-generated module stub, not yet exported
         "src/modules/entities/entities.module.ts", // Conformance-generated module stub, not yet exported
       ],
-      ignoreDependencies: [
-        "@testcontainers/postgresql", // Used by integration helper in packages/lexico-entities/testing (outside knip project scope)
-      ],
-      project: ["src/**/*.ts", "scripts/**/*.ts"],
+      project: ["src/**/*.ts"],
     },
 
-    // lexico-ingestion: Data ingestion CLI for the Lexico database
-    "applications/lexico-ingestion": {
+    // lexico-cli: Data ingestion CLI for the Lexico database
+    "applications/lexico/lexico-cli": {
       ignore: [
         "testing/**", // Test fixtures and setup
       ],

@@ -14,6 +14,7 @@ import { MEANDER_INSERT_CHUNK_SIZE } from "./meanderaw-database.constants";
 import { MeanderawDatabaseModule } from "./meanderaw-database.module";
 import { MeanderawDatabaseService } from "./meanderaw-database.service";
 import { Migration1791160950069 } from "./migrations/1791160950069-migration";
+import { Migration1791414023001 } from "./migrations/1791414023001-migration";
 
 import type { MeanderRecord } from "./meanderaw-database.types";
 
@@ -38,7 +39,7 @@ describe(MeanderawDatabaseService, () => {
     database = await startDatabaseTestingModule({
       database: MeanderawDatabaseModule,
       entities: [Meander],
-      migrations: [Migration1791160950069],
+      migrations: [Migration1791160950069, Migration1791414023001],
       project: "meanderaw",
     });
 
@@ -67,7 +68,6 @@ describe(MeanderawDatabaseService, () => {
           },
           code: "3c9a",
           columns: 2,
-          family: "snake",
           lattice: "3c9a",
           rows: 3,
         }),
@@ -85,7 +85,6 @@ describe(MeanderawDatabaseService, () => {
           },
           code: "3c9a",
           columns: 2,
-          family: "snake",
           lattice: "3c9a",
           rows: 3,
         }),
@@ -247,88 +246,6 @@ describe(MeanderawDatabaseService, () => {
     });
   });
 
-  describe("familyShapeCounts", () => {
-    it("counts each family's rows at each shape, without reading a row", async () => {
-      await service.saveAll([
-        meanderRecord({
-          code: "count-a",
-          columns: 1,
-          family: "whirl",
-          rows: 40,
-        }),
-        meanderRecord({
-          code: "count-b",
-          columns: 1,
-          family: "whirl",
-          rows: 40,
-        }),
-        meanderRecord({
-          code: "count-c",
-          columns: 2,
-          family: "whirl",
-          rows: 40,
-        }),
-      ]);
-
-      const counts = await service.familyShapeCounts();
-
-      expect(counts.filter(({ rows }) => rows === 40)).toStrictEqual(
-        expect.arrayContaining([
-          { columns: 1, count: 2, family: "whirl", rows: 40 },
-          { columns: 2, count: 1, family: "whirl", rows: 40 },
-        ]),
-      );
-    });
-  });
-
-  describe("familyRows", () => {
-    it("reads one family's rows in batches, ordered by rows, then columns, then code", async () => {
-      await service.saveAll([
-        meanderRecord({
-          code: "family-rows-c",
-          columns: 1,
-          family: "swirl",
-          rows: 41,
-        }),
-        meanderRecord({
-          code: "family-rows-a",
-          columns: 2,
-          family: "swirl",
-          rows: 41,
-        }),
-        meanderRecord({
-          code: "family-rows-b",
-          columns: 1,
-          family: "swirl",
-          rows: 41,
-        }),
-        meanderRecord({
-          code: "family-rows-d",
-          columns: 1,
-          family: "swirl",
-          rows: 42,
-        }),
-        meanderRecord({
-          code: "family-rows-e",
-          columns: 1,
-          family: "clasps",
-          rows: 41,
-        }),
-      ]);
-
-      const batches: string[][] = [];
-
-      for await (const batch of service.familyRows("swirl", 2)) {
-        batches.push(batch.map(({ code }) => code));
-      }
-
-      expect(batches).toStrictEqual([
-        ["family-rows-b", "family-rows-c"],
-        ["family-rows-a", "family-rows-d"],
-      ]);
-    });
-  });
-
   describe("codes", () => {
     it("reads the Codes one shape's rows hold, and no other shape's", async () => {
       await service.saveAll([
@@ -360,7 +277,6 @@ describe(MeanderawDatabaseService, () => {
     it("stores every column exactly as save would, the JSON map and array columns included", async () => {
       const fields: Partial<MeanderRecord> = {
         characteristics: { aSoutheastLatinCount: 2, crossCount: 1 },
-        family: "boxes",
         symmetricalCodes: ["01x02y12", "01x02y21"],
       };
 
@@ -402,36 +318,6 @@ describe(MeanderawDatabaseService, () => {
       await expect(repository.countBy({ code: Like("batch-%") })).resolves.toBe(
         0,
       );
-    });
-  });
-
-  describe("family and subFamily columns", () => {
-    it("persists a trusted family and subFamily alongside a row", async () => {
-      const saved = await service.save(
-        meanderRecord({
-          characteristics: { isDots: true },
-          code: "trusted-row",
-          family: "boxes",
-        }),
-      );
-
-      const row = await repository.findOneByOrFail({ id: saved.id });
-
-      expect(row).toMatchObject({
-        characteristics: { isDots: true },
-        family: "boxes",
-      });
-    });
-
-    it("leaves family and subFamily null when a row names neither", async () => {
-      const saved = await service.save(
-        meanderRecord({ code: "untrusted-row" }),
-      );
-
-      const row = await repository.findOneByOrFail({ id: saved.id });
-
-      expect(row.family).toBe("unclassified");
-      expect(row.characteristics).toStrictEqual({});
     });
   });
 

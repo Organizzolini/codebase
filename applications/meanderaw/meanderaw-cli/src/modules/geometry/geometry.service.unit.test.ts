@@ -44,7 +44,7 @@ describe(GeometryService, () => {
   });
 
   describe("borderPath", () => {
-    // 🎯 The run three families share. Each passes its own right edge and
+    // 🎯 The run every closed band shares. Each passes its own right edge and
     // nothing else, so this is the whole of what they have in common — and
     // the assertion is on the literal path data rather than on a parse of
     // it, because the committed corpus is bytes and an extraction that

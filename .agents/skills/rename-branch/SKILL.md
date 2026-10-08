@@ -67,7 +67,7 @@ Using the repository's naming convention (`<type>/<scope>-<description>`):
 | `lexico` | TanStack Start SSR Latin dictionary web app with Supabase backend |
 | `components-web` | Shared React/shadcn component library |
 | `lexico-entities` | Shared TypeORM entities and GraphQL types |
-| `lexico-ingestion` | Data ingestion scripts for Lexico |
+| `lexico-cli` | Data ingestion scripts for Lexico |
 | `meanderaw` | Greek meander (key/fret) SVG generator CLI and the composable motif/modifier library it reads |
 | `sempientor` | Lexical gap discovery CLI that surveys English for morphological, phonotactic, and semantic gaps and coins words to fill them |
 | `callidescope` | Call stack tracing and linting CLI, the configuration package it reads, and the packages that build and render its call graph |
@@ -122,7 +122,7 @@ If remote cleanup or rename operations are incorrect, use [restore-code](../rest
 
 ### Scenario 1: Uncommitted feature in lexico
 
-- _Changes_: Modified `applications/lexico/src/components/Button.tsx`
+- _Changes_: Modified `applications/lexico/lexico-web/src/components/Button.tsx`
 - _Derived Name_: `feat/lexico-button-component`
 - _Action_: `git branch backup/old-name/2026-06-22T12-00-00Z`, then `git branch -m feat/lexico-button-component`
 
