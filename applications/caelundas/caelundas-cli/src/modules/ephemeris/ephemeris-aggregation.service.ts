@@ -135,10 +135,8 @@ export class EphemerisAggregationService {
       accumulators.azimuthElevationEphemeris[timestamp] =
         this.horizon.computeAzimuthElevationForMinute({
           body,
-          distance,
+          julianDayEphemerisTime,
           julianDayUniversalTime,
-          latitude,
-          longitude,
           observerLatitude,
           observerLongitude,
         });

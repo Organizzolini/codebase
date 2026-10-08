@@ -7,7 +7,7 @@ import { EphemerisCoordinateService } from "./ephemeris-coordinate.service";
 import { EphemerisHorizonService } from "./ephemeris-horizon.service";
 import { EphemerisTimeService } from "./ephemeris-time.service";
 
-import type { azalt } from "sweph";
+import { azalt } from "sweph";
 import type * as Sweph from "sweph";
 
 vi.mock("sweph", async (importOriginal) => {
@@ -46,11 +46,11 @@ describe(EphemerisHorizonService, () => {
     coordinateService = await module.resolve(EphemerisCoordinateService);
     timeService = await module.resolve(EphemerisTimeService);
 
-    vi.mocked(coordinateService.getBodyCoordinatesWithDistance).mockReturnValue(
+    vi.mocked(coordinateService.getTopocentricBodyCoordinates).mockReturnValue(
       {
-        distance: 1.01,
-        latitude: -1.2,
-        longitude: 120.5,
+        distance: 0.0025,
+        latitude: 2.47,
+        longitude: 19.09,
       },
     );
     vi.mocked(timeService.dateToJulianDays).mockReturnValue({
@@ -71,17 +71,26 @@ describe(EphemerisHorizonService, () => {
   });
 
   describe("computeAzimuthElevationForMinute", () => {
-    it("returns azimuth/elevation from sweph azalt", () => {
+    it("turns the observer's topocentric position into azimuth/elevation", () => {
       const result = service.computeAzimuthElevationForMinute({
-        body: "sun",
-        distance: 1.01,
+        body: "moon",
+        julianDayEphemerisTime: 2_460_395.5,
         julianDayUniversalTime: 2_460_395.499_306,
-        latitude: -1.2,
-        longitude: 120.5,
         observerLatitude: 40.7128,
         observerLongitude: -74.006,
       });
 
+      expect(
+        coordinateService.getTopocentricBodyCoordinates,
+      ).toHaveBeenCalledWith({
+        body: "moon",
+        julianDayEphemerisTime: 2_460_395.5,
+        observerLatitude: 40.7128,
+        observerLongitude: -74.006,
+      });
+      expect(vi.mocked(azalt).mock.lastCall?.[5]).toStrictEqual([
+        19.09, 2.47, 0.0025,
+      ]);
       expect(result).toStrictEqual({ azimuth: 180, elevation: 44.8 });
     });
   });
