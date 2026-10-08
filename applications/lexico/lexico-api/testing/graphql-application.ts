@@ -9,7 +9,7 @@ import {
 } from "@codebase/lexico-entities";
 
 import { environmentSchema } from "../src/lexico-api.constants";
-import { ORPHANED_GRAPHQL_TYPES } from "../src/lexico-api.entities";
+import { ORPHANED_GRAPHQL_TYPES } from "../src/modules/lexemes/lexemes.constants";
 
 import type { RepositoryOf } from "./word-lookups";
 import type { DatabaseTestingModule } from "@codebase/database/testing";

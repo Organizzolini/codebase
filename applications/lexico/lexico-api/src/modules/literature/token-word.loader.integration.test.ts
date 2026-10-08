@@ -18,6 +18,7 @@ import {
 } from "../../../testing/database";
 
 import { LiteratureService } from "./literature.service";
+import { toTokenType } from "./literature.utilities";
 import { TokenWordLoader } from "./token-word.loader";
 import { TokensResolver } from "./tokens.resolver";
 
@@ -117,7 +118,9 @@ describe("token word loader integration suite", () => {
     const resolver = new TokensResolver(service, new TokenWordLoader(service));
 
     const words = await Promise.all(
-      tokens.map(async (token) => resolver.resolveTokenWord(token)),
+      tokens.map(async (token) =>
+        resolver.resolveTokenWord(toTokenType(token)),
+      ),
     );
 
     expect(words.map((word) => word?.data ?? null)).toStrictEqual(
@@ -134,7 +137,9 @@ describe("token word loader integration suite", () => {
     const resolver = new TokensResolver(service, new TokenWordLoader(service));
 
     const words = await Promise.all(
-      tokens.map(async (token) => resolver.resolveTokenWord(token)),
+      tokens.map(async (token) =>
+        resolver.resolveTokenWord(toTokenType(token)),
+      ),
     );
 
     expect(words.map((word) => word?.data ?? null)).toStrictEqual(

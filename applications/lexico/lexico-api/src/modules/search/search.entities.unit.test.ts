@@ -7,23 +7,8 @@ import {
 import { Test } from "@nestjs/testing";
 import { describe, expect, it } from "vitest";
 
-import {
-  AdjectivalForm,
-  AdjectiveInflection,
-  AdverbForm,
-  AdverbInflection,
-  FiniteVerbForm,
-  GerundForm,
-  InfinitiveForm,
-  Lexeme,
-  NominalForm,
-  NounInflection,
-  ParticipleForm,
-  PrepositionInflection,
-  SupineForm,
-  UninflectedInflection,
-  VerbInflection,
-} from "@codebase/lexico-entities";
+import { LexemeType } from "../lexemes/lexeme.entities";
+import { ORPHANED_GRAPHQL_TYPES } from "../lexemes/lexemes.constants";
 
 import {
   LexemeSearchConnection,
@@ -38,7 +23,7 @@ class DummyResolver {
     const result = new LexemeSearchResult();
     result.enclitic = "que";
     result.identifiers = ["nominative singular"];
-    result.lexeme = new Lexeme();
+    result.lexeme = new LexemeType();
     result.score = 1;
     result.source = SearchMatchSource.LEMMA_EXACT;
     return result;
@@ -56,22 +41,7 @@ describe("search entities suite", () => {
 
     const schemaFactory = module.get(GraphQLSchemaFactory);
     const schema = await schemaFactory.create([DummyResolver], {
-      orphanedTypes: [
-        NominalForm,
-        FiniteVerbForm,
-        ParticipleForm,
-        AdverbForm,
-        InfinitiveForm,
-        GerundForm,
-        SupineForm,
-        AdjectivalForm,
-        NounInflection,
-        VerbInflection,
-        AdjectiveInflection,
-        AdverbInflection,
-        PrepositionInflection,
-        UninflectedInflection,
-      ],
+      orphanedTypes: [...ORPHANED_GRAPHQL_TYPES],
     });
 
     expect(schema).toBeDefined();
@@ -83,7 +53,7 @@ describe("search entities suite", () => {
     const result = new LexemeSearchResult();
     result.enclitic = "que";
     result.identifiers = ["nominative singular"];
-    result.lexeme = new Lexeme();
+    result.lexeme = new LexemeType();
     result.score = 1;
     result.source = SearchMatchSource.LEMMA_EXACT;
 

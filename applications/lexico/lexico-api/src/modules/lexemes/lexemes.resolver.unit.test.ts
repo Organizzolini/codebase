@@ -6,24 +6,10 @@ import {
 import { Test } from "@nestjs/testing";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
-import {
-  AdjectivalForm,
-  AdjectiveInflection,
-  AdverbForm,
-  AdverbInflection,
-  FiniteVerbForm,
-  GerundForm,
-  InfinitiveForm,
-  Lexeme,
-  NominalForm,
-  NounInflection,
-  ParticipleForm,
-  PrepositionInflection,
-  SupineForm,
-  UninflectedInflection,
-  VerbInflection,
-} from "@codebase/lexico-entities";
+import { Lexeme } from "@codebase/lexico-entities";
 
+import { LexemeType } from "./lexeme.entities";
+import { ORPHANED_GRAPHQL_TYPES } from "./lexemes.constants";
 import { LexemesResolver } from "./lexemes.resolver";
 import { LexemesService } from "./lexemes.service";
 
@@ -62,7 +48,8 @@ describe(LexemesResolver, () => {
     const result = await resolver.lexeme({ id: "lex-1" });
 
     expect(mockService.findById).toHaveBeenCalledWith("lex-1");
-    expect(result).toBe(mockLexeme);
+    expect(result).toBeInstanceOf(LexemeType);
+    expect(result).toMatchObject({ id: "lex-1", lemma: "amō" });
   });
 
   it("resolves multiple lexemes by ids using lexemes service", async () => {
@@ -83,7 +70,11 @@ describe(LexemesResolver, () => {
     const result = await resolver.lexemes({ ids: ["lex-1", "lex-2"] });
 
     expect(mockService.findByIds).toHaveBeenCalledWith(["lex-1", "lex-2"]);
-    expect(result).toStrictEqual([mockLexeme1, mockLexeme2]);
+    expect(result).toStrictEqual([
+      expect.any(LexemeType),
+      expect.any(LexemeType),
+    ]);
+    expect(result.map((lexeme) => lexeme.id)).toStrictEqual(["lex-1", "lex-2"]);
   });
 
   it("generates schema including lexeme and lexemes queries", async () => {
@@ -102,22 +93,7 @@ describe(LexemesResolver, () => {
 
     const schemaFactory = module.get(GraphQLSchemaFactory);
     const schema = await schemaFactory.create([LexemesResolver], {
-      orphanedTypes: [
-        NominalForm,
-        FiniteVerbForm,
-        ParticipleForm,
-        AdverbForm,
-        InfinitiveForm,
-        GerundForm,
-        SupineForm,
-        AdjectivalForm,
-        NounInflection,
-        VerbInflection,
-        AdjectiveInflection,
-        AdverbInflection,
-        PrepositionInflection,
-        UninflectedInflection,
-      ],
+      orphanedTypes: [...ORPHANED_GRAPHQL_TYPES],
     });
 
     expect(schema).toBeDefined();

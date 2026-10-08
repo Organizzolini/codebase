@@ -17,9 +17,11 @@ import {
 
 import { LinesResolver } from "./lines.resolver";
 import { LiteratureService } from "./literature.service";
+import { toLineType } from "./literature.utilities";
 
 import type { Connection } from "../../lexico-api.types";
 import type { LinesArguments } from "./line-arguments.entities";
+import type { LineType } from "./line.entities";
 import type { DatabaseTestingModule } from "@codebase/database/testing";
 
 /** A page of lines, reduced to what a reader can observe of it. */
@@ -33,7 +35,7 @@ interface LinesPage {
 }
 
 /** Reduces a connection to the line indices it holds and its page info. */
-function summarize(connection: Connection<Line>): LinesPage {
+function summarize(connection: Connection<LineType>): LinesPage {
   return {
     endCursor: connection.pageInfo.endCursor ?? null,
     hasNextPage: connection.pageInfo.hasNextPage,
@@ -274,7 +276,7 @@ describe("lines resolver integration suite", () => {
     expect.hasAssertions();
 
     for (const [index, line] of passage.lines.entries()) {
-      const tokens = await resolver.tokensForLine(line);
+      const tokens = await resolver.tokensForLine(toLineType(line));
 
       expect(tokens.map((token) => parseIndex(token))).toStrictEqual(
         tokens.map((_token, position) => position),
@@ -294,7 +296,9 @@ describe("lines resolver integration suite", () => {
     expect.hasAssertions();
 
     await expect(
-      resolver.tokensForLine(Object.assign(new Line(), { id: randomUUID() })),
+      resolver.tokensForLine(
+        toLineType(Object.assign(new Line(), { id: randomUUID() })),
+      ),
     ).resolves.toStrictEqual([]);
   });
 });

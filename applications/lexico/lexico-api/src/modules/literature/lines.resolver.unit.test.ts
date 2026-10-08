@@ -6,6 +6,7 @@ import { Line, Token } from "@codebase/lexico-entities";
 
 import { LinesResolver } from "./lines.resolver";
 import { LiteratureService } from "./literature.service";
+import { toLineType, toTokenType } from "./literature.utilities";
 
 describe(LinesResolver, () => {
   let resolver: LinesResolver;
@@ -61,7 +62,7 @@ describe(LinesResolver, () => {
         textId: "text-1",
       }),
     ).resolves.toMatchObject({
-      edges: [{ node: line }],
+      edges: [{ node: toLineType(line) }],
       totalCount: 1,
     });
     await expect(
@@ -69,7 +70,7 @@ describe(LinesResolver, () => {
         first: 10,
       }),
     ).resolves.toMatchObject({
-      edges: [{ node: line }],
+      edges: [{ node: toLineType(line) }],
       totalCount: 1,
     });
   });
@@ -105,13 +106,13 @@ describe(LinesResolver, () => {
         textId: "text-1",
       }),
     ).resolves.toMatchObject({
-      edges: [{ node: line }],
+      edges: [{ node: toLineType(line) }],
       totalCount: 1,
     });
     await expect(
       linesResolver.searchLines({ first: 5, query: "arma" }),
     ).resolves.toMatchObject({
-      edges: [{ node: line }],
+      edges: [{ node: toLineType(line) }],
       totalCount: 1,
     });
   });
@@ -132,9 +133,9 @@ describe(LinesResolver, () => {
       createMock<LiteratureService>({ listTokensForLine }),
     );
 
-    await expect(linesResolver.tokensForLine(line)).resolves.toStrictEqual([
-      token,
-    ]);
+    await expect(
+      linesResolver.tokensForLine(toLineType(line)),
+    ).resolves.toStrictEqual([toTokenType(token)]);
     expect(listTokensForLine).toHaveBeenCalledWith("line-1");
   });
 });

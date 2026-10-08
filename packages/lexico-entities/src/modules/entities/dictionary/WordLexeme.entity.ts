@@ -1,7 +1,6 @@
-import { Field, ObjectType } from "@nestjs/graphql";
 import { Entity, Index, ManyToOne } from "typeorm";
 
-import { DeletableEntity } from "../base/Deletable.entity";
+import { DeletableEntity } from "@codebase/database";
 
 import { Lexeme } from "./Lexeme.entity";
 import { Word } from "./Word.entity";
@@ -19,10 +18,8 @@ import type { Relation } from "typeorm";
   name: "word_lexemes",
 })
 @Index(["word", "lexeme"], { unique: true })
-@ObjectType()
 export class WordLexeme extends DeletableEntity {
   /** The dictionary entry side of the junction. */
-  @Field(() => Lexeme)
   @Index()
   @ManyToOne("Lexeme", "wordLexemes", {
     nullable: false,
@@ -32,7 +29,6 @@ export class WordLexeme extends DeletableEntity {
   lexeme!: Relation<Lexeme>;
 
   /** The word string side of the junction. */
-  @Field(() => Word)
   @Index()
   @ManyToOne("Word", "wordLexemes", {
     nullable: false,

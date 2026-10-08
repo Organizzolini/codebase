@@ -1,4 +1,4 @@
-/* cspell:words puellam puellamque aquave videsne vides neque atque denique amavisti amavisse amandi amatum */
+/* cspell:words puella puellam puellamque aquave videsne vides neque atque denique amavisti amavisse amandi amatum */
 
 import { describe, expect, it } from "vitest";
 
@@ -14,17 +14,22 @@ import {
   SupineForm,
 } from "@codebase/lexico-entities";
 
+import { LexemeType } from "../lexemes/lexeme.entities";
+
 import {
   SCORE_LEMMA_EXACT,
   SCORE_PREFIX,
   SCORE_WORD_EXACT,
 } from "./search.constants";
-import { type LexemeSearchResult, SearchMatchSource } from "./search.entities";
+import { LexemeSearchResult, SearchMatchSource } from "./search.entities";
 import {
   decomposeEnclitic,
   formatFormIdentifier,
   mergeSearchResult,
+  toLexemeSearchResult,
 } from "./search.utilities";
+
+import type { LexemeSearchMatch } from "./search.types";
 
 describe("search utilities suite", () => {
   describe(decomposeEnclitic, () => {
@@ -266,11 +271,11 @@ describe("search utilities suite", () => {
     it("adds candidate to empty map", () => {
       expect.hasAssertions();
 
-      const map = new Map<string, LexemeSearchResult>();
+      const map = new Map<string, LexemeSearchMatch>();
       const lexeme = new Lexeme();
       lexeme.id = "lex-1";
 
-      const candidate: LexemeSearchResult = {
+      const candidate: LexemeSearchMatch = {
         enclitic: "que",
         identifiers: ["nominative singular"],
         lexeme,
@@ -286,18 +291,18 @@ describe("search utilities suite", () => {
     it("upgrades result when higher score candidate is merged", () => {
       expect.hasAssertions();
 
-      const map = new Map<string, LexemeSearchResult>();
+      const map = new Map<string, LexemeSearchMatch>();
       const lexeme = new Lexeme();
       lexeme.id = "lex-1";
 
-      const lowerCandidate: LexemeSearchResult = {
+      const lowerCandidate: LexemeSearchMatch = {
         enclitic: "que",
         identifiers: ["prefix match"],
         lexeme,
         score: SCORE_PREFIX,
         source: SearchMatchSource.PREFIX,
       };
-      const higherCandidate: LexemeSearchResult = {
+      const higherCandidate: LexemeSearchMatch = {
         enclitic: null,
         identifiers: ["exact match"],
         lexeme,
@@ -315,7 +320,7 @@ describe("search utilities suite", () => {
       expect(merged?.identifiers).toContain("prefix match");
       expect(merged?.identifiers).toContain("exact match");
 
-      const map2 = new Map<string, LexemeSearchResult>();
+      const map2 = new Map<string, LexemeSearchMatch>();
       mergeSearchResult(map2, {
         enclitic: null,
         identifiers: lowerCandidate.identifiers,
@@ -333,7 +338,7 @@ describe("search utilities suite", () => {
 
       expect(map2.get("lex-1")?.enclitic).toBeNull();
 
-      const map3 = new Map<string, LexemeSearchResult>();
+      const map3 = new Map<string, LexemeSearchMatch>();
       mergeSearchResult(map3, {
         enclitic: null,
         identifiers: lowerCandidate.identifiers,
@@ -355,18 +360,18 @@ describe("search utilities suite", () => {
     it("preserves higher score when lower score candidate is merged with enclitic", () => {
       expect.hasAssertions();
 
-      const map = new Map<string, LexemeSearchResult>();
+      const map = new Map<string, LexemeSearchMatch>();
       const lexeme = new Lexeme();
       lexeme.id = "lex-1";
 
-      const higherCandidate: LexemeSearchResult = {
+      const higherCandidate: LexemeSearchMatch = {
         enclitic: null,
         identifiers: ["exact match"],
         lexeme,
         score: SCORE_LEMMA_EXACT,
         source: SearchMatchSource.LEMMA_EXACT,
       };
-      const lowerCandidate: LexemeSearchResult = {
+      const lowerCandidate: LexemeSearchMatch = {
         enclitic: "ne",
         identifiers: ["prefix match"],
         lexeme,
@@ -405,6 +410,34 @@ describe("search utilities suite", () => {
       });
 
       expect(map.get("lex-1")?.enclitic).toBe("ne");
+    });
+  });
+
+  describe(toLexemeSearchResult, () => {
+    it("maps a search match and the lexeme it matched to the result type", () => {
+      expect.hasAssertions();
+
+      const lexeme = Object.assign(new Lexeme(), {
+        id: "lex-1",
+        lemma: "puella",
+      });
+      const result = toLexemeSearchResult({
+        enclitic: "que",
+        identifiers: ["accusative singular"],
+        lexeme,
+        score: 3,
+        source: SearchMatchSource.WORD_EXACT,
+      });
+
+      expect(result).toBeInstanceOf(LexemeSearchResult);
+      expect(result).toMatchObject({
+        enclitic: "que",
+        identifiers: ["accusative singular"],
+        score: 3,
+        source: SearchMatchSource.WORD_EXACT,
+      });
+      expect(result.lexeme).toBeInstanceOf(LexemeType);
+      expect(result.lexeme).toMatchObject({ id: "lex-1", lemma: "puella" });
     });
   });
 });

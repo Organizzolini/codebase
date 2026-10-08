@@ -2,12 +2,15 @@ import { Field, Int, ObjectType } from "@nestjs/graphql";
 
 import { PageInfo } from "./lexico-api.entities";
 
+import type { DeletableType } from "./deletable.entities";
 import type {
   ClassConstructor,
   Connection,
   Edge,
+  GraphQLFields,
   PaginationBoundsParameters,
 } from "./lexico-api.types";
+import type { DeletableEntity } from "@codebase/database";
 
 /**
  * Creates a Relay Connection containing edges, page info, and total count.
@@ -41,10 +44,12 @@ export function createEdge<T>(node: T, cursor: string): Edge<T> {
 }
 
 /**
- * Mixin type factory producing a Relay Edge ObjectType for GraphQL schema generation.
+ * Mixin type factory producing a Relay Edge ObjectType for GraphQL schema generation,
+ * named after the node's GraphQL type name.
  */
 export function createEdgeType<T>(
   classReference: ClassConstructor<T>,
+  name: string = classReference.name,
 ): ClassConstructor<Edge<T>> {
   const EdgeType = class implements Edge<T> {
     public cursor!: string;
@@ -60,7 +65,7 @@ export function createEdgeType<T>(
   Field(() => classReference, {
     description: "The item at the end of the edge.",
   })(prototype, "node");
-  ObjectType(`${classReference.name}Edge`)(EdgeType);
+  ObjectType(`${name}Edge`)(EdgeType);
 
   return EdgeType;
 }
@@ -125,6 +130,68 @@ export function fromCursorSafe<T = unknown>(
 }
 
 /**
+ * Maps each node of a connection, keeping its cursors and page information.
+ */
+export function mapConnection<Node, Mapped>(
+  connection: Connection<Node>,
+  map: (node: Node) => Mapped,
+): Connection<Mapped> {
+  return {
+    edges: connection.edges.map((edge) =>
+      createEdge(map(edge.node), edge.cursor),
+    ),
+    pageInfo: connection.pageInfo,
+    totalCount: connection.totalCount,
+  };
+}
+
+/**
+ * Maps a nullable to-one relation to its GraphQL type, keeping `null`, and
+ * leaving one its query did not join unset, as {@link mapRelation} does.
+ */
+export function mapNullableRelation<Entity extends object, Mapped>(
+  relation: Entity | null | undefined,
+  map: (relation: Entity) => Mapped,
+): Mapped | null | undefined {
+  return relation === null ? null : mapRelation(relation, map);
+}
+
+/**
+ * Maps a nullable to-many relation to its GraphQL types, keeping `null`, and
+ * leaving one its query did not join unset, as {@link mapRelations} does.
+ */
+export function mapNullableRelations<Entity extends object, Mapped>(
+  relations: null | readonly Entity[] | undefined,
+  map: (relation: Entity) => Mapped,
+): Mapped[] | null | undefined {
+  return relations === null ? null : mapRelations(relations, map);
+}
+
+/**
+ * Maps a to-one relation to its GraphQL type. An entity declares a relation
+ * as always present, but one its query did not join is left `undefined`; it
+ * stays unset here rather than failing the mapping, so a response reports it
+ * exactly as it did when resolvers returned entities.
+ */
+export function mapRelation<Entity extends object, Mapped>(
+  relation: Entity | undefined,
+  map: (relation: Entity) => Mapped,
+): Mapped | undefined {
+  return relation === undefined ? undefined : map(relation);
+}
+
+/**
+ * Maps each row of a to-many relation to its GraphQL type, leaving one its
+ * query did not join unset, as {@link mapRelation} does for a to-one relation.
+ */
+export function mapRelations<Entity extends object, Mapped>(
+  relations: readonly Entity[] | undefined,
+  map: (relation: Entity) => Mapped,
+): Mapped[] | undefined {
+  return relations?.map((relation) => map(relation));
+}
+
+/**
  * Slices an array of items according to forward (first, after) and backward (last, before) Relay pagination parameters.
  */
 export function paginateArray<T>(
@@ -153,17 +220,19 @@ export function paginateArray<T>(
 }
 
 /**
- * Mixin type factory producing a Relay Connection ObjectType for GraphQL schema generation.
+ * Mixin type factory producing a Relay Connection ObjectType for GraphQL schema generation,
+ * named after the node's GraphQL type name, which defaults to its class name.
  */
 export function Paginated<T>(
   classReference: ClassConstructor<T>,
+  name: string = classReference.name,
 ): ClassConstructor<Connection<T>> {
-  const EdgeType = createEdgeType(classReference);
+  const EdgeType = createEdgeType(classReference, name);
 
   /**
    * Relay Connection GraphQL object type.
    */
-  @ObjectType(`${classReference.name}Connection`)
+  @ObjectType(`${name}Connection`)
   abstract class ConnectionType implements Connection<T> {
     @Field(() => [EdgeType], { description: "A list of edges." })
     public edges!: Edge<T>[];
@@ -185,6 +254,23 @@ export function Paginated<T>(
  */
 export function toCursor(data: unknown): string {
   return Buffer.from(JSON.stringify(data), "utf8").toString("base64url");
+}
+
+/**
+ * Copies the shared base columns every soft-deletable entity exposes.
+ */
+export function toDeletableFields(
+  entity: DeletableEntity,
+): GraphQLFields<DeletableType> {
+  return {
+    createdAt: entity.createdAt,
+    createdBy: entity.createdBy,
+    deletedAt: entity.deletedAt,
+    deletedBy: entity.deletedBy,
+    id: entity.id,
+    updatedAt: entity.updatedAt,
+    updatedBy: entity.updatedBy,
+  };
 }
 
 /**

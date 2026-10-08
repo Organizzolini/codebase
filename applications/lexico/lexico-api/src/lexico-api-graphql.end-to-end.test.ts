@@ -255,6 +255,25 @@ describe("lexico api graphql end-to-end suite", () => {
     });
   });
 
+  it("resolves the word on the other side of each of a word's links", async () => {
+    expect.hasAssertions();
+
+    const response = await application.query(`{
+      word(data: "puellam") {
+        wordForms { word { data } }
+        wordLexemes { word { data } }
+      }
+    }`);
+
+    expect(response.errors).toBeUndefined();
+    expect(response.data).toStrictEqual({
+      word: {
+        wordForms: [{ word: { data: "puellam" } }],
+        wordLexemes: [{ word: { data: "puellam" } }],
+      },
+    });
+  });
+
   it("returns Latin search results wrapping their lexemes", async () => {
     expect.hasAssertions();
 

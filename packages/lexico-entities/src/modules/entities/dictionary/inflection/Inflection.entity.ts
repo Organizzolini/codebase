@@ -1,4 +1,3 @@
-import { Field, ID, InterfaceType } from "@nestjs/graphql";
 import {
   BaseEntity,
   Entity,
@@ -18,10 +17,8 @@ import type { Lexeme } from "../Lexeme.entity";
     "Abstract base table for grammatical inflection metadata using single-table inheritance",
   name: "inflections",
 })
-@InterfaceType()
 @TableInheritance({ column: { name: "type", type: "text" } })
 export class Inflection extends BaseEntity {
-  @Field(() => ID)
   @PrimaryColumn({
     comment:
       "Primary key, a uuidv7 the database assigns on insert; discriminator column 'type' selects the child entity",

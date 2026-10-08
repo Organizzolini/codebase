@@ -17,9 +17,15 @@ import {
   encodeOffsetCursor,
   fromCursor,
   fromCursorSafe,
+  mapConnection,
+  mapNullableRelation,
+  mapNullableRelations,
+  mapRelation,
+  mapRelations,
   paginateArray,
   Paginated,
   toCursor,
+  toDeletableFields,
 } from "./lexico-api.utilities";
 
 import type { Connection } from "./lexico-api.types";
@@ -34,6 +40,21 @@ class TestItem {
 }
 
 const TestItemConnection = Paginated(TestItem);
+
+const RenamedItemConnection = Paginated(TestItem, "RenamedItem");
+
+@Resolver()
+class RenamedItemResolver {
+  @Query(() => RenamedItemConnection)
+  public renamedItems(): InstanceType<typeof RenamedItemConnection> {
+    return createConnection<TestItem>({
+      edges: [],
+      hasNextPage: false,
+      hasPreviousPage: false,
+      totalCount: 0,
+    });
+  }
+}
 
 @Resolver()
 class TestRelayResolver {
@@ -432,6 +453,109 @@ describe("relay pagination helpers suite", () => {
       });
 
       expect(crossedCursorsResult.edges).toHaveLength(0);
+    });
+  });
+
+  describe("paginated mixin naming", () => {
+    it("names the connection and edge after the GraphQL type name it is given", async () => {
+      expect.hasAssertions();
+
+      const module = await Test.createTestingModule({
+        imports: [GraphQLSchemaBuilderModule],
+        providers: [RenamedItemResolver],
+      }).compile();
+      const schema = await module
+        .get(GraphQLSchemaFactory)
+        .create([RenamedItemResolver]);
+
+      expect(schema.getType("RenamedItemConnection")).toBeDefined();
+      expect(schema.getType("RenamedItemEdge")).toBeDefined();
+      expect(schema.getType("TestItemConnection")).toBeUndefined();
+    });
+  });
+
+  describe("graphql mapping helpers", () => {
+    /** Labels an item, standing in for an entity-to-GraphQL mapper. */
+    function toLabel(item: { readonly value: number }): string {
+      return `item ${item.value}`;
+    }
+
+    it("maps each connection node, keeping its cursors and page information", () => {
+      expect.hasAssertions();
+
+      const connection = createConnection({
+        edges: [
+          createEdge({ value: 1 }, "first"),
+          createEdge({ value: 2 }, "second"),
+        ],
+        hasNextPage: true,
+        hasPreviousPage: false,
+        totalCount: 5,
+      });
+
+      expect(mapConnection(connection, toLabel)).toStrictEqual({
+        edges: [
+          { cursor: "first", node: "item 1" },
+          { cursor: "second", node: "item 2" },
+        ],
+        pageInfo: connection.pageInfo,
+        totalCount: 5,
+      });
+    });
+
+    it("maps a loaded to-one relation and keeps a null or unloaded one", () => {
+      expect.hasAssertions();
+
+      const unloaded: undefined | { readonly value: number } = undefined;
+
+      expect(mapRelation({ value: 3 }, toLabel)).toBe("item 3");
+      expect(mapRelation(unloaded, toLabel)).toBeUndefined();
+      expect(mapNullableRelation({ value: 4 }, toLabel)).toBe("item 4");
+      expect(mapNullableRelation(null, toLabel)).toBeNull();
+      expect(mapNullableRelation(unloaded, toLabel)).toBeUndefined();
+    });
+
+    it("maps a loaded to-many relation and keeps a null or unloaded one", () => {
+      expect.hasAssertions();
+
+      const unloaded: undefined | { readonly value: number }[] = undefined;
+
+      expect(mapRelations([{ value: 1 }, { value: 2 }], toLabel)).toStrictEqual(
+        ["item 1", "item 2"],
+      );
+      expect(mapRelations(unloaded, toLabel)).toBeUndefined();
+      expect(mapNullableRelations([{ value: 5 }], toLabel)).toStrictEqual([
+        "item 5",
+      ]);
+      expect(mapNullableRelations(null, toLabel)).toBeNull();
+      expect(mapNullableRelations(unloaded, toLabel)).toBeUndefined();
+    });
+
+    it("copies exactly the shared base columns of a soft-deletable entity", () => {
+      expect.hasAssertions();
+
+      const createdAt = new Date("2025-01-01T00:00:00Z");
+      const updatedAt = new Date("2025-01-02T00:00:00Z");
+      const entity = {
+        createdAt,
+        createdBy: "creator",
+        deletedAt: null,
+        deletedBy: null,
+        id: "row-1",
+        internal: "database only",
+        updatedAt,
+        updatedBy: null,
+      };
+
+      expect(toDeletableFields(entity)).toStrictEqual({
+        createdAt,
+        createdBy: "creator",
+        deletedAt: null,
+        deletedBy: null,
+        id: "row-1",
+        updatedAt,
+        updatedBy: null,
+      });
     });
   });
 });

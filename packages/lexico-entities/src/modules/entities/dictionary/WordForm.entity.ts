@@ -1,7 +1,6 @@
-import { Field, ObjectType } from "@nestjs/graphql";
 import { Entity, Index, ManyToOne } from "typeorm";
 
-import { DeletableEntity } from "../base/Deletable.entity";
+import { DeletableEntity } from "@codebase/database";
 
 import { Form } from "./form/Form.entity";
 import { Word } from "./Word.entity";
@@ -22,10 +21,8 @@ import type { Relation } from "typeorm";
   name: "word_forms",
 })
 @Index(["word", "form"], { unique: true })
-@ObjectType()
 export class WordForm extends DeletableEntity {
   /** The morphological form side of the junction. Cascade-deletes with the Form. */
-  @Field(() => Form)
   @Index()
   @ManyToOne("Form", "wordForms", {
     nullable: false,
@@ -35,7 +32,6 @@ export class WordForm extends DeletableEntity {
   form!: Relation<Form>;
 
   /** The word string side of the junction. */
-  @Field(() => Word)
   @Index()
   @ManyToOne("Word", "wordForms", {
     nullable: false,

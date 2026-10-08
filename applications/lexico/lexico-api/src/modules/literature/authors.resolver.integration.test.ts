@@ -20,6 +20,7 @@ import {
 
 import { AuthorsResolver } from "./authors.resolver";
 import { LiteratureService } from "./literature.service";
+import { toAuthorType } from "./literature.utilities";
 
 import type { DatabaseTestingModule } from "@codebase/database/testing";
 
@@ -191,7 +192,9 @@ describe("authors resolver integration suite", () => {
     it("lists every text an author wrote, nested ones included, by title", async () => {
       expect.hasAssertions();
 
-      const texts = await resolver.resolveAuthorTexts(catalog.vergil);
+      const texts = await resolver.resolveAuthorTexts(
+        toAuthorType(catalog.vergil),
+      );
 
       expect(texts.map((text) => text.title)).toStrictEqual([
         "Aeneid",
@@ -208,7 +211,7 @@ describe("authors resolver integration suite", () => {
     it("lists no texts for an author who has none", async () => {
       expect.hasAssertions();
       await expect(
-        resolver.resolveAuthorTexts(catalog.cicero),
+        resolver.resolveAuthorTexts(toAuthorType(catalog.cicero)),
       ).resolves.toStrictEqual([]);
     });
   });

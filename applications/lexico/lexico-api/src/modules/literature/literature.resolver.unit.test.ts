@@ -12,6 +12,7 @@ import { AuthorsResolver } from "./authors.resolver";
 import { LinesResolver } from "./lines.resolver";
 import { LiteratureResolver } from "./literature.resolver";
 import { LiteratureService } from "./literature.service";
+import { toAuthorType, toLineType, toTextType } from "./literature.utilities";
 import { TextsResolver } from "./texts.resolver";
 import { TokenWordLoader } from "./token-word.loader";
 import { TokensResolver } from "./tokens.resolver";
@@ -67,16 +68,16 @@ describe(LiteratureResolver, () => {
         query: "vir",
       }),
     ).resolves.toStrictEqual({
-      authors: [author],
-      lines: [line],
-      texts: [text],
+      authors: [toAuthorType(author)],
+      lines: [toLineType(line)],
+      texts: [toTextType(text)],
     });
     await expect(
       literatureResolver.searchLiterature({ query: "vir" }),
     ).resolves.toStrictEqual({
-      authors: [author],
-      lines: [line],
-      texts: [text],
+      authors: [toAuthorType(author)],
+      lines: [toLineType(line)],
+      texts: [toTextType(text)],
     });
   });
 

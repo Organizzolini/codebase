@@ -1,4 +1,3 @@
-import { Field, ObjectType } from "@nestjs/graphql";
 import { ChildEntity, Column } from "typeorm";
 
 import {
@@ -14,7 +13,6 @@ import { Inflection } from "./Inflection.entity";
  * Inflection metadata for adjective lexemes.
  */
 @ChildEntity("adjective")
-@ObjectType({ implements: Inflection })
 export class AdjectiveInflection extends Inflection {
   @Column({
     comment: "Adjective declension class (first/second or third)",
@@ -22,7 +20,6 @@ export class AdjectiveInflection extends Inflection {
     enum: inflectionDeclensionValues,
     type: "enum",
   })
-  @Field(() => String)
   declension!: AdjectiveDeclension;
 
   @Column({
@@ -31,6 +28,5 @@ export class AdjectiveInflection extends Inflection {
     enum: adjectiveDegreeValues,
     type: "enum",
   })
-  @Field(() => String)
   degree!: AdjectiveDegree;
 }

@@ -4,7 +4,10 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { Token, Word } from "@codebase/lexico-entities";
 
+import { toWordType } from "../words/words.utilities";
+
 import { LiteratureService } from "./literature.service";
+import { toTokenType } from "./literature.utilities";
 import { TokenWordLoader } from "./token-word.loader";
 import { TokensResolver } from "./tokens.resolver";
 
@@ -103,7 +106,9 @@ describe(TokensResolver, () => {
       const { findTokensByIds, tokensResolver } = createWordResolver(loaded);
       const parent = Object.assign(new Token(), { id: "token-1" });
 
-      await expect(tokensResolver.resolveTokenWord(parent)).resolves.toBe(word);
+      await expect(
+        tokensResolver.resolveTokenWord(toTokenType(parent)),
+      ).resolves.toStrictEqual(toWordType(word));
       expect(findTokensByIds).toHaveBeenCalledWith(["token-1"]);
     });
 
@@ -113,7 +118,9 @@ describe(TokensResolver, () => {
       const parent = Object.assign(new Token(), { id: "token-1", word });
       const { findTokensByIds, tokensResolver } = createWordResolver(parent);
 
-      await expect(tokensResolver.resolveTokenWord(parent)).resolves.toBe(word);
+      await expect(
+        tokensResolver.resolveTokenWord(toTokenType(parent)),
+      ).resolves.toStrictEqual(toWordType(word));
       expect(findTokensByIds).not.toHaveBeenCalled();
     });
 
@@ -128,7 +135,9 @@ describe(TokensResolver, () => {
       });
       const { findTokensByIds, tokensResolver } = createWordResolver(parent);
 
-      await expect(tokensResolver.resolveTokenWord(parent)).resolves.toBeNull();
+      await expect(
+        tokensResolver.resolveTokenWord(toTokenType(parent)),
+      ).resolves.toBeNull();
       expect(findTokensByIds).not.toHaveBeenCalled();
     });
   });

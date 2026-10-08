@@ -1,4 +1,3 @@
-import { Field, ObjectType } from "@nestjs/graphql";
 import { ChildEntity, Column } from "typeorm";
 
 import {
@@ -14,7 +13,6 @@ import { Inflection } from "./Inflection.entity";
  * Inflection metadata for adverb lexemes.
  */
 @ChildEntity("adverb")
-@ObjectType({ implements: Inflection })
 export class AdverbInflection extends Inflection {
   @Column({
     comment: "Functional type of the adverb (descriptive or conjunctional)",
@@ -22,7 +20,6 @@ export class AdverbInflection extends Inflection {
     enum: adverbTypes,
     type: "enum",
   })
-  @Field(() => String)
   adverbType!: AdverbType;
 
   @Column({
@@ -31,6 +28,5 @@ export class AdverbInflection extends Inflection {
     enum: adverbDegrees,
     type: "enum",
   })
-  @Field(() => String)
   degree!: AdverbDegree;
 }

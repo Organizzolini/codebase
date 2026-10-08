@@ -1,22 +1,62 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { Line } from "@codebase/lexico-entities";
+import { Author, Line, Text, Token, Word } from "@codebase/lexico-entities";
 
 import { createRepositoryMock } from "../../../testing/mocks";
 import { toCursor } from "../../lexico-api.utilities";
+import { WordType } from "../words/word.entities";
 
+import { AuthorType } from "./author.entities";
+import { LineType } from "./line.entities";
 import { LOAD_CHUNK_SIZE } from "./literature.constants";
 import {
   createEmptyConnection,
   paginateQuery,
   slicePage,
+  toAuthorType,
+  toLineType,
+  toTextType,
+  toTokenType,
 } from "./literature.utilities";
+import { TextType } from "./text.entities";
+import { TokenType } from "./token.entities";
 
 import type { ConnectionQuery } from "./literature.types";
 
 const FIRST_ID = "01a10ee5-dd0a-77b5-97b1-2c6e9baec33e";
 const SECOND_ID = "01a10ee5-dd0a-77b5-97b1-2c6e9baec33f";
 const THIRD_ID = "01a10ee5-dd0a-77b5-97b1-2c6e9baec340";
+
+/** Builds an author with ingestion metadata the API must not expose. */
+function createAuthor(): Author {
+  return Object.assign(new Author(), {
+    id: "author-1",
+    metadata: { era: "augustan" },
+    name: "Vergil",
+    slug: "vergil",
+  });
+}
+
+/** Builds a book of a work, loaded with its author and parent work. */
+function createBook(): Text {
+  const author = createAuthor();
+  const work = Object.assign(new Text(), {
+    author,
+    id: "text-1",
+    metadata: { books: 12 },
+    parentText: null,
+    slug: "vergil/aeneid",
+    title: "Aeneid",
+  });
+  return Object.assign(new Text(), {
+    author,
+    id: "text-2",
+    parentText: work,
+    slug: "vergil/aeneid/1",
+    title: "Book I",
+    type: "book",
+  });
+}
 
 /** Builds a line query whose one shared builder reads these window ids. */
 function createLineQuery(windowIds: string[]): {
@@ -193,6 +233,89 @@ describe("literature utilities", () => {
         "(line.index, line.id) < (:paginationBeforeKey, :paginationBeforeId)",
         { paginationBeforeId: FIRST_ID, paginationBeforeKey: "2" },
       );
+    });
+  });
+
+  describe(toAuthorType, () => {
+    it("maps an author, leaving out its metadata and the texts its resolver loads", () => {
+      expect.hasAssertions();
+
+      const author = createAuthor();
+      author.texts = [createBook()];
+      const mapped = toAuthorType(author);
+
+      expect(mapped).toBeInstanceOf(AuthorType);
+      expect(mapped).toMatchObject({ name: "Vergil", slug: "vergil" });
+      expect(mapped).not.toHaveProperty("metadata");
+      expect(mapped).not.toHaveProperty("texts");
+    });
+  });
+
+  describe(toTextType, () => {
+    it("maps a text's author and parent text, leaving out its metadata", () => {
+      expect.hasAssertions();
+
+      const mapped = toTextType(createBook());
+
+      expect(mapped).toBeInstanceOf(TextType);
+      expect(mapped.author).toBeInstanceOf(AuthorType);
+      expect(mapped.parentText).toBeInstanceOf(TextType);
+      expect(mapped.parentText).toMatchObject({
+        parentText: null,
+        title: "Aeneid",
+      });
+      expect(mapped).not.toHaveProperty("metadata");
+      expect(mapped.parentText).not.toHaveProperty("metadata");
+      expect(mapped).not.toHaveProperty("lines");
+    });
+  });
+
+  describe(toLineType, () => {
+    it("maps a line with its author and text, leaving its tokens to its resolver", () => {
+      expect.hasAssertions();
+
+      const book = createBook();
+      const line = Object.assign(new Line(), {
+        author: book.author,
+        data: "arma",
+        id: "line-1",
+        index: 0,
+        label: "1",
+        text: book,
+        tokens: [Object.assign(new Token(), { data: "arma", id: "token-1" })],
+      });
+      const mapped = toLineType(line);
+
+      expect(mapped).toBeInstanceOf(LineType);
+      expect(mapped).toMatchObject({ data: "arma", index: 0, label: "1" });
+      expect(mapped.author).toBeInstanceOf(AuthorType);
+      expect(mapped.text).toBeInstanceOf(TextType);
+      expect(mapped).not.toHaveProperty("tokens");
+    });
+  });
+
+  describe(toTokenType, () => {
+    it("maps a token's word, and keeps a token with no word null", () => {
+      expect.hasAssertions();
+
+      const token = Object.assign(new Token(), {
+        data: "arma",
+        id: "token-1",
+        index: 0,
+        isPunctuation: false,
+        word: Object.assign(new Word(), { data: "arma", id: "word-1" }),
+      });
+      const punctuation = Object.assign(new Token(), {
+        data: ",",
+        id: "token-2",
+        isPunctuation: true,
+        word: null,
+      });
+
+      expect(toTokenType(token)).toBeInstanceOf(TokenType);
+      expect(toTokenType(token).word).toBeInstanceOf(WordType);
+      expect(toTokenType(punctuation).word).toBeNull();
+      expect(toTokenType(punctuation).line).toBeUndefined();
     });
   });
 });

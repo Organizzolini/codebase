@@ -9,6 +9,8 @@ import {
   WordLexeme,
 } from "@codebase/lexico-entities";
 
+import { WORD_RELATIONS } from "./words.constants";
+
 /**
  * Service for resolving surface Latin words and their lexical/morphological mapping.
  */
@@ -38,20 +40,7 @@ export class WordsService {
    */
   public async findByData(data: string): Promise<null | Word> {
     return this.wordRepository.findOne({
-      relations: {
-        wordForms: {
-          form: true,
-        },
-        wordLexemes: {
-          lexeme: {
-            forms: true,
-            inflection: true,
-            principalParts: true,
-            pronunciations: true,
-            translations: true,
-          },
-        },
-      },
+      relations: WORD_RELATIONS,
       where: { data },
     });
   }
@@ -66,20 +55,7 @@ export class WordsService {
     }
 
     const words = await this.wordRepository.find({
-      relations: {
-        wordForms: {
-          form: true,
-        },
-        wordLexemes: {
-          lexeme: {
-            forms: true,
-            inflection: true,
-            principalParts: true,
-            pronunciations: true,
-            translations: true,
-          },
-        },
-      },
+      relations: WORD_RELATIONS,
       where: { data: In(data) },
     });
 
@@ -96,20 +72,7 @@ export class WordsService {
     }
 
     return this.wordRepository.find({
-      relations: {
-        wordForms: {
-          form: true,
-        },
-        wordLexemes: {
-          lexeme: {
-            forms: true,
-            inflection: true,
-            principalParts: true,
-            pronunciations: true,
-            translations: true,
-          },
-        },
-      },
+      relations: WORD_RELATIONS,
       where: { id: In(ids) },
     });
   }
@@ -147,6 +110,28 @@ export class WordsService {
     return this.wordLexemeRepository.find({
       relations: { lexeme: true, word: true },
       where: { word: { id: wordId } },
+    });
+  }
+
+  /**
+   * Finds word-form links by their identifiers, each with its word joined the
+   * way a word lookup joins it.
+   */
+  public async findWordFormsByIds(ids: string[]): Promise<WordForm[]> {
+    return this.wordFormRepository.find({
+      relations: { word: WORD_RELATIONS },
+      where: { id: In(ids) },
+    });
+  }
+
+  /**
+   * Finds word-lexeme links by their identifiers, each with its word joined
+   * the way a word lookup joins it.
+   */
+  public async findWordLexemesByIds(ids: string[]): Promise<WordLexeme[]> {
+    return this.wordLexemeRepository.find({
+      relations: { word: WORD_RELATIONS },
+      where: { id: In(ids) },
     });
   }
 }
