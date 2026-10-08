@@ -10,7 +10,7 @@
   },
   "events": [
     {
-      "note": "NASA global P1 12:57:23.5 UT, printed with ΔT 84.3 s. The penumbra's northern limit crosses northern South America and West Africa, well south of Philadelphia. USNO's solar eclipse API returned HTTP 500 for every 2027 date on the retrieval date, so NASA's map is the authority here",
+      "note": "NASA global P1 12:57:23.5 UT, printed with ΔT 84.3 s. The penumbra's northern limit crosses northern South America and West Africa, well south of Philadelphia. USNO's solar eclipse API returned HTTP 500 for every 2027 date on 2026-10-08 and again on re-query, so NASA's map is the authority here Swiss Ephemeris's own `sol_eclipse_when_loc` for Philadelphia, run in review, finds no visible solar eclipse until 2028-01-26.",
       "start": "2027-02-06T12:57:23Z",
       "summary": "🌐 ☀️🐉▶️ Annular Solar Eclipse begins"
     }

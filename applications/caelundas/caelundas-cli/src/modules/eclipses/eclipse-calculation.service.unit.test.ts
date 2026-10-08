@@ -249,7 +249,6 @@ describe(EclipseCalculationService, () => {
         geocentricPhases: {
           lunarPhases: ["maximum"],
           lunarType: "total",
-          solarPhases: ["beginning", "ending"],
           solarType: null,
         },
         minute,

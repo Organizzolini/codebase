@@ -10,7 +10,7 @@
   },
   "events": [
     {
-      "note": "NASA global P1 07:30:00.3 UT, printed with ΔT 84.8 s. The penumbra covers the Atlantic at sunrise, Europe, Africa and the Middle East, and leaves Earth (P4 12:42:59.6 UT) before it reaches North America's daylit side. USNO's solar eclipse API returned HTTP 500 for every 2027 date on the retrieval date, so NASA's map is the authority here",
+      "note": "NASA global P1 07:30:00.3 UT, printed with ΔT 84.8 s. The penumbra covers the Atlantic at sunrise, Europe, Africa and the Middle East, and leaves Earth (P4 12:42:59.6 UT) before it reaches North America's daylit side. USNO's solar eclipse API returned HTTP 500 for every 2027 date on 2026-10-08 and again on re-query, so NASA's map is the authority here Swiss Ephemeris's own `sol_eclipse_when_loc` for Philadelphia, run in review, finds no visible solar eclipse until 2028-01-26.",
       "start": "2027-08-02T07:30:00Z",
       "summary": "🌐 ☀️🐉▶️ Total Solar Eclipse begins"
     }
