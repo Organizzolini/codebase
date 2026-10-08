@@ -396,6 +396,42 @@ describe(MajorAspectProgressiveService, () => {
       sortBySpy.mockRestore();
     });
 
+    it("spans a tangent conjunction that forms and dissolves without perfecting", () => {
+      const forming = createMajorAspectEvent(
+        "Mercury",
+        "Venus",
+        "Conjunct",
+        "Forming",
+        moment.utc("2026-02-16T03:00:00.000Z"),
+      );
+      const dissolving = createMajorAspectEvent(
+        "Mercury",
+        "Venus",
+        "Conjunct",
+        "Dissolving",
+        moment.utc("2026-02-18T21:00:00.000Z"),
+      );
+
+      const progressiveEvents = service.detectProgressive([
+        forming,
+        dissolving,
+      ]);
+
+      expect(progressiveEvents).toHaveLength(1);
+      expect(progressiveEvents[0]?.start).toStrictEqual(forming.start);
+      expect(progressiveEvents[0]?.end).toStrictEqual(dissolving.start);
+      expect(progressiveEvents[0]?.summary).toContain("☿");
+      expect(progressiveEvents[0]?.summary).toContain("♀️");
+      expect(progressiveEvents[0]?.summary).toContain("☌");
+      expect(
+        progressiveEvents.filter(
+          (event) =>
+            event.summary.includes("🎯") ||
+            event.categories.includes("Perfective"),
+        ),
+      ).toHaveLength(0);
+    });
+
     it("sorts body names alphabetically in progressive event", () => {
       const forming = createMajorAspectEvent(
         "Venus",

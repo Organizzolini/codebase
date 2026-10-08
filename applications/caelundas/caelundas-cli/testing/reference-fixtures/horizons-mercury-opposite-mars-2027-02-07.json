@@ -1,0 +1,25 @@
+{
+  "counts": {
+    "🎯 ☿ ☍ ♂️ Mercury perfective opposite Mars": 1
+  },
+  "events": [
+    {
+      "note": "First hit of the triple pass: Mercury minus Mars crosses 180° between 07:14 (−0.0004°) and 07:15 (+0.0001°) UT. Mars is the same query with COMMAND='499'.",
+      "start": "2027-02-07T07:15:00Z",
+      "summary": "🎯 ☿ ☍ ♂️ Mercury perfective opposite Mars"
+    }
+  ],
+  "name": "Mercury opposite Mars on 2027-02-07, one of the three exact hits of the 2027 triple pass",
+  "retrieved": "2026-10-07",
+  "source": {
+    "name": "NASA JPL Horizons: geocentric apparent ecliptic longitude of date (quantity 31) at one-minute steps",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27199%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272027-02-07+00%3A00%27&STOP_TIME=%272027-02-08+00%3A00%27&STEP_SIZE=%271+m%27&QUANTITIES=%2731%27&TIME_TYPE=%27UT%27&CSV_FORMAT=%27YES%27"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2027-02-08",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2027-02-07"
+  }
+}

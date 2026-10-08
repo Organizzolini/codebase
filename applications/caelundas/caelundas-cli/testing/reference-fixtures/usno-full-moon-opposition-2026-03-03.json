@@ -1,0 +1,25 @@
+{
+  "counts": {
+    "🎯 ☀️ ☍ 🌙 Sun perfective opposite Moon": 1
+  },
+  "events": [
+    {
+      "note": "USNO: Full Moon, 3 March 2026, 11:38 UT, the night of the total lunar eclipse",
+      "start": "2026-03-03T11:38:00Z",
+      "summary": "🎯 ☀️ ☍ 🌙 Sun perfective opposite Moon"
+    }
+  ],
+  "name": "Sun opposite Moon at the 3 March 2026 Full Moon",
+  "retrieved": "2026-10-07",
+  "source": {
+    "name": "US Naval Observatory, Astronomical Applications Department: Moon Phases API",
+    "url": "https://aa.usno.navy.mil/api/moon/phases/date?date=2026-03-01&nump=2"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-03-04",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-03-03"
+  }
+}

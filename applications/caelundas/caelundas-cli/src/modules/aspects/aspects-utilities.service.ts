@@ -4,6 +4,7 @@ import { angleByAspect, orbByAspect } from "../caelundas/caelundas.constants";
 import { MathService } from "../math/math.service";
 
 import type { Aspect, AspectPhase, Body } from "../caelundas/caelundas.types";
+import type { LongitudesWindow } from "./aspects.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -115,14 +116,11 @@ export class AspectsUtilitiesService {
   }
 
   /** Computes previous, current, and next separation angles for a two-body longitude window. */
-  private computeAngles(args: {
-    currentLongitudeBody1: number;
-    currentLongitudeBody2: number;
-    nextLongitudeBody1: number;
-    nextLongitudeBody2: number;
-    previousLongitudeBody1: number;
-    previousLongitudeBody2: number;
-  }): { currentAngle: number; nextAngle: number; previousAngle: number } {
+  private computeAngles(args: LongitudesWindow): {
+    currentAngle: number;
+    nextAngle: number;
+    previousAngle: number;
+  } {
     const {
       currentLongitudeBody1,
       currentLongitudeBody2,
@@ -148,27 +146,18 @@ export class AspectsUtilitiesService {
 
   /** Resolves whether the aspect is entering, exacting, or leaving orb at the current minute. */
   private getAspectPhase(args: {
+    angles: { currentAngle: number; nextAngle: number; previousAngle: number };
     aspect: Aspect;
-    currentAngle: number;
-    nextAngle: number;
-    previousAngle: number;
+    longitudes: LongitudesWindow;
   }): AspectPhase | null {
-    const { aspect, currentAngle, nextAngle, previousAngle } = args;
+    const { angles, aspect, longitudes } = args;
     const aspectAngle = angleByAspect[aspect];
     const orb = orbByAspect[aspect];
-    const previousInOrb = Math.abs(previousAngle - aspectAngle) <= orb;
-    const currentInOrb = Math.abs(currentAngle - aspectAngle) <= orb;
-    const nextInOrb = Math.abs(nextAngle - aspectAngle) <= orb;
-    const perfectivePhase = this.getPerfectivePhaseWhenCurrentInOrb({
-      aspect,
-      aspectAngle,
-      currentAngle,
-      currentInOrb,
-      nextAngle,
-      previousAngle,
-    });
-    if (perfectivePhase) {
-      return perfectivePhase;
+    const previousInOrb = Math.abs(angles.previousAngle - aspectAngle) <= orb;
+    const currentInOrb = Math.abs(angles.currentAngle - aspectAngle) <= orb;
+    const nextInOrb = Math.abs(angles.nextAngle - aspectAngle) <= orb;
+    if (currentInOrb && this.isPerfective({ angles, aspect, longitudes })) {
+      return "perfective";
     }
     if (!previousInOrb && currentInOrb) {
       return "forming";
@@ -180,81 +169,41 @@ export class AspectsUtilitiesService {
   }
 
   /**
-   * Returns perfective when the current angle is in orb and trend indicates exactness.
+   * Signed offset of body 1 from body 2 relative to an aspect angle, wrapped to [−180°, 180°).
    */
-  private getPerfectivePhaseWhenCurrentInOrb(args: {
-    aspect: Aspect;
+  private getSignedOffset(args: {
     aspectAngle: number;
-    currentAngle: number;
-    currentInOrb: boolean;
-    nextAngle: number;
-    previousAngle: number;
-  }): "perfective" | null {
-    const {
-      aspect,
-      aspectAngle,
-      currentAngle,
-      currentInOrb,
-      nextAngle,
-      previousAngle,
-    } = args;
-
-    if (!currentInOrb) {
-      return null;
-    }
-
-    const previousDifference = previousAngle - aspectAngle;
-    const currentDifference = currentAngle - aspectAngle;
-    const nextDifference = nextAngle - aspectAngle;
-
-    return this.isPerfective({
-      aspect,
-      currentDifference,
-      nextDifference,
-      previousDifference,
-    })
-      ? "perfective"
-      : null;
-  }
-
-  /** Checks whether the aspect is exact at the current minute based on angular trend. */
-  private isPerfective(args: {
-    aspect: Aspect;
-    currentDifference: number;
-    nextDifference: number;
-    previousDifference: number;
-  }): boolean {
-    const { aspect, currentDifference, nextDifference, previousDifference } =
-      args;
-    if (aspect === "conjunct") {
-      return this.isPerfectiveConjunct(
-        previousDifference,
-        currentDifference,
-        nextDifference,
-      );
-    }
-
-    return this.isPerfectiveNonConjunct(previousDifference, currentDifference);
-  }
-
-  /** Uses local-angle minima to detect exact conjunctions where wrap-around can occur. */
-  private isPerfectiveConjunct(
-    previousDifference: number,
-    currentDifference: number,
-    nextDifference: number,
-  ): boolean {
+    longitudeBody1: number;
+    longitudeBody2: number;
+  }): number {
+    const { aspectAngle, longitudeBody1, longitudeBody2 } = args;
     return (
-      (previousDifference > currentDifference &&
-        nextDifference > currentDifference) ||
-      (previousDifference < currentDifference &&
-        nextDifference < currentDifference)
+      this.mathService.normalizeDegrees(
+        longitudeBody1 - longitudeBody2 - aspectAngle + 180,
+      ) - 180
     );
   }
 
-  // 🌎 Public Methods
+  /** Checks whether the aspect becomes exact between the previous and current minute. */
+  private isPerfective(args: {
+    angles: { currentAngle: number; previousAngle: number };
+    aspect: Aspect;
+    longitudes: LongitudesWindow;
+  }): boolean {
+    const { angles, aspect, longitudes } = args;
+    const aspectAngle = angleByAspect[aspect];
+    if (aspect === "conjunct" || aspect === "opposite") {
+      return this.isSignedOffsetSignChange({ aspectAngle, longitudes });
+    }
 
-  /** Detects non-conjunction perfection by checking zero-crossing of aspect-angle difference. */
-  private isPerfectiveNonConjunct(
+    return this.isPerfectiveByUnsignedAngle(
+      angles.previousAngle - aspectAngle,
+      angles.currentAngle - aspectAngle,
+    );
+  }
+
+  /** Detects perfection by zero-crossing of the unsigned separation minus the aspect angle. */
+  private isPerfectiveByUnsignedAngle(
     previousDifference: number,
     currentDifference: number,
   ): boolean {
@@ -265,35 +214,53 @@ export class AspectsUtilitiesService {
   }
 
   /**
+   * Detects perfection when the signed offset from the aspect angle changes sign,
+   * rejecting the jump across the ±180° wrap, which is the opposite alignment.
+   */
+  private isSignedOffsetSignChange(args: {
+    aspectAngle: number;
+    longitudes: LongitudesWindow;
+  }): boolean {
+    const { aspectAngle, longitudes } = args;
+    const previousOffset = this.getSignedOffset({
+      aspectAngle,
+      longitudeBody1: longitudes.previousLongitudeBody1,
+      longitudeBody2: longitudes.previousLongitudeBody2,
+    });
+    const currentOffset = this.getSignedOffset({
+      aspectAngle,
+      longitudeBody1: longitudes.currentLongitudeBody1,
+      longitudeBody2: longitudes.currentLongitudeBody2,
+    });
+    // Defensive: unreachable while the orb gate holds, since the wrap lies 180° from the target.
+    if (Math.abs(currentOffset - previousOffset) >= 180) {
+      return false;
+    }
+    return (
+      (previousOffset < 0 && currentOffset >= 0) ||
+      (previousOffset > 0 && currentOffset <= 0)
+    );
+  }
+
+  // 🌎 Public Methods
+
+  /**
    * Returns a phase-detection function bound to a specific set of aspects.
    *
    * The returned function checks three consecutive minute positions (previous,
    * current, next) to classify a moment as "forming", "perfective", or
-   * "dissolving". Conjunction uses a local-minimum bounce test; all other
-   * aspects use a sign-crossing test.
+   * "dissolving". Conjunction and opposition are perfective when the signed
+   * separation crosses 0° or 180°; other aspects use the unsigned separation.
    *
    * @returns Phase-detection function for the given aspect set.
    */
   getIsAspect(
     aspectsToDetect: Aspect[],
-  ): (args: {
-    currentLongitudeBody1: number;
-    currentLongitudeBody2: number;
-    nextLongitudeBody1: number;
-    nextLongitudeBody2: number;
-    previousLongitudeBody1: number;
-    previousLongitudeBody2: number;
-  }) => AspectPhase | null {
-    return (args) => {
-      const { currentAngle, nextAngle, previousAngle } =
-        this.computeAngles(args);
+  ): (args: LongitudesWindow) => AspectPhase | null {
+    return (longitudes) => {
+      const angles = this.computeAngles(longitudes);
       for (const aspect of aspectsToDetect) {
-        const phase = this.getAspectPhase({
-          aspect,
-          currentAngle,
-          nextAngle,
-          previousAngle,
-        });
+        const phase = this.getAspectPhase({ angles, aspect, longitudes });
         if (phase !== null) {
           return phase;
         }
