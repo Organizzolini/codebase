@@ -292,10 +292,10 @@ graph LR
   conformetry_output["conformetry-output"]
   conformetry_validation["conformetry-validation"]
   database["database"]
-  lexico["lexico"]
   lexico_api["lexico-api"]
+  lexico_cli["lexico-cli"]
   lexico_entities["lexico-entities"]
-  lexico_ingestion["lexico-ingestion"]
+  lexico_web["lexico-web"]
   logging["logging"]
   meanderaw_cli["meanderaw-cli"]
   synchronization["synchronization"]
@@ -398,14 +398,14 @@ graph LR
   conformetry_validation --> conformetry_configuration
   conformetry_validation --> conformetry_core
   conformetry_validation --> conformetry_languages
-  lexico --> components_web
   lexico_api --> database
   lexico_api --> lexico_entities
   lexico_api --> logging
+  lexico_cli --> database
+  lexico_cli --> lexico_entities
+  lexico_cli --> logging
   lexico_entities --> database
-  lexico_ingestion --> database
-  lexico_ingestion --> lexico_entities
-  lexico_ingestion --> logging
+  lexico_web --> components_web
   meanderaw_cli --> database
   meanderaw_cli --> logging
   synchronization --> conformetry_configuration
@@ -829,37 +829,37 @@ graph LR
   module_lexico_api_SearchModule["lexico-api/SearchModule"]
   module_lexico_api_TypeOrmModule["lexico-api/TypeOrmModule"]
   module_lexico_api_WordsModule["lexico-api/WordsModule"]
+  module_lexico_cli_ClearModule["lexico-cli/ClearModule"]
+  module_lexico_cli_ConfigModule["lexico-cli/ConfigModule"]
+  module_lexico_cli_CorpusScriptorumEcclesiasticorumLatinorumModule["lexico-cli/CorpusScriptorumEcclesiasticorumLatinorumModule"]
+  module_lexico_cli_DatabaseModule["lexico-cli/DatabaseModule"]
+  module_lexico_cli_DictionaryModule["lexico-cli/DictionaryModule"]
+  module_lexico_cli_DiscoveryModule["lexico-cli/DiscoveryModule"]
+  module_lexico_cli_EpigraphikDatenbankClaussSlabyModule["lexico-cli/EpigraphikDatenbankClaussSlabyModule"]
+  module_lexico_cli_EtymologyModule["lexico-cli/EtymologyModule"]
+  module_lexico_cli_FormsModule["lexico-cli/FormsModule"]
+  module_lexico_cli_LatinLibraryModule["lexico-cli/LatinLibraryModule"]
+  module_lexico_cli_LexemesModule["lexico-cli/LexemesModule"]
+  module_lexico_cli_LexicoDatabaseModule["lexico-cli/LexicoDatabaseModule"]
+  module_lexico_cli_LexicoIngestionModule["lexico-cli/LexicoIngestionModule"]
+  module_lexico_cli_LibraryModule["lexico-cli/LibraryModule"]
+  module_lexico_cli_LiteratureModule["lexico-cli/LiteratureModule"]
+  module_lexico_cli_LoggerModule["lexico-cli/LoggerModule"]
+  module_lexico_cli_MainModule["lexico-cli/MainModule"]
+  module_lexico_cli_ManualModule["lexico-cli/ManualModule"]
+  module_lexico_cli_NumeralsModule["lexico-cli/NumeralsModule"]
+  module_lexico_cli_PartOfSpeechModule["lexico-cli/PartOfSpeechModule"]
+  module_lexico_cli_PerseusModule["lexico-cli/PerseusModule"]
+  module_lexico_cli_PrincipalPartsModule["lexico-cli/PrincipalPartsModule"]
+  module_lexico_cli_PronunciationModule["lexico-cli/PronunciationModule"]
+  module_lexico_cli_TranslationsModule["lexico-cli/TranslationsModule"]
+  module_lexico_cli_TypeOrmModule["lexico-cli/TypeOrmModule"]
+  module_lexico_cli_WiktionaryModule["lexico-cli/WiktionaryModule"]
+  module_lexico_cli_WordsModule["lexico-cli/WordsModule"]
   module_lexico_entities_DatabaseModule["lexico-entities/DatabaseModule"]
   module_lexico_entities_EntitiesModule["lexico-entities/EntitiesModule"]
   module_lexico_entities_LexicoDatabaseModule["lexico-entities/LexicoDatabaseModule"]
   module_lexico_entities_TypeOrmModule["lexico-entities/TypeOrmModule"]
-  module_lexico_ingestion_ClearModule["lexico-ingestion/ClearModule"]
-  module_lexico_ingestion_ConfigModule["lexico-ingestion/ConfigModule"]
-  module_lexico_ingestion_CorpusScriptorumEcclesiasticorumLatinorumModule["lexico-ingestion/CorpusScriptorumEcclesiasticorumLatinorumModule"]
-  module_lexico_ingestion_DatabaseModule["lexico-ingestion/DatabaseModule"]
-  module_lexico_ingestion_DictionaryModule["lexico-ingestion/DictionaryModule"]
-  module_lexico_ingestion_DiscoveryModule["lexico-ingestion/DiscoveryModule"]
-  module_lexico_ingestion_EpigraphikDatenbankClaussSlabyModule["lexico-ingestion/EpigraphikDatenbankClaussSlabyModule"]
-  module_lexico_ingestion_EtymologyModule["lexico-ingestion/EtymologyModule"]
-  module_lexico_ingestion_FormsModule["lexico-ingestion/FormsModule"]
-  module_lexico_ingestion_LatinLibraryModule["lexico-ingestion/LatinLibraryModule"]
-  module_lexico_ingestion_LexemesModule["lexico-ingestion/LexemesModule"]
-  module_lexico_ingestion_LexicoDatabaseModule["lexico-ingestion/LexicoDatabaseModule"]
-  module_lexico_ingestion_LexicoIngestionModule["lexico-ingestion/LexicoIngestionModule"]
-  module_lexico_ingestion_LibraryModule["lexico-ingestion/LibraryModule"]
-  module_lexico_ingestion_LiteratureModule["lexico-ingestion/LiteratureModule"]
-  module_lexico_ingestion_LoggerModule["lexico-ingestion/LoggerModule"]
-  module_lexico_ingestion_MainModule["lexico-ingestion/MainModule"]
-  module_lexico_ingestion_ManualModule["lexico-ingestion/ManualModule"]
-  module_lexico_ingestion_NumeralsModule["lexico-ingestion/NumeralsModule"]
-  module_lexico_ingestion_PartOfSpeechModule["lexico-ingestion/PartOfSpeechModule"]
-  module_lexico_ingestion_PerseusModule["lexico-ingestion/PerseusModule"]
-  module_lexico_ingestion_PrincipalPartsModule["lexico-ingestion/PrincipalPartsModule"]
-  module_lexico_ingestion_PronunciationModule["lexico-ingestion/PronunciationModule"]
-  module_lexico_ingestion_TranslationsModule["lexico-ingestion/TranslationsModule"]
-  module_lexico_ingestion_TypeOrmModule["lexico-ingestion/TypeOrmModule"]
-  module_lexico_ingestion_WiktionaryModule["lexico-ingestion/WiktionaryModule"]
-  module_lexico_ingestion_WordsModule["lexico-ingestion/WordsModule"]
   module_logging_LoggerModule["logging/LoggerModule"]
   module_meanderaw_cli_CharacteristicsModule["meanderaw-cli/CharacteristicsModule"]
   module_meanderaw_cli_CodeModule["meanderaw-cli/CodeModule"]
@@ -1555,54 +1555,54 @@ graph LR
   module_lexico_api_SearchModule --> module_lexico_api_MacronsModule
   module_lexico_api_SearchModule --> module_lexico_api_TypeOrmModule
   module_lexico_api_WordsModule --> module_lexico_api_TypeOrmModule
+  module_lexico_cli_ClearModule --> module_lexico_cli_LexicoDatabaseModule
+  module_lexico_cli_ClearModule --> module_lexico_cli_TypeOrmModule
+  module_lexico_cli_DatabaseModule --> module_lexico_cli_TypeOrmModule
+  module_lexico_cli_DictionaryModule --> module_lexico_cli_FormsModule
+  module_lexico_cli_DictionaryModule --> module_lexico_cli_LexemesModule
+  module_lexico_cli_DictionaryModule --> module_lexico_cli_ManualModule
+  module_lexico_cli_DictionaryModule --> module_lexico_cli_PrincipalPartsModule
+  module_lexico_cli_DictionaryModule --> module_lexico_cli_PronunciationModule
+  module_lexico_cli_DictionaryModule --> module_lexico_cli_TranslationsModule
+  module_lexico_cli_DictionaryModule --> module_lexico_cli_WordsModule
+  module_lexico_cli_FormsModule --> module_lexico_cli_TypeOrmModule
+  module_lexico_cli_FormsModule --> module_lexico_cli_WordsModule
+  module_lexico_cli_LexemesModule --> module_lexico_cli_EtymologyModule
+  module_lexico_cli_LexemesModule --> module_lexico_cli_FormsModule
+  module_lexico_cli_LexemesModule --> module_lexico_cli_PartOfSpeechModule
+  module_lexico_cli_LexemesModule --> module_lexico_cli_PrincipalPartsModule
+  module_lexico_cli_LexemesModule --> module_lexico_cli_PronunciationModule
+  module_lexico_cli_LexemesModule --> module_lexico_cli_TranslationsModule
+  module_lexico_cli_LexemesModule --> module_lexico_cli_TypeOrmModule
+  module_lexico_cli_LexemesModule --> module_lexico_cli_WordsModule
+  module_lexico_cli_LexicoDatabaseModule --> module_lexico_cli_DatabaseModule
+  module_lexico_cli_LexicoIngestionModule --> module_lexico_cli_ClearModule
+  module_lexico_cli_LexicoIngestionModule --> module_lexico_cli_CorpusScriptorumEcclesiasticorumLatinorumModule
+  module_lexico_cli_LexicoIngestionModule --> module_lexico_cli_DictionaryModule
+  module_lexico_cli_LexicoIngestionModule --> module_lexico_cli_EpigraphikDatenbankClaussSlabyModule
+  module_lexico_cli_LexicoIngestionModule --> module_lexico_cli_LatinLibraryModule
+  module_lexico_cli_LexicoIngestionModule --> module_lexico_cli_LexicoDatabaseModule
+  module_lexico_cli_LexicoIngestionModule --> module_lexico_cli_LibraryModule
+  module_lexico_cli_LexicoIngestionModule --> module_lexico_cli_LiteratureModule
+  module_lexico_cli_LexicoIngestionModule --> module_lexico_cli_ManualModule
+  module_lexico_cli_LexicoIngestionModule --> module_lexico_cli_PerseusModule
+  module_lexico_cli_LexicoIngestionModule --> module_lexico_cli_WiktionaryModule
+  module_lexico_cli_LexicoIngestionModule --> module_lexico_cli_WordsModule
+  module_lexico_cli_LiteratureModule --> module_lexico_cli_LexicoDatabaseModule
+  module_lexico_cli_LiteratureModule --> module_lexico_cli_NumeralsModule
+  module_lexico_cli_LiteratureModule --> module_lexico_cli_TypeOrmModule
+  module_lexico_cli_MainModule --> module_lexico_cli_DiscoveryModule
+  module_lexico_cli_MainModule --> module_lexico_cli_LexicoIngestionModule
+  module_lexico_cli_ManualModule --> module_lexico_cli_NumeralsModule
+  module_lexico_cli_ManualModule --> module_lexico_cli_TypeOrmModule
+  module_lexico_cli_ManualModule --> module_lexico_cli_WordsModule
+  module_lexico_cli_PrincipalPartsModule --> module_lexico_cli_TypeOrmModule
+  module_lexico_cli_PronunciationModule --> module_lexico_cli_TypeOrmModule
+  module_lexico_cli_TranslationsModule --> module_lexico_cli_TypeOrmModule
+  module_lexico_cli_WiktionaryModule --> module_lexico_cli_TypeOrmModule
+  module_lexico_cli_WordsModule --> module_lexico_cli_TypeOrmModule
   module_lexico_entities_DatabaseModule --> module_lexico_entities_TypeOrmModule
   module_lexico_entities_LexicoDatabaseModule --> module_lexico_entities_DatabaseModule
-  module_lexico_ingestion_ClearModule --> module_lexico_ingestion_LexicoDatabaseModule
-  module_lexico_ingestion_ClearModule --> module_lexico_ingestion_TypeOrmModule
-  module_lexico_ingestion_DatabaseModule --> module_lexico_ingestion_TypeOrmModule
-  module_lexico_ingestion_DictionaryModule --> module_lexico_ingestion_FormsModule
-  module_lexico_ingestion_DictionaryModule --> module_lexico_ingestion_LexemesModule
-  module_lexico_ingestion_DictionaryModule --> module_lexico_ingestion_ManualModule
-  module_lexico_ingestion_DictionaryModule --> module_lexico_ingestion_PrincipalPartsModule
-  module_lexico_ingestion_DictionaryModule --> module_lexico_ingestion_PronunciationModule
-  module_lexico_ingestion_DictionaryModule --> module_lexico_ingestion_TranslationsModule
-  module_lexico_ingestion_DictionaryModule --> module_lexico_ingestion_WordsModule
-  module_lexico_ingestion_FormsModule --> module_lexico_ingestion_TypeOrmModule
-  module_lexico_ingestion_FormsModule --> module_lexico_ingestion_WordsModule
-  module_lexico_ingestion_LexemesModule --> module_lexico_ingestion_EtymologyModule
-  module_lexico_ingestion_LexemesModule --> module_lexico_ingestion_FormsModule
-  module_lexico_ingestion_LexemesModule --> module_lexico_ingestion_PartOfSpeechModule
-  module_lexico_ingestion_LexemesModule --> module_lexico_ingestion_PrincipalPartsModule
-  module_lexico_ingestion_LexemesModule --> module_lexico_ingestion_PronunciationModule
-  module_lexico_ingestion_LexemesModule --> module_lexico_ingestion_TranslationsModule
-  module_lexico_ingestion_LexemesModule --> module_lexico_ingestion_TypeOrmModule
-  module_lexico_ingestion_LexemesModule --> module_lexico_ingestion_WordsModule
-  module_lexico_ingestion_LexicoDatabaseModule --> module_lexico_ingestion_DatabaseModule
-  module_lexico_ingestion_LexicoIngestionModule --> module_lexico_ingestion_ClearModule
-  module_lexico_ingestion_LexicoIngestionModule --> module_lexico_ingestion_CorpusScriptorumEcclesiasticorumLatinorumModule
-  module_lexico_ingestion_LexicoIngestionModule --> module_lexico_ingestion_DictionaryModule
-  module_lexico_ingestion_LexicoIngestionModule --> module_lexico_ingestion_EpigraphikDatenbankClaussSlabyModule
-  module_lexico_ingestion_LexicoIngestionModule --> module_lexico_ingestion_LatinLibraryModule
-  module_lexico_ingestion_LexicoIngestionModule --> module_lexico_ingestion_LexicoDatabaseModule
-  module_lexico_ingestion_LexicoIngestionModule --> module_lexico_ingestion_LibraryModule
-  module_lexico_ingestion_LexicoIngestionModule --> module_lexico_ingestion_LiteratureModule
-  module_lexico_ingestion_LexicoIngestionModule --> module_lexico_ingestion_ManualModule
-  module_lexico_ingestion_LexicoIngestionModule --> module_lexico_ingestion_PerseusModule
-  module_lexico_ingestion_LexicoIngestionModule --> module_lexico_ingestion_WiktionaryModule
-  module_lexico_ingestion_LexicoIngestionModule --> module_lexico_ingestion_WordsModule
-  module_lexico_ingestion_LiteratureModule --> module_lexico_ingestion_LexicoDatabaseModule
-  module_lexico_ingestion_LiteratureModule --> module_lexico_ingestion_NumeralsModule
-  module_lexico_ingestion_LiteratureModule --> module_lexico_ingestion_TypeOrmModule
-  module_lexico_ingestion_MainModule --> module_lexico_ingestion_DiscoveryModule
-  module_lexico_ingestion_MainModule --> module_lexico_ingestion_LexicoIngestionModule
-  module_lexico_ingestion_ManualModule --> module_lexico_ingestion_NumeralsModule
-  module_lexico_ingestion_ManualModule --> module_lexico_ingestion_TypeOrmModule
-  module_lexico_ingestion_ManualModule --> module_lexico_ingestion_WordsModule
-  module_lexico_ingestion_PrincipalPartsModule --> module_lexico_ingestion_TypeOrmModule
-  module_lexico_ingestion_PronunciationModule --> module_lexico_ingestion_TypeOrmModule
-  module_lexico_ingestion_TranslationsModule --> module_lexico_ingestion_TypeOrmModule
-  module_lexico_ingestion_WiktionaryModule --> module_lexico_ingestion_TypeOrmModule
-  module_lexico_ingestion_WordsModule --> module_lexico_ingestion_TypeOrmModule
   module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_CodeModule
   module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_CornerCharacteristicsModule
   module_meanderaw_cli_CharacteristicsModule --> module_meanderaw_cli_CrossCharacteristicsModule
@@ -3556,6 +3556,165 @@ graph LR
   file_lexico_api_testing_setup_ts["lexico-api/testing/setup.ts"]
   file_lexico_api_testing_word_lookups_ts["lexico-api/testing/word-lookups.ts"]
   file_lexico_api_vitest_config_ts["lexico-api/vitest.config.ts"]
+  file_lexico_cli_callidescope_config_ts["lexico-cli/callidescope.config.ts"]
+  file_lexico_cli_codependix_config_ts["lexico-cli/codependix.config.ts"]
+  file_lexico_cli_codometer_config_ts["lexico-cli/codometer.config.ts"]
+  file_lexico_cli_eslint_config_ts["lexico-cli/eslint.config.ts"]
+  file_lexico_cli_src_constants_ts["lexico-cli/src/constants.ts"]
+  file_lexico_cli_src_main_end_to_end_test_ts["lexico-cli/src/main.end-to-end.test.ts"]
+  file_lexico_cli_src_main_module_ts["lexico-cli/src/main.module.ts"]
+  file_lexico_cli_src_main_ts["lexico-cli/src/main.ts"]
+  file_lexico_cli_src_main_unit_test_ts["lexico-cli/src/main.unit.test.ts"]
+  file_lexico_cli_src_modules_clear_clear_command_ts["lexico-cli/src/modules/clear/clear.command.ts"]
+  file_lexico_cli_src_modules_clear_clear_command_unit_test_ts["lexico-cli/src/modules/clear/clear.command.unit.test.ts"]
+  file_lexico_cli_src_modules_clear_clear_constants_ts["lexico-cli/src/modules/clear/clear.constants.ts"]
+  file_lexico_cli_src_modules_clear_clear_module_ts["lexico-cli/src/modules/clear/clear.module.ts"]
+  file_lexico_cli_src_modules_clear_clear_types_ts["lexico-cli/src/modules/clear/clear.types.ts"]
+  file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_ts["lexico-cli/src/modules/corpus-scriptorum-ecclesiasticorum-latinorum/corpus-scriptorum-ecclesiasticorum-latinorum.command.ts"]
+  file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_unit_test_ts["lexico-cli/src/modules/corpus-scriptorum-ecclesiasticorum-latinorum/corpus-scriptorum-ecclesiasticorum-latinorum.command.unit.test.ts"]
+  file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_constants_ts["lexico-cli/src/modules/corpus-scriptorum-ecclesiasticorum-latinorum/corpus-scriptorum-ecclesiasticorum-latinorum.constants.ts"]
+  file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_module_ts["lexico-cli/src/modules/corpus-scriptorum-ecclesiasticorum-latinorum/corpus-scriptorum-ecclesiasticorum-latinorum.module.ts"]
+  file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_types_ts["lexico-cli/src/modules/corpus-scriptorum-ecclesiasticorum-latinorum/corpus-scriptorum-ecclesiasticorum-latinorum.types.ts"]
+  file_lexico_cli_src_modules_dictionary_dictionary_command_ts["lexico-cli/src/modules/dictionary/dictionary.command.ts"]
+  file_lexico_cli_src_modules_dictionary_dictionary_command_unit_test_ts["lexico-cli/src/modules/dictionary/dictionary.command.unit.test.ts"]
+  file_lexico_cli_src_modules_dictionary_dictionary_constants_ts["lexico-cli/src/modules/dictionary/dictionary.constants.ts"]
+  file_lexico_cli_src_modules_dictionary_dictionary_module_ts["lexico-cli/src/modules/dictionary/dictionary.module.ts"]
+  file_lexico_cli_src_modules_dictionary_dictionary_types_ts["lexico-cli/src/modules/dictionary/dictionary.types.ts"]
+  file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_ts["lexico-cli/src/modules/epigraphik-datenbank-clauss-slaby/epigraphik-datenbank-clauss-slaby.command.ts"]
+  file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_unit_test_ts["lexico-cli/src/modules/epigraphik-datenbank-clauss-slaby/epigraphik-datenbank-clauss-slaby.command.unit.test.ts"]
+  file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_constants_ts["lexico-cli/src/modules/epigraphik-datenbank-clauss-slaby/epigraphik-datenbank-clauss-slaby.constants.ts"]
+  file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_module_ts["lexico-cli/src/modules/epigraphik-datenbank-clauss-slaby/epigraphik-datenbank-clauss-slaby.module.ts"]
+  file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_types_ts["lexico-cli/src/modules/epigraphik-datenbank-clauss-slaby/epigraphik-datenbank-clauss-slaby.types.ts"]
+  file_lexico_cli_src_modules_etymology_etymology_constants_ts["lexico-cli/src/modules/etymology/etymology.constants.ts"]
+  file_lexico_cli_src_modules_etymology_etymology_module_ts["lexico-cli/src/modules/etymology/etymology.module.ts"]
+  file_lexico_cli_src_modules_etymology_etymology_service_ts["lexico-cli/src/modules/etymology/etymology.service.ts"]
+  file_lexico_cli_src_modules_etymology_etymology_service_unit_test_ts["lexico-cli/src/modules/etymology/etymology.service.unit.test.ts"]
+  file_lexico_cli_src_modules_etymology_etymology_types_ts["lexico-cli/src/modules/etymology/etymology.types.ts"]
+  file_lexico_cli_src_modules_forms_forms_builder_guards_service_ts["lexico-cli/src/modules/forms/forms-builder-guards.service.ts"]
+  file_lexico_cli_src_modules_forms_forms_builder_guards_service_unit_test_ts["lexico-cli/src/modules/forms/forms-builder-guards.service.unit.test.ts"]
+  file_lexico_cli_src_modules_forms_forms_builder_verb_service_ts["lexico-cli/src/modules/forms/forms-builder-verb.service.ts"]
+  file_lexico_cli_src_modules_forms_forms_builder_verb_service_unit_test_ts["lexico-cli/src/modules/forms/forms-builder-verb.service.unit.test.ts"]
+  file_lexico_cli_src_modules_forms_forms_builder_service_ts["lexico-cli/src/modules/forms/forms-builder.service.ts"]
+  file_lexico_cli_src_modules_forms_forms_builder_service_unit_test_ts["lexico-cli/src/modules/forms/forms-builder.service.unit.test.ts"]
+  file_lexico_cli_src_modules_forms_forms_transient_words_service_ts["lexico-cli/src/modules/forms/forms-transient-words.service.ts"]
+  file_lexico_cli_src_modules_forms_forms_transient_words_service_unit_test_ts["lexico-cli/src/modules/forms/forms-transient-words.service.unit.test.ts"]
+  file_lexico_cli_src_modules_forms_forms_constants_ts["lexico-cli/src/modules/forms/forms.constants.ts"]
+  file_lexico_cli_src_modules_forms_forms_constants_unit_test_ts["lexico-cli/src/modules/forms/forms.constants.unit.test.ts"]
+  file_lexico_cli_src_modules_forms_forms_module_ts["lexico-cli/src/modules/forms/forms.module.ts"]
+  file_lexico_cli_src_modules_forms_forms_service_ts["lexico-cli/src/modules/forms/forms.service.ts"]
+  file_lexico_cli_src_modules_forms_forms_service_unit_test_ts["lexico-cli/src/modules/forms/forms.service.unit.test.ts"]
+  file_lexico_cli_src_modules_forms_forms_types_ts["lexico-cli/src/modules/forms/forms.types.ts"]
+  file_lexico_cli_src_modules_latin_library_latin_library_command_ts["lexico-cli/src/modules/latin-library/latin-library.command.ts"]
+  file_lexico_cli_src_modules_latin_library_latin_library_command_unit_test_ts["lexico-cli/src/modules/latin-library/latin-library.command.unit.test.ts"]
+  file_lexico_cli_src_modules_latin_library_latin_library_constants_ts["lexico-cli/src/modules/latin-library/latin-library.constants.ts"]
+  file_lexico_cli_src_modules_latin_library_latin_library_module_ts["lexico-cli/src/modules/latin-library/latin-library.module.ts"]
+  file_lexico_cli_src_modules_latin_library_latin_library_types_ts["lexico-cli/src/modules/latin-library/latin-library.types.ts"]
+  file_lexico_cli_src_modules_lexemes_lexemes_constants_ts["lexico-cli/src/modules/lexemes/lexemes.constants.ts"]
+  file_lexico_cli_src_modules_lexemes_lexemes_module_ts["lexico-cli/src/modules/lexemes/lexemes.module.ts"]
+  file_lexico_cli_src_modules_lexemes_lexemes_service_ts["lexico-cli/src/modules/lexemes/lexemes.service.ts"]
+  file_lexico_cli_src_modules_lexemes_lexemes_service_unit_test_ts["lexico-cli/src/modules/lexemes/lexemes.service.unit.test.ts"]
+  file_lexico_cli_src_modules_lexemes_lexemes_types_ts["lexico-cli/src/modules/lexemes/lexemes.types.ts"]
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_ts["lexico-cli/src/modules/lexico-ingestion/lexico-ingestion.command.ts"]
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts["lexico-cli/src/modules/lexico-ingestion/lexico-ingestion.command.unit.test.ts"]
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_constants_ts["lexico-cli/src/modules/lexico-ingestion/lexico-ingestion.constants.ts"]
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_module_ts["lexico-cli/src/modules/lexico-ingestion/lexico-ingestion.module.ts"]
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_types_ts["lexico-cli/src/modules/lexico-ingestion/lexico-ingestion.types.ts"]
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_utilities_ts["lexico-cli/src/modules/lexico-ingestion/lexico-ingestion.utilities.ts"]
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_utilities_unit_test_ts["lexico-cli/src/modules/lexico-ingestion/lexico-ingestion.utilities.unit.test.ts"]
+  file_lexico_cli_src_modules_library_library_command_ts["lexico-cli/src/modules/library/library.command.ts"]
+  file_lexico_cli_src_modules_library_library_command_unit_test_ts["lexico-cli/src/modules/library/library.command.unit.test.ts"]
+  file_lexico_cli_src_modules_library_library_constants_ts["lexico-cli/src/modules/library/library.constants.ts"]
+  file_lexico_cli_src_modules_library_library_module_ts["lexico-cli/src/modules/library/library.module.ts"]
+  file_lexico_cli_src_modules_library_library_types_ts["lexico-cli/src/modules/library/library.types.ts"]
+  file_lexico_cli_src_modules_library_library_utilities_ts["lexico-cli/src/modules/library/library.utilities.ts"]
+  file_lexico_cli_src_modules_library_library_utilities_unit_test_ts["lexico-cli/src/modules/library/library.utilities.unit.test.ts"]
+  file_lexico_cli_src_modules_library_providers_corpus_scriptorum_ecclesiasticorum_latinorum_library_provider_ts["lexico-cli/src/modules/library/providers/corpus-scriptorum-ecclesiasticorum-latinorum-library.provider.ts"]
+  file_lexico_cli_src_modules_library_providers_corpus_scriptorum_ecclesiasticorum_latinorum_library_provider_unit_test_ts["lexico-cli/src/modules/library/providers/corpus-scriptorum-ecclesiasticorum-latinorum-library.provider.unit.test.ts"]
+  file_lexico_cli_src_modules_library_providers_epigraphik_datenbank_clauss_slaby_library_provider_ts["lexico-cli/src/modules/library/providers/epigraphik-datenbank-clauss-slaby-library.provider.ts"]
+  file_lexico_cli_src_modules_library_providers_epigraphik_datenbank_clauss_slaby_library_provider_unit_test_ts["lexico-cli/src/modules/library/providers/epigraphik-datenbank-clauss-slaby-library.provider.unit.test.ts"]
+  file_lexico_cli_src_modules_library_providers_latin_library_builder_ts["lexico-cli/src/modules/library/providers/latin-library.builder.ts"]
+  file_lexico_cli_src_modules_library_providers_latin_library_builder_unit_test_ts["lexico-cli/src/modules/library/providers/latin-library.builder.unit.test.ts"]
+  file_lexico_cli_src_modules_library_providers_latin_library_provider_ts["lexico-cli/src/modules/library/providers/latin-library.provider.ts"]
+  file_lexico_cli_src_modules_library_providers_latin_library_provider_unit_test_ts["lexico-cli/src/modules/library/providers/latin-library.provider.unit.test.ts"]
+  file_lexico_cli_src_modules_library_providers_perseus_library_text_extraction_provider_ts["lexico-cli/src/modules/library/providers/perseus-library-text-extraction.provider.ts"]
+  file_lexico_cli_src_modules_library_providers_perseus_library_text_extraction_provider_unit_test_ts["lexico-cli/src/modules/library/providers/perseus-library-text-extraction.provider.unit.test.ts"]
+  file_lexico_cli_src_modules_library_providers_perseus_library_provider_ts["lexico-cli/src/modules/library/providers/perseus-library.provider.ts"]
+  file_lexico_cli_src_modules_library_providers_perseus_library_provider_unit_test_ts["lexico-cli/src/modules/library/providers/perseus-library.provider.unit.test.ts"]
+  file_lexico_cli_src_modules_literature_literature_library_scan_service_ts["lexico-cli/src/modules/literature/literature-library-scan.service.ts"]
+  file_lexico_cli_src_modules_literature_literature_library_scan_service_unit_test_ts["lexico-cli/src/modules/literature/literature-library-scan.service.unit.test.ts"]
+  file_lexico_cli_src_modules_literature_literature_text_ingestion_service_ts["lexico-cli/src/modules/literature/literature-text-ingestion.service.ts"]
+  file_lexico_cli_src_modules_literature_literature_text_ingestion_service_unit_test_ts["lexico-cli/src/modules/literature/literature-text-ingestion.service.unit.test.ts"]
+  file_lexico_cli_src_modules_literature_literature_word_normalization_service_ts["lexico-cli/src/modules/literature/literature-word-normalization.service.ts"]
+  file_lexico_cli_src_modules_literature_literature_word_normalization_service_unit_test_ts["lexico-cli/src/modules/literature/literature-word-normalization.service.unit.test.ts"]
+  file_lexico_cli_src_modules_literature_literature_command_ts["lexico-cli/src/modules/literature/literature.command.ts"]
+  file_lexico_cli_src_modules_literature_literature_command_unit_test_ts["lexico-cli/src/modules/literature/literature.command.unit.test.ts"]
+  file_lexico_cli_src_modules_literature_literature_constants_ts["lexico-cli/src/modules/literature/literature.constants.ts"]
+  file_lexico_cli_src_modules_literature_literature_module_ts["lexico-cli/src/modules/literature/literature.module.ts"]
+  file_lexico_cli_src_modules_literature_literature_service_ts["lexico-cli/src/modules/literature/literature.service.ts"]
+  file_lexico_cli_src_modules_literature_literature_service_unit_test_ts["lexico-cli/src/modules/literature/literature.service.unit.test.ts"]
+  file_lexico_cli_src_modules_literature_literature_types_ts["lexico-cli/src/modules/literature/literature.types.ts"]
+  file_lexico_cli_src_modules_manual_manual_constants_ts["lexico-cli/src/modules/manual/manual.constants.ts"]
+  file_lexico_cli_src_modules_manual_manual_module_ts["lexico-cli/src/modules/manual/manual.module.ts"]
+  file_lexico_cli_src_modules_manual_manual_service_ts["lexico-cli/src/modules/manual/manual.service.ts"]
+  file_lexico_cli_src_modules_manual_manual_service_unit_test_ts["lexico-cli/src/modules/manual/manual.service.unit.test.ts"]
+  file_lexico_cli_src_modules_manual_manual_types_ts["lexico-cli/src/modules/manual/manual.types.ts"]
+  file_lexico_cli_src_modules_manual_manual_utilities_ts["lexico-cli/src/modules/manual/manual.utilities.ts"]
+  file_lexico_cli_src_modules_numerals_numerals_constants_ts["lexico-cli/src/modules/numerals/numerals.constants.ts"]
+  file_lexico_cli_src_modules_numerals_numerals_module_ts["lexico-cli/src/modules/numerals/numerals.module.ts"]
+  file_lexico_cli_src_modules_numerals_numerals_service_ts["lexico-cli/src/modules/numerals/numerals.service.ts"]
+  file_lexico_cli_src_modules_numerals_numerals_service_unit_test_ts["lexico-cli/src/modules/numerals/numerals.service.unit.test.ts"]
+  file_lexico_cli_src_modules_numerals_numerals_types_ts["lexico-cli/src/modules/numerals/numerals.types.ts"]
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_forms_service_ts["lexico-cli/src/modules/part-of-speech/part-of-speech-forms.service.ts"]
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_forms_service_unit_test_ts["lexico-cli/src/modules/part-of-speech/part-of-speech-forms.service.unit.test.ts"]
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_constants_ts["lexico-cli/src/modules/part-of-speech/part-of-speech.constants.ts"]
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_module_ts["lexico-cli/src/modules/part-of-speech/part-of-speech.module.ts"]
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_service_ts["lexico-cli/src/modules/part-of-speech/part-of-speech.service.ts"]
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_service_unit_test_ts["lexico-cli/src/modules/part-of-speech/part-of-speech.service.unit.test.ts"]
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_types_ts["lexico-cli/src/modules/part-of-speech/part-of-speech.types.ts"]
+  file_lexico_cli_src_modules_perseus_perseus_command_ts["lexico-cli/src/modules/perseus/perseus.command.ts"]
+  file_lexico_cli_src_modules_perseus_perseus_command_unit_test_ts["lexico-cli/src/modules/perseus/perseus.command.unit.test.ts"]
+  file_lexico_cli_src_modules_perseus_perseus_constants_ts["lexico-cli/src/modules/perseus/perseus.constants.ts"]
+  file_lexico_cli_src_modules_perseus_perseus_module_ts["lexico-cli/src/modules/perseus/perseus.module.ts"]
+  file_lexico_cli_src_modules_perseus_perseus_types_ts["lexico-cli/src/modules/perseus/perseus.types.ts"]
+  file_lexico_cli_src_modules_principal_parts_principal_parts_constants_ts["lexico-cli/src/modules/principal-parts/principal-parts.constants.ts"]
+  file_lexico_cli_src_modules_principal_parts_principal_parts_module_ts["lexico-cli/src/modules/principal-parts/principal-parts.module.ts"]
+  file_lexico_cli_src_modules_principal_parts_principal_parts_service_ts["lexico-cli/src/modules/principal-parts/principal-parts.service.ts"]
+  file_lexico_cli_src_modules_principal_parts_principal_parts_service_unit_test_ts["lexico-cli/src/modules/principal-parts/principal-parts.service.unit.test.ts"]
+  file_lexico_cli_src_modules_principal_parts_principal_parts_types_ts["lexico-cli/src/modules/principal-parts/principal-parts.types.ts"]
+  file_lexico_cli_src_modules_pronunciation_pronunciation_classical_service_ts["lexico-cli/src/modules/pronunciation/pronunciation-classical.service.ts"]
+  file_lexico_cli_src_modules_pronunciation_pronunciation_classical_service_unit_test_ts["lexico-cli/src/modules/pronunciation/pronunciation-classical.service.unit.test.ts"]
+  file_lexico_cli_src_modules_pronunciation_pronunciation_classifier_service_ts["lexico-cli/src/modules/pronunciation/pronunciation-classifier.service.ts"]
+  file_lexico_cli_src_modules_pronunciation_pronunciation_classifier_service_unit_test_ts["lexico-cli/src/modules/pronunciation/pronunciation-classifier.service.unit.test.ts"]
+  file_lexico_cli_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts["lexico-cli/src/modules/pronunciation/pronunciation-ecclesiastical.service.ts"]
+  file_lexico_cli_src_modules_pronunciation_pronunciation_ecclesiastical_service_unit_test_ts["lexico-cli/src/modules/pronunciation/pronunciation-ecclesiastical.service.unit.test.ts"]
+  file_lexico_cli_src_modules_pronunciation_pronunciation_phonemes_service_ts["lexico-cli/src/modules/pronunciation/pronunciation-phonemes.service.ts"]
+  file_lexico_cli_src_modules_pronunciation_pronunciation_phonemes_service_unit_test_ts["lexico-cli/src/modules/pronunciation/pronunciation-phonemes.service.unit.test.ts"]
+  file_lexico_cli_src_modules_pronunciation_pronunciation_constants_ts["lexico-cli/src/modules/pronunciation/pronunciation.constants.ts"]
+  file_lexico_cli_src_modules_pronunciation_pronunciation_module_ts["lexico-cli/src/modules/pronunciation/pronunciation.module.ts"]
+  file_lexico_cli_src_modules_pronunciation_pronunciation_service_ts["lexico-cli/src/modules/pronunciation/pronunciation.service.ts"]
+  file_lexico_cli_src_modules_pronunciation_pronunciation_service_unit_test_ts["lexico-cli/src/modules/pronunciation/pronunciation.service.unit.test.ts"]
+  file_lexico_cli_src_modules_pronunciation_pronunciation_types_ts["lexico-cli/src/modules/pronunciation/pronunciation.types.ts"]
+  file_lexico_cli_src_modules_translations_translations_constants_ts["lexico-cli/src/modules/translations/translations.constants.ts"]
+  file_lexico_cli_src_modules_translations_translations_module_ts["lexico-cli/src/modules/translations/translations.module.ts"]
+  file_lexico_cli_src_modules_translations_translations_service_ts["lexico-cli/src/modules/translations/translations.service.ts"]
+  file_lexico_cli_src_modules_translations_translations_service_unit_test_ts["lexico-cli/src/modules/translations/translations.service.unit.test.ts"]
+  file_lexico_cli_src_modules_translations_translations_types_ts["lexico-cli/src/modules/translations/translations.types.ts"]
+  file_lexico_cli_src_modules_wiktionary_wiktionary_command_ts["lexico-cli/src/modules/wiktionary/wiktionary.command.ts"]
+  file_lexico_cli_src_modules_wiktionary_wiktionary_command_unit_test_ts["lexico-cli/src/modules/wiktionary/wiktionary.command.unit.test.ts"]
+  file_lexico_cli_src_modules_wiktionary_wiktionary_constants_ts["lexico-cli/src/modules/wiktionary/wiktionary.constants.ts"]
+  file_lexico_cli_src_modules_wiktionary_wiktionary_module_ts["lexico-cli/src/modules/wiktionary/wiktionary.module.ts"]
+  file_lexico_cli_src_modules_wiktionary_wiktionary_types_ts["lexico-cli/src/modules/wiktionary/wiktionary.types.ts"]
+  file_lexico_cli_src_modules_words_words_constants_ts["lexico-cli/src/modules/words/words.constants.ts"]
+  file_lexico_cli_src_modules_words_words_module_ts["lexico-cli/src/modules/words/words.module.ts"]
+  file_lexico_cli_src_modules_words_words_service_ts["lexico-cli/src/modules/words/words.service.ts"]
+  file_lexico_cli_src_modules_words_words_service_unit_test_ts["lexico-cli/src/modules/words/words.service.unit.test.ts"]
+  file_lexico_cli_src_modules_words_words_types_ts["lexico-cli/src/modules/words/words.types.ts"]
+  file_lexico_cli_src_repl_ts["lexico-cli/src/repl.ts"]
+  file_lexico_cli_src_repl_unit_test_ts["lexico-cli/src/repl.unit.test.ts"]
+  file_lexico_cli_testing_command_harness_ts["lexico-cli/testing/command-harness.ts"]
+  file_lexico_cli_testing_mocks_ts["lexico-cli/testing/mocks.ts"]
+  file_lexico_cli_testing_setup_ts["lexico-cli/testing/setup.ts"]
+  file_lexico_cli_vitest_config_ts["lexico-cli/vitest.config.ts"]
   file_lexico_entities_callidescope_config_ts["lexico-entities/callidescope.config.ts"]
   file_lexico_entities_codependix_config_ts["lexico-entities/codependix.config.ts"]
   file_lexico_entities_codometer_config_ts["lexico-entities/codometer.config.ts"]
@@ -3608,213 +3767,54 @@ graph LR
   file_lexico_entities_testing_entity_definition_assertions_ts["lexico-entities/testing/entity-definition-assertions.ts"]
   file_lexico_entities_testing_setup_ts["lexico-entities/testing/setup.ts"]
   file_lexico_entities_vitest_config_ts["lexico-entities/vitest.config.ts"]
-  file_lexico_ingestion_callidescope_config_ts["lexico-ingestion/callidescope.config.ts"]
-  file_lexico_ingestion_codependix_config_ts["lexico-ingestion/codependix.config.ts"]
-  file_lexico_ingestion_codometer_config_ts["lexico-ingestion/codometer.config.ts"]
-  file_lexico_ingestion_eslint_config_ts["lexico-ingestion/eslint.config.ts"]
-  file_lexico_ingestion_src_constants_ts["lexico-ingestion/src/constants.ts"]
-  file_lexico_ingestion_src_main_end_to_end_test_ts["lexico-ingestion/src/main.end-to-end.test.ts"]
-  file_lexico_ingestion_src_main_module_ts["lexico-ingestion/src/main.module.ts"]
-  file_lexico_ingestion_src_main_ts["lexico-ingestion/src/main.ts"]
-  file_lexico_ingestion_src_main_unit_test_ts["lexico-ingestion/src/main.unit.test.ts"]
-  file_lexico_ingestion_src_modules_clear_clear_command_ts["lexico-ingestion/src/modules/clear/clear.command.ts"]
-  file_lexico_ingestion_src_modules_clear_clear_command_unit_test_ts["lexico-ingestion/src/modules/clear/clear.command.unit.test.ts"]
-  file_lexico_ingestion_src_modules_clear_clear_constants_ts["lexico-ingestion/src/modules/clear/clear.constants.ts"]
-  file_lexico_ingestion_src_modules_clear_clear_module_ts["lexico-ingestion/src/modules/clear/clear.module.ts"]
-  file_lexico_ingestion_src_modules_clear_clear_types_ts["lexico-ingestion/src/modules/clear/clear.types.ts"]
-  file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_ts["lexico-ingestion/src/modules/corpus-scriptorum-ecclesiasticorum-latinorum/corpus-scriptorum-ecclesiasticorum-latinorum.command.ts"]
-  file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_unit_test_ts["lexico-ingestion/src/modules/corpus-scriptorum-ecclesiasticorum-latinorum/corpus-scriptorum-ecclesiasticorum-latinorum.command.unit.test.ts"]
-  file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_constants_ts["lexico-ingestion/src/modules/corpus-scriptorum-ecclesiasticorum-latinorum/corpus-scriptorum-ecclesiasticorum-latinorum.constants.ts"]
-  file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_module_ts["lexico-ingestion/src/modules/corpus-scriptorum-ecclesiasticorum-latinorum/corpus-scriptorum-ecclesiasticorum-latinorum.module.ts"]
-  file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_types_ts["lexico-ingestion/src/modules/corpus-scriptorum-ecclesiasticorum-latinorum/corpus-scriptorum-ecclesiasticorum-latinorum.types.ts"]
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_ts["lexico-ingestion/src/modules/dictionary/dictionary.command.ts"]
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_unit_test_ts["lexico-ingestion/src/modules/dictionary/dictionary.command.unit.test.ts"]
-  file_lexico_ingestion_src_modules_dictionary_dictionary_constants_ts["lexico-ingestion/src/modules/dictionary/dictionary.constants.ts"]
-  file_lexico_ingestion_src_modules_dictionary_dictionary_module_ts["lexico-ingestion/src/modules/dictionary/dictionary.module.ts"]
-  file_lexico_ingestion_src_modules_dictionary_dictionary_types_ts["lexico-ingestion/src/modules/dictionary/dictionary.types.ts"]
-  file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_ts["lexico-ingestion/src/modules/epigraphik-datenbank-clauss-slaby/epigraphik-datenbank-clauss-slaby.command.ts"]
-  file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_unit_test_ts["lexico-ingestion/src/modules/epigraphik-datenbank-clauss-slaby/epigraphik-datenbank-clauss-slaby.command.unit.test.ts"]
-  file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_constants_ts["lexico-ingestion/src/modules/epigraphik-datenbank-clauss-slaby/epigraphik-datenbank-clauss-slaby.constants.ts"]
-  file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_module_ts["lexico-ingestion/src/modules/epigraphik-datenbank-clauss-slaby/epigraphik-datenbank-clauss-slaby.module.ts"]
-  file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_types_ts["lexico-ingestion/src/modules/epigraphik-datenbank-clauss-slaby/epigraphik-datenbank-clauss-slaby.types.ts"]
-  file_lexico_ingestion_src_modules_etymology_etymology_constants_ts["lexico-ingestion/src/modules/etymology/etymology.constants.ts"]
-  file_lexico_ingestion_src_modules_etymology_etymology_module_ts["lexico-ingestion/src/modules/etymology/etymology.module.ts"]
-  file_lexico_ingestion_src_modules_etymology_etymology_service_ts["lexico-ingestion/src/modules/etymology/etymology.service.ts"]
-  file_lexico_ingestion_src_modules_etymology_etymology_service_unit_test_ts["lexico-ingestion/src/modules/etymology/etymology.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_etymology_etymology_types_ts["lexico-ingestion/src/modules/etymology/etymology.types.ts"]
-  file_lexico_ingestion_src_modules_forms_forms_builder_guards_service_ts["lexico-ingestion/src/modules/forms/forms-builder-guards.service.ts"]
-  file_lexico_ingestion_src_modules_forms_forms_builder_guards_service_unit_test_ts["lexico-ingestion/src/modules/forms/forms-builder-guards.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_forms_forms_builder_verb_service_ts["lexico-ingestion/src/modules/forms/forms-builder-verb.service.ts"]
-  file_lexico_ingestion_src_modules_forms_forms_builder_verb_service_unit_test_ts["lexico-ingestion/src/modules/forms/forms-builder-verb.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_forms_forms_builder_service_ts["lexico-ingestion/src/modules/forms/forms-builder.service.ts"]
-  file_lexico_ingestion_src_modules_forms_forms_builder_service_unit_test_ts["lexico-ingestion/src/modules/forms/forms-builder.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_forms_forms_transient_words_service_ts["lexico-ingestion/src/modules/forms/forms-transient-words.service.ts"]
-  file_lexico_ingestion_src_modules_forms_forms_transient_words_service_unit_test_ts["lexico-ingestion/src/modules/forms/forms-transient-words.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_forms_forms_constants_ts["lexico-ingestion/src/modules/forms/forms.constants.ts"]
-  file_lexico_ingestion_src_modules_forms_forms_constants_unit_test_ts["lexico-ingestion/src/modules/forms/forms.constants.unit.test.ts"]
-  file_lexico_ingestion_src_modules_forms_forms_module_ts["lexico-ingestion/src/modules/forms/forms.module.ts"]
-  file_lexico_ingestion_src_modules_forms_forms_service_ts["lexico-ingestion/src/modules/forms/forms.service.ts"]
-  file_lexico_ingestion_src_modules_forms_forms_service_unit_test_ts["lexico-ingestion/src/modules/forms/forms.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_forms_forms_types_ts["lexico-ingestion/src/modules/forms/forms.types.ts"]
-  file_lexico_ingestion_src_modules_latin_library_latin_library_command_ts["lexico-ingestion/src/modules/latin-library/latin-library.command.ts"]
-  file_lexico_ingestion_src_modules_latin_library_latin_library_command_unit_test_ts["lexico-ingestion/src/modules/latin-library/latin-library.command.unit.test.ts"]
-  file_lexico_ingestion_src_modules_latin_library_latin_library_constants_ts["lexico-ingestion/src/modules/latin-library/latin-library.constants.ts"]
-  file_lexico_ingestion_src_modules_latin_library_latin_library_module_ts["lexico-ingestion/src/modules/latin-library/latin-library.module.ts"]
-  file_lexico_ingestion_src_modules_latin_library_latin_library_types_ts["lexico-ingestion/src/modules/latin-library/latin-library.types.ts"]
-  file_lexico_ingestion_src_modules_lexemes_lexemes_constants_ts["lexico-ingestion/src/modules/lexemes/lexemes.constants.ts"]
-  file_lexico_ingestion_src_modules_lexemes_lexemes_module_ts["lexico-ingestion/src/modules/lexemes/lexemes.module.ts"]
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts["lexico-ingestion/src/modules/lexemes/lexemes.service.ts"]
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_unit_test_ts["lexico-ingestion/src/modules/lexemes/lexemes.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_lexemes_lexemes_types_ts["lexico-ingestion/src/modules/lexemes/lexemes.types.ts"]
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_ts["lexico-ingestion/src/modules/lexico-ingestion/lexico-ingestion.command.ts"]
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts["lexico-ingestion/src/modules/lexico-ingestion/lexico-ingestion.command.unit.test.ts"]
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_constants_ts["lexico-ingestion/src/modules/lexico-ingestion/lexico-ingestion.constants.ts"]
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_module_ts["lexico-ingestion/src/modules/lexico-ingestion/lexico-ingestion.module.ts"]
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_types_ts["lexico-ingestion/src/modules/lexico-ingestion/lexico-ingestion.types.ts"]
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_utilities_ts["lexico-ingestion/src/modules/lexico-ingestion/lexico-ingestion.utilities.ts"]
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_utilities_unit_test_ts["lexico-ingestion/src/modules/lexico-ingestion/lexico-ingestion.utilities.unit.test.ts"]
-  file_lexico_ingestion_src_modules_library_library_command_ts["lexico-ingestion/src/modules/library/library.command.ts"]
-  file_lexico_ingestion_src_modules_library_library_command_unit_test_ts["lexico-ingestion/src/modules/library/library.command.unit.test.ts"]
-  file_lexico_ingestion_src_modules_library_library_constants_ts["lexico-ingestion/src/modules/library/library.constants.ts"]
-  file_lexico_ingestion_src_modules_library_library_module_ts["lexico-ingestion/src/modules/library/library.module.ts"]
-  file_lexico_ingestion_src_modules_library_library_types_ts["lexico-ingestion/src/modules/library/library.types.ts"]
-  file_lexico_ingestion_src_modules_library_library_utilities_ts["lexico-ingestion/src/modules/library/library.utilities.ts"]
-  file_lexico_ingestion_src_modules_library_library_utilities_unit_test_ts["lexico-ingestion/src/modules/library/library.utilities.unit.test.ts"]
-  file_lexico_ingestion_src_modules_library_providers_corpus_scriptorum_ecclesiasticorum_latinorum_library_provider_ts["lexico-ingestion/src/modules/library/providers/corpus-scriptorum-ecclesiasticorum-latinorum-library.provider.ts"]
-  file_lexico_ingestion_src_modules_library_providers_corpus_scriptorum_ecclesiasticorum_latinorum_library_provider_unit_test_ts["lexico-ingestion/src/modules/library/providers/corpus-scriptorum-ecclesiasticorum-latinorum-library.provider.unit.test.ts"]
-  file_lexico_ingestion_src_modules_library_providers_epigraphik_datenbank_clauss_slaby_library_provider_ts["lexico-ingestion/src/modules/library/providers/epigraphik-datenbank-clauss-slaby-library.provider.ts"]
-  file_lexico_ingestion_src_modules_library_providers_epigraphik_datenbank_clauss_slaby_library_provider_unit_test_ts["lexico-ingestion/src/modules/library/providers/epigraphik-datenbank-clauss-slaby-library.provider.unit.test.ts"]
-  file_lexico_ingestion_src_modules_library_providers_latin_library_builder_ts["lexico-ingestion/src/modules/library/providers/latin-library.builder.ts"]
-  file_lexico_ingestion_src_modules_library_providers_latin_library_builder_unit_test_ts["lexico-ingestion/src/modules/library/providers/latin-library.builder.unit.test.ts"]
-  file_lexico_ingestion_src_modules_library_providers_latin_library_provider_ts["lexico-ingestion/src/modules/library/providers/latin-library.provider.ts"]
-  file_lexico_ingestion_src_modules_library_providers_latin_library_provider_unit_test_ts["lexico-ingestion/src/modules/library/providers/latin-library.provider.unit.test.ts"]
-  file_lexico_ingestion_src_modules_library_providers_perseus_library_text_extraction_provider_ts["lexico-ingestion/src/modules/library/providers/perseus-library-text-extraction.provider.ts"]
-  file_lexico_ingestion_src_modules_library_providers_perseus_library_text_extraction_provider_unit_test_ts["lexico-ingestion/src/modules/library/providers/perseus-library-text-extraction.provider.unit.test.ts"]
-  file_lexico_ingestion_src_modules_library_providers_perseus_library_provider_ts["lexico-ingestion/src/modules/library/providers/perseus-library.provider.ts"]
-  file_lexico_ingestion_src_modules_library_providers_perseus_library_provider_unit_test_ts["lexico-ingestion/src/modules/library/providers/perseus-library.provider.unit.test.ts"]
-  file_lexico_ingestion_src_modules_literature_literature_library_scan_service_ts["lexico-ingestion/src/modules/literature/literature-library-scan.service.ts"]
-  file_lexico_ingestion_src_modules_literature_literature_library_scan_service_unit_test_ts["lexico-ingestion/src/modules/literature/literature-library-scan.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_literature_literature_text_ingestion_service_ts["lexico-ingestion/src/modules/literature/literature-text-ingestion.service.ts"]
-  file_lexico_ingestion_src_modules_literature_literature_text_ingestion_service_unit_test_ts["lexico-ingestion/src/modules/literature/literature-text-ingestion.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_literature_literature_word_normalization_service_ts["lexico-ingestion/src/modules/literature/literature-word-normalization.service.ts"]
-  file_lexico_ingestion_src_modules_literature_literature_word_normalization_service_unit_test_ts["lexico-ingestion/src/modules/literature/literature-word-normalization.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_literature_literature_command_ts["lexico-ingestion/src/modules/literature/literature.command.ts"]
-  file_lexico_ingestion_src_modules_literature_literature_command_unit_test_ts["lexico-ingestion/src/modules/literature/literature.command.unit.test.ts"]
-  file_lexico_ingestion_src_modules_literature_literature_constants_ts["lexico-ingestion/src/modules/literature/literature.constants.ts"]
-  file_lexico_ingestion_src_modules_literature_literature_module_ts["lexico-ingestion/src/modules/literature/literature.module.ts"]
-  file_lexico_ingestion_src_modules_literature_literature_service_ts["lexico-ingestion/src/modules/literature/literature.service.ts"]
-  file_lexico_ingestion_src_modules_literature_literature_service_unit_test_ts["lexico-ingestion/src/modules/literature/literature.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_literature_literature_types_ts["lexico-ingestion/src/modules/literature/literature.types.ts"]
-  file_lexico_ingestion_src_modules_manual_manual_constants_ts["lexico-ingestion/src/modules/manual/manual.constants.ts"]
-  file_lexico_ingestion_src_modules_manual_manual_module_ts["lexico-ingestion/src/modules/manual/manual.module.ts"]
-  file_lexico_ingestion_src_modules_manual_manual_service_ts["lexico-ingestion/src/modules/manual/manual.service.ts"]
-  file_lexico_ingestion_src_modules_manual_manual_service_unit_test_ts["lexico-ingestion/src/modules/manual/manual.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_manual_manual_types_ts["lexico-ingestion/src/modules/manual/manual.types.ts"]
-  file_lexico_ingestion_src_modules_manual_manual_utilities_ts["lexico-ingestion/src/modules/manual/manual.utilities.ts"]
-  file_lexico_ingestion_src_modules_numerals_numerals_constants_ts["lexico-ingestion/src/modules/numerals/numerals.constants.ts"]
-  file_lexico_ingestion_src_modules_numerals_numerals_module_ts["lexico-ingestion/src/modules/numerals/numerals.module.ts"]
-  file_lexico_ingestion_src_modules_numerals_numerals_service_ts["lexico-ingestion/src/modules/numerals/numerals.service.ts"]
-  file_lexico_ingestion_src_modules_numerals_numerals_service_unit_test_ts["lexico-ingestion/src/modules/numerals/numerals.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_numerals_numerals_types_ts["lexico-ingestion/src/modules/numerals/numerals.types.ts"]
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_forms_service_ts["lexico-ingestion/src/modules/part-of-speech/part-of-speech-forms.service.ts"]
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_forms_service_unit_test_ts["lexico-ingestion/src/modules/part-of-speech/part-of-speech-forms.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_constants_ts["lexico-ingestion/src/modules/part-of-speech/part-of-speech.constants.ts"]
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_module_ts["lexico-ingestion/src/modules/part-of-speech/part-of-speech.module.ts"]
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_service_ts["lexico-ingestion/src/modules/part-of-speech/part-of-speech.service.ts"]
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_service_unit_test_ts["lexico-ingestion/src/modules/part-of-speech/part-of-speech.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_types_ts["lexico-ingestion/src/modules/part-of-speech/part-of-speech.types.ts"]
-  file_lexico_ingestion_src_modules_perseus_perseus_command_ts["lexico-ingestion/src/modules/perseus/perseus.command.ts"]
-  file_lexico_ingestion_src_modules_perseus_perseus_command_unit_test_ts["lexico-ingestion/src/modules/perseus/perseus.command.unit.test.ts"]
-  file_lexico_ingestion_src_modules_perseus_perseus_constants_ts["lexico-ingestion/src/modules/perseus/perseus.constants.ts"]
-  file_lexico_ingestion_src_modules_perseus_perseus_module_ts["lexico-ingestion/src/modules/perseus/perseus.module.ts"]
-  file_lexico_ingestion_src_modules_perseus_perseus_types_ts["lexico-ingestion/src/modules/perseus/perseus.types.ts"]
-  file_lexico_ingestion_src_modules_principal_parts_principal_parts_constants_ts["lexico-ingestion/src/modules/principal-parts/principal-parts.constants.ts"]
-  file_lexico_ingestion_src_modules_principal_parts_principal_parts_module_ts["lexico-ingestion/src/modules/principal-parts/principal-parts.module.ts"]
-  file_lexico_ingestion_src_modules_principal_parts_principal_parts_service_ts["lexico-ingestion/src/modules/principal-parts/principal-parts.service.ts"]
-  file_lexico_ingestion_src_modules_principal_parts_principal_parts_service_unit_test_ts["lexico-ingestion/src/modules/principal-parts/principal-parts.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_principal_parts_principal_parts_types_ts["lexico-ingestion/src/modules/principal-parts/principal-parts.types.ts"]
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_classical_service_ts["lexico-ingestion/src/modules/pronunciation/pronunciation-classical.service.ts"]
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_classical_service_unit_test_ts["lexico-ingestion/src/modules/pronunciation/pronunciation-classical.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_classifier_service_ts["lexico-ingestion/src/modules/pronunciation/pronunciation-classifier.service.ts"]
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_classifier_service_unit_test_ts["lexico-ingestion/src/modules/pronunciation/pronunciation-classifier.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts["lexico-ingestion/src/modules/pronunciation/pronunciation-ecclesiastical.service.ts"]
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_ecclesiastical_service_unit_test_ts["lexico-ingestion/src/modules/pronunciation/pronunciation-ecclesiastical.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_phonemes_service_ts["lexico-ingestion/src/modules/pronunciation/pronunciation-phonemes.service.ts"]
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_phonemes_service_unit_test_ts["lexico-ingestion/src/modules/pronunciation/pronunciation-phonemes.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_constants_ts["lexico-ingestion/src/modules/pronunciation/pronunciation.constants.ts"]
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_module_ts["lexico-ingestion/src/modules/pronunciation/pronunciation.module.ts"]
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_ts["lexico-ingestion/src/modules/pronunciation/pronunciation.service.ts"]
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_unit_test_ts["lexico-ingestion/src/modules/pronunciation/pronunciation.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_types_ts["lexico-ingestion/src/modules/pronunciation/pronunciation.types.ts"]
-  file_lexico_ingestion_src_modules_translations_translations_constants_ts["lexico-ingestion/src/modules/translations/translations.constants.ts"]
-  file_lexico_ingestion_src_modules_translations_translations_module_ts["lexico-ingestion/src/modules/translations/translations.module.ts"]
-  file_lexico_ingestion_src_modules_translations_translations_service_ts["lexico-ingestion/src/modules/translations/translations.service.ts"]
-  file_lexico_ingestion_src_modules_translations_translations_service_unit_test_ts["lexico-ingestion/src/modules/translations/translations.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_translations_translations_types_ts["lexico-ingestion/src/modules/translations/translations.types.ts"]
-  file_lexico_ingestion_src_modules_wiktionary_wiktionary_command_ts["lexico-ingestion/src/modules/wiktionary/wiktionary.command.ts"]
-  file_lexico_ingestion_src_modules_wiktionary_wiktionary_command_unit_test_ts["lexico-ingestion/src/modules/wiktionary/wiktionary.command.unit.test.ts"]
-  file_lexico_ingestion_src_modules_wiktionary_wiktionary_constants_ts["lexico-ingestion/src/modules/wiktionary/wiktionary.constants.ts"]
-  file_lexico_ingestion_src_modules_wiktionary_wiktionary_module_ts["lexico-ingestion/src/modules/wiktionary/wiktionary.module.ts"]
-  file_lexico_ingestion_src_modules_wiktionary_wiktionary_types_ts["lexico-ingestion/src/modules/wiktionary/wiktionary.types.ts"]
-  file_lexico_ingestion_src_modules_words_words_constants_ts["lexico-ingestion/src/modules/words/words.constants.ts"]
-  file_lexico_ingestion_src_modules_words_words_module_ts["lexico-ingestion/src/modules/words/words.module.ts"]
-  file_lexico_ingestion_src_modules_words_words_service_ts["lexico-ingestion/src/modules/words/words.service.ts"]
-  file_lexico_ingestion_src_modules_words_words_service_unit_test_ts["lexico-ingestion/src/modules/words/words.service.unit.test.ts"]
-  file_lexico_ingestion_src_modules_words_words_types_ts["lexico-ingestion/src/modules/words/words.types.ts"]
-  file_lexico_ingestion_src_repl_ts["lexico-ingestion/src/repl.ts"]
-  file_lexico_ingestion_src_repl_unit_test_ts["lexico-ingestion/src/repl.unit.test.ts"]
-  file_lexico_ingestion_testing_command_harness_ts["lexico-ingestion/testing/command-harness.ts"]
-  file_lexico_ingestion_testing_mocks_ts["lexico-ingestion/testing/mocks.ts"]
-  file_lexico_ingestion_testing_setup_ts["lexico-ingestion/testing/setup.ts"]
-  file_lexico_ingestion_vitest_config_ts["lexico-ingestion/vitest.config.ts"]
-  file_lexico_callidescope_config_ts["lexico/callidescope.config.ts"]
-  file_lexico_codependix_config_ts["lexico/codependix.config.ts"]
-  file_lexico_codometer_config_ts["lexico/codometer.config.ts"]
-  file_lexico_eslint_config_ts["lexico/eslint.config.ts"]
-  file_lexico_src_components_entry_adjective_forms_table_tsx["lexico/src/components/entry/adjective-forms-table.tsx"]
-  file_lexico_src_components_entry_entry_card_tsx["lexico/src/components/entry/entry-card.tsx"]
-  file_lexico_src_components_entry_form_cell_tsx["lexico/src/components/entry/form-cell.tsx"]
-  file_lexico_src_components_entry_form_tabs_tsx["lexico/src/components/entry/form-tabs.tsx"]
-  file_lexico_src_components_entry_forms_table_tsx["lexico/src/components/entry/forms-table.tsx"]
-  file_lexico_src_components_entry_identifier_tsx["lexico/src/components/entry/identifier.tsx"]
-  file_lexico_src_components_entry_noun_forms_table_tsx["lexico/src/components/entry/noun-forms-table.tsx"]
-  file_lexico_src_components_entry_principal_parts_tsx["lexico/src/components/entry/principal-parts.tsx"]
-  file_lexico_src_components_entry_translations_tsx["lexico/src/components/entry/translations.tsx"]
-  file_lexico_src_components_entry_verb_forms_table_tsx["lexico/src/components/entry/verb-forms-table.tsx"]
-  file_lexico_src_components_layout_index_ts["lexico/src/components/layout/index.ts"]
-  file_lexico_src_components_layout_logo_tsx["lexico/src/components/layout/logo.tsx"]
-  file_lexico_src_components_pronunciation_button_tsx["lexico/src/components/pronunciation-button.tsx"]
-  file_lexico_src_components_pronunciation_button_unit_test_tsx["lexico/src/components/pronunciation-button.unit.test.tsx"]
-  file_lexico_src_lib_auth_ts["lexico/src/lib/auth.ts"]
-  file_lexico_src_lib_bookmarks_ts["lexico/src/lib/bookmarks.ts"]
-  file_lexico_src_lib_client_tsx["lexico/src/lib/client.tsx"]
-  file_lexico_src_lib_forms_ts["lexico/src/lib/forms.ts"]
-  file_lexico_src_lib_library_ts["lexico/src/lib/library.ts"]
-  file_lexico_src_lib_pronunciation_ts["lexico/src/lib/pronunciation.ts"]
-  file_lexico_src_lib_routeTree_gen_ts["lexico/src/lib/routeTree.gen.ts"]
-  file_lexico_src_lib_search_ts["lexico/src/lib/search.ts"]
-  file_lexico_src_lib_types_ts["lexico/src/lib/types.ts"]
-  file_lexico_src_router_tsx["lexico/src/router.tsx"]
-  file_lexico_src_routes___root_tsx["lexico/src/routes/__root.tsx"]
-  file_lexico_src_routes_bookmarks_integration_test_tsx["lexico/src/routes/bookmarks.integration.test.tsx"]
-  file_lexico_src_routes_bookmarks_tsx["lexico/src/routes/bookmarks.tsx"]
-  file_lexico_src_routes_hooks_useLibraryPage_ts["lexico/src/routes/hooks/useLibraryPage.ts"]
-  file_lexico_src_routes_index_integration_test_tsx["lexico/src/routes/index.integration.test.tsx"]
-  file_lexico_src_routes_index_tsx["lexico/src/routes/index.tsx"]
-  file_lexico_src_routes_library_integration_test_tsx["lexico/src/routes/library.integration.test.tsx"]
-  file_lexico_src_routes_library_tsx["lexico/src/routes/library.tsx"]
-  file_lexico_src_routes_search_integration_test_tsx["lexico/src/routes/search.integration.test.tsx"]
-  file_lexico_src_routes_search_tsx["lexico/src/routes/search.tsx"]
-  file_lexico_src_routes_settings_integration_test_tsx["lexico/src/routes/settings.integration.test.tsx"]
-  file_lexico_src_routes_settings_tsx["lexico/src/routes/settings.tsx"]
-  file_lexico_src_routes_tools_integration_test_tsx["lexico/src/routes/tools.integration.test.tsx"]
-  file_lexico_src_routes_tools_tsx["lexico/src/routes/tools.tsx"]
-  file_lexico_src_routes_word__id_integration_test_tsx["lexico/src/routes/word.$id.integration.test.tsx"]
-  file_lexico_src_routes_word__id_tsx["lexico/src/routes/word.$id.tsx"]
-  file_lexico_testing_render_route_tsx["lexico/testing/render-route.tsx"]
-  file_lexico_testing_setup_ts["lexico/testing/setup.ts"]
-  file_lexico_vite_config_mts["lexico/vite.config.mts"]
-  file_lexico_vitest_config_ts["lexico/vitest.config.ts"]
+  file_lexico_web_callidescope_config_ts["lexico-web/callidescope.config.ts"]
+  file_lexico_web_codependix_config_ts["lexico-web/codependix.config.ts"]
+  file_lexico_web_codometer_config_ts["lexico-web/codometer.config.ts"]
+  file_lexico_web_eslint_config_ts["lexico-web/eslint.config.ts"]
+  file_lexico_web_src_components_entry_adjective_forms_table_tsx["lexico-web/src/components/entry/adjective-forms-table.tsx"]
+  file_lexico_web_src_components_entry_entry_card_tsx["lexico-web/src/components/entry/entry-card.tsx"]
+  file_lexico_web_src_components_entry_form_cell_tsx["lexico-web/src/components/entry/form-cell.tsx"]
+  file_lexico_web_src_components_entry_form_tabs_tsx["lexico-web/src/components/entry/form-tabs.tsx"]
+  file_lexico_web_src_components_entry_forms_table_tsx["lexico-web/src/components/entry/forms-table.tsx"]
+  file_lexico_web_src_components_entry_identifier_tsx["lexico-web/src/components/entry/identifier.tsx"]
+  file_lexico_web_src_components_entry_noun_forms_table_tsx["lexico-web/src/components/entry/noun-forms-table.tsx"]
+  file_lexico_web_src_components_entry_principal_parts_tsx["lexico-web/src/components/entry/principal-parts.tsx"]
+  file_lexico_web_src_components_entry_translations_tsx["lexico-web/src/components/entry/translations.tsx"]
+  file_lexico_web_src_components_entry_verb_forms_table_tsx["lexico-web/src/components/entry/verb-forms-table.tsx"]
+  file_lexico_web_src_components_layout_index_ts["lexico-web/src/components/layout/index.ts"]
+  file_lexico_web_src_components_layout_logo_tsx["lexico-web/src/components/layout/logo.tsx"]
+  file_lexico_web_src_components_pronunciation_button_tsx["lexico-web/src/components/pronunciation-button.tsx"]
+  file_lexico_web_src_components_pronunciation_button_unit_test_tsx["lexico-web/src/components/pronunciation-button.unit.test.tsx"]
+  file_lexico_web_src_lib_auth_ts["lexico-web/src/lib/auth.ts"]
+  file_lexico_web_src_lib_bookmarks_ts["lexico-web/src/lib/bookmarks.ts"]
+  file_lexico_web_src_lib_client_tsx["lexico-web/src/lib/client.tsx"]
+  file_lexico_web_src_lib_forms_ts["lexico-web/src/lib/forms.ts"]
+  file_lexico_web_src_lib_library_ts["lexico-web/src/lib/library.ts"]
+  file_lexico_web_src_lib_pronunciation_ts["lexico-web/src/lib/pronunciation.ts"]
+  file_lexico_web_src_lib_routeTree_gen_ts["lexico-web/src/lib/routeTree.gen.ts"]
+  file_lexico_web_src_lib_search_ts["lexico-web/src/lib/search.ts"]
+  file_lexico_web_src_lib_types_ts["lexico-web/src/lib/types.ts"]
+  file_lexico_web_src_router_tsx["lexico-web/src/router.tsx"]
+  file_lexico_web_src_routes___root_tsx["lexico-web/src/routes/__root.tsx"]
+  file_lexico_web_src_routes_bookmarks_integration_test_tsx["lexico-web/src/routes/bookmarks.integration.test.tsx"]
+  file_lexico_web_src_routes_bookmarks_tsx["lexico-web/src/routes/bookmarks.tsx"]
+  file_lexico_web_src_routes_hooks_useLibraryPage_ts["lexico-web/src/routes/hooks/useLibraryPage.ts"]
+  file_lexico_web_src_routes_index_integration_test_tsx["lexico-web/src/routes/index.integration.test.tsx"]
+  file_lexico_web_src_routes_index_tsx["lexico-web/src/routes/index.tsx"]
+  file_lexico_web_src_routes_library_integration_test_tsx["lexico-web/src/routes/library.integration.test.tsx"]
+  file_lexico_web_src_routes_library_tsx["lexico-web/src/routes/library.tsx"]
+  file_lexico_web_src_routes_search_integration_test_tsx["lexico-web/src/routes/search.integration.test.tsx"]
+  file_lexico_web_src_routes_search_tsx["lexico-web/src/routes/search.tsx"]
+  file_lexico_web_src_routes_settings_integration_test_tsx["lexico-web/src/routes/settings.integration.test.tsx"]
+  file_lexico_web_src_routes_settings_tsx["lexico-web/src/routes/settings.tsx"]
+  file_lexico_web_src_routes_tools_integration_test_tsx["lexico-web/src/routes/tools.integration.test.tsx"]
+  file_lexico_web_src_routes_tools_tsx["lexico-web/src/routes/tools.tsx"]
+  file_lexico_web_src_routes_word__id_integration_test_tsx["lexico-web/src/routes/word.$id.integration.test.tsx"]
+  file_lexico_web_src_routes_word__id_tsx["lexico-web/src/routes/word.$id.tsx"]
+  file_lexico_web_testing_render_route_tsx["lexico-web/testing/render-route.tsx"]
+  file_lexico_web_testing_setup_ts["lexico-web/testing/setup.ts"]
+  file_lexico_web_vite_config_mts["lexico-web/vite.config.mts"]
+  file_lexico_web_vitest_config_ts["lexico-web/vitest.config.ts"]
   file_logging_callidescope_config_ts["logging/callidescope.config.ts"]
   file_logging_codependix_config_ts["logging/codependix.config.ts"]
   file_logging_codometer_config_ts["logging/codometer.config.ts"]
@@ -7877,6 +7877,309 @@ graph LR
   file_lexico_api_testing_reading_application_ts --> file_lexico_api_src_modules_literature_literature_module_ts
   file_lexico_api_testing_reading_application_ts --> file_lexico_api_testing_database_ts
   file_lexico_api_testing_reading_application_ts --> file_lexico_api_testing_reading_passage_ts
+  file_lexico_cli_src_main_end_to_end_test_ts --> file_lexico_cli_src_constants_ts
+  file_lexico_cli_src_main_module_ts --> file_lexico_cli_src_constants_ts
+  file_lexico_cli_src_main_module_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_module_ts
+  file_lexico_cli_src_main_ts --> file_lexico_cli_src_main_module_ts
+  file_lexico_cli_src_modules_clear_clear_command_ts --> file_lexico_cli_src_modules_clear_clear_types_ts
+  file_lexico_cli_src_modules_clear_clear_command_unit_test_ts --> file_lexico_cli_src_modules_clear_clear_command_ts
+  file_lexico_cli_src_modules_clear_clear_command_unit_test_ts --> file_lexico_cli_testing_command_harness_ts
+  file_lexico_cli_src_modules_clear_clear_command_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_modules_clear_clear_module_ts --> file_lexico_cli_src_modules_clear_clear_command_ts
+  file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_ts --> file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_constants_ts
+  file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_ts --> file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_types_ts
+  file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_unit_test_ts --> file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_ts
+  file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_unit_test_ts --> file_lexico_cli_testing_command_harness_ts
+  file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_module_ts --> file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_command_ts --> file_lexico_cli_src_modules_dictionary_dictionary_types_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_command_ts --> file_lexico_cli_src_modules_lexemes_lexemes_service_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_command_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_types_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_command_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_utilities_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_command_ts --> file_lexico_cli_src_modules_manual_manual_service_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_command_ts --> file_lexico_cli_src_modules_translations_translations_service_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_command_unit_test_ts --> file_lexico_cli_src_modules_dictionary_dictionary_command_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_command_unit_test_ts --> file_lexico_cli_src_modules_lexemes_lexemes_service_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_command_unit_test_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_types_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_command_unit_test_ts --> file_lexico_cli_src_modules_manual_manual_service_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_command_unit_test_ts --> file_lexico_cli_src_modules_translations_translations_service_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_command_unit_test_ts --> file_lexico_cli_testing_command_harness_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_command_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_module_ts --> file_lexico_cli_src_modules_dictionary_dictionary_command_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_module_ts --> file_lexico_cli_src_modules_forms_forms_module_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_module_ts --> file_lexico_cli_src_modules_lexemes_lexemes_module_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_module_ts --> file_lexico_cli_src_modules_manual_manual_module_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_module_ts --> file_lexico_cli_src_modules_principal_parts_principal_parts_module_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_module_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_module_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_module_ts --> file_lexico_cli_src_modules_translations_translations_module_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_module_ts --> file_lexico_cli_src_modules_words_words_module_ts
+  file_lexico_cli_src_modules_dictionary_dictionary_types_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_types_ts
+  file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_ts --> file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_constants_ts
+  file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_ts --> file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_types_ts
+  file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_unit_test_ts --> file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_ts
+  file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_unit_test_ts --> file_lexico_cli_testing_command_harness_ts
+  file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_module_ts --> file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_ts
+  file_lexico_cli_src_modules_etymology_etymology_module_ts --> file_lexico_cli_src_modules_etymology_etymology_service_ts
+  file_lexico_cli_src_modules_etymology_etymology_service_unit_test_ts --> file_lexico_cli_src_modules_etymology_etymology_service_ts
+  file_lexico_cli_src_modules_forms_forms_builder_guards_service_ts --> file_lexico_cli_src_modules_forms_forms_constants_ts
+  file_lexico_cli_src_modules_forms_forms_builder_guards_service_ts --> file_lexico_cli_src_modules_forms_forms_types_ts
+  file_lexico_cli_src_modules_forms_forms_builder_guards_service_unit_test_ts --> file_lexico_cli_src_modules_forms_forms_builder_guards_service_ts
+  file_lexico_cli_src_modules_forms_forms_builder_verb_service_ts --> file_lexico_cli_src_modules_forms_forms_builder_guards_service_ts
+  file_lexico_cli_src_modules_forms_forms_builder_verb_service_ts --> file_lexico_cli_src_modules_forms_forms_transient_words_service_ts
+  file_lexico_cli_src_modules_forms_forms_builder_verb_service_ts --> file_lexico_cli_src_modules_forms_forms_types_ts
+  file_lexico_cli_src_modules_forms_forms_builder_verb_service_unit_test_ts --> file_lexico_cli_src_modules_forms_forms_builder_guards_service_ts
+  file_lexico_cli_src_modules_forms_forms_builder_verb_service_unit_test_ts --> file_lexico_cli_src_modules_forms_forms_builder_verb_service_ts
+  file_lexico_cli_src_modules_forms_forms_builder_verb_service_unit_test_ts --> file_lexico_cli_src_modules_forms_forms_transient_words_service_ts
+  file_lexico_cli_src_modules_forms_forms_builder_service_ts --> file_lexico_cli_src_modules_forms_forms_builder_guards_service_ts
+  file_lexico_cli_src_modules_forms_forms_builder_service_ts --> file_lexico_cli_src_modules_forms_forms_builder_verb_service_ts
+  file_lexico_cli_src_modules_forms_forms_builder_service_ts --> file_lexico_cli_src_modules_forms_forms_transient_words_service_ts
+  file_lexico_cli_src_modules_forms_forms_builder_service_ts --> file_lexico_cli_src_modules_forms_forms_constants_ts
+  file_lexico_cli_src_modules_forms_forms_builder_service_ts --> file_lexico_cli_src_modules_forms_forms_types_ts
+  file_lexico_cli_src_modules_forms_forms_builder_service_unit_test_ts --> file_lexico_cli_src_modules_forms_forms_builder_guards_service_ts
+  file_lexico_cli_src_modules_forms_forms_builder_service_unit_test_ts --> file_lexico_cli_src_modules_forms_forms_builder_verb_service_ts
+  file_lexico_cli_src_modules_forms_forms_builder_service_unit_test_ts --> file_lexico_cli_src_modules_forms_forms_builder_service_ts
+  file_lexico_cli_src_modules_forms_forms_builder_service_unit_test_ts --> file_lexico_cli_src_modules_forms_forms_transient_words_service_ts
+  file_lexico_cli_src_modules_forms_forms_transient_words_service_unit_test_ts --> file_lexico_cli_src_modules_forms_forms_transient_words_service_ts
+  file_lexico_cli_src_modules_forms_forms_module_ts --> file_lexico_cli_src_modules_forms_forms_builder_guards_service_ts
+  file_lexico_cli_src_modules_forms_forms_module_ts --> file_lexico_cli_src_modules_forms_forms_builder_verb_service_ts
+  file_lexico_cli_src_modules_forms_forms_module_ts --> file_lexico_cli_src_modules_forms_forms_builder_service_ts
+  file_lexico_cli_src_modules_forms_forms_module_ts --> file_lexico_cli_src_modules_forms_forms_transient_words_service_ts
+  file_lexico_cli_src_modules_forms_forms_module_ts --> file_lexico_cli_src_modules_forms_forms_service_ts
+  file_lexico_cli_src_modules_forms_forms_module_ts --> file_lexico_cli_src_modules_words_words_module_ts
+  file_lexico_cli_src_modules_forms_forms_service_ts --> file_lexico_cli_src_modules_forms_forms_transient_words_service_ts
+  file_lexico_cli_src_modules_forms_forms_service_ts --> file_lexico_cli_src_modules_words_words_service_ts
+  file_lexico_cli_src_modules_forms_forms_service_unit_test_ts --> file_lexico_cli_src_modules_forms_forms_transient_words_service_ts
+  file_lexico_cli_src_modules_forms_forms_service_unit_test_ts --> file_lexico_cli_src_modules_forms_forms_service_ts
+  file_lexico_cli_src_modules_forms_forms_service_unit_test_ts --> file_lexico_cli_src_modules_words_words_service_ts
+  file_lexico_cli_src_modules_forms_forms_service_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_modules_latin_library_latin_library_command_unit_test_ts --> file_lexico_cli_src_modules_latin_library_latin_library_command_ts
+  file_lexico_cli_src_modules_latin_library_latin_library_command_unit_test_ts --> file_lexico_cli_testing_command_harness_ts
+  file_lexico_cli_src_modules_latin_library_latin_library_module_ts --> file_lexico_cli_src_modules_latin_library_latin_library_command_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_module_ts --> file_lexico_cli_src_modules_etymology_etymology_module_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_module_ts --> file_lexico_cli_src_modules_forms_forms_module_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_module_ts --> file_lexico_cli_src_modules_lexemes_lexemes_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_module_ts --> file_lexico_cli_src_modules_part_of_speech_part_of_speech_module_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_module_ts --> file_lexico_cli_src_modules_principal_parts_principal_parts_module_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_module_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_module_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_module_ts --> file_lexico_cli_src_modules_translations_translations_module_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_module_ts --> file_lexico_cli_src_modules_words_words_module_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_ts --> file_lexico_cli_src_modules_etymology_etymology_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_ts --> file_lexico_cli_src_modules_forms_forms_builder_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_ts --> file_lexico_cli_src_modules_forms_forms_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_ts --> file_lexico_cli_src_modules_lexemes_lexemes_constants_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_constants_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_types_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_ts --> file_lexico_cli_src_modules_part_of_speech_part_of_speech_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_ts --> file_lexico_cli_src_modules_principal_parts_principal_parts_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_ts --> file_lexico_cli_src_modules_translations_translations_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_ts --> file_lexico_cli_src_modules_words_words_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_cli_src_modules_etymology_etymology_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_cli_src_modules_forms_forms_builder_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_cli_src_modules_forms_forms_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_cli_src_modules_lexemes_lexemes_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_types_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_cli_src_modules_part_of_speech_part_of_speech_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_cli_src_modules_principal_parts_principal_parts_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_cli_src_modules_translations_translations_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_cli_src_modules_words_words_service_ts
+  file_lexico_cli_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_cli_src_modules_dictionary_dictionary_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_cli_src_modules_latin_library_latin_library_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_types_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_cli_src_modules_library_library_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_cli_src_modules_literature_literature_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_cli_src_modules_perseus_perseus_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_cli_src_modules_wiktionary_wiktionary_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_cli_src_modules_dictionary_dictionary_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_cli_src_modules_latin_library_latin_library_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_types_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_cli_src_modules_library_library_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_cli_src_modules_literature_literature_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_cli_src_modules_perseus_perseus_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_cli_src_modules_wiktionary_wiktionary_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_cli_src_modules_clear_clear_module_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_cli_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_module_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_cli_src_modules_dictionary_dictionary_module_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_cli_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_module_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_cli_src_modules_latin_library_latin_library_module_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_command_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_cli_src_modules_library_library_module_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_cli_src_modules_literature_literature_module_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_cli_src_modules_manual_manual_module_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_cli_src_modules_perseus_perseus_module_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_cli_src_modules_wiktionary_wiktionary_module_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_cli_src_modules_words_words_module_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_utilities_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_constants_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_utilities_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_types_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_utilities_unit_test_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_constants_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_utilities_unit_test_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_utilities_ts
+  file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_utilities_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_modules_library_library_command_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_types_ts
+  file_lexico_cli_src_modules_library_library_command_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_utilities_ts
+  file_lexico_cli_src_modules_library_library_command_ts --> file_lexico_cli_src_modules_library_library_constants_ts
+  file_lexico_cli_src_modules_library_library_command_ts --> file_lexico_cli_src_modules_library_library_types_ts
+  file_lexico_cli_src_modules_library_library_command_unit_test_ts --> file_lexico_cli_src_modules_library_library_command_ts
+  file_lexico_cli_src_modules_library_library_command_unit_test_ts --> file_lexico_cli_src_modules_library_library_constants_ts
+  file_lexico_cli_src_modules_library_library_command_unit_test_ts --> file_lexico_cli_src_modules_library_library_types_ts
+  file_lexico_cli_src_modules_library_library_command_unit_test_ts --> file_lexico_cli_testing_command_harness_ts
+  file_lexico_cli_src_modules_library_library_command_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_modules_library_library_module_ts --> file_lexico_cli_src_modules_library_library_command_ts
+  file_lexico_cli_src_modules_library_library_module_ts --> file_lexico_cli_src_modules_library_library_constants_ts
+  file_lexico_cli_src_modules_library_library_module_ts --> file_lexico_cli_src_modules_library_library_types_ts
+  file_lexico_cli_src_modules_library_library_module_ts --> file_lexico_cli_src_modules_library_providers_corpus_scriptorum_ecclesiasticorum_latinorum_library_provider_ts
+  file_lexico_cli_src_modules_library_library_module_ts --> file_lexico_cli_src_modules_library_providers_epigraphik_datenbank_clauss_slaby_library_provider_ts
+  file_lexico_cli_src_modules_library_library_module_ts --> file_lexico_cli_src_modules_library_providers_latin_library_builder_ts
+  file_lexico_cli_src_modules_library_library_module_ts --> file_lexico_cli_src_modules_library_providers_latin_library_provider_ts
+  file_lexico_cli_src_modules_library_library_module_ts --> file_lexico_cli_src_modules_library_providers_perseus_library_text_extraction_provider_ts
+  file_lexico_cli_src_modules_library_library_module_ts --> file_lexico_cli_src_modules_library_providers_perseus_library_provider_ts
+  file_lexico_cli_src_modules_library_library_types_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_types_ts
+  file_lexico_cli_src_modules_library_library_utilities_unit_test_ts --> file_lexico_cli_src_modules_library_library_utilities_ts
+  file_lexico_cli_src_modules_library_providers_corpus_scriptorum_ecclesiasticorum_latinorum_library_provider_ts --> file_lexico_cli_src_modules_library_library_utilities_ts
+  file_lexico_cli_src_modules_library_providers_corpus_scriptorum_ecclesiasticorum_latinorum_library_provider_unit_test_ts --> file_lexico_cli_src_modules_library_providers_corpus_scriptorum_ecclesiasticorum_latinorum_library_provider_ts
+  file_lexico_cli_src_modules_library_providers_epigraphik_datenbank_clauss_slaby_library_provider_unit_test_ts --> file_lexico_cli_src_modules_library_providers_epigraphik_datenbank_clauss_slaby_library_provider_ts
+  file_lexico_cli_src_modules_library_providers_latin_library_builder_ts --> file_lexico_cli_src_modules_library_library_utilities_ts
+  file_lexico_cli_src_modules_library_providers_latin_library_builder_ts --> file_lexico_cli_src_modules_literature_literature_constants_ts
+  file_lexico_cli_src_modules_library_providers_latin_library_builder_unit_test_ts --> file_lexico_cli_src_modules_library_providers_latin_library_builder_ts
+  file_lexico_cli_src_modules_library_providers_latin_library_provider_ts --> file_lexico_cli_src_modules_library_library_utilities_ts
+  file_lexico_cli_src_modules_library_providers_latin_library_provider_ts --> file_lexico_cli_src_modules_library_providers_latin_library_builder_ts
+  file_lexico_cli_src_modules_library_providers_latin_library_provider_unit_test_ts --> file_lexico_cli_src_modules_library_providers_latin_library_builder_ts
+  file_lexico_cli_src_modules_library_providers_latin_library_provider_unit_test_ts --> file_lexico_cli_src_modules_library_providers_latin_library_provider_ts
+  file_lexico_cli_src_modules_library_providers_perseus_library_text_extraction_provider_ts --> file_lexico_cli_src_modules_library_library_utilities_ts
+  file_lexico_cli_src_modules_library_providers_perseus_library_text_extraction_provider_unit_test_ts --> file_lexico_cli_src_modules_library_providers_perseus_library_text_extraction_provider_ts
+  file_lexico_cli_src_modules_library_providers_perseus_library_provider_ts --> file_lexico_cli_src_modules_library_providers_perseus_library_text_extraction_provider_ts
+  file_lexico_cli_src_modules_library_providers_perseus_library_provider_unit_test_ts --> file_lexico_cli_src_modules_library_providers_perseus_library_text_extraction_provider_ts
+  file_lexico_cli_src_modules_library_providers_perseus_library_provider_unit_test_ts --> file_lexico_cli_src_modules_library_providers_perseus_library_provider_ts
+  file_lexico_cli_src_modules_literature_literature_library_scan_service_ts --> file_lexico_cli_src_modules_literature_literature_types_ts
+  file_lexico_cli_src_modules_literature_literature_library_scan_service_unit_test_ts --> file_lexico_cli_src_modules_literature_literature_library_scan_service_ts
+  file_lexico_cli_src_modules_literature_literature_text_ingestion_service_ts --> file_lexico_cli_src_modules_literature_literature_types_ts
+  file_lexico_cli_src_modules_literature_literature_text_ingestion_service_unit_test_ts --> file_lexico_cli_src_modules_literature_literature_text_ingestion_service_ts
+  file_lexico_cli_src_modules_literature_literature_text_ingestion_service_unit_test_ts --> file_lexico_cli_src_modules_literature_literature_types_ts
+  file_lexico_cli_src_modules_literature_literature_word_normalization_service_ts --> file_lexico_cli_src_modules_literature_literature_constants_ts
+  file_lexico_cli_src_modules_literature_literature_word_normalization_service_unit_test_ts --> file_lexico_cli_src_modules_literature_literature_word_normalization_service_ts
+  file_lexico_cli_src_modules_literature_literature_command_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_types_ts
+  file_lexico_cli_src_modules_literature_literature_command_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_utilities_ts
+  file_lexico_cli_src_modules_literature_literature_command_ts --> file_lexico_cli_src_modules_literature_literature_service_ts
+  file_lexico_cli_src_modules_literature_literature_command_ts --> file_lexico_cli_src_modules_literature_literature_types_ts
+  file_lexico_cli_src_modules_literature_literature_command_unit_test_ts --> file_lexico_cli_src_modules_literature_literature_command_ts
+  file_lexico_cli_src_modules_literature_literature_command_unit_test_ts --> file_lexico_cli_src_modules_literature_literature_service_ts
+  file_lexico_cli_src_modules_literature_literature_command_unit_test_ts --> file_lexico_cli_src_modules_literature_literature_types_ts
+  file_lexico_cli_src_modules_literature_literature_command_unit_test_ts --> file_lexico_cli_testing_command_harness_ts
+  file_lexico_cli_src_modules_literature_literature_command_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_modules_literature_literature_module_ts --> file_lexico_cli_src_modules_literature_literature_library_scan_service_ts
+  file_lexico_cli_src_modules_literature_literature_module_ts --> file_lexico_cli_src_modules_literature_literature_text_ingestion_service_ts
+  file_lexico_cli_src_modules_literature_literature_module_ts --> file_lexico_cli_src_modules_literature_literature_word_normalization_service_ts
+  file_lexico_cli_src_modules_literature_literature_module_ts --> file_lexico_cli_src_modules_literature_literature_command_ts
+  file_lexico_cli_src_modules_literature_literature_module_ts --> file_lexico_cli_src_modules_literature_literature_service_ts
+  file_lexico_cli_src_modules_literature_literature_module_ts --> file_lexico_cli_src_modules_numerals_numerals_module_ts
+  file_lexico_cli_src_modules_literature_literature_service_ts --> file_lexico_cli_src_modules_literature_literature_library_scan_service_ts
+  file_lexico_cli_src_modules_literature_literature_service_ts --> file_lexico_cli_src_modules_literature_literature_text_ingestion_service_ts
+  file_lexico_cli_src_modules_literature_literature_service_ts --> file_lexico_cli_src_modules_literature_literature_word_normalization_service_ts
+  file_lexico_cli_src_modules_literature_literature_service_ts --> file_lexico_cli_src_modules_literature_literature_constants_ts
+  file_lexico_cli_src_modules_literature_literature_service_ts --> file_lexico_cli_src_modules_literature_literature_types_ts
+  file_lexico_cli_src_modules_literature_literature_service_ts --> file_lexico_cli_src_modules_numerals_numerals_service_ts
+  file_lexico_cli_src_modules_literature_literature_service_unit_test_ts --> file_lexico_cli_src_modules_literature_literature_library_scan_service_ts
+  file_lexico_cli_src_modules_literature_literature_service_unit_test_ts --> file_lexico_cli_src_modules_literature_literature_text_ingestion_service_ts
+  file_lexico_cli_src_modules_literature_literature_service_unit_test_ts --> file_lexico_cli_src_modules_literature_literature_word_normalization_service_ts
+  file_lexico_cli_src_modules_literature_literature_service_unit_test_ts --> file_lexico_cli_src_modules_literature_literature_service_ts
+  file_lexico_cli_src_modules_literature_literature_service_unit_test_ts --> file_lexico_cli_src_modules_literature_literature_types_ts
+  file_lexico_cli_src_modules_literature_literature_service_unit_test_ts --> file_lexico_cli_src_modules_numerals_numerals_service_ts
+  file_lexico_cli_src_modules_literature_literature_service_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_modules_literature_literature_types_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_types_ts
+  file_lexico_cli_src_modules_manual_manual_constants_ts --> file_lexico_cli_src_modules_manual_manual_types_ts
+  file_lexico_cli_src_modules_manual_manual_module_ts --> file_lexico_cli_src_modules_manual_manual_service_ts
+  file_lexico_cli_src_modules_manual_manual_module_ts --> file_lexico_cli_src_modules_numerals_numerals_module_ts
+  file_lexico_cli_src_modules_manual_manual_module_ts --> file_lexico_cli_src_modules_words_words_module_ts
+  file_lexico_cli_src_modules_manual_manual_service_ts --> file_lexico_cli_src_modules_manual_manual_constants_ts
+  file_lexico_cli_src_modules_manual_manual_service_ts --> file_lexico_cli_src_modules_manual_manual_types_ts
+  file_lexico_cli_src_modules_manual_manual_service_ts --> file_lexico_cli_src_modules_manual_manual_utilities_ts
+  file_lexico_cli_src_modules_manual_manual_service_ts --> file_lexico_cli_src_modules_numerals_numerals_service_ts
+  file_lexico_cli_src_modules_manual_manual_service_ts --> file_lexico_cli_src_modules_words_words_service_ts
+  file_lexico_cli_src_modules_manual_manual_service_unit_test_ts --> file_lexico_cli_src_modules_manual_manual_constants_ts
+  file_lexico_cli_src_modules_manual_manual_service_unit_test_ts --> file_lexico_cli_src_modules_manual_manual_service_ts
+  file_lexico_cli_src_modules_manual_manual_service_unit_test_ts --> file_lexico_cli_src_modules_manual_manual_types_ts
+  file_lexico_cli_src_modules_manual_manual_service_unit_test_ts --> file_lexico_cli_src_modules_manual_manual_utilities_ts
+  file_lexico_cli_src_modules_manual_manual_service_unit_test_ts --> file_lexico_cli_src_modules_numerals_numerals_service_ts
+  file_lexico_cli_src_modules_manual_manual_service_unit_test_ts --> file_lexico_cli_src_modules_words_words_service_ts
+  file_lexico_cli_src_modules_manual_manual_service_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_modules_numerals_numerals_module_ts --> file_lexico_cli_src_modules_numerals_numerals_service_ts
+  file_lexico_cli_src_modules_numerals_numerals_service_ts --> file_lexico_cli_src_modules_numerals_numerals_constants_ts
+  file_lexico_cli_src_modules_numerals_numerals_service_unit_test_ts --> file_lexico_cli_src_modules_numerals_numerals_service_ts
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_forms_service_ts --> file_lexico_cli_src_modules_part_of_speech_part_of_speech_constants_ts
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_forms_service_unit_test_ts --> file_lexico_cli_src_modules_part_of_speech_part_of_speech_forms_service_ts
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_forms_service_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_module_ts --> file_lexico_cli_src_modules_part_of_speech_part_of_speech_forms_service_ts
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_module_ts --> file_lexico_cli_src_modules_part_of_speech_part_of_speech_service_ts
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_service_ts --> file_lexico_cli_src_modules_part_of_speech_part_of_speech_forms_service_ts
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_service_ts --> file_lexico_cli_src_modules_part_of_speech_part_of_speech_constants_ts
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_service_unit_test_ts --> file_lexico_cli_src_modules_part_of_speech_part_of_speech_forms_service_ts
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_service_unit_test_ts --> file_lexico_cli_src_modules_part_of_speech_part_of_speech_module_ts
+  file_lexico_cli_src_modules_part_of_speech_part_of_speech_service_unit_test_ts --> file_lexico_cli_src_modules_part_of_speech_part_of_speech_service_ts
+  file_lexico_cli_src_modules_perseus_perseus_command_ts --> file_lexico_cli_src_modules_perseus_perseus_constants_ts
+  file_lexico_cli_src_modules_perseus_perseus_command_ts --> file_lexico_cli_src_modules_perseus_perseus_types_ts
+  file_lexico_cli_src_modules_perseus_perseus_command_unit_test_ts --> file_lexico_cli_src_modules_perseus_perseus_command_ts
+  file_lexico_cli_src_modules_perseus_perseus_command_unit_test_ts --> file_lexico_cli_testing_command_harness_ts
+  file_lexico_cli_src_modules_perseus_perseus_module_ts --> file_lexico_cli_src_modules_perseus_perseus_command_ts
+  file_lexico_cli_src_modules_principal_parts_principal_parts_module_ts --> file_lexico_cli_src_modules_principal_parts_principal_parts_service_ts
+  file_lexico_cli_src_modules_principal_parts_principal_parts_service_unit_test_ts --> file_lexico_cli_src_modules_principal_parts_principal_parts_service_ts
+  file_lexico_cli_src_modules_principal_parts_principal_parts_service_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_classical_service_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_constants_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_classical_service_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_types_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_classical_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_classical_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_classifier_service_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_classical_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_classifier_service_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_classifier_service_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_types_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_classifier_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_classical_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_classifier_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_classifier_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_classifier_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_classifier_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_types_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_phonemes_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_constants_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_types_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_ecclesiastical_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_ecclesiastical_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_phonemes_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_ecclesiastical_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_types_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_phonemes_service_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_types_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_phonemes_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_phonemes_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_constants_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_types_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_module_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_classical_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_module_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_classifier_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_module_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_module_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_phonemes_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_module_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_service_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_classifier_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_service_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_constants_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_service_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_types_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_classical_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_classifier_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_phonemes_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_service_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_service_unit_test_ts --> file_lexico_cli_src_modules_pronunciation_pronunciation_types_ts
+  file_lexico_cli_src_modules_pronunciation_pronunciation_service_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_modules_translations_translations_module_ts --> file_lexico_cli_src_modules_translations_translations_service_ts
+  file_lexico_cli_src_modules_translations_translations_service_ts --> file_lexico_cli_src_modules_translations_translations_constants_ts
+  file_lexico_cli_src_modules_translations_translations_service_unit_test_ts --> file_lexico_cli_src_modules_translations_translations_service_ts
+  file_lexico_cli_src_modules_translations_translations_service_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_modules_wiktionary_wiktionary_command_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_types_ts
+  file_lexico_cli_src_modules_wiktionary_wiktionary_command_ts --> file_lexico_cli_src_modules_wiktionary_wiktionary_constants_ts
+  file_lexico_cli_src_modules_wiktionary_wiktionary_command_ts --> file_lexico_cli_src_modules_wiktionary_wiktionary_types_ts
+  file_lexico_cli_src_modules_wiktionary_wiktionary_command_unit_test_ts --> file_lexico_cli_src_modules_wiktionary_wiktionary_command_ts
+  file_lexico_cli_src_modules_wiktionary_wiktionary_command_unit_test_ts --> file_lexico_cli_testing_command_harness_ts
+  file_lexico_cli_src_modules_wiktionary_wiktionary_module_ts --> file_lexico_cli_src_modules_wiktionary_wiktionary_command_ts
+  file_lexico_cli_src_modules_wiktionary_wiktionary_types_ts --> file_lexico_cli_src_modules_wiktionary_wiktionary_constants_ts
+  file_lexico_cli_src_modules_words_words_module_ts --> file_lexico_cli_src_modules_words_words_service_ts
+  file_lexico_cli_src_modules_words_words_service_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_constants_ts
+  file_lexico_cli_src_modules_words_words_service_unit_test_ts --> file_lexico_cli_src_modules_lexico_ingestion_lexico_ingestion_constants_ts
+  file_lexico_cli_src_modules_words_words_service_unit_test_ts --> file_lexico_cli_src_modules_words_words_service_ts
+  file_lexico_cli_src_modules_words_words_service_unit_test_ts --> file_lexico_cli_testing_mocks_ts
+  file_lexico_cli_src_repl_ts --> file_lexico_cli_src_main_module_ts
   file_lexico_entities_src_modules_entities_dictionary_form_AdjectivalForm_entity_ts --> file_lexico_entities_src_modules_entities_dictionary_form_Form_entity_ts
   file_lexico_entities_src_modules_entities_dictionary_form_AdjectivalForm_entity_ts --> file_lexico_entities_src_modules_lexico_database_lexico_database_constants_ts
   file_lexico_entities_src_modules_entities_dictionary_form_AdverbForm_entity_ts --> file_lexico_entities_src_modules_entities_dictionary_form_Form_entity_ts
@@ -7989,382 +8292,79 @@ graph LR
   file_lexico_entities_src_modules_lexico_database_lexico_database_module_ts --> file_lexico_entities_src_modules_lexico_database_lexico_database_constants_ts
   file_lexico_entities_src_modules_lexico_database_lexico_database_module_ts --> file_lexico_entities_src_modules_lexico_database_lexico_database_service_ts
   file_lexico_entities_src_modules_lexico_database_lexico_database_service_unit_test_ts --> file_lexico_entities_src_modules_lexico_database_lexico_database_service_ts
-  file_lexico_ingestion_src_main_end_to_end_test_ts --> file_lexico_ingestion_src_constants_ts
-  file_lexico_ingestion_src_main_module_ts --> file_lexico_ingestion_src_constants_ts
-  file_lexico_ingestion_src_main_module_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_module_ts
-  file_lexico_ingestion_src_main_ts --> file_lexico_ingestion_src_main_module_ts
-  file_lexico_ingestion_src_modules_clear_clear_command_ts --> file_lexico_ingestion_src_modules_clear_clear_types_ts
-  file_lexico_ingestion_src_modules_clear_clear_command_unit_test_ts --> file_lexico_ingestion_src_modules_clear_clear_command_ts
-  file_lexico_ingestion_src_modules_clear_clear_command_unit_test_ts --> file_lexico_ingestion_testing_command_harness_ts
-  file_lexico_ingestion_src_modules_clear_clear_command_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_modules_clear_clear_module_ts --> file_lexico_ingestion_src_modules_clear_clear_command_ts
-  file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_ts --> file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_constants_ts
-  file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_ts --> file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_types_ts
-  file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_unit_test_ts --> file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_ts
-  file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_unit_test_ts --> file_lexico_ingestion_testing_command_harness_ts
-  file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_module_ts --> file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_ts --> file_lexico_ingestion_src_modules_dictionary_dictionary_types_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_ts --> file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_types_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_utilities_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_ts --> file_lexico_ingestion_src_modules_manual_manual_service_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_ts --> file_lexico_ingestion_src_modules_translations_translations_service_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_unit_test_ts --> file_lexico_ingestion_src_modules_dictionary_dictionary_command_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_unit_test_ts --> file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_unit_test_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_types_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_unit_test_ts --> file_lexico_ingestion_src_modules_manual_manual_service_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_unit_test_ts --> file_lexico_ingestion_src_modules_translations_translations_service_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_unit_test_ts --> file_lexico_ingestion_testing_command_harness_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_command_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_module_ts --> file_lexico_ingestion_src_modules_dictionary_dictionary_command_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_module_ts --> file_lexico_ingestion_src_modules_forms_forms_module_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_module_ts --> file_lexico_ingestion_src_modules_lexemes_lexemes_module_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_module_ts --> file_lexico_ingestion_src_modules_manual_manual_module_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_module_ts --> file_lexico_ingestion_src_modules_principal_parts_principal_parts_module_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_module_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_module_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_module_ts --> file_lexico_ingestion_src_modules_translations_translations_module_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_module_ts --> file_lexico_ingestion_src_modules_words_words_module_ts
-  file_lexico_ingestion_src_modules_dictionary_dictionary_types_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_types_ts
-  file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_ts --> file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_constants_ts
-  file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_ts --> file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_types_ts
-  file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_unit_test_ts --> file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_ts
-  file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_unit_test_ts --> file_lexico_ingestion_testing_command_harness_ts
-  file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_module_ts --> file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_ts
-  file_lexico_ingestion_src_modules_etymology_etymology_module_ts --> file_lexico_ingestion_src_modules_etymology_etymology_service_ts
-  file_lexico_ingestion_src_modules_etymology_etymology_service_unit_test_ts --> file_lexico_ingestion_src_modules_etymology_etymology_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_guards_service_ts --> file_lexico_ingestion_src_modules_forms_forms_constants_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_guards_service_ts --> file_lexico_ingestion_src_modules_forms_forms_types_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_guards_service_unit_test_ts --> file_lexico_ingestion_src_modules_forms_forms_builder_guards_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_verb_service_ts --> file_lexico_ingestion_src_modules_forms_forms_builder_guards_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_verb_service_ts --> file_lexico_ingestion_src_modules_forms_forms_transient_words_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_verb_service_ts --> file_lexico_ingestion_src_modules_forms_forms_types_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_verb_service_unit_test_ts --> file_lexico_ingestion_src_modules_forms_forms_builder_guards_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_verb_service_unit_test_ts --> file_lexico_ingestion_src_modules_forms_forms_builder_verb_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_verb_service_unit_test_ts --> file_lexico_ingestion_src_modules_forms_forms_transient_words_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_service_ts --> file_lexico_ingestion_src_modules_forms_forms_builder_guards_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_service_ts --> file_lexico_ingestion_src_modules_forms_forms_builder_verb_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_service_ts --> file_lexico_ingestion_src_modules_forms_forms_transient_words_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_service_ts --> file_lexico_ingestion_src_modules_forms_forms_constants_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_service_ts --> file_lexico_ingestion_src_modules_forms_forms_types_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_service_unit_test_ts --> file_lexico_ingestion_src_modules_forms_forms_builder_guards_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_service_unit_test_ts --> file_lexico_ingestion_src_modules_forms_forms_builder_verb_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_service_unit_test_ts --> file_lexico_ingestion_src_modules_forms_forms_builder_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_builder_service_unit_test_ts --> file_lexico_ingestion_src_modules_forms_forms_transient_words_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_transient_words_service_unit_test_ts --> file_lexico_ingestion_src_modules_forms_forms_transient_words_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_module_ts --> file_lexico_ingestion_src_modules_forms_forms_builder_guards_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_module_ts --> file_lexico_ingestion_src_modules_forms_forms_builder_verb_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_module_ts --> file_lexico_ingestion_src_modules_forms_forms_builder_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_module_ts --> file_lexico_ingestion_src_modules_forms_forms_transient_words_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_module_ts --> file_lexico_ingestion_src_modules_forms_forms_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_module_ts --> file_lexico_ingestion_src_modules_words_words_module_ts
-  file_lexico_ingestion_src_modules_forms_forms_service_ts --> file_lexico_ingestion_src_modules_forms_forms_transient_words_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_service_ts --> file_lexico_ingestion_src_modules_words_words_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_service_unit_test_ts --> file_lexico_ingestion_src_modules_forms_forms_transient_words_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_service_unit_test_ts --> file_lexico_ingestion_src_modules_forms_forms_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_service_unit_test_ts --> file_lexico_ingestion_src_modules_words_words_service_ts
-  file_lexico_ingestion_src_modules_forms_forms_service_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_modules_latin_library_latin_library_command_unit_test_ts --> file_lexico_ingestion_src_modules_latin_library_latin_library_command_ts
-  file_lexico_ingestion_src_modules_latin_library_latin_library_command_unit_test_ts --> file_lexico_ingestion_testing_command_harness_ts
-  file_lexico_ingestion_src_modules_latin_library_latin_library_module_ts --> file_lexico_ingestion_src_modules_latin_library_latin_library_command_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_module_ts --> file_lexico_ingestion_src_modules_etymology_etymology_module_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_module_ts --> file_lexico_ingestion_src_modules_forms_forms_module_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_module_ts --> file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_module_ts --> file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_module_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_module_ts --> file_lexico_ingestion_src_modules_principal_parts_principal_parts_module_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_module_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_module_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_module_ts --> file_lexico_ingestion_src_modules_translations_translations_module_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_module_ts --> file_lexico_ingestion_src_modules_words_words_module_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts --> file_lexico_ingestion_src_modules_etymology_etymology_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts --> file_lexico_ingestion_src_modules_forms_forms_builder_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts --> file_lexico_ingestion_src_modules_forms_forms_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts --> file_lexico_ingestion_src_modules_lexemes_lexemes_constants_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_constants_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_types_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts --> file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts --> file_lexico_ingestion_src_modules_principal_parts_principal_parts_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts --> file_lexico_ingestion_src_modules_translations_translations_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts --> file_lexico_ingestion_src_modules_words_words_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_ingestion_src_modules_etymology_etymology_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_ingestion_src_modules_forms_forms_builder_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_ingestion_src_modules_forms_forms_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_ingestion_src_modules_lexemes_lexemes_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_types_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_ingestion_src_modules_principal_parts_principal_parts_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_ingestion_src_modules_translations_translations_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_ingestion_src_modules_words_words_service_ts
-  file_lexico_ingestion_src_modules_lexemes_lexemes_service_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_ingestion_src_modules_dictionary_dictionary_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_ingestion_src_modules_latin_library_latin_library_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_types_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_ingestion_src_modules_library_library_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_ingestion_src_modules_literature_literature_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_ingestion_src_modules_perseus_perseus_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_ts --> file_lexico_ingestion_src_modules_wiktionary_wiktionary_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_ingestion_src_modules_dictionary_dictionary_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_ingestion_src_modules_latin_library_latin_library_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_types_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_ingestion_src_modules_library_library_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_ingestion_src_modules_literature_literature_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_ingestion_src_modules_perseus_perseus_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_ingestion_src_modules_wiktionary_wiktionary_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_ingestion_src_modules_clear_clear_module_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_ingestion_src_modules_corpus_scriptorum_ecclesiasticorum_latinorum_corpus_scriptorum_ecclesiasticorum_latinorum_module_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_ingestion_src_modules_dictionary_dictionary_module_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_ingestion_src_modules_epigraphik_datenbank_clauss_slaby_epigraphik_datenbank_clauss_slaby_module_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_ingestion_src_modules_latin_library_latin_library_module_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_command_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_ingestion_src_modules_library_library_module_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_ingestion_src_modules_literature_literature_module_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_ingestion_src_modules_manual_manual_module_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_ingestion_src_modules_perseus_perseus_module_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_ingestion_src_modules_wiktionary_wiktionary_module_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_module_ts --> file_lexico_ingestion_src_modules_words_words_module_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_utilities_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_constants_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_utilities_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_types_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_utilities_unit_test_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_constants_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_utilities_unit_test_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_utilities_ts
-  file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_utilities_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_modules_library_library_command_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_types_ts
-  file_lexico_ingestion_src_modules_library_library_command_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_utilities_ts
-  file_lexico_ingestion_src_modules_library_library_command_ts --> file_lexico_ingestion_src_modules_library_library_constants_ts
-  file_lexico_ingestion_src_modules_library_library_command_ts --> file_lexico_ingestion_src_modules_library_library_types_ts
-  file_lexico_ingestion_src_modules_library_library_command_unit_test_ts --> file_lexico_ingestion_src_modules_library_library_command_ts
-  file_lexico_ingestion_src_modules_library_library_command_unit_test_ts --> file_lexico_ingestion_src_modules_library_library_constants_ts
-  file_lexico_ingestion_src_modules_library_library_command_unit_test_ts --> file_lexico_ingestion_src_modules_library_library_types_ts
-  file_lexico_ingestion_src_modules_library_library_command_unit_test_ts --> file_lexico_ingestion_testing_command_harness_ts
-  file_lexico_ingestion_src_modules_library_library_command_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_modules_library_library_module_ts --> file_lexico_ingestion_src_modules_library_library_command_ts
-  file_lexico_ingestion_src_modules_library_library_module_ts --> file_lexico_ingestion_src_modules_library_library_constants_ts
-  file_lexico_ingestion_src_modules_library_library_module_ts --> file_lexico_ingestion_src_modules_library_library_types_ts
-  file_lexico_ingestion_src_modules_library_library_module_ts --> file_lexico_ingestion_src_modules_library_providers_corpus_scriptorum_ecclesiasticorum_latinorum_library_provider_ts
-  file_lexico_ingestion_src_modules_library_library_module_ts --> file_lexico_ingestion_src_modules_library_providers_epigraphik_datenbank_clauss_slaby_library_provider_ts
-  file_lexico_ingestion_src_modules_library_library_module_ts --> file_lexico_ingestion_src_modules_library_providers_latin_library_builder_ts
-  file_lexico_ingestion_src_modules_library_library_module_ts --> file_lexico_ingestion_src_modules_library_providers_latin_library_provider_ts
-  file_lexico_ingestion_src_modules_library_library_module_ts --> file_lexico_ingestion_src_modules_library_providers_perseus_library_text_extraction_provider_ts
-  file_lexico_ingestion_src_modules_library_library_module_ts --> file_lexico_ingestion_src_modules_library_providers_perseus_library_provider_ts
-  file_lexico_ingestion_src_modules_library_library_types_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_types_ts
-  file_lexico_ingestion_src_modules_library_library_utilities_unit_test_ts --> file_lexico_ingestion_src_modules_library_library_utilities_ts
-  file_lexico_ingestion_src_modules_library_providers_corpus_scriptorum_ecclesiasticorum_latinorum_library_provider_ts --> file_lexico_ingestion_src_modules_library_library_utilities_ts
-  file_lexico_ingestion_src_modules_library_providers_corpus_scriptorum_ecclesiasticorum_latinorum_library_provider_unit_test_ts --> file_lexico_ingestion_src_modules_library_providers_corpus_scriptorum_ecclesiasticorum_latinorum_library_provider_ts
-  file_lexico_ingestion_src_modules_library_providers_epigraphik_datenbank_clauss_slaby_library_provider_unit_test_ts --> file_lexico_ingestion_src_modules_library_providers_epigraphik_datenbank_clauss_slaby_library_provider_ts
-  file_lexico_ingestion_src_modules_library_providers_latin_library_builder_ts --> file_lexico_ingestion_src_modules_library_library_utilities_ts
-  file_lexico_ingestion_src_modules_library_providers_latin_library_builder_ts --> file_lexico_ingestion_src_modules_literature_literature_constants_ts
-  file_lexico_ingestion_src_modules_library_providers_latin_library_builder_unit_test_ts --> file_lexico_ingestion_src_modules_library_providers_latin_library_builder_ts
-  file_lexico_ingestion_src_modules_library_providers_latin_library_provider_ts --> file_lexico_ingestion_src_modules_library_library_utilities_ts
-  file_lexico_ingestion_src_modules_library_providers_latin_library_provider_ts --> file_lexico_ingestion_src_modules_library_providers_latin_library_builder_ts
-  file_lexico_ingestion_src_modules_library_providers_latin_library_provider_unit_test_ts --> file_lexico_ingestion_src_modules_library_providers_latin_library_builder_ts
-  file_lexico_ingestion_src_modules_library_providers_latin_library_provider_unit_test_ts --> file_lexico_ingestion_src_modules_library_providers_latin_library_provider_ts
-  file_lexico_ingestion_src_modules_library_providers_perseus_library_text_extraction_provider_ts --> file_lexico_ingestion_src_modules_library_library_utilities_ts
-  file_lexico_ingestion_src_modules_library_providers_perseus_library_text_extraction_provider_unit_test_ts --> file_lexico_ingestion_src_modules_library_providers_perseus_library_text_extraction_provider_ts
-  file_lexico_ingestion_src_modules_library_providers_perseus_library_provider_ts --> file_lexico_ingestion_src_modules_library_providers_perseus_library_text_extraction_provider_ts
-  file_lexico_ingestion_src_modules_library_providers_perseus_library_provider_unit_test_ts --> file_lexico_ingestion_src_modules_library_providers_perseus_library_text_extraction_provider_ts
-  file_lexico_ingestion_src_modules_library_providers_perseus_library_provider_unit_test_ts --> file_lexico_ingestion_src_modules_library_providers_perseus_library_provider_ts
-  file_lexico_ingestion_src_modules_literature_literature_library_scan_service_ts --> file_lexico_ingestion_src_modules_literature_literature_types_ts
-  file_lexico_ingestion_src_modules_literature_literature_library_scan_service_unit_test_ts --> file_lexico_ingestion_src_modules_literature_literature_library_scan_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_text_ingestion_service_ts --> file_lexico_ingestion_src_modules_literature_literature_types_ts
-  file_lexico_ingestion_src_modules_literature_literature_text_ingestion_service_unit_test_ts --> file_lexico_ingestion_src_modules_literature_literature_text_ingestion_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_text_ingestion_service_unit_test_ts --> file_lexico_ingestion_src_modules_literature_literature_types_ts
-  file_lexico_ingestion_src_modules_literature_literature_word_normalization_service_ts --> file_lexico_ingestion_src_modules_literature_literature_constants_ts
-  file_lexico_ingestion_src_modules_literature_literature_word_normalization_service_unit_test_ts --> file_lexico_ingestion_src_modules_literature_literature_word_normalization_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_command_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_types_ts
-  file_lexico_ingestion_src_modules_literature_literature_command_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_utilities_ts
-  file_lexico_ingestion_src_modules_literature_literature_command_ts --> file_lexico_ingestion_src_modules_literature_literature_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_command_ts --> file_lexico_ingestion_src_modules_literature_literature_types_ts
-  file_lexico_ingestion_src_modules_literature_literature_command_unit_test_ts --> file_lexico_ingestion_src_modules_literature_literature_command_ts
-  file_lexico_ingestion_src_modules_literature_literature_command_unit_test_ts --> file_lexico_ingestion_src_modules_literature_literature_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_command_unit_test_ts --> file_lexico_ingestion_src_modules_literature_literature_types_ts
-  file_lexico_ingestion_src_modules_literature_literature_command_unit_test_ts --> file_lexico_ingestion_testing_command_harness_ts
-  file_lexico_ingestion_src_modules_literature_literature_command_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_modules_literature_literature_module_ts --> file_lexico_ingestion_src_modules_literature_literature_library_scan_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_module_ts --> file_lexico_ingestion_src_modules_literature_literature_text_ingestion_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_module_ts --> file_lexico_ingestion_src_modules_literature_literature_word_normalization_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_module_ts --> file_lexico_ingestion_src_modules_literature_literature_command_ts
-  file_lexico_ingestion_src_modules_literature_literature_module_ts --> file_lexico_ingestion_src_modules_literature_literature_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_module_ts --> file_lexico_ingestion_src_modules_numerals_numerals_module_ts
-  file_lexico_ingestion_src_modules_literature_literature_service_ts --> file_lexico_ingestion_src_modules_literature_literature_library_scan_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_service_ts --> file_lexico_ingestion_src_modules_literature_literature_text_ingestion_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_service_ts --> file_lexico_ingestion_src_modules_literature_literature_word_normalization_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_service_ts --> file_lexico_ingestion_src_modules_literature_literature_constants_ts
-  file_lexico_ingestion_src_modules_literature_literature_service_ts --> file_lexico_ingestion_src_modules_literature_literature_types_ts
-  file_lexico_ingestion_src_modules_literature_literature_service_ts --> file_lexico_ingestion_src_modules_numerals_numerals_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_service_unit_test_ts --> file_lexico_ingestion_src_modules_literature_literature_library_scan_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_service_unit_test_ts --> file_lexico_ingestion_src_modules_literature_literature_text_ingestion_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_service_unit_test_ts --> file_lexico_ingestion_src_modules_literature_literature_word_normalization_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_service_unit_test_ts --> file_lexico_ingestion_src_modules_literature_literature_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_service_unit_test_ts --> file_lexico_ingestion_src_modules_literature_literature_types_ts
-  file_lexico_ingestion_src_modules_literature_literature_service_unit_test_ts --> file_lexico_ingestion_src_modules_numerals_numerals_service_ts
-  file_lexico_ingestion_src_modules_literature_literature_service_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_modules_literature_literature_types_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_types_ts
-  file_lexico_ingestion_src_modules_manual_manual_constants_ts --> file_lexico_ingestion_src_modules_manual_manual_types_ts
-  file_lexico_ingestion_src_modules_manual_manual_module_ts --> file_lexico_ingestion_src_modules_manual_manual_service_ts
-  file_lexico_ingestion_src_modules_manual_manual_module_ts --> file_lexico_ingestion_src_modules_numerals_numerals_module_ts
-  file_lexico_ingestion_src_modules_manual_manual_module_ts --> file_lexico_ingestion_src_modules_words_words_module_ts
-  file_lexico_ingestion_src_modules_manual_manual_service_ts --> file_lexico_ingestion_src_modules_manual_manual_constants_ts
-  file_lexico_ingestion_src_modules_manual_manual_service_ts --> file_lexico_ingestion_src_modules_manual_manual_types_ts
-  file_lexico_ingestion_src_modules_manual_manual_service_ts --> file_lexico_ingestion_src_modules_manual_manual_utilities_ts
-  file_lexico_ingestion_src_modules_manual_manual_service_ts --> file_lexico_ingestion_src_modules_numerals_numerals_service_ts
-  file_lexico_ingestion_src_modules_manual_manual_service_ts --> file_lexico_ingestion_src_modules_words_words_service_ts
-  file_lexico_ingestion_src_modules_manual_manual_service_unit_test_ts --> file_lexico_ingestion_src_modules_manual_manual_constants_ts
-  file_lexico_ingestion_src_modules_manual_manual_service_unit_test_ts --> file_lexico_ingestion_src_modules_manual_manual_service_ts
-  file_lexico_ingestion_src_modules_manual_manual_service_unit_test_ts --> file_lexico_ingestion_src_modules_manual_manual_types_ts
-  file_lexico_ingestion_src_modules_manual_manual_service_unit_test_ts --> file_lexico_ingestion_src_modules_manual_manual_utilities_ts
-  file_lexico_ingestion_src_modules_manual_manual_service_unit_test_ts --> file_lexico_ingestion_src_modules_numerals_numerals_service_ts
-  file_lexico_ingestion_src_modules_manual_manual_service_unit_test_ts --> file_lexico_ingestion_src_modules_words_words_service_ts
-  file_lexico_ingestion_src_modules_manual_manual_service_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_modules_numerals_numerals_module_ts --> file_lexico_ingestion_src_modules_numerals_numerals_service_ts
-  file_lexico_ingestion_src_modules_numerals_numerals_service_ts --> file_lexico_ingestion_src_modules_numerals_numerals_constants_ts
-  file_lexico_ingestion_src_modules_numerals_numerals_service_unit_test_ts --> file_lexico_ingestion_src_modules_numerals_numerals_service_ts
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_forms_service_ts --> file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_constants_ts
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_forms_service_unit_test_ts --> file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_forms_service_ts
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_forms_service_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_module_ts --> file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_forms_service_ts
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_module_ts --> file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_service_ts
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_service_ts --> file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_forms_service_ts
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_service_ts --> file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_constants_ts
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_service_unit_test_ts --> file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_forms_service_ts
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_service_unit_test_ts --> file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_module_ts
-  file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_service_unit_test_ts --> file_lexico_ingestion_src_modules_part_of_speech_part_of_speech_service_ts
-  file_lexico_ingestion_src_modules_perseus_perseus_command_ts --> file_lexico_ingestion_src_modules_perseus_perseus_constants_ts
-  file_lexico_ingestion_src_modules_perseus_perseus_command_ts --> file_lexico_ingestion_src_modules_perseus_perseus_types_ts
-  file_lexico_ingestion_src_modules_perseus_perseus_command_unit_test_ts --> file_lexico_ingestion_src_modules_perseus_perseus_command_ts
-  file_lexico_ingestion_src_modules_perseus_perseus_command_unit_test_ts --> file_lexico_ingestion_testing_command_harness_ts
-  file_lexico_ingestion_src_modules_perseus_perseus_module_ts --> file_lexico_ingestion_src_modules_perseus_perseus_command_ts
-  file_lexico_ingestion_src_modules_principal_parts_principal_parts_module_ts --> file_lexico_ingestion_src_modules_principal_parts_principal_parts_service_ts
-  file_lexico_ingestion_src_modules_principal_parts_principal_parts_service_unit_test_ts --> file_lexico_ingestion_src_modules_principal_parts_principal_parts_service_ts
-  file_lexico_ingestion_src_modules_principal_parts_principal_parts_service_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_classical_service_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_constants_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_classical_service_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_types_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_classical_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_classical_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_classifier_service_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_classical_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_classifier_service_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_classifier_service_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_types_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_classifier_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_classical_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_classifier_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_classifier_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_classifier_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_classifier_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_types_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_phonemes_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_constants_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_types_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_ecclesiastical_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_ecclesiastical_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_phonemes_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_ecclesiastical_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_types_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_phonemes_service_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_types_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_phonemes_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_phonemes_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_constants_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_types_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_module_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_classical_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_module_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_classifier_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_module_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_module_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_phonemes_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_module_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_classifier_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_constants_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_types_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_classical_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_classifier_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_ecclesiastical_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_phonemes_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_unit_test_ts --> file_lexico_ingestion_src_modules_pronunciation_pronunciation_types_ts
-  file_lexico_ingestion_src_modules_pronunciation_pronunciation_service_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_modules_translations_translations_module_ts --> file_lexico_ingestion_src_modules_translations_translations_service_ts
-  file_lexico_ingestion_src_modules_translations_translations_service_ts --> file_lexico_ingestion_src_modules_translations_translations_constants_ts
-  file_lexico_ingestion_src_modules_translations_translations_service_unit_test_ts --> file_lexico_ingestion_src_modules_translations_translations_service_ts
-  file_lexico_ingestion_src_modules_translations_translations_service_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_modules_wiktionary_wiktionary_command_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_types_ts
-  file_lexico_ingestion_src_modules_wiktionary_wiktionary_command_ts --> file_lexico_ingestion_src_modules_wiktionary_wiktionary_constants_ts
-  file_lexico_ingestion_src_modules_wiktionary_wiktionary_command_ts --> file_lexico_ingestion_src_modules_wiktionary_wiktionary_types_ts
-  file_lexico_ingestion_src_modules_wiktionary_wiktionary_command_unit_test_ts --> file_lexico_ingestion_src_modules_wiktionary_wiktionary_command_ts
-  file_lexico_ingestion_src_modules_wiktionary_wiktionary_command_unit_test_ts --> file_lexico_ingestion_testing_command_harness_ts
-  file_lexico_ingestion_src_modules_wiktionary_wiktionary_module_ts --> file_lexico_ingestion_src_modules_wiktionary_wiktionary_command_ts
-  file_lexico_ingestion_src_modules_wiktionary_wiktionary_types_ts --> file_lexico_ingestion_src_modules_wiktionary_wiktionary_constants_ts
-  file_lexico_ingestion_src_modules_words_words_module_ts --> file_lexico_ingestion_src_modules_words_words_service_ts
-  file_lexico_ingestion_src_modules_words_words_service_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_constants_ts
-  file_lexico_ingestion_src_modules_words_words_service_unit_test_ts --> file_lexico_ingestion_src_modules_lexico_ingestion_lexico_ingestion_constants_ts
-  file_lexico_ingestion_src_modules_words_words_service_unit_test_ts --> file_lexico_ingestion_src_modules_words_words_service_ts
-  file_lexico_ingestion_src_modules_words_words_service_unit_test_ts --> file_lexico_ingestion_testing_mocks_ts
-  file_lexico_ingestion_src_repl_ts --> file_lexico_ingestion_src_main_module_ts
-  file_lexico_src_components_entry_adjective_forms_table_tsx --> file_lexico_src_components_entry_form_cell_tsx
-  file_lexico_src_components_entry_adjective_forms_table_tsx --> file_lexico_src_components_entry_form_tabs_tsx
-  file_lexico_src_components_entry_adjective_forms_table_tsx --> file_lexico_src_components_entry_forms_table_tsx
-  file_lexico_src_components_entry_entry_card_tsx --> file_lexico_src_components_entry_adjective_forms_table_tsx
-  file_lexico_src_components_entry_entry_card_tsx --> file_lexico_src_components_entry_noun_forms_table_tsx
-  file_lexico_src_components_entry_entry_card_tsx --> file_lexico_src_components_entry_principal_parts_tsx
-  file_lexico_src_components_entry_entry_card_tsx --> file_lexico_src_components_entry_translations_tsx
-  file_lexico_src_components_entry_entry_card_tsx --> file_lexico_src_components_entry_verb_forms_table_tsx
-  file_lexico_src_components_entry_entry_card_tsx --> file_lexico_src_lib_types_ts
-  file_lexico_src_components_entry_form_cell_tsx --> file_lexico_src_components_entry_identifier_tsx
-  file_lexico_src_components_entry_form_tabs_tsx --> file_lexico_src_components_entry_identifier_tsx
-  file_lexico_src_components_entry_forms_table_tsx --> file_lexico_src_components_entry_form_cell_tsx
-  file_lexico_src_components_entry_noun_forms_table_tsx --> file_lexico_src_components_entry_form_cell_tsx
-  file_lexico_src_components_entry_noun_forms_table_tsx --> file_lexico_src_components_entry_forms_table_tsx
-  file_lexico_src_components_entry_principal_parts_tsx --> file_lexico_src_components_entry_identifier_tsx
-  file_lexico_src_components_entry_principal_parts_tsx --> file_lexico_src_lib_types_ts
-  file_lexico_src_components_entry_verb_forms_table_tsx --> file_lexico_src_components_entry_form_cell_tsx
-  file_lexico_src_components_entry_verb_forms_table_tsx --> file_lexico_src_components_entry_form_tabs_tsx
-  file_lexico_src_components_entry_verb_forms_table_tsx --> file_lexico_src_components_entry_forms_table_tsx
-  file_lexico_src_components_pronunciation_button_tsx --> file_lexico_src_lib_pronunciation_ts
-  file_lexico_src_components_pronunciation_button_unit_test_tsx --> file_lexico_src_components_pronunciation_button_tsx
-  file_lexico_src_lib_bookmarks_ts --> file_lexico_src_lib_types_ts
-  file_lexico_src_lib_forms_ts --> file_lexico_src_components_entry_adjective_forms_table_tsx
-  file_lexico_src_lib_forms_ts --> file_lexico_src_components_entry_noun_forms_table_tsx
-  file_lexico_src_lib_forms_ts --> file_lexico_src_components_entry_verb_forms_table_tsx
-  file_lexico_src_lib_forms_ts --> file_lexico_src_lib_types_ts
-  file_lexico_src_lib_routeTree_gen_ts --> file_lexico_src_router_tsx
-  file_lexico_src_lib_routeTree_gen_ts --> file_lexico_src_routes___root_tsx
-  file_lexico_src_lib_routeTree_gen_ts --> file_lexico_src_routes_bookmarks_tsx
-  file_lexico_src_lib_routeTree_gen_ts --> file_lexico_src_routes_index_tsx
-  file_lexico_src_lib_routeTree_gen_ts --> file_lexico_src_routes_library_tsx
-  file_lexico_src_lib_routeTree_gen_ts --> file_lexico_src_routes_search_tsx
-  file_lexico_src_lib_routeTree_gen_ts --> file_lexico_src_routes_settings_tsx
-  file_lexico_src_lib_routeTree_gen_ts --> file_lexico_src_routes_tools_tsx
-  file_lexico_src_lib_routeTree_gen_ts --> file_lexico_src_routes_word__id_tsx
-  file_lexico_src_lib_search_ts --> file_lexico_src_lib_types_ts
-  file_lexico_src_router_tsx --> file_lexico_src_lib_routeTree_gen_ts
-  file_lexico_src_routes___root_tsx --> file_lexico_src_components_layout_index_ts
-  file_lexico_src_routes___root_tsx --> file_lexico_src_lib_auth_ts
-  file_lexico_src_routes_bookmarks_integration_test_tsx --> file_lexico_src_routes_bookmarks_tsx
-  file_lexico_src_routes_bookmarks_integration_test_tsx --> file_lexico_testing_render_route_tsx
-  file_lexico_src_routes_bookmarks_tsx --> file_lexico_src_components_entry_entry_card_tsx
-  file_lexico_src_routes_bookmarks_tsx --> file_lexico_src_lib_bookmarks_ts
-  file_lexico_src_routes_hooks_useLibraryPage_ts --> file_lexico_src_lib_library_ts
-  file_lexico_src_routes_index_integration_test_tsx --> file_lexico_src_routes_index_tsx
-  file_lexico_src_routes_index_integration_test_tsx --> file_lexico_testing_render_route_tsx
-  file_lexico_src_routes_library_integration_test_tsx --> file_lexico_src_routes_library_tsx
-  file_lexico_src_routes_library_integration_test_tsx --> file_lexico_testing_render_route_tsx
-  file_lexico_src_routes_library_tsx --> file_lexico_src_lib_library_ts
-  file_lexico_src_routes_library_tsx --> file_lexico_src_routes_hooks_useLibraryPage_ts
-  file_lexico_src_routes_search_integration_test_tsx --> file_lexico_src_routes_search_tsx
-  file_lexico_src_routes_search_integration_test_tsx --> file_lexico_testing_render_route_tsx
-  file_lexico_src_routes_search_tsx --> file_lexico_src_components_entry_entry_card_tsx
-  file_lexico_src_routes_search_tsx --> file_lexico_src_lib_forms_ts
-  file_lexico_src_routes_search_tsx --> file_lexico_src_lib_search_ts
-  file_lexico_src_routes_search_tsx --> file_lexico_src_lib_types_ts
-  file_lexico_src_routes_settings_integration_test_tsx --> file_lexico_src_routes_settings_tsx
-  file_lexico_src_routes_settings_integration_test_tsx --> file_lexico_testing_render_route_tsx
-  file_lexico_src_routes_settings_tsx --> file_lexico_src_lib_auth_ts
-  file_lexico_src_routes_tools_integration_test_tsx --> file_lexico_src_routes_tools_tsx
-  file_lexico_src_routes_tools_integration_test_tsx --> file_lexico_testing_render_route_tsx
-  file_lexico_src_routes_word__id_integration_test_tsx --> file_lexico_src_routes_word__id_tsx
-  file_lexico_src_routes_word__id_integration_test_tsx --> file_lexico_testing_render_route_tsx
-  file_lexico_src_routes_word__id_tsx --> file_lexico_src_components_entry_adjective_forms_table_tsx
-  file_lexico_src_routes_word__id_tsx --> file_lexico_src_components_entry_noun_forms_table_tsx
-  file_lexico_src_routes_word__id_tsx --> file_lexico_src_components_entry_principal_parts_tsx
-  file_lexico_src_routes_word__id_tsx --> file_lexico_src_components_entry_verb_forms_table_tsx
-  file_lexico_src_routes_word__id_tsx --> file_lexico_src_components_pronunciation_button_tsx
-  file_lexico_src_routes_word__id_tsx --> file_lexico_src_lib_bookmarks_ts
-  file_lexico_src_routes_word__id_tsx --> file_lexico_src_lib_forms_ts
-  file_lexico_src_routes_word__id_tsx --> file_lexico_src_lib_search_ts
-  file_lexico_src_routes_word__id_tsx --> file_lexico_src_lib_types_ts
-  file_lexico_testing_render_route_tsx --> file_lexico_src_router_tsx
+  file_lexico_web_src_components_entry_adjective_forms_table_tsx --> file_lexico_web_src_components_entry_form_cell_tsx
+  file_lexico_web_src_components_entry_adjective_forms_table_tsx --> file_lexico_web_src_components_entry_form_tabs_tsx
+  file_lexico_web_src_components_entry_adjective_forms_table_tsx --> file_lexico_web_src_components_entry_forms_table_tsx
+  file_lexico_web_src_components_entry_entry_card_tsx --> file_lexico_web_src_components_entry_adjective_forms_table_tsx
+  file_lexico_web_src_components_entry_entry_card_tsx --> file_lexico_web_src_components_entry_noun_forms_table_tsx
+  file_lexico_web_src_components_entry_entry_card_tsx --> file_lexico_web_src_components_entry_principal_parts_tsx
+  file_lexico_web_src_components_entry_entry_card_tsx --> file_lexico_web_src_components_entry_translations_tsx
+  file_lexico_web_src_components_entry_entry_card_tsx --> file_lexico_web_src_components_entry_verb_forms_table_tsx
+  file_lexico_web_src_components_entry_entry_card_tsx --> file_lexico_web_src_lib_types_ts
+  file_lexico_web_src_components_entry_form_cell_tsx --> file_lexico_web_src_components_entry_identifier_tsx
+  file_lexico_web_src_components_entry_form_tabs_tsx --> file_lexico_web_src_components_entry_identifier_tsx
+  file_lexico_web_src_components_entry_forms_table_tsx --> file_lexico_web_src_components_entry_form_cell_tsx
+  file_lexico_web_src_components_entry_noun_forms_table_tsx --> file_lexico_web_src_components_entry_form_cell_tsx
+  file_lexico_web_src_components_entry_noun_forms_table_tsx --> file_lexico_web_src_components_entry_forms_table_tsx
+  file_lexico_web_src_components_entry_principal_parts_tsx --> file_lexico_web_src_components_entry_identifier_tsx
+  file_lexico_web_src_components_entry_principal_parts_tsx --> file_lexico_web_src_lib_types_ts
+  file_lexico_web_src_components_entry_verb_forms_table_tsx --> file_lexico_web_src_components_entry_form_cell_tsx
+  file_lexico_web_src_components_entry_verb_forms_table_tsx --> file_lexico_web_src_components_entry_form_tabs_tsx
+  file_lexico_web_src_components_entry_verb_forms_table_tsx --> file_lexico_web_src_components_entry_forms_table_tsx
+  file_lexico_web_src_components_pronunciation_button_tsx --> file_lexico_web_src_lib_pronunciation_ts
+  file_lexico_web_src_components_pronunciation_button_unit_test_tsx --> file_lexico_web_src_components_pronunciation_button_tsx
+  file_lexico_web_src_lib_bookmarks_ts --> file_lexico_web_src_lib_types_ts
+  file_lexico_web_src_lib_forms_ts --> file_lexico_web_src_components_entry_adjective_forms_table_tsx
+  file_lexico_web_src_lib_forms_ts --> file_lexico_web_src_components_entry_noun_forms_table_tsx
+  file_lexico_web_src_lib_forms_ts --> file_lexico_web_src_components_entry_verb_forms_table_tsx
+  file_lexico_web_src_lib_forms_ts --> file_lexico_web_src_lib_types_ts
+  file_lexico_web_src_lib_routeTree_gen_ts --> file_lexico_web_src_router_tsx
+  file_lexico_web_src_lib_routeTree_gen_ts --> file_lexico_web_src_routes___root_tsx
+  file_lexico_web_src_lib_routeTree_gen_ts --> file_lexico_web_src_routes_bookmarks_tsx
+  file_lexico_web_src_lib_routeTree_gen_ts --> file_lexico_web_src_routes_index_tsx
+  file_lexico_web_src_lib_routeTree_gen_ts --> file_lexico_web_src_routes_library_tsx
+  file_lexico_web_src_lib_routeTree_gen_ts --> file_lexico_web_src_routes_search_tsx
+  file_lexico_web_src_lib_routeTree_gen_ts --> file_lexico_web_src_routes_settings_tsx
+  file_lexico_web_src_lib_routeTree_gen_ts --> file_lexico_web_src_routes_tools_tsx
+  file_lexico_web_src_lib_routeTree_gen_ts --> file_lexico_web_src_routes_word__id_tsx
+  file_lexico_web_src_lib_search_ts --> file_lexico_web_src_lib_types_ts
+  file_lexico_web_src_router_tsx --> file_lexico_web_src_lib_routeTree_gen_ts
+  file_lexico_web_src_routes___root_tsx --> file_lexico_web_src_components_layout_index_ts
+  file_lexico_web_src_routes___root_tsx --> file_lexico_web_src_lib_auth_ts
+  file_lexico_web_src_routes_bookmarks_integration_test_tsx --> file_lexico_web_src_routes_bookmarks_tsx
+  file_lexico_web_src_routes_bookmarks_integration_test_tsx --> file_lexico_web_testing_render_route_tsx
+  file_lexico_web_src_routes_bookmarks_tsx --> file_lexico_web_src_components_entry_entry_card_tsx
+  file_lexico_web_src_routes_bookmarks_tsx --> file_lexico_web_src_lib_bookmarks_ts
+  file_lexico_web_src_routes_hooks_useLibraryPage_ts --> file_lexico_web_src_lib_library_ts
+  file_lexico_web_src_routes_index_integration_test_tsx --> file_lexico_web_src_routes_index_tsx
+  file_lexico_web_src_routes_index_integration_test_tsx --> file_lexico_web_testing_render_route_tsx
+  file_lexico_web_src_routes_library_integration_test_tsx --> file_lexico_web_src_routes_library_tsx
+  file_lexico_web_src_routes_library_integration_test_tsx --> file_lexico_web_testing_render_route_tsx
+  file_lexico_web_src_routes_library_tsx --> file_lexico_web_src_lib_library_ts
+  file_lexico_web_src_routes_library_tsx --> file_lexico_web_src_routes_hooks_useLibraryPage_ts
+  file_lexico_web_src_routes_search_integration_test_tsx --> file_lexico_web_src_routes_search_tsx
+  file_lexico_web_src_routes_search_integration_test_tsx --> file_lexico_web_testing_render_route_tsx
+  file_lexico_web_src_routes_search_tsx --> file_lexico_web_src_components_entry_entry_card_tsx
+  file_lexico_web_src_routes_search_tsx --> file_lexico_web_src_lib_forms_ts
+  file_lexico_web_src_routes_search_tsx --> file_lexico_web_src_lib_search_ts
+  file_lexico_web_src_routes_search_tsx --> file_lexico_web_src_lib_types_ts
+  file_lexico_web_src_routes_settings_integration_test_tsx --> file_lexico_web_src_routes_settings_tsx
+  file_lexico_web_src_routes_settings_integration_test_tsx --> file_lexico_web_testing_render_route_tsx
+  file_lexico_web_src_routes_settings_tsx --> file_lexico_web_src_lib_auth_ts
+  file_lexico_web_src_routes_tools_integration_test_tsx --> file_lexico_web_src_routes_tools_tsx
+  file_lexico_web_src_routes_tools_integration_test_tsx --> file_lexico_web_testing_render_route_tsx
+  file_lexico_web_src_routes_word__id_integration_test_tsx --> file_lexico_web_src_routes_word__id_tsx
+  file_lexico_web_src_routes_word__id_integration_test_tsx --> file_lexico_web_testing_render_route_tsx
+  file_lexico_web_src_routes_word__id_tsx --> file_lexico_web_src_components_entry_adjective_forms_table_tsx
+  file_lexico_web_src_routes_word__id_tsx --> file_lexico_web_src_components_entry_noun_forms_table_tsx
+  file_lexico_web_src_routes_word__id_tsx --> file_lexico_web_src_components_entry_principal_parts_tsx
+  file_lexico_web_src_routes_word__id_tsx --> file_lexico_web_src_components_entry_verb_forms_table_tsx
+  file_lexico_web_src_routes_word__id_tsx --> file_lexico_web_src_components_pronunciation_button_tsx
+  file_lexico_web_src_routes_word__id_tsx --> file_lexico_web_src_lib_bookmarks_ts
+  file_lexico_web_src_routes_word__id_tsx --> file_lexico_web_src_lib_forms_ts
+  file_lexico_web_src_routes_word__id_tsx --> file_lexico_web_src_lib_search_ts
+  file_lexico_web_src_routes_word__id_tsx --> file_lexico_web_src_lib_types_ts
+  file_lexico_web_testing_render_route_tsx --> file_lexico_web_src_router_tsx
   file_logging_src_lib_conventional_log_message_eslint_rule_ts --> file_logging_src_modules_logger_logger_constants_ts
   file_logging_src_lib_conventional_log_message_eslint_rule_unit_test_ts --> file_logging_src_lib_conventional_log_message_eslint_rule_ts
   file_logging_src_modules_logger_logger_module_ts --> file_logging_src_modules_logger_logger_service_ts
@@ -10623,7 +10623,7 @@ Repository statistics measured by [codometer](packages/ic-suite/codometer/codome
 
 ### Repository
 
-![Lines of Code](https://img.shields.io/badge/Lines_of_Code-6290-22c55e?style=flat-square)
+![Lines of Code](https://img.shields.io/badge/Lines_of_Code-6293-22c55e?style=flat-square)
 ![Repository Size](https://img.shields.io/badge/Repository_Size-2.21_MB-6b7280?style=flat-square)
 ![Folders](https://img.shields.io/badge/Folders-76-4a4a4a?style=flat-square)
 ![Source Files](https://img.shields.io/badge/Source_Files-24-3178c6?style=flat-square)
@@ -10673,27 +10673,27 @@ Repository statistics measured by [codometer](packages/ic-suite/codometer/codome
 ### JSON
 
 ![JSON Files](https://img.shields.io/badge/JSON_Files-23-a16207?style=flat-square)
-![JSON Lines](https://img.shields.io/badge/JSON_Lines-6028-ca8a04?style=flat-square)
-![JSON Objects](https://img.shields.io/badge/JSON_Objects-789-7c3aed?style=flat-square)
-![JSON Arrays](https://img.shields.io/badge/JSON_Arrays-314-8b5cf6?style=flat-square)
-![JSON Properties](https://img.shields.io/badge/JSON_Properties-1961-0284c7?style=flat-square)
-![JSON Strings](https://img.shields.io/badge/JSON_Strings-1978-16a34a?style=flat-square)
+![JSON Lines](https://img.shields.io/badge/JSON_Lines-6083-ca8a04?style=flat-square)
+![JSON Objects](https://img.shields.io/badge/JSON_Objects-798-7c3aed?style=flat-square)
+![JSON Arrays](https://img.shields.io/badge/JSON_Arrays-318-8b5cf6?style=flat-square)
+![JSON Properties](https://img.shields.io/badge/JSON_Properties-1980-0284c7?style=flat-square)
+![JSON Strings](https://img.shields.io/badge/JSON_Strings-2001-16a34a?style=flat-square)
 ![JSON Numbers](https://img.shields.io/badge/JSON_Numbers-38-059669?style=flat-square)
-![JSON Booleans](https://img.shields.io/badge/JSON_Booleans-144-0ea5e9?style=flat-square)
+![JSON Booleans](https://img.shields.io/badge/JSON_Booleans-145-0ea5e9?style=flat-square)
 ![JSON Nulls](https://img.shields.io/badge/JSON_Nulls-0-64748b?style=flat-square)
-![JSON Items](https://img.shields.io/badge/JSON_Items-1286-475569?style=flat-square)
-![JSON Nodes](https://img.shields.io/badge/JSON_Nodes-3263-dc2626?style=flat-square)
+![JSON Items](https://img.shields.io/badge/JSON_Items-1304-475569?style=flat-square)
+![JSON Nodes](https://img.shields.io/badge/JSON_Nodes-3300-dc2626?style=flat-square)
 ![JSON Max Depth](https://img.shields.io/badge/JSON_Max_Depth-11-ea580c?style=flat-square)
 
 ### YAML
 
 ![YAML Files](https://img.shields.io/badge/YAML_Files-23-cb171e?style=flat-square)
-![YAML Lines](https://img.shields.io/badge/YAML_Lines-3167-e34c26?style=flat-square)
+![YAML Lines](https://img.shields.io/badge/YAML_Lines-3170-e34c26?style=flat-square)
 ![YAML Documents](https://img.shields.io/badge/YAML_Documents-23-f97316?style=flat-square)
 ![YAML Mappings](https://img.shields.io/badge/YAML_Mappings-444-7c3aed?style=flat-square)
 ![YAML Sequences](https://img.shields.io/badge/YAML_Sequences-91-8b5cf6?style=flat-square)
-![YAML Keys](https://img.shields.io/badge/YAML_Keys-1525-0284c7?style=flat-square)
-![YAML Scalars](https://img.shields.io/badge/YAML_Scalars-3042-16a34a?style=flat-square)
+![YAML Keys](https://img.shields.io/badge/YAML_Keys-1523-0284c7?style=flat-square)
+![YAML Scalars](https://img.shields.io/badge/YAML_Scalars-3040-16a34a?style=flat-square)
 ![YAML Anchors](https://img.shields.io/badge/YAML_Anchors-0-059669?style=flat-square)
 ![YAML Aliases](https://img.shields.io/badge/YAML_Aliases-0-10b981?style=flat-square)
 ![YAML Comments](https://img.shields.io/badge/YAML_Comments-522-64748b?style=flat-square)
@@ -10850,8 +10850,8 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 | Project | Deepest | Limit | Headroom | Widest |
 | --- | --- | --- | --- | --- |
 | `applications/caelundas/caelundas-cli` | 16 | 16 | 0 | 12 |
-| `applications/lexico/lexico-web` | 9 | 9 | 0 | 9 |
 | `applications/lexico/lexico-cli` | 17 | 17 | 0 | 8 |
+| `applications/lexico/lexico-web` | 9 | 9 | 0 | 9 |
 | `applications/meanderaw/meanderaw-cli` | 16 | 16 | 0 | 12 |
 | `packages/components-web` | 3 | 3 | 0 | 7 |
 | `packages/database` | 4 | 4 | 0 | 4 |

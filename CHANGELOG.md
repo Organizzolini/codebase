@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.34.2](https://github.com/organizzolini/codebase/compare/v2.34.1...v2.34.2) (2026-10-08)
+
+### ♻️ Code Refactoring
+
+* **lexico-cli:** ♻️ rename lexico-ingestion to lexico-cli under the applications/lexico group ([#1334](https://github.com/organizzolini/codebase/issues/1334)) ([f4b8261](https://github.com/organizzolini/codebase/commit/f4b82618cda1fae61a3c768dd6c84c5845660572)), closes [#1313](https://github.com/organizzolini/codebase/issues/1313) [#1333](https://github.com/organizzolini/codebase/issues/1333) [#1329](https://github.com/organizzolini/codebase/issues/1329) [#1313](https://github.com/organizzolini/codebase/issues/1313)
+* **lexico:** ♻️ move lexico-api under the applications/lexico group ([#1333](https://github.com/organizzolini/codebase/issues/1333)) ([9b140ae](https://github.com/organizzolini/codebase/commit/9b140aee1f76b757c4c0ae7b66f1c2a4df9a6977)), closes [#1329](https://github.com/organizzolini/codebase/issues/1329) [#1329](https://github.com/organizzolini/codebase/issues/1329) [#1334](https://github.com/organizzolini/codebase/issues/1334)
+* **lexico:** ♻️ rename lexico to lexico-web under an applications/lexico group ([#1329](https://github.com/organizzolini/codebase/issues/1329)) ([4fb87a4](https://github.com/organizzolini/codebase/commit/4fb87a4aec90f6b3bdc4ba6bd79453a612e6355c)), closes [#1302](https://github.com/organizzolini/codebase/issues/1302) [#1304](https://github.com/organizzolini/codebase/issues/1304) [organizzolini/codebase#1301](https://github.com/organizzolini/codebase/issues/1301) [#1302](https://github.com/organizzolini/codebase/issues/1302) [#1304](https://github.com/organizzolini/codebase/issues/1304)
+
 ## [2.34.1](https://github.com/organizzolini/codebase/compare/v2.34.0...v2.34.1) (2026-10-08)
 
 ### ⚡ Performance Improvements
