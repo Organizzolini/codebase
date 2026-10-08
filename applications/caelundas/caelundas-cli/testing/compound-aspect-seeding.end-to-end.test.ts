@@ -80,9 +80,16 @@ describe(
             timezone: input.timezone,
           });
         const aspectsUtilitiesService = context.get(AspectsUtilitiesService);
-        const longitudeBefore = (body: Body): number =>
-          coordinateEphemerisByBody[body][previousMinute.toISOString()]
-            ?.longitude ?? Number.NaN;
+        const longitudeBefore = (body: Body): number => {
+          const coordinate =
+            coordinateEphemerisByBody[body][previousMinute.toISOString()];
+          if (!coordinate) {
+            throw new Error(
+              `No ${body} longitude at ${previousMinute.toISOString()}`,
+            );
+          }
+          return coordinate.longitude;
+        };
 
         const inOrbBefore = perfective
           .filter(
