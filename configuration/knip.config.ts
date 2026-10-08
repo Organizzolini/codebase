@@ -180,7 +180,7 @@ const config: KnipConfig = {
     },
 
     // lexico-api: NestJS GraphQL API
-    "applications/lexico-api": {
+    "applications/lexico/lexico-api": {
       ignoreDependencies: [
         // Apollo 5's Express integration, which @nestjs/apollo resolves by
         // name at startup; without it GraphQLModule refuses to boot.
