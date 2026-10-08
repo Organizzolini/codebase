@@ -27,17 +27,31 @@ export class BoundaryReportService {
   // 🌎 Public Methods
 
   /**
+   * Who a finding is charged to, as the lines and the Markdown report word it.
+   *
+   * The one place that wording lives: a violation and a failure are both
+   * reported as a note when they live only in a dependency, and a reader who
+   * sees the phrase in one report should find it unchanged in the other.
+   * Says "in dependency" because the finding is real, and inherited, but it is
+   * not theirs to fix and it did not fail their run.
+   */
+  public describeCharge(args: {
+    isNote: boolean;
+    projects: readonly string[];
+  }): string {
+    const projects = args.projects.join(", ");
+
+    return args.isNote ? `in dependency ${projects}, not failing` : projects;
+  }
+
+  /**
    * One line per note — a violation charged only to a dependency of the
    * projects a run judges — marked as not failing.
-   *
-   * Says "in dependency" because the reader asked about a different project:
-   * the finding is real, and inherited, but it is not theirs to fix and it
-   * did not fail their run.
    */
   public renderNotes(violations: readonly BoundaryViolation[]): string[] {
     return violations.map(
       (violation) =>
-        `${violation.level} in dependency ${violation.projects.join(", ")}, not failing: ${violation.message}`,
+        `${violation.level} ${this.describeCharge({ isNote: true, projects: violation.projects })}: ${violation.message}`,
     );
   }
 
@@ -73,7 +87,7 @@ export class BoundaryReportService {
   public renderViolations(violations: readonly BoundaryViolation[]): string[] {
     return violations.map(
       (violation) =>
-        `${violation.level} ${violation.projects.join(", ")}: ${violation.message}`,
+        `${violation.level} ${this.describeCharge({ isNote: false, projects: violation.projects })}: ${violation.message}`,
     );
   }
 }

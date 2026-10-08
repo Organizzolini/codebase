@@ -5,11 +5,13 @@ import { BoundaryCheckModule } from "./boundary-check.module";
 import { BoundaryCheckService } from "./boundary-check.service";
 import { BoundaryFailureService } from "./boundary-failure.service";
 import { BoundaryGraphService } from "./boundary-graph.service";
+import { BoundaryOutcomeReportService } from "./boundary-outcome-report.service";
 
 const SERVICES = [
   BoundaryCheckService,
   BoundaryFailureService,
   BoundaryGraphService,
+  BoundaryOutcomeReportService,
 ];
 
 describe(BoundaryCheckModule, () => {

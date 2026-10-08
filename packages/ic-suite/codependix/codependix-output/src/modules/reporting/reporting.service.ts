@@ -1,4 +1,7 @@
-import { BoundaryReportService } from "@codependix/boundaries";
+import {
+  BoundaryOutcomeReportService,
+  BoundaryReportService,
+} from "@codependix/boundaries";
 import { InputError } from "@codependix/configuration";
 import { Injectable } from "@nestjs/common";
 
@@ -6,10 +9,8 @@ import { LoggerService } from "@codebase/logging";
 
 import type { MapRunResult } from "../graph-run/graph-run.types";
 import type {
-  BoundaryCheckFailure,
   BoundaryCheckOutcome,
   BoundaryVerdict,
-  JudgedBoundaryFinding,
 } from "@codependix/boundaries";
 import type { GraphRunOutcome } from "@codependix/core";
 
@@ -27,6 +28,7 @@ export class ReportingService {
   // 🏗 Dependency Injection
 
   constructor(
+    private readonly boundaryOutcomeReportService: BoundaryOutcomeReportService,
     private readonly boundaryReportService: BoundaryReportService,
     private readonly logger: LoggerService,
   ) {
@@ -55,29 +57,6 @@ export class ReportingService {
   }
 
   /**
-   * One line per failure: its level, the projects it is charged to, and the
-   * error — then the project owning the code it broke on, when that is
-   * another project. A note says which dependency it lives in instead.
-   */
-  private renderFailures(
-    failures: readonly JudgedBoundaryFinding<BoundaryCheckFailure>[],
-  ): string[] {
-    return failures.map((failure) => {
-      const projects = failure.projects.join(", ");
-      const charged =
-        failure.verdict === "note"
-          ? `in dependency ${projects}, not failing`
-          : projects;
-      const owner =
-        failure.ownerProject === undefined
-          ? ""
-          : ` (failed in code owned by ${failure.ownerProject})`;
-
-      return `${failure.level} ${charged}: ${failure.error}${owner}`;
-    });
-  }
-
-  /**
    * Warns about every finding charged only to a dependency of the judged
    * projects. Reported rather than dropped — the judged projects are built on
    * it — but never failing a run that named a different project.
@@ -89,7 +68,9 @@ export class ReportingService {
       "🕸️ Found codependix boundary findings in dependencies, not failing",
       undefined,
       {
-        failures: this.renderFailures(notes.failures),
+        failures: this.boundaryOutcomeReportService.renderFailures(
+          notes.failures,
+        ),
         violations: this.boundaryReportService.renderNotes(notes.violations),
       },
     );
@@ -111,7 +92,9 @@ export class ReportingService {
 
     if (failing.failures.length > 0) {
       this.logger.error("💥 Failed running codependix", undefined, {
-        failures: this.renderFailures(failing.failures),
+        failures: this.boundaryOutcomeReportService.renderFailures(
+          failing.failures,
+        ),
       });
     }
 

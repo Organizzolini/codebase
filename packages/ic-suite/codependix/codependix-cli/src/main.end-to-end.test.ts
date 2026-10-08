@@ -97,4 +97,122 @@ describe("main end-to-end suite", () => {
       expect(standardError).toContain("ReportingService");
     });
   });
+
+  describe("a boundaries-only run printing its report", () => {
+    let workingDirectory: string;
+
+    /** Runs `--check boundaries` over the fixture with the given extra flags. */
+    function runBoundaries(flags: string[]): {
+      exitCode: null | number;
+      standardError: string;
+      standardOutput: string;
+    } {
+      const result = spawnSync(
+        process.execPath,
+        [
+          "--import",
+          "@swc-node/register/esm-register",
+          COMMAND_PATH,
+          "map",
+          "--config",
+          path.join(workingDirectory, "codependix.config.json"),
+          "--check",
+          "boundaries",
+          "--projects",
+          "a",
+          ...flags,
+        ],
+        {
+          cwd: workingDirectory,
+          encoding: "utf8",
+          env: { ...process.env, FORCE_COLOR: "0" },
+          timeout: 120_000,
+        },
+      );
+
+      return {
+        exitCode: result.status,
+        standardError: result.stderr,
+        standardOutput: result.stdout,
+      };
+    }
+
+    beforeAll(() => {
+      mkdirSync(FIXTURE_ROOT, { recursive: true });
+      workingDirectory = mkdtempSync(
+        path.join(FIXTURE_ROOT, "codependix-cli-boundaries-test-"),
+      );
+
+      // a ⇄ b is a cycle, and c depends on a.
+      writeFileSync(
+        path.join(workingDirectory, "codependix-graph.json"),
+        JSON.stringify({
+          dependencies: {
+            a: [{ source: "a", target: "b", type: "static" }],
+            b: [{ source: "b", target: "a", type: "static" }],
+            c: [{ source: "c", target: "a", type: "static" }],
+          },
+          nodes: Object.fromEntries(
+            ["a", "b", "c"].map((name) => [
+              name,
+              { data: { root: `packages/${name}` }, name, type: "lib" },
+            ]),
+          ),
+        }),
+      );
+      writeFileSync(
+        path.join(workingDirectory, "codependix.config.json"),
+        JSON.stringify({
+          boundaries: {
+            nxProjects: [{ kind: "acyclic", name: "no-cycles" }],
+          },
+          include: [],
+          projectGraph: "codependix-graph.json",
+        }),
+      );
+      writeFileSync(
+        path.join(workingDirectory, "tsconfig.json"),
+        JSON.stringify({
+          extends: path.relative(
+            workingDirectory,
+            path.resolve(import.meta.dirname, "../tsconfig.json"),
+          ),
+        }),
+      );
+    });
+
+    afterAll(() => {
+      rmSync(workingDirectory, { force: true, recursive: true });
+    });
+
+    it("puts nothing but a parseable report with a boundaries key on standard output", () => {
+      expect.hasAssertions();
+
+      const { exitCode, standardOutput } = runBoundaries(["--format", "json"]);
+      const report = JSON.parse(standardOutput) as {
+        boundaries: {
+          judgedProjects: string[];
+          violations: { projects: string[]; verdict: string }[];
+        };
+      };
+
+      expect(exitCode).toBe(1);
+      expect(report.boundaries.judgedProjects).toStrictEqual(["a"]);
+      expect(report.boundaries.violations).toHaveLength(1);
+      expect(report.boundaries.violations[0]).toMatchObject({
+        projects: ["a", "b"],
+        verdict: "fail",
+      });
+    });
+
+    it("logs on standard error and prints nothing without a format flag", () => {
+      expect.hasAssertions();
+
+      const { exitCode, standardError, standardOutput } = runBoundaries([]);
+
+      expect(exitCode).toBe(1);
+      expect(standardOutput).toBe("");
+      expect(standardError).toContain("boundary violations");
+    });
+  });
 });

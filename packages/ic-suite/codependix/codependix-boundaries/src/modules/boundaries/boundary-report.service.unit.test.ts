@@ -89,6 +89,18 @@ describe(BoundaryReportService, () => {
     ]);
   });
 
+  it("describes a charge as the projects it fails", () => {
+    expect(
+      service.describeCharge({ isNote: false, projects: ["a", "b"] }),
+    ).toBe("a, b");
+  });
+
+  it("describes a note's charge as the dependency it lives in, not failing", () => {
+    expect(service.describeCharge({ isNote: true, projects: ["a", "b"] })).toBe(
+      "in dependency a, b, not failing",
+    );
+  });
+
   it("renders nothing for no violations", () => {
     expect(service.renderViolations([])).toStrictEqual([]);
   });
