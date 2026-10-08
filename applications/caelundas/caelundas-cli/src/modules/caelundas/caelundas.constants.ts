@@ -17,8 +17,6 @@ import {
 type AzimuthElevationEphemerisBody = Extract<Body, "moon" | "sun">;
 /** Union of all tracked celestial bodies, derived from the symbol map. */
 type Body = keyof typeof symbolByBody;
-/** Bodies for which angular diameter ephemerides are generated. */
-type DiameterEphemerisBody = Extract<Body, "moon" | "sun">;
 /** Bodies for which distance ephemerides are generated. */
 type DistanceEphemerisBody = Extract<
   Body,
@@ -224,12 +222,6 @@ export const illuminationBodies: IlluminationEphemerisBody[] = [
   "venus",
   "mars",
 ];
-
-/**
- * Bodies queried for angular diameter ephemeris.
- * Used for eclipse calculations.
- */
-export const diameterBodies: DiameterEphemerisBody[] = ["sun", "moon"];
 
 /**
  * Bodies queried for distance ephemeris.

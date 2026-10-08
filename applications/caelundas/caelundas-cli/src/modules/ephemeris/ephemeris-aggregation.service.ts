@@ -13,8 +13,6 @@ import type {
   AzimuthElevationEphemeris,
   AzimuthElevationEphemerisBody,
   CoordinateEphemeris,
-  DiameterEphemeris,
-  DiameterEphemerisBody,
   DistanceEphemeris,
   DistanceEphemerisBody,
   IlluminationEphemeris,
@@ -52,13 +50,12 @@ export class EphemerisAggregationService {
 
   /**
    * Computes minute-by-minute ephemeris for a single non-node body.
-   * Performs single-pass aggregation of coordinate, azimuth, illumination, and diameter data.
+   * Performs single-pass aggregation of coordinate, azimuth, and illumination data.
    */
   private computeNonNodeBodyMinutes(args: {
     body: Exclude<Body, Node>;
     end: Moment;
     needsAzimuth: boolean;
-    needsDiameter: boolean;
     needsDistance: boolean;
     needsIllumination: boolean;
     observerLatitude: number;
@@ -70,7 +67,6 @@ export class EphemerisAggregationService {
       body,
       end,
       needsAzimuth,
-      needsDiameter,
       needsDistance,
       needsIllumination,
       observerLatitude,
@@ -81,7 +77,6 @@ export class EphemerisAggregationService {
     const accumulators: EphemerisAccumulators = {
       azimuthElevationEphemeris: {},
       coordinateEphemeris: {},
-      diameterEphemeris: {},
       distanceEphemeris: {},
       illuminationEphemeris: {},
     };
@@ -91,7 +86,6 @@ export class EphemerisAggregationService {
         body,
         date,
         needsAzimuth,
-        needsDiameter,
         needsDistance,
         needsIllumination,
         observerLatitude,
@@ -104,7 +98,7 @@ export class EphemerisAggregationService {
 
   /**
    * Processes a single minute of non-node body data.
-   * Computes coordinates, distance, azimuth/elevation, and illumination/diameter as requested.
+   * Computes coordinates, distance, azimuth/elevation, and illumination as requested.
    */
   private processNonNodeBodyMinute(
     args: NonNodeBodyMinuteProcessingArguments,
@@ -114,7 +108,6 @@ export class EphemerisAggregationService {
       body,
       date,
       needsAzimuth,
-      needsDiameter,
       needsDistance,
       needsIllumination,
       observerLatitude,
@@ -143,13 +136,11 @@ export class EphemerisAggregationService {
           observerLongitude,
         });
     }
-    if (needsIllumination || needsDiameter) {
+    if (needsIllumination) {
       this.phenomena.computePhenoForMinute({
         body,
-        diameterEphemeris: accumulators.diameterEphemeris,
         illuminationEphemeris: accumulators.illuminationEphemeris,
         julianDayUniversalTime,
-        needsDiameter,
         needsIllumination,
         swissEphemerisConstant,
         timestamp,
@@ -191,7 +182,6 @@ export class EphemerisAggregationService {
     }
     const needsAzimuth = featureSets.azimuthElevationSet.has(body);
     const needsIllumination = featureSets.illuminationSet.has(body);
-    const needsDiameter = featureSets.diameterSet.has(body);
     const needsDistance = featureSets.distanceSet.has(body);
     const swissEphemerisConstant =
       this.constant.getSwissEphemerisConstantForBody(body);
@@ -199,7 +189,6 @@ export class EphemerisAggregationService {
       body,
       end,
       needsAzimuth,
-      needsDiameter,
       needsDistance,
       needsIllumination,
       observerLatitude,
@@ -212,8 +201,6 @@ export class EphemerisAggregationService {
       allEntries.azimuthEntries.push([body, result.azimuthElevationEphemeris]);
     if (needsIllumination)
       allEntries.illuminationEntries.push([body, result.illuminationEphemeris]);
-    if (needsDiameter)
-      allEntries.diameterEntries.push([body, result.diameterEphemeris]);
     if (needsDistance)
       allEntries.distanceEntries.push([body, result.distanceEphemeris]);
   }
@@ -226,7 +213,6 @@ export class EphemerisAggregationService {
     return {
       azimuthEntries: [],
       coordinateEntries: [],
-      diameterEntries: [],
       distanceEntries: [],
       illuminationEntries: [],
     };
@@ -238,19 +224,12 @@ export class EphemerisAggregationService {
    */
   public buildEphemerisFeatureSets(args: {
     azimuthElevationBodies: AzimuthElevationEphemerisBody[];
-    diameterBodies: DiameterEphemerisBody[];
     distanceBodies: DistanceEphemerisBody[];
     illuminationBodies: IlluminationEphemerisBody[];
   }): EphemerisFeatureSets {
-    const {
-      azimuthElevationBodies,
-      diameterBodies,
-      distanceBodies,
-      illuminationBodies,
-    } = args;
+    const { azimuthElevationBodies, distanceBodies, illuminationBodies } = args;
     return {
       azimuthElevationSet: new Set<Body>(azimuthElevationBodies),
-      diameterSet: new Set<Body>(diameterBodies),
       distanceSet: new Set<Body>(distanceBodies),
       illuminationSet: new Set<Body>(illuminationBodies),
     };
@@ -262,7 +241,6 @@ export class EphemerisAggregationService {
   public entriesToEphemerides(allEntries: EphemerisEntries): {
     azimuthElevationEphemerisByBody: Record<Body, AzimuthElevationEphemeris>;
     coordinateEphemerisByBody: Record<Body, CoordinateEphemeris>;
-    diameterEphemerisByBody: Record<Body, DiameterEphemeris>;
     distanceEphemerisByBody: Record<Body, DistanceEphemeris>;
     illuminationEphemerisByBody: Record<Body, IlluminationEphemeris>;
   } {
@@ -271,7 +249,6 @@ export class EphemerisAggregationService {
         allEntries.azimuthEntries,
       ),
       coordinateEphemerisByBody: typedFromEntries(allEntries.coordinateEntries),
-      diameterEphemerisByBody: typedFromEntries(allEntries.diameterEntries),
       distanceEphemerisByBody: typedFromEntries(allEntries.distanceEntries),
       illuminationEphemerisByBody: typedFromEntries(
         allEntries.illuminationEntries,

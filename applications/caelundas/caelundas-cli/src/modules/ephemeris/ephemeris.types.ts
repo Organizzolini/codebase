@@ -48,23 +48,6 @@ export type CoordinateEphemerisBody = Body;
 export type Coordinates = [Longitude, Latitude];
 
 /**
- * Time-indexed ephemeris of apparent angular diameter.
- *
- * Keys are ISO timestamps, values are angular diameters in degrees.
- * Used for eclipse predictions and occultation calculations.
- */
-export type DiameterEphemeris = Record<string, { diameter: number }>;
-
-/**
- * Bodies for which diameter ephemerides are generated.
- * Limited to Sun and Moon for eclipse calculations.
- *
- * @remarks A copy of this type exists in `caelundas.constants.ts` to avoid a circular
- * import. Update both when the body set changes.
- */
-export type DiameterEphemerisBody = Extract<Body, "moon" | "sun">;
-
-/**
  * Time-indexed ephemeris of observer-body distance and its rate of change.
  *
  * Keys are ISO timestamps. `distance` is in astronomical units (AU) and
@@ -98,7 +81,6 @@ export type DistanceEphemerisBody = Extract<
 export interface Ephemerides {
   azimuthElevationEphemerisByBody: Record<Body, AzimuthElevationEphemeris>;
   coordinateEphemerisByBody: Record<Body, CoordinateEphemeris>;
-  diameterEphemerisByBody: Record<Body, DiameterEphemeris>;
   distanceEphemerisByBody: Record<Body, DistanceEphemeris>;
   illuminationEphemerisByBody: Record<Body, IlluminationEphemeris>;
 }
