@@ -88,6 +88,14 @@ export interface BoundaryViolation {
   readonly level: CodependixBoundaryLevel;
   /** The sentence reported, whether the rule's own or the generated one. */
   readonly message: string;
+  /**
+   * The projects this violation is charged to, sorted: an access rule's
+   * edge source's project, or every project owning a node on a cycle.
+   *
+   * What decides whether it fails a run — it does when any of these is a
+   * project the run judges — see `BoundaryCheckService.run`.
+   */
+  readonly projects: readonly string[];
   /** The `name` of the rule that reported it. */
   readonly rule: string;
   readonly scope: string;

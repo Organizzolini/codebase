@@ -1,5 +1,7 @@
 // ♟️ Constants
 
+import path from "node:path";
+
 import type { CodependixBoundaryLevel } from "../boundaries/boundaries.types";
 
 /**
@@ -32,3 +34,20 @@ export const BOUNDARY_LEVEL_ORDER = [
   "typescript",
   "python",
 ] as const satisfies readonly CodependixBoundaryLevel[];
+
+/**
+ * The location one V8 stack frame names, in either of the two shapes V8
+ * writes: `at name (location:line:column)` or a bare `at location:line:column`.
+ *
+ * Captures the location without its line and column, so a frame reads as a
+ * path or a `file:` URL whichever way it was written.
+ */
+export const STACK_FRAME_LOCATION = /^\s*at (?:.*\()?(.+?):\d+:\d+\)?$/u;
+
+/**
+ * The path segment marking a frame as third-party code.
+ *
+ * A frame inside a package's own `node_modules` is not that project's code,
+ * even though it sits under the project's root, so it never names an owner.
+ */
+export const NODE_MODULES_SEGMENT = `${path.sep}node_modules${path.sep}`;

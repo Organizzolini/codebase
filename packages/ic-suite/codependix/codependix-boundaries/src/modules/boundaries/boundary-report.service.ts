@@ -27,6 +27,21 @@ export class BoundaryReportService {
   // 🌎 Public Methods
 
   /**
+   * One line per note — a violation charged only to a dependency of the
+   * projects a run judges — marked as not failing.
+   *
+   * Says "in dependency" because the reader asked about a different project:
+   * the finding is real, and inherited, but it is not theirs to fix and it
+   * did not fail their run.
+   */
+  public renderNotes(violations: readonly BoundaryViolation[]): string[] {
+    return violations.map(
+      (violation) =>
+        `${violation.level} in dependency ${violation.projects.join(", ")}, not failing: ${violation.message}`,
+    );
+  }
+
+  /**
    * One line summarizing what a run found.
    *
    * Counts rules as well as violations, because the two answer different
@@ -46,17 +61,19 @@ export class BoundaryReportService {
   }
 
   /**
-   * One line per violation, each naming its level and scope before the rule's
-   * own sentence.
+   * One line per violation, each naming its level and the projects it is
+   * charged to before the rule's own sentence.
    *
-   * The level and scope lead because the message cannot carry them: the same
-   * rule evaluated at file level fails once per project, and a bare pair of
-   * file paths does not say whose files they are.
+   * The level and projects lead because the message cannot carry them: the
+   * same rule evaluated at file level fails once per project, and a bare pair
+   * of file paths does not say whose files they are. Charged projects rather
+   * than the graph's scope, so an Nx-level finding names the projects that
+   * own it rather than the workspace it was found in.
    */
   public renderViolations(violations: readonly BoundaryViolation[]): string[] {
     return violations.map(
       (violation) =>
-        `${violation.level} ${violation.scope}: ${violation.message}`,
+        `${violation.level} ${violation.projects.join(", ")}: ${violation.message}`,
     );
   }
 }

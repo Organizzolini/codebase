@@ -4,6 +4,7 @@ import {
   BoundaryReportService,
   type BoundaryViolation,
   type GraphRunContext,
+  type JudgedBoundaryFinding,
   RunContextService,
 } from "@codependix/boundaries";
 import {
@@ -50,14 +51,16 @@ function buildMode(overrides: Partial<RunMode> = {}): RunMode {
   };
 }
 
-const VIOLATION: BoundaryViolation = {
+const VIOLATION: JudgedBoundaryFinding<BoundaryViolation> = {
   cycle: undefined,
   level: "nxProjects",
   message: "layers: a must not depend on b.",
+  projects: ["a"],
   rule: "layers",
   scope: "workspace",
   source: "a",
   target: "b",
+  verdict: "fail",
 };
 
 describe(MapCommand, () => {
@@ -99,6 +102,7 @@ describe(MapCommand, () => {
   /** Hands the command a context, as `RunContextService.build` resolves one. */
   function buildContextWithInclude(include: string[]): GraphRunContext {
     return {
+      buildProjects: [],
       configuration: {
         boundaries: {
           fileImports: { python: [], typescript: [] },
@@ -108,7 +112,7 @@ describe(MapCommand, () => {
         exclude: [],
         include,
         projectGraph: undefined,
-        selection: { projects: [], tags: [] },
+        selection: { dependencies: true, projects: [], tags: [] },
         workspace: {},
       },
       enabledGraphTypes: new Set([
@@ -522,7 +526,7 @@ describe(MapCommand, () => {
       undefined,
       {
         summary: "1 boundary violation across 1 rule.",
-        violations: ["nxProjects workspace: layers: a must not depend on b."],
+        violations: ["nxProjects a: layers: a must not depend on b."],
       },
     );
   });
@@ -530,7 +534,14 @@ describe(MapCommand, () => {
   it("fails and logs a project whose graph could not be judged", async () => {
     selectMode({ checksBoundaries: true, writes: false });
     vi.mocked(boundaryCheckService.run).mockResolvedValue({
-      failures: [{ error: "boom", projectName: "lexico" }],
+      failures: [
+        {
+          error: "boom",
+          level: "nestjsModules",
+          projects: ["lexico"],
+          verdict: "fail",
+        },
+      ],
       violations: [],
     });
 
@@ -540,7 +551,7 @@ describe(MapCommand, () => {
     expect(loggerService.error).toHaveBeenCalledWith(
       "💥 Failed running codependix",
       undefined,
-      { failures: [{ error: "boom", projectName: "lexico" }] },
+      { failures: ["nestjsModules lexico: boom"] },
     );
   });
 
@@ -742,6 +753,26 @@ describe(MapCommand, () => {
       "🕸️ Rejected the command line",
       undefined,
       { reason: error.message },
+    );
+  });
+
+  // 🧭 Dependency closure
+
+  it("delegates --dependencies to an unconditional true", () => {
+    expect(buildCommand().parseDependencies()).toBe(true);
+  });
+
+  it("delegates --no-dependencies to an unconditional false", () => {
+    expect(buildCommand().parseNoDependencies()).toBe(false);
+  });
+
+  it("hands --no-dependencies to the run context builder", async () => {
+    await run({ check: "boundaries", dependencies: false, projects: "a" });
+
+    expect(runContextService.build).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({ dependencies: false }) as unknown,
+      }),
     );
   });
 

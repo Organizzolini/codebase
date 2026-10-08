@@ -115,6 +115,7 @@ function buildNxContext(): GraphRunContext {
   const projects = readProjects(ATLAS_CHAIN);
 
   return {
+    buildProjects: projects,
     configuration: {
       boundaries: {
         fileImports: { python: [], typescript: [] },
@@ -124,7 +125,7 @@ function buildNxContext(): GraphRunContext {
       exclude: [],
       include: ["**"],
       projectGraph: undefined,
-      selection: { projects: [], tags: [] },
+      selection: { dependencies: true, projects: [], tags: [] },
       workspace: {},
     },
     enabledGraphTypes: new Set(["nxProjects"]),

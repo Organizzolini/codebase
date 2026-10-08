@@ -33,6 +33,8 @@ for this repository's own.
 | ---- | ------- |
 | `--check [check]` | Fail on a comma-separated set drawn from `boundaries` and `reports` |
 | `--config [config]` | Path to a `codependix.config.ts`. Searched for upward from `--directory` when omitted |
+| `--dependencies` | Build `--check boundaries` over the dependencies of the projects `--projects` or `--tags` named, reporting their findings as notes (default). No effect without `--projects` or `--tags` |
+| `--no-dependencies` | Build `--check boundaries` over only the projects `--projects` or `--tags` named, not their dependencies. No effect without `--projects` or `--tags` |
 | `-d, --directory [directory]` | Workspace root whose Nx project graph this run reads. Defaults to the working directory |
 | `--exclude [exclude]` | Comma-separated globs overriding the configured `exclude`. Refused when `exclude` was never configured |
 | `--file-imports` | Build, check, and write the `fileImports` graph type for this run |
@@ -45,8 +47,8 @@ for this repository's own.
 | `--no-nestjs-modules` | Skip the `nestjsModules` graph type for this run |
 | `--nx-projects` | Build, check, and write the `nxProjects` graph type for this run |
 | `--no-nx-projects` | Skip the `nxProjects` graph type for this run |
-| `--projects [projects]` | Comma-separated project names or roots to export for, as globs, beyond those `include` already selects. Also narrows the Workspace Graph and `--check boundaries` to the named set |
-| `--tags [tags]` | Comma-separated Nx tags to export for, beyond what `include` already selects. Also narrows the Workspace Graph and `--check boundaries` to the tagged projects |
+| `--projects [projects]` | Comma-separated project names or roots to export for, as globs, beyond those `include` already selects. Also narrows the Workspace Graph to the named set, and `--check boundaries` to failing only on findings charged to it |
+| `--tags [tags]` | Comma-separated Nx tags to export for, beyond what `include` already selects. Narrows the Workspace Graph and `--check boundaries` to the tagged projects, as `--projects` does |
 | `--write` | Writes every configured export |
 
 ### The two `--check` names
@@ -78,6 +80,23 @@ unreadable together.
 - A bare `--check`, or one whose value is only separators, is refused. Read as
   "gate nothing" it would be a gate that cannot fail, which is worse than no
   gate at all because it looks like protection.
+
+### Which project a boundary finding fails
+
+Every finding is charged to the project or projects it belongs to: a cycle to
+every project owning a node on it, a forbidden edge to the project owning its
+source, a file- or NestJS-level finding to the project whose graph it was
+found in, and a container that cannot boot to that container's project — its
+message naming the project that owns the class it failed on, when the stack
+shows another one.
+
+`--projects` and `--tags` name the projects a run judges. Graphs are built
+over those projects and everything they transitively depend on, and a finding
+fails the run only when it is charged to a named project. One charged only to
+a dependency is logged as a note, "in dependency", without failing:
+the named project is built on it, but it is not that project's to fix.
+`--no-dependencies` builds over the named projects alone. With neither flag
+every project is judged.
 
 ### When no mode is named
 

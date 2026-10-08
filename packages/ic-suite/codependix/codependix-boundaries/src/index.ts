@@ -29,8 +29,13 @@ export type {
   BoundaryCheckContext,
   BoundaryCheckFailure,
   BoundaryCheckOutcome,
+  BoundaryLevelOutcome,
+  BoundaryVerdict,
+  CollectFailureArguments,
+  JudgedBoundaryFinding,
   LevelCheckArguments,
 } from "./modules/boundary-check/boundary-check.types";
+export { BoundaryFailureService } from "./modules/boundary-check/boundary-failure.service";
 export { BoundaryGraphService } from "./modules/boundary-check/boundary-graph.service";
 export { RunContextModule } from "./modules/run-context/run-context.module";
 export { RunContextService } from "./modules/run-context/run-context.service";

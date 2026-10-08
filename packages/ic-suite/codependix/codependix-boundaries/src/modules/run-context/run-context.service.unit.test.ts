@@ -58,7 +58,7 @@ describe(RunContextService, () => {
       exclude: [],
       include: ["**"],
       projectGraph: undefined,
-      selection: { projects: [], tags: [] },
+      selection: { dependencies: true, projects: [], tags: [] },
       workspace: {},
     });
     vi.mocked(configurationService.isProjectSelected).mockReturnValue(true);
@@ -95,13 +95,21 @@ describe(RunContextService, () => {
   it("hands the command line's selection to the configuration loader", async () => {
     await service.build({
       mode: "write",
-      options: { projects: "widgets", tags: "framework:nestjs" },
+      options: {
+        dependencies: false,
+        projects: "widgets",
+        tags: "framework:nestjs",
+      },
       workingDirectory: "/workspace",
     });
 
     expect(configurationService.loadConfiguration).toHaveBeenCalledWith(
       expect.objectContaining({
-        selection: { projects: "widgets", tags: "framework:nestjs" },
+        selection: {
+          dependencies: false,
+          projects: "widgets",
+          tags: "framework:nestjs",
+        },
       }),
     );
   });
@@ -182,7 +190,7 @@ describe(RunContextService, () => {
       exclude: [],
       include: ["**"],
       projectGraph: "artifacts/graph.json",
-      selection: { projects: [], tags: [] },
+      selection: { dependencies: true, projects: [], tags: [] },
       workspace: {},
     });
 
@@ -224,6 +232,67 @@ describe(RunContextService, () => {
     expect(
       context.selectedProjects.map((project) => project.name),
     ).toStrictEqual(["widgets"]);
+  });
+
+  // 🧭 Judged set and build set
+
+  describe("the build set", () => {
+    beforeEach(() => {
+      vi.mocked(configurationService.isProjectSelected).mockImplementation(
+        (args) => args.projectName === "widgets",
+      );
+      vi.mocked(neighborhoodService.resolveDependencyClosure).mockReturnValue([
+        "reporting",
+        "widgets",
+      ]);
+    });
+
+    // A finding in a project the judged one depends on is part of what that
+    // project is built from, so the graphs are drawn over the whole closure.
+    it("widens the judged projects to their dependency closure", async () => {
+      const context = await service.build({
+        mode: "check",
+        options: { projects: "widgets" },
+        workingDirectory: "/workspace",
+      });
+
+      expect(neighborhoodService.resolveDependencyClosure).toHaveBeenCalledWith(
+        { dependencies: {}, nodes: {} },
+        ["widgets"],
+      );
+      expect(
+        context.selectedProjects.map((project) => project.name),
+      ).toStrictEqual(["widgets"]);
+      expect(context.buildProjects).toStrictEqual(PROJECTS);
+    });
+
+    it("builds over the judged projects alone under --no-dependencies", async () => {
+      vi.mocked(configurationService.loadConfiguration).mockResolvedValue({
+        boundaries: {
+          fileImports: { python: [], typescript: [] },
+          nestjsModules: [],
+          nxProjects: [],
+        },
+        exclude: [],
+        include: ["**"],
+        projectGraph: undefined,
+        selection: { dependencies: false, projects: ["widgets"], tags: [] },
+        workspace: {},
+      });
+
+      const context = await service.build({
+        mode: "check",
+        options: { dependencies: false, projects: "widgets" },
+        workingDirectory: "/workspace",
+      });
+
+      expect(
+        context.buildProjects.map((project) => project.name),
+      ).toStrictEqual(["widgets"]);
+      expect(
+        neighborhoodService.resolveDependencyClosure,
+      ).not.toHaveBeenCalled();
+    });
   });
 
   it("matches a project's root against the selection as a workspace-relative path", async () => {

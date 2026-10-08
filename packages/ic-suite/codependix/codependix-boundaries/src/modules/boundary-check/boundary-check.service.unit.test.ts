@@ -11,6 +11,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { BoundariesService } from "../boundaries/boundaries.service";
 
 import { BoundaryCheckService } from "./boundary-check.service";
+import { BoundaryFailureService } from "./boundary-failure.service";
 import { BoundaryGraphService } from "./boundary-graph.service";
 
 import type {
@@ -37,6 +38,7 @@ const VIOLATION: BoundaryViolation = {
   cycle: undefined,
   level: "nxProjects",
   message: "layers: a must not depend on b.",
+  projects: ["a"],
   rule: "layers",
   scope: "workspace",
   source: "a",
@@ -47,6 +49,13 @@ const VIOLATION: BoundaryViolation = {
 const PROJECTS = [
   { absoluteRoot: "/workspace/packages/a", name: "a", tags: [] },
 ];
+
+/** A dependency of `a`, built but never judged when only `a` is selected. */
+const DEPENDENCY = {
+  absoluteRoot: "/workspace/packages/b",
+  name: "b",
+  tags: [],
+};
 
 /** Boundaries overrides a test may pass, `fileImports` narrowed per language. */
 type BoundariesOverrides = Omit<
@@ -94,12 +103,13 @@ describe(BoundaryCheckService, () => {
     ]),
   ): BoundaryCheckContext {
     return {
+      buildProjects: PROJECTS,
       configuration: {
         boundaries: buildBoundaries(boundaries),
         exclude: [],
         include: ["**"],
         projectGraph: undefined,
-        selection: { projects: [], tags: [] },
+        selection: { dependencies: true, projects: [], tags: [] },
         workspace: {},
       },
       enabledGraphTypes,
@@ -121,6 +131,7 @@ describe(BoundaryCheckService, () => {
     const module = await Test.createTestingModule({
       providers: [
         BoundaryCheckService,
+        BoundaryFailureService,
         BoundaryGraphService,
         { provide: BoundariesService, useValue: boundariesService },
         { provide: ModuleGraphService, useValue: moduleGraphService },
@@ -160,25 +171,24 @@ describe(BoundaryCheckService, () => {
     expect(service).toBeDefined();
   });
 
-  // --projects/--tags narrow what the gate judges, deliberately: a narrowed
-  // run sees fewer edges than a whole-workspace one.
-  it("judges the selected projects rather than every project", async () => {
+  // The judged projects' edges into their dependencies are part of what
+  // they are, so the graph is drawn over the build set rather than the
+  // judged set, which would drop every edge leaving it.
+  it("builds the Nx graph over the build set, not only the judged projects", async () => {
     const context = buildContext({
       nxProjects: [{ kind: "acyclic", name: "no-cycles" }],
     });
 
     await service.run({
       ...context,
-      projects: [
-        ...PROJECTS,
-        { absoluteRoot: "/workspace/packages/b", name: "b", tags: [] },
-      ],
+      buildProjects: [...PROJECTS, DEPENDENCY],
+      projects: [...PROJECTS, DEPENDENCY],
       selectedProjects: PROJECTS,
     });
 
     expect(workspaceGraphService.buildWorkspaceGraph).toHaveBeenCalledWith(
       expect.anything(),
-      PROJECTS,
+      [...PROJECTS, DEPENDENCY],
     );
   });
 
@@ -197,13 +207,15 @@ describe(BoundaryCheckService, () => {
 
     const outcome = await service.run(buildContext({ nxProjects: RULE_LIST }));
 
-    expect(outcome.violations).toStrictEqual([VIOLATION]);
+    expect(outcome.violations).toStrictEqual([
+      { ...VIOLATION, verdict: "fail" },
+    ]);
     expect(evaluatedGraphs[0]?.level).toBe("nxProjects");
     expect(evaluatedGraphs[0]?.scope).toBe("workspace");
     expect(evaluatedRules[0]).toBe(RULE_LIST);
   });
 
-  it("records a failed workspace graph rather than raising", async () => {
+  it("records a failed workspace graph against every judged project", async () => {
     vi.mocked(workspaceGraphService.buildWorkspaceGraph).mockImplementation(
       () => {
         throw new Error("boom");
@@ -213,7 +225,7 @@ describe(BoundaryCheckService, () => {
     const outcome = await service.run(buildContext({ nxProjects: RULE_LIST }));
 
     expect(outcome.failures).toStrictEqual([
-      { error: "boom", projectName: "workspace" },
+      { error: "boom", level: "nxProjects", projects: ["a"], verdict: "fail" },
     ]);
   });
 
@@ -268,7 +280,12 @@ describe(BoundaryCheckService, () => {
     );
 
     expect(outcome.failures).toStrictEqual([
-      { error: "boom", projectName: "a" },
+      {
+        error: "boom",
+        level: "nestjsModules",
+        projects: ["a"],
+        verdict: "fail",
+      },
     ]);
     expect(evaluatedGraphs).toHaveLength(1);
   });
@@ -293,7 +310,12 @@ describe(BoundaryCheckService, () => {
     );
 
     expect(outcome.failures).toStrictEqual([
-      { error: "boom", projectName: "a" },
+      {
+        error: "boom",
+        level: "nestjsModules",
+        projects: ["a"],
+        verdict: "fail",
+      },
     ]);
   });
 
@@ -335,7 +357,12 @@ describe(BoundaryCheckService, () => {
     );
 
     expect(outcome.failures).toStrictEqual([
-      { error: "boom", projectName: "a" },
+      {
+        error: "boom",
+        level: "typescript",
+        projects: ["a"],
+        verdict: "fail",
+      },
     ]);
   });
 
@@ -369,7 +396,12 @@ describe(BoundaryCheckService, () => {
     );
 
     expect(outcome.failures).toStrictEqual([
-      { error: "boom", projectName: "a" },
+      {
+        error: "boom",
+        level: "python",
+        projects: ["a"],
+        verdict: "fail",
+      },
     ]);
   });
 
@@ -487,6 +519,133 @@ describe(BoundaryCheckService, () => {
 
     const outcome = await service.run(buildContext({ nxProjects: RULE_LIST }));
 
-    expect(outcome.violations).toStrictEqual([VIOLATION]);
+    expect(outcome.violations).toStrictEqual([
+      { ...VIOLATION, verdict: "fail" },
+    ]);
+  });
+
+  // ⚖️ Judging
+
+  describe("judging", () => {
+    /** A context judging `a` alone, built over `a` and its dependency `b`. */
+    function buildNarrowedContext(
+      boundaries: BoundariesOverrides,
+    ): BoundaryCheckContext {
+      return {
+        ...buildContext(boundaries),
+        buildProjects: [...PROJECTS, DEPENDENCY],
+        projects: [...PROJECTS, DEPENDENCY],
+        selectedProjects: PROJECTS,
+      };
+    }
+
+    // D3: the judged project inherits the finding but cannot fix it, so it is
+    // reported against the dependency it lives in without failing the run.
+    it("notes a violation charged only to a dependency", async () => {
+      reportedViolations.push({ ...VIOLATION, projects: ["b"] });
+
+      const outcome = await service.run(
+        buildNarrowedContext({ nxProjects: RULE_LIST }),
+      );
+
+      expect(outcome.violations.map((found) => found.verdict)).toStrictEqual([
+        "note",
+      ]);
+    });
+
+    // D5: a cycle through a judged project fails it, wherever else it runs.
+    it("fails a violation charged to a judged project and a dependency alike", async () => {
+      reportedViolations.push({ ...VIOLATION, projects: ["a", "b"] });
+
+      const outcome = await service.run(
+        buildNarrowedContext({ nxProjects: RULE_LIST }),
+      );
+
+      expect(outcome.violations.map((found) => found.verdict)).toStrictEqual([
+        "fail",
+      ]);
+    });
+
+    it("discovers every per-project level over the build set", async () => {
+      await service.run(
+        buildNarrowedContext({
+          fileImports: { python: RULE_LIST, typescript: RULE_LIST },
+          nestjsModules: RULE_LIST,
+        }),
+      );
+
+      expect(nestjsProjectService.discoverProjects).toHaveBeenCalledWith([
+        ...PROJECTS,
+        DEPENDENCY,
+      ]);
+      expect(pythonService.discoverProjects).toHaveBeenCalledWith([
+        ...PROJECTS,
+        DEPENDENCY,
+      ]);
+      expect(typescriptService.discoverProjects).toHaveBeenCalledWith([
+        ...PROJECTS,
+        DEPENDENCY,
+      ]);
+    });
+
+    it("notes a container failure in a dependency, charged to that dependency", async () => {
+      vi.mocked(nestjsProjectService.discoverProjects).mockReturnValue([
+        { ...DEPENDENCY, rootModuleFile: "src/main.ts" },
+      ]);
+      vi.mocked(nestjsProjectService.exploreProject).mockRejectedValueOnce(
+        new Error("boom"),
+      );
+
+      const outcome = await service.run(
+        buildNarrowedContext({ nestjsModules: RULE_LIST }),
+      );
+
+      expect(outcome.failures).toStrictEqual([
+        {
+          error: "boom",
+          level: "nestjsModules",
+          projects: ["b"],
+          verdict: "note",
+        },
+      ]);
+    });
+
+    // D3: the judged container really cannot boot, so it fails — and the
+    // failure names the dependency whose class it could not evaluate.
+    it("fails a judged container, naming the dependency that broke it", async () => {
+      const error = new ReferenceError(
+        "Cannot access 'Word' before initialization",
+      );
+
+      error.stack = [
+        "ReferenceError: Cannot access 'Word' before initialization",
+        "    at file:///workspace/packages/b/src/word.entity.ts:12:3",
+        "    at /workspace/packages/a/src/main.ts:1:1",
+      ].join("\n");
+      vi.mocked(nestjsProjectService.discoverProjects).mockReturnValue([
+        {
+          absoluteRoot: "/workspace/packages/a",
+          name: "a",
+          rootModuleFile: "src/main.ts",
+        },
+      ]);
+      vi.mocked(nestjsProjectService.exploreProject).mockRejectedValueOnce(
+        error,
+      );
+
+      const outcome = await service.run(
+        buildNarrowedContext({ nestjsModules: RULE_LIST }),
+      );
+
+      expect(outcome.failures).toStrictEqual([
+        {
+          error: "Cannot access 'Word' before initialization",
+          level: "nestjsModules",
+          ownerProject: "b",
+          projects: ["a"],
+          verdict: "fail",
+        },
+      ]);
+    });
   });
 });

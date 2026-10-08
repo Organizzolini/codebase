@@ -15,7 +15,7 @@ import type {
   ResolvedCodependixConfiguration,
 } from "@codependix/configuration";
 import type { CodependixRunMode } from "@codependix/core";
-import type { NxProject } from "@codependix/nx-projects";
+import type { NxProject, NxProjectGraph } from "@codependix/nx-projects";
 
 /**
  * Resolves everything one run reads, once, before any pass runs.
@@ -68,6 +68,37 @@ export class RunContextService {
   }
 
   /**
+   * Widens the selected projects to the set every boundary graph is built
+   * over: their dependency closure, or the selection alone under
+   * `--no-dependencies`.
+   *
+   * Only the selection is judged. The rest of the closure is built so a
+   * finding the selected projects inherit from a dependency can be reported
+   * against it as a note, and so an Nx edge leaving the selection is still
+   * drawn. With no selection every project is selected, and the closure of
+   * every project is every project.
+   */
+  private resolveBuildProjects(args: {
+    configuration: ResolvedCodependixConfiguration;
+    graph: NxProjectGraph;
+    projects: NxProject[];
+    selectedProjects: NxProject[];
+  }): NxProject[] {
+    if (!args.configuration.selection.dependencies) {
+      return args.selectedProjects;
+    }
+
+    const closure = new Set(
+      this.neighborhoodService.resolveDependencyClosure(
+        args.graph,
+        args.selectedProjects.map((project) => project.name),
+      ),
+    );
+
+    return args.projects.filter((project) => closure.has(project.name));
+  }
+
+  /**
    * Reads the three graph-type toggle flags into the set of graph types this
    * run builds, checks, and writes.
    *
@@ -100,6 +131,24 @@ export class RunContextService {
     return projectGraph === undefined
       ? undefined
       : path.resolve(workingDirectory, projectGraph);
+  }
+
+  /**
+   * Resolves the two project sets a run acts on: the selection it judges,
+   * and the build set every boundary graph is drawn over.
+   */
+  private resolveProjectSets(args: {
+    configuration: ResolvedCodependixConfiguration;
+    graph: NxProjectGraph;
+    projects: NxProject[];
+    workingDirectory: string;
+  }): Pick<GraphRunContext, "buildProjects" | "selectedProjects"> {
+    const selectedProjects = this.selectProjects(args);
+
+    return {
+      buildProjects: this.resolveBuildProjects({ ...args, selectedProjects }),
+      selectedProjects,
+    };
   }
 
   /**
@@ -146,7 +195,11 @@ export class RunContextService {
       configurationPath: options.config,
       overrides: { exclude: options.exclude, include: options.include },
       searchDirectory: workingDirectory,
-      selection: { projects: options.projects, tags: options.tags },
+      selection: {
+        dependencies: options.dependencies,
+        projects: options.projects,
+        tags: options.tags,
+      },
     });
     const graph = await this.neighborhoodService.readProjectGraph(
       this.resolveProjectGraphPath(
@@ -162,17 +215,18 @@ export class RunContextService {
       await this.loadProjectConfigurations(projects);
 
     return {
+      ...this.resolveProjectSets({
+        configuration,
+        graph,
+        projects,
+        workingDirectory,
+      }),
       configuration,
       enabledGraphTypes: this.resolveEnabledGraphTypes(options),
       graph,
       mode,
       projectConfigurations,
       projects,
-      selectedProjects: this.selectProjects({
-        configuration,
-        projects,
-        workingDirectory,
-      }),
       workingDirectory,
     };
   }

@@ -16,7 +16,7 @@ function buildResolved(): ResolvedCodependixConfiguration {
     exclude: [],
     include: ["packages/**"],
     projectGraph: undefined,
-    selection: { projects: [], tags: [] },
+    selection: { dependencies: true, projects: [], tags: [] },
     workspace: {},
   };
 }
