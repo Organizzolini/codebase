@@ -7,7 +7,7 @@ import { MathService } from "../math/math.service";
 import { AspectsUtilitiesService } from "./aspects-utilities.service";
 
 import type { Body } from "../caelundas/caelundas.types";
-import type { LongitudesWindow } from "./aspects.types";
+import type { BodyLongitudesWindow } from "./aspects.types";
 
 describe(AspectsUtilitiesService, () => {
   let service: AspectsUtilitiesService;
@@ -26,18 +26,21 @@ describe(AspectsUtilitiesService, () => {
 
   describe("getActiveAspectBodies", () => {
     const minute = moment.utc("2026-10-01T04:00:00Z");
-    const steady = (longitude: number): LongitudesWindow => ({
+    const steady = (longitude: number): BodyLongitudesWindow => ({
       current: longitude,
       next: longitude,
       previous: longitude,
     });
-    const longitudes: Partial<Record<Body, LongitudesWindow>> = {
+    const longitudes: Partial<Record<Body, BodyLongitudesWindow>> = {
       mars: steady(140),
       mercury: { current: 231, next: 231.1, previous: 229 },
       pluto: steady(323),
     };
-    const getLongitudesWindow = ({ body }: { body: Body }): LongitudesWindow =>
-      longitudes[body] ?? steady(0);
+    const getLongitudesWindow = ({
+      body,
+    }: {
+      body: Body;
+    }): BodyLongitudesWindow => longitudes[body] ?? steady(0);
 
     it("lists each pair held in an aspect across the previous, current and next minute", () => {
       const active = service.getActiveAspectBodies({

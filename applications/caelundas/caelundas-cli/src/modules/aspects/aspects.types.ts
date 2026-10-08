@@ -14,6 +14,15 @@ export interface AspectBodies {
 }
 
 /**
+ * One body's ecliptic longitude at the previous, current and next minute.
+ */
+export interface BodyLongitudesWindow {
+  current: number;
+  next: number;
+  previous: number;
+}
+
+/**
  * Detects multi-body aspect patterns from already-detected simple aspect edges.
  */
 export interface CompositeAspectDetector {
@@ -27,15 +36,6 @@ export interface CompositeAspectDetectorArguments {
   currentAspectBodies: AspectBodies[];
   minute: Moment;
   previousAspectBodies: AspectBodies[];
-}
-
-/**
- * One body's ecliptic longitude at the previous, current and next minute.
- */
-export interface LongitudesWindow {
-  current: number;
-  next: number;
-  previous: number;
 }
 
 /**

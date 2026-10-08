@@ -6,7 +6,7 @@ import { MathService } from "../math/math.service";
 import { LONGITUDES_WINDOW_INSTANTS } from "./aspects.constants";
 
 import type { Aspect, AspectPhase, Body } from "../caelundas/caelundas.types";
-import type { AspectBodies, LongitudesWindow } from "./aspects.types";
+import type { AspectBodies, BodyLongitudesWindow } from "./aspects.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -281,7 +281,7 @@ export class AspectsUtilitiesService {
       minute: Moment;
       nextMinute: Moment;
       previousMinute: Moment;
-    }) => LongitudesWindow;
+    }) => BodyLongitudesWindow;
     minute: Moment;
   }): AspectBodies[] {
     const { aspects, bodies, getLongitudesWindow, minute } = args;
