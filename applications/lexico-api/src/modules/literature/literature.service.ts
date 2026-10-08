@@ -11,11 +11,7 @@ import {
   Word,
 } from "@codebase/lexico-entities";
 
-import {
-  createConnection,
-  paginateArray,
-  toCursor,
-} from "../../lexico-api.utilities";
+import { createEmptyConnection, paginateQuery } from "./literature.utilities";
 
 import type { Connection } from "../../lexico-api.types";
 import type { PaginationArguments } from "../search/pagination-arguments.entities";
@@ -45,30 +41,6 @@ export class LiteratureService {
   // 🔑 Public Fields
 
   // 🔏 Private Methods
-
-  /**
-   * Paginates ordered entities into a structured Relay connection.
-   */
-  private paginateConnection<T extends { id: string }>(
-    items: T[],
-    pagination?: PaginationArguments,
-    getCursor?: (item: T) => string,
-  ): Connection<T> {
-    const paginated = paginateArray(items, {
-      after: pagination?.after,
-      before: pagination?.before,
-      first: pagination?.first,
-      getCursor: getCursor ?? ((item) => toCursor({ id: item.id })),
-      last: pagination?.last,
-    });
-
-    return createConnection<T>({
-      edges: paginated.edges,
-      hasNextPage: paginated.hasNextPage,
-      hasPreviousPage: paginated.hasPreviousPage,
-      totalCount: items.length,
-    });
-  }
 
   // 🌎 Public Methods
 
@@ -131,22 +103,23 @@ export class LiteratureService {
   }
 
   /**
-   * Lists authors in a stable order.
-   */
-  public async listAuthors(): Promise<Author[]> {
-    return this.authorRepository.find({
-      order: { name: "ASC" },
-      relations: { texts: true },
-    });
-  }
-
-  /**
-   * Lists authors using Relay pagination.
+   * Lists authors by name using Relay pagination.
    */
   public async listAuthorsConnection(
     pagination?: PaginationArguments,
   ): Promise<Connection<Author>> {
-    return this.paginateConnection(await this.listAuthors(), pagination);
+    return paginateQuery(
+      {
+        filter: () => this.authorRepository.createQueryBuilder("author"),
+        load: async (ids) =>
+          this.authorRepository.find({
+            relations: { texts: true },
+            where: { id: In(ids) },
+          }),
+        sortKey: "author.name",
+      },
+      pagination,
+    );
   }
 
   /**
@@ -189,8 +162,35 @@ export class LiteratureService {
     },
     pagination?: PaginationArguments,
   ): Promise<Connection<Line>> {
-    return this.paginateConnection(
-      await this.listLines(textId, range.startIndex, range.endIndex),
+    if (!textId) {
+      return createEmptyConnection<Line>();
+    }
+
+    return paginateQuery(
+      {
+        filter: () => {
+          const query = this.lineRepository
+            .createQueryBuilder("line")
+            .where("line.text_id = :textId", { textId });
+          if (typeof range.startIndex === "number") {
+            query.andWhere("line.index >= :startIndex", {
+              startIndex: range.startIndex,
+            });
+          }
+          if (typeof range.endIndex === "number") {
+            query.andWhere("line.index <= :endIndex", {
+              endIndex: range.endIndex,
+            });
+          }
+          return query;
+        },
+        load: async (ids) =>
+          this.lineRepository.find({
+            relations: { author: true, text: true },
+            where: { id: In(ids) },
+          }),
+        sortKey: "line.index",
+      },
       pagination,
     );
   }
@@ -223,8 +223,27 @@ export class LiteratureService {
     parentTextId?: null | string,
     pagination?: PaginationArguments,
   ): Promise<Connection<Text>> {
-    return this.paginateConnection(
-      await this.listTexts(authorId, parentTextId),
+    return paginateQuery(
+      {
+        filter: () => {
+          const query = this.textRepository.createQueryBuilder("text");
+          if (authorId) {
+            query.andWhere("text.author_id = :authorId", { authorId });
+          }
+          if (parentTextId) {
+            query.andWhere("text.parent_text_id = :parentTextId", {
+              parentTextId,
+            });
+          }
+          return query;
+        },
+        load: async (ids) =>
+          this.textRepository.find({
+            relations: { author: true, parentText: true },
+            where: { id: In(ids) },
+          }),
+        sortKey: "text.title",
+      },
       pagination,
     );
   }
@@ -247,8 +266,19 @@ export class LiteratureService {
     lineId: string,
     pagination?: PaginationArguments,
   ): Promise<Connection<Token>> {
-    return this.paginateConnection(
-      await this.listTokensForLine(lineId),
+    return paginateQuery(
+      {
+        filter: () =>
+          this.tokenRepository
+            .createQueryBuilder("token")
+            .where("token.line_id = :lineId", { lineId }),
+        load: async (ids) =>
+          this.tokenRepository.find({
+            relations: { author: true, line: true, text: true, word: true },
+            where: { id: In(ids) },
+          }),
+        sortKey: "token.index",
+      },
       pagination,
     );
   }
@@ -271,26 +301,23 @@ export class LiteratureService {
   ): Promise<Connection<Author>> {
     const clean = query.trim();
     if (clean.length === 0) {
-      return createConnection<Author>({
-        edges: [],
-        hasNextPage: false,
-        hasPreviousPage: false,
-        totalCount: 0,
-      });
+      return createEmptyConnection<Author>();
     }
 
-    const authors = await this.authorRepository
-      .createQueryBuilder("author")
-      .where(
-        "LOWER(author.name) LIKE :query OR LOWER(author.slug) LIKE :query",
-        {
-          query: `%${clean.toLowerCase()}%`,
-        },
-      )
-      .orderBy("author.name", "ASC")
-      .getMany();
-
-    return this.paginateConnection(authors, pagination);
+    return paginateQuery(
+      {
+        filter: () =>
+          this.authorRepository
+            .createQueryBuilder("author")
+            .where(
+              "(LOWER(author.name) LIKE :query OR LOWER(author.slug) LIKE :query)",
+              { query: `%${clean.toLowerCase()}%` },
+            ),
+        load: async (ids) => this.authorRepository.findBy({ id: In(ids) }),
+        sortKey: "author.name",
+      },
+      pagination,
+    );
   }
 
   /** Searches lines by content within a text or globally. */
@@ -301,27 +328,27 @@ export class LiteratureService {
   ): Promise<Connection<Line>> {
     const clean = query.trim();
     if (clean.length === 0) {
-      return createConnection<Line>({
-        edges: [],
-        hasNextPage: false,
-        hasPreviousPage: false,
-        totalCount: 0,
-      });
+      return createEmptyConnection<Line>();
     }
 
-    const qb = this.lineRepository
-      .createQueryBuilder("line")
-      .leftJoinAndSelect("line.text", "text")
-      .where("LOWER(line.data) LIKE :query", {
-        query: `%${clean.toLowerCase()}%`,
-      })
-      .orderBy("line.index", "ASC");
-
-    if (textId) {
-      qb.andWhere("text.id = :textId", { textId });
-    }
-
-    return this.paginateConnection(await qb.getMany(), pagination);
+    return paginateQuery(
+      {
+        filter: () => {
+          const lines = this.lineRepository
+            .createQueryBuilder("line")
+            .where("LOWER(line.data) LIKE :query", {
+              query: `%${clean.toLowerCase()}%`,
+            });
+          if (textId) {
+            lines.andWhere("line.text_id = :textId", { textId });
+          }
+          return lines;
+        },
+        load: async (ids) => this.lineRepository.findBy({ id: In(ids) }),
+        sortKey: "line.index",
+      },
+      pagination,
+    );
   }
 
   /** Aggregates author, text, and line search hits into a single response. */
@@ -336,30 +363,15 @@ export class LiteratureService {
     const clean = query.trim();
     const authors =
       clean.length === 0
-        ? createConnection<Author>({
-            edges: [],
-            hasNextPage: false,
-            hasPreviousPage: false,
-            totalCount: 0,
-          })
+        ? createEmptyConnection<Author>()
         : await this.searchAuthors(clean);
     const texts =
       clean.length === 0
-        ? createConnection<Text>({
-            edges: [],
-            hasNextPage: false,
-            hasPreviousPage: false,
-            totalCount: 0,
-          })
+        ? createEmptyConnection<Text>()
         : await this.searchTexts(clean, authorId);
     const lines =
       clean.length === 0
-        ? createConnection<Line>({
-            edges: [],
-            hasNextPage: false,
-            hasPreviousPage: false,
-            totalCount: 0,
-          })
+        ? createEmptyConnection<Line>()
         : await this.searchLines(clean);
 
     return {
@@ -377,27 +389,27 @@ export class LiteratureService {
   ): Promise<Connection<Text>> {
     const clean = query.trim();
     if (clean.length === 0) {
-      return createConnection<Text>({
-        edges: [],
-        hasNextPage: false,
-        hasPreviousPage: false,
-        totalCount: 0,
-      });
+      return createEmptyConnection<Text>();
     }
 
-    const qb = this.textRepository
-      .createQueryBuilder("text")
-      .leftJoinAndSelect("text.author", "author")
-      .where(
-        "(LOWER(text.title) LIKE :query OR LOWER(text.slug) LIKE :query)",
-        { query: `%${clean.toLowerCase()}%` },
-      )
-      .orderBy("text.title", "ASC");
-
-    if (authorId) {
-      qb.andWhere("author.id = :authorId", { authorId });
-    }
-
-    return this.paginateConnection(await qb.getMany(), pagination);
+    return paginateQuery(
+      {
+        filter: () => {
+          const texts = this.textRepository
+            .createQueryBuilder("text")
+            .where(
+              "(LOWER(text.title) LIKE :query OR LOWER(text.slug) LIKE :query)",
+              { query: `%${clean.toLowerCase()}%` },
+            );
+          if (authorId) {
+            texts.andWhere("text.author_id = :authorId", { authorId });
+          }
+          return texts;
+        },
+        load: async (ids) => this.textRepository.findBy({ id: In(ids) }),
+        sortKey: "text.title",
+      },
+      pagination,
+    );
   }
 }
