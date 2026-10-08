@@ -2,6 +2,7 @@
 import path from "node:path";
 
 import { resolvePluginService } from "./modules/plugin/plugin-context.utilities";
+import { resolveToolInputs } from "./modules/plugin/plugin-inputs.utilities";
 import { PROJECT_CONFIGURATION_GLOB } from "./modules/plugin/plugin.constants";
 
 import type {
@@ -43,6 +44,7 @@ const createNodes: CreateNodes = [
     const targetsByProjectRoot = pluginService.inferTargets({
       options,
       projectConfigurationFiles,
+      toolInputs: resolveToolInputs(context.workspaceRoot),
       workspaceRoot: context.workspaceRoot,
     });
 

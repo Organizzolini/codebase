@@ -58,6 +58,23 @@ export class PluginService {
     return typeof value === "string" && value !== "" ? value : undefined;
   }
 
+  /**
+   * The project roots among the files Nx matched: each `project.json`'s
+   * directory, the workspace root excepted.
+   */
+  private selectProjectRoots(
+    projectConfigurationFiles: readonly string[],
+  ): string[] {
+    return projectConfigurationFiles
+      .filter(
+        (projectConfigurationFile) =>
+          path.basename(projectConfigurationFile) ===
+          PROJECT_CONFIGURATION_FILENAME,
+      )
+      .map((projectConfigurationFile) => path.dirname(projectConfigurationFile))
+      .filter((projectRoot) => projectRoot !== WORKSPACE_PROJECT_ROOT);
+  }
+
   /** Copies an untrusted value into a record, or an empty one. */
   private toRecord(value: unknown): Record<string, unknown> {
     return typeof value === "object" && value !== null ? { ...value } : {};
@@ -71,8 +88,10 @@ export class PluginService {
    * Every project gets one, the workspace root excepted. The gate builds over
    * a project's dependency closure, so its inputs reach the dependencies'
    * sources through `^default`; the workspace configuration holds the rules,
-   * so editing it invalidates every gate; and the project's own configuration
-   * is the one file only this project's gate reads. No `configurations` are
+   * so editing it invalidates every gate; the project's own configuration is
+   * the one file only this project's gate reads; and the command line's own
+   * code decides every verdict, through the `toolInputs` the caller resolved
+   * with `resolveToolInputs`. No `configurations` are
    * declared, so an aggregator run with `--configuration=check` falls through
    * to the defaults rather than failing for a configuration this target lacks.
    */
@@ -93,20 +112,16 @@ export class PluginService {
           "^default",
           `{workspaceRoot}/${pluginOptions.configurationPath}`,
           PROJECT_CONFIGURATION_INPUT,
+          ...args.toolInputs,
         ],
         options: {},
       },
     };
-    const projectRoots = args.projectConfigurationFiles
-      .filter(
-        (projectConfigurationFile) =>
-          path.basename(projectConfigurationFile) ===
-          PROJECT_CONFIGURATION_FILENAME,
-      )
-      .map((projectConfigurationFile) => path.dirname(projectConfigurationFile))
-      .filter((projectRoot) => projectRoot !== WORKSPACE_PROJECT_ROOT);
-
-    return new Map(projectRoots.map((projectRoot) => [projectRoot, targets]));
+    return new Map(
+      this.selectProjectRoots(args.projectConfigurationFiles).map(
+        (projectRoot) => [projectRoot, targets],
+      ),
+    );
   }
 
   /**

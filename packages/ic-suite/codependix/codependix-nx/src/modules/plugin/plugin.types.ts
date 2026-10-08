@@ -11,12 +11,18 @@ export interface CodependixPluginOptions {
   readonly gateTargetName: string;
 }
 
+/**
+ * One cache input of an inferred target: a file glob, or the npm packages an
+ * installed command line is versioned by.
+ */
+export type InferredInput = string | { externalDependencies: string[] };
+
 /** A target this plugin infers onto a project. */
 export interface InferredTarget {
   readonly cache: boolean;
   readonly executor: string;
   /** Files whose change must invalidate the cached result. */
-  readonly inputs: string[];
+  readonly inputs: InferredInput[];
   readonly options: Record<string, unknown>;
 }
 
@@ -29,6 +35,8 @@ export interface InferTargetsArguments {
   readonly options: unknown;
   /** Every file Nx matched, workspace-root relative. */
   readonly projectConfigurationFiles: readonly string[];
+  /** The command line's own inputs, from `resolveToolInputs`. */
+  readonly toolInputs: readonly InferredInput[];
   readonly workspaceRoot: string;
 }
 
