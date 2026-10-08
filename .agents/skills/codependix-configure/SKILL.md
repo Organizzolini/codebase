@@ -353,6 +353,7 @@ files are not inputs, so a test-only edit to the tool invalidates no gate, while
 any other edit re-runs them all. A package the plugin cannot resolve loses only
 its own inputs, and Nx's logger warns naming it.
 
-A gate given `projects` or `tags` — on the command line, in the target's
-options, or in a configuration — is never replayed from the cache, because it
-judges projects its inputs do not cover.
+A gate whose `projects` or `tags` select anything other than its own project —
+on the command line, in the target's options, or in a named Nx configuration —
+is never replayed from the cache, because it judges projects its inputs do not
+cover. A gate judging only its own project is cached as usual.

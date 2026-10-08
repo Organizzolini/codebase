@@ -243,9 +243,10 @@ and passes; the broken project's own gate is the one that fails, so reproduce
 a failure by running the gate of the project it names.
 
 The cache keys on the project, its dependencies, the configuration, and the
-codependix command line, test files excluded. A gate given `projects` or `tags`
-judges projects those inputs do not cover, so it is never replayed from the
-cache. The target declares no configurations, so an aggregator run with
+codependix command line, test files excluded. A gate whose selection differs
+from its own project judges projects those inputs do not cover, so it is never
+replayed from the cache; one judging only its own project is cached as usual.
+The target declares no configurations, so an aggregator run with
 `--configuration=check` falls through to its defaults, as callidescope's
 `callidescope-gate` does. In this repository `guard-code` depends on it. The
 workspace-wide `codebase:codependix` target is write-only: it publishes the
@@ -299,8 +300,9 @@ boot — also names `ownerProject` when the class it failed on belongs to a
 different project than the one whose container failed. Read the `fail` rows,
 and treat `note` rows as the dependency's own gate's business.
 
-A failure charged to every judged project, when there is more than one, prints
-as `all N judged projects` rather than a list, and the Markdown report lists it
+A failure — a container that would not boot — charged to every judged project,
+when there is more than one, prints as `all N judged projects` rather than a
+list, and the Markdown report lists it
 once under `#### All judged projects` instead of under each project. The JSON
 keeps the full `projects` array. A bullet's error text keeps its line breaks,
 indented under the bullet, and `-->` is written `--&gt;` so the text cannot

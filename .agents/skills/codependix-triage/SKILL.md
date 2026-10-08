@@ -27,9 +27,7 @@ target, or with `codependix map --check boundaries --projects <project>`,
 adding `--format json` to read the findings as data. The finding that fails a
 gate is the one charged to its project; a line reading "in dependency X, not
 failing" is a note, and X's own gate is the one that fails. Fix it where the
-note says it lives, not in the project that printed it. A finding charged to
-every judged project reads "all N judged projects" instead, so there is no
-other gate to look at: the fix goes where the finding says.
+note says it lives, not in the project that printed it.
 
 **This is the one finding a re-run never fixes.** Nothing is stale and nothing
 needs regenerating: the edge is in the code, and one of two things has to give.
@@ -123,6 +121,9 @@ value-import cycle between entity files, where a decorator reads a class
 before its module finished evaluating, surfaces here as
 `Cannot access 'X' before initialization` — a boot failure, not an `acyclic`
 finding.
+
+When a container failure is charged to every judged project, and there is more
+than one, the line reads "all N judged projects" instead of a list.
 
 An application is rooted in `src/main.module.ts` and its `MainModule` export; a
 library package with no such file is rooted in a synthetic module built from
