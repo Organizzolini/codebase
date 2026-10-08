@@ -15,6 +15,7 @@ const instantSchema = z.iso.datetime({ offset: false });
 
 export const referenceFixtureSchema = z.strictObject({
   absent: z.array(z.string()).optional(),
+  counts: z.record(z.string(), z.int().nonnegative()).optional(),
   events: z
     .array(
       z.strictObject({
@@ -32,8 +33,8 @@ export const referenceFixtureSchema = z.strictObject({
   toleranceMinutes: z.number().positive(),
   window: z.strictObject({
     endDate: z.iso.date(),
-    latitude: z.number(),
-    longitude: z.number(),
+    latitude: z.number().min(-90).max(90),
+    longitude: z.number().min(-180).max(180),
     startDate: z.iso.date(),
   }),
 });

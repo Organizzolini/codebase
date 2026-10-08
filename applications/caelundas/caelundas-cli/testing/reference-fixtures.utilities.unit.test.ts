@@ -151,6 +151,55 @@ describe("reference fixtures", () => {
       expect(lateEnd?.passed).toBe(false);
       expect(lateEnd?.endDeltaMinutes).toBeCloseTo(10);
     });
+
+    it("lets each detected event satisfy at most one reference", () => {
+      expect.hasAssertions();
+
+      const twice: ReferenceFixture = {
+        ...fixture,
+        events: [
+          { start: "2026-03-20T10:37:00Z", summary: "🌄 Civil Dawn" },
+          { start: "2026-03-20T10:38:00Z", summary: "🌄 Civil Dawn" },
+        ],
+      };
+      const comparisons = compareReferenceEvents(
+        [detected("🌄 Civil Dawn", "2026-03-20T10:37:30Z")],
+        twice,
+      );
+
+      expect(
+        comparisons.map((comparison) => comparison.passed).toSorted(),
+      ).toStrictEqual([false, true]);
+      expect(
+        comparisons.filter((comparison) => comparison.actual),
+      ).toHaveLength(1);
+    });
+
+    it("pairs repeated summaries with their own nearest events", () => {
+      expect.hasAssertions();
+
+      const comparisons = compareReferenceEvents(
+        [
+          detected("🌄 Civil Dawn", "2026-03-21T10:36:00Z"),
+          detected("🌄 Civil Dawn", "2026-03-20T10:38:00Z"),
+        ],
+        {
+          ...fixture,
+          events: [
+            { start: "2026-03-21T10:37:00Z", summary: "🌄 Civil Dawn" },
+            { start: "2026-03-20T10:37:00Z", summary: "🌄 Civil Dawn" },
+          ],
+        },
+      );
+
+      expect(comparisons.map((comparison) => comparison.passed)).toStrictEqual([
+        true,
+        true,
+      ]);
+      expect(
+        comparisons.map((comparison) => comparison.startDeltaMinutes),
+      ).toStrictEqual([-1, 1]);
+    });
   });
 
   describe(assertReferenceEvents, () => {
@@ -246,6 +295,48 @@ describe("reference fixtures", () => {
         /🌑 Solar Eclipse: must not be detected, found at 2026-03-20T12:00:00\.000Z/,
       );
     });
+
+    it("passes when a summary occurs exactly the stated number of times", () => {
+      expect.hasAssertions();
+      expect(() => {
+        assertReferenceEvents(
+          [
+            detected("🌄 Civil Dawn", "2026-03-20T10:37:00Z"),
+            detected("🌄 Civil Dawn", "2026-03-21T10:36:00Z"),
+          ],
+          { ...fixture, counts: { "🌄 Civil Dawn": 2 } },
+        );
+      }).not.toThrow();
+    });
+
+    it("fails when a summary occurs a different number of times", () => {
+      expect.hasAssertions();
+      expect(() => {
+        assertReferenceEvents(
+          [
+            detected("🌄 Civil Dawn", "2026-03-20T10:37:00Z"),
+            detected("🌄 Civil Dawn", "2026-03-20T10:37:00Z"),
+          ],
+          { ...fixture, counts: { "🌄 Civil Dawn": 1 } },
+        );
+      }).toThrow(/🌄 Civil Dawn: expected exactly 1 event, found 2/);
+    });
+
+    it("fails when a reference is claimed by an earlier one", () => {
+      expect.hasAssertions();
+      expect(() => {
+        assertReferenceEvents(
+          [detected("🌄 Civil Dawn", "2026-03-20T10:37:00Z")],
+          {
+            ...fixture,
+            events: [
+              { start: "2026-03-20T10:37:00Z", summary: "🌄 Civil Dawn" },
+              { start: "2026-03-20T10:37:00Z", summary: "🌄 Civil Dawn" },
+            ],
+          },
+        );
+      }).toThrow(/none detected/);
+    });
   });
 
   describe(loadReferenceFixture, () => {
@@ -292,6 +383,35 @@ describe("reference fixtures", () => {
 
       expect(() => loadReferenceFixture("local", directory)).toThrow(
         /Invalid ISO datetime/,
+      );
+    });
+
+    it("rejects a latitude or longitude outside the globe", () => {
+      expect.hasAssertions();
+
+      fs.writeFileSync(
+        path.join(directory, "off-globe.json"),
+        JSON.stringify({
+          ...fixture,
+          window: { ...fixture.window, latitude: 91 },
+        }),
+      );
+
+      expect(() => loadReferenceFixture("off-globe", directory)).toThrow(
+        /latitude/,
+      );
+    });
+
+    it("rejects a negative count", () => {
+      expect.hasAssertions();
+
+      fs.writeFileSync(
+        path.join(directory, "negative.json"),
+        JSON.stringify({ ...fixture, counts: { "🌄 Civil Dawn": -1 } }),
+      );
+
+      expect(() => loadReferenceFixture("negative", directory)).toThrow(
+        /counts/,
       );
     });
   });

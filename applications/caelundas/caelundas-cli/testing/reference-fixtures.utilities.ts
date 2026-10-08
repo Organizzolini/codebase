@@ -17,8 +17,10 @@ import type {
 } from "./reference-fixtures.types";
 
 /**
- * Fails the test unless every reference event was detected within tolerance
- * and no `absent` summary was detected at all.
+ * Fails the test unless every reference event was paired with a detected
+ * event within tolerance (one detected event satisfies at most one reference),
+ * no `absent` summary was detected at all, and every `counts` summary occurs
+ * exactly the stated number of times.
  *
  * The message lists every failing event with its expected time, actual time
  * and delta, and cites the fixture's source and retrieval date, so a failure
@@ -39,11 +41,22 @@ export function assertReferenceEvents(
           `${summary}: must not be detected, found at ${event.start.toISOString()}`,
       ),
   );
-  const problems = [...failures, ...unexpected];
+  const miscounted = Object.entries(fixture.counts ?? {}).flatMap(
+    ([summary, count]) => {
+      const found = events.filter((event) => event.summary === summary);
+
+      return found.length === count
+        ? []
+        : [
+            `${summary}: expected exactly ${count} ${count === 1 ? "event" : "events"}, found ${found.length}${found.length > 0 ? ` (at ${found.map((event) => event.start.toISOString()).join(", ")})` : ""}`,
+          ];
+    },
+  );
+  const problems = [...failures, ...unexpected, ...miscounted];
   if (problems.length > 0) {
     expect.fail(
       [
-        `${problems.length} of ${fixture.events.length + (fixture.absent?.length ?? 0)} reference checks failed for "${fixture.name}" (${fixture.source.name}, retrieved ${fixture.retrieved}):`,
+        `${problems.length} of ${fixture.events.length + (fixture.absent?.length ?? 0) + Object.keys(fixture.counts ?? {}).length} reference checks failed for "${fixture.name}" (${fixture.source.name}, retrieved ${fixture.retrieved}):`,
         ...problems,
       ].join("\n"),
     );
@@ -54,18 +67,20 @@ export function assertReferenceEvents(
 }
 
 /**
- * Compares every reference event with the nearest detected event of the same
- * summary, within the event's tolerance (or the fixture's). A span reference
+ * Compares every reference event with the detected event of the same summary
+ * paired to it by nearest start, within the event's tolerance (or the fixture's). A span reference
  * holds the end to the same tolerance as the start.
  */
 export function compareReferenceEvents(
   events: readonly DetectedCalendarEvent[],
   fixture: ReferenceFixture,
 ): ReferenceComparison[] {
-  return fixture.events.map((expected) => {
+  const paired = pairEvents(events, fixture.events);
+
+  return fixture.events.map((expected, index) => {
     const toleranceMinutes =
       expected.toleranceMinutes ?? fixture.toleranceMinutes;
-    const actual = findNearest(events, expected);
+    const actual = paired[index];
     if (!actual) {
       return { expected, passed: false, toleranceMinutes };
     }
@@ -134,22 +149,6 @@ function describeFailure(comparison: ReferenceComparison): string {
   return parts.join("\n");
 }
 
-/** The detected event that shares the reference's summary and starts nearest to it. */
-function findNearest(
-  events: readonly DetectedCalendarEvent[],
-  reference: ReferenceEvent,
-): DetectedCalendarEvent | undefined {
-  const target = Date.parse(reference.start);
-
-  return events
-    .filter((event) => event.summary === reference.summary)
-    .toSorted(
-      (a, b) =>
-        Math.abs(a.start.valueOf() - target) -
-        Math.abs(b.start.valueOf() - target),
-    )[0];
-}
-
 /** Formats a signed number of minutes with one decimal, such as `+1.5`. */
 function formatDelta(minutes: number): string {
   return `${minutes >= 0 ? "+" : "-"}${Math.abs(minutes).toFixed(1)}`;
@@ -163,4 +162,39 @@ function formatInstant(instant: string): string {
 /** Minutes from `reference` to `actual`: positive when the detected moment is later. */
 function minutesBetween(reference: string, actual: Date): number {
   return (actual.getTime() - Date.parse(reference)) / MILLISECONDS_PER_MINUTE;
+}
+
+/**
+ * Pairs each reference with a detected event of the same summary, nearest
+ * start first, so that every detected event satisfies at most one reference.
+ */
+function pairEvents(
+  events: readonly DetectedCalendarEvent[],
+  references: readonly ReferenceEvent[],
+): (DetectedCalendarEvent | undefined)[] {
+  const candidates = references
+    .flatMap((reference, referenceIndex) =>
+      events
+        .filter((event) => event.summary === reference.summary)
+        .map((event) => ({
+          distance: Math.abs(
+            event.start.valueOf() - Date.parse(reference.start),
+          ),
+          event,
+          referenceIndex,
+        })),
+    )
+    .toSorted((a, b) => a.distance - b.distance);
+  const paired: (DetectedCalendarEvent | undefined)[] = references.map(
+    () => undefined,
+  );
+  const claimed = new Set<DetectedCalendarEvent>();
+  for (const { event, referenceIndex } of candidates) {
+    if (paired[referenceIndex] === undefined && !claimed.has(event)) {
+      paired[referenceIndex] = event;
+      claimed.add(event);
+    }
+  }
+
+  return paired;
 }

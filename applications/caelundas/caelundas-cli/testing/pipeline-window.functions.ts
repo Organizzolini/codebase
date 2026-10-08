@@ -4,13 +4,15 @@ import { inputSchema } from "../src/modules/input/input.constants";
 import { PerfectiveService } from "../src/modules/perfective/perfective.service";
 import { ProgressiveService } from "../src/modules/progressive/progressive.service";
 
-import { sweeps } from "./pipeline-window.constants";
 import { PipelineWindowModule } from "./pipeline-window.module";
 
 import type {
   PipelineWindow,
   PipelineWindowRequest,
 } from "./pipeline-window.types";
+
+/** Sweeps already started in this process, so tests sharing a window pay for it once. */
+const sweeps = new Map<string, Promise<PipelineWindow>>();
 
 /**
  * Runs the real perfective pass, then the real progressive pass, over a short
@@ -39,6 +41,8 @@ export async function runPipelineWindow(
 
   const pending = sweep(request);
   sweeps.set(key, pending);
+  // A failed sweep must not poison later tests that share its window.
+  pending.catch(() => sweeps.delete(key));
   return pending;
 }
 

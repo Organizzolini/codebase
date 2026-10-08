@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { runPipelineWindow } from "./pipeline-window.utilities";
+import { PIPELINE_TEST_TIMEOUT_MILLISECONDS } from "./pipeline-window.constants";
+import { runPipelineWindow } from "./pipeline-window.functions";
 import {
   assertReferenceEvents,
   loadReferenceFixture,
@@ -22,11 +23,15 @@ const fixtureNames = [
 describe.each(fixtureNames)("reference fixture %s", (name) => {
   const fixture = loadReferenceFixture(name);
 
-  it(`agrees with ${fixture.source.name}`, { timeout: 120_000 }, async () => {
-    expect.hasAssertions();
+  it(
+    `agrees with ${fixture.source.name}`,
+    { timeout: PIPELINE_TEST_TIMEOUT_MILLISECONDS },
+    async () => {
+      expect.hasAssertions();
 
-    const { events } = await runPipelineWindow(fixture.window);
+      const { events } = await runPipelineWindow(fixture.window);
 
-    assertReferenceEvents(events, fixture);
-  });
+      assertReferenceEvents(events, fixture);
+    },
+  );
 });

@@ -17,6 +17,10 @@ export interface PipelineWindow {
 /**
  * A place and a short date range to sweep through the real pipeline.
  * Keep it to one to three days: a sweep costs about nine seconds a day.
+ *
+ * `endDate` is inclusive: detection covers the whole end date. `inputSchema`
+ * also refuses an end date equal to the start date, so the shortest window is
+ * two dates apart and a "one-day" reference costs two days of sweeping.
  */
 export interface PipelineWindowRequest {
   /** Last date swept, `YYYY-MM-DD`, in the observer's timezone. */

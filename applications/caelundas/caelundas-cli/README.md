@@ -2326,9 +2326,9 @@ graph LR
   file_testing_pipeline_reference_end_to_end_test_ts["testing/pipeline-reference.end-to-end.test.ts"]
   file_testing_pipeline_window_constants_ts["testing/pipeline-window.constants.ts"]
   file_testing_pipeline_window_end_to_end_test_ts["testing/pipeline-window.end-to-end.test.ts"]
+  file_testing_pipeline_window_functions_ts["testing/pipeline-window.functions.ts"]
   file_testing_pipeline_window_module_ts["testing/pipeline-window.module.ts"]
   file_testing_pipeline_window_types_ts["testing/pipeline-window.types.ts"]
-  file_testing_pipeline_window_utilities_ts["testing/pipeline-window.utilities.ts"]
   file_testing_reference_fixtures_constants_ts["testing/reference-fixtures.constants.ts"]
   file_testing_reference_fixtures_types_ts["testing/reference-fixtures.types.ts"]
   file_testing_reference_fixtures_utilities_ts["testing/reference-fixtures.utilities.ts"]
@@ -3460,22 +3460,22 @@ graph LR
   file_testing_major_aspects_utilities_ts --> file_src_modules_math_math_service_ts
   file_testing_major_aspects_utilities_ts --> file_src_modules_progressive_progressive_aspect_service_ts
   file_testing_major_aspects_utilities_ts --> file_src_modules_progressive_progressive_utilities_service_ts
-  file_testing_pipeline_reference_end_to_end_test_ts --> file_testing_pipeline_window_utilities_ts
+  file_testing_pipeline_reference_end_to_end_test_ts --> file_testing_pipeline_window_constants_ts
+  file_testing_pipeline_reference_end_to_end_test_ts --> file_testing_pipeline_window_functions_ts
   file_testing_pipeline_reference_end_to_end_test_ts --> file_testing_reference_fixtures_utilities_ts
-  file_testing_pipeline_window_constants_ts --> file_testing_pipeline_window_types_ts
-  file_testing_pipeline_window_end_to_end_test_ts --> file_testing_pipeline_window_utilities_ts
+  file_testing_pipeline_window_end_to_end_test_ts --> file_testing_pipeline_window_constants_ts
+  file_testing_pipeline_window_end_to_end_test_ts --> file_testing_pipeline_window_functions_ts
+  file_testing_pipeline_window_functions_ts --> file_src_modules_input_input_constants_ts
+  file_testing_pipeline_window_functions_ts --> file_src_modules_perfective_perfective_service_ts
+  file_testing_pipeline_window_functions_ts --> file_src_modules_progressive_progressive_service_ts
+  file_testing_pipeline_window_functions_ts --> file_testing_pipeline_window_module_ts
+  file_testing_pipeline_window_functions_ts --> file_testing_pipeline_window_types_ts
   file_testing_pipeline_window_module_ts --> file_src_modules_perfective_perfective_module_ts
   file_testing_pipeline_window_module_ts --> file_src_modules_progressive_progressive_module_ts
   file_testing_pipeline_window_types_ts --> file_src_modules_caelundas_database_caelundas_database_types_ts
   file_testing_pipeline_window_types_ts --> file_src_modules_input_input_types_ts
-  file_testing_pipeline_window_utilities_ts --> file_src_modules_input_input_constants_ts
-  file_testing_pipeline_window_utilities_ts --> file_src_modules_perfective_perfective_service_ts
-  file_testing_pipeline_window_utilities_ts --> file_src_modules_progressive_progressive_service_ts
-  file_testing_pipeline_window_utilities_ts --> file_testing_pipeline_window_constants_ts
-  file_testing_pipeline_window_utilities_ts --> file_testing_pipeline_window_module_ts
-  file_testing_pipeline_window_utilities_ts --> file_testing_pipeline_window_types_ts
   file_testing_reference_fixtures_types_ts --> file_src_modules_caelundas_database_caelundas_database_types_ts
-  file_testing_reference_fixtures_types_ts --> file_testing_pipeline_window_types_ts
+  file_testing_reference_fixtures_types_ts --> file_testing_reference_fixtures_constants_ts
   file_testing_reference_fixtures_utilities_ts --> file_src_modules_caelundas_database_caelundas_database_types_ts
   file_testing_reference_fixtures_utilities_ts --> file_testing_reference_fixtures_constants_ts
   file_testing_reference_fixtures_utilities_ts --> file_testing_reference_fixtures_types_ts

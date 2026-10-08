@@ -35,13 +35,15 @@
     "dependency-cruiser": {},
     "deprecate-code": {},
     "download-ephemeris": {
-      "cache": false,
-      "description": "Download Swiss Ephemeris data files to data/ephemeris/",
+      "cache": true,
+      "description": "Download Swiss Ephemeris data files to data/ephemeris/ (cached, so CI fetches them once per cache key)",
       "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/scripts/download-ephemeris.ts"],
       "options": {
         "command": "pnpm tsx scripts/download-ephemeris.ts",
         "cwd": "{projectRoot}"
-      }
+      },
+      "outputs": ["{projectRoot}/data/ephemeris"]
     },
     "format-code": {},
     "guard-code": {},
@@ -86,6 +88,9 @@
     "type-coverage": {},
     "typecheck": {},
     "typecheck-code": {},
+    "vitest": {
+      "dependsOn": ["download-ephemeris"]
+    },
     "yaml-lint": {}
   }
 }
