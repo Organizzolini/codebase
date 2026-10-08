@@ -300,9 +300,13 @@ project it judges. The rule kind decides who that is:
 | `acyclic` cycle | Every project owning a node on the cycle, so a cycle across A and B fails both |
 | Container that cannot boot | The project whose container failed, named with the owner of the failing class when that is another project |
 
-A project that merely depends on a project with a finding is not failed: it
-sees the finding as a note, "in dependency". So a rule is written with the
-source project in mind — it is the one that has to change.
+A project that merely depends on a project with a cycle or a forbidden edge is
+not failed: it sees the finding as a note, "in dependency". So a rule is
+written with the source project in mind — it is the one that has to change. A
+container that cannot boot is the exception: a dependent whose own container
+fails because a dependency's class could not evaluate fails too, since its
+container really cannot boot, and its failure names that dependency as the
+owner.
 
 ## The per-project gate
 
