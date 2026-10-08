@@ -76,6 +76,7 @@ describe(AnnualSolarCycleService, () => {
       const distance = distances[index] ?? distances.at(-1) ?? 0;
       ephemeris[minute.toISOString()] = {
         distance,
+        distanceSpeed: 0,
       };
     }
 

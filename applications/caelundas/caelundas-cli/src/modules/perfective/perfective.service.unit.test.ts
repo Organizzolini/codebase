@@ -72,6 +72,7 @@ describe(PerfectiveService, () => {
   const dailyCyclesMock = { detect: vi.fn<DailyCyclesService["detect"]>() };
   const monthlyLunarCycleMock = {
     detect: vi.fn<MonthlyLunarCycleService["detect"]>(),
+    detectApsides: vi.fn<MonthlyLunarCycleService["detectApsides"]>(() => []),
   };
   const annualSolarCycleMock = {
     detect: vi.fn<AnnualSolarCycleService["detect"]>(),

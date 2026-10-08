@@ -1,0 +1,25 @@
+{
+  "counts": {
+    "🌙 ❄️ Lunar Apogee": 1
+  },
+  "events": [
+    {
+      "note": "Horizons range-rate changes sign between 20:52 and 20:53 UTC (about 20:52:50). A published monthly perigee and apogee table lists 20:48 UTC, because the distance extremum is nearly flat.",
+      "start": "2026-01-13T20:52:50Z",
+      "summary": "🌙 ❄️ Lunar Apogee"
+    }
+  ],
+  "name": "The 2026-01-13 lunar apogee",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "NASA JPL Horizons: Moon (301) geocentric range-rate sign change, 1-minute steps",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?COMMAND='301'&CENTER='500@399'&QUANTITIES='20'&START_TIME='2026-01-13 20:30'&STEP_SIZE='1 m'"
+  },
+  "toleranceMinutes": 5,
+  "window": {
+    "endDate": "2026-01-14",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-01-13"
+  }
+}

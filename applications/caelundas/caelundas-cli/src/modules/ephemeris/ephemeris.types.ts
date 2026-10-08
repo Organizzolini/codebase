@@ -67,21 +67,25 @@ export type DiameterEphemerisBody = Extract<Body, "moon" | "sun">;
 /**
  * Time-indexed ephemeris of observer-body distance.
  *
- * Keys are ISO timestamps, values are distances in astronomical units (AU).
+ * Keys are ISO timestamps, values are distances in astronomical units (AU) and
+ * the radial speed in AU per day (negative while approaching, positive while receding).
  * Used for apsis detection (perihelion/aphelion, perigee/apogee).
  */
-export type DistanceEphemeris = Record<string, { distance: number }>;
+export type DistanceEphemeris = Record<
+  string,
+  { distance: number; distanceSpeed: number }
+>;
 
 /**
  * Bodies for which distance ephemerides are generated.
- * Includes Sun (for apsis) and inner planets with visible orbital variations.
+ * Includes Sun and Moon (for apsis) and inner planets with visible orbital variations.
  *
  * @remarks A copy of this type exists in `caelundas.constants.ts` to avoid a circular
  * import. Update both when the body set changes.
  */
 export type DistanceEphemerisBody = Extract<
   Body,
-  "mars" | "mercury" | "sun" | "venus"
+  "mars" | "mercury" | "moon" | "sun" | "venus"
 >;
 
 /**

@@ -88,6 +88,7 @@ describe("phases.events integration", () => {
     string,
     {
       distance: number;
+      distanceSpeed: number;
       illumination: number;
       latitude: number;
       longitude: number;
@@ -98,6 +99,7 @@ describe("phases.events integration", () => {
       string,
       {
         distance: number;
+        distanceSpeed: number;
         illumination: number;
         latitude: number;
         longitude: number;
@@ -109,6 +111,7 @@ describe("phases.events integration", () => {
       const time = baseTime.clone().add(index, "minutes");
       ephemeris[time.toISOString()] = {
         distance: config.distance + index * 0.001,
+        distanceSpeed: 0.001,
         illumination: config.illumination + index * 0.01,
         latitude: 0,
         longitude: config.longitude + index * step,
