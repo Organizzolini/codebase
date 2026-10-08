@@ -66,8 +66,7 @@ export class PublishablePackagesConsumerService {
     const tarballs = this.resolveTarballs(options);
     const tools = CONSUMER_TOOLS.map((name): [string, string] => [
       name,
-      this.readManifest(options.workspaceRoot, `node_modules/${name}`)
-        .version ?? "",
+      this.readToolVersion(options.workspaceRoot, name),
     ]);
     const { packageManager } = this.readManifest(options.workspaceRoot, ".");
     const manifest = {
@@ -163,6 +162,25 @@ export class PublishablePackagesConsumerService {
   }
 
   /**
+   * Reads the version of a tool this workspace installed, refusing to leave
+   * it unpinned: an empty range would let the consumer drift silently.
+   */
+  private readToolVersion(workspaceRoot: string, name: string): string {
+    const { version } = this.readManifest(
+      workspaceRoot,
+      `node_modules/${name}`,
+    );
+
+    if (version === undefined || version === "") {
+      throw new Error(
+        `Cannot pin ${name} in the consumer: the workspace has no installed version of it. Run pnpm install first.`,
+      );
+    }
+
+    return version;
+  }
+
+  /**
    * Resolves the directory consumers are created beneath, refusing one that
    * sits inside any package or workspace.
    */
@@ -217,15 +235,21 @@ export class PublishablePackagesConsumerService {
    * @returns Where the consumer was written, alongside the workspace it must not borrow from.
    */
   public createConsumer(options: ConsumerOptions): ConsumerContext {
-    const parent = this.resolveConsumerParent();
-    const directory = mkdtempSync(path.join(parent, CONSUMER_DIRECTORY_PREFIX));
-
-    this.writeFiles(directory, {
+    const files = {
       ...CONSUMER_FIXTURE_FILES,
       ...this.createTypecheckFiles(options),
       "package.json": this.createManifest(options),
       "pnpm-workspace.yaml": this.createWorkspaceConfiguration(options),
-    });
+    };
+    const parent = this.resolveConsumerParent();
+    const directory = mkdtempSync(path.join(parent, CONSUMER_DIRECTORY_PREFIX));
+
+    try {
+      this.writeFiles(directory, files);
+    } catch (error) {
+      rmSync(directory, { force: true, recursive: true });
+      throw error;
+    }
     this.logger.log(
       `📦 Wrote a consumer of the packed packages to ${directory}`,
     );

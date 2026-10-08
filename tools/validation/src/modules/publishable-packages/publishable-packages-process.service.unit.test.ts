@@ -128,20 +128,24 @@ describe(PublishablePackagesProcessService, () => {
     ).toStrictEqual({ output: "Error: spawn pnpm ENOENT", status: null });
   });
 
-  it.each([["publish"], ["release"], ["unpublish"], ["dist-tag"], ["login"]])(
-    "refuses to run a command carrying %s",
-    (argument) => {
-      expect.hasAssertions();
-      expect(() =>
-        service.run(context, {
-          args: ["exec", argument],
-          executable: "pnpm",
-          timeout: 1,
-        }),
-      ).toThrow(/registry/u);
-      expect(spawnSync).not.toHaveBeenCalled();
-    },
-  );
+  it.each([
+    ["publish"],
+    ["release"],
+    ["unpublish"],
+    ["dist-tags"],
+    ["login"],
+    ["healthy:nx-release-publish"],
+  ])("refuses to run a command carrying %s", (argument) => {
+    expect.hasAssertions();
+    expect(() =>
+      service.run(context, {
+        args: ["exec", argument],
+        executable: "pnpm",
+        timeout: 1,
+      }),
+    ).toThrow(/registry/u);
+    expect(spawnSync).not.toHaveBeenCalled();
+  });
 
   it("refuses a publishing executable", () => {
     expect.hasAssertions();
@@ -162,6 +166,7 @@ describe(PublishablePackagesProcessService, () => {
       HOME: "/home/runner",
       NODE_AUTH_TOKEN: "secret",
       NODE_OPTIONS: "--import @swc-node/register/esm-register",
+      NODE_PATH: "/work/codebase/node_modules",
       npm_config_registry: "http://localhost:4873",
       NPM_TOKEN: "secret",
       NX_WORKSPACE_ROOT: "/work/codebase",
@@ -174,7 +179,6 @@ describe(PublishablePackagesProcessService, () => {
     expect(lastSpawnEnvironment()).toStrictEqual({
       FORCE_COLOR: "0",
       HOME: "/home/runner",
-      NO_COLOR: "1",
       npm_config_userconfig: path.join(context.directory, ".npmrc-user"),
       NX_DAEMON: "false",
       NX_NO_CLOUD: "true",

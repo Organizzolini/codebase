@@ -109,10 +109,12 @@ the check refuses either when it, or any directory above it, holds a
 `package.json`, `node_modules`, or `pnpm-workspace.yaml`. CI points it at
 `$RUNNER_TEMP`.
 
-It never publishes. Every command runs without a shell, without this
-workspace's `PATH` entries, Nx variables, or registry tokens, and with an
-empty user `.npmrc`; one carrying `publish`, `release`, `login`, or any other
-registry write is refused before it starts.
+It never publishes: no command it runs writes to a registry. Every command
+runs without a shell, without this workspace's `PATH` entries, Nx variables,
+or registry tokens, and with an empty user `.npmrc`. As a tripwire against a
+publish added here later, a command carrying `publish`, `release`, `login`,
+`dist-tag`, an `nx-release-publish` target, or a similar npm subcommand is
+refused before it starts.
 
 ## Start
 

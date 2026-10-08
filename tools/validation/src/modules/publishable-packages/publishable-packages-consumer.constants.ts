@@ -27,22 +27,32 @@ export const WORKSPACE_MARKERS = [
 ] as const;
 
 /**
- * Arguments that publish, deprecate, or authenticate against a registry.
+ * npm, pnpm, and Nx subcommands that publish, retag, or authenticate.
  *
- * The check installs from tarballs and reads the public registry for third
- * party dependencies, nothing more. Every ic-suite manifest pins
- * `publishConfig.registry` to npmjs, which overrides any `--registry` flag,
- * so a stray publish from here would be a real release.
+ * A tripwire, not the guarantee: every command this check runs is written in
+ * this module, and none of them writes to a registry. The tripwire exists
+ * because every ic-suite manifest pins `publishConfig.registry` to npmjs,
+ * which overrides any `--registry` flag, so a stray publish added here later
+ * would be a real release.
  */
 export const REGISTRY_WRITE_ARGUMENTS: ReadonlySet<string> = new Set([
+  "access",
+  "add-user",
   "adduser",
   "deprecate",
   "dist-tag",
+  "dist-tags",
   "login",
+  "owner",
   "publish",
   "release",
+  "team",
+  "token",
   "unpublish",
 ]);
+
+/** Suffix of the target Nx release infers to publish one project. */
+export const RELEASE_PUBLISH_TARGET_SUFFIX = ":nx-release-publish";
 
 /**
  * Environment variables a consumer command never inherits.
@@ -53,7 +63,7 @@ export const REGISTRY_WRITE_ARGUMENTS: ReadonlySet<string> = new Set([
  * project variables could load this workspace's TypeScript hooks.
  */
 export const INHERITED_VARIABLE_PATTERN =
-  /^(?:npm_|nx_|pnpm_config_|force_color$|init_cwd$|node_auth_token$|node_options$|swc_node_project$|ts_node_project$)/i;
+  /^(?:npm_|nx_|pnpm_config_|force_color$|init_cwd$|node_auth_token$|node_options$|node_path$|swc_node_project$|ts_node_project$)/i;
 
 /**
  * A terminal control sequence, such as the colors pino and Nx print even
@@ -67,7 +77,14 @@ export const ESCAPE_SEQUENCE_PATTERN = new RegExp(
 );
 
 /** Milliseconds `pnpm install` may take on an oversubscribed runner. */
-export const INSTALL_TIMEOUT = 900_000;
+export const INSTALL_TIMEOUT = 600_000;
+
+/**
+ * Largest output a consumer command may print. Node's default of 1 MiB is
+ * within reach of an append-only install log, which would then read as a
+ * failed install.
+ */
+export const MAXIMUM_OUTPUT_BYTES = 64 * 1024 * 1024;
 
 /** Milliseconds any other consumer command may take. */
 export const COMMAND_TIMEOUT = 300_000;
@@ -126,15 +143,13 @@ export const TYPECHECK_DIRECTORY = "typecheck";
 export const TYPECHECK_CONFIGURATION = "tsconfig.typecheck.json";
 
 /**
- * What {@link TYPECHECK_CONFIGURATION} holds: every import file, under the
- * options a NestJS consumer compiles with. Written as JSON text because its
- * keys are TypeScript's own option names.
+ * What {@link TYPECHECK_CONFIGURATION} holds: every import file, strictly.
+ * Written as JSON text because its keys are TypeScript's own option names.
+ * Library checking stays off: with it on, `nx`'s and `thread-stream`'s own
+ * declarations fail, which says nothing about the packages under test.
  */
 export const TYPECHECK_CONFIGURATION_CONTENT = `{
   "compilerOptions": {
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "ignoreDeprecations": "6.0",
     "lib": ["ES2023", "DOM"],
     "module": "ESNext",
     "moduleResolution": "bundler",

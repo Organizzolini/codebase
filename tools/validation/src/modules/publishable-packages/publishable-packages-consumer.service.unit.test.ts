@@ -180,16 +180,30 @@ describe(PublishablePackagesConsumerService, () => {
       );
     });
 
-    it("pins no version for a tool the workspace has not installed", () => {
+    it("refuses to leave a tool the workspace has not installed unpinned", () => {
       expect.hasAssertions();
 
       vi.mocked(readFileSync).mockImplementation((target) =>
         String(target).endsWith("package.json") ? "{}" : "",
       );
-      service.createConsumer(options);
 
-      expect(JSON.parse(written("package.json"))).toMatchObject({
-        devDependencies: { nx: "", typescript: "" },
+      expect(() => service.createConsumer(options)).toThrow(
+        "Cannot pin @types/node in the consumer",
+      );
+      expect(mkdtempSync).not.toHaveBeenCalled();
+    });
+
+    it("removes a consumer it could not finish writing", () => {
+      expect.hasAssertions();
+
+      vi.mocked(writeFileSync).mockImplementationOnce(() => {
+        throw new Error("ENOSPC");
+      });
+
+      expect(() => service.createConsumer(options)).toThrow("ENOSPC");
+      expect(rmSync).toHaveBeenCalledWith(CONSUMER, {
+        force: true,
+        recursive: true,
       });
     });
 

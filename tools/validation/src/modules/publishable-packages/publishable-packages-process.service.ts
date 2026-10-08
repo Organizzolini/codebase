@@ -8,7 +8,9 @@ import { LoggerService } from "@codebase/logging";
 import {
   ESCAPE_SEQUENCE_PATTERN,
   INHERITED_VARIABLE_PATTERN,
+  MAXIMUM_OUTPUT_BYTES,
   REGISTRY_WRITE_ARGUMENTS,
+  RELEASE_PUBLISH_TARGET_SUFFIX,
 } from "./publishable-packages-consumer.constants";
 
 import type {
@@ -41,7 +43,10 @@ export class PublishablePackagesProcessService {
    */
   private assertNoRegistryWrite(command: ConsumerCommand): void {
     for (const word of [path.basename(command.executable), ...command.args]) {
-      if (REGISTRY_WRITE_ARGUMENTS.has(word)) {
+      if (
+        REGISTRY_WRITE_ARGUMENTS.has(word) ||
+        word.endsWith(RELEASE_PUBLISH_TARGET_SUFFIX)
+      ) {
         throw new Error(
           `Refusing to run "${word}": the publishable packages check never writes to a registry.`,
         );
@@ -79,7 +84,6 @@ export class PublishablePackagesProcessService {
     return {
       ...environment,
       FORCE_COLOR: "0",
-      NO_COLOR: "1",
       npm_config_userconfig: path.join(context.directory, ".npmrc-user"),
       NX_DAEMON: "false",
       NX_NO_CLOUD: "true",
@@ -107,6 +111,7 @@ export class PublishablePackagesProcessService {
       cwd: context.directory,
       encoding: "utf8",
       env: this.createEnvironment(context),
+      maxBuffer: MAXIMUM_OUTPUT_BYTES,
       timeout: command.timeout,
     });
     const printed = [result.stdout, result.stderr]
