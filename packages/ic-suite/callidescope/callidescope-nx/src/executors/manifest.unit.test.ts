@@ -39,7 +39,7 @@ function readRecord(value: unknown, field: string): Record<string, unknown> {
   return value;
 }
 
-const { exports, files, publishConfig } = readManifest("package.json");
+const { exports, files, name, publishConfig } = readManifest("package.json");
 const packageExports = readRecord(exports, "exports");
 const { exports: publishedExportsField } = readRecord(
   publishConfig,
@@ -61,8 +61,12 @@ function readExecutor(executorName: string): Record<string, unknown> {
 }
 
 /**
- * Resolves one subpath through an `exports` map's string targets, wildcard
- * patterns included, the way Node does for a package specifier.
+ * Resolves one subpath through an `exports` map: the first string target whose
+ * key matches exactly or as a single-wildcard pattern.
+ *
+ * Narrower than Node, which prefers the longest matching prefix and reads
+ * conditional targets too — so it can only fail a map Node would accept,
+ * never pass one Node would reject, for the maps this package declares.
  */
 function resolveExport(
   exportsMap: Record<string, unknown>,
@@ -97,7 +101,7 @@ function resolveExport(
 // directory or by `require.resolve` from it — never through a relative path
 // into sources the tarball does not carry.
 describe("executors.json", () => {
-  it("declares every executor the plugin infers", () => {
+  it("declares exactly the four executors the plugin infers", () => {
     expect.hasAssertions();
     expect(Object.keys(executors).toSorted()).toStrictEqual([
       "breadth",
@@ -117,7 +121,8 @@ describe("executors.json", () => {
 
       // `./src/...` resolves against the installed package directory, where
       // only `dist/` ships, so the specifier has to go through `exports`.
-      expect(implementation).toBe(`@callidescope/nx/${subpath}`);
+      expect(name).toBe("@callidescope/nx");
+      expect(implementation).toBe(`${String(name)}/${subpath}`);
       expect(resolveExport(publishedExports, `./${subpath}`)).toBe(
         `./dist/${subpath}.js`,
       );
@@ -136,9 +141,10 @@ describe("executors.json", () => {
       expect.hasAssertions();
 
       const { schema } = readExecutor(executorName);
-      const schemaPath = path.posix.normalize(
-        typeof schema === "string" ? schema : "",
-      );
+
+      expect(schema).toBeTypeOf("string");
+
+      const schemaPath = path.posix.normalize(String(schema));
 
       expect(existsSync(path.join(PACKAGE_DIRECTORY, schemaPath))).toBe(true);
       expect(
