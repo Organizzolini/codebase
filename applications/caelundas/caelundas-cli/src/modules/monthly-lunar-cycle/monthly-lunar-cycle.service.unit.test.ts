@@ -5,7 +5,6 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { LoggerService } from "@codebase/logging";
 
-import { MARGIN_MINUTES } from "../caelundas/caelundas.constants";
 import * as CaelundasTypes from "../caelundas/caelundas.types";
 import { symbolByLunarPhase } from "../caelundas/symbol-caelundas.constants";
 import { CalendarService } from "../calendar/calendar.service";
@@ -16,7 +15,10 @@ import { MonthlyLunarCycleService } from "./monthly-lunar-cycle.service";
 
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { LunarPhase } from "../caelundas/caelundas.types";
-import type { IlluminationEphemeris } from "../ephemeris/ephemeris.types";
+import type {
+  CoordinateEphemeris,
+  IlluminationEphemeris,
+} from "../ephemeris/ephemeris.types";
 import type { LogData } from "@codebase/logging";
 
 vi.mock("fs", () => ({
@@ -37,27 +39,6 @@ interface ServicePrivate {
     entering: DetectedCalendarEvent,
     exiting: DetectedCalendarEvent,
   ) => DetectedCalendarEvent | null;
-  isFullMoon: (args: {
-    currentIllumination: number;
-    nextIlluminations: number[];
-    previousIlluminations: number[];
-  }) => boolean;
-  isLunarPhase: (args: {
-    currentIllumination: number;
-    lunarPhase: LunarPhase;
-    nextIlluminations: number[];
-    previousIlluminations: number[];
-  }) => boolean;
-  isNewMoon: (args: {
-    currentIllumination: number;
-    nextIlluminations: number[];
-    previousIlluminations: number[];
-  }) => boolean;
-  isQuarterPhase: (args: {
-    currentIllumination: number;
-    lunarPhase: LunarPhase;
-    previousIllumination: number;
-  }) => boolean;
 }
 
 describe(MonthlyLunarCycleService, () => {
@@ -117,47 +98,142 @@ describe(MonthlyLunarCycleService, () => {
     s = service as unknown as ServicePrivate;
   });
 
-  // Helper to create illumination ephemeris with margin
-  function createIlluminationEphemeris(
-    currentMinute: Moment,
-    illuminations: number[],
-  ): IlluminationEphemeris {
-    const ephemeris: IlluminationEphemeris = {};
-    const totalMinutes = MARGIN_MINUTES * 2 + 1;
-
-    for (let index = 0; index < totalMinutes; index++) {
-      const minute = currentMinute
-        .clone()
-        .subtract(MARGIN_MINUTES - index, "minutes");
-      const illumination = illuminations[index] ?? illuminations.at(-1) ?? 0;
-      ephemeris[minute.toISOString()] = {
-        illumination,
+  /**
+   * Runs `detect` over consecutive minutes of a synthetic sky, one sample per
+   * minute, and returns every event from the minutes that have both
+   * neighbors. The Moon sits `elongations[i]` degrees ahead of the Sun.
+   */
+  function detectSeries(args: {
+    elongations: number[];
+    illuminations?: number[];
+    sunLongitudes?: number[];
+  }): DetectedCalendarEvent[] {
+    const { elongations, illuminations = [], sunLongitudes = [] } = args;
+    const start = moment.utc("2026-10-26T04:00:00.000Z");
+    const minutes = elongations.map((_elongation, index) =>
+      start.clone().add(index, "minutes"),
+    );
+    const moonCoordinateEphemeris: CoordinateEphemeris = {};
+    const moonIlluminationEphemeris: IlluminationEphemeris = {};
+    const sunCoordinateEphemeris: CoordinateEphemeris = {};
+    for (const [index, minute] of minutes.entries()) {
+      const sunLongitude = sunLongitudes[index] ?? 200;
+      const elongation = elongations[index] ?? 0;
+      sunCoordinateEphemeris[minute.toISOString()] = {
+        latitude: 0,
+        longitude: sunLongitude,
+      };
+      moonCoordinateEphemeris[minute.toISOString()] = {
+        latitude: 5,
+        longitude: (sunLongitude + elongation) % 360,
+      };
+      moonIlluminationEphemeris[minute.toISOString()] = {
+        illumination: illuminations[index] ?? 40,
       };
     }
-
-    return ephemeris;
+    return minutes.slice(1, -1).flatMap((minute) =>
+      service.detect({
+        minute,
+        moonCoordinateEphemeris,
+        moonIlluminationEphemeris,
+        sunCoordinateEphemeris,
+      }),
+    );
   }
 
   describe("detect", () => {
-    it("returns empty array when no lunar phase events occur", () => {
-      const currentMinute = moment.utc("2024-03-15T12:00:00.000Z");
-
-      // Illumination staying constant (no phase change)
-      const constantIlluminations = Array.from<number>({
-        length: MARGIN_MINUTES * 2 + 1,
-      }).fill(0.5);
-
-      const moonIlluminationEphemeris = createIlluminationEphemeris(
-        currentMinute,
-        constantIlluminations,
+    it("returns no events when the elongation crosses no phase", () => {
+      expect(detectSeries({ elongations: [10, 10.5, 11, 11.5] })).toStrictEqual(
+        [],
       );
+    });
 
-      const events = service.detect({
-        minute: currentMinute,
-        moonIlluminationEphemeris,
+    it.each([
+      { elongations: [359.6, 359.9, 0.2, 0.5], summary: "🌙 🌑 New Moon" },
+      {
+        elongations: [89.6, 89.9, 90.2, 90.5],
+        summary: "🌙 🌓 First Quarter Moon",
+      },
+      { elongations: [179.6, 179.9, 180.2, 180.5], summary: "🌙 🌕 Full Moon" },
+      {
+        elongations: [269.6, 269.9, 270.2, 270.5],
+        summary: "🌙 🌗 Last Quarter Moon",
+      },
+    ])(
+      "reports $summary once when Moon minus Sun longitude reaches it",
+      ({ elongations, summary }) => {
+        const events = detectSeries({ elongations });
+
+        expect(events.map((event) => event.summary)).toStrictEqual([summary]);
+      },
+    );
+
+    it("stamps the phase at the minute nearest the exact elongation", () => {
+      // 90° falls 0.2 of a minute after 04:02, so 04:02 is nearest.
+      const events = detectSeries({
+        elongations: [89, 89.5, 89.9, 90.4, 90.9],
       });
 
-      expect(events).toHaveLength(0);
+      expect(events.map((event) => event.start.toISOString())).toStrictEqual([
+        "2026-10-26T04:02:00.000Z",
+      ]);
+    });
+
+    it("stamps the later minute when the exact elongation falls after the midpoint", () => {
+      // 180° falls 0.8 of a minute after 04:02, so 04:03 is nearest.
+      const events = detectSeries({
+        elongations: [178.6, 179.1, 179.6, 180.1, 180.6],
+      });
+
+      expect(events.map((event) => event.start.toISOString())).toStrictEqual([
+        "2026-10-26T04:03:00.000Z",
+      ]);
+    });
+
+    it("measures elongation from the Sun even when the Sun crosses 0° Aries", () => {
+      const events = detectSeries({
+        elongations: [179.6, 179.9, 180.2, 180.5],
+        sunLongitudes: [359.98, 359.99, 0, 0.01],
+      });
+
+      expect(events.map((event) => event.summary)).toStrictEqual([
+        "🌙 🌕 Full Moon",
+      ]);
+    });
+
+    it("does not mistake Full Moon for New Moon across the 180° offset wrap", () => {
+      const events = detectSeries({
+        elongations: [179.6, 179.9, 180.2, 180.5],
+      });
+
+      expect(events.map((event) => event.summary)).not.toContain(
+        "🌙 🌑 New Moon",
+      );
+    });
+
+    it("reports a crescent when illumination crosses its threshold while waxing", () => {
+      const events = detectSeries({
+        elongations: [55, 55.5, 56, 56.5],
+        illuminations: [24.8, 24.9, 25.1, 25.2],
+      });
+
+      expect(events.map((event) => event.summary)).toStrictEqual([
+        "🌙 🌒 Waxing Crescent Moon",
+      ]);
+    });
+
+    it("ignores illumination when timing a primary phase", () => {
+      // Illumination peaks two minutes before the Moon reaches 180°.
+      const events = detectSeries({
+        elongations: [179, 179.3, 179.6, 179.9, 180.2, 180.5],
+        illuminations: [99, 99.9, 99.8, 99.7, 99.6, 99.5],
+      });
+
+      expect(
+        events
+          .filter((event) => event.summary === "🌙 🌕 Full Moon")
+          .map((event) => event.start.toISOString()),
+      ).toStrictEqual(["2026-10-26T04:03:00.000Z"]);
     });
   });
 
@@ -557,48 +633,6 @@ describe(MonthlyLunarCycleService, () => {
       orderedEventsSpy.mockRestore();
     });
 
-    describe("isNewMoon", () => {
-      it("returns true at new moon (minimum illumination)", () => {
-        const result = s.isNewMoon({
-          currentIllumination: 1,
-          nextIlluminations: [3, 5],
-          previousIlluminations: [5, 3],
-        });
-
-        expect(result).toBe(true);
-      });
-
-      it("returns false when illumination is not minimum", () => {
-        const result = s.isNewMoon({
-          currentIllumination: 10,
-          nextIlluminations: [12, 15],
-          previousIlluminations: [5, 8],
-        });
-
-        expect(result).toBe(false);
-      });
-
-      it("returns false when illumination is above 50", () => {
-        const result = s.isNewMoon({
-          currentIllumination: 55,
-          nextIlluminations: [58, 60],
-          previousIlluminations: [60, 58],
-        });
-
-        expect(result).toBe(false);
-      });
-
-      it("handles edge case where current equals next minimum", () => {
-        const result = s.isNewMoon({
-          currentIllumination: 2,
-          nextIlluminations: [2, 5],
-          previousIlluminations: [5, 3],
-        });
-
-        expect(result).toBe(true);
-      });
-    });
-
     describe("extractLunarPhaseFromCategories", () => {
       it("warns and return null when no lunar phase category is present", () => {
         const warnSpy = vi
@@ -674,192 +708,6 @@ describe(MonthlyLunarCycleService, () => {
       });
     });
 
-    describe("isFullMoon", () => {
-      it("returns true at full moon (maximum illumination)", () => {
-        const result = s.isFullMoon({
-          currentIllumination: 99,
-          nextIlluminations: [97, 95],
-          previousIlluminations: [95, 97],
-        });
-
-        expect(result).toBe(true);
-      });
-
-      it("returns false when illumination is not maximum", () => {
-        const result = s.isFullMoon({
-          currentIllumination: 80,
-          nextIlluminations: [85, 90],
-          previousIlluminations: [75, 78],
-        });
-
-        expect(result).toBe(false);
-      });
-
-      it("returns false when illumination is below 50", () => {
-        const result = s.isFullMoon({
-          currentIllumination: 45,
-          nextIlluminations: [42, 40],
-          previousIlluminations: [40, 42],
-        });
-
-        expect(result).toBe(false);
-      });
-
-      it("handles edge case where current equals next maximum", () => {
-        const result = s.isFullMoon({
-          currentIllumination: 98,
-          nextIlluminations: [98, 95],
-          previousIlluminations: [95, 97],
-        });
-
-        expect(result).toBe(true);
-      });
-    });
-
-    describe("isLunarPhase", () => {
-      it("returns false when quarter phases lack a previous illumination", () => {
-        const result = s.isLunarPhase({
-          currentIllumination: 51,
-          lunarPhase: "first quarter",
-          nextIlluminations: [53],
-          previousIlluminations: [],
-        });
-
-        expect(result).toBe(false);
-      });
-
-      it("delegates to isNewMoon", () => {
-        const result = s.isLunarPhase({
-          currentIllumination: 1,
-          lunarPhase: "new",
-          nextIlluminations: [3, 5],
-          previousIlluminations: [5, 3],
-        });
-
-        expect(result).toBe(true);
-      });
-
-      it("delegates to isFullMoon", () => {
-        const result = s.isLunarPhase({
-          currentIllumination: 99,
-          lunarPhase: "full",
-          nextIlluminations: [97, 95],
-          previousIlluminations: [95, 97],
-        });
-
-        expect(result).toBe(true);
-      });
-
-      it("returns true when crossing 25% threshold while waxing", () => {
-        const result = s.isLunarPhase({
-          currentIllumination: 26,
-          lunarPhase: "waxing crescent",
-          nextIlluminations: [28],
-          previousIlluminations: [24],
-        });
-
-        expect(result).toBe(true);
-      });
-
-      it("returns false when waxing crescent is waning", () => {
-        const result = s.isLunarPhase({
-          currentIllumination: 24,
-          lunarPhase: "waxing crescent",
-          nextIlluminations: [22],
-          previousIlluminations: [26],
-        });
-
-        expect(result).toBe(false);
-      });
-
-      it("returns true when crossing 50% threshold while waxing", () => {
-        const result = s.isLunarPhase({
-          currentIllumination: 51,
-          lunarPhase: "first quarter",
-          nextIlluminations: [53],
-          previousIlluminations: [49],
-        });
-
-        expect(result).toBe(true);
-      });
-
-      it("returns false when first quarter is not crossing threshold", () => {
-        const result = s.isLunarPhase({
-          currentIllumination: 55,
-          lunarPhase: "first quarter",
-          nextIlluminations: [58],
-          previousIlluminations: [52],
-        });
-
-        expect(result).toBe(false);
-      });
-
-      it("returns true when crossing 75% threshold while waxing", () => {
-        const result = s.isLunarPhase({
-          currentIllumination: 76,
-          lunarPhase: "waxing gibbous",
-          nextIlluminations: [78],
-          previousIlluminations: [74],
-        });
-
-        expect(result).toBe(true);
-      });
-
-      it("returns true when crossing 75% threshold while waning", () => {
-        const result = s.isLunarPhase({
-          currentIllumination: 74,
-          lunarPhase: "waning gibbous",
-          nextIlluminations: [72],
-          previousIlluminations: [76],
-        });
-
-        expect(result).toBe(true);
-      });
-
-      it("returns false when waning gibbous is waxing", () => {
-        const result = s.isLunarPhase({
-          currentIllumination: 76,
-          lunarPhase: "waning gibbous",
-          nextIlluminations: [78],
-          previousIlluminations: [74],
-        });
-
-        expect(result).toBe(false);
-      });
-
-      it("returns true when crossing 50% threshold while waning", () => {
-        const result = s.isLunarPhase({
-          currentIllumination: 49,
-          lunarPhase: "last quarter",
-          nextIlluminations: [47],
-          previousIlluminations: [51],
-        });
-
-        expect(result).toBe(true);
-      });
-
-      it("returns false for non-quarter phases in quarter calculations", () => {
-        const result = s.isQuarterPhase({
-          currentIllumination: 49,
-          lunarPhase: "new",
-          previousIllumination: 51,
-        });
-
-        expect(result).toBe(false);
-      });
-
-      it("returns true when crossing 25% threshold while waning", () => {
-        const result = s.isLunarPhase({
-          currentIllumination: 24,
-          lunarPhase: "waning crescent",
-          nextIlluminations: [22],
-          previousIlluminations: [26],
-        });
-
-        expect(result).toBe(true);
-      });
-    });
-
     describe("getMonthlyLunarCycleProgressiveEvent", () => {
       it("creates a progressive lunar cycle event for valid lunar phases", () => {
         const entering = {
@@ -906,26 +754,6 @@ describe(MonthlyLunarCycleService, () => {
             "Missing phase",
           ),
         ).toBeNull();
-      });
-
-      it("returns false when a quarter phase has no previous illumination sample", () => {
-        const internals = s as unknown as {
-          isLunarPhase: (args: {
-            currentIllumination: number;
-            lunarPhase: "first quarter";
-            nextIlluminations: number[];
-            previousIlluminations: number[];
-          }) => boolean;
-        };
-
-        expect(
-          internals.isLunarPhase({
-            currentIllumination: 50,
-            lunarPhase: "first quarter",
-            nextIlluminations: [55, 60],
-            previousIlluminations: [],
-          }),
-        ).toBe(false);
       });
 
       it("returns null when the lunar phase category is missing", () => {
