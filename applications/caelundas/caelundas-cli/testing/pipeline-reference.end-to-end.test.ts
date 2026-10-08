@@ -29,6 +29,10 @@ const fixtureNames = [
   "usno-reykjavik-sun-2026-06-21",
   "usno-tromso-moon-2026-12-20",
   "usno-vigo-evening-twilight-2026-06-20",
+  "jpl-venus-libra-backward-ingress-2026-10-25",
+  "jpl-saturn-pisces-backward-ingress-2025-09-01",
+  "jpl-chiron-aries-backward-ingress-2026-09-18",
+  "jpl-moon-aries-peak-ingress-2026-03-20",
 ];
 
 describe.each(fixtureNames)("reference fixture %s", (name) => {
