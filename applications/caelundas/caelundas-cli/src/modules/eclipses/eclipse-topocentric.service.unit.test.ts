@@ -321,7 +321,7 @@ describe(EclipseTopocentricService, () => {
       summary: "📍 ☀️🐉▶️ Partial Solar Eclipse begins",
     };
 
-    it("builds topocentric solar events with the local type", () => {
+    it("titles a local solar event partial when no sample ahead can be read", () => {
       vi.spyOn(
         eclipseGeometryService,
         "getAllTopocentricSamples",
