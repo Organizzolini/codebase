@@ -196,14 +196,15 @@ export class EphemerisService {
   }
 
   /**
-   * Safely extracts azimuth or elevation data from horizon coordinate ephemeris.
+   * Safely extracts one field of a horizon position: azimuth, apparent or true
+   * elevation, or semidiameter.
    *
    * @throws When timestamp or field is missing from ephemeris.
    */
   public getAzimuthElevationFromEphemeris(
     ephemeris: AzimuthElevationEphemeris,
     timestamp: string,
-    fieldName: "azimuth" | "elevation",
+    fieldName: "azimuth" | "elevation" | "semidiameter" | "trueElevation",
   ): number {
     const data = ephemeris[timestamp];
     if (data?.[fieldName] === undefined) {

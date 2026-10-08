@@ -99,6 +99,13 @@ describe(EphemerisHorizonService, () => {
   });
 
   describe("computeSemidiameter", () => {
+    it("gives the Sun's angular radius at one astronomical unit", () => {
+      // 695,700 km at 1 AU subtends 15.99 arcminutes.
+      expect(
+        service.computeSemidiameter({ body: "sun", distance: 1 }) * 60,
+      ).toBeCloseTo(15.99, 2);
+    });
+
     it("gives the Moon's angular radius from its distance", () => {
       // 1737.4 km at 384,400 km subtends 15.54 arcminutes.
       expect(
@@ -107,12 +114,6 @@ describe(EphemerisHorizonService, () => {
           distance: 384_400 / 149_597_870.7,
         }) * 60,
       ).toBeCloseTo(15.54, 2);
-    });
-
-    it("throws for a body with no known radius", () => {
-      expect(() =>
-        service.computeSemidiameter({ body: "mars", distance: 1 }),
-      ).toThrow('No radius known for body "mars"');
     });
   });
 

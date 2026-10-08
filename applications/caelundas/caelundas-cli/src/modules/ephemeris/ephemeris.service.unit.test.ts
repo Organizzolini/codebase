@@ -261,6 +261,32 @@ describe(EphemerisService, () => {
       ).toBe(180);
     });
 
+    it("returns true elevation and semidiameter values", () => {
+      const ephemeris: AzimuthElevationEphemeris = {
+        "2024-03-21T00:00:00.000Z": {
+          azimuth: 180,
+          elevation: 44.8,
+          semidiameter: 0.27,
+          trueElevation: 44.79,
+        },
+      };
+
+      expect(
+        service.getAzimuthElevationFromEphemeris(
+          ephemeris,
+          "2024-03-21T00:00:00.000Z",
+          "trueElevation",
+        ),
+      ).toBe(44.79);
+      expect(
+        service.getAzimuthElevationFromEphemeris(
+          ephemeris,
+          "2024-03-21T00:00:00.000Z",
+          "semidiameter",
+        ),
+      ).toBe(0.27);
+    });
+
     it("returns coordinate values", () => {
       const ephemeris: CoordinateEphemeris = {
         "2024-03-21T00:00:00.000Z": { latitude: -1.2, longitude: 120.5 },
