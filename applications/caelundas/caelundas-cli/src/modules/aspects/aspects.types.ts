@@ -41,6 +41,8 @@ export interface ProgressiveAspectDetector {
  */
 export interface SimpleAspectDetector {
   detect(arguments_: SimpleAspectDetectorArguments): DetectedCalendarEvent[];
+  /** Lists this family's aspects already in orb at the minute, to seed a sweep. */
+  detectActive(arguments_: SimpleAspectDetectorArguments): AspectBodies[];
 }
 
 /**

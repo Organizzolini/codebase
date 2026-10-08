@@ -19,6 +19,7 @@ import { TwilightsService } from "../twilights/twilights.service";
 
 import { PerfectiveService } from "./perfective.service";
 
+import type { AspectBodies } from "../aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Input } from "../input/input.types";
 import type {
@@ -65,7 +66,13 @@ describe(PerfectiveService, () => {
   const ephemerisAggMock = {
     getEphemerides: vi.fn<EphemerisService["getEphemerides"]>(),
   };
-  const aspectsMock = { detect: vi.fn<AspectsService["detect"]>() };
+  const aspectsMock = {
+    detect: vi.fn<AspectsService["detect"]>(),
+    seed: vi.fn<AspectsService["seed"]>(() => ({
+      aspectBodies: [],
+      events: [],
+    })),
+  };
   const eclipsesMock = { detect: vi.fn<EclipsesService["detect"]>() };
   const retrogradesMock = { detect: vi.fn<RetrogradesService["detect"]>() };
   const ingressesMock = { detect: vi.fn<IngressesService["detect"]>() };
@@ -208,6 +215,54 @@ describe(PerfectiveService, () => {
 
       expect(result).toContain(fakeEvent1);
       expect(result).toContain(fakeEvent2);
+    });
+
+    it("seeds the aspect registry from the window's first minute, once", () => {
+      const firstDate = moment.tz("2025-06-15", "America/New_York");
+      const secondDate = moment.tz("2025-06-16", "America/New_York");
+      const firstMinute = firstDate.clone().startOf("day");
+      const secondDayMinute = secondDate.clone().startOf("day");
+      const seededAspectBodies: AspectBodies[] = [
+        { aspect: "square", bodies: ["mars", "pluto"] },
+      ];
+      const seededEvent = { summary: "seeded compound forming" } as never;
+
+      datetimeMock.generateDates.mockReturnValue([firstDate, secondDate]);
+      ephemerisAggMock.getEphemerides.mockReturnValue(emptyEphemerides);
+      datetimeMock.generateMinutes
+        .mockReturnValueOnce([firstMinute])
+        .mockReturnValueOnce([secondDayMinute]);
+      aspectsMock.seed.mockReturnValueOnce({
+        aspectBodies: seededAspectBodies,
+        events: [seededEvent],
+      });
+      aspectsMock.detect.mockReturnValue({ aspectBodies: [], events: [] });
+      for (const subMock of [
+        eclipsesMock,
+        retrogradesMock,
+        ingressesMock,
+        dailyCyclesMock,
+        monthlyLunarCycleMock,
+        annualSolarCycleMock,
+        twilightsMock,
+      ]) {
+        subMock.detect.mockReturnValue([]);
+      }
+
+      const result = service.detect(baseInput);
+
+      expect(aspectsMock.seed).toHaveBeenCalledExactlyOnceWith({
+        coordinateEphemerisByBody: emptyEphemerides.coordinateEphemerisByBody,
+        minute: firstMinute,
+      });
+      expect(aspectsMock.detect).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({
+          minute: firstMinute,
+          previousAspectBodies: seededAspectBodies,
+        }),
+      );
+      expect(result).toStrictEqual([seededEvent]);
     });
 
     it("logs a completion summary with the total event count", () => {
