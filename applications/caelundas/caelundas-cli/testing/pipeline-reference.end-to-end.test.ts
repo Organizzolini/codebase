@@ -20,6 +20,8 @@ const fixtureNames = [
   "usno-philadelphia-night-2026-03-19",
   "usno-philadelphia-twilight-2026-03-20",
   "usno-vigo-evening-twilight-2026-06-20",
+  "usno-solar-aphelion-2026-07-06",
+  "usno-solar-perihelion-2026-01-03",
 ];
 
 describe.each(fixtureNames)("reference fixture %s", (name) => {
