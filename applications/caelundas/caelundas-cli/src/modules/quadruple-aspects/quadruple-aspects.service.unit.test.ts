@@ -398,6 +398,15 @@ describe(QuadrupleAspectsService, () => {
       expect(spanTitles[0]).not.toMatch(/forming|dissolving/u);
     });
 
+    it("drops a kite that forms and dissolves in the same minute", () => {
+      const spans = service.detectProgressive([
+        buildKiteBoundary("forming", "2026-10-20T08:00:00.000Z"),
+        buildKiteBoundary("dissolving", "2026-10-20T08:00:00.000Z"),
+      ]);
+
+      expect(spans).toStrictEqual([]);
+    });
+
     it("pairs two occurrences of one kite into two spans despite duplicate boundaries", () => {
       const boundaries = [
         ["forming", "2026-10-20T08:00:00.000Z"],

@@ -3,16 +3,47 @@ import _ from "lodash";
 import moment, { type Moment } from "moment-timezone";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
+import { LoggerService } from "@codebase/logging";
+
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { ProgressiveCompoundEventService } from "../aspects/progressive-compound-event.service";
 import { MathService } from "../math/math.service";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { SextupleAspectsComposerService } from "./sextuple-aspects-composer.service";
 import { SextupleAspectsService } from "./sextuple-aspects.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
+
+/** Builds one hexagram boundary event for the shared progressive-step tests. */
+function buildHexagramBoundary(
+  phase: "Dissolving" | "Forming",
+  isoMinute: string,
+): DetectedCalendarEvent {
+  const minute = moment.utc(isoMinute);
+  return {
+    categories: [
+      "Astronomy",
+      "Astrology",
+      "Compound Aspect",
+      "Sextuple Aspect",
+      "Hexagram",
+      phase,
+      "Jupiter",
+      "Mars",
+      "Moon",
+      "Saturn",
+      "Sun",
+      "Venus",
+    ],
+    description: `Jupiter, Mars, Moon, Saturn, Sun, Venus hexagram ${phase.toLowerCase()}`,
+    end: minute,
+    start: minute,
+    summary: `Jupiter, Mars, Moon, Saturn, Sun, Venus hexagram ${phase.toLowerCase()}`,
+  };
+}
 
 describe(SextupleAspectsService, () => {
   let service: SextupleAspectsService;
@@ -28,6 +59,8 @@ describe(SextupleAspectsService, () => {
         AspectPhaseEmojiService,
         ProgressiveCompoundEventService,
         MathService,
+        LoggerService,
+        ProgressiveUtilitiesService,
       ],
     }).compile();
     compoundPhaseService = await module.resolve(CompoundPhaseService);
@@ -274,6 +307,50 @@ describe(SextupleAspectsService, () => {
   });
 
   describe("detectProgressive", () => {
+    const spansOf = (events: DetectedCalendarEvent[]): string[][] =>
+      service
+        .detectProgressive(events)
+        .map((span) => [span.start.toISOString(), span.end.toISOString()]);
+
+    it("pairs two occurrences into two spans despite duplicate boundaries", () => {
+      const boundaries = [
+        ["Forming", "2026-10-20T08:00:00.000Z"],
+        ["Dissolving", "2026-10-20T19:30:00.000Z"],
+        ["Forming", "2026-10-27T03:15:00.000Z"],
+        ["Dissolving", "2026-10-27T11:45:00.000Z"],
+      ] as const;
+      const events = boundaries.flatMap(([phase, isoMinute]) => [
+        buildHexagramBoundary(phase, isoMinute),
+        buildHexagramBoundary(phase, isoMinute),
+      ]);
+
+      expect(spansOf(events)).toStrictEqual([
+        ["2026-10-20T08:00:00.000Z", "2026-10-20T19:30:00.000Z"],
+        ["2026-10-27T03:15:00.000Z", "2026-10-27T11:45:00.000Z"],
+      ]);
+    });
+
+    it("warns and skips an occurrence whose dissolving is missing", () => {
+      const warn = vi.spyOn(LoggerService.prototype, "warn");
+
+      const spans = spansOf([
+        buildHexagramBoundary("Forming", "2026-10-20T08:00:00.000Z"),
+        buildHexagramBoundary("Forming", "2026-10-27T03:15:00.000Z"),
+        buildHexagramBoundary("Dissolving", "2026-10-27T11:45:00.000Z"),
+      ]);
+
+      expect(spans).toStrictEqual([
+        ["2026-10-27T03:15:00.000Z", "2026-10-27T11:45:00.000Z"],
+      ]);
+      expect(warn).toHaveBeenCalledWith(
+        "🔀 Unpaired progressive events",
+        undefined,
+        expect.objectContaining({ unpairedBeginnings: 1 }),
+      );
+
+      warn.mockRestore();
+    });
+
     it("returns empty array for empty input", () => {
       const events = service.detectProgressive([]);
 

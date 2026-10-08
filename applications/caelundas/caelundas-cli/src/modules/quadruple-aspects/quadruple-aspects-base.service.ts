@@ -91,14 +91,6 @@ export class QuadrupleAspectsBaseService {
   }
 
   /**
-   * Returns the bodies in canonical order, so a pattern is titled the same
-   * whatever order its edges arrived in.
-   */
-  canonicalBodyOrder(patternBodies: readonly Body[]): Body[] {
-    return this.aspectGraphService.canonicalBodyOrder(patternBodies);
-  }
-
-  /**
    * Checks grand cross pattern.
    */
   checkGrandCrossPattern(args: {
@@ -255,7 +247,9 @@ export class QuadrupleAspectsBaseService {
             unionEdges,
           });
           if (!grandTrine) continue;
-          const ordered = this.canonicalBodyOrder([...grandTrine]);
+          const ordered = this.aspectGraphService.canonicalBodyOrder([
+            ...grandTrine,
+          ]);
           grandTrinesByKey.set(ordered.join("\u001F"), new Set(ordered));
         }
       }
@@ -409,19 +403,6 @@ export class QuadrupleAspectsBaseService {
       categories.push(`${_.startCase(focalOrApexBody)} Focal`);
     }
     return categories;
-  }
-
-  /**
-   * Merges both registries into one edge set with each edge present once.
-   */
-  unionAspectBodies(
-    currentAspectBodies: AspectBodies[],
-    previousAspectBodies: AspectBodies[],
-  ): AspectBodies[] {
-    return this.aspectGraphService.unionAspectBodies(
-      currentAspectBodies,
-      previousAspectBodies,
-    );
   }
 
   /**

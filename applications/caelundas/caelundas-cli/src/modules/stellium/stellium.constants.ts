@@ -1,15 +1,19 @@
 // ♟️ Constants
 
-/** Latin multiplicative for a stellium's size, as `symbolByStellium` keys it. */
-export const stelliumSizeNames: Readonly<Record<number, string>> = {
-  3: "triple",
-  4: "quadruple",
-  5: "quintuple",
-  6: "sextuple",
-  7: "septuple",
-  8: "octuple",
-  9: "nonuple",
-  10: "decuple",
-  11: "undecuple",
-  12: "duodecuple",
+import type { symbolByStellium } from "../caelundas/symbol-caelundas.constants";
+
+/** The `symbolByStellium` key for each stellium size it has a symbol for. */
+export const stelliumNameBySize: Readonly<
+  Record<number, keyof typeof symbolByStellium>
+> = {
+  3: "triple stellium",
+  4: "quadruple stellium",
+  5: "quintuple stellium",
+  6: "sextuple stellium",
+  7: "septuple stellium",
+  8: "octuple stellium",
+  9: "nonuple stellium",
+  10: "decuple stellium",
+  11: "undecuple stellium",
+  12: "duodecuple stellium",
 };

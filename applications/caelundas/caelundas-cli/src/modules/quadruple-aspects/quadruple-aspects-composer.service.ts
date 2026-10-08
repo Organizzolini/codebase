@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import _ from "lodash";
 
+import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
@@ -19,6 +20,7 @@ export class QuadrupleAspectsComposerService {
   // 🏗 Dependency Injection
 
   constructor(
+    private readonly aspectGraphService: AspectGraphService,
     private readonly compoundPhaseService: CompoundPhaseService,
     private readonly quadrupleAspectsBaseService: QuadrupleAspectsBaseService,
     private readonly progressiveUtilitiesService: ProgressiveUtilitiesService,
@@ -108,24 +110,18 @@ export class QuadrupleAspectsComposerService {
 
   /**
    * Pairs one quadruple-aspect group's boundaries into spans, one per
-   * occurrence, keeping a single boundary per phase and minute.
+   * occurrence.
    */
   collectProgressiveEventsFromGroup(
     group: DetectedCalendarEvent[],
     progressiveEvents: DetectedCalendarEvent[],
   ): void {
-    const boundariesFor = (phase: string): DetectedCalendarEvent[] =>
-      _.uniqBy(
-        group.filter((event) => event.categories.includes(phase)),
-        (event) => event.start.valueOf(),
-      );
     const [firstEvent] = group;
     const groupKey = firstEvent
       ? this.quadrupleAspectsBaseService.makeProgressiveGroupKey(firstEvent)
       : "";
-    const pairs = this.progressiveUtilitiesService.pairProgressiveEvents(
-      boundariesFor("Forming"),
-      boundariesFor("Dissolving"),
+    const pairs = this.progressiveUtilitiesService.pairCompoundBoundaries(
+      group,
       `Quadruple Aspect ${groupKey}`,
     );
 
@@ -173,7 +169,7 @@ export class QuadrupleAspectsComposerService {
   }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
     const events: DetectedCalendarEvent[] = [];
-    const unionEdges = this.quadrupleAspectsBaseService.unionAspectBodies(
+    const unionEdges = this.aspectGraphService.unionAspectBodies(
       currentAspectBodies,
       previousAspectBodies,
     );
@@ -236,7 +232,7 @@ export class QuadrupleAspectsComposerService {
   }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
     const events: DetectedCalendarEvent[] = [];
-    const unionEdges = this.quadrupleAspectsBaseService.unionAspectBodies(
+    const unionEdges = this.aspectGraphService.unionAspectBodies(
       currentAspectBodies,
       previousAspectBodies,
     );
@@ -394,9 +390,7 @@ export class QuadrupleAspectsComposerService {
     ]);
     if (bodies.size !== 4) return null;
 
-    const bodyList = this.quadrupleAspectsBaseService.canonicalBodyOrder([
-      ...bodies,
-    ]);
+    const bodyList = this.aspectGraphService.canonicalBodyOrder([...bodies]);
     const oppositeBodyMap =
       this.quadrupleAspectsBaseService.buildGrandCrossOppositeMap(opp1, opp2);
 

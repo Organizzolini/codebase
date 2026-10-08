@@ -5,13 +5,12 @@ import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { ProgressiveCompoundEventService } from "../aspects/progressive-compound-event.service";
 import { aspectBodies as stelliumBodies } from "../caelundas/caelundas.constants";
-import { isKeyOf } from "../caelundas/caelundas.types";
 import {
   symbolByBody,
   symbolByStellium,
 } from "../caelundas/symbol-caelundas.constants";
 
-import { stelliumSizeNames } from "./stellium.constants";
+import { stelliumNameBySize } from "./stellium.constants";
 
 import type { AspectBodies } from "../aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
@@ -193,10 +192,11 @@ export class StelliumService {
     const bodiesCapitalized = bodies.map((b) => _.startCase(b));
     const bodySymbols = bodies.map((b) => symbolByBody[b]);
     const stelliumType = `${bodies.length}-body`;
-    const stelliumName = `${stelliumSizeNames[bodies.length] ?? ""} stellium`;
-    const stelliumSymbol = isKeyOf(symbolByStellium, stelliumName)
-      ? symbolByStellium[stelliumName]
-      : symbolByStellium["duodecuple stellium"];
+    const stelliumName = stelliumNameBySize[bodies.length];
+    if (stelliumName === undefined) {
+      throw new Error(`No stellium symbol for ${bodies.length} bodies`);
+    }
+    const stelliumSymbol = symbolByStellium[stelliumName];
 
     const description = `${_.sortBy([...bodiesCapitalized]).join(", ")} stellium ${phase}`;
     const phaseEmoji = this.phaseEmojiFor(phase);

@@ -333,7 +333,7 @@ describe(TripleAspectsComposerService, () => {
       );
     });
 
-    it("skips sparse progressive pairs", () => {
+    it("leaves a lone boundary unpaired and rejects unknown labels", () => {
       const internals = service as unknown as {
         resolveAspectType: (aspectCapitalized: string) => null;
         resolveProgressiveMeta: (
@@ -378,7 +378,7 @@ describe(TripleAspectsComposerService, () => {
       ).toBeNull();
     });
 
-    it("sorts grouped events before pairing progressive triples", () => {
+    it("builds no span when the only dissolving precedes the forming", () => {
       const minute = moment.utc("2024-03-21T12:00:00.000Z");
       const laterForming = {
         categories: [

@@ -378,30 +378,18 @@ export class TripleAspectsComposerService {
 
   /**
    * Pairs one triple-aspect group's boundaries into spans, one per occurrence.
-   *
-   * A repeated boundary at the same minute is the same boundary, so each phase
-   * keeps one event per minute before the shared occurrence pairing runs.
    */
   pairProgressiveGroup(
     groupEvents: DetectedCalendarEvent[],
   ): DetectedCalendarEvent[] {
-    const boundariesFor = (phase: string): DetectedCalendarEvent[] =>
-      _.uniqBy(
-        groupEvents.filter((event) => event.categories.includes(phase)),
-        (event) => event.start.valueOf(),
-      );
     const [firstEvent] = groupEvents;
     const groupKey = firstEvent ? this.getProgressiveGroupKey(firstEvent) : "";
-    const pairs = this.progressiveUtilitiesService.pairProgressiveEvents(
-      boundariesFor("Forming"),
-      boundariesFor("Dissolving"),
+    const pairs = this.progressiveUtilitiesService.pairCompoundBoundaries(
+      groupEvents,
       `Triple Aspect ${groupKey}`,
     );
 
     return pairs.flatMap(([forming, dissolving]) => {
-      if (!dissolving.start.isAfter(forming.start)) {
-        return [];
-      }
       const aspectCapitalized = forming.categories.find((category) =>
         ["Grand Trine", "T Square", "Yod"].includes(category),
       );

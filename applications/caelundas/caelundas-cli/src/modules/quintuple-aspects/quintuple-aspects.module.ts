@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 
 import { AspectsUtilitiesModule } from "../aspects/aspects-utilities.module";
 import { MathModule } from "../math/math.module";
+import { ProgressiveUtilitiesModule } from "../progressive/progressive-utilities.module";
 
 import { QuintupleAspectsComposerService } from "./quintuple-aspects-composer.service";
 import { QuintupleAspectsService } from "./quintuple-aspects.service";
@@ -14,7 +15,7 @@ import { QuintupleAspectsService } from "./quintuple-aspects.service";
 @Module({
   controllers: [],
   exports: [QuintupleAspectsService],
-  imports: [MathModule, AspectsUtilitiesModule],
+  imports: [MathModule, AspectsUtilitiesModule, ProgressiveUtilitiesModule],
   providers: [QuintupleAspectsComposerService, QuintupleAspectsService],
 })
 export class QuintupleAspectsModule {}

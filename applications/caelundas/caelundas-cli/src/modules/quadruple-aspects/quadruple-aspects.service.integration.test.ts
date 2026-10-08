@@ -26,13 +26,15 @@ import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-data
  * in only current or only previous, so phase detection fires exactly once.
  */
 
+const aspectGraphService = new AspectGraphService();
 const quadrupleAspectsBaseService = new QuadrupleAspectsBaseService(
-  new AspectGraphService(),
+  aspectGraphService,
   new AspectPhaseEmojiService(),
 );
 const service = new QuadrupleAspectsService(
   quadrupleAspectsBaseService,
   new QuadrupleAspectsComposerService(
+    aspectGraphService,
     new CompoundPhaseService(),
     quadrupleAspectsBaseService,
     new ProgressiveUtilitiesService(new LoggerService()),

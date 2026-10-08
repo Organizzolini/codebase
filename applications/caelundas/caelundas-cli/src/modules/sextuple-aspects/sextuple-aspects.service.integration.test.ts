@@ -1,10 +1,13 @@
 import moment from "moment-timezone";
 import { describe, expect, it } from "vitest";
 
+import { LoggerService } from "@codebase/logging";
+
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { ProgressiveCompoundEventService } from "../aspects/progressive-compound-event.service";
 import { MathService } from "../math/math.service";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { SextupleAspectsComposerService } from "./sextuple-aspects-composer.service";
 import { SextupleAspectsService } from "./sextuple-aspects.service";
@@ -31,6 +34,7 @@ const service = new SextupleAspectsService(
   ),
   new MathService(),
   new CompoundPhaseService(),
+  new ProgressiveUtilitiesService(new LoggerService()),
 );
 
 describe("sextuple-aspects.events integration", () => {

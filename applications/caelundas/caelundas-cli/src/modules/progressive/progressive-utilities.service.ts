@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import _ from "lodash";
 
 import { LoggerService } from "@codebase/logging";
 
@@ -64,6 +65,33 @@ export class ProgressiveUtilitiesService {
   }
 
   // 🌎 Public Methods
+
+  /**
+   * Pairs one compound pattern's forming and dissolving boundaries into
+   * occurrences with {@link pairProgressiveEvents}.
+   *
+   * A boundary repeated at the same minute is the same boundary, so each phase
+   * keeps one per minute first. A pattern that forms and dissolves on the same
+   * minute has no span, so that pair is dropped.
+   */
+  pairCompoundBoundaries(
+    groupEvents: DetectedCalendarEvent[],
+    label: string,
+  ): [DetectedCalendarEvent, DetectedCalendarEvent][] {
+    const boundariesFor = (phase: string): DetectedCalendarEvent[] =>
+      _.uniqBy(
+        groupEvents.filter((event) => event.categories.includes(phase)),
+        (event) => event.start.valueOf(),
+      );
+
+    return this.pairProgressiveEvents(
+      boundariesFor("Forming"),
+      boundariesFor("Dissolving"),
+      label,
+    ).filter(([forming, dissolving]) =>
+      dissolving.start.isAfter(forming.start),
+    );
+  }
 
   /**
    * Pairs each beginning with the earliest unused ending at or after it, as

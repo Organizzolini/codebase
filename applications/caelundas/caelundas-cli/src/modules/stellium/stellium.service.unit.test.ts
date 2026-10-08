@@ -5,6 +5,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { ProgressiveCompoundEventService } from "../aspects/progressive-compound-event.service";
+import { aspectBodies } from "../caelundas/caelundas.constants";
 
 import { StelliumService } from "./stellium.service";
 
@@ -253,6 +254,24 @@ describe(StelliumService, () => {
           "⬅️ 🌟 ♂️-☿-☀️-♀️ Mars, Mercury, Sun, Venus stellium dissolving",
           "🌟 ♂️-☿-☀️-♀️ Mars, Mercury, Sun, Venus stellium",
         ]);
+      });
+
+      it("refuses a stellium size that has no symbol", () => {
+        const cluster = aspectBodies.slice(0, 13);
+        const conjunctions = cluster.flatMap((first, index) =>
+          cluster.slice(index + 1).map((second): AspectBodies => ({
+            aspect: "conjunct",
+            bodies: [first, second],
+          })),
+        );
+
+        expect(() =>
+          service.detect({
+            currentAspectBodies: conjunctions,
+            minute: moment.utc("2026-01-17T12:00:00.000Z"),
+            previousAspectBodies: [],
+          }),
+        ).toThrow("No stellium symbol for 13 bodies");
       });
 
       it("detects 5-body stellium", () => {
