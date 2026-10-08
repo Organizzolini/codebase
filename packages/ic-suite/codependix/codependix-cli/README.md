@@ -39,10 +39,10 @@ for this repository's own.
 | `--exclude [exclude]` | Comma-separated globs overriding the configured `exclude`. Refused when `exclude` was never configured |
 | `--file-imports` | Build, check, and write the `fileImports` graph type for this run |
 | `--no-file-imports` | Skip the `fileImports` graph type for this run |
-| `-f, --format [format]` | What to print to standard output, one of `json` and `markdown` (default: `markdown`). A graph type prints only when the run also configured a workspace destination for it, even if its own toggle flag enabled it |
+| `-f, --format [format]` | What to print to standard output, one of `json` and `markdown` (default: `markdown`). A graph type prints only when the run also configured a workspace destination for it, even if its own toggle flag enabled it. A `--check boundaries` run adds its findings, under a `boundaries` key in `json` and a `Boundaries` section in `markdown` |
 | `--include [include]` | Comma-separated globs overriding the configured `include`. Refused when `include` was never configured |
-| `--json-output [jsonOutput]` | Write every active graph type's data, combined into one JSON file at this path, keyed by graph type name. A type appears only when the run also configured a workspace destination for it |
-| `--markdown-output [markdownOutput]` | Write every active graph type's rendered diagram, combined into one Markdown file at this path. A type appears only when the run also configured a workspace destination for it |
+| `--json-output [jsonOutput]` | Write every active graph type's data, combined into one JSON file at this path, keyed by graph type name. A type appears only when the run also configured a workspace destination for it. A `--check boundaries` run adds its findings under a `boundaries` key |
+| `--markdown-output [markdownOutput]` | Write every active graph type's rendered diagram, combined into one Markdown file at this path. A type appears only when the run also configured a workspace destination for it. A `--check boundaries` run adds its findings as a `Boundaries` section |
 | `--nestjs-modules` | Build, check, and write the `nestjsModules` graph type for this run |
 | `--no-nestjs-modules` | Skip the `nestjsModules` graph type for this run |
 | `--nx-projects` | Build, check, and write the `nxProjects` graph type for this run |
@@ -138,6 +138,25 @@ Markdown is the console default because it is the one rendering that reads in a
 terminal and pastes into an issue. `--format json` is for a machine reading
 standard output, so every diagnostic goes to standard error — keeping standard
 output clean and parseable as data.
+
+### The boundary report
+
+`--check boundaries` logs its findings to standard error and, given
+`--format`, `--json-output`, or `--markdown-output`, also prints them as a
+report: under a `boundaries` key in JSON, and as a `### Boundaries` section in
+Markdown. A `--check boundaries`-only run, which exports nothing, prints just
+that report; a run that also exports carries both in one document. Without one
+of those flags a boundaries-only run prints nothing, and a run that also
+exports prints its graphs exactly as it did before.
+
+The JSON holds `judgedProjects` (the projects whose findings fail the run),
+`violations` (`level`, `rule`, `message`, `source`, `target`, `cycle`, the
+charged `projects`, and a `verdict` of `fail` or `note`) and `failures`
+(`level`, `error`, the charged `projects`, an `ownerProject` when the failing
+code belongs to another project, and a `verdict`). A `note` is a finding that
+lives in a dependency of a judged project and does not fail the run. The
+Markdown lists the same findings under each project they are charged to, a
+note marked as not failing.
 
 ## Packages
 
@@ -264,6 +283,7 @@ flowchart LR
   BoundaryCheckModule --> TypescriptModule
   BoundaryCheckModule --> WorkspaceGraphModule
   CombinedOutputModule --> AnchorsModule
+  CombinedOutputModule --> BoundaryCheckModule
   ConfigurationModule --> InputModule
   ConfigurationModule --> OverrideResolutionModule
   DeliveryModule --> AnchorsModule

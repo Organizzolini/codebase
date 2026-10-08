@@ -1,5 +1,6 @@
 import {
   type BoundaryCheckFailure,
+  BoundaryOutcomeReportService,
   BoundaryReportService,
   type BoundaryViolation,
   type JudgedBoundaryFinding,
@@ -43,6 +44,7 @@ describe(ReportingService, () => {
     const module = await Test.createTestingModule({
       providers: [
         ReportingService,
+        BoundaryOutcomeReportService,
         {
           provide: BoundaryReportService,
           useValue: new BoundaryReportService(),
@@ -67,7 +69,13 @@ describe(ReportingService, () => {
   it("sets its own logger context", () => {
     const freshLogger = createMock<LoggerService>();
 
-    new ReportingService(new BoundaryReportService(), freshLogger);
+    const boundaryReportService = new BoundaryReportService();
+
+    new ReportingService(
+      new BoundaryOutcomeReportService(boundaryReportService),
+      boundaryReportService,
+      freshLogger,
+    );
 
     expect(freshLogger.setContext).toHaveBeenCalledWith("ReportingService");
   });

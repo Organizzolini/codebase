@@ -1,6 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
+import { BoundaryOutcomeReportService } from "@codependix/boundaries";
 import { CODEPENDIX_GRAPH_TYPES } from "@codependix/configuration";
 import { Injectable } from "@nestjs/common";
 
@@ -9,22 +10,24 @@ import { JSON_INDENTATION } from "../delivery/delivery.constants";
 import { MARKDOWN_SECTION_INTRO_LINE } from "../graph-run/graph-run.constants";
 
 import {
+  BOUNDARIES_KEY,
+  BOUNDARIES_MARKDOWN_SUBHEADING,
   FORMAT_JSON,
   FORMAT_MARKDOWN,
   FORMAT_NAMES,
   GRAPH_TYPE_MARKDOWN_SUBHEADINGS,
 } from "./combined-output.constants";
 
-import type { CombinedGraphExports } from "../graph-run/graph-run.types";
 import type {
   CombinedOutputFormat,
   CombinedOutputRunArguments,
 } from "./combined-output.types";
 
 /**
- * Combines every active graph type's whole-workspace data into the single
- * JSON object and single Markdown document `--json-output`,
- * `--markdown-output`, and `--format` each read from, and delivers them.
+ * Combines every active graph type's whole-workspace data, and a boundary
+ * check's findings when one ran, into the single JSON object and single
+ * Markdown document `--json-output`, `--markdown-output`, and `--format` each
+ * read from, and delivers them.
  *
  * Kept apart from `DeliveryService`, which delivers one graph type's export
  * to its own per-project or per-workspace destination: this service instead
@@ -39,7 +42,10 @@ import type {
 export class CombinedOutputService {
   // 🏗 Dependency Injection
 
-  constructor(private readonly anchorsService: AnchorsService) {}
+  constructor(
+    private readonly anchorsService: AnchorsService,
+    private readonly boundaryOutcomeReportService: BoundaryOutcomeReportService,
+  ) {}
 
   // 🔐 Private Fields
 
@@ -51,33 +57,45 @@ export class CombinedOutputService {
   private printConsole(args: CombinedOutputRunArguments): void {
     const content =
       args.format === FORMAT_JSON
-        ? this.renderJson(args.graphs)
-        : this.renderMarkdown(args.graphs);
+        ? this.renderJson(args)
+        : this.renderMarkdown(args);
 
     process.stdout.write(`${content}\n`);
   }
 
-  /** Builds the combined JSON object's content, keyed by graph type. */
-  private renderJson(graphs: CombinedGraphExports): string {
+  /**
+   * Builds the combined JSON object's content, keyed by graph type, with the
+   * boundary report under `boundaries` when one was carried.
+   */
+  private renderJson(args: CombinedOutputRunArguments): string {
     const keyed: Partial<Record<string, unknown>> = {};
 
     for (const graphType of CODEPENDIX_GRAPH_TYPES) {
-      const entry = graphs[graphType];
+      const entry = args.graphs[graphType];
 
       if (entry !== undefined) {
         keyed[graphType] = entry.json;
       }
     }
 
+    if (args.boundaries !== undefined) {
+      keyed[BOUNDARIES_KEY] = this.boundaryOutcomeReportService.buildReport(
+        args.boundaries,
+      );
+    }
+
     return JSON.stringify(keyed, null, JSON_INDENTATION);
   }
 
-  /** Builds the combined Markdown document's content from every active type. */
-  private renderMarkdown(graphs: CombinedGraphExports): string {
+  /**
+   * Builds the combined Markdown document's content from every active type,
+   * then the boundary report when one was carried.
+   */
+  private renderMarkdown(args: CombinedOutputRunArguments): string {
     let fileContent = "";
 
     for (const graphType of CODEPENDIX_GRAPH_TYPES) {
-      const entry = graphs[graphType];
+      const entry = args.graphs[graphType];
 
       if (entry === undefined) continue;
 
@@ -90,7 +108,17 @@ export class CombinedOutputService {
       });
     }
 
-    return fileContent;
+    if (args.boundaries === undefined) return fileContent;
+
+    return this.anchorsService.insertAnchorSection({
+      anchorName: BOUNDARIES_KEY,
+      content: this.boundaryOutcomeReportService.renderMarkdown(
+        this.boundaryOutcomeReportService.buildReport(args.boundaries),
+      ),
+      fileContent,
+      introLine: MARKDOWN_SECTION_INTRO_LINE,
+      subheading: BOUNDARIES_MARKDOWN_SUBHEADING,
+    });
   }
 
   /** Writes a combined destination's content, creating its directory first. */
@@ -140,9 +168,10 @@ export class CombinedOutputService {
    * `--format` always names, and the `--json-output`/`--markdown-output`
    * files when their paths were given.
    *
-   * A run naming no active graph type at all — every `--no-*` flag given —
-   * still prints and writes, with an empty object or an empty document: the
-   * flags are independent of which graph types are active, exactly as
+   * A run naming no active graph type at all — every `--no-*` flag given, or
+   * a `--check boundaries`-only run — still prints and writes, with an empty
+   * object or an empty document, or just the boundary report: the flags are
+   * independent of which graph types are active, exactly as
    * `--check`/`--write` are.
    */
   run(args: CombinedOutputRunArguments): void {
@@ -150,7 +179,7 @@ export class CombinedOutputService {
 
     if (args.jsonOutputPath !== undefined) {
       this.writeFile({
-        content: this.renderJson(args.graphs),
+        content: this.renderJson(args),
         path: args.jsonOutputPath,
         workingDirectory: args.workingDirectory,
       });
@@ -158,7 +187,7 @@ export class CombinedOutputService {
 
     if (args.markdownOutputPath !== undefined) {
       this.writeFile({
-        content: this.renderMarkdown(args.graphs),
+        content: this.renderMarkdown(args),
         path: args.markdownOutputPath,
         workingDirectory: args.workingDirectory,
       });

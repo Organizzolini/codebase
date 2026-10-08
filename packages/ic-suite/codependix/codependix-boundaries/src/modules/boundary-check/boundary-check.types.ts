@@ -96,6 +96,52 @@ export interface BoundaryLevelOutcome {
 }
 
 /**
+ * One boundary pass's findings as `--format json` prints them, under the
+ * `boundaries` key.
+ *
+ * Every finding carries its verdict, so a reader can tell a finding that
+ * failed the run from a note about a dependency without re-deriving it from
+ * `judgedProjects`.
+ */
+export interface BoundaryReport {
+  /** Every container that could not boot, charged and judged. */
+  readonly failures: BoundaryReportFailure[];
+  /** The projects the run judged, sorted — what a finding must be charged to to fail. */
+  readonly judgedProjects: string[];
+  /** Every edge or cycle that broke a declared rule, charged and judged. */
+  readonly violations: BoundaryReportViolation[];
+}
+
+/** Arguments accepted when building a run's `BoundaryReport`. */
+export interface BoundaryReportArguments {
+  readonly judgedProjects: readonly string[];
+  readonly outcome: BoundaryCheckOutcome;
+}
+
+/** One container failure in a `BoundaryReport`. */
+export interface BoundaryReportFailure {
+  readonly error: string;
+  readonly level: CodependixBoundaryLevel;
+  /** Present only when the failing code belongs to another project. */
+  readonly ownerProject?: string;
+  readonly projects: readonly string[];
+  readonly verdict: BoundaryVerdict;
+}
+
+/** One rule violation in a `BoundaryReport`. */
+export interface BoundaryReportViolation {
+  /** The whole cycle for an `acyclic` rule, and `null` for an access rule. */
+  readonly cycle: null | readonly string[];
+  readonly level: CodependixBoundaryLevel;
+  readonly message: string;
+  readonly projects: readonly string[];
+  readonly rule: string;
+  readonly source: string;
+  readonly target: string;
+  readonly verdict: BoundaryVerdict;
+}
+
+/**
  * Whether a finding fails the run, or is reported as a note against the
  * dependency it lives in.
  *

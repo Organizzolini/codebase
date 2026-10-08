@@ -733,12 +733,14 @@ describe("map command", () => {
       exitCode: number;
       loggedErrors: unknown[][];
       loggedWarns: unknown[][];
+      printed: string;
     }> {
       process.chdir(workingDirectory);
       process.exitCode = 0;
 
       const errorSpy = vi.spyOn(LoggerService.prototype, "error");
       const warnSpy = vi.spyOn(LoggerService.prototype, "warn");
+      const printSpy = vi.spyOn(process.stdout, "write").mockReturnValue(true);
       const module = await Test.createTestingModule({
         imports: [MainModule],
       }).compile();
@@ -752,9 +754,13 @@ describe("map command", () => {
       const exitCode = process.exitCode;
       const loggedErrors = [...errorSpy.mock.calls];
       const loggedWarns = [...warnSpy.mock.calls];
+      const printed = printSpy.mock.calls
+        .map(([chunk]) => String(chunk))
+        .join("");
 
       errorSpy.mockRestore();
       warnSpy.mockRestore();
+      printSpy.mockRestore();
       process.exitCode = 0;
       process.chdir(originalWorkingDirectory);
 
@@ -762,6 +768,7 @@ describe("map command", () => {
         exitCode: typeof exitCode === "string" ? Number(exitCode) : exitCode,
         loggedErrors,
         loggedWarns,
+        printed,
       };
     }
 
@@ -926,6 +933,86 @@ describe("map command", () => {
       expect(noted.exitCode).toBe(0);
       expect(noted.loggedWarns).toStrictEqual([]);
       expect(cycle.exitCode).toBe(0);
+    });
+
+    describe("printed as a report", () => {
+      it("prints a failing run's findings as JSON under a boundaries key", async () => {
+        const { exitCode, printed } = await check(cycleWorkspace, {
+          format: "json",
+          projects: "a",
+        });
+
+        expect(exitCode).toBe(1);
+        expect(JSON.parse(printed)).toStrictEqual({
+          boundaries: {
+            failures: [],
+            judgedProjects: ["a"],
+            violations: [
+              {
+                cycle: ["a", "b", "a"],
+                level: "nxProjects",
+                message: "no-cycles: a → b → a is a cycle.",
+                projects: ["a", "b"],
+                rule: "no-cycles",
+                source: "b",
+                target: "a",
+                verdict: "fail",
+              },
+            ],
+          },
+        });
+      });
+
+      it("prints a dependency's finding as a note", async () => {
+        const { exitCode, printed } = await check(cycleWorkspace, {
+          format: "json",
+          projects: "c",
+        });
+        const report = JSON.parse(printed) as {
+          boundaries: { violations: { verdict: string }[] };
+        };
+
+        expect(exitCode).toBe(0);
+        expect(
+          report.boundaries.violations.map((v) => v.verdict),
+        ).toStrictEqual(["note"]);
+      });
+
+      it("prints Markdown grouped by charged project, marking a note as not failing", async () => {
+        const { printed } = await check(cycleWorkspace, {
+          format: "markdown",
+          projects: "c",
+        });
+
+        expect(printed).toContain("### Boundaries");
+        expect(printed).toContain("Judged projects: c.");
+        expect(printed).toContain("#### a");
+        expect(printed).toContain(
+          "- **note** nxProjects in dependency a, b, not failing: no-cycles: a → b → a is a cycle.",
+        );
+      });
+
+      it("prints a clean run's report with no findings", async () => {
+        const { exitCode, printed } = await check(cycleWorkspace, {
+          format: "json",
+          projects: "d",
+        });
+
+        expect(exitCode).toBe(0);
+        expect(JSON.parse(printed)).toStrictEqual({
+          boundaries: {
+            failures: [],
+            judgedProjects: ["d"],
+            violations: [],
+          },
+        });
+      });
+
+      it("prints nothing when no format or output was asked for", async () => {
+        const { printed } = await check(cycleWorkspace, { projects: "a" });
+
+        expect(printed).toBe("");
+      });
     });
   });
 });

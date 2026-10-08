@@ -17,7 +17,11 @@ import { Command, CommandRunner, Option } from "nest-commander";
 
 import { LoggerService } from "@codebase/logging";
 
-import type { GraphRunContext } from "@codependix/boundaries";
+import type {
+  BoundaryCheckOutcome,
+  BoundaryReportArguments,
+  GraphRunContext,
+} from "@codependix/boundaries";
 import type { MapCommandOptions } from "@codependix/configuration";
 import type { RunMode } from "@codependix/core";
 import type {
@@ -71,28 +75,62 @@ export class MapCommand extends CommandRunner {
   // 🔏 Private Methods
 
   /**
-   * Prints and writes every active graph type's combined output, when the
-   * export pass ran at all.
+   * What a `--check boundaries` pass found, as the combined output carries it
+   * — but only when the command line asked for an output.
    *
-   * A `--check boundaries`-only run never reaches this: nothing was built to
-   * combine, so `--format`/`--json-output`/`--markdown-output` are silently
-   * inert on a run that touched no export at all — the same way `--write`
-   * and `--check reports` are inert on one that never named a destination.
+   * Left out unless `--format`, `--json-output`, or `--markdown-output` was
+   * given: an export run prints its graphs to standard output by default, and
+   * a `--write --check boundaries` run that named no output keeps printing
+   * exactly those graphs. A `--check boundaries`-only run that named none
+   * prints nothing at all and logs to standard error alone.
+   */
+  private buildBoundaryReport(args: {
+    boundaryOutcome: BoundaryCheckOutcome | undefined;
+    context: GraphRunContext;
+    options: MapCommandOptions;
+  }): BoundaryReportArguments | undefined {
+    const { boundaryOutcome, context, options } = args;
+    const asked =
+      options.format !== undefined ||
+      options.jsonOutput !== undefined ||
+      options.markdownOutput !== undefined;
+
+    if (boundaryOutcome === undefined || !asked) return undefined;
+
+    return {
+      judgedProjects: context.selectedProjects.map((project) => project.name),
+      outcome: boundaryOutcome,
+    };
+  }
+
+  /**
+   * Prints and writes the combined output: every active graph type's data
+   * when the export pass ran, and the boundary pass's findings beside it when
+   * `buildBoundaryReport` carries them.
    */
   private runCombinedOutput(args: {
+    boundaryOutcome: BoundaryCheckOutcome | undefined;
     combinedGraphs: CombinedGraphExports | undefined;
+    context: GraphRunContext;
     format: CombinedOutputFormat;
     options: MapCommandOptions;
-    workingDirectory: string;
   }): void {
-    if (args.combinedGraphs === undefined) return;
+    const { combinedGraphs, context, options } = args;
+    const boundaries = this.buildBoundaryReport({
+      boundaryOutcome: args.boundaryOutcome,
+      context,
+      options,
+    });
+
+    if (combinedGraphs === undefined && boundaries === undefined) return;
 
     this.combinedOutputService.run({
+      boundaries,
       format: args.format,
-      graphs: args.combinedGraphs,
-      jsonOutputPath: args.options.jsonOutput,
-      markdownOutputPath: args.options.markdownOutput,
-      workingDirectory: args.workingDirectory,
+      graphs: combinedGraphs ?? {},
+      jsonOutputPath: options.jsonOutput,
+      markdownOutputPath: options.markdownOutput,
+      workingDirectory: context.workingDirectory,
     });
   }
 
@@ -141,10 +179,11 @@ export class MapCommand extends CommandRunner {
       : undefined;
 
     this.runCombinedOutput({
+      boundaryOutcome,
       combinedGraphs: exportRun?.combinedGraphs,
+      context,
       format,
       options,
-      workingDirectory: context.workingDirectory,
     });
 
     if (
@@ -243,7 +282,7 @@ export class MapCommand extends CommandRunner {
    * `MapCommand.resolveFormat`, which validates the value this returns.
    */
   @Option({
-    description: `What to print to standard output, one of ${FORMAT_NAMES.join(" and ")} (default: ${FORMAT_MARKDOWN}). A graph type prints only when this run also configured a workspace destination for it, even if its own toggle flag enabled it`,
+    description: `What to print to standard output, one of ${FORMAT_NAMES.join(" and ")} (default: ${FORMAT_MARKDOWN}). A graph type prints only when this run also configured a workspace destination for it, even if its own toggle flag enabled it. A --check boundaries run adds its findings, under a boundaries key in json and a Boundaries section in markdown`,
     flags: "-f, --format [format]",
   })
   public parseFormat(value: string | undefined): string | undefined {
@@ -272,7 +311,7 @@ export class MapCommand extends CommandRunner {
    */
   @Option({
     description:
-      "Write every active graph type's data, combined into one JSON file at this path, keyed by graph type name. A type appears only when this run also configured a workspace destination for it",
+      "Write every active graph type's data, combined into one JSON file at this path, keyed by graph type name. A type appears only when this run also configured a workspace destination for it. A --check boundaries run adds its findings under a boundaries key",
     flags: "--json-output [jsonOutput]",
   })
   public parseJsonOutput(value: string | undefined): string | undefined {
@@ -285,7 +324,7 @@ export class MapCommand extends CommandRunner {
    */
   @Option({
     description:
-      "Write every active graph type's rendered diagram, combined into one Markdown file at this path. A type appears only when this run also configured a workspace destination for it",
+      "Write every active graph type's rendered diagram, combined into one Markdown file at this path. A type appears only when this run also configured a workspace destination for it. A --check boundaries run adds its findings as a Boundaries section",
     flags: "--markdown-output [markdownOutput]",
   })
   public parseMarkdownOutput(value: string | undefined): string | undefined {
