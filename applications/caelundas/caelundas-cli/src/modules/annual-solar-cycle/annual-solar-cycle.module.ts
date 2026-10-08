@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common";
 
 import { EphemerisModule } from "../ephemeris/ephemeris.module";
-import { MathModule } from "../math/math.module";
 import { ProgressiveUtilitiesModule } from "../progressive/progressive-utilities.module";
 
 import { AnnualSolarCycleEventsService } from "./annual-solar-cycle-events.service";
@@ -15,7 +14,7 @@ import { AnnualSolarCycleService } from "./annual-solar-cycle.service";
 @Module({
   controllers: [],
   exports: [AnnualSolarCycleService],
-  imports: [EphemerisModule, MathModule, ProgressiveUtilitiesModule],
+  imports: [EphemerisModule, ProgressiveUtilitiesModule],
   providers: [AnnualSolarCycleEventsService, AnnualSolarCycleService],
 })
 export class AnnualSolarCycleModule {}
