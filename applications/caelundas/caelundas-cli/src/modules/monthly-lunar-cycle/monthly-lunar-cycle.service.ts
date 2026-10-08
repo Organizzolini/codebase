@@ -293,16 +293,16 @@ export class MonthlyLunarCycleService {
    *
    * Pairs consecutive lunar phase events to create progressive events spanning the
    * period between phases. This shows how long Moon remains in each phase state
-   * (roughly 7.4 days per phase on average).
+   * (roughly 3.7 days per phase on average).
    *
    * @remarks
    * - Filters to events with "Monthly Lunar Cycle" category
    * - Sorts events chronologically by start time
-   * - Pairs consecutive phase events (new → first, first → full, full → third, third → new)
+   * - Pairs consecutive phase events (new → waxing crescent → first quarter → … → waning crescent → new)
    * - Progressive event represents time spent **in** the entering phase
    * - Skips invalid events that lack proper phase categorization
    * - Returns empty array for unpaired events (e.g., at date range boundaries)
-   * - Average phase duration: ~7.4 days (29.5 day lunar month ÷ 4 phases)
+   * - Average phase duration: ~3.7 days (29.5 day lunar month ÷ 8 phases)
    *
    * @see {@link getMonthlyLunarCycleDurationEvent} for event formatting
    * @see {@link lunarPhases} for phase ordering

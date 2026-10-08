@@ -192,14 +192,18 @@ describe(MonthlyLunarCycleService, () => {
       ]);
     });
 
-    it("does not mistake Full Moon for New Moon across the 180° offset wrap", () => {
+    it("reports only Full Moon when the Moon crosses 0° Aries opposite the Sun", () => {
+      // The Moon's own longitude wraps 359.9° → 0.2° just as Moon − Sun
+      // passes 180°, where the offset from the New Moon target jumps from
+      // +179.9° to −179.8°; neither wrap may read as a New Moon.
       const events = detectSeries({
         elongations: [179.6, 179.9, 180.2, 180.5],
+        sunLongitudes: [180, 180, 180, 180],
       });
 
-      expect(events.map((event) => event.summary)).not.toContain(
-        "🌙 🌑 New Moon",
-      );
+      expect(events.map((event) => event.summary)).toStrictEqual([
+        "🌙 🌕 Full Moon",
+      ]);
     });
 
     it.each([

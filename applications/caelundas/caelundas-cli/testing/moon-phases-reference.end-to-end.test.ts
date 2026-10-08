@@ -26,6 +26,8 @@ const EPHEMERIS_MARGIN_MINUTES = 35;
  * Every primary Moon phase USNO publishes for 2026, checked against the real
  * Swiss Ephemeris detector. A whole-year pipeline sweep would take about an
  * hour, so only the Moon and Sun are computed, and only around each phase.
+ * For the same reason the fixture is not in `fixtureNames`: its window is
+ * there only because the schema requires one.
  */
 describe("every 2026 primary Moon phase", () => {
   const fixture = loadReferenceFixture("usno-moon-phases-2026");

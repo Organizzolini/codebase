@@ -1,7 +1,7 @@
 {
   "events": [
     {
-      "note": "USNO: Full Moon, 3 January 2026, 10:03 UT",
+      "note": "USNO: Full Moon, 3 January 2026, 10:03 UT. Fixture-wide: the window exists only because the schema requires one; moon-phases-reference.end-to-end.test.ts checks these events around each phase, and registering this fixture in fixtureNames would run a year-long pipeline sweep",
       "start": "2026-01-03T10:03:00Z",
       "summary": "🌙 🌕 Full Moon"
     },
