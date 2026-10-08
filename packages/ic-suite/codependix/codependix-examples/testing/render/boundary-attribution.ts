@@ -1,11 +1,7 @@
 import { renderBoundaryRun, runBoundaryCheck } from "./boundary-run";
 import { boundaryReportService } from "./builders";
 import { fence, fenceJson } from "./document";
-import {
-  buildProjectGraph,
-  readProjects,
-  renderWorkspaceGraph,
-} from "./nx-graphs";
+import { renderWorkspaceGraph } from "./nx-graphs";
 
 import type { BoundaryRun } from "./boundary-run";
 import type { ExampleWorkspace } from "./nx-graphs";
@@ -307,10 +303,9 @@ async function runScenario(args: {
 }): Promise<BoundaryRun> {
   return runBoundaryCheck({
     ...(args.dependencies !== undefined && { dependencies: args.dependencies }),
-    graph: buildProjectGraph(args.workspace),
     judged: args.judged,
-    projects: readProjects(args.workspace),
     rules: { nxProjects: args.rules },
     workingDirectory: "/atlas",
+    workspace: args.workspace,
   });
 }

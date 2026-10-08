@@ -1,25 +1,31 @@
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+
 import {
   boundaryCheckService,
   boundaryOutcomeReportService,
-  neighborhoodService,
+  getRunContextService,
 } from "./builders";
 import { fence } from "./document";
+import { buildProjectGraph } from "./nx-graphs";
 
+import type { ExampleWorkspace } from "./nx-graphs";
 import type {
   BoundaryCheckOutcome,
   BoundaryReport,
 } from "@codependix/boundaries";
 import type { CodependixBoundaryRule } from "@codependix/configuration";
-import type { NxProject, NxProjectGraph } from "@codependix/nx-projects";
 
 // 🏷️ Types
 
 /** One run's outcome, with everything a guide quotes from it. */
 export interface BoundaryRun {
-  /** The projects every graph was built over, sorted. */
+  /** The projects every graph was built over, as the run context resolved them. */
   readonly builtProjects: string[];
   /** `1` exactly when a finding is charged to a judged project. */
   readonly exitCode: 0 | 1;
+  /** The projects that were judged, which `--projects` resolved to. */
   readonly judged: readonly string[];
   readonly outcome: BoundaryCheckOutcome;
   readonly report: BoundaryReport;
@@ -29,16 +35,16 @@ export interface BoundaryRun {
 export interface BoundaryRunArguments {
   /** `false` for `--no-dependencies`: build the judged projects alone. */
   readonly dependencies?: boolean;
-  readonly graph: NxProjectGraph;
-  /** The projects `--projects` named, which are the only ones that can fail. */
+  /** What `--projects` names: project names or globs, as the flag takes them. */
   readonly judged: readonly string[];
-  readonly projects: NxProject[];
   /** The rules the run is judged against, at the one level a run declares. */
   readonly rules: {
     readonly nestjsModules?: CodependixBoundaryRule[];
     readonly nxProjects?: CodependixBoundaryRule[];
   };
+  /** Directory the workspace's project roots are resolved against. */
   readonly workingDirectory: string;
+  readonly workspace: ExampleWorkspace;
 }
 
 // 🏃 Running
@@ -62,51 +68,59 @@ export function renderBoundaryRun(run: BoundaryRun): string {
 /**
  * Runs the real boundary check over an example workspace and judges it.
  *
- * Resolves the build set the way `RunContextService` does, from the same
- * dependency closure, so what a guide shows is what `--projects` builds.
+ * Everything before the check is the real run: the workspace is written out as
+ * the project graph file and configuration a workspace with no Nx would
+ * supply, and `RunContextService.build` reads them with `--projects` and
+ * `--no-dependencies` exactly as the command does. Which projects are judged,
+ * and which are built, are therefore its answers rather than a copy of them.
  */
 export async function runBoundaryCheck(
   args: BoundaryRunArguments,
 ): Promise<BoundaryRun> {
-  const selectedProjects = args.projects.filter((project) =>
-    args.judged.includes(project.name),
-  );
-  const buildProjects = resolveBuildProjects({ ...args, selectedProjects });
-  const outcome = await boundaryCheckService.run({
-    buildProjects,
-    configuration: {
-      boundaries: {
-        fileImports: { python: [], typescript: [] },
-        nestjsModules: args.rules.nestjsModules ?? [],
-        nxProjects: args.rules.nxProjects ?? [],
-      },
-      exclude: [],
-      include: ["**"],
-      projectGraph: undefined,
-      selection: {
-        dependencies: args.dependencies ?? true,
-        projects: [...args.judged],
-        tags: [],
-      },
-      workspace: {},
-    },
-    enabledGraphTypes: new Set(["fileImports", "nestjsModules", "nxProjects"]),
-    graph: args.graph,
-    projects: args.projects,
-    selectedProjects,
-    workingDirectory: args.workingDirectory,
-  });
+  const directory = mkdtempSync(path.join(tmpdir(), "codependix-boundary-"));
 
-  return {
-    builtProjects: buildProjects.map((project) => project.name),
-    exitCode: failsTheRun(outcome) ? 1 : 0,
-    judged: args.judged,
-    outcome,
-    report: boundaryOutcomeReportService.buildReport({
-      judgedProjects: args.judged,
+  try {
+    const graphPath = path.join(directory, "project-graph.json");
+    const configurationPath = path.join(directory, "codependix.config.json");
+
+    writeFileSync(graphPath, JSON.stringify(buildProjectGraph(args.workspace)));
+    writeFileSync(
+      configurationPath,
+      JSON.stringify({
+        boundaries: args.rules,
+        projectGraph: graphPath,
+      }),
+    );
+
+    const runContextService = await getRunContextService();
+    const context = await runContextService.build({
+      mode: "check",
+      options: {
+        check: "boundaries",
+        config: configurationPath,
+        ...(args.dependencies !== undefined && {
+          dependencies: args.dependencies,
+        }),
+        projects: args.judged.join(","),
+      },
+      workingDirectory: args.workingDirectory,
+    });
+    const judged = context.selectedProjects.map((project) => project.name);
+    const outcome = await boundaryCheckService.run(context);
+
+    return {
+      builtProjects: context.buildProjects.map((project) => project.name),
+      exitCode: failsTheRun(outcome) ? 1 : 0,
+      judged,
       outcome,
-    }),
-  };
+      report: boundaryOutcomeReportService.buildReport({
+        judgedProjects: judged,
+        outcome,
+      }),
+    };
+  } finally {
+    rmSync(directory, { force: true, recursive: true });
+  }
 }
 
 // 🔏 Helpers
@@ -116,22 +130,4 @@ function failsTheRun(outcome: BoundaryCheckOutcome): boolean {
   return [...outcome.violations, ...outcome.failures].some(
     (finding) => finding.verdict === "fail",
   );
-}
-
-/** The judged projects and their dependency closure, or the judged alone. */
-function resolveBuildProjects(
-  args: BoundaryRunArguments & {
-    selectedProjects: NxProject[];
-  },
-): NxProject[] {
-  if (args.dependencies === false) return args.selectedProjects;
-
-  const closure = new Set(
-    neighborhoodService.resolveDependencyClosure(
-      args.graph,
-      args.selectedProjects.map((project) => project.name),
-    ),
-  );
-
-  return args.projects.filter((project) => closure.has(project.name));
 }

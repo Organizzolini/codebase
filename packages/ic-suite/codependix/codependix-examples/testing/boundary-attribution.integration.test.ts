@@ -52,6 +52,26 @@ describe("boundary attribution examples", () => {
     });
   });
 
+  describe("the selection", () => {
+    // The run context is the real one, so a glob selects exactly what
+    // `--projects` would: this is what pins the guides to the command.
+    it("judges what a --projects glob selects, and builds its closure", async () => {
+      expect.hasAssertions();
+
+      const run = await attribution.runCycleCheck({ judged: ["shop-p*"] });
+
+      expect(run.judged).toStrictEqual(["shop-pricing"]);
+      expect(run.builtProjects).toStrictEqual([
+        "shop-checkout",
+        "shop-pricing",
+      ]);
+      expect(chargedProjects(run)).toStrictEqual([
+        ["shop-checkout", "shop-pricing"],
+      ]);
+      expect(run.exitCode).toBe(1);
+    });
+  });
+
   describe("a dependent", () => {
     it("is only noted when the cycle lives in its dependencies", async () => {
       expect.hasAssertions();

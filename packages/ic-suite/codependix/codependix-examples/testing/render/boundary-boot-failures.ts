@@ -1,7 +1,6 @@
 import { renderBoundaryRun, runBoundaryCheck } from "./boundary-run";
-import { neighborhoodService } from "./builders";
 import { fenceJson } from "./document";
-import { buildProjectGraph, renderWorkspaceGraph } from "./nx-graphs";
+import { renderWorkspaceGraph } from "./nx-graphs";
 import { EXAMPLES_DIRECTORY } from "./paths";
 
 import type { BoundaryRun } from "./boundary-run";
@@ -91,13 +90,10 @@ export async function buildBootFailureDocuments(): Promise<ExampleDocument[]> {
 export async function runBootCheck(args: {
   judged: readonly string[];
 }): Promise<BoundaryRun> {
-  const graph = buildProjectGraph(STOREFRONT);
-
   return runBoundaryCheck({
-    graph,
     judged: args.judged,
-    projects: neighborhoodService.readProjects(graph, EXAMPLES_DIRECTORY),
     rules: { nestjsModules: NO_MODULE_CYCLES },
     workingDirectory: EXAMPLES_DIRECTORY,
+    workspace: STOREFRONT,
   });
 }

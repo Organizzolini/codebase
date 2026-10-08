@@ -288,7 +288,6 @@ graph LR
   file_testing_render_boundary_attribution_ts --> file_testing_render_nx_graphs_ts
   file_testing_render_boundary_attribution_ts --> file_testing_render_types_ts
   file_testing_render_boundary_boot_failures_ts --> file_testing_render_boundary_run_ts
-  file_testing_render_boundary_boot_failures_ts --> file_testing_render_builders_ts
   file_testing_render_boundary_boot_failures_ts --> file_testing_render_document_ts
   file_testing_render_boundary_boot_failures_ts --> file_testing_render_nx_graphs_ts
   file_testing_render_boundary_boot_failures_ts --> file_testing_render_paths_ts
@@ -298,6 +297,7 @@ graph LR
   file_testing_render_boundary_rules_ts --> file_testing_render_types_ts
   file_testing_render_boundary_run_ts --> file_testing_render_builders_ts
   file_testing_render_boundary_run_ts --> file_testing_render_document_ts
+  file_testing_render_boundary_run_ts --> file_testing_render_nx_graphs_ts
   file_testing_render_catalog_ts --> file_testing_render_anchor_placement_ts
   file_testing_render_catalog_ts --> file_testing_render_boundary_attribution_ts
   file_testing_render_catalog_ts --> file_testing_render_boundary_boot_failures_ts

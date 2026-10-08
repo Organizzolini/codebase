@@ -7,6 +7,7 @@ import {
   BoundaryOutcomeReportService,
   BoundaryReportService,
   BoundarySelectorService,
+  RunContextService,
 } from "@codependix/boundaries";
 import {
   ConfigurationModule,
@@ -121,7 +122,7 @@ export async function closeConfigurationService(): Promise<void> {
  * resolver are providers nothing outside the package can name.
  *
  * A function rather than a top-level `await`, which would make this shared
- * module async for the sake of one of its eighteen builders and boot a
+ * module async for the sake of one of its nineteen builders and boot a
  * container for callers that never touch configuration at all.
  */
 export async function getConfigurationService(): Promise<ConfigurationService> {
@@ -133,6 +134,19 @@ export async function getConfigurationService(): Promise<ConfigurationService> {
   const context = await configurationContextPromise;
 
   return context.get(ConfigurationService);
+}
+
+/**
+ * Resolves the run context a real `--projects` run builds: the selection, and
+ * the dependency closure every boundary graph is drawn over.
+ *
+ * A function for the same reason as `getConfigurationService`, which it reads.
+ */
+export async function getRunContextService(): Promise<RunContextService> {
+  return new RunContextService(
+    await getConfigurationService(),
+    neighborhoodService,
+  );
 }
 
 /** Reads and rewrites codependix's own named anchor blocks. */
