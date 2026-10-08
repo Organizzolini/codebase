@@ -323,10 +323,12 @@
         "filter": {
           "projects": [
             "caelundas-cli",
+            "caelundas-web",
             "lexico-api",
             "lexico-cli",
             "lexico-web",
-            "meanderaw-cli"
+            "meanderaw-cli",
+            "meanderaw-web"
           ]
         },
         "inputs": [
