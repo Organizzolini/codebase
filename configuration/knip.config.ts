@@ -369,6 +369,20 @@ const config: KnipConfig = {
       ],
       project: "testing/**/*.ts",
     },
+    "packages/ic-suite/codependix/codependix-nx": {
+      // An Nx plugin's executors are loaded by name from `executors.json`,
+      // never imported, so each is a root nothing in this workspace
+      // references. The gate spawns `@codependix/cli`'s entry under
+      // `@swc-node/register`, naming both only as strings, and `@swc/core` is
+      // that loader's peer — so no import names any of them.
+      entry: ["src/executors/*/executor.ts"],
+      ignoreDependencies: [
+        "@codependix/cli",
+        "@swc-node/register",
+        "@swc/core",
+      ],
+      project: "src/**/*.ts",
+    },
 
     // conformetry packages: NestJS service/command application scaffolds
     "packages/ic-suite/conformetry/conformetry-cli": {

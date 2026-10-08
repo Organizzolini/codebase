@@ -1,0 +1,85 @@
+{
+  "author": "Jimmy Paolini",
+  "bugs": {
+    "url": "https://github.com/organizzolini/codebase/issues"
+  },
+  "dependencies": {
+    "@codependix/cli": "workspace:*",
+    "@nestjs/common": "catalog:ic-suite",
+    "@nestjs/core": "catalog:ic-suite",
+    "@nx/devkit": "catalog:",
+    "@swc-node/register": "catalog:",
+    "@swc/core": "catalog:",
+    "reflect-metadata": "catalog:"
+  },
+  "description": "Nx plugin inferring a per-project codependix boundary gate, judged over each project's Nx dependency closure",
+  "devDependencies": {
+    "@golevelup/ts-vitest": "catalog:",
+    "@nestjs/testing": "catalog:",
+    "@nx/eslint-plugin": "catalog:",
+    "@swc/helpers": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "executors": "./executors.json",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./executors.json": "./executors.json",
+    "./package.json": "./package.json",
+    "./src/executors/*": "./src/executors/*"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "dist",
+    "executors.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/packages/ic-suite/codependix/codependix-nx#readme",
+  "keywords": [
+    "architecture-linter",
+    "boundaries",
+    "codependix",
+    "dependency-graph",
+    "nx",
+    "nx-plugin"
+  ],
+  "license": "MIT",
+  "main": "src/index.ts",
+  "name": "@codependix/nx",
+  "nx": {
+    "executors": "./executors.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/src/index.js"
+      },
+      "./executors.json": "./executors.json",
+      "./package.json": "./package.json",
+      "./src/executors/*": "./dist/src/executors/*.js"
+    },
+    "main": "./dist/src/index.js",
+    "registry": "https://registry.npmjs.org",
+    "types": "./dist/src/index.d.ts"
+  },
+  "repository": {
+    "directory": "packages/ic-suite/codependix/codependix-nx",
+    "type": "git",
+    "url": "git+https://github.com/organizzolini/codebase.git"
+  },
+  "type": "module",
+  "typeCoverage": {
+    "atLeast": 100,
+    "strict": true
+  },
+  "types": "src/index.ts",
+  "version": "0.0.0"
+}

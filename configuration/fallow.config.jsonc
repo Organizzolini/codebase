@@ -141,6 +141,10 @@
     // to resolve that name at all. `@conformetry/nx` needs no entry here only
     // because `configuration/conformetry.config.ts` imports its types.
     "@callidescope/nx",
+    // `@codependix/nx`'s gate runs this package's `./main` export as a child
+    // process, resolving the entry from a specifier string rather than
+    // importing it — `configuration/knip.config.ts` carries the same reason.
+    "@codependix/cli",
     // Depended on so that pnpm links its `conformetry` bin into
     // node_modules/.bin, which it does only for a root dependency. The bin now
     // points at emitted JavaScript, so the link appears once the package has
