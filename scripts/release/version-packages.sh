@@ -34,4 +34,10 @@ if main_has_moved_from "${base}"; then
   exit 0
 fi
 
+# Nx reads each package's current version from its tag, so a version an
+# earlier run committed but never tagged reads as unreleased and is bumped
+# again, as after v2.35.0's tag push was cut short. tag-packages.sh pushes any
+# such tags first; on a fresh checkout it has nothing to commit.
+bash "$(dirname "${BASH_SOURCE[0]}")/tag-packages.sh"
+
 pnpm exec nx release --skip-publish
