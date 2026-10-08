@@ -5,8 +5,9 @@ import { NeighborhoodService } from "@codependix/nx-projects";
 import { Injectable } from "@nestjs/common";
 
 import {
+  FRAME_POSITION,
   NODE_MODULES_SEGMENT,
-  STACK_FRAME_LOCATION,
+  STACK_FRAME_PREFIX,
 } from "./boundary-check.constants";
 
 import type {
@@ -65,11 +66,38 @@ export class BoundaryFailureService {
   }
 
   /**
+   * The location one stack line names, without its line and column — or
+   * nothing for a line that is not a frame, or a frame naming no position.
+   *
+   * String operations rather than a regular expression: a stack is library
+   * input, and every single-pattern reading of both frame shapes backtracks
+   * in polynomial time on a crafted line.
+   */
+  private readFrameLocation(line: string): string | undefined {
+    const frame = line.trim();
+
+    if (!frame.startsWith(STACK_FRAME_PREFIX)) return undefined;
+
+    const body = frame.slice(STACK_FRAME_PREFIX.length);
+    const location = body.endsWith(")")
+      ? body.slice(body.lastIndexOf("(") + 1, -1)
+      : body;
+    const columnAt = location.lastIndexOf(":");
+    const lineAt = location.lastIndexOf(":", columnAt - 1);
+    const isPositioned =
+      lineAt > 0 &&
+      FRAME_POSITION.test(location.slice(lineAt + 1, columnAt)) &&
+      FRAME_POSITION.test(location.slice(columnAt + 1));
+
+    return isPositioned ? location.slice(0, lineAt) : undefined;
+  }
+
+  /**
    * The absolute file path one stack line names, or nothing for a line that
    * is not a frame or names no file — a `node:` internal, say.
    */
   private readFramePath(line: string): string | undefined {
-    const location = STACK_FRAME_LOCATION.exec(line)?.[1];
+    const location = this.readFrameLocation(line);
 
     if (location?.startsWith("file:") === true) {
       return fileURLToPath(location);

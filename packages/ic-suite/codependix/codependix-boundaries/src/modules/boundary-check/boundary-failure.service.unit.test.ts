@@ -216,6 +216,32 @@ describe(BoundaryFailureService, () => {
     expect(failure).not.toHaveProperty("ownerProject");
   });
 
+  it("reads no file from a frame missing its line and column", () => {
+    const failure = collect(
+      buildError([
+        "/workspace/packages/lexico-entities/src/WordForm.entity.ts",
+        "Word (/workspace/packages/lexico-entities/src/word.entity.ts:x:1)",
+        "Word (/workspace/packages/lexico-entities/src/word.entity.ts:1:)",
+      ]),
+    );
+
+    expect(failure).not.toHaveProperty("ownerProject");
+  });
+
+  // A stack is library input: a frame crafted to make a backtracking parser
+  // go polynomial must be read in linear time, and still read as no file.
+  it.each([
+    ["an unclosed name", "(a".repeat(50_000)],
+    ["a closed one", `${"(a".repeat(50_000)}:1:1)`],
+    ["a run of separators", `/${":1".repeat(50_000)}`],
+  ])("reads an adversarial frame with %s promptly", (_shape, frame) => {
+    const startedAt = performance.now();
+    const failure = collect(buildError([frame]));
+
+    expect(performance.now() - startedAt).toBeLessThan(500);
+    expect(failure).not.toHaveProperty("ownerProject");
+  });
+
   // Guessing would name a project that did nothing wrong.
   it("names no owner when no frame lands inside a known project", () => {
     const failure = collect(

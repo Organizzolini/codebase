@@ -38,13 +38,20 @@ export const BOUNDARY_LEVEL_ORDER = [
 ] as const satisfies readonly CodependixBoundaryLevel[];
 
 /**
- * The location one V8 stack frame names, in either of the two shapes V8
- * writes: `at name (location:line:column)` or a bare `at location:line:column`.
- *
- * Captures the location without its line and column, so a frame reads as a
- * path or a `file:` URL whichever way it was written.
+ * What every V8 stack frame line starts with once its indentation is
+ * trimmed: `at name (location:line:column)` or a bare `at location:line:column`.
  */
-export const STACK_FRAME_LOCATION = /^\s*at (?:.*\()?(.+?):\d+:\d+\)?$/u;
+export const STACK_FRAME_PREFIX = "at ";
+
+/**
+ * A frame's line or column number.
+ *
+ * Anchored at both ends with one quantifier, so it runs in linear time on
+ * whatever a stack carries — the frame itself is parsed with string
+ * operations rather than one regular expression, which would backtrack
+ * in polynomial time on a crafted frame.
+ */
+export const FRAME_POSITION = /^\d+$/u;
 
 /**
  * The path segment marking a frame as third-party code.
