@@ -94,6 +94,15 @@ export class ProgressiveAspectService {
       groupedAspectEvents,
     )) {
       if (!aspectGroupKey) {
+        this.logger.warn(
+          "📐 Skipping progressive aspect events with an empty group key",
+          undefined,
+          {
+            aspectCategory,
+            events: aspectGroupEvents.length,
+            sample: aspectGroupEvents[0]?.categories,
+          },
+        );
         continue;
       }
 

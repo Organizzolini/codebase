@@ -164,6 +164,33 @@ describe(ProgressiveAspectService, () => {
     expect(events).toHaveLength(1);
   });
 
+  it("warns instead of silently skipping a group with an empty key", () => {
+    const event = {
+      categories: ["Astronomy", "Major Aspect", "Forming"],
+      description: "bodies with no match",
+      end: moment.utc("2024-03-21T12:00:00.000Z"),
+      start: moment.utc("2024-03-21T12:00:00.000Z"),
+      summary: "bodies with no match",
+    };
+    mockLoggerService.warn.mockClear();
+
+    const events = service.buildProgressiveAspectEvents({
+      aspectCategory: "Major Aspect",
+      categoryLabel: "major aspect",
+      events: [event],
+      getAspectGroupKey: () => "",
+      getProgressiveEvent: (beginning) => beginning,
+      pairProgressiveEvents: () => [],
+    });
+
+    expect(events).toHaveLength(0);
+    expect(mockLoggerService.warn).toHaveBeenCalledWith(
+      expect.stringContaining("Skipping"),
+      undefined,
+      expect.objectContaining({ aspectCategory: "Major Aspect", events: 1 }),
+    );
+  });
+
   describe("extractTypedAspectPartsOrThrow", () => {
     it("logs and throws with the original error preserved as cause", () => {
       const categories = ["Astronomy", "Astrology"];

@@ -121,6 +121,22 @@ describe(MinorAspectsComposerService, () => {
     );
   });
 
+  it("names multi-word bodies in start case so grouping keys form", () => {
+    const event = service.assembleMinorAspectEvent({
+      body1: "moon",
+      body2: "north lunar node",
+      minorAspect: "semisextile",
+      phase: "forming",
+      timestamp: moment.utc("2026-02-17T12:00:00.000Z"),
+    });
+
+    expect(event.description).toBe("Moon forming semisextile North Lunar Node");
+    expect(event.categories).toContain("North Lunar Node");
+    expect(service.buildGroupKey(event)).toBe(
+      "Moon-Semisextile-North Lunar Node",
+    );
+  });
+
   it("extracts and casts aspect components", () => {
     expect(
       service.extractAspectComponents([

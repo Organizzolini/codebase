@@ -5,9 +5,12 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { LoggerService } from "@codebase/logging";
 
+import { AspectsUtilitiesService } from "../aspects/aspects-utilities.service";
+import { MathService } from "../math/math.service";
 import { ProgressiveAspectService } from "../progressive/progressive-aspect.service";
 import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
+import { MajorAspectEventService } from "./major-aspect-event.service";
 import { MajorAspectProgressiveService } from "./major-aspect-progressive.service";
 
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
@@ -20,6 +23,7 @@ vi.mock("fs", () => ({
 
 describe(MajorAspectProgressiveService, () => {
   let service: MajorAspectProgressiveService;
+  let eventService: MajorAspectEventService;
   let privateService: {
     castAspectPartsToTypes: (args: {
       aspectCapitalized: string;
@@ -42,6 +46,9 @@ describe(MajorAspectProgressiveService, () => {
     const module = await Test.createTestingModule({
       providers: [
         LoggerService,
+        AspectsUtilitiesService,
+        MajorAspectEventService,
+        MathService,
         ProgressiveAspectService,
         ProgressiveUtilitiesService,
         MajorAspectProgressiveService,
@@ -49,6 +56,7 @@ describe(MajorAspectProgressiveService, () => {
     }).compile();
 
     service = await module.resolve(MajorAspectProgressiveService);
+    eventService = await module.resolve(MajorAspectEventService);
     privateService = service as unknown as {
       castAspectPartsToTypes: (args: {
         aspectCapitalized: string;
@@ -93,6 +101,37 @@ describe(MajorAspectProgressiveService, () => {
       end: timestamp,
       start: timestamp,
       summary: `${body1} ${aspect} ${body2}`,
+    });
+
+    it("spans an aspect to the north lunar node from the events as built", () => {
+      const forming = eventService.buildMajorAspectEvent({
+        body1: "moon",
+        body2: "north lunar node",
+        longitudeBody1: 10,
+        longitudeBody2: 10,
+        phase: "forming",
+        timestamp: moment.utc("2026-02-17T04:00:00.000Z"),
+      });
+      const dissolving = eventService.buildMajorAspectEvent({
+        body1: "moon",
+        body2: "north lunar node",
+        longitudeBody1: 10,
+        longitudeBody2: 10,
+        phase: "dissolving",
+        timestamp: moment.utc("2026-02-18T04:00:00.000Z"),
+      });
+
+      const progressiveEvents = service.detectProgressive([
+        forming,
+        dissolving,
+      ]);
+
+      expect(progressiveEvents).toHaveLength(1);
+      expect(progressiveEvents[0]?.description).toBe(
+        "Moon conjunct North Lunar Node",
+      );
+      expect(progressiveEvents[0]?.start).toStrictEqual(forming.start);
+      expect(progressiveEvents[0]?.end).toStrictEqual(dissolving.start);
     });
 
     it("creates progressive events from forming and dissolving pairs", () => {

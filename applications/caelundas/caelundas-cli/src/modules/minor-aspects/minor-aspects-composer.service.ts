@@ -10,7 +10,6 @@ import {
 } from "../caelundas/caelundas.constants";
 import {
   bodyDisplayName,
-  capitalize,
   isBody,
   isMinorAspect,
 } from "../caelundas/caelundas.types";
@@ -61,8 +60,8 @@ export class MinorAspectsComposerService {
     args: AssembleMinorAspectEventArguments,
   ): DetectedCalendarEvent {
     const { body1, body2, minorAspect, phase, timestamp } = args;
-    const body1Capitalized = capitalize(body1);
-    const body2Capitalized = capitalize(body2);
+    const body1Capitalized = bodyDisplayName(body1);
+    const body2Capitalized = bodyDisplayName(body2);
     const baseCategories = [
       "Astronomy",
       "Astrology",
