@@ -8,33 +8,21 @@ import {
 import { Test } from "@nestjs/testing";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
-import {
-  AdjectivalForm,
-  AdjectiveInflection,
-  AdverbForm,
-  AdverbInflection,
-  FiniteVerbForm,
-  GerundForm,
-  InfinitiveForm,
-  Lexeme,
-  NominalForm,
-  NounInflection,
-  ParticipleForm,
-  PrepositionInflection,
-  SupineForm,
-  UninflectedInflection,
-  VerbInflection,
-} from "@codebase/lexico-entities";
+import { Lexeme } from "@codebase/lexico-entities";
 
 import { createConnection, createEdge } from "../../lexico-api.utilities";
+import { LexemeType } from "../lexemes/lexeme.entities";
+import { ORPHANED_GRAPHQL_TYPES } from "../lexemes/lexemes.constants";
 
 import {
   LexemeSearchConnection,
-  type LexemeSearchResult,
+  LexemeSearchResult,
   SearchMatchSource,
 } from "./search.entities";
 import { SearchResolver } from "./search.resolver";
 import { SearchService } from "./search.service";
+
+import type { LexemeSearchMatch } from "./search.types";
 
 describe(SearchResolver, () => {
   let resolver: SearchResolver;
@@ -63,7 +51,7 @@ describe(SearchResolver, () => {
     mockLexeme.id = "lex-1";
     mockLexeme.lemma = "amō";
 
-    const mockResult: LexemeSearchResult = {
+    const mockResult: LexemeSearchMatch = {
       enclitic: null,
       identifiers: [],
       lexeme: mockLexeme,
@@ -71,7 +59,7 @@ describe(SearchResolver, () => {
       source: SearchMatchSource.LEMMA_EXACT,
     };
 
-    const mockConnection = createConnection<LexemeSearchResult>({
+    const mockConnection = createConnection<LexemeSearchMatch>({
       edges: [createEdge(mockResult, "c1")],
       hasNextPage: false,
       hasPreviousPage: false,
@@ -100,7 +88,20 @@ describe(SearchResolver, () => {
       last: 5,
       query: "amō",
     });
-    expect(result).toBe(mockConnection);
+    expect(result).toStrictEqual({
+      edges: [{ cursor: "c1", node: expect.any(LexemeSearchResult) }],
+      pageInfo: mockConnection.pageInfo,
+      totalCount: 1,
+    });
+    expect(result.edges[0]?.node).toMatchObject({
+      lexeme: expect.any(LexemeType),
+      score: mockResult.score,
+      source: mockResult.source,
+    });
+    expect(result.edges[0]?.node.lexeme).toMatchObject({
+      id: "lex-1",
+      lemma: "amō",
+    });
   });
 
   it("resolves searchEnglish query with pagination parameters", async () => {
@@ -110,7 +111,7 @@ describe(SearchResolver, () => {
     mockLexeme.id = "lex-1";
     mockLexeme.lemma = "amō";
 
-    const mockResult: LexemeSearchResult = {
+    const mockResult: LexemeSearchMatch = {
       enclitic: null,
       identifiers: [],
       lexeme: mockLexeme,
@@ -118,7 +119,7 @@ describe(SearchResolver, () => {
       source: SearchMatchSource.TRANSLATION_FULLTEXT,
     };
 
-    const mockConnection = createConnection<LexemeSearchResult>({
+    const mockConnection = createConnection<LexemeSearchMatch>({
       edges: [createEdge(mockResult, "c1")],
       hasNextPage: false,
       hasPreviousPage: false,
@@ -147,7 +148,20 @@ describe(SearchResolver, () => {
       last: 10,
       query: "love",
     });
-    expect(result).toBe(mockConnection);
+    expect(result).toStrictEqual({
+      edges: [{ cursor: "c1", node: expect.any(LexemeSearchResult) }],
+      pageInfo: mockConnection.pageInfo,
+      totalCount: 1,
+    });
+    expect(result.edges[0]?.node).toMatchObject({
+      lexeme: expect.any(LexemeType),
+      score: mockResult.score,
+      source: mockResult.source,
+    });
+    expect(result.edges[0]?.node.lexeme).toMatchObject({
+      id: "lex-1",
+      lemma: "amō",
+    });
   });
 
   it("generates GraphQL schema including searchLatin and searchEnglish queries", async () => {
@@ -166,23 +180,7 @@ describe(SearchResolver, () => {
 
     const schemaFactory = module.get(GraphQLSchemaFactory);
     const schema = await schemaFactory.create([SearchResolver], {
-      orphanedTypes: [
-        LexemeSearchConnection,
-        NominalForm,
-        FiniteVerbForm,
-        ParticipleForm,
-        AdverbForm,
-        InfinitiveForm,
-        GerundForm,
-        SupineForm,
-        AdjectivalForm,
-        NounInflection,
-        VerbInflection,
-        AdjectiveInflection,
-        AdverbInflection,
-        PrepositionInflection,
-        UninflectedInflection,
-      ],
+      orphanedTypes: [LexemeSearchConnection, ...ORPHANED_GRAPHQL_TYPES],
     });
 
     expect(schema).toBeDefined();

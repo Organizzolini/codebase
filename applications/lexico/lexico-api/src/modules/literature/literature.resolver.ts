@@ -3,6 +3,7 @@ import { Args as Arguments, Query, Resolver } from "@nestjs/graphql";
 
 import { LiteratureSearchResult } from "./literature-search-result.entities";
 import { LiteratureService } from "./literature.service";
+import { toAuthorType, toLineType, toTextType } from "./literature.utilities";
 import { SearchLiteratureArguments } from "./search-literature-arguments.entities";
 
 /**
@@ -29,9 +30,9 @@ export class LiteratureResolver {
       arguments_.authorId,
     );
     return {
-      authors: results.authors,
-      lines: results.lines,
-      texts: results.texts,
+      authors: results.authors.map((author) => toAuthorType(author)),
+      lines: results.lines.map((line) => toLineType(line)),
+      texts: results.texts.map((text) => toTextType(text)),
     };
   }
 

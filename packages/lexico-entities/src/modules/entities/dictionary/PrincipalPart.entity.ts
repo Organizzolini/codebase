@@ -1,7 +1,6 @@
-import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, ManyToOne } from "typeorm";
 
-import { DeletableEntity } from "../base/Deletable.entity";
+import { DeletableEntity } from "@codebase/database";
 
 import type { Lexeme } from "./Lexeme.entity";
 
@@ -13,7 +12,6 @@ import type { Lexeme } from "./Lexeme.entity";
     "A named principal part (e.g. first, infinitive) of a Latin dictionary entry",
   name: "principal_parts",
 })
-@ObjectType()
 export class PrincipalPart extends DeletableEntity {
   @Index()
   @ManyToOne("Lexeme", "principalParts", {
@@ -25,12 +23,10 @@ export class PrincipalPart extends DeletableEntity {
   @Column("text", {
     comment: "Label for the principal part (e.g. first, infinitive)",
   })
-  @Field()
   name!: string;
 
   @Column("jsonb", {
     comment: "One or more textual forms for this principal part",
   })
-  @Field(() => [String])
   text!: string[];
 }

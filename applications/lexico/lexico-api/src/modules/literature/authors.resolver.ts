@@ -7,21 +7,23 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 
-import { Author, Text } from "@codebase/lexico-entities";
-
+import { mapConnection } from "../../lexico-api.utilities";
 import { PaginationArguments } from "../search/pagination-arguments.entities";
 
 import { AuthorArguments } from "./author-argument.entities";
+import { AuthorType } from "./author.entities";
 import { AuthorConnectionType } from "./literature-connection.entities";
 import { LiteratureService } from "./literature.service";
+import { toAuthorType, toTextType } from "./literature.utilities";
 import { SearchAuthorsArguments } from "./search-authors-arguments.entities";
+import { TextType } from "./text.entities";
 
 import type { Connection } from "../../lexico-api.types";
 
 /**
  * GraphQL resolver for Authors.
  */
-@Resolver(() => Author)
+@Resolver(() => AuthorType)
 export class AuthorsResolver {
   // 🏗 Dependency Injection
 
@@ -35,10 +37,10 @@ export class AuthorsResolver {
   /**
    * Finds an author by ID or slug.
    */
-  @Query(() => Author, { name: "author", nullable: true })
+  @Query(() => AuthorType, { name: "author", nullable: true })
   public async author(
     @Arguments() arguments_: AuthorArguments,
-  ): Promise<Author | null> {
+  ): Promise<AuthorType | null> {
     const resolvedId = arguments_.lookup?.id ?? arguments_.id;
     const resolvedSlug = arguments_.lookup?.slug ?? arguments_.slug;
 
@@ -46,7 +48,11 @@ export class AuthorsResolver {
       return null;
     }
 
-    return this.literatureService.findAuthorByLookup(resolvedId, resolvedSlug);
+    const author = await this.literatureService.findAuthorByLookup(
+      resolvedId,
+      resolvedSlug,
+    );
+    return author === null ? null : toAuthorType(author);
   }
 
   /**
@@ -55,14 +61,20 @@ export class AuthorsResolver {
   @Query(() => AuthorConnectionType, { name: "authors" })
   public async authors(
     @Arguments() arguments_: PaginationArguments,
-  ): Promise<Connection<Author>> {
-    return this.literatureService.listAuthorsConnection(arguments_);
+  ): Promise<Connection<AuthorType>> {
+    return mapConnection(
+      await this.literatureService.listAuthorsConnection(arguments_),
+      toAuthorType,
+    );
   }
 
   /** Resolves the text list associated with an author. */
-  @ResolveField(() => [Text], { name: "texts" })
-  public async resolveAuthorTexts(@Parent() author: Author): Promise<Text[]> {
-    return this.literatureService.listTexts(author.id);
+  @ResolveField(() => [TextType], { name: "texts" })
+  public async resolveAuthorTexts(
+    @Parent() author: AuthorType,
+  ): Promise<TextType[]> {
+    const texts = await this.literatureService.listTexts(author.id);
+    return texts.map((text) => toTextType(text));
   }
 
   // 🖋️ Mutations
@@ -73,7 +85,10 @@ export class AuthorsResolver {
   @Query(() => AuthorConnectionType, { name: "searchAuthors" })
   public async searchAuthors(
     @Arguments() arguments_: SearchAuthorsArguments,
-  ): Promise<Connection<Author>> {
-    return this.literatureService.searchAuthors(arguments_.query, arguments_);
+  ): Promise<Connection<AuthorType>> {
+    return mapConnection(
+      await this.literatureService.searchAuthors(arguments_.query, arguments_),
+      toAuthorType,
+    );
   }
 }

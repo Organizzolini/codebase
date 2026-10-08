@@ -1,4 +1,3 @@
-export { DeletableEntity } from "./modules/entities/base/Deletable.entity";
 export { AdjectivalForm } from "./modules/entities/dictionary/form/AdjectivalForm.entity";
 export { AdverbForm } from "./modules/entities/dictionary/form/AdverbForm.entity";
 export { FiniteVerbForm } from "./modules/entities/dictionary/form/FiniteVerbForm.entity";

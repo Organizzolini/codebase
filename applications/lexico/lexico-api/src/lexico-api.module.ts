@@ -8,8 +8,8 @@ import { LexicoDatabaseModule } from "@codebase/lexico-entities";
 import { LoggerModule } from "@codebase/logging";
 
 import { environmentSchema, GRAPHQL_SCHEMA_FILE } from "./lexico-api.constants";
-import { ORPHANED_GRAPHQL_TYPES } from "./lexico-api.entities";
 import { HealthModule } from "./modules/health/health.module";
+import { ORPHANED_GRAPHQL_TYPES } from "./modules/lexemes/lexemes.constants";
 import { LexemesModule } from "./modules/lexemes/lexemes.module";
 import { LiteratureModule } from "./modules/literature/literature.module";
 import { SearchModule } from "./modules/search/search.module";

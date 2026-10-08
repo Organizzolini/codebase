@@ -1,11 +1,14 @@
 import { Inject } from "@nestjs/common";
 import { Args as Arguments, Query, Resolver } from "@nestjs/graphql";
 
+import { mapConnection } from "../../lexico-api.utilities";
+
 import { SearchEnglishArguments } from "./search-english-arguments.entities";
 import { SearchLatinArguments } from "./search-latin-arguments.entities";
 import { ENGLISH_SEARCH_RESULT_LIMIT } from "./search.constants";
 import { LexemeSearchConnection, LexemeSearchResult } from "./search.entities";
 import { SearchService } from "./search.service";
+import { toLexemeSearchResult } from "./search.utilities";
 
 import type { Connection } from "../../lexico-api.types";
 
@@ -32,7 +35,10 @@ export class SearchResolver {
   public async searchEnglish(
     @Arguments() arguments_: SearchEnglishArguments,
   ): Promise<Connection<LexemeSearchResult>> {
-    return this.searchService.searchEnglish(arguments_.query, arguments_);
+    return mapConnection(
+      await this.searchService.searchEnglish(arguments_.query, arguments_),
+      toLexemeSearchResult,
+    );
   }
 
   /**
@@ -46,7 +52,10 @@ export class SearchResolver {
   public async searchLatin(
     @Arguments() arguments_: SearchLatinArguments,
   ): Promise<Connection<LexemeSearchResult>> {
-    return this.searchService.searchLatin(arguments_.query, arguments_);
+    return mapConnection(
+      await this.searchService.searchLatin(arguments_.query, arguments_),
+      toLexemeSearchResult,
+    );
   }
 
   // 🖋️ Mutations

@@ -1,7 +1,8 @@
 // 🏷️ Types
 
 import type { Connection } from "../../lexico-api.types";
-import type { LexemeSearchResult } from "./search.entities";
+import type { SearchMatchSource } from "./search.entities";
+import type { Lexeme } from "@codebase/lexico-entities";
 
 /**
  * Result of Latin enclitic decomposition.
@@ -20,6 +21,18 @@ export interface EnglishSearchMatch {
 }
 
 /**
+ * One lexeme a search matched, with how it matched, before it is mapped to
+ * the `LexemeSearchResult` the API returns.
+ */
+export interface LexemeSearchMatch {
+  enclitic: null | string;
+  identifiers: string[];
+  lexeme: Lexeme;
+  score: number;
+  source: SearchMatchSource;
+}
+
+/**
  * Payload encoded into search pagination cursors.
  */
 export interface SearchCursorPayload {
@@ -31,7 +44,7 @@ export interface SearchCursorPayload {
  * One completed dictionary search, as recorded in its log line.
  */
 export interface SearchLogEntry {
-  connection: Connection<LexemeSearchResult>;
+  connection: Connection<LexemeSearchMatch>;
   language: "english" | "latin";
   query: string;
   startTime: number;

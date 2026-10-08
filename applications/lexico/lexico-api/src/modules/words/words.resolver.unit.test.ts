@@ -8,6 +8,7 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { Word } from "@codebase/lexico-entities";
 
+import { WordType } from "./word.entities";
 import { WordsResolver } from "./words.resolver";
 import { WordsService } from "./words.service";
 
@@ -46,7 +47,8 @@ describe(WordsResolver, () => {
     const result = await resolver.word({ data: "amo" });
 
     expect(mockService.findByData).toHaveBeenCalledWith("amo");
-    expect(result).toBe(word);
+    expect(result).toBeInstanceOf(WordType);
+    expect(result).toMatchObject({ data: "amo", id: "word-1" });
   });
 
   it("resolves multiple words by data using the words service", async () => {
@@ -70,7 +72,11 @@ describe(WordsResolver, () => {
     const result = await resolver.words({ data: ["amo", "amare"] });
 
     expect(mockService.findByDataList).toHaveBeenCalledWith(["amo", "amare"]);
-    expect(result).toStrictEqual(words);
+    expect(result).toStrictEqual([expect.any(WordType), expect.any(WordType)]);
+    expect(result.map((mapped) => mapped.id)).toStrictEqual([
+      "word-1",
+      "word-2",
+    ]);
   });
 
   it("generates a schema containing the word and words queries", async () => {

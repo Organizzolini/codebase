@@ -4,7 +4,10 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { Line, Text } from "@codebase/lexico-entities";
 
+import { mapNullableRelation } from "../../lexico-api.utilities";
+
 import { LiteratureService } from "./literature.service";
+import { toLineType, toTextType } from "./literature.utilities";
 import { TextsResolver } from "./texts.resolver";
 
 /** Builds a line with the given index under a text. */
@@ -48,14 +51,18 @@ describe(TextsResolver, () => {
 
     const textsResolver = new TextsResolver(mockService);
 
-    await expect(textsResolver.text({ id: "text-1" })).resolves.toBe(text);
-    await expect(textsResolver.text({ slug: "aeneid" })).resolves.toBe(text);
+    await expect(textsResolver.text({ id: "text-1" })).resolves.toStrictEqual(
+      toTextType(text),
+    );
+    await expect(textsResolver.text({ slug: "aeneid" })).resolves.toStrictEqual(
+      toTextType(text),
+    );
     await expect(
       textsResolver.text({ lookup: { id: "text-1" } }),
-    ).resolves.toBe(text);
+    ).resolves.toStrictEqual(toTextType(text));
     await expect(
       textsResolver.text({ lookup: { slug: "aeneid" } }),
-    ).resolves.toBe(text);
+    ).resolves.toStrictEqual(toTextType(text));
   });
 
   it("returns a paginated connection for texts", async () => {
@@ -90,17 +97,17 @@ describe(TextsResolver, () => {
         last: 5,
       }),
     ).resolves.toMatchObject({
-      edges: [{ node: text }],
+      edges: [{ node: toTextType(text) }],
       totalCount: 1,
     });
     await expect(
       textsResolver.texts({ first: 10, parentTextId: "parent-1" }),
     ).resolves.toMatchObject({
-      edges: [{ node: text }],
+      edges: [{ node: toTextType(text) }],
       totalCount: 1,
     });
     await expect(textsResolver.texts({ first: 10 })).resolves.toMatchObject({
-      edges: [{ node: text }],
+      edges: [{ node: toTextType(text) }],
       totalCount: 1,
     });
   });
@@ -137,19 +144,23 @@ describe(TextsResolver, () => {
         query: "ene",
       }),
     ).resolves.toMatchObject({
-      edges: [{ node: text }],
+      edges: [{ node: toTextType(text) }],
       totalCount: 1,
     });
     await expect(
       textsResolver.searchTexts({ first: 5, query: "ene" }),
     ).resolves.toMatchObject({
-      edges: [{ node: text }],
+      edges: [{ node: toTextType(text) }],
       totalCount: 1,
     });
 
-    await expect(textsResolver.parentText(text)).resolves.toBe(text.parentText);
     await expect(
-      textsResolver.parentText(Object.assign(new Text(), { parentText: null })),
+      textsResolver.parentText(toTextType(text)),
+    ).resolves.toStrictEqual(mapNullableRelation(text.parentText, toTextType));
+    await expect(
+      textsResolver.parentText(
+        toTextType(Object.assign(new Text(), { parentText: null })),
+      ),
     ).resolves.toBeNull();
   });
 
@@ -168,10 +179,14 @@ describe(TextsResolver, () => {
     );
 
     await expect(
-      textsResolver.parentText(Object.assign(new Text(), { id: "text-1" })),
-    ).resolves.toBe(grandparent);
+      textsResolver.parentText(
+        toTextType(Object.assign(new Text(), { id: "text-1" })),
+      ),
+    ).resolves.toStrictEqual(toTextType(grandparent));
     await expect(
-      textsResolver.parentText(Object.assign(new Text(), { id: "text-9" })),
+      textsResolver.parentText(
+        toTextType(Object.assign(new Text(), { id: "text-9" })),
+      ),
     ).resolves.toBeNull();
     expect(findTextByLookup).toHaveBeenNthCalledWith(1, "text-1");
   });
@@ -201,7 +216,7 @@ describe(TextsResolver, () => {
       createMock<LiteratureService>({ listLines }),
     );
 
-    const lines = await textsResolver.linesForText(text);
+    const lines = await textsResolver.linesForText(toTextType(text));
 
     expect(lines.map((line) => line.index)).toStrictEqual([0, 10, 34, 49]);
     expect(listLines).toHaveBeenCalledWith("text-1");
@@ -222,12 +237,12 @@ describe(TextsResolver, () => {
       createMock<LiteratureService>({ listLines, listTexts }),
     );
 
-    await expect(textsResolver.linesForText(text)).resolves.toStrictEqual([
-      createLine(0),
-    ]);
-    await expect(textsResolver.childTexts(text)).resolves.toStrictEqual([
-      child,
-    ]);
+    await expect(
+      textsResolver.linesForText(toTextType(text)),
+    ).resolves.toStrictEqual([toLineType(createLine(0))]);
+    await expect(
+      textsResolver.childTexts(toTextType(text)),
+    ).resolves.toStrictEqual([toTextType(child)]);
     expect(listTexts).toHaveBeenCalledWith(undefined, "text-1");
   });
 });

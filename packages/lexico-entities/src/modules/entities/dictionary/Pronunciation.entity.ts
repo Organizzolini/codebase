@@ -1,7 +1,6 @@
-import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, JoinColumn, ManyToOne, Unique } from "typeorm";
 
-import { DeletableEntity } from "../base/Deletable.entity";
+import { DeletableEntity } from "@codebase/database";
 
 import type { Lexeme } from "./Lexeme.entity";
 
@@ -29,7 +28,6 @@ export const pronunciationVariants = Object.values(
     "A pronunciation variant (classical, ecclesiastical, or vulgar) for a Latin lexeme",
   name: "pronunciations",
 })
-@ObjectType()
 @Unique(["lexeme", "variant"])
 export class Pronunciation extends DeletableEntity {
   @Index()
@@ -44,7 +42,6 @@ export class Pronunciation extends DeletableEntity {
     comment: "Phonemic segmentation (e.g. a.moː)",
     nullable: true,
   })
-  @Field(() => String, { nullable: true })
   @Index()
   phonemes?: null | string;
 
@@ -52,7 +49,6 @@ export class Pronunciation extends DeletableEntity {
     comment: "Phonemic IPA transcription (e.g. /ˈaː.moː/)",
     nullable: true,
   })
-  @Field(() => String, { nullable: true })
   @Index()
   phonemic?: null | string;
 
@@ -60,7 +56,6 @@ export class Pronunciation extends DeletableEntity {
     comment: "Phonetic IPA transcription (e.g. [ˈäː.moː])",
     nullable: true,
   })
-  @Field(() => String, { nullable: true })
   phonetic?: null | string;
 
   @Column({
@@ -68,7 +63,6 @@ export class Pronunciation extends DeletableEntity {
     enum: pronunciationVariants,
     type: "enum",
   })
-  @Field(() => String)
   @Index()
   variant!: PronunciationVariant;
 }

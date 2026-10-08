@@ -7,11 +7,15 @@ import {
   Resolver,
 } from "@nestjs/graphql";
 
-import { Token, Word } from "@codebase/lexico-entities";
+import { mapConnection } from "../../lexico-api.utilities";
+import { WordType } from "../words/word.entities";
+import { toWordType } from "../words/words.utilities";
 
 import { TokenConnectionType } from "./literature-connection.entities";
 import { LiteratureService } from "./literature.service";
+import { toTokenType } from "./literature.utilities";
 import { TokenWordLoader } from "./token-word.loader";
+import { TokenType } from "./token.entities";
 import { TokensArguments } from "./tokens-arguments.entities";
 
 import type { Connection } from "../../lexico-api.types";
@@ -19,7 +23,7 @@ import type { Connection } from "../../lexico-api.types";
 /**
  * GraphQL resolver for Tokens.
  */
-@Resolver(() => Token)
+@Resolver(() => TokenType)
 export class TokensResolver {
   // 🏗 Dependency Injection
 
@@ -36,12 +40,15 @@ export class TokensResolver {
    * Resolves a token to the matching dictionary word, reusing the parent's
    * already-loaded relation and batching the rest through the loader.
    */
-  @ResolveField(() => Word, { name: "word", nullable: true })
-  public async resolveTokenWord(@Parent() token: Token): Promise<null | Word> {
+  @ResolveField(() => WordType, { name: "word", nullable: true })
+  public async resolveTokenWord(
+    @Parent() token: TokenType,
+  ): Promise<null | WordType> {
     if (token.word !== undefined) {
       return token.word;
     }
-    return this.tokenWordLoader.byTokenId.load(token.id);
+    const word = await this.tokenWordLoader.byTokenId.load(token.id);
+    return word === null ? null : toWordType(word);
   }
 
   // 🖋️ Mutations
@@ -52,10 +59,11 @@ export class TokensResolver {
   @Query(() => TokenConnectionType, { name: "tokens" })
   public async tokens(
     @Arguments() arguments_: TokensArguments,
-  ): Promise<Connection<Token>> {
-    return this.literatureService.listTokensForLineConnection(
+  ): Promise<Connection<TokenType>> {
+    const tokens = await this.literatureService.listTokensForLineConnection(
       arguments_.lineId,
       arguments_,
     );
+    return mapConnection(tokens, toTokenType);
   }
 }

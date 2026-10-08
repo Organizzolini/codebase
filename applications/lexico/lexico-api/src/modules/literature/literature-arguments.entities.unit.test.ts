@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { Author, Line, Text } from "@codebase/lexico-entities";
-
 import { AuthorArguments } from "./author-argument.entities";
 import { AuthorLookupInput } from "./author-lookup-input.entities";
+import { AuthorType } from "./author.entities";
 import { LinesArguments } from "./line-arguments.entities";
+import { LineType } from "./line.entities";
 import { LinesRangeInput } from "./lines-range-input.entities";
 import {
   AuthorConnectionType,
@@ -19,6 +19,7 @@ import { SearchLiteratureArguments } from "./search-literature-arguments.entitie
 import { SearchTextsArguments } from "./search-texts-arguments.entities";
 import { TextArguments } from "./text-argument.entities";
 import { TextLookupInput } from "./text-lookup-input.entities";
+import { TextType } from "./text.entities";
 import { TextsArguments } from "./texts-arguments.entities";
 import { TokensArguments } from "./tokens-arguments.entities";
 
@@ -163,9 +164,9 @@ describe("literature arguments and entities suite", () => {
     expect.hasAssertions();
 
     const searchResult = new LiteratureSearchResult();
-    searchResult.authors = [new Author()];
-    searchResult.texts = [new Text()];
-    searchResult.lines = [new Line()];
+    searchResult.authors = [new AuthorType()];
+    searchResult.texts = [new TextType()];
+    searchResult.lines = [new LineType()];
 
     expect(searchResult.authors).toHaveLength(1);
     expect(searchResult.texts).toHaveLength(1);

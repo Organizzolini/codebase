@@ -1,22 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 
-import {
-  AdjectivalForm,
-  AdjectiveInflection,
-  AdverbForm,
-  AdverbInflection,
-  FiniteVerbForm,
-  GerundForm,
-  InfinitiveForm,
-  NominalForm,
-  NounInflection,
-  ParticipleForm,
-  PrepositionInflection,
-  SupineForm,
-  UninflectedInflection,
-  VerbInflection,
-} from "@codebase/lexico-entities";
-
 /**
  * Relay PageInfo containing pagination state.
  */
@@ -44,24 +27,3 @@ export class PageInfo {
   })
   public startCursor?: string | undefined;
 }
-
-/**
- * Every concrete form and inflection, which no resolver names, so the schema
- * can resolve the `Form` and `Inflection` interfaces a lexeme returns.
- */
-export const ORPHANED_GRAPHQL_TYPES = [
-  NominalForm,
-  FiniteVerbForm,
-  ParticipleForm,
-  AdverbForm,
-  InfinitiveForm,
-  GerundForm,
-  SupineForm,
-  AdjectivalForm,
-  NounInflection,
-  VerbInflection,
-  AdjectiveInflection,
-  AdverbInflection,
-  PrepositionInflection,
-  UninflectedInflection,
-] as const;

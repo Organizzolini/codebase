@@ -1,16 +1,16 @@
 import { Inject } from "@nestjs/common";
 import { Args as Arguments, Query, Resolver } from "@nestjs/graphql";
 
-import { Word } from "@codebase/lexico-entities";
-
 import { WordArguments } from "./word-arguments.entities";
+import { WordType } from "./word.entities";
 import { WordsArguments } from "./words-arguments.entities";
 import { WordsService } from "./words.service";
+import { toWordType } from "./words.utilities";
 
 /**
  * GraphQL resolver exposing surface-word and morphological lookup queries.
  */
-@Resolver(() => Word)
+@Resolver(() => WordType)
 export class WordsResolver {
   // 🏗 Dependency Injection
 
@@ -23,26 +23,30 @@ export class WordsResolver {
   /**
    * Retrieves a single surface word by normalized input string.
    */
-  @Query(() => Word, {
+  @Query(() => WordType, {
     description: "Retrieves a surface Latin word and its morphological links.",
     name: "word",
     nullable: true,
   })
   public async word(
     @Arguments() arguments_: WordArguments,
-  ): Promise<null | Word> {
-    return this.wordsService.findByData(arguments_.data);
+  ): Promise<null | WordType> {
+    const word = await this.wordsService.findByData(arguments_.data);
+    return word === null ? null : toWordType(word);
   }
 
   /**
    * Retrieves multiple surface words by a batch of normalized input strings.
    */
-  @Query(() => [Word], {
+  @Query(() => [WordType], {
     description: "Retrieves multiple surface Latin words and their links.",
     name: "words",
   })
-  public async words(@Arguments() arguments_: WordsArguments): Promise<Word[]> {
-    return this.wordsService.findByDataList(arguments_.data);
+  public async words(
+    @Arguments() arguments_: WordsArguments,
+  ): Promise<WordType[]> {
+    const words = await this.wordsService.findByDataList(arguments_.data);
+    return words.map((word) => toWordType(word));
   }
 
   // 🖋️ Mutations

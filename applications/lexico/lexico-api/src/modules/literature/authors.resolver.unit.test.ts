@@ -10,6 +10,7 @@ import { Author, Text } from "@codebase/lexico-entities";
 
 import { AuthorsResolver } from "./authors.resolver";
 import { LiteratureService } from "./literature.service";
+import { toAuthorType, toTextType } from "./literature.utilities";
 import { TextsResolver } from "./texts.resolver";
 
 describe(AuthorsResolver, () => {
@@ -55,21 +56,21 @@ describe(AuthorsResolver, () => {
 
     const authorsResolver = new AuthorsResolver(mockService);
 
-    await expect(authorsResolver.author({ id: "author-1" })).resolves.toBe(
-      author,
-    );
-    await expect(authorsResolver.author({ slug: "virgil" })).resolves.toBe(
-      author,
-    );
+    await expect(
+      authorsResolver.author({ id: "author-1" }),
+    ).resolves.toStrictEqual(toAuthorType(author));
+    await expect(
+      authorsResolver.author({ slug: "virgil" }),
+    ).resolves.toStrictEqual(toAuthorType(author));
     await expect(
       authorsResolver.author({ lookup: { id: "author-1" } }),
-    ).resolves.toBe(author);
+    ).resolves.toStrictEqual(toAuthorType(author));
     await expect(
       authorsResolver.author({ lookup: { slug: "virgil" } }),
-    ).resolves.toBe(author);
+    ).resolves.toStrictEqual(toAuthorType(author));
     await expect(
-      authorsResolver.resolveAuthorTexts(author),
-    ).resolves.toStrictEqual([text]);
+      authorsResolver.resolveAuthorTexts(toAuthorType(author)),
+    ).resolves.toStrictEqual([toTextType(text)]);
   });
 
   it("returns a paginated connection for authors", async () => {
@@ -103,7 +104,7 @@ describe(AuthorsResolver, () => {
         last: 5,
       }),
     ).resolves.toMatchObject({
-      edges: [{ node: author }],
+      edges: [{ node: toAuthorType(author) }],
       totalCount: 1,
     });
   });
@@ -140,7 +141,7 @@ describe(AuthorsResolver, () => {
         query: "vir",
       }),
     ).resolves.toMatchObject({
-      edges: [{ node: author }],
+      edges: [{ node: toAuthorType(author) }],
       totalCount: 1,
     });
   });

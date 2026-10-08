@@ -29,7 +29,7 @@ import {
   SCORE_PREFIX,
   SCORE_WORD_EXACT,
 } from "./search.constants";
-import { type LexemeSearchResult, SearchMatchSource } from "./search.entities";
+import { SearchMatchSource } from "./search.entities";
 import {
   decomposeEnclitic,
   formatFormIdentifier,
@@ -41,6 +41,7 @@ import type { Connection } from "../../lexico-api.types";
 import type {
   EncliticDecompositionResult,
   EnglishSearchMatch,
+  LexemeSearchMatch,
   SearchCursorPayload,
   SearchLogEntry,
   SearchPaginationOptions,
@@ -92,7 +93,7 @@ export class SearchService {
    */
   private async findEncliticLexemes(
     decomposition: EncliticDecompositionResult,
-    resultsMap: Map<string, LexemeSearchResult>,
+    resultsMap: Map<string, LexemeSearchMatch>,
   ): Promise<void> {
     const { enclitic } = decomposition;
     if (!enclitic) {
@@ -163,7 +164,7 @@ export class SearchService {
   private async findExactLemmas(
     searchTerms: Set<string>,
     decomposition: EncliticDecompositionResult,
-    resultsMap: Map<string, LexemeSearchResult>,
+    resultsMap: Map<string, LexemeSearchMatch>,
   ): Promise<void> {
     for (const term of searchTerms) {
       const exactLemmas = await this.createLexemeQuery()
@@ -187,7 +188,7 @@ export class SearchService {
    */
   private async findFuzzyLemmas(
     searchTerms: Set<string>,
-    resultsMap: Map<string, LexemeSearchResult>,
+    resultsMap: Map<string, LexemeSearchMatch>,
   ): Promise<void> {
     for (const term of searchTerms) {
       if (term.length >= 3) {
@@ -214,7 +215,7 @@ export class SearchService {
    */
   private async findPrefixLemmas(
     searchTerms: Set<string>,
-    resultsMap: Map<string, LexemeSearchResult>,
+    resultsMap: Map<string, LexemeSearchMatch>,
   ): Promise<void> {
     for (const term of searchTerms) {
       const prefixLemmas = await this.createLexemeQuery()
@@ -240,7 +241,7 @@ export class SearchService {
   private async findWordMatches(
     searchTerms: Set<string>,
     decomposition: EncliticDecompositionResult,
-    resultsMap: Map<string, LexemeSearchResult>,
+    resultsMap: Map<string, LexemeSearchMatch>,
   ): Promise<void> {
     for (const term of searchTerms) {
       const words = await this.wordRepository
@@ -298,9 +299,9 @@ export class SearchService {
    * Deterministically orders and paginates aggregated search results.
    */
   private paginateSearchResults(
-    results: LexemeSearchResult[],
+    results: LexemeSearchMatch[],
     options?: SearchPaginationOptions,
-  ): Connection<LexemeSearchResult> {
+  ): Connection<LexemeSearchMatch> {
     const allResults = results.toSorted((a, b) => {
       if (b.score !== a.score) {
         return b.score - a.score;
@@ -320,7 +321,7 @@ export class SearchService {
       last: options?.last,
     });
 
-    return createConnection<LexemeSearchResult>({
+    return createConnection<LexemeSearchMatch>({
       edges: paginated.edges,
       hasNextPage: paginated.hasNextPage,
       hasPreviousPage: paginated.hasPreviousPage,
@@ -336,7 +337,7 @@ export class SearchService {
   public async searchEnglish(
     query: string,
     options?: SearchPaginationOptions,
-  ): Promise<Connection<LexemeSearchResult>> {
+  ): Promise<Connection<LexemeSearchMatch>> {
     const startTime = performance.now();
     const cleanQuery = query.trim().toLowerCase();
     if (cleanQuery.length === 0) {
@@ -354,7 +355,7 @@ export class SearchService {
             .getMany();
     const lexemesById = new Map(lexemes.map((lexeme) => [lexeme.id, lexeme]));
 
-    const results = matches.flatMap((match): LexemeSearchResult[] => {
+    const results = matches.flatMap((match): LexemeSearchMatch[] => {
       const lexeme = lexemesById.get(match.lexemeId);
       return lexeme
         ? [
@@ -380,7 +381,7 @@ export class SearchService {
   public async searchLatin(
     query: string,
     options?: SearchPaginationOptions,
-  ): Promise<Connection<LexemeSearchResult>> {
+  ): Promise<Connection<LexemeSearchMatch>> {
     const startTime = performance.now();
     const cleanQuery = this.macronsService
       .removeMacrons(query)
@@ -394,7 +395,7 @@ export class SearchService {
     const searchTerms = new Set(
       [cleanQuery, decomposition.stem].filter(Boolean),
     );
-    const resultsMap = new Map<string, LexemeSearchResult>();
+    const resultsMap = new Map<string, LexemeSearchMatch>();
 
     await this.findExactLemmas(searchTerms, decomposition, resultsMap);
     await this.findWordMatches(searchTerms, decomposition, resultsMap);

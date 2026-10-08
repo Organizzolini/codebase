@@ -2,20 +2,33 @@ import {
   createConnection,
   createEdge,
   fromCursorSafe,
+  mapNullableRelation,
+  mapRelation,
+  mapRelations,
   toCursor,
+  toDeletableFields,
 } from "../../lexico-api.utilities";
+import { toWordType } from "../words/words.utilities";
 
+import { AuthorType } from "./author.entities";
+import { LineType } from "./line.entities";
 import { ENTITY_ID_PATTERN, LOAD_CHUNK_SIZE } from "./literature.constants";
+import { TextType } from "./text.entities";
+import { TokenType } from "./token.entities";
 
-import type { Connection } from "../../lexico-api.types";
+import type { Connection, MappedFields } from "../../lexico-api.types";
 import type { PaginationArguments } from "../search/pagination-arguments.entities";
 import type {
   ConnectionQuery,
   CursorPosition,
   IdentifiedEntity,
+  LineRelationField,
   PageLimits,
   QueryBuilder,
+  TextRelationField,
+  TokenRelationField,
 } from "./literature.types";
+import type { Author, Line, Text, Token } from "@codebase/lexico-entities";
 
 /** Returns a connection holding no edges and counting nothing. */
 export function createEmptyConnection<T>(): Connection<T> {
@@ -84,6 +97,54 @@ export function slicePage(
   }
 
   return { hasNext, hasPrevious, ids: result };
+}
+
+/** Maps an author to its GraphQL type. */
+export function toAuthorType(author: Author): AuthorType {
+  return Object.assign(new AuthorType(), {
+    ...toDeletableFields(author),
+    name: author.name,
+    slug: author.slug,
+  } satisfies MappedFields<AuthorType>);
+}
+
+/** Maps a line, and each relation it loaded, to its GraphQL type. */
+export function toLineType(line: Line): LineType {
+  return Object.assign(new LineType(), {
+    ...toDeletableFields(line),
+    author: mapRelation(line.author, toAuthorType),
+    data: line.data,
+    index: line.index,
+    label: line.label,
+    text: mapRelation(line.text, toTextType),
+  } satisfies MappedFields<LineType, LineRelationField>);
+}
+
+/** Maps a text, and each relation it loaded, to its GraphQL type. */
+export function toTextType(text: Text): TextType {
+  return Object.assign(new TextType(), {
+    ...toDeletableFields(text),
+    author: mapRelation(text.author, toAuthorType),
+    childTexts: mapRelations(text.childTexts, toTextType),
+    parentText: mapNullableRelation(text.parentText, toTextType),
+    slug: text.slug,
+    title: text.title,
+    type: text.type,
+  } satisfies MappedFields<TextType, TextRelationField>);
+}
+
+/** Maps a token, and each relation it loaded, to its GraphQL type. */
+export function toTokenType(token: Token): TokenType {
+  return Object.assign(new TokenType(), {
+    ...toDeletableFields(token),
+    author: mapRelation(token.author, toAuthorType),
+    data: token.data,
+    index: token.index,
+    isPunctuation: token.isPunctuation,
+    line: mapRelation(token.line, toLineType),
+    text: mapRelation(token.text, toTextType),
+    word: mapNullableRelation(token.word, toWordType),
+  } satisfies MappedFields<TokenType, TokenRelationField>);
 }
 
 /** Narrows a filtered query to the rows strictly between two cursor positions. */

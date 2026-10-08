@@ -1,7 +1,6 @@
-import { Field, Float, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, OneToMany, OneToOne, Unique } from "typeorm";
 
-import { DeletableEntity } from "../base/Deletable.entity";
+import { DeletableEntity } from "@codebase/database";
 
 import { Form } from "./form/Form.entity";
 import { Inflection } from "./inflection/Inflection.entity";
@@ -19,7 +18,6 @@ import { WordLexeme } from "./WordLexeme.entity";
     "A dictionary entry representing a Latin word form with its translations, principal parts, pronunciation, and inflection data",
   name: "lexemes",
 })
-@ObjectType()
 @Unique(["lemma", "disambiguator"])
 export class Lexeme extends DeletableEntity {
   @Column("bigint", {
@@ -27,24 +25,20 @@ export class Lexeme extends DeletableEntity {
       "Disambiguation index when multiple entries share the same lemma (0-based)",
     default: 0,
   })
-  @Field(() => Float)
   disambiguator!: number;
 
   @Column("text", {
     comment: "Etymology of the word (Latin or Greek origin)",
     nullable: true,
   })
-  @Field(() => String, { nullable: true })
   etymology?: string;
 
-  @Field(() => [Form])
   @OneToMany(() => Form, (form) => form.lexeme, {
     cascade: true,
     onDelete: "CASCADE",
   })
   forms!: Form[];
 
-  @Field(() => Inflection, { nullable: true })
   @OneToOne(() => Inflection, (inflection) => inflection.lexeme, {
     cascade: true,
     nullable: true,
@@ -54,7 +48,6 @@ export class Lexeme extends DeletableEntity {
   @Column("text", {
     comment: "Dictionary headword (lemma), e.g. 'amō'",
   })
-  @Field()
   @Index()
   lemma!: string;
 
@@ -63,18 +56,15 @@ export class Lexeme extends DeletableEntity {
     enum: partsOfSpeech,
     type: "enum",
   })
-  @Field(() => String)
   @Index()
   partOfSpeech!: PartOfSpeech;
 
-  @Field(() => [PrincipalPart])
   @OneToMany(() => PrincipalPart, "lexeme", {
     cascade: true,
     onDelete: "CASCADE",
   })
   principalParts!: PrincipalPart[];
 
-  @Field(() => [Pronunciation], { nullable: true })
   @OneToMany(() => Pronunciation, "lexeme", {
     cascade: true,
     onDelete: "CASCADE",
@@ -82,7 +72,6 @@ export class Lexeme extends DeletableEntity {
   })
   pronunciations?: null | Pronunciation[];
 
-  @Field(() => [Translation], { nullable: true })
   @OneToMany(() => Translation, (translation) => translation.lexeme, {
     cascade: true,
     nullable: true,

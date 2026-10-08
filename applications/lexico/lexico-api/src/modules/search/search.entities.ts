@@ -2,9 +2,8 @@
 
 import { Field, Float, ObjectType, registerEnumType } from "@nestjs/graphql";
 
-import { Lexeme } from "@codebase/lexico-entities";
-
 import { Paginated } from "../../lexico-api.utilities";
+import { LexemeType } from "../lexemes/lexeme.entities";
 
 /**
  * Search match classification source.
@@ -40,8 +39,8 @@ export class LexemeSearchResult {
   })
   public identifiers!: string[];
 
-  @Field(() => Lexeme, { description: "Matched dictionary lexeme entry" })
-  public lexeme!: Lexeme;
+  @Field(() => LexemeType, { description: "Matched dictionary lexeme entry" })
+  public lexeme!: LexemeType;
 
   @Field(() => Float, { description: "Computed search relevance score" })
   public score!: number;

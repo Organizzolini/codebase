@@ -22,12 +22,13 @@ import {
 } from "../../../testing/relay-connection-walk";
 
 import { LiteratureService } from "./literature.service";
+import { toTextType } from "./literature.utilities";
 import { TextsResolver } from "./texts.resolver";
 
 import type { DatabaseTestingModule } from "@codebase/database/testing";
 
 /** The titles of a list of texts, in the order given. */
-function titlesOf(texts: readonly Text[]): string[] {
+function titlesOf(texts: readonly { readonly title: string }[]): string[] {
   return texts.map((text) => text.title);
 }
 
@@ -264,15 +265,15 @@ describe("texts resolver integration suite", () => {
     it("lists a text's direct children by title", async () => {
       expect.hasAssertions();
 
-      expect(titlesOf(await resolver.childTexts(catalog.aeneid))).toStrictEqual(
-        ["Book I", "Book II"],
-      );
       expect(
-        titlesOf(await resolver.childTexts(catalog.bookOne)),
+        titlesOf(await resolver.childTexts(toTextType(catalog.aeneid))),
+      ).toStrictEqual(["Book I", "Book II"]);
+      expect(
+        titlesOf(await resolver.childTexts(toTextType(catalog.bookOne))),
       ).toStrictEqual(["Proem"]);
-      await expect(resolver.childTexts(catalog.proem)).resolves.toStrictEqual(
-        [],
-      );
+      await expect(
+        resolver.childTexts(toTextType(catalog.proem)),
+      ).resolves.toStrictEqual([]);
     });
 
     it("resolves no parent for a top-level text", async () => {
@@ -300,7 +301,7 @@ describe("texts resolver integration suite", () => {
     it("climbs from a child listed under its parent back to that parent", async () => {
       expect.hasAssertions();
 
-      const [child] = await resolver.childTexts(catalog.aeneid);
+      const [child] = await resolver.childTexts(toTextType(catalog.aeneid));
       const parent =
         child === undefined ? null : await resolver.parentText(child);
 
@@ -310,7 +311,7 @@ describe("texts resolver integration suite", () => {
     it("lists a text's lines in index order whatever order they were saved", async () => {
       expect.hasAssertions();
 
-      const lines = await resolver.linesForText(catalog.proem);
+      const lines = await resolver.linesForText(toTextType(catalog.proem));
 
       expect(lines.map((line) => line.label)).toStrictEqual([
         ...PROEM_LINE_LABELS,
@@ -324,7 +325,7 @@ describe("texts resolver integration suite", () => {
     it("lists no lines for a text whose lines all sit in its children", async () => {
       expect.hasAssertions();
       await expect(
-        resolver.linesForText(catalog.aeneid),
+        resolver.linesForText(toTextType(catalog.aeneid)),
       ).resolves.toStrictEqual([]);
     });
   });

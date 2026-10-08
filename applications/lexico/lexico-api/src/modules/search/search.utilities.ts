@@ -10,13 +10,19 @@ import {
   SupineForm,
 } from "@codebase/lexico-entities";
 
+import { toLexemeType } from "../lexemes/lexemes.utilities";
+
 import {
   ENCLITIC_FALSE_POSITIVES,
   ENCLITIC_SUFFIXES,
 } from "./search.constants";
+import { LexemeSearchResult } from "./search.entities";
 
-import type { LexemeSearchResult } from "./search.entities";
-import type { EncliticDecompositionResult } from "./search.types";
+import type { GraphQLFields } from "../../lexico-api.types";
+import type {
+  EncliticDecompositionResult,
+  LexemeSearchMatch,
+} from "./search.types";
 
 /**
  * Decomposes possible Latin enclitic suffixes (-que, -ve, -ne) from a query string.
@@ -63,7 +69,7 @@ export function formatFormIdentifier(form: Form): null | string {
 /**
  * Returns whether a search result's lexeme has at least one translation to show.
  */
-export function hasTranslations(result: LexemeSearchResult): boolean {
+export function hasTranslations(result: LexemeSearchMatch): boolean {
   return (result.lexeme.translations?.length ?? 0) > 0;
 }
 
@@ -71,8 +77,8 @@ export function hasTranslations(result: LexemeSearchResult): boolean {
  * Merges a candidate search result into a deduplication map, keeping the highest score tier.
  */
 export function mergeSearchResult(
-  map: Map<string, LexemeSearchResult>,
-  candidate: LexemeSearchResult,
+  map: Map<string, LexemeSearchMatch>,
+  candidate: LexemeSearchMatch,
 ): void {
   const existing = map.get(candidate.lexeme.id);
   if (!existing) {
@@ -99,6 +105,21 @@ export function mergeSearchResult(
       existing.enclitic = candidate.enclitic;
     }
   }
+}
+
+/**
+ * Maps a search match, and the lexeme it matched, to the result the API returns.
+ */
+export function toLexemeSearchResult(
+  match: LexemeSearchMatch,
+): LexemeSearchResult {
+  return Object.assign(new LexemeSearchResult(), {
+    enclitic: match.enclitic,
+    identifiers: match.identifiers,
+    lexeme: toLexemeType(match.lexeme),
+    score: match.score,
+    source: match.source,
+  } satisfies GraphQLFields<LexemeSearchResult>);
 }
 
 /**

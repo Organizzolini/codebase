@@ -1,7 +1,6 @@
-import { Field, ObjectType } from "@nestjs/graphql";
 import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 
-import { DeletableEntity } from "../base/Deletable.entity";
+import { DeletableEntity } from "@codebase/database";
 
 import type { Lexeme } from "./Lexeme.entity";
 
@@ -12,7 +11,6 @@ import type { Lexeme } from "./Lexeme.entity";
   comment: "An English translation of a Latin dictionary entry",
   name: "translations",
 })
-@ObjectType()
 export class Translation extends DeletableEntity {
   constructor(data: string, lexeme?: Lexeme) {
     super();
@@ -21,7 +19,6 @@ export class Translation extends DeletableEntity {
   }
 
   @Column("text", { comment: "English translation text" })
-  @Field()
   @Index()
   data!: string;
 

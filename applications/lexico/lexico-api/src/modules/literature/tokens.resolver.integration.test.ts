@@ -21,6 +21,7 @@ import { TokenWordLoader } from "./token-word.loader";
 import { TokensResolver } from "./tokens.resolver";
 
 import type { Connection } from "../../lexico-api.types";
+import type { TokenType } from "./token.entities";
 import type { TokensArguments } from "./tokens-arguments.entities";
 import type { DatabaseTestingModule } from "@codebase/database/testing";
 
@@ -35,7 +36,7 @@ interface TokensPage {
 }
 
 /** Reduces a connection to the token strings it holds and its page info. */
-function summarize(connection: Connection<Token>): TokensPage {
+function summarize(connection: Connection<TokenType>): TokensPage {
   return {
     data: connection.edges.map((edge) => edge.node.data),
     endCursor: connection.pageInfo.endCursor ?? null,

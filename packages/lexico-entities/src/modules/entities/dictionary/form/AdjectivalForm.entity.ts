@@ -1,4 +1,3 @@
-import { Field, ObjectType } from "@nestjs/graphql";
 import { ChildEntity, Column } from "typeorm";
 
 import {
@@ -14,7 +13,6 @@ import { Form } from "./Form.entity";
 
 /** A declined form for an adjective (gender + case + number). */
 @ChildEntity("adjectival")
-@ObjectType({ implements: Form })
 export class AdjectivalForm extends Form {
   @Column({
     comment: "Grammatical case of this form",
@@ -22,7 +20,6 @@ export class AdjectivalForm extends Form {
     name: "form_case",
     type: "enum",
   })
-  @Field(() => String)
   case!: FormCase;
 
   @Column({
@@ -30,7 +27,6 @@ export class AdjectivalForm extends Form {
     enum: formGenderValues,
     type: "enum",
   })
-  @Field(() => String)
   gender!: FormGender;
 
   @Column({
@@ -38,6 +34,5 @@ export class AdjectivalForm extends Form {
     enum: formNumberValues,
     type: "enum",
   })
-  @Field(() => String)
   number!: FormNumber;
 }

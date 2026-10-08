@@ -6,6 +6,7 @@ import { In, Word, WordForm, WordLexeme } from "@codebase/lexico-entities";
 
 import { createRepositoryMock } from "../../../testing/mocks";
 
+import { WORD_RELATIONS } from "./words.constants";
 import { WordsService } from "./words.service";
 
 describe(WordsService, () => {
@@ -228,6 +229,39 @@ describe(WordsService, () => {
         },
       },
       where: { id: In(["word-1"]) },
+    });
+  });
+
+  it("finds word-form and word-lexeme links by id, each with its word joined", async () => {
+    expect.hasAssertions();
+
+    const formRows = [Object.assign(new WordForm(), { id: "word-form-1" })];
+    const lexemeRows = [
+      Object.assign(new WordLexeme(), { id: "word-lexeme-1" }),
+    ];
+    const formRepo = createRepositoryMock<WordForm>();
+    const lexemeRepo = createRepositoryMock<WordLexeme>();
+    vi.spyOn(formRepo, "find").mockResolvedValue(formRows);
+    vi.spyOn(lexemeRepo, "find").mockResolvedValue(lexemeRows);
+    const service = new WordsService(
+      createRepositoryMock<Word>(),
+      formRepo,
+      lexemeRepo,
+    );
+
+    await expect(
+      service.findWordFormsByIds(["word-form-1"]),
+    ).resolves.toStrictEqual(formRows);
+    await expect(
+      service.findWordLexemesByIds(["word-lexeme-1"]),
+    ).resolves.toStrictEqual(lexemeRows);
+    expect(formRepo.find).toHaveBeenCalledWith({
+      relations: { word: WORD_RELATIONS },
+      where: { id: In(["word-form-1"]) },
+    });
+    expect(lexemeRepo.find).toHaveBeenCalledWith({
+      relations: { word: WORD_RELATIONS },
+      where: { id: In(["word-lexeme-1"]) },
     });
   });
 });

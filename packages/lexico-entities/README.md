@@ -5,8 +5,13 @@ shared enumerations for [Lexico](../../applications/lexico/lexico-web/README.md)
 
 This package is the single definition of what a Latin word _is_ in this suite.
 [lexico-cli](../../applications/lexico/lexico-cli/README.md) writes
-through these entities, and the web application reads through them, so neither
-carries its own idea of the schema.
+through these entities, and [lexico-api](../../applications/lexico/lexico-api/README.md)
+reads through them, so neither carries its own idea of the schema.
+
+The entities are the database's model only: nothing here is a GraphQL type.
+lexico-api declares its own GraphQL object types, each checked at compile time
+against the entity it exposes, so a consumer with no GraphQL server, such as
+lexico-cli, never depends on `@nestjs/graphql`.
 
 ## Usage
 
@@ -68,12 +73,11 @@ morphology does not fit one flat row. A form is an `AdjectivalForm`,
 
 ### Base classes
 
-Every entity but `Inflection` extends `DeletableEntity`, a thin GraphQL layer
-over [`@codebase/database`](../database/README.md)'s shared base of the same
-name. The shared base declares the columns — a `uuid` id the database assigns
-with `uuidv7()`, then the created, updated, and soft-deleted timestamps and
-their nullable `*By` columns — and this layer adds only their `@Field`
-decorators, so no entity restates them and the API schema stays as it was.
+Every entity but `Inflection` extends
+[`@codebase/database`](../database/README.md)'s `DeletableEntity` directly. It
+declares the columns — a `uuid` id the database assigns with `uuidv7()`, then
+the created, updated, and soft-deleted timestamps and their nullable `*By`
+columns — so no entity restates them.
 Rows restored from before the move keep their version 4 ids; new rows get
 version 7.
 
@@ -298,7 +302,6 @@ graph LR
   file_codometer_config_ts["codometer.config.ts"]
   file_eslint_config_ts["eslint.config.ts"]
   file_src_index_ts["src/index.ts"]
-  file_src_modules_entities_base_Deletable_entity_ts["src/modules/entities/base/Deletable.entity.ts"]
   file_src_modules_entities_dictionary_form_AdjectivalForm_entity_ts["src/modules/entities/dictionary/form/AdjectivalForm.entity.ts"]
   file_src_modules_entities_dictionary_form_AdverbForm_entity_ts["src/modules/entities/dictionary/form/AdverbForm.entity.ts"]
   file_src_modules_entities_dictionary_form_FiniteVerbForm_entity_ts["src/modules/entities/dictionary/form/FiniteVerbForm.entity.ts"]
@@ -351,7 +354,6 @@ graph LR
   file_src_modules_entities_dictionary_form_AdverbForm_entity_ts --> file_src_modules_lexico_database_lexico_database_constants_ts
   file_src_modules_entities_dictionary_form_FiniteVerbForm_entity_ts --> file_src_modules_entities_dictionary_form_Form_entity_ts
   file_src_modules_entities_dictionary_form_FiniteVerbForm_entity_ts --> file_src_modules_lexico_database_lexico_database_constants_ts
-  file_src_modules_entities_dictionary_form_Form_entity_ts --> file_src_modules_entities_base_Deletable_entity_ts
   file_src_modules_entities_dictionary_form_Form_entity_ts --> file_src_modules_entities_dictionary_Lexeme_entity_ts
   file_src_modules_entities_dictionary_form_Form_entity_ts --> file_src_modules_entities_dictionary_WordForm_entity_ts
   file_src_modules_entities_dictionary_form_GerundForm_entity_ts --> file_src_modules_entities_dictionary_form_Form_entity_ts
@@ -376,7 +378,6 @@ graph LR
   file_src_modules_entities_dictionary_inflection_Uninflected_entity_ts --> file_src_modules_entities_dictionary_inflection_Inflection_entity_ts
   file_src_modules_entities_dictionary_inflection_VerbInflection_entity_ts --> file_src_modules_entities_dictionary_inflection_Inflection_entity_ts
   file_src_modules_entities_dictionary_inflection_VerbInflection_entity_ts --> file_src_modules_lexico_database_lexico_database_constants_ts
-  file_src_modules_entities_dictionary_Lexeme_entity_ts --> file_src_modules_entities_base_Deletable_entity_ts
   file_src_modules_entities_dictionary_Lexeme_entity_ts --> file_src_modules_entities_dictionary_form_Form_entity_ts
   file_src_modules_entities_dictionary_Lexeme_entity_ts --> file_src_modules_entities_dictionary_inflection_Inflection_entity_ts
   file_src_modules_entities_dictionary_Lexeme_entity_ts --> file_src_modules_entities_dictionary_PartOfSpeech_entity_ts
@@ -384,19 +385,13 @@ graph LR
   file_src_modules_entities_dictionary_Lexeme_entity_ts --> file_src_modules_entities_dictionary_Pronunciation_entity_ts
   file_src_modules_entities_dictionary_Lexeme_entity_ts --> file_src_modules_entities_dictionary_Translation_entity_ts
   file_src_modules_entities_dictionary_Lexeme_entity_ts --> file_src_modules_entities_dictionary_WordLexeme_entity_ts
-  file_src_modules_entities_dictionary_PrincipalPart_entity_ts --> file_src_modules_entities_base_Deletable_entity_ts
   file_src_modules_entities_dictionary_PrincipalPart_entity_ts --> file_src_modules_entities_dictionary_Lexeme_entity_ts
-  file_src_modules_entities_dictionary_Pronunciation_entity_ts --> file_src_modules_entities_base_Deletable_entity_ts
   file_src_modules_entities_dictionary_Pronunciation_entity_ts --> file_src_modules_entities_dictionary_Lexeme_entity_ts
-  file_src_modules_entities_dictionary_Translation_entity_ts --> file_src_modules_entities_base_Deletable_entity_ts
   file_src_modules_entities_dictionary_Translation_entity_ts --> file_src_modules_entities_dictionary_Lexeme_entity_ts
-  file_src_modules_entities_dictionary_Word_entity_ts --> file_src_modules_entities_base_Deletable_entity_ts
   file_src_modules_entities_dictionary_Word_entity_ts --> file_src_modules_entities_dictionary_WordForm_entity_ts
   file_src_modules_entities_dictionary_Word_entity_ts --> file_src_modules_entities_dictionary_WordLexeme_entity_ts
-  file_src_modules_entities_dictionary_WordForm_entity_ts --> file_src_modules_entities_base_Deletable_entity_ts
   file_src_modules_entities_dictionary_WordForm_entity_ts --> file_src_modules_entities_dictionary_form_Form_entity_ts
   file_src_modules_entities_dictionary_WordForm_entity_ts --> file_src_modules_entities_dictionary_Word_entity_ts
-  file_src_modules_entities_dictionary_WordLexeme_entity_ts --> file_src_modules_entities_base_Deletable_entity_ts
   file_src_modules_entities_dictionary_WordLexeme_entity_ts --> file_src_modules_entities_dictionary_Lexeme_entity_ts
   file_src_modules_entities_dictionary_WordLexeme_entity_ts --> file_src_modules_entities_dictionary_Word_entity_ts
   file_src_modules_entities_entities_module_ts --> file_src_modules_entities_entities_service_ts
@@ -408,16 +403,12 @@ graph LR
   file_src_modules_entities_entities_service_unit_test_ts --> file_src_modules_lexico_database_data_source_constants_ts
   file_src_modules_entities_entities_service_unit_test_ts --> file_src_modules_lexico_database_lexico_database_constants_ts
   file_src_modules_entities_entities_service_unit_test_ts --> file_testing_entity_definition_assertions_ts
-  file_src_modules_entities_literature_Author_entity_ts --> file_src_modules_entities_base_Deletable_entity_ts
   file_src_modules_entities_literature_Author_entity_ts --> file_src_modules_entities_literature_Text_entity_ts
-  file_src_modules_entities_literature_Line_entity_ts --> file_src_modules_entities_base_Deletable_entity_ts
   file_src_modules_entities_literature_Line_entity_ts --> file_src_modules_entities_literature_Author_entity_ts
   file_src_modules_entities_literature_Line_entity_ts --> file_src_modules_entities_literature_Text_entity_ts
   file_src_modules_entities_literature_Line_entity_ts --> file_src_modules_entities_literature_Token_entity_ts
-  file_src_modules_entities_literature_Text_entity_ts --> file_src_modules_entities_base_Deletable_entity_ts
   file_src_modules_entities_literature_Text_entity_ts --> file_src_modules_entities_literature_Author_entity_ts
   file_src_modules_entities_literature_Text_entity_ts --> file_src_modules_entities_literature_Line_entity_ts
-  file_src_modules_entities_literature_Token_entity_ts --> file_src_modules_entities_base_Deletable_entity_ts
   file_src_modules_entities_literature_Token_entity_ts --> file_src_modules_entities_dictionary_Word_entity_ts
   file_src_modules_entities_literature_Token_entity_ts --> file_src_modules_entities_literature_Author_entity_ts
   file_src_modules_entities_literature_Token_entity_ts --> file_src_modules_entities_literature_Line_entity_ts

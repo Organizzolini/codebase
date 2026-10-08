@@ -7,6 +7,9 @@ import {
   WordLexeme,
 } from "@codebase/lexico-entities";
 
+import { WordFormResolver } from "./word-form.resolver";
+import { WordLexemeResolver } from "./word-lexeme.resolver";
+import { WordLinkLoader } from "./word-link.loader";
 import { WordsResolver } from "./words.resolver";
 import { WordsService } from "./words.service";
 
@@ -17,6 +20,12 @@ import { WordsService } from "./words.service";
   controllers: [],
   exports: [WordsService],
   imports: [TypeOrmModule.forFeature([Word, WordForm, WordLexeme])],
-  providers: [WordsResolver, WordsService],
+  providers: [
+    WordFormResolver,
+    WordLexemeResolver,
+    WordLinkLoader,
+    WordsResolver,
+    WordsService,
+  ],
 })
 export class WordsModule {}
