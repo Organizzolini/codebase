@@ -8,9 +8,13 @@ import {
 } from "@nestjs/graphql";
 
 import { mapConnection, mapNullableRelation } from "../../lexico-api.utilities";
+import { PaginationArguments } from "../search/pagination-arguments.entities";
 
-import { LineType } from "./line.entities";
-import { TextConnectionType } from "./literature-connection.entities";
+import {
+  LineConnectionType,
+  TextConnectionType,
+} from "./literature-connection.entities";
+import { LiteratureRelationsLoader } from "./literature-relations.loader";
 import { LiteratureService } from "./literature.service";
 import { toLineType, toTextType } from "./literature.utilities";
 import { SearchTextsArguments } from "./search-texts-arguments.entities";
@@ -19,6 +23,7 @@ import { TextType } from "./text.entities";
 import { TextsArguments } from "./texts-arguments.entities";
 
 import type { Connection } from "../../lexico-api.types";
+import type { LineType } from "./line.entities";
 
 /**
  * GraphQL resolver for Texts.
@@ -30,37 +35,51 @@ export class TextsResolver {
   public constructor(
     @Inject(LiteratureService)
     private readonly literatureService: LiteratureService,
+    @Inject(LiteratureRelationsLoader)
+    private readonly literatureRelationsLoader: LiteratureRelationsLoader,
   ) {}
 
   // 🔎 Queries
 
   /**
-   * Lists the child texts under the current text, ordered like the `texts` query.
-   * Loaded here rather than from the parent's relation, which not every query joins.
+   * Pages the child texts under the current text, ordered like the `texts`
+   * query. The children of every text in a response are loaded together.
    */
-  @ResolveField(() => [TextType], { name: "childTexts" })
-  public async childTexts(@Parent() text: TextType): Promise<TextType[]> {
-    const childTexts = await this.literatureService.listTexts(
-      undefined,
-      text.id,
-    );
-    return childTexts.map((childText) => toTextType(childText));
+  @ResolveField(() => TextConnectionType, { name: "childTexts" })
+  public async childTexts(
+    @Parent() text: TextType,
+    @Arguments() arguments_: PaginationArguments,
+  ): Promise<Connection<TextType>> {
+    const childTexts =
+      await this.literatureRelationsLoader.childTextsByParent.load({
+        pagination: arguments_,
+        parentId: text.id,
+      });
+    return mapConnection(childTexts, toTextType);
   }
 
   /**
-   * Lists the current text's lines in index order. A joined relation carries no
-   * order, and not every query joins it, so the lines are always loaded here.
+   * Pages the current text's lines in index order. A joined relation carries
+   * no order, and not every query joins it, so the lines of every text in a
+   * response are loaded together here.
    */
-  @ResolveField(() => [LineType], { name: "lines" })
-  public async linesForText(@Parent() text: TextType): Promise<LineType[]> {
-    const lines = await this.literatureService.listLines(text.id);
-    return lines.map((line) => toLineType(line));
+  @ResolveField(() => LineConnectionType, { name: "lines" })
+  public async linesForText(
+    @Parent() text: TextType,
+    @Arguments() arguments_: PaginationArguments,
+  ): Promise<Connection<LineType>> {
+    const lines = await this.literatureRelationsLoader.linesByText.load({
+      pagination: arguments_,
+      parentId: text.id,
+    });
+    return mapConnection(lines, toLineType);
   }
 
   /**
-   * Resolves the parent text for a nested text. A parent that was itself
-   * loaded as a relation carries no `parentText` of its own, so one that was
-   * not joined is looked up here rather than reported as absent.
+   * Resolves the parent text for a nested text. A parent the query joined is
+   * used as it is, a joined null included. One that was not joined — a parent
+   * loaded as a relation carries no `parentText` of its own, and search does
+   * not join it — is looked up with every other text's in the same response.
    */
   @ResolveField(() => TextType, { name: "parentText", nullable: true })
   public async parentText(@Parent() text: TextType): Promise<null | TextType> {
@@ -68,8 +87,10 @@ export class TextsResolver {
       return text.parentText;
     }
 
-    const loaded = await this.literatureService.findTextByLookup(text.id);
-    return mapNullableRelation(loaded?.parentText, toTextType) ?? null;
+    const parent = await this.literatureRelationsLoader.parentTextByText.load(
+      text.id,
+    );
+    return mapNullableRelation(parent, toTextType) ?? null;
   }
 
   // 🖋️ Mutations

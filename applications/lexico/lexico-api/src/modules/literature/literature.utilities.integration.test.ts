@@ -105,7 +105,6 @@ describe("literature pagination integration suite", () => {
       database.repository(Line),
       database.repository(Text),
       database.repository(Token),
-      database.repository(Word),
     );
 
     authors["vergil"] = await seedAuthor("Vergil", "vergil");
@@ -163,7 +162,7 @@ describe("literature pagination integration suite", () => {
     ) => Promise<Connection<Author | Line | Text | Token>>,
     quick = true,
   ): Promise<void> {
-    for (const pagination of paginationMatrix(ids, outsiderId, quick)) {
+    for (const pagination of paginationMatrix(ids, outsiderId, { quick })) {
       expect({
         pagination,
         summary: summarize(await page(pagination)),
@@ -183,9 +182,9 @@ describe("literature pagination integration suite", () => {
       { first: 2 },
     );
 
-    expect(
-      connection.edges.map((edge) => String(edge.node.index)),
-    ).toStrictEqual(["3", "4"]);
+    expect(connection.edges.map((edge) => edge.node.index)).toStrictEqual([
+      3, 4,
+    ]);
     expect(connection.totalCount).toBe(5);
     expect(connection.pageInfo).toMatchObject({
       hasNextPage: true,
@@ -200,11 +199,7 @@ describe("literature pagination integration suite", () => {
       { after: connection.pageInfo.endCursor ?? null, first: 10 },
     );
 
-    expect(next.edges.map((edge) => String(edge.node.index))).toStrictEqual([
-      "5",
-      "6",
-      "7",
-    ]);
+    expect(next.edges.map((edge) => edge.node.index)).toStrictEqual([5, 6, 7]);
     expect(next.pageInfo).toMatchObject({
       hasNextPage: false,
       hasPreviousPage: true,
@@ -216,9 +211,7 @@ describe("literature pagination integration suite", () => {
       { before: next.pageInfo.startCursor ?? null, last: 1 },
     );
 
-    expect(previous.edges.map((edge) => String(edge.node.index))).toStrictEqual(
-      ["4"],
-    );
+    expect(previous.edges.map((edge) => edge.node.index)).toStrictEqual([4]);
     expect(previous.pageInfo).toMatchObject({
       hasNextPage: true,
       hasPreviousPage: true,
@@ -297,16 +290,13 @@ describe("literature pagination integration suite", () => {
       .filter((statement) => /FROM ("[a-z_]+"\.)?"lines"/u.test(statement));
     spy.mockRestore();
 
-    expect(
-      connection.edges.map((edge) => String(edge.node.index)),
-    ).toStrictEqual(["4", "5"]);
+    expect(connection.edges.map((edge) => edge.node.index)).toStrictEqual([
+      4, 5,
+    ]);
     expect(connection.totalCount).toBe(12);
-    expect(lineReads).toContainEqual(expect.stringMatching(/LIMIT 3$/u));
-    expect(
-      lineReads.filter(
-        (statement) => !/LIMIT|COUNT\(|IN \(|"id" = \$/u.test(statement),
-      ),
-    ).toStrictEqual([]);
+    expect(lineReads).toHaveLength(2);
+    expect(lineReads[0]).toMatch(/MATERIALIZED .* LIMIT 3\)/u);
+    expect(lineReads[1]).toMatch(/"id" IN \(\$1, \$2\)/u);
   });
 
   it(
@@ -328,10 +318,12 @@ describe("literature pagination integration suite", () => {
       expect(all.edges.map((edge) => edge.node.id)).toStrictEqual(
         idsInOrder(Object.values(authors), (author) => author.name),
       );
+      // 🔗 `Author.texts` pages through the relations loader, so the author
+      // page joins none of them.
       expect(
         all.edges.find((edge) => edge.node.id === authors["vergil"]?.id)?.node
           .texts,
-      ).toHaveLength(4);
+      ).toBeUndefined();
 
       await expectMatrixAgreement(
         idsInOrder(Object.values(authors), (author) => author.name),

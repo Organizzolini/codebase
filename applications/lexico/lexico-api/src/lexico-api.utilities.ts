@@ -8,7 +8,6 @@ import type {
   Connection,
   Edge,
   GraphQLFields,
-  PaginationBoundsParameters,
 } from "./lexico-api.types";
 import type { DeletableEntity } from "@codebase/database";
 
@@ -192,34 +191,6 @@ export function mapRelations<Entity extends object, Mapped>(
 }
 
 /**
- * Slices an array of items according to forward (first, after) and backward (last, before) Relay pagination parameters.
- */
-export function paginateArray<T>(
-  items: T[],
-  parameters: {
-    after?: null | string | undefined;
-    before?: null | string | undefined;
-    first?: null | number | undefined;
-    getCursor: (item: T) => string;
-    last?: null | number | undefined;
-  },
-): {
-  edges: Edge<T>[];
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-} {
-  const { endIndex, startIndex } = getPaginationBounds(items, parameters);
-  const sliced = items.slice(startIndex, endIndex);
-  const { hasNext, hasPrevious, result } = sliceWithLimits(sliced, parameters);
-
-  return {
-    edges: result.map((item) => createEdge(item, parameters.getCursor(item))),
-    hasNextPage: endIndex < items.length || hasNext,
-    hasPreviousPage: startIndex > 0 || hasPrevious,
-  };
-}
-
-/**
  * Mixin type factory producing a Relay Connection ObjectType for GraphQL schema generation,
  * named after the node's GraphQL type name, which defaults to its class name.
  */
@@ -271,70 +242,4 @@ export function toDeletableFields(
     updatedAt: entity.updatedAt,
     updatedBy: entity.updatedBy,
   };
-}
-
-/**
- * Computes start and end slice indices based on after and before cursors.
- */
-function getPaginationBounds<T>(
-  items: T[],
-  parameters: PaginationBoundsParameters<T>,
-): { endIndex: number; startIndex: number } {
-  let startIndex = 0;
-  let endIndex = items.length;
-
-  if (parameters.after) {
-    const afterIndex = items.findIndex(
-      (item) => parameters.getCursor(item) === parameters.after,
-    );
-    if (afterIndex !== -1) {
-      startIndex = afterIndex + 1;
-    }
-  }
-
-  if (parameters.before) {
-    const beforeIndex = items.findIndex(
-      (item) => parameters.getCursor(item) === parameters.before,
-    );
-    if (beforeIndex !== -1) {
-      endIndex = beforeIndex;
-    }
-  }
-
-  return { endIndex, startIndex: Math.min(startIndex, endIndex) };
-}
-
-/**
- * Slices a sub-array based on first and last count limits.
- */
-function sliceWithLimits<T>(
-  items: T[],
-  limits: {
-    first?: null | number | undefined;
-    last?: null | number | undefined;
-  },
-): { hasNext: boolean; hasPrevious: boolean; result: T[] } {
-  let result = items;
-  let hasNext = false;
-  let hasPrevious = false;
-
-  if (
-    typeof limits.first === "number" &&
-    limits.first >= 0 &&
-    result.length > limits.first
-  ) {
-    result = result.slice(0, limits.first);
-    hasNext = true;
-  }
-
-  if (
-    typeof limits.last === "number" &&
-    limits.last >= 0 &&
-    result.length > limits.last
-  ) {
-    result = result.slice(result.length - limits.last);
-    hasPrevious = true;
-  }
-
-  return { hasNext, hasPrevious, result };
 }

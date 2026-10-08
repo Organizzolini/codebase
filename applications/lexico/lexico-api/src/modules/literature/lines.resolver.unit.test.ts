@@ -5,8 +5,13 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 import { Line, Token } from "@codebase/lexico-entities";
 
 import { LinesResolver } from "./lines.resolver";
+import { LiteratureRelationsLoader } from "./literature-relations.loader";
 import { LiteratureService } from "./literature.service";
-import { toLineType, toTokenType } from "./literature.utilities";
+import {
+  createEmptyConnection,
+  toLineType,
+  toTokenType,
+} from "./literature.utilities";
 
 describe(LinesResolver, () => {
   let resolver: LinesResolver;
@@ -18,6 +23,10 @@ describe(LinesResolver, () => {
         {
           provide: LiteratureService,
           useValue: createMock<LiteratureService>(),
+        },
+        {
+          provide: LiteratureRelationsLoader,
+          useValue: createMock<LiteratureRelationsLoader>(),
         },
       ],
     }).compile();
@@ -50,7 +59,10 @@ describe(LinesResolver, () => {
         }),
     });
 
-    const linesResolver = new LinesResolver(mockService);
+    const linesResolver = new LinesResolver(
+      mockService,
+      createMock<LiteratureRelationsLoader>(),
+    );
 
     await expect(
       linesResolver.lines({
@@ -94,7 +106,10 @@ describe(LinesResolver, () => {
       }),
     });
 
-    const linesResolver = new LinesResolver(mockService);
+    const linesResolver = new LinesResolver(
+      mockService,
+      createMock<LiteratureRelationsLoader>(),
+    );
 
     await expect(
       linesResolver.searchLines({
@@ -117,25 +132,36 @@ describe(LinesResolver, () => {
     });
   });
 
-  it("loads a line's tokens through the service when the relation was not joined", async () => {
+  it("pages a line's tokens through the request's relations loader", async () => {
     expect.hasAssertions();
 
-    const line = new Line();
-    line.id = "line-1";
-
-    const token = new Token();
-    token.id = "token-1";
-
-    const listTokensForLine = vi
-      .fn<LiteratureService["listTokensForLine"]>()
-      .mockResolvedValue([token]);
+    const line = Object.assign(new Line(), { id: "line-1" });
+    const token = Object.assign(new Token(), { id: "token-1" });
+    const load = vi
+      .fn<LiteratureRelationsLoader["tokensByLine"]["load"]>()
+      .mockResolvedValue({
+        ...createEmptyConnection<Token>(),
+        edges: [{ cursor: "t", node: token }],
+        totalCount: 1,
+      });
     const linesResolver = new LinesResolver(
-      createMock<LiteratureService>({ listTokensForLine }),
+      createMock<LiteratureService>(),
+      createMock<LiteratureRelationsLoader>({
+        tokensByLine: createMock<LiteratureRelationsLoader["tokensByLine"]>({
+          load,
+        }),
+      }),
     );
 
     await expect(
-      linesResolver.tokensForLine(toLineType(line)),
-    ).resolves.toStrictEqual([toTokenType(token)]);
-    expect(listTokensForLine).toHaveBeenCalledWith("line-1");
+      linesResolver.tokensForLine(toLineType(line), { first: 2 }),
+    ).resolves.toMatchObject({
+      edges: [{ cursor: "t", node: toTokenType(token) }],
+      totalCount: 1,
+    });
+    expect(load).toHaveBeenCalledWith({
+      pagination: { first: 2 },
+      parentId: "line-1",
+    });
   });
 });

@@ -8,11 +8,8 @@ import {
   describe,
   expect,
   it,
-  type MockInstance,
   vi,
 } from "vitest";
-
-import { Token } from "@codebase/lexico-entities";
 
 import { DATABASE_TIMEOUT_MILLISECONDS } from "../../../testing/database";
 import {
@@ -21,19 +18,20 @@ import {
 } from "../../../testing/reading-application";
 import { PASSAGE_TOKENS } from "../../../testing/reading-passage";
 
-import { LiteratureService } from "./literature.service";
-
 /** A line as the reader query below selects one. */
 interface ReaderLine {
   readonly data: string;
   readonly index: number;
   readonly label: string;
-  readonly tokens: readonly {
-    readonly data: string;
-    readonly index: number;
-    readonly isPunctuation: boolean;
-    readonly word: null | { readonly data: string; readonly id: string };
-  }[];
+  readonly tokens: {
+    readonly edges: readonly { readonly node: ReaderToken }[];
+    readonly pageInfo: {
+      readonly endCursor: null | string;
+      readonly hasNextPage: boolean;
+      readonly hasPreviousPage: boolean;
+    };
+    readonly totalCount: number;
+  };
 }
 
 /** A page of the reader query's `lines` connection. */
@@ -47,37 +45,43 @@ interface ReaderPage {
   readonly totalCount: number;
 }
 
-/** A spy on the token word loader's batched lookup. */
-type TokenLookupSpy = MockInstance<LiteratureService["findTokensByIds"]>;
+/** A token as the reader query below selects one. */
+interface ReaderToken {
+  readonly data: string;
+  readonly index: number;
+  readonly isPunctuation: boolean;
+  readonly word: null | { readonly data: string; readonly id: string };
+}
 
-/** Selects a page of lines with every token and the word each resolves to. */
-const READER_SELECTION = `
-  totalCount
-  pageInfo { endCursor hasNextPage hasPreviousPage }
-  edges {
-    node {
-      index
-      label
-      data
-      tokens { index data isPunctuation word { id data } }
-    }
-  }
-`;
-
-/** Reads a passage the way the reader does: lines, tokens, and their words. */
+/**
+ * Reads a passage the way the reader does: a page of lines, a page of each
+ * line's tokens, and the word each token resolves to.
+ */
 const READER = `
-  query Reader($textId: ID!, $range: LinesRangeInput, $first: Int, $after: String) {
+  query Reader(
+    $textId: ID!
+    $range: LinesRangeInput
+    $first: Int
+    $after: String
+    $tokensFirst: Int
+    $tokensAfter: String
+  ) {
     lines(textId: $textId, range: $range, first: $first, after: $after) {
-      ${READER_SELECTION}
+      totalCount
+      pageInfo { endCursor hasNextPage hasPreviousPage }
+      edges {
+        node {
+          index
+          label
+          data
+          tokens(first: $tokensFirst, after: $tokensAfter) {
+            totalCount
+            pageInfo { endCursor hasNextPage hasPreviousPage }
+            edges { node { index data isPunctuation word { id data } } }
+          }
+        }
+      }
     }
-  }
-`;
-
-/** Reads the same passage twice in one request, through two aliases. */
-const READER_TWICE = `
-  query ReaderTwice($textId: ID!) {
-    again: lines(textId: $textId) { ${READER_SELECTION} }
-    once: lines(textId: $textId) { ${READER_SELECTION} }
   }
 `;
 
@@ -89,7 +93,7 @@ function readsFrom(table: string): RegExp {
 /** Reduces a reader page's tokens to what a reader sees of each one. */
 function tokensOf(page: ReaderPage): unknown[] {
   return page.edges.map((edge) =>
-    edge.node.tokens.map((token) => ({
+    edge.node.tokens.edges.map(({ node: token }) => ({
       data: token.data,
       isPunctuation: token.isPunctuation,
       word: token.word?.data ?? null,
@@ -99,8 +103,8 @@ function tokensOf(page: ReaderPage): unknown[] {
 
 /**
  * Executes the reader's `lines` → `tokens` → `word` query over HTTP against
- * the literature API and a real database, and counts the statements and word
- * lookups each request issues.
+ * the literature API and a real database, and counts the statements each
+ * request issues.
  */
 describe("lines resolver end-to-end suite", () => {
   let application: ReadingApplication;
@@ -137,33 +141,6 @@ describe("lines resolver end-to-end suite", () => {
     return { page: lines, statements };
   }
 
-  /**
-   * Strips the word relation from every token a line lists, as a parent
-   * that never joined it would, so `Token.word` must go through the loader.
-   * Returns a spy on the loader's batched lookup. Both spies sit on the one
-   * singleton service every request-scoped resolver is handed.
-   */
-  function forceWordLoader(): TokenLookupSpy {
-    const service = application.server.get(LiteratureService);
-    const listTokensForLine = service.listTokensForLine.bind(service);
-    vi.spyOn(service, "listTokensForLine").mockImplementation(
-      async (lineId: string): Promise<Token[]> => {
-        const tokens = await listTokensForLine(lineId);
-        return tokens.map((token) => {
-          const bare = Object.assign(new Token(), token);
-          delete bare.word;
-          return bare;
-        });
-      },
-    );
-    return vi.spyOn(service, "findTokensByIds");
-  }
-
-  /** Flattens every token ID a loader spy was asked for across its batches. */
-  function loadedTokenIds(spy: TokenLookupSpy): string[] {
-    return spy.mock.calls.flatMap(([tokenIds]) => tokenIds);
-  }
-
   beforeAll(async () => {
     application = await startReadingApplication();
   }, DATABASE_TIMEOUT_MILLISECONDS);
@@ -191,13 +168,18 @@ describe("lines resolver end-to-end suite", () => {
     });
     expect(tokensOf(lines)).toStrictEqual(PASSAGE_TOKENS);
     expect(
+      lines.edges.map((edge) => edge.node.tokens.totalCount),
+    ).toStrictEqual(PASSAGE_TOKENS.map((tokens) => tokens.length));
+    expect(
       lines.edges.every((edge) =>
-        edge.node.tokens.every((token, position) => token.index === position),
+        edge.node.tokens.edges.every(
+          ({ node: token }, position) => token.index === position,
+        ),
       ),
     ).toBe(true);
 
     const et = lines.edges
-      .flatMap((edge) => edge.node.tokens)
+      .flatMap((edge) => edge.node.tokens.edges.map(({ node }) => node))
       .filter((token) => token.data === "et");
 
     expect(et.length).toBeGreaterThan(1);
@@ -233,68 +215,56 @@ describe("lines resolver end-to-end suite", () => {
     });
   });
 
-  it("issues one token statement per line and no word lookups, however many tokens", async () => {
+  it("costs the same statements for one line as for every line, however many tokens", async () => {
     expect.hasAssertions();
 
-    const findTokensByIds = vi.spyOn(
-      application.server.get(LiteratureService),
-      "findTokensByIds",
-    );
     const one = await readWithStatements({ range: { endIndex: 0 } });
     const all = await readWithStatements({});
-    const tokenCount = PASSAGE_TOKENS.flat().length;
+    const tokenReads = all.statements.filter((statement) =>
+      readsFrom("tokens").test(statement),
+    );
 
     expect(tokensOf(all.page)).toStrictEqual(PASSAGE_TOKENS);
-    expect(tokenCount).toBeGreaterThan(50);
+    expect(PASSAGE_TOKENS.flat().length).toBeGreaterThan(50);
+    expect(all.statements).toHaveLength(one.statements.length);
+    expect(all.statements).toHaveLength(4);
+    expect(tokenReads).toHaveLength(2);
     expect(
-      all.statements.filter((statement) => readsFrom("tokens").test(statement)),
-    ).toHaveLength(5);
-    expect(findTokensByIds).not.toHaveBeenCalled();
-    expect(all.statements.length - one.statements.length).toBe(4);
+      all.statements.filter((statement) => readsFrom("words").test(statement)),
+    ).toStrictEqual([]);
   });
 
-  it("batches unloaded token words into at most one lookup per line", async () => {
+  it("pages each line's tokens on its own, applying a token cursor only to its line", async () => {
     expect.hasAssertions();
 
-    const findTokensByIds = forceWordLoader();
-    const { lines } = await query<{ lines: ReaderPage }>(READER);
-    const tokenIds = loadedTokenIds(findTokensByIds);
+    const first = await query<{ lines: ReaderPage }>(READER, {
+      tokensFirst: 2,
+    });
+    const [opening] = first.lines.edges;
+    const next = await query<{ lines: ReaderPage }>(READER, {
+      tokensAfter: opening?.node.tokens.pageInfo.endCursor,
+      tokensFirst: 2,
+    });
 
-    expect(tokensOf(lines)).toStrictEqual(PASSAGE_TOKENS);
-    expect(findTokensByIds.mock.calls.length).toBeGreaterThan(0);
-    expect(findTokensByIds.mock.calls.length).toBeLessThanOrEqual(5);
-    expect(tokenIds).toHaveLength(PASSAGE_TOKENS.flat().length);
-    expect(new Set(tokenIds).size).toBe(tokenIds.length);
-  });
-
-  it("caches each token's word for the rest of one request", async () => {
-    expect.hasAssertions();
-
-    const findTokensByIds = forceWordLoader();
-    const { again, once } = await query<{
-      again: ReaderPage;
-      once: ReaderPage;
-    }>(READER_TWICE);
-    const tokenIds = loadedTokenIds(findTokensByIds);
-
-    expect(tokensOf(again)).toStrictEqual(PASSAGE_TOKENS);
-    expect(tokensOf(once)).toStrictEqual(PASSAGE_TOKENS);
-    expect(tokenIds).toHaveLength(PASSAGE_TOKENS.flat().length);
-    expect(new Set(tokenIds).size).toBe(tokenIds.length);
-  });
-
-  it("gives each request its own loader, so a second request looks words up again", async () => {
-    expect.hasAssertions();
-
-    const findTokensByIds = forceWordLoader();
-    await query(READER);
-    const firstRequest = loadedTokenIds(findTokensByIds);
-    findTokensByIds.mockClear();
-    const { lines } = await query<{ lines: ReaderPage }>(READER);
-    const secondRequest = loadedTokenIds(findTokensByIds);
-
-    expect(tokensOf(lines)).toStrictEqual(PASSAGE_TOKENS);
-    expect(firstRequest).toHaveLength(PASSAGE_TOKENS.flat().length);
-    expect(secondRequest.toSorted()).toStrictEqual(firstRequest.toSorted());
+    expect(tokensOf(first.lines)).toStrictEqual(
+      PASSAGE_TOKENS.map((tokens) => tokens.slice(0, 2)),
+    );
+    expect(
+      first.lines.edges.map((edge) => edge.node.tokens.pageInfo),
+    ).toStrictEqual(
+      PASSAGE_TOKENS.map(() =>
+        expect.objectContaining({ hasNextPage: true, hasPreviousPage: false }),
+      ),
+    );
+    expect(tokensOf(next.lines)).toStrictEqual([
+      PASSAGE_TOKENS[0]?.slice(2, 4),
+      ...PASSAGE_TOKENS.slice(1).map((tokens) => tokens.slice(0, 2)),
+    ]);
+    expect(next.lines.edges[0]?.node.tokens.pageInfo.hasPreviousPage).toBe(
+      true,
+    );
+    expect(next.lines.edges[1]?.node.tokens.pageInfo.hasPreviousPage).toBe(
+      false,
+    );
   });
 });

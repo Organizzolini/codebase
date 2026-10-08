@@ -8,7 +8,6 @@ import {
   type Repository,
   Text,
   Token,
-  Word,
 } from "@codebase/lexico-entities";
 
 import { createEmptyConnection, paginateQuery } from "./literature.utilities";
@@ -32,8 +31,6 @@ export class LiteratureService {
     private readonly textRepository: Repository<Text>,
     @InjectRepository(Token)
     private readonly tokenRepository: Repository<Token>,
-    @InjectRepository(Word)
-    private readonly wordRepository: Repository<Word>,
   ) {}
 
   // 🔐 Private Fields
@@ -50,16 +47,10 @@ export class LiteratureService {
     slug?: null | string,
   ): Promise<Author | null> {
     if (id) {
-      return this.authorRepository.findOne({
-        relations: { texts: true },
-        where: { id },
-      });
+      return this.authorRepository.findOneBy({ id });
     }
     if (slug) {
-      return this.authorRepository.findOne({
-        relations: { texts: true },
-        where: { slug },
-      });
+      return this.authorRepository.findOneBy({ slug });
     }
     return null;
   }
@@ -90,18 +81,6 @@ export class LiteratureService {
     return null;
   }
 
-  /** Loads token rows by ID, preserving their word relation for DataLoader batching. */
-  public async findTokensByIds(tokenIds: string[]): Promise<Token[]> {
-    if (tokenIds.length === 0) {
-      return [];
-    }
-
-    return this.tokenRepository.find({
-      relations: { word: true },
-      where: { id: In(tokenIds) },
-    });
-  }
-
   /**
    * Lists authors by name using Relay pagination.
    */
@@ -111,44 +90,11 @@ export class LiteratureService {
     return paginateQuery(
       {
         filter: () => this.authorRepository.createQueryBuilder("author"),
-        load: async (ids) =>
-          this.authorRepository.find({
-            relations: { texts: true },
-            where: { id: In(ids) },
-          }),
+        load: async (ids) => this.authorRepository.findBy({ id: In(ids) }),
         sortKey: "author.name",
       },
       pagination,
     );
-  }
-
-  /**
-   * Retrieves lines for a text, optionally clipped to index bounds.
-   */
-  public async listLines(
-    textId?: null | string,
-    startIndex?: null | number,
-    endIndex?: null | number,
-  ): Promise<Line[]> {
-    if (!textId) {
-      return [];
-    }
-
-    const query = this.lineRepository
-      .createQueryBuilder("line")
-      .leftJoinAndSelect("line.author", "author")
-      .leftJoinAndSelect("line.text", "text")
-      .where("line.text_id = :textId", { textId })
-      .orderBy("line.index", "ASC");
-
-    if (typeof startIndex === "number") {
-      query.andWhere("line.index >= :startIndex", { startIndex });
-    }
-    if (typeof endIndex === "number") {
-      query.andWhere("line.index <= :endIndex", { endIndex });
-    }
-
-    return query.getMany();
   }
 
   /**
@@ -196,26 +142,6 @@ export class LiteratureService {
   }
 
   /**
-   * Lists texts by author with optional parent filter.
-   */
-  public async listTexts(
-    authorId?: null | string,
-    parentTextId?: null | string,
-  ): Promise<Text[]> {
-    return this.textRepository.find({
-      order: { title: "ASC" },
-      relations: {
-        author: true,
-        parentText: true,
-      },
-      where: {
-        ...(authorId ? { author: { id: authorId } } : {}),
-        ...(parentTextId ? { parentText: { id: parentTextId } } : {}),
-      },
-    });
-  }
-
-  /**
    * Lists texts using Relay pagination with the same author and parent text filters.
    */
   public async listTextsConnection(
@@ -249,17 +175,6 @@ export class LiteratureService {
   }
 
   /**
-   * Finds tokens for a line with word relations eager-loaded.
-   */
-  public async listTokensForLine(lineId: string): Promise<Token[]> {
-    return this.tokenRepository.find({
-      order: { index: "ASC" },
-      relations: { author: true, line: true, text: true, word: true },
-      where: { line: { id: lineId } },
-    });
-  }
-
-  /**
    * Lists tokens for a line with Relay pagination.
    */
   public async listTokensForLineConnection(
@@ -281,17 +196,6 @@ export class LiteratureService {
       },
       pagination,
     );
-  }
-
-  /** Returns a word entity by a token's normalized word value. */
-  public async resolveTokenWord(token: Token): Promise<null | Word> {
-    if (token.isPunctuation || !token.data) {
-      return null;
-    }
-
-    return this.wordRepository.findOne({
-      where: { data: token.data },
-    });
   }
 
   /** Searches authors by name or slug with a simple substring filter. */

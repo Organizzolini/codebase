@@ -124,15 +124,6 @@ export type MappedFields<Type, RelationField extends keyof Type = never> = {
 };
 
 /**
- * Parameters for finding index bounds for array pagination.
- */
-export interface PaginationBoundsParameters<T> {
-  after?: null | string | undefined;
-  before?: null | string | undefined;
-  getCursor: (item: T) => string;
-}
-
-/**
  * A relation's type in place of an entity in a GraphQL class property. It
  * keeps decorator metadata from naming the related class, which the
  * circular imports between related types would otherwise reach before it is

@@ -4,7 +4,6 @@ import {
   fromCursorSafe,
   mapNullableRelation,
   mapRelation,
-  mapRelations,
   toCursor,
   toDeletableFields,
 } from "../../lexico-api.utilities";
@@ -20,11 +19,14 @@ import type { Connection, MappedFields } from "../../lexico-api.types";
 import type { PaginationArguments } from "../search/pagination-arguments.entities";
 import type {
   ConnectionQuery,
+  CursorClaim,
   CursorPosition,
   IdentifiedEntity,
   LineRelationField,
   PageLimits,
-  QueryBuilder,
+  PageRead,
+  PageReadRow,
+  SqlCondition,
   TextRelationField,
   TokenRelationField,
 } from "./literature.types";
@@ -48,41 +50,67 @@ export function createEmptyConnection<T>(): Connection<T> {
  * a cursor naming no row of the filtered set is ignored, `first` is applied
  * before `last`, and a negative count is no limit at all.
  */
-export async function paginateQuery<Entity extends IdentifiedEntity>(
-  query: ConnectionQuery<Entity>,
+export async function paginateQuery<
+  Node extends IdentifiedEntity,
+  Row extends IdentifiedEntity = Node,
+>(
+  query: ConnectionQuery<Node, Row>,
   pagination: PaginationArguments = {},
-): Promise<Connection<Entity>> {
+): Promise<Connection<Node>> {
   const limits: PageLimits = {
     first: readCount(pagination.first),
     last: readCount(pagination.last),
   };
-  const [totalCount, after, before] = await Promise.all([
-    query.filter().getCount(),
-    findCursorPosition(query, pagination.after),
-    findCursorPosition(query, pagination.before),
-  ]);
-  const windowIds = await findWindowIds(query, { after, before }, limits);
-  const page = slicePage(windowIds, limits);
-  const nodes = await loadInOrder(query, page.ids);
-  const startsAfterFirstRow =
-    after !== null && (before === null || (await hasRowBefore(query, before)));
-
-  return createConnection<Entity>({
-    edges: nodes.map((node) => createEdge(node, toCursor({ id: node.id }))),
-    hasNextPage: before !== null || page.hasNext,
-    hasPreviousPage: page.hasPrevious || startsAfterFirstRow,
-    totalCount,
+  const read = await readPage(query, {
+    after: decodeCursor(query, pagination.after),
+    before: decodeCursor(query, pagination.before),
+    limits,
   });
+  const page = slicePage(read.window, limits);
+  const nodes = await loadInOrder(query, page.ids);
+  const keys = new Map(page.ids.map((position) => [position.id, position.key]));
+  const startsAfterFirstRow =
+    read.after !== null && (read.before === null || read.hasRowBefore);
+
+  return createConnection<Node>({
+    edges: nodes.map((node) =>
+      createEdge(
+        node,
+        encodeCursor(query, { id: node.id, key: keys.get(node.id) }),
+      ),
+    ),
+    hasNextPage: read.before !== null || page.hasNext,
+    hasPreviousPage: page.hasPrevious || startsAfterFirstRow,
+    totalCount: read.totalCount,
+  });
+}
+
+/** Reads a page count, treating an absent or negative count as no limit. */
+export function readCount(count: null | number | undefined): null | number {
+  return typeof count === "number" && count >= 0 ? count : null;
+}
+
+/**
+ * Reads the entity id a cursor names, or null when it is absent, malformed,
+ * or not the canonical encoding of that id, which no page ever hands out.
+ */
+export function readCursorId(cursor: null | string | undefined): null | string {
+  const id = fromCursorSafe<null | { id?: unknown }>(cursor)?.id;
+  return typeof id === "string" &&
+    ENTITY_ID_PATTERN.test(id) &&
+    toCursor({ id }) === cursor
+    ? id
+    : null;
 }
 
 /**
  * Cuts a window's ids to `first` and then to `last`, flagging each cut, the
  * same way the original in-memory slicing did.
  */
-export function slicePage(
-  ids: readonly string[],
+export function slicePage<Item>(
+  ids: readonly Item[],
   limits: PageLimits,
-): { hasNext: boolean; hasPrevious: boolean; ids: string[] } {
+): { hasNext: boolean; hasPrevious: boolean; ids: Item[] } {
   let result = [...ids];
   let hasNext = false;
   let hasPrevious = false;
@@ -125,7 +153,6 @@ export function toTextType(text: Text): TextType {
   return Object.assign(new TextType(), {
     ...toDeletableFields(text),
     author: mapRelation(text.author, toAuthorType),
-    childTexts: mapRelations(text.childTexts, toTextType),
     parentText: mapNullableRelation(text.parentText, toTextType),
     slug: text.slug,
     title: text.title,
@@ -147,125 +174,150 @@ export function toTokenType(token: Token): TokenType {
   } satisfies MappedFields<TokenType, TokenRelationField>);
 }
 
-/** Narrows a filtered query to the rows strictly between two cursor positions. */
-function boundWindow<Entity extends IdentifiedEntity>(
-  query: ConnectionQuery<Entity>,
-  bounds: { after: CursorPosition | null; before: CursorPosition | null },
-): QueryBuilder<Entity> {
-  const builder = query.filter();
-  const row = `(${query.sortKey}, ${builder.alias}.id)`;
-
-  if (bounds.after !== null) {
-    builder.andWhere(`${row} > (:paginationAfterKey, :paginationAfterId)`, {
-      paginationAfterId: bounds.after.id,
-      paginationAfterKey: bounds.after.key,
-    });
-  }
-  if (bounds.before !== null) {
-    builder.andWhere(`${row} < (:paginationBeforeKey, :paginationBeforeId)`, {
-      paginationBeforeId: bounds.before.id,
-      paginationBeforeKey: bounds.before.key,
-    });
-  }
-
-  return builder;
-}
-
 /**
- * Resolves a cursor to the sort key of the row it names within the filtered
- * set, or null when it is absent, malformed, or names no such row.
+ * Reads the row a cursor claims to name, or null when the cursor is absent or
+ * not one the connection hands out.
  */
-async function findCursorPosition<Entity extends IdentifiedEntity>(
-  query: ConnectionQuery<Entity>,
+function decodeCursor<
+  Node extends IdentifiedEntity,
+  Row extends IdentifiedEntity,
+>(
+  query: ConnectionQuery<Node, Row>,
   cursor: null | string | undefined,
-): Promise<CursorPosition | null> {
-  const id = fromCursorSafe<null | { id?: unknown }>(cursor)?.id;
-  if (
-    typeof id !== "string" ||
-    !ENTITY_ID_PATTERN.test(id) ||
-    toCursor({ id }) !== cursor
-  ) {
-    return null;
+): CursorClaim | null {
+  if (query.cursor === undefined) {
+    const id = readCursorId(cursor);
+    return id === null ? null : { id };
   }
-
-  const builder = query.filter();
-  const row = await builder
-    .select(query.sortKey, "key")
-    .andWhere(`${builder.alias}.id = :paginationCursorId`, {
-      paginationCursorId: id,
-    })
-    .getRawOne<{ key: unknown }>();
-
-  return row === undefined ? null : { id, key: row.key };
+  return typeof cursor === "string" ? query.cursor.decode(cursor) : null;
 }
 
-/**
- * Reads the ids of the window's rows in order, at most one past the page: from
- * the front for `first`, or from the back for `last` alone.
- */
-async function findWindowIds<Entity extends IdentifiedEntity>(
-  query: ConnectionQuery<Entity>,
-  bounds: { after: CursorPosition | null; before: CursorPosition | null },
-  limits: PageLimits,
-): Promise<string[]> {
-  const fromBack = limits.first === null && limits.last !== null;
-  const direction = fromBack ? "DESC" : "ASC";
-  const limit = limits.first ?? limits.last;
-  const builder = boundWindow(query, bounds);
-  builder
-    .select(`${builder.alias}.id`, "id")
-    .orderBy(query.sortKey, direction)
-    .addOrderBy(`${builder.alias}.id`, direction);
-  if (limit !== null) {
-    builder.limit(limit + 1);
-  }
-
-  const rows = await builder.getRawMany<{ id: string }>();
-  const ids = rows.map((row) => row.id);
-  return fromBack ? ids.toReversed() : ids;
-}
-
-/** Reports whether any filtered row sorts before a cursor's position. */
-async function hasRowBefore<Entity extends IdentifiedEntity>(
-  query: ConnectionQuery<Entity>,
-  before: CursorPosition,
-): Promise<boolean> {
-  const builder = boundWindow(query, { after: null, before });
-  const row = await builder
-    .select(`${builder.alias}.id`, "id")
-    .limit(1)
-    .getRawOne<{ id: string }>();
-
-  return row !== undefined;
+/** Encodes the cursor a connection hands out for the row at a position. */
+function encodeCursor<
+  Node extends IdentifiedEntity,
+  Row extends IdentifiedEntity,
+>(query: ConnectionQuery<Node, Row>, position: CursorPosition): string {
+  return query.cursor === undefined
+    ? toCursor({ id: position.id })
+    : query.cursor.encode(position);
 }
 
 /**
  * Loads a page's entities in chunks, so an unlimited page never binds more ids
  * than Postgres accepts in one statement, and returns them in the page's order.
  */
-async function loadInOrder<Entity extends IdentifiedEntity>(
-  query: ConnectionQuery<Entity>,
-  ids: string[],
-): Promise<Entity[]> {
-  if (ids.length === 0) {
+async function loadInOrder<
+  Node extends IdentifiedEntity,
+  Row extends IdentifiedEntity,
+>(
+  query: ConnectionQuery<Node, Row>,
+  positions: readonly CursorPosition[],
+): Promise<Node[]> {
+  if (positions.length === 0) {
     return [];
   }
 
-  const chunks: string[][] = [];
-  for (let start = 0; start < ids.length; start += LOAD_CHUNK_SIZE) {
-    chunks.push(ids.slice(start, start + LOAD_CHUNK_SIZE));
+  const chunks: CursorPosition[][] = [];
+  for (let start = 0; start < positions.length; start += LOAD_CHUNK_SIZE) {
+    chunks.push(positions.slice(start, start + LOAD_CHUNK_SIZE));
   }
   const loaded = await Promise.all(
-    chunks.map(async (chunk) => query.load(chunk)),
+    chunks.map(async (chunk) =>
+      query.load(
+        chunk.map((position) => position.id),
+        new Map(chunk.map((position) => [position.id, position.key])),
+      ),
+    ),
   );
-  const byId = new Map(loaded.flat().map((entity) => [entity.id, entity]));
-  return ids.flatMap((id) => {
-    const entity = byId.get(id);
-    return entity === undefined ? [] : [entity];
+  const byId = new Map(loaded.flat().map((node) => [node.id, node]));
+  return positions.flatMap((position) => {
+    const node = byId.get(position.id);
+    return node === undefined ? [] : [node];
   });
 }
 
-/** Reads a page count, treating an absent or negative count as no limit. */
-function readCount(count: null | number | undefined): null | number {
-  return typeof count === "number" && count >= 0 ? count : null;
+/**
+ * Reads everything a page needs of a filtered query in one statement, so the
+ * filter — which may rank every match — runs once: the filtered rows are
+ * materialized, and their count, the rows the cursors name, whether a row
+ * precedes the `before` cursor's, and the window between the cursors, at
+ * most one row past the page, are all read from them. The window is read from
+ * the front for `first`, or from the back for `last` alone.
+ */
+async function readPage<
+  Node extends IdentifiedEntity,
+  Row extends IdentifiedEntity,
+>(
+  query: ConnectionQuery<Node, Row>,
+  page: {
+    readonly after: CursorClaim | null;
+    readonly before: CursorClaim | null;
+    readonly limits: PageLimits;
+  },
+): Promise<PageRead> {
+  const { limits } = page;
+  const builder = query.filter();
+  const filtered = builder
+    .select(`${builder.alias}.id`, "id")
+    .addSelect(query.sortKey, "key");
+  const after = selectClaimedRow("after", page.after);
+  const before = selectClaimedRow("before", page.before);
+  const fromBack = limits.first === null && limits.last !== null;
+  const direction = fromBack ? "DESC" : "ASC";
+  const limit = limits.first ?? limits.last;
+  const statement = [
+    `WITH "filtered" AS MATERIALIZED (${filtered.getQuery()}),`,
+    `"after" AS (${after.sql}),`,
+    `"before" AS (${before.sql})`,
+    `SELECT (SELECT COUNT(*) FROM "filtered") AS "totalCount",`,
+    `(SELECT json_build_object('id', "id", 'key', "key") FROM "after") AS "after",`,
+    `(SELECT json_build_object('id', "id", 'key', "key") FROM "before") AS "before",`,
+    `EXISTS (SELECT 1 FROM "filtered" WHERE ("key", "id") < (SELECT "key", "id" FROM "before")) AS "hasRowBefore",`,
+    `(SELECT COALESCE(json_agg(json_build_object('id', "page"."id", 'key', "page"."key") ORDER BY "page"."key" ${direction}, "page"."id" ${direction}), '[]'::json)`,
+    `FROM (SELECT "id", "key" FROM "filtered"`,
+    `WHERE (NOT EXISTS (SELECT 1 FROM "after") OR ("key", "id") > (SELECT "key", "id" FROM "after"))`,
+    `AND (NOT EXISTS (SELECT 1 FROM "before") OR ("key", "id") < (SELECT "key", "id" FROM "before"))`,
+    `ORDER BY "key" ${direction}, "id" ${direction}${limit === null ? "" : ` LIMIT ${String(limit + 1)}`}) "page") AS "window"`,
+  ].join(" ");
+  const [sql, parameters]: [string, unknown[]] =
+    builder.dataSource.driver.escapeQueryWithParameters(statement, {
+      ...filtered.getParameters(),
+      ...after.parameters,
+      ...before.parameters,
+    });
+  const [row] = await builder.dataSource.query<PageReadRow[]>(sql, parameters);
+
+  return {
+    after: row?.after ?? null,
+    before: row?.before ?? null,
+    hasRowBefore: row?.hasRowBefore ?? false,
+    totalCount: Number(row?.totalCount ?? 0),
+    window: fromBack ? (row?.window ?? []).toReversed() : (row?.window ?? []),
+  };
+}
+
+/**
+ * Selects the filtered row a cursor claims, as a common table expression
+ * holding that row or none: a row with the claimed id and, when the cursor
+ * carries one, the claimed sort key.
+ */
+function selectClaimedRow(
+  name: "after" | "before",
+  claim: CursorClaim | null,
+): SqlCondition {
+  if (claim === null) {
+    return {
+      parameters: {},
+      sql: `SELECT "id", "key" FROM "filtered" WHERE FALSE`,
+    };
+  }
+
+  const keyed = "key" in claim;
+  return {
+    parameters: {
+      [`${name}CursorId`]: claim.id,
+      [`${name}CursorKey`]: claim.key,
+    },
+    sql: `SELECT "id", "key" FROM "filtered" WHERE "id" = :${name}CursorId${keyed ? ` AND "key" = :${name}CursorKey` : ""}`,
+  };
 }

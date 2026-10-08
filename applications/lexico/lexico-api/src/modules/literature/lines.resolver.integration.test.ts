@@ -8,15 +8,14 @@ import {
   DATABASE_TIMEOUT_MILLISECONDS,
   startLexicoDatabaseTestingModule,
 } from "../../../testing/database";
+import { createLiteratureServices } from "../../../testing/literature-services";
 import {
-  parseIndex,
   passageTokensAt,
   type ReadingPassage,
   seedReadingPassage,
 } from "../../../testing/reading-passage";
 
 import { LinesResolver } from "./lines.resolver";
-import { LiteratureService } from "./literature.service";
 import { toLineType } from "./literature.utilities";
 
 import type { Connection } from "../../lexico-api.types";
@@ -40,7 +39,7 @@ function summarize(connection: Connection<LineType>): LinesPage {
     endCursor: connection.pageInfo.endCursor ?? null,
     hasNextPage: connection.pageInfo.hasNextPage,
     hasPreviousPage: connection.pageInfo.hasPreviousPage,
-    indices: connection.edges.map((edge) => parseIndex(edge.node)),
+    indices: connection.edges.map((edge) => edge.node.index),
     startCursor: connection.pageInfo.startCursor ?? null,
     totalCount: connection.totalCount,
   };
@@ -73,15 +72,8 @@ describe("lines resolver integration suite", () => {
       Word,
     ]);
     passage = await seedReadingPassage(database.dataSource);
-    resolver = new LinesResolver(
-      new LiteratureService(
-        database.repository(Author),
-        database.repository(Line),
-        database.repository(Text),
-        database.repository(Token),
-        database.repository(Word),
-      ),
-    );
+    const { createLoader, service } = createLiteratureServices(database);
+    resolver = new LinesResolver(service, createLoader());
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
   afterAll(async () => {
@@ -276,9 +268,11 @@ describe("lines resolver integration suite", () => {
     expect.hasAssertions();
 
     for (const [index, line] of passage.lines.entries()) {
-      const tokens = await resolver.tokensForLine(toLineType(line));
+      const connection = await resolver.tokensForLine(toLineType(line), {});
+      const tokens = connection.edges.map((edge) => edge.node);
 
-      expect(tokens.map((token) => parseIndex(token))).toStrictEqual(
+      expect(connection.totalCount).toBe(passageTokensAt(index).length);
+      expect(tokens.map((token) => token.index)).toStrictEqual(
         tokens.map((_token, position) => position),
       );
       expect(
@@ -298,7 +292,12 @@ describe("lines resolver integration suite", () => {
     await expect(
       resolver.tokensForLine(
         toLineType(Object.assign(new Line(), { id: randomUUID() })),
+        { first: 3 },
       ),
-    ).resolves.toStrictEqual([]);
+    ).resolves.toMatchObject({
+      edges: [],
+      pageInfo: { hasNextPage: false, hasPreviousPage: false },
+      totalCount: 0,
+    });
   });
 });
