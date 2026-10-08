@@ -79,22 +79,28 @@ export class PublishablePackagesChecksService {
 
   /**
    * Emits the consumer's conformetry generator plugin, as the documented
-   * postinstall would, and generates one instance into the healthy fixture,
-   * which the conformetry target then validates alongside the rest.
+   * postinstall would, and checks it against `@conformetry/nx:sync`, which
+   * loads the plugin's own generator. Then generates one instance into the
+   * healthy fixture, which the conformetry target validates with the rest.
    */
   private verifyGenerator(context: ConsumerContext): string[] {
-    const bootstrap = this.runBinary(
-      context,
-      "conformetry-nx-bootstrap-generators",
-      [],
-    );
-    if (bootstrap.status !== 0) {
-      return [
-        formatCommandFailure(
-          "Failed to emit the conformetry generator plugin",
-          bootstrap,
-        ),
-      ];
+    const setup = [
+      {
+        args: [],
+        binary: "conformetry-nx-bootstrap-generators",
+        description: "Failed to emit the conformetry generator plugin",
+      },
+      {
+        args: ["sync:check"],
+        binary: "nx",
+        description: "Failed to check the consumer with @conformetry/nx:sync",
+      },
+    ];
+    for (const step of setup) {
+      const result = this.runBinary(context, step.binary, step.args);
+      if (result.status !== 0) {
+        return [formatCommandFailure(step.description, result)];
+      }
     }
 
     const generation = this.runBinary(context, "nx", [

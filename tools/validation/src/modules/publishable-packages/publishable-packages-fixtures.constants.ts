@@ -16,7 +16,10 @@ const ROOT_TSCONFIG = {
   },
 };
 
-/** Registers all three Nx plugins, each with its target named explicitly. */
+/**
+ * Registers all three Nx plugins, each with its target named explicitly, and
+ * the conformetry sync generator its README tells a workspace to declare.
+ */
 const NX_CONFIGURATION = {
   plugins: [
     {
@@ -41,6 +44,7 @@ const NX_CONFIGURATION = {
       plugin: "@conformetry/nx",
     },
   ],
+  sync: { globalGenerators: ["@conformetry/nx:sync"] },
 };
 
 /** A forbidden edge the broken fixture's implicit dependency breaks. */

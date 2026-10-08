@@ -218,6 +218,19 @@ describe(PublishablePackagesChecksService, () => {
     ]);
   });
 
+  it("checks the emitted plugin against the conformetry sync generator", () => {
+    expect.hasAssertions();
+
+    overrideCommand((command) => command.args[0] === "sync:check", {
+      output: "Could not resolve schema",
+      status: 1,
+    });
+
+    expect(service.verifyConsumer(context, publishablePackages)).toStrictEqual([
+      "❌ Failed to check the consumer with @conformetry/nx:sync (exit 1):\nCould not resolve schema",
+    ]);
+  });
+
   it("reports a generator that wrote nothing", () => {
     expect.hasAssertions();
 
