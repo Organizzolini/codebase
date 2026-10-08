@@ -139,7 +139,8 @@ export class ConfigurationService {
   // 🌎 Public Methods
 
   /**
-   * Splits the `--projects` and `--tags` arguments into lists.
+   * Splits the `--projects` and `--tags` arguments into lists, and reads
+   * `--no-dependencies` as building over the selected projects alone.
    *
    * Empty entries are dropped, so a trailing comma and a doubled one are both
    * read as the author meant them rather than as a glob matching nothing.
@@ -148,6 +149,7 @@ export class ConfigurationService {
     selection: CodependixSelectionArguments | undefined,
   ): ResolvedCodependixSelection {
     return {
+      dependencies: selection?.dependencies !== false,
       projects: this.splitSelectionArgument(selection?.projects),
       tags: this.splitSelectionArgument(selection?.tags),
     };

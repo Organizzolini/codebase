@@ -13,6 +13,7 @@ function buildViolation(
     cycle: undefined,
     level: "nxProjects",
     message: "layers: a must not depend on b.",
+    projects: ["a"],
     rule: "layers",
     scope: "workspace",
     source: "a",
@@ -56,13 +57,35 @@ describe(BoundaryReportService, () => {
     ).toBe("3 boundary violations across 2 rules.");
   });
 
-  it("names the level and the scope in front of each message", () => {
+  it("names the level and the charged project in front of each message", () => {
     expect(
       service.renderViolations([
-        buildViolation({ level: "typescript", scope: "codependix-cli" }),
+        buildViolation({
+          level: "typescript",
+          projects: ["codependix-cli"],
+          scope: "codependix-cli",
+        }),
       ]),
     ).toStrictEqual([
       "typescript codependix-cli: layers: a must not depend on b.",
+    ]);
+  });
+
+  // An Nx-level finding is found in the workspace graph but belongs to the
+  // projects it is charged to, so those are what the line names.
+  it("names every project a cycle is charged to, never the workspace", () => {
+    expect(
+      service.renderViolations([
+        buildViolation({ projects: ["a", "b"], scope: "workspace" }),
+      ]),
+    ).toStrictEqual(["nxProjects a, b: layers: a must not depend on b."]);
+  });
+
+  it("marks a note as not failing and names the dependency it lives in", () => {
+    expect(
+      service.renderNotes([buildViolation({ projects: ["lexico-entities"] })]),
+    ).toStrictEqual([
+      "nxProjects in dependency lexico-entities, not failing: layers: a must not depend on b.",
     ]);
   });
 

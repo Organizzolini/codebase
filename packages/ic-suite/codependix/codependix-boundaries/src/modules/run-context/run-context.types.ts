@@ -19,6 +19,16 @@ import type { NxProject, NxProjectGraph } from "@codependix/nx-projects";
  * at the call site.
  */
 export interface GraphRunContext {
+  /**
+   * The projects every boundary graph is built over: `selectedProjects`'
+   * dependency closure in the Nx project graph, or `selectedProjects` alone
+   * under `--no-dependencies`.
+   *
+   * Wider than what is judged, so a finding a selected project inherits from
+   * a dependency is still found — and reported as a note against that
+   * dependency rather than failing the run. Exports never read this.
+   */
+  buildProjects: NxProject[];
   configuration: ResolvedCodependixConfiguration;
   /**
    * The graph types this run builds, checks, and writes.
@@ -48,7 +58,8 @@ export interface GraphRunContext {
   /** Every project the graph knows, apart from the workspace root. */
   projects: NxProject[];
   /**
-   * The projects `--projects` and `--tags` narrowed the run to.
+   * The projects `--projects` and `--tags` narrowed the run to — the set the
+   * boundary gate judges, and the set the Workspace Graph is drawn over.
    *
    * Identical to `projects` when a run named neither, which is what keeps the
    * Workspace Graph whole and the boundary gate judging every project by

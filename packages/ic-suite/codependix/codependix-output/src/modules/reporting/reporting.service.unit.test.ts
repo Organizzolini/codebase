@@ -1,6 +1,8 @@
 import {
+  type BoundaryCheckFailure,
   BoundaryReportService,
   type BoundaryViolation,
+  type JudgedBoundaryFinding,
 } from "@codependix/boundaries";
 import { InputError } from "@codependix/configuration";
 import { createMock } from "@golevelup/ts-vitest";
@@ -14,14 +16,23 @@ import { ReportingService } from "./reporting.service";
 import type { MapRunResult } from "../graph-run/graph-run.types";
 import type { GraphRunOutcome } from "@codependix/core";
 
-const VIOLATION: BoundaryViolation = {
+const VIOLATION: JudgedBoundaryFinding<BoundaryViolation> = {
   cycle: undefined,
   level: "nxProjects",
   message: "layers: a must not depend on b.",
+  projects: ["a"],
   rule: "layers",
   scope: "workspace",
   source: "a",
   target: "b",
+  verdict: "fail",
+};
+
+const FAILURE: JudgedBoundaryFinding<BoundaryCheckFailure> = {
+  error: "Cannot access 'Word' before initialization",
+  level: "nestjsModules",
+  projects: ["lexico-cli"],
+  verdict: "fail",
 };
 
 describe(ReportingService, () => {
@@ -69,9 +80,9 @@ describe(ReportingService, () => {
       expect(loggerService.error).not.toHaveBeenCalled();
     });
 
-    it("logs and fails on a project failure", () => {
+    it("logs and fails on a failure charged to a judged project", () => {
       const passed = service.reportBoundaries({
-        failures: [{ error: "boom", projectName: "lexico" }],
+        failures: [FAILURE],
         violations: [],
       });
 
@@ -79,8 +90,76 @@ describe(ReportingService, () => {
       expect(loggerService.error).toHaveBeenCalledWith(
         "💥 Failed running codependix",
         undefined,
-        { failures: [{ error: "boom", projectName: "lexico" }] },
+        {
+          failures: [
+            "nestjsModules lexico-cli: Cannot access 'Word' before initialization",
+          ],
+        },
       );
+    });
+
+    // D3: the container that cannot boot fails, and the line names the
+    // dependency owning the class it failed on.
+    it("names the project owning the code a failure broke on", () => {
+      service.reportBoundaries({
+        failures: [{ ...FAILURE, ownerProject: "lexico-entities" }],
+        violations: [],
+      });
+
+      expect(loggerService.error).toHaveBeenCalledWith(
+        "💥 Failed running codependix",
+        undefined,
+        {
+          failures: [
+            "nestjsModules lexico-cli: Cannot access 'Word' before initialization (failed in code owned by lexico-entities)",
+          ],
+        },
+      );
+    });
+
+    it("passes on findings that are only notes, warning about each", () => {
+      const passed = service.reportBoundaries({
+        failures: [
+          { ...FAILURE, projects: ["lexico-entities"], verdict: "note" },
+        ],
+        violations: [{ ...VIOLATION, projects: ["b"], verdict: "note" }],
+      });
+
+      expect(passed).toBe(true);
+      expect(loggerService.error).not.toHaveBeenCalled();
+      expect(loggerService.warn).toHaveBeenCalledWith(
+        "🕸️ Found codependix boundary findings in dependencies, not failing",
+        undefined,
+        {
+          failures: [
+            "nestjsModules in dependency lexico-entities, not failing: Cannot access 'Word' before initialization",
+          ],
+          violations: [
+            "nxProjects in dependency b, not failing: layers: a must not depend on b.",
+          ],
+        },
+      );
+    });
+
+    it("fails on a judged violation and still warns about a note beside it", () => {
+      const passed = service.reportBoundaries({
+        failures: [],
+        violations: [
+          VIOLATION,
+          { ...VIOLATION, projects: ["b"], verdict: "note" },
+        ],
+      });
+
+      expect(passed).toBe(false);
+      expect(loggerService.error).toHaveBeenCalledWith(
+        "🕸️ Found codependix boundary violations",
+        undefined,
+        {
+          summary: "1 boundary violation across 1 rule.",
+          violations: ["nxProjects a: layers: a must not depend on b."],
+        },
+      );
+      expect(loggerService.warn).toHaveBeenCalledTimes(1);
     });
 
     it("logs and fails on a boundary violation, rendered through BoundaryReportService", () => {
@@ -95,7 +174,7 @@ describe(ReportingService, () => {
         undefined,
         {
           summary: "1 boundary violation across 1 rule.",
-          violations: ["nxProjects workspace: layers: a must not depend on b."],
+          violations: ["nxProjects a: layers: a must not depend on b."],
         },
       );
     });

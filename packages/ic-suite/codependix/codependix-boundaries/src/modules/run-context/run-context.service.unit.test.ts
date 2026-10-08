@@ -1,4 +1,4 @@
-import { ConfigurationService } from "@codependix/configuration";
+import { ConfigurationService, InputError } from "@codependix/configuration";
 import { NeighborhoodService } from "@codependix/nx-projects";
 import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
@@ -6,6 +6,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { RunContextService } from "./run-context.service";
 
+import type { ResolvedCodependixConfiguration } from "@codependix/configuration";
 import type { NxProject } from "@codependix/nx-projects";
 
 /** The projects the mocked workspace reports, tagged for selection. */
@@ -58,7 +59,7 @@ describe(RunContextService, () => {
       exclude: [],
       include: ["**"],
       projectGraph: undefined,
-      selection: { projects: [], tags: [] },
+      selection: { dependencies: true, projects: [], tags: [] },
       workspace: {},
     });
     vi.mocked(configurationService.isProjectSelected).mockReturnValue(true);
@@ -95,13 +96,21 @@ describe(RunContextService, () => {
   it("hands the command line's selection to the configuration loader", async () => {
     await service.build({
       mode: "write",
-      options: { projects: "widgets", tags: "framework:nestjs" },
+      options: {
+        dependencies: false,
+        projects: "widgets",
+        tags: "framework:nestjs",
+      },
       workingDirectory: "/workspace",
     });
 
     expect(configurationService.loadConfiguration).toHaveBeenCalledWith(
       expect.objectContaining({
-        selection: { projects: "widgets", tags: "framework:nestjs" },
+        selection: {
+          dependencies: false,
+          projects: "widgets",
+          tags: "framework:nestjs",
+        },
       }),
     );
   });
@@ -182,7 +191,7 @@ describe(RunContextService, () => {
       exclude: [],
       include: ["**"],
       projectGraph: "artifacts/graph.json",
-      selection: { projects: [], tags: [] },
+      selection: { dependencies: true, projects: [], tags: [] },
       workspace: {},
     });
 
@@ -224,6 +233,170 @@ describe(RunContextService, () => {
     expect(
       context.selectedProjects.map((project) => project.name),
     ).toStrictEqual(["widgets"]);
+  });
+
+  // 🧭 Judged set and build set
+
+  describe("the build set", () => {
+    beforeEach(() => {
+      vi.mocked(configurationService.isProjectSelected).mockImplementation(
+        (args) => args.projectName === "widgets",
+      );
+      vi.mocked(neighborhoodService.resolveDependencyClosure).mockReturnValue([
+        "reporting",
+        "widgets",
+      ]);
+    });
+
+    // A finding in a project the judged one depends on is part of what that
+    // project is built from, so the graphs are drawn over the whole closure.
+    it("widens the judged projects to their dependency closure", async () => {
+      const context = await service.build({
+        mode: "check",
+        options: { projects: "widgets" },
+        workingDirectory: "/workspace",
+      });
+
+      expect(neighborhoodService.resolveDependencyClosure).toHaveBeenCalledWith(
+        { dependencies: {}, nodes: {} },
+        ["widgets"],
+      );
+      expect(
+        context.selectedProjects.map((project) => project.name),
+      ).toStrictEqual(["widgets"]);
+      expect(context.buildProjects).toStrictEqual(PROJECTS);
+    });
+
+    it("builds over the judged projects alone under --no-dependencies", async () => {
+      vi.mocked(configurationService.loadConfiguration).mockResolvedValue({
+        boundaries: {
+          fileImports: { python: [], typescript: [] },
+          nestjsModules: [],
+          nxProjects: [],
+        },
+        exclude: [],
+        include: ["**"],
+        projectGraph: undefined,
+        selection: { dependencies: false, projects: ["widgets"], tags: [] },
+        workspace: {},
+      });
+
+      const context = await service.build({
+        mode: "check",
+        options: { dependencies: false, projects: "widgets" },
+        workingDirectory: "/workspace",
+      });
+
+      expect(
+        context.buildProjects.map((project) => project.name),
+      ).toStrictEqual(["widgets"]);
+      expect(
+        neighborhoodService.resolveDependencyClosure,
+      ).not.toHaveBeenCalled();
+    });
+  });
+
+  // 🚫 A selection matching nothing
+
+  describe("a selection matching no project", () => {
+    /** A configuration whose command-line selection is the given one. */
+    function buildSelectionConfiguration(
+      selection: ResolvedCodependixConfiguration["selection"],
+    ): ResolvedCodependixConfiguration {
+      return {
+        boundaries: {
+          fileImports: { python: [], typescript: [] },
+          nestjsModules: [],
+          nxProjects: [],
+        },
+        exclude: [],
+        include: ["**"],
+        projectGraph: undefined,
+        selection,
+        workspace: {},
+      };
+    }
+
+    beforeEach(() => {
+      vi.mocked(configurationService.isProjectSelected).mockReturnValue(false);
+    });
+
+    // A misspelled name would otherwise judge nothing and pass: a green gate
+    // that checked nothing at all.
+    it("refuses the run, naming every pattern that matched nothing", async () => {
+      vi.mocked(configurationService.loadConfiguration).mockResolvedValue(
+        buildSelectionConfiguration({
+          dependencies: true,
+          projects: ["lexico-entity", "codebase"],
+          tags: ["scope:nothing"],
+        }),
+      );
+
+      const built = service.build({
+        mode: "check",
+        options: { projects: "lexico-entity,codebase", tags: "scope:nothing" },
+        workingDirectory: "/workspace",
+      });
+
+      await expect(built).rejects.toThrow(InputError);
+      await expect(built).rejects.toThrow(
+        "--projects lexico-entity,codebase and --tags scope:nothing matched no project, so there is nothing to judge or draw.",
+      );
+    });
+
+    it("refuses a project selection alone the same way", async () => {
+      vi.mocked(configurationService.loadConfiguration).mockResolvedValue(
+        buildSelectionConfiguration({
+          dependencies: true,
+          projects: ["codebase"],
+          tags: [],
+        }),
+      );
+
+      await expect(
+        service.build({
+          mode: "check",
+          options: { projects: "codebase" },
+          workingDirectory: "/workspace",
+        }),
+      ).rejects.toThrow(
+        "--projects codebase matched no project, so there is nothing to judge or draw.",
+      );
+    });
+
+    it("refuses a tag selection alone the same way", async () => {
+      vi.mocked(configurationService.loadConfiguration).mockResolvedValue(
+        buildSelectionConfiguration({
+          dependencies: true,
+          projects: [],
+          tags: ["scope:nothing"],
+        }),
+      );
+
+      await expect(
+        service.build({
+          mode: "write",
+          options: { tags: "scope:nothing" },
+          workingDirectory: "/workspace",
+        }),
+      ).rejects.toThrow(
+        "--tags scope:nothing matched no project, so there is nothing to judge or draw.",
+      );
+    });
+
+    // No selection at all is not an empty one: it selects every project, and
+    // a workspace with none has nothing to refuse.
+    it("builds an empty workspace when nothing was selected", async () => {
+      vi.mocked(neighborhoodService.readProjects).mockReturnValue([]);
+
+      const context = await service.build({
+        mode: "check",
+        options: {},
+        workingDirectory: "/workspace",
+      });
+
+      expect(context.selectedProjects).toStrictEqual([]);
+    });
   });
 
   it("matches a project's root against the selection as a workspace-relative path", async () => {

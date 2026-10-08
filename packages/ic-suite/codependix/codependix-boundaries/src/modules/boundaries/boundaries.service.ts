@@ -50,13 +50,18 @@ export class BoundariesService {
 
   // 🔏 Private Methods
 
-  /** Turns one condemned edge into the violation reported for it. */
+  /**
+   * Turns one condemned edge into the violation reported for it, charged to
+   * the project owning the edge's source alone: the dependency is written in
+   * the source, so that is the project a fix belongs to.
+   */
   private buildAccessViolation(args: {
     edge: { source: string; target: string };
     graph: BoundaryGraph;
+    nodes: Map<string, BoundaryNode>;
     rule: CodependixBoundaryAccessRule;
   }): BoundaryViolation {
-    const { edge, graph, rule } = args;
+    const { edge, graph, nodes, rule } = args;
     const describe =
       rule.kind === "forbid" ? describeForbiddenEdge : describeDisallowedEdge;
 
@@ -71,6 +76,7 @@ export class BoundariesService {
         }),
         message: rule.message,
       }),
+      projects: this.chargeProjects({ graph, ids: [edge.source], nodes }),
       rule: rule.name,
       scope: graph.scope,
       source: edge.source,
@@ -94,6 +100,30 @@ export class BoundariesService {
     return args.message === undefined
       ? args.generated
       : `${args.generated} ${args.message}`;
+  }
+
+  /**
+   * The projects owning the given nodes, sorted and deduplicated.
+   *
+   * A node's own `project` where it carries one — every node in an Nx-level
+   * graph is its own project — and the graph's `scope` otherwise, which is
+   * the project a file- or NestJS-level graph was built for. Never the
+   * workspace: a finding charged to no project could fail no project.
+   */
+  private chargeProjects(args: {
+    graph: BoundaryGraph;
+    ids: readonly string[];
+    nodes: Map<string, BoundaryNode>;
+  }): string[] {
+    const projects = new Set(
+      args.ids.map(
+        (id) => this.resolveNode(args.nodes, id).project ?? args.graph.scope,
+      ),
+    );
+
+    return [...projects].toSorted((first, second) =>
+      first.localeCompare(second),
+    );
   }
 
   /**
@@ -130,18 +160,23 @@ export class BoundariesService {
         continue;
       }
 
-      violations.push(this.buildAccessViolation({ edge, graph, rule }));
+      violations.push(this.buildAccessViolation({ edge, graph, nodes, rule }));
     }
 
     return violations;
   }
 
-  /** Reports every cycle an `acyclic` rule's selected nodes still form. */
+  /**
+   * Reports every cycle an `acyclic` rule's selected nodes still form, each
+   * charged to every project owning a node on it: no one project on a cycle
+   * can break it alone, so it fails every one of them.
+   */
   private evaluateAcyclicRule(args: {
     graph: BoundaryGraph;
     rule: CodependixBoundaryAcyclicRule;
   }): BoundaryViolation[] {
     const { graph, rule } = args;
+    const nodes = this.indexNodes(graph);
     const nodeIds = this.selectorService.selectIds(graph.nodes, rule.nodes);
     const cycles = this.cyclesService.findCycles({
       edges: graph.edges,
@@ -155,6 +190,7 @@ export class BoundariesService {
         generated: describeCycle({ cycle: cycle.path, rule: rule.name }),
         message: rule.message,
       }),
+      projects: this.chargeProjects({ graph, ids: cycle.path, nodes }),
       rule: rule.name,
       scope: graph.scope,
       source: cycle.source,

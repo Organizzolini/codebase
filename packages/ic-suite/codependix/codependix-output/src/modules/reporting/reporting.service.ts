@@ -5,7 +5,12 @@ import { Injectable } from "@nestjs/common";
 import { LoggerService } from "@codebase/logging";
 
 import type { MapRunResult } from "../graph-run/graph-run.types";
-import type { BoundaryCheckOutcome } from "@codependix/boundaries";
+import type {
+  BoundaryCheckFailure,
+  BoundaryCheckOutcome,
+  BoundaryVerdict,
+  JudgedBoundaryFinding,
+} from "@codependix/boundaries";
 import type { GraphRunOutcome } from "@codependix/core";
 
 /**
@@ -34,33 +39,94 @@ export class ReportingService {
 
   // 🔏 Private Methods
 
+  /** Narrows an outcome to the findings that reached one verdict. */
+  private filterVerdict(
+    outcome: BoundaryCheckOutcome,
+    verdict: BoundaryVerdict,
+  ): BoundaryCheckOutcome {
+    return {
+      failures: outcome.failures.filter(
+        (failure) => failure.verdict === verdict,
+      ),
+      violations: outcome.violations.filter(
+        (violation) => violation.verdict === verdict,
+      ),
+    };
+  }
+
+  /**
+   * One line per failure: its level, the projects it is charged to, and the
+   * error — then the project owning the code it broke on, when that is
+   * another project. A note says which dependency it lives in instead.
+   */
+  private renderFailures(
+    failures: readonly JudgedBoundaryFinding<BoundaryCheckFailure>[],
+  ): string[] {
+    return failures.map((failure) => {
+      const projects = failure.projects.join(", ");
+      const charged =
+        failure.verdict === "note"
+          ? `in dependency ${projects}, not failing`
+          : projects;
+      const owner =
+        failure.ownerProject === undefined
+          ? ""
+          : ` (failed in code owned by ${failure.ownerProject})`;
+
+      return `${failure.level} ${charged}: ${failure.error}${owner}`;
+    });
+  }
+
+  /**
+   * Warns about every finding charged only to a dependency of the judged
+   * projects. Reported rather than dropped — the judged projects are built on
+   * it — but never failing a run that named a different project.
+   */
+  private reportBoundaryNotes(notes: BoundaryCheckOutcome): void {
+    if (notes.failures.length === 0 && notes.violations.length === 0) return;
+
+    this.logger.warn(
+      "🕸️ Found codependix boundary findings in dependencies, not failing",
+      undefined,
+      {
+        failures: this.renderFailures(notes.failures),
+        violations: this.boundaryReportService.renderNotes(notes.violations),
+      },
+    );
+  }
+
   // 🌎 Public Methods
 
   /**
    * Logs a boundary pass's violations and failures, and reports whether the
-   * run as a whole should fail.
+   * run as a whole should fail — which it does only for a finding charged to
+   * a project the run judges.
    *
    * Violations go to the console and the exit code and nowhere else: a list of
    * things currently wrong is not a document worth publishing on the default
    * branch, and not one worth checking for staleness either.
    */
   reportBoundaries(outcome: BoundaryCheckOutcome): boolean {
-    if (outcome.failures.length > 0) {
+    const failing = this.filterVerdict(outcome, "fail");
+
+    if (failing.failures.length > 0) {
       this.logger.error("💥 Failed running codependix", undefined, {
-        failures: outcome.failures,
+        failures: this.renderFailures(failing.failures),
       });
     }
 
-    if (outcome.violations.length > 0) {
+    if (failing.violations.length > 0) {
       this.logger.error("🕸️ Found codependix boundary violations", undefined, {
-        summary: this.boundaryReportService.renderSummary(outcome.violations),
+        summary: this.boundaryReportService.renderSummary(failing.violations),
         violations: this.boundaryReportService.renderViolations(
-          outcome.violations,
+          failing.violations,
         ),
       });
     }
 
-    return outcome.failures.length === 0 && outcome.violations.length === 0;
+    this.reportBoundaryNotes(this.filterVerdict(outcome, "note"));
+
+    return failing.failures.length === 0 && failing.violations.length === 0;
   }
 
   /**

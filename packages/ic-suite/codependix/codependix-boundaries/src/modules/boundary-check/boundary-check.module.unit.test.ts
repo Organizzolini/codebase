@@ -3,9 +3,14 @@ import { describe, expect, it } from "vitest";
 
 import { BoundaryCheckModule } from "./boundary-check.module";
 import { BoundaryCheckService } from "./boundary-check.service";
+import { BoundaryFailureService } from "./boundary-failure.service";
 import { BoundaryGraphService } from "./boundary-graph.service";
 
-const SERVICES = [BoundaryCheckService, BoundaryGraphService];
+const SERVICES = [
+  BoundaryCheckService,
+  BoundaryFailureService,
+  BoundaryGraphService,
+];
 
 describe(BoundaryCheckModule, () => {
   it.each(SERVICES)("exports and provides %s", (service) => {

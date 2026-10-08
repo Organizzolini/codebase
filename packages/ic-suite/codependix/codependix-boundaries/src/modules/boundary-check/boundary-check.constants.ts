@@ -1,13 +1,17 @@
 // ♟️ Constants
 
+import path from "node:path";
+
 import type { CodependixBoundaryLevel } from "../boundaries/boundaries.types";
 
 /**
- * The scope a violation found in the whole-workspace Nx graph is reported
- * under.
+ * The `scope` of the whole-workspace Nx graph — what the graph covers, not
+ * who a finding in it is charged to.
  *
- * The Nx level is judged once for the repository rather than once per
- * project, so it has no project name to report against.
+ * The Nx level is built once for the repository rather than once per
+ * project, so its graph has no one project to name. Each finding in it is
+ * charged to the projects owning its nodes instead — see
+ * `BoundariesService.chargeProjects`.
  */
 export const WORKSPACE_SCOPE = "workspace";
 
@@ -32,3 +36,27 @@ export const BOUNDARY_LEVEL_ORDER = [
   "typescript",
   "python",
 ] as const satisfies readonly CodependixBoundaryLevel[];
+
+/**
+ * What every V8 stack frame line starts with once its indentation is
+ * trimmed: `at name (location:line:column)` or a bare `at location:line:column`.
+ */
+export const STACK_FRAME_PREFIX = "at ";
+
+/**
+ * A frame's line or column number.
+ *
+ * Anchored at both ends with one quantifier, so it runs in linear time on
+ * whatever a stack carries — the frame itself is parsed with string
+ * operations rather than one regular expression, which would backtrack
+ * in polynomial time on a crafted frame.
+ */
+export const FRAME_POSITION = /^\d+$/u;
+
+/**
+ * The path segment marking a frame as third-party code.
+ *
+ * A frame inside a package's own `node_modules` is not that project's code,
+ * even though it sits under the project's root, so it never names an owner.
+ */
+export const NODE_MODULES_SEGMENT = `${path.sep}node_modules${path.sep}`;
