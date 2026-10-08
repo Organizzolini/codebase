@@ -2,9 +2,11 @@
 # environment.sh — Bootstrap .env files for all projects from their defaults.
 #
 # Each project ships a .env.default containing safe placeholder values.
-# This script copies .env.default → .env for any project that doesn't already
-# have a .env, so developers can immediately run the stack without manually
-# creating env files. Existing .env files are never overwritten.
+# This script finds every .env.default git knows about (tracked or untracked,
+# respecting .gitignore) outside the conformetry templates, and copies it to
+# .env wherever one doesn't already exist, so developers can immediately run
+# the stack without manually creating env files. Existing .env files are never
+# overwritten.
 #
 # Also injects LOCAL_WORKSPACE_FOLDER into the root .env so that docker-compose
 # volume mounts resolve correctly on the host (devcontainer sets this via
@@ -28,9 +30,18 @@ setup_env_file() {
 }
 
 echo "🔍 Setting up environment files..."
-setup_env_file "." "Root"
-setup_env_file "applications/lexico/lexico-web" "Lexico"
-setup_env_file "applications/caelundas/caelundas-cli" "Caelundas"
+while IFS= read -r default_file; do
+  dir="$(dirname "${default_file}")"
+  if [[ "${dir}" == "." ]]; then
+    setup_env_file "." "Root"
+  else
+    setup_env_file "${dir}" "${dir}"
+  fi
+done < <(
+  git ls-files --cached --others --exclude-standard -- \
+    '.env.default' '*/.env.default' \
+    ':!:configuration/conformetry-templates/**' | sort -u
+)
 
 # Ensure LOCAL_WORKSPACE_FOLDER is set for docker-compose volume mounts
 # (devcontainer sets this via remoteEnv; locally we derive it from pwd)
