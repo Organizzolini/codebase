@@ -119,7 +119,7 @@ The devcontainer handles equivalent setup automatically.
 
 **What it does:**
 
-- Creates `.env` from `.env.default` for root, lexico, and caelundas (if not already present)
+- Creates `.env` from every `.env.default` in the repository (excluding `configuration/conformetry-templates/`), skipping any `.env` that already exists
 - Appends `LOCAL_WORKSPACE_FOLDER=$(pwd)` to root `.env` for docker-compose volume mounts
 - Sources `.env` file and exports environment variables
 
