@@ -1,0 +1,31 @@
+{
+  "counts": {
+    "☀️ → ♈ Sun ingress Aries": 1,
+    "🌸 Vernal Equinox": 1
+  },
+  "events": [
+    {
+      "note": "USNO seasons table: Equinox, 20 March 2026, 14:46 UT",
+      "start": "2026-03-20T14:46:00Z",
+      "summary": "🌸 Vernal Equinox"
+    },
+    {
+      "note": "The Sun reaches ecliptic longitude 0 at the March equinox",
+      "start": "2026-03-20T14:46:00Z",
+      "summary": "☀️ → ♈ Sun ingress Aries"
+    }
+  ],
+  "name": "The 2026 March equinox",
+  "retrieved": "2026-10-07",
+  "source": {
+    "name": "US Naval Observatory, Astronomical Applications Department: Earth's Seasons API",
+    "url": "https://aa.usno.navy.mil/api/seasons?year=2026&tz=0&dst=false"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-03-21",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-03-20"
+  }
+}
