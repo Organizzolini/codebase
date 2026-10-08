@@ -8,12 +8,12 @@ import { MonthlyLunarCycleService } from "./monthly-lunar-cycle.service";
 
 /**
  * NestJS module for monthly lunar cycle event detection.
- * Exports {@link MonthlyLunarCycleService} which identifies the four primary lunar phases,
- * and {@link LunarApsidesService} which identifies lunar apogee and perigee.
+ * Exports {@link MonthlyLunarCycleService} which identifies the four primary lunar phases
+ * and, through {@link LunarApsidesService}, lunar apogee and perigee.
  */
 @Module({
   controllers: [],
-  exports: [LunarApsidesService, MonthlyLunarCycleService],
+  exports: [MonthlyLunarCycleService],
   imports: [CalendarModule, EphemerisModule],
   providers: [LunarApsidesService, MonthlyLunarCycleService],
 })

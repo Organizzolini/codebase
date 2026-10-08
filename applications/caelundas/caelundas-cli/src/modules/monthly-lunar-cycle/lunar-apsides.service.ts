@@ -15,7 +15,7 @@ import type { DistanceEphemeris } from "../ephemeris/ephemeris.types";
 import type { Moment } from "moment-timezone";
 
 /**
- * Detects lunar apogee and perigee from extrema of the Moon's geocentric distance.
+ * Detects lunar apogee and perigee from the sign change of the Moon's radial speed.
  *
  * These are events of the Moon's orbit, distinct from the "Lunar Apogee" body
  * (the osculating apogee point) that aspects are measured against.

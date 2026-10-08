@@ -13,7 +13,7 @@
   "retrieved": "2026-10-08",
   "source": {
     "name": "NASA JPL Horizons: Moon (301) geocentric range-rate sign change, 1-minute steps",
-    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?COMMAND='301'&CENTER='500@399'&QUANTITIES='20'&START_TIME='2026-01-13 20:30'&STEP_SIZE='1 m'"
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='301'&CENTER='500@399'&QUANTITIES='20'&START_TIME='2026-01-13 20:30'&STOP_TIME='2026-01-14'&STEP_SIZE='1 m'"
   },
   "toleranceMinutes": 5,
   "window": {

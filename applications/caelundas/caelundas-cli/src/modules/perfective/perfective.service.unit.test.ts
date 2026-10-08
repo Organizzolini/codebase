@@ -211,6 +211,39 @@ describe(PerfectiveService, () => {
       expect(result).toContain(fakeEvent2);
     });
 
+    it("passes the Moon distance ephemeris to lunar apsis detection", () => {
+      const date = moment.tz("2025-06-15", "America/New_York");
+      const minute = date.clone().startOf("day");
+      const moonDistanceEphemeris = {
+        [minute.toISOString()]: { distance: 0.0025, distanceSpeed: 0 },
+      };
+      datetimeMock.generateDates.mockReturnValue([date]);
+      datetimeMock.generateMinutes.mockReturnValue([minute]);
+      ephemerisAggMock.getEphemerides.mockReturnValue({
+        ...emptyEphemerides,
+        distanceEphemerisByBody: { moon: moonDistanceEphemeris } as never,
+      });
+      aspectsMock.detect.mockReturnValue({ aspectBodies: [], events: [] });
+      for (const subMock of [
+        eclipsesMock,
+        retrogradesMock,
+        ingressesMock,
+        dailyCyclesMock,
+        monthlyLunarCycleMock,
+        annualSolarCycleMock,
+        twilightsMock,
+      ]) {
+        subMock.detect.mockReturnValue([]);
+      }
+
+      service.detect(baseInput);
+
+      expect(monthlyLunarCycleMock.detectApsides).toHaveBeenCalledWith({
+        minute,
+        moonDistanceEphemeris,
+      });
+    });
+
     it("logs a completion summary with the total event count", () => {
       const date = moment.tz("2025-06-15", "America/New_York");
       datetimeMock.generateDates.mockReturnValue([date]);

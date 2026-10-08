@@ -5,7 +5,6 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 import { LoggerService } from "@codebase/logging";
 
 import { CalendarService } from "../calendar/calendar.service";
-import { EphemerisModule } from "../ephemeris/ephemeris.module";
 
 import { LunarApsidesService } from "./lunar-apsides.service";
 
@@ -23,7 +22,6 @@ describe(LunarApsidesService, () => {
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      imports: [EphemerisModule],
       providers: [
         LoggerService,
         {
