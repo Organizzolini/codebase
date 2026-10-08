@@ -19,6 +19,7 @@ export interface AuthorTextApplication {
     document: string,
     variables?: Record<string, unknown>,
   ) => Promise<AuthorTextResponse>;
+  readonly server: INestApplication<Server>;
   readonly stop: () => Promise<void>;
 }
 
@@ -65,6 +66,7 @@ export async function startAuthorTextApplication(): Promise<AuthorTextApplicatio
         });
         return authorTextResponseSchema.parse(await response.json());
       },
+      server: application,
       stop: async (): Promise<void> => {
         await application.close();
         await database.close();

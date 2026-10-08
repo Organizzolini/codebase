@@ -2,9 +2,12 @@ import { Test } from "@nestjs/testing";
 import moment from "moment-timezone";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
+import { LoggerService } from "@codebase/logging";
+
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { QuadrupleAspectsBaseService } from "./quadruple-aspects-base.service";
 import { QuadrupleAspectsComposerService } from "./quadruple-aspects-composer.service";
@@ -25,6 +28,8 @@ describe(QuadrupleAspectsComposerService, () => {
         QuadrupleAspectsBaseService,
         AspectGraphService,
         AspectPhaseEmojiService,
+        LoggerService,
+        ProgressiveUtilitiesService,
       ],
     }).compile();
 
@@ -61,7 +66,7 @@ describe(QuadrupleAspectsComposerService, () => {
     expect(result).toBeNull();
   });
 
-  it("collects progressive events from forming to dissolving while skipping sparse entries", () => {
+  it("collects progressive events from forming to dissolving", () => {
     const progressiveEvents: DetectedCalendarEvent[] = [];
     const forming: DetectedCalendarEvent = {
       categories: ["Quadruple Aspect", "Grand Cross", "Forming"],
@@ -79,7 +84,7 @@ describe(QuadrupleAspectsComposerService, () => {
     };
 
     service.collectProgressiveEventsFromGroup(
-      [forming, undefined as unknown as DetectedCalendarEvent, dissolving],
+      [forming, dissolving],
       progressiveEvents,
     );
 

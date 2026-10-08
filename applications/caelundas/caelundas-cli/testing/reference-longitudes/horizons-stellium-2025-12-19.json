@@ -1,0 +1,132 @@
+{
+  "boundaries": [
+    {
+      "start": "2025-12-19T08:16:00Z",
+      "summary": "➡️ 🌟 🌙-☀️-♀️-⚵ Juno, Moon, Sun, Venus stellium forming"
+    },
+    {
+      "start": "2025-12-19T19:44:00Z",
+      "summary": "➡️ 🌟 ♂️-🌙-☀️-⚵ Juno, Mars, Moon, Sun stellium forming"
+    },
+    {
+      "start": "2025-12-20T10:06:00Z",
+      "summary": "⬅️ 🌟 🌙-☀️-♀️-⚵ Juno, Moon, Sun, Venus stellium dissolving"
+    },
+    {
+      "start": "2025-12-20T14:19:00Z",
+      "summary": "⬅️ 🌟 ♂️-🌙-☀️-⚵ Juno, Mars, Moon, Sun stellium dissolving"
+    }
+  ],
+  "longitudesByMinute": {
+    "2025-12-19T08:15:00Z": {
+      "juno": 266.3032004,
+      "mars": 273.0444129,
+      "moon": 259.6680028,
+      "sun": 267.6742799,
+      "venus": 263.2766216
+    },
+    "2025-12-19T08:16:00Z": {
+      "juno": 266.3034501,
+      "mars": 273.0449389,
+      "moon": 259.6763235,
+      "sun": 267.6749871,
+      "venus": 263.2774958
+    },
+    "2025-12-19T08:17:00Z": {
+      "juno": 266.3036998,
+      "mars": 273.0454648,
+      "moon": 259.6846444,
+      "sun": 267.6756942,
+      "venus": 263.27837
+    },
+    "2025-12-19T19:43:00Z": {
+      "juno": 266.475023,
+      "mars": 273.4063472,
+      "moon": 265.4031612,
+      "sun": 268.160847,
+      "venus": 263.8780746
+    },
+    "2025-12-19T19:44:00Z": {
+      "juno": 266.4752728,
+      "mars": 273.4068734,
+      "moon": 265.4115128,
+      "sun": 268.1615543,
+      "venus": 263.8789488
+    },
+    "2025-12-19T19:45:00Z": {
+      "juno": 266.4755225,
+      "mars": 273.4073996,
+      "moon": 265.4198645,
+      "sun": 268.1622615,
+      "venus": 263.879823
+    },
+    "2025-12-20T10:05:00Z": {
+      "juno": 266.6903598,
+      "mars": 273.8600706,
+      "moon": 272.6201502,
+      "sun": 268.7705223,
+      "venus": 264.6316444
+    },
+    "2025-12-20T10:06:00Z": {
+      "juno": 266.6906096,
+      "mars": 273.8605971,
+      "moon": 272.6285439,
+      "sun": 268.7712297,
+      "venus": 264.6325186
+    },
+    "2025-12-20T10:07:00Z": {
+      "juno": 266.6908595,
+      "mars": 273.8611236,
+      "moon": 272.6369378,
+      "sun": 268.771937,
+      "venus": 264.6333928
+    },
+    "2025-12-20T14:18:00Z": {
+      "juno": 266.7535736,
+      "mars": 273.9932929,
+      "moon": 274.7454097,
+      "sun": 268.9494743,
+      "venus": 264.8528204
+    },
+    "2025-12-20T14:19:00Z": {
+      "juno": 266.7538235,
+      "mars": 273.9938195,
+      "moon": 274.7538165,
+      "sun": 268.9501816,
+      "venus": 264.8536946
+    },
+    "2025-12-20T14:20:00Z": {
+      "juno": 266.7540734,
+      "mars": 273.9943461,
+      "moon": 274.7622234,
+      "sun": 268.950889,
+      "venus": 264.8545688
+    }
+  },
+  "name": "Two overlapping stelliums around the 20 December 2025 new Moon",
+  "note": "Juno, Moon, Sun and Venus are pairwise within 8 degrees from 08:16 UT on 19 December, and Juno, Mars, Moon and Sun from 19:44 UT. Mars and Venus are about 10 degrees apart, so the five bodies form one conjunction component that is not a clique, and both stelliums are its maximal cliques. Each minute listed is a boundary T with T-1 and T+1: an edge is in T's registry when its bodies are within orb at T and T+1, because a leg's dissolving event marks its last minute in orb and the registry drops it then.",
+  "retrieved": "2026-10-08",
+  "source": {
+    "commandByBody": {
+      "juno": "3;",
+      "mars": "499",
+      "moon": "301",
+      "sun": "10",
+      "venus": "299"
+    },
+    "name": "NASA JPL Horizons API: observer table, CENTER='500@399' (geocentric), QUANTITIES='31' (apparent ecliptic longitude of date), EXTRA_PREC='YES', listed times in UT",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api"
+  },
+  "spans": [
+    {
+      "end": "2025-12-20T10:06:00Z",
+      "start": "2025-12-19T08:16:00Z",
+      "summary": "🌟 🌙-☀️-♀️-⚵ Juno, Moon, Sun, Venus stellium"
+    },
+    {
+      "end": "2025-12-20T14:19:00Z",
+      "start": "2025-12-19T19:44:00Z",
+      "summary": "🌟 ♂️-🌙-☀️-⚵ Juno, Mars, Moon, Sun stellium"
+    }
+  ]
+}

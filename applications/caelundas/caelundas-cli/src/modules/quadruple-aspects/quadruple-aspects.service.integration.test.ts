@@ -1,9 +1,12 @@
 import moment from "moment-timezone";
 import { describe, expect, it } from "vitest";
 
+import { LoggerService } from "@codebase/logging";
+
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { QuadrupleAspectsBaseService } from "./quadruple-aspects-base.service";
 import { QuadrupleAspectsComposerService } from "./quadruple-aspects-composer.service";
@@ -23,15 +26,18 @@ import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-data
  * in only current or only previous, so phase detection fires exactly once.
  */
 
+const aspectGraphService = new AspectGraphService();
 const quadrupleAspectsBaseService = new QuadrupleAspectsBaseService(
-  new AspectGraphService(),
+  aspectGraphService,
   new AspectPhaseEmojiService(),
 );
 const service = new QuadrupleAspectsService(
   quadrupleAspectsBaseService,
   new QuadrupleAspectsComposerService(
+    aspectGraphService,
     new CompoundPhaseService(),
     quadrupleAspectsBaseService,
+    new ProgressiveUtilitiesService(new LoggerService()),
   ),
 );
 
@@ -113,9 +119,7 @@ describe("quadruple-aspects.events integration", () => {
         "Jupiter, Mars, Moon, Sun grand cross dissolving",
       );
       expect(events[0]?.summary).toContain("⬅️");
-      expect(events[0]?.start).toStrictEqual(
-        currentMinute.clone().subtract(1, "minute"),
-      );
+      expect(events[0]?.start).toStrictEqual(currentMinute);
     });
 
     it("produces a progressive Grand Cross event spanning from forming to dissolving", () => {
@@ -261,9 +265,7 @@ describe("quadruple-aspects.events integration", () => {
         "Mars, Moon, Sun, Venus kite dissolving (Venus focal)",
       );
       expect(events[0]?.summary).toContain("⬅️");
-      expect(events[0]?.start).toStrictEqual(
-        currentMinute.clone().subtract(1, "minute"),
-      );
+      expect(events[0]?.start).toStrictEqual(currentMinute);
     });
 
     it("produces a progressive Kite event spanning from forming to dissolving", () => {

@@ -7,9 +7,14 @@ import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { aspectBodies as tripleAspectBodies } from "../caelundas/caelundas.constants";
 import {
+  bodyDisplayName,
+  bodyFromDisplayName,
+} from "../caelundas/caelundas.types";
+import {
   symbolByBody,
   symbolByTripleAspect,
 } from "../caelundas/symbol-caelundas.constants";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
@@ -33,6 +38,7 @@ export class TripleAspectsComposerService {
     private readonly aspectGraphService: AspectGraphService,
     private readonly aspectPhaseEmojiService: AspectPhaseEmojiService,
     private readonly logger: LoggerService,
+    private readonly progressiveUtilitiesService: ProgressiveUtilitiesService,
   ) {
     this.logger.setContext(TripleAspectsComposerService.name);
   }
@@ -51,7 +57,7 @@ export class TripleAspectsComposerService {
     aspectCapitalized: string,
   ): null | ProgressiveBodiesMeta {
     const tripleAspectBodyNames = new Set(
-      tripleAspectBodies.map((body) => _.startCase(body)),
+      tripleAspectBodies.map((body) => bodyDisplayName(body)),
     );
     const bodiesCapitalized = _.sortBy(
       forming.categories.filter((category) =>
@@ -107,7 +113,7 @@ export class TripleAspectsComposerService {
     ];
 
     if (focalOrApexBody) {
-      categories.push(`${_.startCase(focalOrApexBody)} Focal`);
+      categories.push(`${bodyDisplayName(focalOrApexBody)} Focal`);
     }
 
     return categories;
@@ -125,7 +131,7 @@ export class TripleAspectsComposerService {
     const { bodiesSorted, focalOrApexBody, phase, tripleAspect } = args;
     const base = `${bodiesSorted[0]}, ${bodiesSorted[1]}, ${bodiesSorted[2]} ${tripleAspect} ${phase}`;
     return focalOrApexBody
-      ? `${base} (${_.startCase(focalOrApexBody)} focal)`
+      ? `${base} (${bodyDisplayName(focalOrApexBody)} focal)`
       : base;
   }
 
@@ -161,51 +167,6 @@ export class TripleAspectsComposerService {
   }
 
   /**
-   * Pairs progressive group pairs.
-   */
-  private pairProgressiveGroupPairs(
-    formingEvents: DetectedCalendarEvent[],
-    dissolvingEvents: DetectedCalendarEvent[],
-  ): DetectedCalendarEvent[] {
-    const results: DetectedCalendarEvent[] = [];
-
-    for (
-      let index = 0;
-      index < Math.min(formingEvents.length, dissolvingEvents.length);
-      index++
-    ) {
-      const forming = formingEvents[index];
-      const dissolving = dissolvingEvents[index];
-
-      if (
-        !forming ||
-        !dissolving ||
-        dissolving.start.valueOf() <= forming.start.valueOf()
-      ) {
-        continue;
-      }
-
-      const aspectCapitalized = forming.categories.find((category) =>
-        ["Grand Trine", "T Square", "Yod"].includes(category),
-      );
-      if (!aspectCapitalized) {
-        continue;
-      }
-
-      const event = this.buildProgressiveEvent({
-        aspectCapitalized,
-        dissolving,
-        forming,
-      });
-      if (event) {
-        results.push(event);
-      }
-    }
-
-    return results;
-  }
-
-  /**
    * Resolves aspect type.
    */
   private resolveAspectType(aspectCapitalized: string): null | TripleAspect {
@@ -232,13 +193,9 @@ export class TripleAspectsComposerService {
     const body2Capitalized = bodiesCapitalized[1] ?? "";
     const body3Capitalized = bodiesCapitalized[2] ?? "";
 
-    const bodyMap: Record<string, Body> = Object.fromEntries(
-      tripleAspectBodies.map((body) => [_.startCase(body), body]),
-    );
-
-    const body1 = bodyMap[body1Capitalized];
-    const body2 = bodyMap[body2Capitalized];
-    const body3 = bodyMap[body3Capitalized];
+    const body1 = this.resolveTripleBody(body1Capitalized);
+    const body2 = this.resolveTripleBody(body2Capitalized);
+    const body3 = this.resolveTripleBody(body3Capitalized);
 
     if (!body1 || !body2 || !body3) {
       this.logger.warn(
@@ -262,6 +219,15 @@ export class TripleAspectsComposerService {
       body3,
       body3Capitalized,
     };
+  }
+
+  /**
+   * Inverts a display name to a body tracked by triple aspects.
+   */
+  private resolveTripleBody(displayName: string): Body | undefined {
+    const body = bodyFromDisplayName(displayName);
+    const trackedBodies: ReadonlySet<string> = new Set(tripleAspectBodies);
+    return body !== undefined && trackedBodies.has(body) ? body : undefined;
   }
 
   // 🌎 Public Methods
@@ -334,9 +300,9 @@ export class TripleAspectsComposerService {
       tripleAspect,
     } = args;
 
-    const body1Capitalized = _.startCase(body1);
-    const body2Capitalized = _.startCase(body2);
-    const body3Capitalized = _.startCase(body3);
+    const body1Capitalized = bodyDisplayName(body1);
+    const body2Capitalized = bodyDisplayName(body2);
+    const body3Capitalized = bodyDisplayName(body3);
     const description = this.buildTripleAspectDescription({
       bodiesSorted: _.sortBy([
         body1Capitalized,
@@ -390,7 +356,7 @@ export class TripleAspectsComposerService {
    */
   getProgressiveGroupKey(event: DetectedCalendarEvent): string {
     const tripleAspectBodyNames = new Set(
-      tripleAspectBodies.map((body) => _.startCase(body)),
+      tripleAspectBodies.map((body) => bodyDisplayName(body)),
     );
     const planets = _.sortBy(
       event.categories.filter((category) =>
@@ -420,18 +386,31 @@ export class TripleAspectsComposerService {
   }
 
   /**
-   * Pairs sorted forming/dissolving events for one triple-aspect group key.
+   * Pairs one triple-aspect group's boundaries into spans, one per occurrence.
    */
   pairProgressiveGroup(
     groupEvents: DetectedCalendarEvent[],
   ): DetectedCalendarEvent[] {
-    const formingEvents = groupEvents
-      .filter((event) => event.categories.includes("Forming"))
-      .toSorted((left, right) => left.start.valueOf() - right.start.valueOf());
-    const dissolvingEvents = groupEvents
-      .filter((event) => event.categories.includes("Dissolving"))
-      .toSorted((left, right) => left.start.valueOf() - right.start.valueOf());
+    const [firstEvent] = groupEvents;
+    const groupKey = firstEvent ? this.getProgressiveGroupKey(firstEvent) : "";
+    const pairs = this.progressiveUtilitiesService.pairCompoundBoundaries(
+      groupEvents,
+      `Triple Aspect ${groupKey}`,
+    );
 
-    return this.pairProgressiveGroupPairs(formingEvents, dissolvingEvents);
+    return pairs.flatMap(([forming, dissolving]) => {
+      const aspectCapitalized = forming.categories.find((category) =>
+        ["Grand Trine", "T Square", "Yod"].includes(category),
+      );
+      const event =
+        aspectCapitalized === undefined
+          ? null
+          : this.buildProgressiveEvent({
+              aspectCapitalized,
+              dissolving,
+              forming,
+            });
+      return event ? [event] : [];
+    });
   }
 }

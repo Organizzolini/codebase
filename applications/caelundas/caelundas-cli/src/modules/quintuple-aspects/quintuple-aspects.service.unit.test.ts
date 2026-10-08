@@ -3,16 +3,46 @@ import _ from "lodash";
 import moment from "moment-timezone";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
+import { LoggerService } from "@codebase/logging";
+
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { ProgressiveCompoundEventService } from "../aspects/progressive-compound-event.service";
 import { MathService } from "../math/math.service";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { QuintupleAspectsComposerService } from "./quintuple-aspects-composer.service";
 import { QuintupleAspectsService } from "./quintuple-aspects.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
+
+/** Builds one pentagram boundary event for the shared progressive-step tests. */
+function buildPentagramBoundary(
+  phase: "Dissolving" | "Forming",
+  isoMinute: string,
+): DetectedCalendarEvent {
+  const minute = moment.utc(isoMinute);
+  return {
+    categories: [
+      "Astronomy",
+      "Astrology",
+      "Compound Aspect",
+      "Quintuple Aspect",
+      "Pentagram",
+      phase,
+      "Jupiter",
+      "Mars",
+      "Moon",
+      "Sun",
+      "Venus",
+    ],
+    description: `Jupiter, Mars, Moon, Sun, Venus pentagram ${phase.toLowerCase()}`,
+    end: minute,
+    start: minute,
+    summary: `Jupiter, Mars, Moon, Sun, Venus pentagram ${phase.toLowerCase()}`,
+  };
+}
 
 describe(QuintupleAspectsService, () => {
   let service: QuintupleAspectsService;
@@ -27,6 +57,8 @@ describe(QuintupleAspectsService, () => {
         AspectPhaseEmojiService,
         ProgressiveCompoundEventService,
         MathService,
+        LoggerService,
+        ProgressiveUtilitiesService,
       ],
     }).compile();
     compoundPhaseService = await module.resolve(CompoundPhaseService);
@@ -220,6 +252,50 @@ describe(QuintupleAspectsService, () => {
   });
 
   describe("detectProgressive", () => {
+    const spansOf = (events: DetectedCalendarEvent[]): string[][] =>
+      service
+        .detectProgressive(events)
+        .map((span) => [span.start.toISOString(), span.end.toISOString()]);
+
+    it("pairs two occurrences into two spans despite duplicate boundaries", () => {
+      const boundaries = [
+        ["Forming", "2026-10-20T08:00:00.000Z"],
+        ["Dissolving", "2026-10-20T19:30:00.000Z"],
+        ["Forming", "2026-10-27T03:15:00.000Z"],
+        ["Dissolving", "2026-10-27T11:45:00.000Z"],
+      ] as const;
+      const events = boundaries.flatMap(([phase, isoMinute]) => [
+        buildPentagramBoundary(phase, isoMinute),
+        buildPentagramBoundary(phase, isoMinute),
+      ]);
+
+      expect(spansOf(events)).toStrictEqual([
+        ["2026-10-20T08:00:00.000Z", "2026-10-20T19:30:00.000Z"],
+        ["2026-10-27T03:15:00.000Z", "2026-10-27T11:45:00.000Z"],
+      ]);
+    });
+
+    it("warns and skips an occurrence whose dissolving is missing", () => {
+      const warn = vi.spyOn(LoggerService.prototype, "warn");
+
+      const spans = spansOf([
+        buildPentagramBoundary("Forming", "2026-10-20T08:00:00.000Z"),
+        buildPentagramBoundary("Forming", "2026-10-27T03:15:00.000Z"),
+        buildPentagramBoundary("Dissolving", "2026-10-27T11:45:00.000Z"),
+      ]);
+
+      expect(spans).toStrictEqual([
+        ["2026-10-27T03:15:00.000Z", "2026-10-27T11:45:00.000Z"],
+      ]);
+      expect(warn).toHaveBeenCalledWith(
+        "🔀 Unpaired progressive events",
+        undefined,
+        expect.objectContaining({ unpairedBeginnings: 1 }),
+      );
+
+      warn.mockRestore();
+    });
+
     it("creates progressive events from forming and dissolving pairs", () => {
       const formingEvent: DetectedCalendarEvent = {
         categories: [
@@ -418,83 +494,6 @@ describe(QuintupleAspectsService, () => {
       expect(progressiveEvents).toHaveLength(0);
     });
 
-    it("skips undefined candidate events in grouped progressive pairing", () => {
-      const formingEvent: DetectedCalendarEvent = {
-        categories: [
-          "Quintuple Aspect",
-          "Pentagram",
-          "Forming",
-          "Sun",
-          "Moon",
-          "Mars",
-          "Jupiter",
-          "Venus",
-        ],
-        description: "Sun, Moon, Mars, Jupiter, Venus pentagram forming",
-        end: moment.utc("2024-03-21T10:00:00.000Z"),
-        start: moment.utc("2024-03-21T10:00:00.000Z"),
-        summary: "Pentagram forming",
-      };
-      const dissolvingEvent: DetectedCalendarEvent = {
-        categories: [
-          "Quintuple Aspect",
-          "Pentagram",
-          "Dissolving",
-          "Sun",
-          "Moon",
-          "Mars",
-          "Jupiter",
-          "Venus",
-        ],
-        description: "Sun, Moon, Mars, Jupiter, Venus pentagram dissolving",
-        end: moment.utc("2024-03-21T14:00:00.000Z"),
-        start: moment.utc("2024-03-21T14:00:00.000Z"),
-        summary: "Pentagram dissolving",
-      };
-
-      const composer = (
-        service as unknown as {
-          quintupleAspectsComposerService: QuintupleAspectsComposerService;
-        }
-      ).quintupleAspectsComposerService;
-      const sortBySpy = vi
-        .spyOn(_, "sortBy")
-        .mockReturnValue([formingEvent, undefined, dissolvingEvent] as unknown);
-      const groupSpy = vi
-        .spyOn(composer, "groupQuintupleEventsByKey")
-        .mockReturnValue({
-          key: [
-            formingEvent,
-            undefined,
-            dissolvingEvent,
-          ] as unknown as DetectedCalendarEvent[],
-        });
-      const progressiveBuilderSpy = vi
-        .spyOn(composer, "buildProgressiveQuintupleEvent")
-        .mockReturnValue({
-          categories: ["Quintuple Aspect", "Pentagram"],
-          description: "Pentagram duration",
-          end: dissolvingEvent.start,
-          start: formingEvent.start,
-          summary: "Pentagram duration",
-        });
-
-      const progressiveEvents = service.detectProgressive([
-        formingEvent,
-        dissolvingEvent,
-      ]);
-
-      expect(progressiveEvents).toHaveLength(1);
-      expect(progressiveBuilderSpy).toHaveBeenCalledWith(
-        formingEvent,
-        dissolvingEvent,
-      );
-
-      sortBySpy.mockRestore();
-      groupSpy.mockRestore();
-      progressiveBuilderSpy.mockRestore();
-    });
-
     it("skips progressive when dissolving comes before forming", () => {
       const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
@@ -588,7 +587,7 @@ describe(QuintupleAspectsService, () => {
         validateProgressiveEvent: (
           event: DetectedCalendarEvent | undefined,
         ): void => {
-          expect(event?.summary).toBe("Pentagram forming");
+          expect(event?.summary).toBe("Pentagram");
         },
       },
       {

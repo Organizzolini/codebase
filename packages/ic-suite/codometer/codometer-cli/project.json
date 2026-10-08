@@ -51,6 +51,15 @@
     "type-coverage": {},
     "typecheck": {},
     "typecheck-code": {},
+    "vitest": {
+      "inputs": [
+        "...",
+        "{workspaceRoot}/configuration/vite.library.config.ts",
+        {
+          "externalDependencies": ["vite"]
+        }
+      ]
+    },
     "yaml-lint": {}
   }
 }

@@ -2,12 +2,13 @@ import { Test } from "@nestjs/testing";
 import { getRepositoryToken } from "@nestjs/typeorm";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
-import { Author, In, Line, Text, Token, Word } from "@codebase/lexico-entities";
+import { Author, In, Line, Text, Token } from "@codebase/lexico-entities";
 
 import { createRepositoryMock } from "../../../testing/mocks";
 
 import { LiteratureService } from "./literature.service";
 
+import type { PageReadRow } from "./literature.types";
 import type { Repository } from "typeorm";
 
 /** Stubs a repository so its next connection holds exactly these entities. */
@@ -16,11 +17,42 @@ function stubPage<Entity extends { id: string }>(
   entities: Entity[],
 ): ReturnType<Repository<Entity>["createQueryBuilder"]> {
   const builder = repository.createQueryBuilder();
-  vi.mocked(builder.getCount).mockResolvedValue(entities.length);
-  vi.mocked(builder.getRawMany).mockResolvedValue(entities);
+  vi.mocked(builder.getQuery).mockReturnValue("SELECT filtered");
+  vi.mocked(builder.getParameters).mockReturnValue({});
+  stubPageStatement(builder, entities);
   vi.mocked(repository.find).mockResolvedValue(entities);
   vi.mocked(repository.findBy).mockResolvedValue(entities);
   return builder;
+}
+
+/**
+ * Stubs a builder so the page statement it runs reads back exactly these
+ * entities, every one counted and none past the page.
+ */
+function stubPageStatement(
+  builder: object,
+  entities: readonly { id: string }[],
+): void {
+  Object.defineProperty(builder, "dataSource", {
+    configurable: true,
+    value: {
+      driver: {
+        escapeQueryWithParameters: (sql: string): [string, unknown[]] => [
+          sql,
+          [],
+        ],
+      },
+      query: vi.fn<() => Promise<PageReadRow[]>>().mockResolvedValue([
+        {
+          after: null,
+          before: null,
+          hasRowBefore: false,
+          totalCount: entities.length,
+          window: entities.map((entity, key) => ({ id: entity.id, key })),
+        },
+      ]),
+    },
+  });
 }
 
 describe(LiteratureService, () => {
@@ -46,10 +78,6 @@ describe(LiteratureService, () => {
           provide: getRepositoryToken(Token),
           useValue: createRepositoryMock<Token>(),
         },
-        {
-          provide: getRepositoryToken(Word),
-          useValue: createRepositoryMock<Word>(),
-        },
       ],
     }).compile();
 
@@ -60,23 +88,21 @@ describe(LiteratureService, () => {
     expect(service).toBeDefined();
   });
 
-  it("finds an author by id and slug with related text rows", async () => {
+  it("finds an author by id and slug without loading its texts", async () => {
     expect.hasAssertions();
 
     const author = new Author();
     author.id = "author-1";
     author.slug = "virgil";
-    author.texts = [Object.assign(new Text(), { id: "text-1" })];
 
     const authorRepo = createRepositoryMock<Author>();
-    vi.spyOn(authorRepo, "findOne").mockResolvedValue(author);
+    vi.spyOn(authorRepo, "findOneBy").mockResolvedValue(author);
 
     const service = new LiteratureService(
       authorRepo,
       createRepositoryMock<Line>(),
       createRepositoryMock<Text>(),
       createRepositoryMock<Token>(),
-      createRepositoryMock<Word>(),
     );
 
     await expect(service.findAuthorByLookup("author-1")).resolves.toBe(author);
@@ -86,10 +112,8 @@ describe(LiteratureService, () => {
     await expect(service.findAuthorByLookup(null, null)).resolves.toBeNull();
     await expect(service.findAuthorByLookup("", "")).resolves.toBeNull();
 
-    expect(authorRepo.findOne).toHaveBeenCalledWith({
-      relations: { texts: true },
-      where: { id: "author-1" },
-    });
+    expect(authorRepo.findOneBy).toHaveBeenCalledWith({ id: "author-1" });
+    expect(authorRepo.findOneBy).toHaveBeenCalledWith({ slug: "virgil" });
   });
 
   it("lists authors and paginates them through Relay connection output", async () => {
@@ -110,7 +134,6 @@ describe(LiteratureService, () => {
       createRepositoryMock<Line>(),
       createRepositoryMock<Text>(),
       createRepositoryMock<Token>(),
-      createRepositoryMock<Word>(),
     );
 
     const result = await service.listAuthorsConnection({ first: 10 });
@@ -118,10 +141,9 @@ describe(LiteratureService, () => {
     expect(result.totalCount).toBe(1);
     expect(result.edges).toHaveLength(1);
     expect(result.edges[0]?.node).toBe(firstAuthor);
-    expect(authorQb.limit).toHaveBeenCalledWith(11);
-    expect(authorRepo.find).toHaveBeenCalledWith({
-      relations: { texts: true },
-      where: { id: In(["author-1"]) },
+    expect(authorQb.addSelect).toHaveBeenCalledWith("author.name", "key");
+    expect(authorRepo.findBy).toHaveBeenCalledWith({
+      id: In(["author-1"]),
     });
   });
 
@@ -138,7 +160,6 @@ describe(LiteratureService, () => {
       createRepositoryMock<Line>(),
       textRepo,
       createRepositoryMock<Token>(),
-      createRepositoryMock<Word>(),
     );
 
     await expect(service.findTextByLookup("text-1")).resolves.toBe(text);
@@ -175,7 +196,6 @@ describe(LiteratureService, () => {
       lineRepo,
       createRepositoryMock<Text>(),
       tokenRepo,
-      createRepositoryMock<Word>(),
     );
 
     const lines = await service.listLinesConnection(
@@ -227,70 +247,6 @@ describe(LiteratureService, () => {
     });
   });
 
-  it("resolves token words using the word repository and handles punctuation gracefully", async () => {
-    expect.hasAssertions();
-
-    const tokenRepo = createRepositoryMock<Token>();
-    const wordRepo = createRepositoryMock<Word>();
-    const token = new Token();
-    token.id = "token-1";
-    token.data = "amo";
-    token.isPunctuation = false;
-
-    const word = new Word();
-    word.id = "word-1";
-    word.data = "amo";
-    vi.spyOn(tokenRepo, "find").mockResolvedValue([token]);
-    vi.spyOn(wordRepo, "findOne").mockResolvedValue(word);
-
-    const service = new LiteratureService(
-      createRepositoryMock<Author>(),
-      createRepositoryMock<Line>(),
-      createRepositoryMock<Text>(),
-      tokenRepo,
-      wordRepo,
-    );
-
-    await expect(service.findTokensByIds(["token-1"])).resolves.toStrictEqual([
-      token,
-    ]);
-    await expect(service.resolveTokenWord(token)).resolves.toBe(word);
-
-    const emptyToken = Object.assign(new Token(), {
-      data: "",
-      id: token.id,
-      isPunctuation: false,
-      word: token.word,
-    });
-    const punctuationToken = Object.assign(new Token(), {
-      data: "!",
-      id: token.id,
-      isPunctuation: true,
-      word: token.word,
-    });
-
-    const noDataToken = Object.assign(new Token(), {
-      data: undefined as unknown as string,
-      id: token.id,
-      isPunctuation: false,
-      word: token.word,
-    });
-
-    await expect(service.resolveTokenWord(emptyToken)).resolves.toBeNull();
-    await expect(
-      service.resolveTokenWord(punctuationToken),
-    ).resolves.toBeNull();
-    await expect(service.resolveTokenWord(noDataToken)).resolves.toBeNull();
-
-    expect(wordRepo.findOne).toHaveBeenCalledWith({
-      where: { data: "amo" },
-    });
-    expect(tokenRepo.find).toHaveBeenCalledWith({
-      relations: { word: true },
-      where: { id: In(["token-1"]) },
-    });
-  });
-
   it("searches authors, texts, and lines and aggregates the literature search result", async () => {
     expect.hasAssertions();
 
@@ -319,7 +275,6 @@ describe(LiteratureService, () => {
       lineRepo,
       textRepo,
       createRepositoryMock<Token>(),
-      createRepositoryMock<Word>(),
     );
 
     const result = await service.searchLiterature("vir", "author-1");
@@ -346,12 +301,10 @@ describe(LiteratureService, () => {
       lineRepo,
       textRepo,
       createRepositoryMock<Token>(),
-      createRepositoryMock<Word>(),
     );
 
     await expect(service.findAuthorByLookup(null, null)).resolves.toBeNull();
     await expect(service.findTextByLookup(null, null)).resolves.toBeNull();
-    await expect(service.findTokensByIds([])).resolves.toStrictEqual([]);
     await expect(service.searchAuthors("   ")).resolves.toMatchObject({
       edges: [],
       totalCount: 0,
@@ -373,15 +326,6 @@ describe(LiteratureService, () => {
       lines: [],
       texts: [],
     });
-    await expect(
-      service.listTexts("author-1", "parent-1"),
-    ).resolves.toStrictEqual([]);
-    await expect(
-      service.listTexts(undefined, "parent-1"),
-    ).resolves.toStrictEqual([]);
-    await expect(
-      service.listTexts(undefined, undefined),
-    ).resolves.toStrictEqual([]);
   });
 
   it("keeps text-id filtering active when searching lines by text and avoids null parent text branches", async () => {
@@ -399,7 +343,6 @@ describe(LiteratureService, () => {
       lineRepo,
       createRepositoryMock<Text>(),
       createRepositoryMock<Token>(),
-      createRepositoryMock<Word>(),
     );
 
     await expect(service.searchLines("arma", "text-1")).resolves.toMatchObject({
@@ -430,23 +373,24 @@ describe(LiteratureService, () => {
     line.id = "line-1";
     line.data = "arma virumque";
 
-    const authorFindOne = vi.mocked(authorRepo.findOne);
-    authorFindOne.mockResolvedValue(author);
+    const authorFindOneBy = vi.mocked(authorRepo.findOneBy);
+    authorFindOneBy.mockResolvedValue(author);
 
     const textFindOne = vi.mocked(textRepo.findOne);
     textFindOne.mockResolvedValue(text);
 
     const lineCreateQueryBuilder = vi.mocked(lineRepo.createQueryBuilder);
-    lineCreateQueryBuilder.mockReturnValue({
-      addOrderBy: vi.fn<() => unknown>().mockReturnThis(),
+    const lineBuilder = {
+      addSelect: vi.fn<() => unknown>().mockReturnThis(),
       alias: "line",
       andWhere: vi.fn<() => unknown>().mockReturnThis(),
-      getCount: vi.fn<() => Promise<number>>().mockResolvedValue(1),
-      getRawMany: vi.fn<() => Promise<Line[]>>().mockResolvedValue([line]),
-      orderBy: vi.fn<() => unknown>().mockReturnThis(),
+      getParameters: vi.fn<() => object>().mockReturnValue({}),
+      getQuery: vi.fn<() => string>().mockReturnValue("SELECT filtered"),
       select: vi.fn<() => unknown>().mockReturnThis(),
       where: vi.fn<() => unknown>().mockReturnThis(),
-    } as never);
+    };
+    stubPageStatement(lineBuilder, [line]);
+    lineCreateQueryBuilder.mockReturnValue(lineBuilder as never);
     vi.mocked(lineRepo.findBy).mockResolvedValue([line]);
 
     const service = new LiteratureService(
@@ -454,7 +398,6 @@ describe(LiteratureService, () => {
       lineRepo,
       textRepo,
       createRepositoryMock<Token>(),
-      createRepositoryMock<Word>(),
     );
 
     await expect(service.findAuthorByLookup(undefined, "virgil")).resolves.toBe(
@@ -463,7 +406,6 @@ describe(LiteratureService, () => {
     await expect(service.findTextByLookup(undefined, "aeneid")).resolves.toBe(
       text,
     );
-    await expect(service.listLines()).resolves.toStrictEqual([]);
     await expect(service.searchAuthors(" ")).resolves.toMatchObject({
       edges: [],
       totalCount: 0,
@@ -489,49 +431,6 @@ describe(LiteratureService, () => {
       authors: [],
       lines: [line],
       texts: [],
-    });
-  });
-
-  it("lists every line of a text within index bounds and every token of a line for field resolvers", async () => {
-    expect.hasAssertions();
-
-    const lineRepo = createRepositoryMock<Line>();
-    const tokenRepo = createRepositoryMock<Token>();
-    const line = Object.assign(new Line(), { id: "line-1", index: 2 });
-    const token = Object.assign(new Token(), { id: "token-1", index: 0 });
-    const qb = lineRepo.createQueryBuilder();
-    vi.mocked(qb.getMany).mockResolvedValue([line]);
-    vi.mocked(tokenRepo.find).mockResolvedValue([token]);
-
-    const service = new LiteratureService(
-      createRepositoryMock<Author>(),
-      lineRepo,
-      createRepositoryMock<Text>(),
-      tokenRepo,
-      createRepositoryMock<Word>(),
-    );
-
-    await expect(service.listLines("text-1", 1, 5)).resolves.toStrictEqual([
-      line,
-    ]);
-    await expect(service.listLines("text-1")).resolves.toStrictEqual([line]);
-    await expect(service.listTokensForLine("line-1")).resolves.toStrictEqual([
-      token,
-    ]);
-
-    expect(qb.where).toHaveBeenCalledWith("line.text_id = :textId", {
-      textId: "text-1",
-    });
-    expect(qb.andWhere).toHaveBeenCalledWith("line.index >= :startIndex", {
-      startIndex: 1,
-    });
-    expect(qb.andWhere).toHaveBeenCalledWith("line.index <= :endIndex", {
-      endIndex: 5,
-    });
-    expect(tokenRepo.find).toHaveBeenCalledWith({
-      order: { index: "ASC" },
-      relations: { author: true, line: true, text: true, word: true },
-      where: { line: { id: "line-1" } },
     });
   });
 });

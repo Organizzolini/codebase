@@ -204,7 +204,7 @@ describe(CalendarService, () => {
       expect(calendar).toContain("END:VTIMEZONE");
     });
 
-    it("includes basic timezone content for non-New-York timezone", () => {
+    it("includes a standard observance for UTC", () => {
       const calendar = service.buildFileContent({
         description: "A test calendar description",
         events: sampleEvents,
@@ -216,7 +216,107 @@ describe(CalendarService, () => {
       expect(calendar).toContain("BEGIN:VTIMEZONE");
       expect(calendar).toContain("TZID:UTC");
       expect(calendar).toContain("END:VTIMEZONE");
+      expect(calendar).toContain("BEGIN:STANDARD");
       expect(calendar).not.toContain("BEGIN:DAYLIGHT");
+    });
+
+    it.each([
+      "Australia/Sydney",
+      "Europe/Oslo",
+      "Atlantic/Reykjavik",
+      "Europe/Madrid",
+      "Pacific/Fiji",
+      "America/New_York",
+      "UTC",
+    ])("emits a valid VTIMEZONE with observances for %s", (timezone) => {
+      const calendar = service.buildFileContent({
+        description: "A test calendar description",
+        events: sampleEvents,
+        name: "Test Calendar",
+        timezone,
+      });
+      const block = /BEGIN:VTIMEZONE[\s\S]*END:VTIMEZONE/.exec(calendar)?.[0];
+
+      expect(block).toContain(`TZID:${timezone}`);
+
+      const components = block?.match(/BEGIN:(STANDARD|DAYLIGHT)/g) ?? [];
+
+      expect(components.length).toBeGreaterThan(0);
+
+      for (const component of block
+        ?.split(/(?=BEGIN:(?:STANDARD|DAYLIGHT))/)
+        .slice(1) ?? []) {
+        expect(component).toMatch(/TZOFFSETFROM:[+-]\d{4}/);
+        expect(component).toMatch(/TZOFFSETTO:[+-]\d{4}/);
+        expect(component).toMatch(/DTSTART:\d{8}T\d{6}\r\n/);
+      }
+    });
+
+    it("describes Sydney daylight saving as +1100 daylight", () => {
+      const calendar = service.buildFileContent({
+        description: "A test calendar description",
+        events: [
+          {
+            categories: [],
+            description: "d",
+            end: moment.utc("2026-01-15T00:00:00Z"),
+            start: moment.utc("2026-01-15T00:00:00Z"),
+            summary: "s",
+          },
+        ],
+        name: "Test Calendar",
+        timezone: "Australia/Sydney",
+      });
+
+      expect(calendar).toMatch(
+        /BEGIN:DAYLIGHT[\s\S]*?TZOFFSETTO:\+1100[\s\S]*?END:DAYLIGHT/,
+      );
+      expect(calendar).toMatch(
+        /BEGIN:STANDARD[\s\S]*?TZOFFSETTO:\+1000[\s\S]*?END:STANDARD/,
+      );
+    });
+
+    it("labels the opening observance DAYLIGHT when daylight time is in force", () => {
+      const calendar = service.buildFileContent({
+        description: "A test calendar description",
+        events: [
+          {
+            categories: [],
+            description: "d",
+            end: moment.utc("2026-01-15T00:00:00Z"),
+            start: moment.utc("2026-01-15T00:00:00Z"),
+            summary: "s",
+          },
+        ],
+        name: "Test Calendar",
+        timezone: "Australia/Sydney",
+      });
+      const opening =
+        /X-LIC-LOCATION:[^\r\n]+\r\n([\s\S]*?)END:(?:STANDARD|DAYLIGHT)/.exec(
+          calendar,
+        )?.[1];
+
+      expect(opening).toMatch(/^BEGIN:DAYLIGHT\r\n/);
+      expect(opening).toContain("TZOFFSETTO:+1100");
+    });
+
+    it("keeps the instant of an event in the repeated fall-back hour", () => {
+      const secondPass = moment.utc("2026-11-01T06:30:00Z"); // 01:30 EST
+      const firstPass = moment.utc("2026-11-01T05:30:00Z"); // 01:30 EDT
+      for (const instant of [firstPass, secondPass]) {
+        const vevent = service.buildEventContent({
+          categories: [],
+          description: "d",
+          end: instant,
+          start: instant,
+          summary: "s",
+        });
+        const value = /DTSTART(?:;TZID=[^:]+)?:(\d{8}T\d{6}Z?)/.exec(
+          vevent,
+        )?.[1];
+
+        expect(value).toBe(`${instant.format("YYYYMMDDTHHmmss")}Z`);
+      }
     });
 
     it("includes all events", () => {
@@ -260,6 +360,55 @@ describe(CalendarService, () => {
       expect(calendar).toContain("END:STANDARD");
       expect(calendar).toContain("TZNAME:EDT");
       expect(calendar).toContain("TZNAME:EST");
+    });
+
+    describe("content lines (RFC 5545 §3.1)", () => {
+      const longDescription = `🌕 ${"Full Moon in Libra opposite the Sun in Aries, ".repeat(4)}✨`;
+      const calendar = (): string =>
+        service.buildFileContent({
+          description: "A test calendar description",
+          events: [
+            {
+              categories: ["Astronomy", "Lunar Phase"],
+              description: longDescription,
+              end: moment.utc("2025-03-29T10:58:00Z"),
+              start: moment.utc("2025-03-29T10:58:00Z"),
+              summary: "Full Moon",
+            },
+          ],
+          name: "Test Calendar",
+          timezone: "America/New_York",
+        });
+
+      it("ends every line with CRLF", () => {
+        const content = calendar();
+
+        expect(content).not.toMatch(/(?<!\r)\n/);
+        expect(content.endsWith("END:VCALENDAR\r\n")).toBe(true);
+      });
+
+      it("folds every line to at most 75 octets", () => {
+        const lines = calendar().split("\r\n");
+
+        for (const line of lines) {
+          expect(Buffer.byteLength(line, "utf8")).toBeLessThanOrEqual(75);
+        }
+      });
+
+      it("unfolds a folded line back to its original value", () => {
+        const unfolded = calendar().replaceAll(/\r\n[ \t]/g, "");
+
+        expect(unfolded).toContain(`DESCRIPTION:${longDescription}\r\n`);
+      });
+
+      it("never splits a multi-octet character across a fold", () => {
+        // A split surrogate pair or UTF-8 sequence would not survive the round trip.
+        const lines = calendar().split("\r\n");
+
+        for (const line of lines) {
+          expect(Buffer.from(line, "utf8").toString("utf8")).toBe(line);
+        }
+      });
     });
 
     it("omits optional calendar description and timezone fields when absent", () => {

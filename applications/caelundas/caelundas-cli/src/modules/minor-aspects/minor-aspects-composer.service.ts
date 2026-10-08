@@ -9,7 +9,7 @@ import {
   minorAspects,
 } from "../caelundas/caelundas.constants";
 import {
-  capitalize,
+  bodyDisplayName,
   isBody,
   isMinorAspect,
 } from "../caelundas/caelundas.types";
@@ -60,8 +60,8 @@ export class MinorAspectsComposerService {
     args: AssembleMinorAspectEventArguments,
   ): DetectedCalendarEvent {
     const { body1, body2, minorAspect, phase, timestamp } = args;
-    const body1Capitalized = capitalize(body1);
-    const body2Capitalized = capitalize(body2);
+    const body1Capitalized = bodyDisplayName(body1);
+    const body2Capitalized = bodyDisplayName(body2);
     const baseCategories = [
       "Astronomy",
       "Astrology",
@@ -99,7 +99,7 @@ export class MinorAspectsComposerService {
     const bodiesCapitalized = _.sortBy(
       event.categories.filter((category) =>
         minorAspectBodies
-          .map((minorAspectBody) => _.startCase(minorAspectBody))
+          .map((minorAspectBody) => bodyDisplayName(minorAspectBody))
           .includes(category),
       ),
     );
@@ -150,7 +150,7 @@ export class MinorAspectsComposerService {
   extractAspectComponents(categories: string[]): ExtractAspectComponentsResult {
     const bodiesCapitalized = categories
       .filter((c: string) =>
-        minorAspectBodies.map((b: string) => _.startCase(b)).includes(c),
+        minorAspectBodies.map((b: string) => bodyDisplayName(b)).includes(c),
       )
       .toSorted();
     const aspectCapitalized = categories.find((c: string) =>

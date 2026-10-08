@@ -10,18 +10,23 @@ import {
   SupineForm,
 } from "@codebase/lexico-entities";
 
+import { fromCursorSafe, toCursor } from "../../lexico-api.utilities";
 import { toLexemeType } from "../lexemes/lexemes.utilities";
+import { ENTITY_ID_PATTERN } from "../literature/literature.constants";
 
 import {
   ENCLITIC_FALSE_POSITIVES,
   ENCLITIC_SUFFIXES,
+  LATIN_TIER_SOURCES,
 } from "./search.constants";
-import { LexemeSearchResult } from "./search.entities";
+import { LexemeSearchResult, SearchMatchSource } from "./search.entities";
 
 import type { GraphQLFields } from "../../lexico-api.types";
+import type { CursorClaim } from "../literature/literature.types";
 import type {
   EncliticDecompositionResult,
   LexemeSearchMatch,
+  SearchCursorPayload,
 } from "./search.types";
 
 /**
@@ -67,44 +72,30 @@ export function formatFormIdentifier(form: Form): null | string {
 }
 
 /**
- * Returns whether a search result's lexeme has at least one translation to show.
+ * Reads the lexeme and score a search cursor names, as the row it claims:
+ * its id, and its negated score as the sort key the ranking pages by. Null
+ * for anything that is not the canonical cursor of a scored lexeme.
  */
-export function hasTranslations(result: LexemeSearchMatch): boolean {
-  return (result.lexeme.translations?.length ?? 0) > 0;
+export function readSearchCursor(cursor: string): CursorClaim | null {
+  const payload = fromCursorSafe<null | { id?: unknown; score?: unknown }>(
+    cursor,
+  );
+  const id = payload?.id;
+  const score = payload?.score;
+  return typeof id === "string" &&
+    ENTITY_ID_PATTERN.test(id) &&
+    typeof score === "number" &&
+    toCursor({ id, score } satisfies SearchCursorPayload) === cursor
+    ? { id, key: -score }
+    : null;
 }
 
 /**
- * Merges a candidate search result into a deduplication map, keeping the highest score tier.
+ * Names the Latin tier a lexeme's best score came from, reading a score no
+ * tier gives as the lowest tier, fuzzy matching.
  */
-export function mergeSearchResult(
-  map: Map<string, LexemeSearchMatch>,
-  candidate: LexemeSearchMatch,
-): void {
-  const existing = map.get(candidate.lexeme.id);
-  if (!existing) {
-    map.set(candidate.lexeme.id, candidate);
-    return;
-  }
-
-  if (candidate.score > existing.score) {
-    const mergedIdentifiers = [
-      ...new Set([...existing.identifiers, ...candidate.identifiers]),
-    ];
-    map.set(candidate.lexeme.id, {
-      enclitic: candidate.enclitic ?? existing.enclitic ?? null,
-      identifiers: mergedIdentifiers,
-      lexeme: candidate.lexeme,
-      score: candidate.score,
-      source: candidate.source,
-    });
-  } else {
-    existing.identifiers = [
-      ...new Set([...existing.identifiers, ...candidate.identifiers]),
-    ];
-    if (!existing.enclitic && candidate.enclitic) {
-      existing.enclitic = candidate.enclitic;
-    }
-  }
+export function toLatinMatchSource(score: number): SearchMatchSource {
+  return LATIN_TIER_SOURCES.get(score) ?? SearchMatchSource.FUZZY;
 }
 
 /**
@@ -120,6 +111,14 @@ export function toLexemeSearchResult(
     score: match.score,
     source: match.source,
   } satisfies GraphQLFields<LexemeSearchResult>);
+}
+
+/**
+ * Reads a ranked row's score back from the sort key it pages by, which is the
+ * score negated so the best score sorts first.
+ */
+export function toRankedScore(key: unknown): number {
+  return -Number(key);
 }
 
 /**

@@ -8,8 +8,9 @@ import {
   signs,
 } from "../caelundas/caelundas.constants";
 import {
+  bodyDisplayName,
+  bodyFromDisplayName,
   capitalize,
-  isBody,
   isDecan,
   isSign,
   objectEntries,
@@ -115,7 +116,7 @@ export class IngressesComposerService {
     const { body, date, longitude } = args;
     const sign = IngressesComposerService.getSign(longitude);
     const decan = this.resolveDecan(longitude);
-    const bodyCapitalized = capitalize(body);
+    const bodyCapitalized = bodyDisplayName(body);
     const signCapitalized = capitalize(sign);
     const description = `${bodyCapitalized} ingress decan ${decan} ${signCapitalized}`;
     const summary = `${symbolByBody[body]} → ${symbolBySign[sign]}${symbolByDecan[decan]} ${description}`;
@@ -147,7 +148,7 @@ export class IngressesComposerService {
   }): DetectedCalendarEvent {
     const { body, date, longitude } = args;
     const sign = IngressesComposerService.getSign(longitude);
-    const bodyCapitalized = capitalize(body);
+    const bodyCapitalized = bodyDisplayName(body);
     const signCapitalized = capitalize(sign);
     const bodySymbol = symbolByBody[body];
     const signSymbol = symbolBySign[sign];
@@ -210,7 +211,7 @@ export class IngressesComposerService {
   }): DetectedCalendarEvent {
     const { body, date, longitude } = args;
     const sign = IngressesComposerService.getSign(longitude);
-    const bodyCapitalized = _.startCase(body);
+    const bodyCapitalized = bodyDisplayName(body);
     const signCapitalized = _.startCase(sign);
     const bodySymbol = symbolByBody[body];
     const signSymbol = symbolBySign[sign];
@@ -258,15 +259,15 @@ export class IngressesComposerService {
         `Could not extract sign from categories: ${categories.join(", ")}`,
       );
     }
-    const bodyLower = bodyCapitalized.toLowerCase();
+    const bodyFromName = bodyFromDisplayName(bodyCapitalized);
     const signLower = signCapitalized.toLowerCase();
-    if (!isBody(bodyLower) || !isSign(signLower)) {
+    if (bodyFromName === undefined || !isSign(signLower)) {
       throw new Error(
         `Could not extract typed values from categories: ${categories.join(", ")}`,
       );
     }
     return {
-      body: bodyLower,
+      body: bodyFromName,
       bodyCapitalized,
       sign: signLower,
       signCapitalized,
@@ -358,7 +359,7 @@ export class IngressesComposerService {
     return _.groupBy(events, (event) => {
       const bodyCapitalized = event.categories.find((category) =>
         signIngressBodies
-          .map((signIngressBody) => _.startCase(signIngressBody))
+          .map((signIngressBody) => bodyDisplayName(signIngressBody))
           .includes(category),
       );
       return bodyCapitalized || "";

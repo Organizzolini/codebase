@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import _ from "lodash";
 
+import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { QuadrupleAspectsBaseService } from "./quadruple-aspects-base.service";
 
@@ -18,8 +19,10 @@ export class QuadrupleAspectsComposerService {
   // 🏗 Dependency Injection
 
   constructor(
+    private readonly aspectGraphService: AspectGraphService,
     private readonly compoundPhaseService: CompoundPhaseService,
     private readonly quadrupleAspectsBaseService: QuadrupleAspectsBaseService,
+    private readonly progressiveUtilitiesService: ProgressiveUtilitiesService,
   ) {}
 
   // 🔐 Private Fields
@@ -105,33 +108,29 @@ export class QuadrupleAspectsComposerService {
   }
 
   /**
-   * Collects progressive events from group.
+   * Pairs one quadruple-aspect group's boundaries into spans, one per
+   * occurrence.
    */
   collectProgressiveEventsFromGroup(
     group: DetectedCalendarEvent[],
     progressiveEvents: DetectedCalendarEvent[],
   ): void {
-    const sortedEvents = _.sortBy(group, "start");
+    const [firstEvent] = group;
+    const groupKey = firstEvent
+      ? this.quadrupleAspectsBaseService.makeProgressiveGroupKey(firstEvent)
+      : "";
+    const pairs = this.progressiveUtilitiesService.pairCompoundBoundaries(
+      group,
+      `Quadruple Aspect ${groupKey}`,
+    );
 
-    for (let index = 0; index < sortedEvents.length; index++) {
-      const currentEvent = sortedEvents[index];
-      if (!currentEvent) continue;
-      if (!currentEvent.categories.includes("Forming")) continue;
-
-      for (let index_ = index + 1; index_ < sortedEvents.length; index_++) {
-        const potentialDissolvingEvent = sortedEvents[index_];
-        if (!potentialDissolvingEvent) continue;
-
-        if (potentialDissolvingEvent.categories.includes("Dissolving")) {
-          progressiveEvents.push(
-            this.quadrupleAspectsBaseService.buildProgressiveEvent(
-              currentEvent,
-              potentialDissolvingEvent,
-            ),
-          );
-          break;
-        }
-      }
+    for (const [forming, dissolving] of pairs) {
+      progressiveEvents.push(
+        this.quadrupleAspectsBaseService.buildProgressiveEvent(
+          forming,
+          dissolving,
+        ),
+      );
     }
   }
 
@@ -169,7 +168,10 @@ export class QuadrupleAspectsComposerService {
   }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
     const events: DetectedCalendarEvent[] = [];
-    const unionEdges = [...currentAspectBodies, ...previousAspectBodies];
+    const unionEdges = this.aspectGraphService.unionAspectBodies(
+      currentAspectBodies,
+      previousAspectBodies,
+    );
     const aspectsByType =
       this.quadrupleAspectsBaseService.groupAspectsByType(unionEdges);
     const oppositions = aspectsByType.get("opposite") || [];
@@ -229,7 +231,10 @@ export class QuadrupleAspectsComposerService {
   }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
     const events: DetectedCalendarEvent[] = [];
-    const unionEdges = [...currentAspectBodies, ...previousAspectBodies];
+    const unionEdges = this.aspectGraphService.unionAspectBodies(
+      currentAspectBodies,
+      previousAspectBodies,
+    );
     const aspectsByType =
       this.quadrupleAspectsBaseService.groupAspectsByType(unionEdges);
     const trines = aspectsByType.get("trine") || [];
@@ -384,7 +389,7 @@ export class QuadrupleAspectsComposerService {
     ]);
     if (bodies.size !== 4) return null;
 
-    const bodyList = [...bodies];
+    const bodyList = this.aspectGraphService.canonicalBodyOrder([...bodies]);
     const oppositeBodyMap =
       this.quadrupleAspectsBaseService.buildGrandCrossOppositeMap(opp1, opp2);
 
@@ -462,7 +467,7 @@ export class QuadrupleAspectsComposerService {
 
     return this.resolveKiteEvent({
       baseBody,
-      bodies: [baseBody, other0, other1, fourthBody],
+      bodies: [...gtBodies, fourthBody],
       current,
       fourthBody,
       minute,

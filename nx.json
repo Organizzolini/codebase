@@ -193,6 +193,20 @@
           "projects": ["tag:language:python", "tag:language:typescript"]
         },
         "inputs": ["^production", "dependency-versions", "production"]
+      },
+      {
+        "cache": true,
+        "dependsOn": ["^build"],
+        "description": "The `packages/ic-suite/<suite>/` override of the default `build` entry above: every field is identical except the one extra input. Each ic-suite `vite.config.ts` builds from `configuration/vite.library.config.ts`, which belongs to the root project, so without it a change there neither invalidates a cached build nor makes these packages affected — and Nx release reads that same affected set to decide which packages a commit republishes. Kept as a full second entry because Nx does not merge across matching targetDefaults array entries; the last one whose `filter` matches a project replaces the earlier entry wholesale.",
+        "filter": {
+          "projects": ["packages/ic-suite/*/*"]
+        },
+        "inputs": [
+          "^production",
+          "{workspaceRoot}/configuration/vite.library.config.ts",
+          "dependency-versions",
+          "production"
+        ]
       }
     ],
     "build-projects": {
@@ -321,13 +335,7 @@
         "description": "The `applications/<domain>/` override of the default `codometer` entry above: every field is identical except the two relative paths, corrected from two directories below the workspace root to three. A full entry for the same reason as the `packages/ic-suite/<suite>/` one: Nx replaces a matching targetDefaults array entry wholesale rather than merging it.",
         "executor": "nx:run-commands",
         "filter": {
-          "projects": [
-            "caelundas-cli",
-            "lexico-api",
-            "lexico-cli",
-            "lexico-web",
-            "meanderaw-cli"
-          ]
+          "projects": ["applications/*/*"]
         },
         "inputs": [
           "!{projectRoot}/codometer-report.json",
@@ -1070,10 +1078,10 @@
         "cache": true,
         "configurations": {
           "check": {
-            "command": "stylelint --allow-empty-input --config ../../configuration/stylelint.config.cjs 'src/**/*.css'"
+            "command": "stylelint --allow-empty-input --config configuration/stylelint.config.cjs '{projectRoot}/src/**/*.css'"
           },
           "write": {
-            "command": "stylelint --allow-empty-input --fix --config ../../configuration/stylelint.config.cjs 'src/**/*.css'"
+            "command": "stylelint --allow-empty-input --fix --config configuration/stylelint.config.cjs '{projectRoot}/src/**/*.css'"
           }
         },
         "defaultConfiguration": "check",
@@ -1094,77 +1102,7 @@
           }
         ],
         "options": {
-          "command": "stylelint --allow-empty-input --config ../../configuration/stylelint.config.cjs 'src/**/*.css'",
-          "cwd": "{projectRoot}"
-        }
-      },
-      {
-        "cache": true,
-        "configurations": {
-          "check": {
-            "command": "stylelint --allow-empty-input --config ../../../../configuration/stylelint.config.cjs 'src/**/*.css'"
-          },
-          "write": {
-            "command": "stylelint --allow-empty-input --fix --config ../../../../configuration/stylelint.config.cjs 'src/**/*.css'"
-          }
-        },
-        "defaultConfiguration": "check",
-        "executor": "nx:run-commands",
-        "filter": {
-          "projects": [
-            "callidescope-agents",
-            "callidescope-cli",
-            "callidescope-configuration",
-            "callidescope-core",
-            "callidescope-examples",
-            "callidescope-graph",
-            "callidescope-nx",
-            "callidescope-output",
-            "codependix-agents",
-            "codependix-boundaries",
-            "codependix-cli",
-            "codependix-configuration",
-            "codependix-core",
-            "codependix-examples",
-            "codependix-file-imports",
-            "codependix-nestjs-modules",
-            "codependix-nx-projects",
-            "codependix-output",
-            "codometer-agents",
-            "codometer-cli",
-            "codometer-configuration",
-            "codometer-core",
-            "codometer-examples",
-            "codometer-languages",
-            "codometer-measurement",
-            "codometer-output",
-            "conformetry-agents",
-            "conformetry-cli",
-            "conformetry-configuration",
-            "conformetry-core",
-            "conformetry-examples",
-            "conformetry-generation",
-            "conformetry-languages",
-            "conformetry-nx",
-            "conformetry-output",
-            "conformetry-validation"
-          ]
-        },
-        "inputs": [
-          "{projectRoot}/src/**/*.css",
-          "{workspaceRoot}/configuration/stylelint.config.cjs",
-          "shared-globals",
-          {
-            "externalDependencies": [
-              "stylelint",
-              "stylelint-config-standard",
-              "stylelint-config-tailwindcss"
-            ]
-          }
-        ],
-        "options": {
-          "command": "stylelint --allow-empty-input --config ../../../../configuration/stylelint.config.cjs 'src/**/*.css'",
-          "cwd": "{projectRoot}"
+          "command": "stylelint --allow-empty-input --config configuration/stylelint.config.cjs '{projectRoot}/src/**/*.css'"
         }
       },
       {

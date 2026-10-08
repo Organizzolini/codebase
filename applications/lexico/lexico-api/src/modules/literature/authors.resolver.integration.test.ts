@@ -12,6 +12,7 @@ import {
   DATABASE_TIMEOUT_MILLISECONDS,
   startLexicoDatabaseTestingModule,
 } from "../../../testing/database";
+import { createLiteratureServices } from "../../../testing/literature-services";
 import {
   nodesOf,
   walkBackward,
@@ -19,7 +20,6 @@ import {
 } from "../../../testing/relay-connection-walk";
 
 import { AuthorsResolver } from "./authors.resolver";
-import { LiteratureService } from "./literature.service";
 import { toAuthorType } from "./literature.utilities";
 
 import type { DatabaseTestingModule } from "@codebase/database/testing";
@@ -43,15 +43,8 @@ describe("authors resolver integration suite", () => {
       Word,
     ]);
     catalog = await seedAuthorTextCatalog(database);
-    resolver = new AuthorsResolver(
-      new LiteratureService(
-        database.repository(Author),
-        database.repository(Line),
-        database.repository(Text),
-        database.repository(Token),
-        database.repository(Word),
-      ),
-    );
+    const { createLoader, service } = createLiteratureServices(database);
+    resolver = new AuthorsResolver(service, createLoader());
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
   afterAll(async () => {
@@ -192,10 +185,13 @@ describe("authors resolver integration suite", () => {
     it("lists every text an author wrote, nested ones included, by title", async () => {
       expect.hasAssertions();
 
-      const texts = await resolver.resolveAuthorTexts(
+      const connection = await resolver.resolveAuthorTexts(
         toAuthorType(catalog.vergil),
+        {},
       );
+      const texts = connection.edges.map((edge) => edge.node);
 
+      expect(connection.totalCount).toBe(5);
       expect(texts.map((text) => text.title)).toStrictEqual([
         "Aeneid",
         "Book I",
@@ -208,11 +204,31 @@ describe("authors resolver integration suite", () => {
       );
     });
 
+    it("pages an author's texts with first and after", async () => {
+      expect.hasAssertions();
+
+      const pages = await walkForward(async (after) =>
+        resolver.resolveAuthorTexts(toAuthorType(catalog.vergil), {
+          after,
+          first: 2,
+        }),
+      );
+
+      expect(pages.map((page) => page.edges.length)).toStrictEqual([2, 2, 1]);
+      expect(nodesOf(pages).map((text) => text.title)).toStrictEqual([
+        "Aeneid",
+        "Book I",
+        "Book II",
+        "Eclogues",
+        "Proem",
+      ]);
+    });
+
     it("lists no texts for an author who has none", async () => {
       expect.hasAssertions();
       await expect(
-        resolver.resolveAuthorTexts(toAuthorType(catalog.cicero)),
-      ).resolves.toStrictEqual([]);
+        resolver.resolveAuthorTexts(toAuthorType(catalog.cicero), {}),
+      ).resolves.toMatchObject({ edges: [], totalCount: 0 });
     });
   });
 });

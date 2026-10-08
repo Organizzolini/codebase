@@ -9,6 +9,8 @@ import {
 import { Test } from "@nestjs/testing";
 import { describe, expect, it } from "vitest";
 
+import { paginateArray } from "../testing/pagination";
+
 import { PageInfo } from "./lexico-api.entities";
 import {
   createConnection,
@@ -22,7 +24,6 @@ import {
   mapNullableRelations,
   mapRelation,
   mapRelations,
-  paginateArray,
   Paginated,
   toCursor,
   toDeletableFields,
@@ -306,7 +307,7 @@ describe("relay pagination helpers suite", () => {
     });
   });
 
-  describe("array pagination", () => {
+  describe("array pagination, the oracle SQL paging agrees with", () => {
     const items = [
       { id: "1", name: "one" },
       { id: "2", name: "two" },

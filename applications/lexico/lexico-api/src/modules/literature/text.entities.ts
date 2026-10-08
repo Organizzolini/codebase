@@ -28,9 +28,6 @@ export class TextType
   @Field(() => AuthorType)
   public author!: Related<AuthorType>;
 
-  @Field(() => [TextType])
-  public childTexts!: TextType[];
-
   @Field(() => TextType, { nullable: true })
   public parentText!: null | Related<TextType> | undefined;
 

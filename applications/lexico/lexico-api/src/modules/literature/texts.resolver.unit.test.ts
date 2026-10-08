@@ -6,9 +6,28 @@ import { Line, Text } from "@codebase/lexico-entities";
 
 import { mapNullableRelation } from "../../lexico-api.utilities";
 
+import { LiteratureRelationsLoader } from "./literature-relations.loader";
 import { LiteratureService } from "./literature.service";
-import { toLineType, toTextType } from "./literature.utilities";
+import {
+  createEmptyConnection,
+  toLineType,
+  toTextType,
+} from "./literature.utilities";
 import { TextsResolver } from "./texts.resolver";
+
+import type { Connection } from "../../lexico-api.types";
+
+/** A one-page connection holding the given nodes. */
+function connectionOf<Node>(nodes: Node[]): Connection<Node> {
+  return {
+    ...createEmptyConnection<Node>(),
+    edges: nodes.map((node, position) => ({
+      cursor: String(position),
+      node,
+    })),
+    totalCount: nodes.length,
+  };
+}
 
 /** Builds a line with the given index under a text. */
 function createLine(index: number): Line {
@@ -25,6 +44,10 @@ describe(TextsResolver, () => {
         {
           provide: LiteratureService,
           useValue: createMock<LiteratureService>(),
+        },
+        {
+          provide: LiteratureRelationsLoader,
+          useValue: createMock<LiteratureRelationsLoader>(),
         },
       ],
     }).compile();
@@ -49,7 +72,10 @@ describe(TextsResolver, () => {
         .mockResolvedValue(text),
     });
 
-    const textsResolver = new TextsResolver(mockService);
+    const textsResolver = new TextsResolver(
+      mockService,
+      createMock<LiteratureRelationsLoader>(),
+    );
 
     await expect(textsResolver.text({ id: "text-1" })).resolves.toStrictEqual(
       toTextType(text),
@@ -86,7 +112,10 @@ describe(TextsResolver, () => {
         }),
     });
 
-    const textsResolver = new TextsResolver(mockService);
+    const textsResolver = new TextsResolver(
+      mockService,
+      createMock<LiteratureRelationsLoader>(),
+    );
 
     await expect(
       textsResolver.texts({
@@ -132,7 +161,10 @@ describe(TextsResolver, () => {
       }),
     });
 
-    const textsResolver = new TextsResolver(mockService);
+    const textsResolver = new TextsResolver(
+      mockService,
+      createMock<LiteratureRelationsLoader>(),
+    );
 
     await expect(
       textsResolver.searchTexts({
@@ -164,18 +196,21 @@ describe(TextsResolver, () => {
     ).resolves.toBeNull();
   });
 
-  it("looks up the parent of a text whose parent was not joined", async () => {
+  it("looks up the parent of a text whose parent was not joined through the request's loader", async () => {
     expect.hasAssertions();
 
     const grandparent = Object.assign(new Text(), { id: "text-0" });
-    const findTextByLookup = vi
-      .fn<LiteratureService["findTextByLookup"]>()
-      .mockResolvedValueOnce(
-        Object.assign(new Text(), { id: "text-1", parentText: grandparent }),
-      )
+    const load = vi
+      .fn<LiteratureRelationsLoader["parentTextByText"]["load"]>()
+      .mockResolvedValueOnce(grandparent)
       .mockResolvedValueOnce(null);
     const textsResolver = new TextsResolver(
-      createMock<LiteratureService>({ findTextByLookup }),
+      createMock<LiteratureService>(),
+      createMock<LiteratureRelationsLoader>({
+        parentTextByText: createMock<
+          LiteratureRelationsLoader["parentTextByText"]
+        >({ load }),
+      }),
     );
 
     await expect(
@@ -188,20 +223,23 @@ describe(TextsResolver, () => {
         toTextType(Object.assign(new Text(), { id: "text-9" })),
       ),
     ).resolves.toBeNull();
-    expect(findTextByLookup).toHaveBeenNthCalledWith(1, "text-1");
+    expect(load).toHaveBeenNthCalledWith(1, "text-1");
   });
 
   it("resolves nullable text lookups", async () => {
     expect.hasAssertions();
 
-    const textsResolver = new TextsResolver(createMock<LiteratureService>());
+    const textsResolver = new TextsResolver(
+      createMock<LiteratureService>(),
+      createMock<LiteratureRelationsLoader>(),
+    );
 
     await expect(textsResolver.text({})).resolves.toBeNull();
 
     await expect(textsResolver.text({ lookup: {} })).resolves.toBeNull();
   });
 
-  it("resolves a text's lines in index order even when the relation was joined out of order", async () => {
+  it("pages a text's lines through the loader even when the relation was joined out of order", async () => {
     expect.hasAssertions();
 
     const text = Object.assign(new Text(), {
@@ -209,40 +247,55 @@ describe(TextsResolver, () => {
       lines: [createLine(34), createLine(49), createLine(10), createLine(0)],
     });
     const orderedLines = [0, 10, 34, 49].map((index) => createLine(index));
-    const listLines = vi
-      .fn<LiteratureService["listLines"]>()
-      .mockResolvedValue(orderedLines);
+    const load = vi
+      .fn<LiteratureRelationsLoader["linesByText"]["load"]>()
+      .mockResolvedValue(connectionOf(orderedLines));
     const textsResolver = new TextsResolver(
-      createMock<LiteratureService>({ listLines }),
+      createMock<LiteratureService>(),
+      createMock<LiteratureRelationsLoader>({
+        linesByText: createMock<LiteratureRelationsLoader["linesByText"]>({
+          load,
+        }),
+      }),
     );
 
-    const lines = await textsResolver.linesForText(toTextType(text));
+    const lines = await textsResolver.linesForText(toTextType(text), {
+      first: 4,
+    });
 
-    expect(lines.map((line) => line.index)).toStrictEqual([0, 10, 34, 49]);
-    expect(listLines).toHaveBeenCalledWith("text-1");
+    expect(lines.edges.map((edge) => edge.node.index)).toStrictEqual([
+      0, 10, 34, 49,
+    ]);
+    expect(lines.edges[0]?.node).toStrictEqual(toLineType(createLine(0)));
+    expect(load).toHaveBeenCalledWith({
+      pagination: { first: 4 },
+      parentId: "text-1",
+    });
   });
 
-  it("resolves lines and child texts for a text loaded without those relations", async () => {
+  it("pages a text's child texts through the loader", async () => {
     expect.hasAssertions();
 
     const text = Object.assign(new Text(), { id: "text-1" });
     const child = Object.assign(new Text(), { id: "text-2", title: "Liber I" });
-    const listLines = vi
-      .fn<LiteratureService["listLines"]>()
-      .mockResolvedValue([createLine(0)]);
-    const listTexts = vi
-      .fn<LiteratureService["listTexts"]>()
-      .mockResolvedValue([child]);
+    const load = vi
+      .fn<LiteratureRelationsLoader["childTextsByParent"]["load"]>()
+      .mockResolvedValue(connectionOf([child]));
     const textsResolver = new TextsResolver(
-      createMock<LiteratureService>({ listLines, listTexts }),
+      createMock<LiteratureService>(),
+      createMock<LiteratureRelationsLoader>({
+        childTextsByParent: createMock<
+          LiteratureRelationsLoader["childTextsByParent"]
+        >({ load }),
+      }),
     );
 
     await expect(
-      textsResolver.linesForText(toTextType(text)),
-    ).resolves.toStrictEqual([toLineType(createLine(0))]);
-    await expect(
-      textsResolver.childTexts(toTextType(text)),
-    ).resolves.toStrictEqual([toTextType(child)]);
-    expect(listTexts).toHaveBeenCalledWith(undefined, "text-1");
+      textsResolver.childTexts(toTextType(text), {}),
+    ).resolves.toMatchObject({
+      edges: [{ node: toTextType(child) }],
+      totalCount: 1,
+    });
+    expect(load).toHaveBeenCalledWith({ pagination: {}, parentId: "text-1" });
   });
 });

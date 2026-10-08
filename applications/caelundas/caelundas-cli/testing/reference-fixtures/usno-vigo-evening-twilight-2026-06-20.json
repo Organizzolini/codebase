@@ -1,0 +1,26 @@
+{
+  "counts": {
+    "🌌 Astronomical Twilight (Evening)": 1
+  },
+  "events": [
+    {
+      "end": "2026-06-20T22:29:00Z",
+      "note": "USNO: nautical twilight ends 21:34 UT and astronomical twilight ends 22:29 UT on 20 June, which is 00:29 CEST on 21 June, after local midnight. The 19 June astronomical dusk at 22:28 UT falls inside the window but closes no span, and the 21 June one falls outside it",
+      "start": "2026-06-20T21:34:00Z",
+      "summary": "🌌 Astronomical Twilight (Evening)"
+    }
+  ],
+  "name": "Vigo evening astronomical twilight on 20 June 2026",
+  "retrieved": "2026-10-07",
+  "source": {
+    "name": "US Naval Observatory, Astronomical Applications Department: Nautical and Astronomical Twilight tables for one year (Universal Time)",
+    "url": "https://aa.usno.navy.mil/calculated/rstt/year?ID=AA&year=2026&task=4&lat=42.2406&lon=-8.7207&label=&tz=0&tz_sign=-1&submit=Get+Data"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-06-21",
+    "latitude": 42.2406,
+    "longitude": -8.7207,
+    "startDate": "2026-06-20"
+  }
+}

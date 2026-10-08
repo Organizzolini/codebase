@@ -2,13 +2,9 @@ import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
-import { Token, Word } from "@codebase/lexico-entities";
-
-import { toWordType } from "../words/words.utilities";
+import { Token } from "@codebase/lexico-entities";
 
 import { LiteratureService } from "./literature.service";
-import { toTokenType } from "./literature.utilities";
-import { TokenWordLoader } from "./token-word.loader";
 import { TokensResolver } from "./tokens.resolver";
 
 describe(TokensResolver, () => {
@@ -21,10 +17,6 @@ describe(TokensResolver, () => {
         {
           provide: LiteratureService,
           useValue: createMock<LiteratureService>(),
-        },
-        {
-          provide: TokenWordLoader,
-          useValue: createMock<TokenWordLoader>(),
         },
       ],
     }).compile();
@@ -57,10 +49,7 @@ describe(TokensResolver, () => {
         }),
     });
 
-    const tokensResolver = new TokensResolver(
-      mockService,
-      createMock<TokenWordLoader>(),
-    );
+    const tokensResolver = new TokensResolver(mockService);
 
     await expect(
       tokensResolver.tokens({
@@ -73,72 +62,6 @@ describe(TokensResolver, () => {
     ).resolves.toMatchObject({
       edges: [{ node: token }],
       totalCount: 1,
-    });
-  });
-
-  describe("word", () => {
-    /** Builds a resolver whose loader answers from the given loaded token. */
-    function createWordResolver(loaded: Token): {
-      findTokensByIds: ReturnType<
-        typeof vi.fn<LiteratureService["findTokensByIds"]>
-      >;
-      tokensResolver: TokensResolver;
-    } {
-      const findTokensByIds = vi
-        .fn<LiteratureService["findTokensByIds"]>()
-        .mockResolvedValue([loaded]);
-      const mockService = createMock<LiteratureService>({ findTokensByIds });
-      return {
-        findTokensByIds,
-        tokensResolver: new TokensResolver(
-          mockService,
-          new TokenWordLoader(mockService),
-        ),
-      };
-    }
-
-    const word = Object.assign(new Word(), { data: "amo", id: "word-1" });
-
-    it("loads the word through the data loader when the relation is absent", async () => {
-      expect.hasAssertions();
-
-      const loaded = Object.assign(new Token(), { id: "token-1", word });
-      const { findTokensByIds, tokensResolver } = createWordResolver(loaded);
-      const parent = Object.assign(new Token(), { id: "token-1" });
-
-      await expect(
-        tokensResolver.resolveTokenWord(toTokenType(parent)),
-      ).resolves.toStrictEqual(toWordType(word));
-      expect(findTokensByIds).toHaveBeenCalledWith(["token-1"]);
-    });
-
-    it("returns the parent's loaded word without querying", async () => {
-      expect.hasAssertions();
-
-      const parent = Object.assign(new Token(), { id: "token-1", word });
-      const { findTokensByIds, tokensResolver } = createWordResolver(parent);
-
-      await expect(
-        tokensResolver.resolveTokenWord(toTokenType(parent)),
-      ).resolves.toStrictEqual(toWordType(word));
-      expect(findTokensByIds).not.toHaveBeenCalled();
-    });
-
-    it("returns null without querying for a loaded token that has no word", async () => {
-      expect.hasAssertions();
-
-      const parent = Object.assign(new Token(), {
-        data: ",",
-        id: "token-2",
-        isPunctuation: true,
-        word: null,
-      });
-      const { findTokensByIds, tokensResolver } = createWordResolver(parent);
-
-      await expect(
-        tokensResolver.resolveTokenWord(toTokenType(parent)),
-      ).resolves.toBeNull();
-      expect(findTokensByIds).not.toHaveBeenCalled();
     });
   });
 });

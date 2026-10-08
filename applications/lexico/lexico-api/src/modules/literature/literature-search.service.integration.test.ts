@@ -54,7 +54,6 @@ describe("literature search service integration suite", () => {
       database.repository(Line),
       database.repository(Text),
       database.repository(Token),
-      database.repository(Word),
     );
     corpus = await seedLiteratureSearchCorpus(database);
   }, DATABASE_TIMEOUT_MILLISECONDS);

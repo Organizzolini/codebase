@@ -4,6 +4,7 @@ import _ from "lodash";
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { aspectBodies as quadrupleAspectBodies } from "../caelundas/caelundas.constants";
+import { bodyDisplayName } from "../caelundas/caelundas.types";
 import {
   symbolByBody,
   symbolByQuadrupleAspect,
@@ -70,7 +71,7 @@ export class QuadrupleAspectsBaseService {
       ),
       end: dissolvingEvent.start,
       start: formingEvent.start,
-      summary: formingEvent.summary.replace(/^(➡️|⬅️|🎯)\s/, ""),
+      summary: this.aspectPhaseEmojiService.spanTitle(formingEvent.summary),
     };
   }
 
@@ -86,7 +87,7 @@ export class QuadrupleAspectsBaseService {
     const { bodiesSorted, focalOrApexBody, phase, quadrupleAspect } = args;
     const base = `${bodiesSorted.join(", ")} ${quadrupleAspect} ${phase}`;
     return focalOrApexBody
-      ? `${base} (${_.startCase(focalOrApexBody)} focal)`
+      ? `${base} (${bodyDisplayName(focalOrApexBody)} focal)`
       : base;
   }
 
@@ -222,13 +223,14 @@ export class QuadrupleAspectsBaseService {
   }
 
   /**
-   * Finds grand trines.
+   * Finds each grand trine once, its bodies in canonical order, however many
+   * trine triples close the same triangle.
    */
   findGrandTrines(
     trines: AspectBodies[],
     unionEdges: AspectBodies[],
   ): Set<Body>[] {
-    const grandTrines: Set<Body>[] = [];
+    const grandTrinesByKey = new Map<string, Set<Body>>();
 
     for (let index = 0; index < trines.length; index++) {
       const trineI = trines[index];
@@ -245,12 +247,16 @@ export class QuadrupleAspectsBaseService {
             trineK,
             unionEdges,
           });
-          if (grandTrine) grandTrines.push(grandTrine);
+          if (!grandTrine) continue;
+          const ordered = this.aspectGraphService.canonicalBodyOrder([
+            ...grandTrine,
+          ]);
+          grandTrinesByKey.set(ordered.join("\u001F"), new Set(ordered));
         }
       }
     }
 
-    return grandTrines;
+    return [...grandTrinesByKey.values()];
   }
 
   /**
@@ -289,10 +295,10 @@ export class QuadrupleAspectsBaseService {
       quadrupleAspect,
       timestamp,
     } = eventArguments;
-    const body1DisplayName = _.startCase(body1);
-    const body2DisplayName = _.startCase(body2);
-    const body3DisplayName = _.startCase(body3);
-    const body4DisplayName = _.startCase(body4);
+    const body1DisplayName = bodyDisplayName(body1);
+    const body2DisplayName = bodyDisplayName(body2);
+    const body3DisplayName = bodyDisplayName(body3);
+    const body4DisplayName = bodyDisplayName(body4);
     const description = this.buildQuadrupleAspectDescription({
       bodiesSorted: _.sortBy([
         body1DisplayName,
@@ -351,7 +357,7 @@ export class QuadrupleAspectsBaseService {
     const planets = _.sortBy(
       event.categories.filter((category) =>
         quadrupleAspectBodies
-          .map((quadrupleAspectBody) => _.startCase(quadrupleAspectBody))
+          .map((quadrupleAspectBody) => bodyDisplayName(quadrupleAspectBody))
           .includes(category),
       ),
     );
@@ -395,7 +401,7 @@ export class QuadrupleAspectsBaseService {
       body4Capitalized,
     ];
     if (focalOrApexBody) {
-      categories.push(`${_.startCase(focalOrApexBody)} Focal`);
+      categories.push(`${bodyDisplayName(focalOrApexBody)} Focal`);
     }
     return categories;
   }

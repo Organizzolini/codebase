@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 
 import { AspectsUtilitiesModule } from "../aspects/aspects-utilities.module";
+import { ProgressiveUtilitiesModule } from "../progressive/progressive-utilities.module";
 
 import { QuadrupleAspectsBaseService } from "./quadruple-aspects-base.service";
 import { QuadrupleAspectsComposerService } from "./quadruple-aspects-composer.service";
@@ -14,7 +15,7 @@ import { QuadrupleAspectsService } from "./quadruple-aspects.service";
 @Module({
   controllers: [],
   exports: [QuadrupleAspectsService],
-  imports: [AspectsUtilitiesModule],
+  imports: [AspectsUtilitiesModule, ProgressiveUtilitiesModule],
   providers: [
     QuadrupleAspectsBaseService,
     QuadrupleAspectsComposerService,

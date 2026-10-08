@@ -1,5 +1,14 @@
 // ♟️ Constants
 
+import type { PartitionCounts } from "./literature.types";
+
+/** A parent with no children counts nothing. */
+export const EMPTY_PARTITION_COUNTS: PartitionCounts = {
+  beforeCount: 0,
+  totalCount: 0,
+  windowCount: 0,
+};
+
 /**
  * The lowercase uuid an entity id cursor must carry — Postgres returns uuids
  * lowercase — checked before Postgres sees it, so a malformed cursor is

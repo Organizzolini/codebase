@@ -1,10 +1,13 @@
 import moment from "moment-timezone";
 import { describe, expect, it } from "vitest";
 
+import { LoggerService } from "@codebase/logging";
+
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { ProgressiveCompoundEventService } from "../aspects/progressive-compound-event.service";
 import { MathService } from "../math/math.service";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { QuintupleAspectsComposerService } from "./quintuple-aspects-composer.service";
 import { QuintupleAspectsService } from "./quintuple-aspects.service";
@@ -30,6 +33,7 @@ const service = new QuintupleAspectsService(
     new AspectPhaseEmojiService(),
     new ProgressiveCompoundEventService(),
   ),
+  new ProgressiveUtilitiesService(new LoggerService()),
 );
 
 describe("quintuple-aspects.events integration", () => {

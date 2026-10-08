@@ -191,7 +191,7 @@ Call stacks traced through `tools/synchronization`, deepest first. Each frame sh
 
 | Measure | Value |
 | --- | --- |
-| Callables | 222 |
+| Callables | 223 |
 | Files | 55 |
 | Calls traced | 242 |
 | Call stacks | 11 |
@@ -859,8 +859,8 @@ graph LR
 
 ### Project
 
-![Lines of Code](https://img.shields.io/badge/Lines_of_Code-10012-22c55e?style=flat-square)
-![Repository Size](https://img.shields.io/badge/Repository_Size-329.83_kB-6b7280?style=flat-square)
+![Lines of Code](https://img.shields.io/badge/Lines_of_Code-10055-22c55e?style=flat-square)
+![Repository Size](https://img.shields.io/badge/Repository_Size-331.02_kB-6b7280?style=flat-square)
 ![Folders](https://img.shields.io/badge/Folders-12-4a4a4a?style=flat-square)
 ![Source Files](https://img.shields.io/badge/Source_Files-82-3178c6?style=flat-square)
 
@@ -880,15 +880,15 @@ graph LR
 ![Test Files](https://img.shields.io/badge/Test_Files-25-10b981?style=flat-square)
 ![External Packages](https://img.shields.io/badge/External_Packages-18-8b5cf6?style=flat-square)
 ![Classes](https://img.shields.io/badge/Classes-30-7c3aed?style=flat-square)
-![Functions](https://img.shields.io/badge/Functions-465-16a34a?style=flat-square)
+![Functions](https://img.shields.io/badge/Functions-468-16a34a?style=flat-square)
 ![Methods](https://img.shields.io/badge/Methods-197-15803d?style=flat-square)
-![Sync Functions](https://img.shields.io/badge/Sync_Functions-511-4ade80?style=flat-square)
-![Async Functions](https://img.shields.io/badge/Async_Functions-151-059669?style=flat-square)
-![Constants](https://img.shields.io/badge/Constants-536-dc2626?style=flat-square)
+![Sync Functions](https://img.shields.io/badge/Sync_Functions-513-4ade80?style=flat-square)
+![Async Functions](https://img.shields.io/badge/Async_Functions-152-059669?style=flat-square)
+![Constants](https://img.shields.io/badge/Constants-539-dc2626?style=flat-square)
 ![Imports](https://img.shields.io/badge/Imports-397-0284c7?style=flat-square)
 ![Exported Symbols](https://img.shields.io/badge/Exported_Symbols-99-ea580c?style=flat-square)
-![Comments](https://img.shields.io/badge/Comments-345-64748b?style=flat-square)
-![Comment Lines](https://img.shields.io/badge/Comment_Lines-742-475569?style=flat-square)
+![Comments](https://img.shields.io/badge/Comments-348-64748b?style=flat-square)
+![Comment Lines](https://img.shields.io/badge/Comment_Lines-745-475569?style=flat-square)
 ![TODO Comments](https://img.shields.io/badge/TODO_Comments-3-ca8a04?style=flat-square)
 
 ### Python

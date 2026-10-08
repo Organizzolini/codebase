@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import _ from "lodash";
+
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { QuintupleAspectsComposerService } from "./quintuple-aspects-composer.service";
 
@@ -16,6 +17,7 @@ export class QuintupleAspectsService {
 
   constructor(
     private readonly quintupleAspectsComposerService: QuintupleAspectsComposerService,
+    private readonly progressiveUtilitiesService: ProgressiveUtilitiesService,
   ) {}
 
   // 🔐 Private Fields
@@ -58,37 +60,18 @@ export class QuintupleAspectsService {
     const groupedEvents =
       this.quintupleAspectsComposerService.groupQuintupleEventsByKey(events);
 
-    for (const group of Object.values(groupedEvents)) {
-      const sortedEvents = _.sortBy(group, "start");
-
-      for (let index = 0; index < sortedEvents.length; index++) {
-        const currentEvent = sortedEvents[index];
-
-        if (!currentEvent?.categories.includes("Forming")) {
-          continue;
-        }
-
-        for (
-          let secondIndex = index + 1;
-          secondIndex < sortedEvents.length;
-          secondIndex++
-        ) {
-          const potentialDissolvingEvent = sortedEvents[secondIndex];
-
-          if (!potentialDissolvingEvent) {
-            continue;
-          }
-
-          if (potentialDissolvingEvent.categories.includes("Dissolving")) {
-            progressiveEvents.push(
-              this.quintupleAspectsComposerService.buildProgressiveQuintupleEvent(
-                currentEvent,
-                potentialDissolvingEvent,
-              ),
-            );
-            break;
-          }
-        }
+    for (const [groupKey, group] of Object.entries(groupedEvents)) {
+      const pairs = this.progressiveUtilitiesService.pairCompoundBoundaries(
+        group,
+        `Quintuple Aspect ${groupKey}`,
+      );
+      for (const [forming, dissolving] of pairs) {
+        progressiveEvents.push(
+          this.quintupleAspectsComposerService.buildProgressiveQuintupleEvent(
+            forming,
+            dissolving,
+          ),
+        );
       }
     }
 

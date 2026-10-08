@@ -55,23 +55,235 @@ describe(ProgressiveUtilitiesService, () => {
     expect(logger.warn).not.toHaveBeenCalled();
   });
 
-  it("warns on unequal counts and skips undefined pair entries", () => {
+  it("warns on unequal counts and pairs only what it can", () => {
     const beginning = createEvent("2024-03-21T10:00:00.000Z");
     const ending = createEvent("2024-03-21T12:00:00.000Z");
     const extraEnding = createEvent("2024-03-21T13:00:00.000Z");
     const thirdEnding = createEvent("2024-03-21T14:00:00.000Z");
 
     const pairs = service.pairProgressiveEvents(
-      [beginning, undefined as unknown as DetectedCalendarEvent],
+      [beginning],
       [ending, extraEnding, thirdEnding],
       "unequal",
     );
 
     expect(pairs).toStrictEqual([[beginning, ending]]);
     expect(logger.warn).toHaveBeenCalledWith(
-      "🔀 Mismatched progressive event counts",
+      "🔀 Unpaired progressive events",
       undefined,
-      { beginnings: 2, endings: 3, label: "unequal" },
+      {
+        label: "unequal",
+        paired: 1,
+        unpairedBeginnings: 0,
+        unpairedEndings: 2,
+      },
     );
+  });
+
+  it("drops endings that come before the first beginning", () => {
+    const strayEnding = createEvent("2026-03-19T10:00:00.000Z");
+    const beginning = createEvent("2026-03-19T23:00:00.000Z");
+    const ending = createEvent("2026-03-20T10:00:00.000Z");
+
+    const pairs = service.pairProgressiveEvents(
+      [beginning],
+      [strayEnding, ending],
+      "window opens mid-occurrence",
+    );
+
+    expect(pairs).toStrictEqual([[beginning, ending]]);
+  });
+
+  it("pairs each beginning with the earliest ending after it", () => {
+    const endings = [
+      createEvent("2026-03-19T10:00:00.000Z"),
+      createEvent("2026-03-20T10:00:00.000Z"),
+      createEvent("2026-03-21T10:00:00.000Z"),
+    ];
+    const beginnings = [
+      createEvent("2026-03-19T23:00:00.000Z"),
+      createEvent("2026-03-20T23:00:00.000Z"),
+      createEvent("2026-03-21T23:00:00.000Z"),
+    ];
+
+    const pairs = service.pairProgressiveEvents(beginnings, endings, "night");
+
+    expect(pairs).toStrictEqual([
+      [beginnings[0], endings[1]],
+      [beginnings[1], endings[2]],
+    ]);
+  });
+
+  it("pairs by time whatever order the lists arrive in", () => {
+    const firstBeginning = createEvent("2026-01-01T00:00:00.000Z");
+    const firstEnding = createEvent("2026-01-02T00:00:00.000Z");
+    const secondBeginning = createEvent("2026-02-01T00:00:00.000Z");
+    const secondEnding = createEvent("2026-02-02T00:00:00.000Z");
+
+    const pairs = service.pairProgressiveEvents(
+      [secondBeginning, firstBeginning],
+      [secondEnding, firstEnding],
+      "unordered",
+    );
+
+    expect(pairs).toStrictEqual([
+      [firstBeginning, firstEnding],
+      [secondBeginning, secondEnding],
+    ]);
+  });
+
+  it("leaves a beginning unpaired when the next beginning comes before any ending", () => {
+    const firstBeginning = createEvent("2026-01-01T00:00:00.000Z");
+    const secondBeginning = createEvent("2026-02-01T00:00:00.000Z");
+    const ending = createEvent("2026-02-02T00:00:00.000Z");
+
+    const pairs = service.pairProgressiveEvents(
+      [firstBeginning, secondBeginning],
+      [ending],
+      "missing ending",
+    );
+
+    expect(pairs).toStrictEqual([[secondBeginning, ending]]);
+    expect(logger.warn).toHaveBeenCalledWith(
+      "🔀 Unpaired progressive events",
+      undefined,
+      {
+        label: "missing ending",
+        paired: 1,
+        unpairedBeginnings: 1,
+        unpairedEndings: 0,
+      },
+    );
+  });
+
+  it("pairs an ending that coincides with the next beginning with the earlier one", () => {
+    const firstBeginning = createEvent("2026-01-01T00:00:00.000Z");
+    const firstEnding = createEvent("2026-01-02T00:00:00.000Z");
+    const secondBeginning = createEvent("2026-01-02T00:00:00.000Z");
+    const secondEnding = createEvent("2026-01-03T00:00:00.000Z");
+
+    const pairs = service.pairProgressiveEvents(
+      [firstBeginning, secondBeginning],
+      [firstEnding, secondEnding],
+      "touching occurrences",
+    );
+
+    expect(pairs).toStrictEqual([
+      [firstBeginning, firstEnding],
+      [secondBeginning, secondEnding],
+    ]);
+  });
+
+  it("never emits a span that ends before it starts", () => {
+    const beginnings = [
+      createEvent("2026-07-01T00:00:00.000Z"),
+      createEvent("2026-10-24T00:00:00.000Z"),
+    ];
+    const endings = [
+      createEvent("2026-06-15T00:00:00.000Z"),
+      createEvent("2026-07-23T00:00:00.000Z"),
+    ];
+
+    const pairs = service.pairProgressiveEvents(beginnings, endings, "spans");
+
+    for (const [beginning, ending] of pairs) {
+      expect(ending.start.valueOf()).toBeGreaterThanOrEqual(
+        beginning.start.valueOf(),
+      );
+    }
+
+    expect(pairs).toStrictEqual([[beginnings[0], endings[1]]]);
+  });
+
+  it("warns when an occurrence is left unpaired even though counts match", () => {
+    const strayEnding = createEvent("2026-07-23T00:00:00.000Z");
+    const strayBeginning = createEvent("2026-10-24T00:00:00.000Z");
+
+    const pairs = service.pairProgressiveEvents(
+      [strayBeginning],
+      [strayEnding],
+      "Mercury retrograde",
+    );
+
+    expect(pairs).toStrictEqual([]);
+    expect(logger.warn).toHaveBeenCalledWith(
+      "🔀 Unpaired progressive events",
+      undefined,
+      {
+        label: "Mercury retrograde",
+        paired: 0,
+        unpairedBeginnings: 1,
+        unpairedEndings: 1,
+      },
+    );
+  });
+
+  describe("pairCompoundBoundaries", () => {
+    const boundary = (
+      phase: "Dissolving" | "Forming",
+      iso: string,
+    ): DetectedCalendarEvent => ({
+      ...createEvent(iso),
+      categories: ["Compound Aspect", phase],
+    });
+    const spansOf = (
+      pairs: [DetectedCalendarEvent, DetectedCalendarEvent][],
+    ): string[][] =>
+      pairs.map(([beginning, ending]) => [
+        beginning.start.toISOString(),
+        ending.start.toISOString(),
+      ]);
+
+    it("pairs each occurrence once however often its boundaries repeat", () => {
+      const pairs = service.pairCompoundBoundaries(
+        [
+          boundary("Forming", "2026-10-20T08:00:00.000Z"),
+          boundary("Forming", "2026-10-20T08:00:00.000Z"),
+          boundary("Dissolving", "2026-10-20T19:30:00.000Z"),
+          boundary("Dissolving", "2026-10-20T19:30:00.000Z"),
+          boundary("Forming", "2026-10-27T03:15:00.000Z"),
+          boundary("Dissolving", "2026-10-27T11:45:00.000Z"),
+        ],
+        "Kite",
+      );
+
+      expect(spansOf(pairs)).toStrictEqual([
+        ["2026-10-20T08:00:00.000Z", "2026-10-20T19:30:00.000Z"],
+        ["2026-10-27T03:15:00.000Z", "2026-10-27T11:45:00.000Z"],
+      ]);
+      expect(logger.warn).not.toHaveBeenCalled();
+    });
+
+    it("drops a pattern that forms and dissolves in the same minute", () => {
+      const pairs = service.pairCompoundBoundaries(
+        [
+          boundary("Forming", "2026-10-20T08:00:00.000Z"),
+          boundary("Dissolving", "2026-10-20T08:00:00.000Z"),
+        ],
+        "Kite",
+      );
+
+      expect(pairs).toStrictEqual([]);
+    });
+
+    it("warns and skips an occurrence whose dissolving is missing", () => {
+      const pairs = service.pairCompoundBoundaries(
+        [
+          boundary("Forming", "2026-10-20T08:00:00.000Z"),
+          boundary("Forming", "2026-10-27T03:15:00.000Z"),
+          boundary("Dissolving", "2026-10-27T11:45:00.000Z"),
+        ],
+        "Kite",
+      );
+
+      expect(spansOf(pairs)).toStrictEqual([
+        ["2026-10-27T03:15:00.000Z", "2026-10-27T11:45:00.000Z"],
+      ]);
+      expect(logger.warn).toHaveBeenCalledWith(
+        "🔀 Unpaired progressive events",
+        undefined,
+        expect.objectContaining({ label: "Kite", unpairedBeginnings: 1 }),
+      );
+    });
   });
 });

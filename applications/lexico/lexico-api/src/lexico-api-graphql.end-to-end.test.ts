@@ -308,7 +308,7 @@ describe("lexico api graphql end-to-end suite", () => {
       author(slug: "vergil") {
         __typename
         name
-        texts { title parentText { title } }
+        texts { edges { node { title parentText { title } } } }
       }
       text(slug: "vergil/aeneid/1") {
         __typename
@@ -316,11 +316,19 @@ describe("lexico api graphql end-to-end suite", () => {
         author { name }
         parentText { title }
         lines {
-          __typename
-          label
-          data
-          text { title }
-          tokens { __typename data isPunctuation word { data } }
+          totalCount
+          edges {
+            node {
+              __typename
+              label
+              data
+              text { title }
+              tokens {
+                totalCount
+                edges { node { __typename data isPunctuation word { data } } }
+              }
+            }
+          }
         }
       }
     }`);
@@ -330,30 +338,42 @@ describe("lexico api graphql end-to-end suite", () => {
       author: {
         __typename: "Author",
         name: "Vergil",
-        texts: expect.arrayContaining([
-          { parentText: null, title: "Aeneid" },
-          { parentText: { title: "Aeneid" }, title: "Book I" },
-        ]),
+        texts: {
+          edges: expect.arrayContaining([
+            { node: { parentText: null, title: "Aeneid" } },
+            { node: { parentText: { title: "Aeneid" }, title: "Book I" } },
+          ]),
+        },
       },
       text: {
         __typename: "Text",
         author: { name: "Vergil" },
-        lines: [
-          {
-            __typename: "Line",
-            data: "arma virumque cano puellam",
-            label: "1",
-            text: { title: "Book I" },
-            tokens: [
-              {
-                __typename: "Token",
-                data: "puellam",
-                isPunctuation: false,
-                word: { data: "puellam" },
+        lines: {
+          edges: [
+            {
+              node: {
+                __typename: "Line",
+                data: "arma virumque cano puellam",
+                label: "1",
+                text: { title: "Book I" },
+                tokens: {
+                  edges: [
+                    {
+                      node: {
+                        __typename: "Token",
+                        data: "puellam",
+                        isPunctuation: false,
+                        word: { data: "puellam" },
+                      },
+                    },
+                  ],
+                  totalCount: 1,
+                },
               },
-            ],
-          },
-        ],
+            },
+          ],
+          totalCount: 1,
+        },
         parentText: { title: "Aeneid" },
         title: "Book I",
       },

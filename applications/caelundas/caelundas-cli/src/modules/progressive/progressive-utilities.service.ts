@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import _ from "lodash";
 
 import { LoggerService } from "@codebase/logging";
 
@@ -25,34 +26,100 @@ export class ProgressiveUtilitiesService {
 
   // 🔏 Private Methods
 
+  /**
+   * Walks both lists in start order, pairing each beginning with the first
+   * ending at or after it unless the next beginning comes first.
+   */
+  private pairInStartOrder(
+    beginnings: DetectedCalendarEvent[],
+    endings: DetectedCalendarEvent[],
+  ): [DetectedCalendarEvent, DetectedCalendarEvent][] {
+    const byStart = (
+      first: DetectedCalendarEvent,
+      second: DetectedCalendarEvent,
+    ): number => first.start.valueOf() - second.start.valueOf();
+    const orderedBeginnings = beginnings.toSorted(byStart);
+    const orderedEndings = endings.toSorted(byStart);
+    const pairs: [DetectedCalendarEvent, DetectedCalendarEvent][] = [];
+    let endingIndex = 0;
+
+    for (const [index, beginning] of orderedBeginnings.entries()) {
+      while (
+        orderedEndings[endingIndex]?.start.isBefore(beginning.start) === true
+      ) {
+        endingIndex++;
+      }
+
+      const ending = orderedEndings[endingIndex];
+      const nextBeginning = orderedBeginnings[index + 1];
+      if (
+        ending !== undefined &&
+        (nextBeginning === undefined || byStart(ending, nextBeginning) <= 0)
+      ) {
+        pairs.push([beginning, ending]);
+        endingIndex++;
+      }
+    }
+
+    return pairs;
+  }
+
   // 🌎 Public Methods
 
   /**
-   * Pairs beginning and ending events into tuples.
+   * Pairs one compound pattern's forming and dissolving boundaries into
+   * occurrences with {@link pairProgressiveEvents}.
+   *
+   * A boundary repeated at the same minute is the same boundary, so each phase
+   * keeps one per minute first. A pattern that forms and dissolves on the same
+   * minute has no span, so that pair is dropped.
+   */
+  pairCompoundBoundaries(
+    groupEvents: DetectedCalendarEvent[],
+    label: string,
+  ): [DetectedCalendarEvent, DetectedCalendarEvent][] {
+    const boundariesFor = (phase: string): DetectedCalendarEvent[] =>
+      _.uniqBy(
+        groupEvents.filter((event) => event.categories.includes(phase)),
+        (event) => event.start.valueOf(),
+      );
+
+    return this.pairProgressiveEvents(
+      boundariesFor("Forming"),
+      boundariesFor("Dissolving"),
+      label,
+    ).filter(([forming, dissolving]) =>
+      dissolving.start.isAfter(forming.start),
+    );
+  }
+
+  /**
+   * Pairs each beginning with the earliest unused ending at or after it, as
+   * long as that ending comes no later than the next beginning.
+   *
+   * Both lists are ordered by start time first, so an ending before the first
+   * beginning (a window opening mid-occurrence) is dropped instead of shifting
+   * every later span, and no span can end before it starts. A beginning whose
+   * ending is missing is dropped rather than bridged to a later occurrence's
+   * ending, and so is one with no ending in the window. Any unpaired event
+   * logs a warning.
    */
   pairProgressiveEvents(
     beginnings: DetectedCalendarEvent[],
     endings: DetectedCalendarEvent[],
     label: string,
   ): [DetectedCalendarEvent, DetectedCalendarEvent][] {
-    const pairCount = Math.min(beginnings.length, endings.length);
+    const pairs = this.pairInStartOrder(beginnings, endings);
+    const unpairedBeginnings = beginnings.length - pairs.length;
+    const unpairedEndings = endings.length - pairs.length;
 
-    if (beginnings.length !== endings.length) {
-      this.logger.warn("🔀 Mismatched progressive event counts", undefined, {
-        beginnings: beginnings.length,
-        endings: endings.length,
+    if (unpairedBeginnings > 0 || unpairedEndings > 0) {
+      this.logger.warn("🔀 Unpaired progressive events", undefined, {
         label,
+        paired: pairs.length,
+        unpairedBeginnings,
+        unpairedEndings,
       });
-    }
-
-    const pairs: [DetectedCalendarEvent, DetectedCalendarEvent][] = [];
-
-    for (let index = 0; index < pairCount; index++) {
-      const beginning = beginnings[index];
-      const ending = endings[index];
-      if (beginning !== undefined && ending !== undefined) {
-        pairs.push([beginning, ending]);
-      }
     }
 
     return pairs;

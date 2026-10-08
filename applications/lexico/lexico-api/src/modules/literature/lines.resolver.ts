@@ -8,16 +8,21 @@ import {
 } from "@nestjs/graphql";
 
 import { mapConnection } from "../../lexico-api.utilities";
+import { PaginationArguments } from "../search/pagination-arguments.entities";
 
 import { LinesArguments } from "./line-arguments.entities";
 import { LineType } from "./line.entities";
-import { LineConnectionType } from "./literature-connection.entities";
+import {
+  LineConnectionType,
+  TokenConnectionType,
+} from "./literature-connection.entities";
+import { LiteratureRelationsLoader } from "./literature-relations.loader";
 import { LiteratureService } from "./literature.service";
 import { toLineType, toTokenType } from "./literature.utilities";
 import { SearchLinesArguments } from "./search-lines-arguments.entities";
-import { TokenType } from "./token.entities";
 
 import type { Connection } from "../../lexico-api.types";
+import type { TokenType } from "./token.entities";
 
 /**
  * GraphQL resolver for Lines.
@@ -29,6 +34,8 @@ export class LinesResolver {
   public constructor(
     @Inject(LiteratureService)
     private readonly literatureService: LiteratureService,
+    @Inject(LiteratureRelationsLoader)
+    private readonly literatureRelationsLoader: LiteratureRelationsLoader,
   ) {}
 
   // 🔎 Queries
@@ -68,10 +75,20 @@ export class LinesResolver {
 
   // 🔗 Relations
 
-  /** Resolves every token attached to a line. */
-  @ResolveField(() => [TokenType], { name: "tokens" })
-  public async tokensForLine(@Parent() line: LineType): Promise<TokenType[]> {
-    const tokens = await this.literatureService.listTokensForLine(line.id);
-    return tokens.map((token) => toTokenType(token));
+  /**
+   * Pages a line's tokens in index order, each with its dictionary word. The
+   * tokens of every line on a page are loaded together, in a fixed number of
+   * statements however many lines and tokens there are.
+   */
+  @ResolveField(() => TokenConnectionType, { name: "tokens" })
+  public async tokensForLine(
+    @Parent() line: LineType,
+    @Arguments() arguments_: PaginationArguments,
+  ): Promise<Connection<TokenType>> {
+    const tokens = await this.literatureRelationsLoader.tokensByLine.load({
+      pagination: arguments_,
+      parentId: line.id,
+    });
+    return mapConnection(tokens, toTokenType);
   }
 }

@@ -231,8 +231,8 @@ Call stacks traced through `packages/lexico-entities`, deepest first. Each frame
 
 | Measure | Value |
 | --- | --- |
-| Callables | 85 |
-| Files | 44 |
+| Callables | 20 |
+| Files | 43 |
 | Calls traced | 0 |
 | Call stacks | 0 |
 | Deepest stack | 0 |
@@ -327,6 +327,7 @@ graph LR
   file_src_modules_entities_dictionary_WordForm_entity_ts["src/modules/entities/dictionary/WordForm.entity.ts"]
   file_src_modules_entities_dictionary_WordLexeme_entity_ts["src/modules/entities/dictionary/WordLexeme.entity.ts"]
   file_src_modules_entities_entities_constants_ts["src/modules/entities/entities.constants.ts"]
+  file_src_modules_entities_entities_constants_unit_test_ts["src/modules/entities/entities.constants.unit.test.ts"]
   file_src_modules_entities_entities_module_integration_test_ts["src/modules/entities/entities.module.integration.test.ts"]
   file_src_modules_entities_entities_module_ts["src/modules/entities/entities.module.ts"]
   file_src_modules_entities_entities_service_integration_test_ts["src/modules/entities/entities.service.integration.test.ts"]
@@ -394,7 +395,12 @@ graph LR
   file_src_modules_entities_dictionary_WordForm_entity_ts --> file_src_modules_entities_dictionary_Word_entity_ts
   file_src_modules_entities_dictionary_WordLexeme_entity_ts --> file_src_modules_entities_dictionary_Lexeme_entity_ts
   file_src_modules_entities_dictionary_WordLexeme_entity_ts --> file_src_modules_entities_dictionary_Word_entity_ts
+  file_src_modules_entities_entities_constants_unit_test_ts --> file_src_modules_entities_entities_constants_ts
   file_src_modules_entities_entities_module_ts --> file_src_modules_entities_entities_service_ts
+  file_src_modules_entities_entities_service_integration_test_ts --> file_src_modules_entities_literature_Author_entity_ts
+  file_src_modules_entities_entities_service_integration_test_ts --> file_src_modules_entities_literature_Line_entity_ts
+  file_src_modules_entities_entities_service_integration_test_ts --> file_src_modules_entities_literature_Text_entity_ts
+  file_src_modules_entities_entities_service_integration_test_ts --> file_src_modules_entities_literature_Token_entity_ts
   file_src_modules_entities_entities_service_integration_test_ts --> file_src_modules_lexico_database_data_source_constants_ts
   file_src_modules_entities_entities_service_integration_test_ts --> file_src_modules_lexico_database_lexico_database_constants_ts
   file_src_modules_entities_entities_service_unit_test_ts --> file_src_modules_entities_dictionary_PartOfSpeech_entity_ts
@@ -404,12 +410,14 @@ graph LR
   file_src_modules_entities_entities_service_unit_test_ts --> file_src_modules_lexico_database_lexico_database_constants_ts
   file_src_modules_entities_entities_service_unit_test_ts --> file_testing_entity_definition_assertions_ts
   file_src_modules_entities_literature_Author_entity_ts --> file_src_modules_entities_literature_Text_entity_ts
+  file_src_modules_entities_literature_Line_entity_ts --> file_src_modules_entities_entities_constants_ts
   file_src_modules_entities_literature_Line_entity_ts --> file_src_modules_entities_literature_Author_entity_ts
   file_src_modules_entities_literature_Line_entity_ts --> file_src_modules_entities_literature_Text_entity_ts
   file_src_modules_entities_literature_Line_entity_ts --> file_src_modules_entities_literature_Token_entity_ts
   file_src_modules_entities_literature_Text_entity_ts --> file_src_modules_entities_literature_Author_entity_ts
   file_src_modules_entities_literature_Text_entity_ts --> file_src_modules_entities_literature_Line_entity_ts
   file_src_modules_entities_literature_Token_entity_ts --> file_src_modules_entities_dictionary_Word_entity_ts
+  file_src_modules_entities_literature_Token_entity_ts --> file_src_modules_entities_entities_constants_ts
   file_src_modules_entities_literature_Token_entity_ts --> file_src_modules_entities_literature_Author_entity_ts
   file_src_modules_entities_literature_Token_entity_ts --> file_src_modules_entities_literature_Line_entity_ts
   file_src_modules_entities_literature_Token_entity_ts --> file_src_modules_entities_literature_Text_entity_ts
@@ -457,14 +465,14 @@ graph LR
 
 ### Project
 
-![Lines of Code](https://img.shields.io/badge/Lines_of_Code-4894-22c55e?style=flat-square)
-![Repository Size](https://img.shields.io/badge/Repository_Size-209.12_kB-6b7280?style=flat-square)
-![Folders](https://img.shields.io/badge/Folders-11-4a4a4a?style=flat-square)
+![Lines of Code](https://img.shields.io/badge/Lines_of_Code-4825-22c55e?style=flat-square)
+![Repository Size](https://img.shields.io/badge/Repository_Size-207.49_kB-6b7280?style=flat-square)
+![Folders](https://img.shields.io/badge/Folders-10-4a4a4a?style=flat-square)
 ![Source Files](https://img.shields.io/badge/Source_Files-52-3178c6?style=flat-square)
 
 ### Measured Targets
 
-![Compiled JavaScript Size](https://img.shields.io/badge/Compiled_JavaScript_Size-27.07_kB_gzip-6b7280?style=flat-square)
+![Compiled JavaScript Size](https://img.shields.io/badge/Compiled_JavaScript_Size-25.50_kB_gzip-6b7280?style=flat-square)
 
 ### TypeScript
 
@@ -472,25 +480,25 @@ graph LR
 ![Interfaces](https://img.shields.io/badge/Interfaces-8-0ea5e9?style=flat-square)
 ![Generic Declarations](https://img.shields.io/badge/Generic_Declarations-2-0369a1?style=flat-square)
 ![Enums](https://img.shields.io/badge/Enums-0-f97316?style=flat-square)
-![Decorators](https://img.shields.io/badge/Decorators-261-db2777?style=flat-square)
+![Decorators](https://img.shields.io/badge/Decorators-151-db2777?style=flat-square)
 ![Doc Comments](https://img.shields.io/badge/Doc_Comments-82-6366f1?style=flat-square)
 ![Static Methods](https://img.shields.io/badge/Static_Methods-0-166534?style=flat-square)
 
 ### JavaScript
 
 ![JavaScript Files](https://img.shields.io/badge/JavaScript_Files-0-f7df1e?style=flat-square)
-![Test Files](https://img.shields.io/badge/Test_Files-5-10b981?style=flat-square)
-![External Packages](https://img.shields.io/badge/External_Packages-14-8b5cf6?style=flat-square)
-![Classes](https://img.shields.io/badge/Classes-36-7c3aed?style=flat-square)
-![Functions](https://img.shields.io/badge/Functions-189-16a34a?style=flat-square)
-![Methods](https://img.shields.io/badge/Methods-85-15803d?style=flat-square)
-![Sync Functions](https://img.shields.io/badge/Sync_Functions-249-4ade80?style=flat-square)
-![Async Functions](https://img.shields.io/badge/Async_Functions-25-059669?style=flat-square)
-![Constants](https://img.shields.io/badge/Constants-144-dc2626?style=flat-square)
-![Imports](https://img.shields.io/badge/Imports-214-0284c7?style=flat-square)
+![Test Files](https://img.shields.io/badge/Test_Files-6-10b981?style=flat-square)
+![External Packages](https://img.shields.io/badge/External_Packages-13-8b5cf6?style=flat-square)
+![Classes](https://img.shields.io/badge/Classes-35-7c3aed?style=flat-square)
+![Functions](https://img.shields.io/badge/Functions-195-16a34a?style=flat-square)
+![Methods](https://img.shields.io/badge/Methods-18-15803d?style=flat-square)
+![Sync Functions](https://img.shields.io/badge/Sync_Functions-187-4ade80?style=flat-square)
+![Async Functions](https://img.shields.io/badge/Async_Functions-26-059669?style=flat-square)
+![Constants](https://img.shields.io/badge/Constants-150-dc2626?style=flat-square)
+![Imports](https://img.shields.io/badge/Imports-194-0284c7?style=flat-square)
 ![Exported Symbols](https://img.shields.io/badge/Exported_Symbols-110-ea580c?style=flat-square)
 ![Comments](https://img.shields.io/badge/Comments-111-64748b?style=flat-square)
-![Comment Lines](https://img.shields.io/badge/Comment_Lines-200-475569?style=flat-square)
+![Comment Lines](https://img.shields.io/badge/Comment_Lines-201-475569?style=flat-square)
 ![TODO Comments](https://img.shields.io/badge/TODO_Comments-3-ca8a04?style=flat-square)
 
 ### Python
@@ -511,16 +519,16 @@ graph LR
 ### JSON
 
 ![JSON Files](https://img.shields.io/badge/JSON_Files-4-a16207?style=flat-square)
-![JSON Lines](https://img.shields.io/badge/JSON_Lines-151-ca8a04?style=flat-square)
+![JSON Lines](https://img.shields.io/badge/JSON_Lines-150-ca8a04?style=flat-square)
 ![JSON Objects](https://img.shields.io/badge/JSON_Objects-41-7c3aed?style=flat-square)
 ![JSON Arrays](https://img.shields.io/badge/JSON_Arrays-10-8b5cf6?style=flat-square)
-![JSON Properties](https://img.shields.io/badge/JSON_Properties-103-0284c7?style=flat-square)
-![JSON Strings](https://img.shields.io/badge/JSON_Strings-77-16a34a?style=flat-square)
+![JSON Properties](https://img.shields.io/badge/JSON_Properties-102-0284c7?style=flat-square)
+![JSON Strings](https://img.shields.io/badge/JSON_Strings-76-16a34a?style=flat-square)
 ![JSON Numbers](https://img.shields.io/badge/JSON_Numbers-1-059669?style=flat-square)
 ![JSON Booleans](https://img.shields.io/badge/JSON_Booleans-8-0ea5e9?style=flat-square)
 ![JSON Nulls](https://img.shields.io/badge/JSON_Nulls-0-64748b?style=flat-square)
 ![JSON Items](https://img.shields.io/badge/JSON_Items-30-475569?style=flat-square)
-![JSON Nodes](https://img.shields.io/badge/JSON_Nodes-137-dc2626?style=flat-square)
+![JSON Nodes](https://img.shields.io/badge/JSON_Nodes-136-dc2626?style=flat-square)
 ![JSON Max Depth](https://img.shields.io/badge/JSON_Max_Depth-7-ea580c?style=flat-square)
 
 ### YAML
@@ -607,8 +615,8 @@ graph LR
 ![Constants Files](https://img.shields.io/badge/Constants_Files-3-ea580c?style=flat-square)
 ![Types Files](https://img.shields.io/badge/Types_Files-2-db2777?style=flat-square)
 ![Utilities Files](https://img.shields.io/badge/Utilities_Files-0-0ea5e9?style=flat-square)
-![TypeORM Entities](https://img.shields.io/badge/TypeORM_Entities-29-059669?style=flat-square)
-![Unit Tests](https://img.shields.io/badge/Unit_Tests-3-ca8a04?style=flat-square)
+![TypeORM Entities](https://img.shields.io/badge/TypeORM_Entities-28-059669?style=flat-square)
+![Unit Tests](https://img.shields.io/badge/Unit_Tests-4-ca8a04?style=flat-square)
 ![Integration Tests](https://img.shields.io/badge/Integration_Tests-2-7c3aed?style=flat-square)
 ![End To End Tests](https://img.shields.io/badge/End_To_End_Tests-0-0284c7?style=flat-square)
 ![CSS Comment Budget](https://img.shields.io/badge/CSS_Comment_Budget-0-16a34a?style=flat-square)
