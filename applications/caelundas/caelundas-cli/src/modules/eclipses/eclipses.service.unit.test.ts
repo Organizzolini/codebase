@@ -197,7 +197,6 @@ describe(EclipsesService, () => {
           geocentricPhases: {
             lunarPhases: [],
             lunarType: null,
-            solarPhases: ["beginning"],
             solarType: "total",
           },
         }),

@@ -3,6 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { LoggerService } from "@codebase/logging";
 
 import {
+  HORIZON_REFRACTION_DEGREES,
   KILOMETERS_PER_ASTRONOMICAL_UNIT,
   radiusKilometersByHorizonBody,
 } from "../ephemeris/ephemeris.constants";
@@ -12,7 +13,6 @@ import {
   DANJON_SHADOW_ENLARGEMENT,
   DEGREES_PER_RADIAN,
   EARTH_EQUATORIAL_RADIUS_KILOMETERS,
-  HORIZON_REFRACTION_DEGREES,
 } from "./eclipses.constants";
 
 import type {

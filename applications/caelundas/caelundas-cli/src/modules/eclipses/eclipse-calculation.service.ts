@@ -288,7 +288,6 @@ export class EclipseCalculationService {
     geocentricPhases: {
       lunarPhases: EclipsePhase[];
       lunarType: LunarEclipseType | null;
-      solarPhases: EclipsePhase[];
       solarType: null | SolarEclipseType;
     };
     minute: Moment;
