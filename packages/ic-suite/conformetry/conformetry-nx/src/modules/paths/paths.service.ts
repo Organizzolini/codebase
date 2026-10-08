@@ -86,8 +86,6 @@ export class PathsService {
   }): string | undefined {
     const countsByParent = new Map<string, number>();
 
-    console.log("instances", args.instances);
-
     for (const instance of args.instances) {
       // An instance's path is already the parent: the template supplies the
       // folder, so nothing is stripped here.
@@ -99,8 +97,6 @@ export class PathsService {
 
       countsByParent.set(parentPath, (countsByParent.get(parentPath) ?? 0) + 1);
     }
-
-    console.log("countsByParent", [...countsByParent.entries()]);
 
     return [...countsByParent.entries()].toSorted(
       ([left, leftCount], [right, rightCount]) => {
@@ -133,14 +129,26 @@ export class PathsService {
    * Places a project that does not exist yet, which is why no project lookup
    * can answer this. An unrecognized type is used verbatim, so the first
    * project of a new type still lands somewhere sensible.
+   *
+   * Refuses when no type is given: falling back to the workspace root wrote a
+   * stray project folder there and reported success, which reads as the
+   * generator having worked.
    */
   private resolveNewProjectPath(args: {
+    generatorName: string | undefined;
     tree: Tree;
     type: string | undefined;
     workspaceRoot: string;
   }): string {
     if (args.type === undefined) {
-      return args.workspaceRoot;
+      const generator =
+        args.generatorName === undefined
+          ? "This generator"
+          : `Generator ${args.generatorName}`;
+
+      throw new Error(
+        `${generator} cannot tell where to place a new project. Pass --directory=<parent folder> (the folder the project is created inside; its kebab-case name is appended), or declare a type input on the generator.`,
+      );
     }
 
     return path.resolve(
@@ -207,8 +215,9 @@ export class PathsService {
    * Resolves the absolute directory a generator's template tree is laid over.
    *
    * This is the *parent* of anything the template creates, because a template
-   * that produces a folder contains that folder. Falls back to the workspace
-   * root when the inputs name nothing to locate.
+   * that produces a folder contains that folder. Throws for a new project
+   * whose inputs name neither a directory nor a type, rather than writing it
+   * at the workspace root.
    */
   public async resolveGenerationPath(
     args: ResolveGenerationPathArguments,
@@ -223,6 +232,7 @@ export class PathsService {
 
     if (projectName === undefined) {
       return this.resolveNewProjectPath({
+        generatorName: args.generatorName,
         tree: args.tree,
         type: args.inputs[TYPE_INPUT_NAME],
         workspaceRoot: args.workspaceRoot,
