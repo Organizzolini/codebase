@@ -12,7 +12,7 @@ import type { Hash, Task } from "@nx/devkit";
  * itself, which is the one place a run's own options can change whether it
  * is cacheable at all: `cache` is fixed per target, before any option is
  * read. A gate judging its own project is hashed exactly as Nx would; one
- * given `projects` or `tags` is never replayed.
+ * whose `projects` or `tags` select any other project is never replayed.
  */
 export default async function gateHasher(
   task: Task,

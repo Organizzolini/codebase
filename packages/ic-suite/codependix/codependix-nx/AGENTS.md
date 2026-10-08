@@ -50,7 +50,7 @@ src/index.ts — createNodes
   └─ PluginService.inferTargets                       ← one gate per project.json
 
 src/executors/gate/hasher.ts → GateService.hashTask   ← own-project runs hashed by Nx,
-                                                        selection runs never replayed
+                                                        selection of other projects never replayed
 src/executors/gate/executor.ts → GateService.run
   └─ node --import <loader URL> <@codependix/cli/main> map --check boundaries …
 ```
@@ -84,8 +84,10 @@ The schema is named by path and listed in `files`, so the tarball ships it.
 ### Caching rules
 
 - **Tool inputs** (`resolveToolInputs`): inside this workspace, a
-  `package.json`, `tsconfig.json`, and `src/**/!(*.test.*|*.spec.*)` glob per
-  package in `@codependix/cli`'s `workspace:` closure. Each package is located
+  `package.json` and `src/**/!(*.test.*|*.spec.*)` glob per package in
+  `@codependix/cli`'s `workspace:` closure, plus `{workspaceRoot}/tsconfig.json`
+  in either case: `@swc-node/register` reads its options from the gate's
+  working directory (the workspace root), never from a package's own tsconfig. Each package is located
   through its entry and the manifest that names it; one that cannot be
   located is named in an Nx `logger.warn` and skipped. An installed command
   line yields one `externalDependencies` input instead. Never throws.
@@ -94,7 +96,7 @@ The schema is named by path and listed in `files`, so the tarball ships it.
   `!`-prefixed one, so a negated input would not stop a test-only edit from
   selecting every gate.
 - **Selection runs are never cached.** A gate whose effective `projects` or
-  `tags` (target options, then configuration, then command line) judge any
+  `tags` (target options, then configuration, then command line) select any
   project but its own gets a random hash from `GateService.hashTask`.
 
 ### Key Commands
