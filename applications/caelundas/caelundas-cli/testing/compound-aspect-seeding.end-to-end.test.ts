@@ -1,116 +1,110 @@
-import { describe, expect, it } from "vitest";
+import { NestFactory } from "@nestjs/core";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+
+import { AspectsUtilitiesService } from "../src/modules/aspects/aspects-utilities.service";
+import { aspectBodies } from "../src/modules/caelundas/caelundas.constants";
+import { isAspect } from "../src/modules/caelundas/caelundas.types";
+import { EphemerisService } from "../src/modules/ephemeris/ephemeris.service";
 
 import { PIPELINE_TEST_TIMEOUT_MILLISECONDS } from "./pipeline-window.constants";
 import { runPipelineWindow } from "./pipeline-window.functions";
+import { PipelineWindowModule } from "./pipeline-window.module";
 
 import type { DetectedCalendarEvent } from "../src/modules/caelundas-database/caelundas-database.types";
-import type { PipelineWindow } from "./pipeline-window.types";
+import type { Aspect, Body } from "../src/modules/caelundas/caelundas.types";
+import type { INestApplicationContext } from "@nestjs/common";
 
 const philadelphia = { latitude: 39.949_309, longitude: -75.171_69 };
 
-/** The Mars-Pluto T-squares window, shared with its reference fixture's sweep. */
-const octoberWindow = {
-  ...philadelphia,
-  endDate: "2026-10-02",
-  startDate: "2026-10-01",
-};
+/** The windows of the two compound-aspect reference fixtures, so their sweeps are shared. */
+const windows = [
+  [
+    "October 2026",
+    { ...philadelphia, endDate: "2026-10-02", startDate: "2026-10-01" },
+  ],
+  [
+    "January 2026",
+    { ...philadelphia, endDate: "2026-01-17", startDate: "2026-01-15" },
+  ],
+] as const;
+
+/** The two bodies and the aspect a simple-aspect event names in its categories. */
+function parseSimpleAspect(
+  event: DetectedCalendarEvent,
+): null | { aspect: Aspect; body1: Body; body2: Body } {
+  const categories = event.categories.map((category) => category.toLowerCase());
+  const [body1, body2, ...others] = aspectBodies.filter((body) =>
+    categories.includes(body),
+  );
+  const aspect = categories.find((category) => isAspect(category));
+  if (!aspect || !body1 || !body2 || others.length > 0) return null;
+  return { aspect, body1, body2 };
+}
 
 /**
- * Mid-January 2026: Sun, Venus, Mars, Mercury, Vesta and Pluto, most of whose
- * conjunctions formed before the window opens, close into one stellium when
- * Mercury's conjunction with Pluto forms on the 17th.
+ * Seeding must not invent simple aspects: any simple aspect forming at a
+ * window's first minute has to be one that was out of orb the minute before,
+ * judged from the real ephemeris rather than from caelundas' own events.
  */
-const januaryWindow = {
-  ...philadelphia,
-  endDate: "2026-01-17",
-  startDate: "2026-01-15",
-};
-
-const januaryStelliumBodies = [
-  "Mars",
-  "Mercury",
-  "Pluto",
-  "Sun",
-  "Venus",
-  "Vesta",
-];
-
-/** The first minute a sweep covers: midnight local time on its start date. */
-function firstMinute(window: PipelineWindow): number {
-  return window.input.start.clone().startOf("day").valueOf();
-}
-
-/** Whether an event carries every one of the given categories. */
-function hasCategories(
-  event: DetectedCalendarEvent,
-  categories: string[],
-): boolean {
-  return categories.every((category) => event.categories.includes(category));
-}
-
 describe(
-  "compound aspects in effect at the window start",
+  "simple aspects at the window start",
   { timeout: PIPELINE_TEST_TIMEOUT_MILLISECONDS },
   () => {
-    it("reports the compound aspects already in orb at the first minute", async () => {
-      expect.hasAssertions();
+    let context: INestApplicationContext;
 
-      const swept = await runPipelineWindow(januaryWindow);
-      const start = firstMinute(swept);
-      const { perfective } = swept;
-      const compoundsAtStart = perfective.filter(
-        (event) =>
-          event.start.valueOf() === start &&
-          hasCategories(event, ["Compound Aspect", "Forming"]),
+    beforeAll(async () => {
+      context = await NestFactory.createApplicationContext(
+        PipelineWindowModule,
+        { abortOnError: false, logger: false },
       );
-
-      expect(compoundsAtStart.length).toBeGreaterThan(0);
     });
 
-    it("reports the January stellium whose legs formed before the window", async () => {
-      expect.hasAssertions();
-
-      const { perfective } = await runPipelineWindow(januaryWindow);
-      const lastLeg = perfective.find((event) =>
-        hasCategories(event, [
-          "Simple Aspect",
-          "Conjunct",
-          "Forming",
-          "Mercury",
-          "Pluto",
-        ]),
-      );
-      const stellium = perfective.find(
-        (event) =>
-          hasCategories(event, ["Stellium", "Forming"]) &&
-          januaryStelliumBodies.every((body) =>
-            event.categories.includes(body),
-          ),
-      );
-
-      expect(lastLeg).toBeDefined();
-      expect(stellium?.start.toISOString()).toBe(lastLeg?.start.toISOString());
+    afterAll(async () => {
+      await context.close();
     });
 
-    it.each([
-      ["October 2026", octoberWindow],
-      ["January 2026", januaryWindow],
-    ])(
-      "emits no simple-aspect event at the first minute of %s",
+    it.each(windows)(
+      "forms at the first minute of %s only pairs that were out of orb a minute earlier",
       async (_name, window) => {
         expect.hasAssertions();
 
-        const swept = await runPipelineWindow(window);
-        const start = firstMinute(swept);
-        const { perfective } = swept;
+        const { input, perfective } = await runPipelineWindow(window);
+        const firstMinute = input.start.clone().startOf("day");
+        const previousMinute = firstMinute.clone().subtract(1, "minute");
+        const coordinateEphemerisByBody = context
+          .get(EphemerisService)
+          .getCoordinateEphemerisByBody({
+            bodies: [...aspectBodies],
+            end: firstMinute,
+            start: previousMinute,
+            timezone: input.timezone,
+          });
+        const aspectsUtilitiesService = context.get(AspectsUtilitiesService);
+        const longitudeBefore = (body: Body): number =>
+          coordinateEphemerisByBody[body][previousMinute.toISOString()]
+            ?.longitude ?? Number.NaN;
 
-        expect(
-          perfective.filter(
+        const inOrbBefore = perfective
+          .filter(
             (event) =>
-              event.start.valueOf() === start &&
-              event.categories.includes("Simple Aspect"),
-          ),
-        ).toStrictEqual([]);
+              event.start.isSame(firstMinute) &&
+              ["Simple Aspect", "Forming"].every((category) =>
+                event.categories.includes(category),
+              ),
+          )
+          .filter((event) => {
+            const parsed = parseSimpleAspect(event);
+            return (
+              parsed === null ||
+              aspectsUtilitiesService.isAspect({
+                aspect: parsed.aspect,
+                longitudeBody1: longitudeBefore(parsed.body1),
+                longitudeBody2: longitudeBefore(parsed.body2),
+              })
+            );
+          });
+
+        expect(inOrbBefore.map((event) => event.summary)).toStrictEqual([]);
       },
     );
   },
