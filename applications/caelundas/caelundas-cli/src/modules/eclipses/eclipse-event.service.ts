@@ -4,8 +4,8 @@ import { LoggerService } from "@codebase/logging";
 
 import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { EclipsePhase } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { EclipseFrame } from "./eclipses.types";
 import type { Moment } from "moment-timezone";
 
@@ -40,7 +40,7 @@ export class EclipseEventService {
     description: string;
     frame: EclipseFrame;
     summary: string;
-  }): Event {
+  }): DetectedCalendarEvent {
     const { body, date, description, frame, summary } = args;
     const frameLabel =
       frame === "geocentric" ? "Geocentric" : "Topocentric Visibility";
@@ -67,10 +67,10 @@ export class EclipseEventService {
    * Derives lunar eclipse duration event.
    */
   private getLunarEclipseDurationEvent(
-    beginning: Event,
-    ending: Event,
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
     frameLabel: "Geocentric" | "Topocentric Visibility",
-  ): Event {
+  ): DetectedCalendarEvent {
     const frameSymbol = frameLabel === "Geocentric" ? "🌐" : "📍";
     return {
       categories: [...this.categories, "Lunar", frameLabel],
@@ -110,10 +110,10 @@ export class EclipseEventService {
    * Derives progressive frame.
    */
   private getProgressiveEventsForFrame(
-    eclipseEvents: Event[],
+    eclipseEvents: DetectedCalendarEvent[],
     frameLabel: "Geocentric" | "Topocentric Visibility",
     body: "Lunar" | "Solar",
-  ): Event[] {
+  ): DetectedCalendarEvent[] {
     const events = eclipseEvents.filter(
       (event) =>
         event.categories.includes(body) &&
@@ -143,10 +143,10 @@ export class EclipseEventService {
    * Derives solar eclipse duration event.
    */
   private getSolarEclipseDurationEvent(
-    beginning: Event,
-    ending: Event,
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
     frameLabel: "Geocentric" | "Topocentric Visibility",
-  ): Event {
+  ): DetectedCalendarEvent {
     const frameSymbol = frameLabel === "Geocentric" ? "🌐" : "📍";
     return {
       categories: [...this.categories, "Solar", frameLabel],
@@ -191,7 +191,7 @@ export class EclipseEventService {
     date: Moment;
     frame: EclipseFrame;
     phase: EclipsePhase;
-  }): Event {
+  }): DetectedCalendarEvent {
     const { date, frame, phase } = args;
     const { description, summary } = this.getLunarEclipsePhaseLabels(phase);
     return this.buildEclipseEvent({
@@ -210,7 +210,7 @@ export class EclipseEventService {
     date: Moment;
     frame: EclipseFrame;
     phase: EclipsePhase;
-  }): Event {
+  }): DetectedCalendarEvent {
     const { date, frame, phase } = args;
     const { description, summary } = this.getSolarEclipsePhaseLabels(phase);
     return this.buildEclipseEvent({
@@ -225,7 +225,7 @@ export class EclipseEventService {
   /**
    * Builds progressive event spans for eclipse periods.
    */
-  detectProgressive(events: Event[]): Event[] {
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
     const eclipseEvents = events.filter((event) =>
       event.categories.includes("Eclipse"),
     );

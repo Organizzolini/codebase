@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 
 import { LoggerService } from "@codebase/logging";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 /**
  * Utility service for pairing progressive events.
@@ -31,10 +31,10 @@ export class ProgressiveUtilitiesService {
    * Pairs beginning and ending events into tuples.
    */
   pairProgressiveEvents(
-    beginnings: Event[],
-    endings: Event[],
+    beginnings: DetectedCalendarEvent[],
+    endings: DetectedCalendarEvent[],
     label: string,
-  ): [Event, Event][] {
+  ): [DetectedCalendarEvent, DetectedCalendarEvent][] {
     const pairCount = Math.min(beginnings.length, endings.length);
 
     if (beginnings.length !== endings.length) {
@@ -45,7 +45,7 @@ export class ProgressiveUtilitiesService {
       });
     }
 
-    const pairs: [Event, Event][] = [];
+    const pairs: [DetectedCalendarEvent, DetectedCalendarEvent][] = [];
 
     for (let index = 0; index < pairCount; index++) {
       const beginning = beginnings[index];

@@ -15,7 +15,7 @@ import {
   MERCURY_MORNING_VISIBILITY_DESCRIPTION,
 } from "./phases.constants";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { PhaseParameters } from "./phases.types";
 
 const createTimestamp = (): moment.Moment =>
@@ -42,7 +42,7 @@ const configurePhaseCalculationServiceMock = (
   >,
 ): void => {
   vi.mocked(phaseCalculationService.filterByCategory).mockImplementation(
-    (events: Event[], category: string) =>
+    (events: DetectedCalendarEvent[], category: string) =>
       events.filter((event) => event.categories.includes(category)),
   );
   vi.mocked(phaseCalculationService.formatTimeZoneIso).mockReturnValue(
@@ -336,14 +336,14 @@ describe(MercurianPhaseService, () => {
 
   describe("getMercurianPhaseProgressiveEvents", () => {
     it("creates mercurian morning visibility duration events", () => {
-      const morningRise: Event = {
+      const morningRise: DetectedCalendarEvent = {
         categories: ["Planetary Phase", "Mercurian", "Morning Rise"],
         description: "Mercury Morning Rise",
         end: moment.utc("2024-01-01T00:00:00.000Z"),
         start: moment.utc("2024-01-01T00:00:00.000Z"),
         summary: "Mercury Morning Rise",
       };
-      const morningSet: Event = {
+      const morningSet: DetectedCalendarEvent = {
         categories: ["Planetary Phase", "Mercurian", "Morning Set"],
         description: "Mercury Morning Set",
         end: moment.utc("2024-01-02T00:00:00.000Z"),
@@ -368,14 +368,14 @@ describe(MercurianPhaseService, () => {
     });
 
     it("creates mercurian evening visibility duration events", () => {
-      const eveningRise: Event = {
+      const eveningRise: DetectedCalendarEvent = {
         categories: ["Planetary Phase", "Mercurian", "Evening Rise"],
         description: "Mercury Evening Rise",
         end: moment.utc("2024-01-01T00:00:00.000Z"),
         start: moment.utc("2024-01-01T00:00:00.000Z"),
         summary: "Mercury Evening Rise",
       };
-      const eveningSet: Event = {
+      const eveningSet: DetectedCalendarEvent = {
         categories: ["Planetary Phase", "Mercurian", "Evening Set"],
         description: "Mercury Evening Set",
         end: moment.utc("2024-01-02T00:00:00.000Z"),

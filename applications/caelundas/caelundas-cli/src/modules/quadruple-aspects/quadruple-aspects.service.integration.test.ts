@@ -10,7 +10,7 @@ import { QuadrupleAspectsComposerService } from "./quadruple-aspects-composer.se
 import { QuadrupleAspectsService } from "./quadruple-aspects.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 /**
  * Integration tests for Quadruple Aspect pattern detection
@@ -122,7 +122,7 @@ describe("quadruple-aspects.events integration", () => {
       const formingStart = moment.utc("2024-06-15T14:30:00.000Z");
       const dissolvingStart = moment.utc("2024-06-15T18:00:00.000Z");
 
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -142,7 +142,7 @@ describe("quadruple-aspects.events integration", () => {
           "➡️ ➕ ☀️-♂️-🌙-♃ Jupiter, Mars, Moon, Sun grand cross forming",
       };
 
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -270,7 +270,7 @@ describe("quadruple-aspects.events integration", () => {
       const formingStart = moment.utc("2024-07-20T10:00:00.000Z");
       const dissolvingStart = moment.utc("2024-07-20T14:00:00.000Z");
 
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -291,7 +291,7 @@ describe("quadruple-aspects.events integration", () => {
           "➡️ 🪁 ☀️-🌙-♂️-♀️ Mars, Moon, Sun, Venus kite forming (Venus focal)",
       };
 
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",

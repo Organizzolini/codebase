@@ -4,7 +4,6 @@ import { Command, CommandRunner } from "nest-commander";
 import { LoggerService } from "@codebase/logging";
 
 import { CalendarEventsService } from "../calendar-events/calendar-events.service";
-import { toEvent } from "../calendar-events/calendar-events.utilities";
 import { CalendarService } from "../calendar/calendar.service";
 import { InputService } from "../input/input.service";
 import { PerfectiveService } from "../perfective/perfective.service";
@@ -90,13 +89,12 @@ export class CaelundasCommand extends CommandRunner {
     };
     await this.calendarEventsService.upsert(allEvents, coordinates);
 
-    const storedRows = await this.calendarEventsService.findInRange({
+    const storedEvents = await this.calendarEventsService.findInRange({
       ...coordinates,
       // Detection covers the whole end date, so read back through its end.
       end: input.end.clone().add(1, "day"),
       start: input.start,
     });
-    const storedEvents = storedRows.map((row) => toEvent(row));
 
     await this.calendarService.write(storedEvents, input);
     await this.calendarService.writeJson(storedEvents, input);

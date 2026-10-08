@@ -8,12 +8,12 @@ import { specialtyAspects } from "../caelundas/caelundas.constants";
 import { symbolBySpecialtyAspect } from "../caelundas/symbol-caelundas.constants";
 import { EphemerisService } from "../ephemeris/ephemeris.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   AspectPhase,
   Body,
   SpecialtyAspect,
 } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 import type { Moment } from "moment-timezone";
 
@@ -50,7 +50,7 @@ export class SpecialtyAspectsEventService {
     phase: AspectPhase;
     specialtyAspect: SpecialtyAspect;
     timestamp: Moment;
-  }): Event {
+  }): DetectedCalendarEvent {
     const { body1, body2, phase, specialtyAspect, timestamp } = args;
     return this.aspectEventFormattingService.assembleSimpleAspectEvent({
       aspectCategory: "Specialty Aspect",

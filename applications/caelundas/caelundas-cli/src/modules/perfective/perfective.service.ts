@@ -16,7 +16,7 @@ import { RetrogradesService } from "../retrogrades/retrogrades.service";
 import { TwilightsService } from "../twilights/twilights.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Coordinates, Ephemerides } from "../ephemeris/ephemeris.types";
 import type { Input } from "../input/input.types";
 import type { Moment } from "moment-timezone";
@@ -61,7 +61,10 @@ export class PerfectiveService {
     date: Moment;
     previousAspectBodies: AspectBodies[];
     timezone: string;
-  }): { events: Event[]; previousAspectBodies: AspectBodies[] } {
+  }): {
+    events: DetectedCalendarEvent[];
+    previousAspectBodies: AspectBodies[];
+  } {
     const {
       coordinates,
       date,
@@ -77,7 +80,7 @@ export class PerfectiveService {
       start: startOfDay.clone().subtract(MARGIN_MINUTES, "minutes"),
       timezone,
     });
-    const events: Event[] = [];
+    const events: DetectedCalendarEvent[] = [];
     for (const minute of this.datetimeService.generateMinutes(
       startOfDay,
       endOfDay,
@@ -98,14 +101,14 @@ export class PerfectiveService {
     minute: Moment,
     ephemerides: Ephemerides,
     previousAspectBodies: AspectBodies[],
-  ): { aspectBodies: AspectBodies[]; events: Event[] } {
+  ): { aspectBodies: AspectBodies[]; events: DetectedCalendarEvent[] } {
     const { coordinateEphemerisByBody } = ephemerides;
     const { aspectBodies, events: aspectEvents } = this.aspectsService.detect({
       coordinateEphemerisByBody,
       minute,
       previousAspectBodies,
     });
-    const events: Event[] = [
+    const events: DetectedCalendarEvent[] = [
       ...aspectEvents,
       ...this.detectObservationalEvents(minute, ephemerides),
       ...this.detectOrbitalEvents(minute, ephemerides),
@@ -117,7 +120,7 @@ export class PerfectiveService {
   private detectObservationalEvents(
     minute: Moment,
     ephemerides: Ephemerides,
-  ): Event[] {
+  ): DetectedCalendarEvent[] {
     const {
       azimuthElevationEphemerisByBody,
       coordinateEphemerisByBody,
@@ -149,7 +152,7 @@ export class PerfectiveService {
   private detectOrbitalEvents(
     minute: Moment,
     ephemerides: Ephemerides,
-  ): Event[] {
+  ): DetectedCalendarEvent[] {
     const {
       coordinateEphemerisByBody,
       distanceEphemerisByBody,
@@ -200,11 +203,11 @@ export class PerfectiveService {
    * to identify aspects, eclipses, retrogrades, ingresses, daily solar/lunar cycle events,
    * monthly lunar phases, annual solar cycle events, and twilight transitions.
    */
-  detect(input: Input): Event[] {
+  detect(input: Input): DetectedCalendarEvent[] {
     const { end, latitude, longitude, start, timezone } = input;
     const coordinates: Coordinates = [longitude, latitude];
     let previousAspectBodies: AspectBodies[] = [];
-    const perfectiveEvents: Event[] = [];
+    const perfectiveEvents: DetectedCalendarEvent[] = [];
     for (const date of this.datetimeService.generateDates(
       start,
       end,

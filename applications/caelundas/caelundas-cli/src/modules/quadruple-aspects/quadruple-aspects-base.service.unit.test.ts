@@ -8,8 +8,8 @@ import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { QuadrupleAspectsBaseService } from "./quadruple-aspects-base.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 
 describe(QuadrupleAspectsBaseService, () => {
   let service: QuadrupleAspectsBaseService;
@@ -115,14 +115,14 @@ describe(QuadrupleAspectsBaseService, () => {
   });
 
   it("builds progressive events by stripping phase markers and emojis", () => {
-    const formingEvent: Event = {
+    const formingEvent: DetectedCalendarEvent = {
       categories: ["Quadruple Aspect", "Grand Cross", "Forming", "Sun"],
       description: "Mars, Moon, Sun, Venus grand cross forming (Mars focal)",
       end: moment.utc("2024-03-21T10:00:00.000Z"),
       start: moment.utc("2024-03-21T10:00:00.000Z"),
       summary: "➡️ ⊞ ☉-☽-♂-♀ Mars, Moon, Sun, Venus grand cross forming",
     };
-    const dissolvingEvent: Event = {
+    const dissolvingEvent: DetectedCalendarEvent = {
       categories: ["Quadruple Aspect", "Grand Cross", "Dissolving", "Sun"],
       description: "Mars, Moon, Sun, Venus grand cross dissolving (Mars focal)",
       end: moment.utc("2024-03-21T14:00:00.000Z"),

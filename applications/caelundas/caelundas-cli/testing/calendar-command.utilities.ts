@@ -17,7 +17,7 @@ import { InputModule } from "../src/modules/input/input.module";
 import { PerfectiveService } from "../src/modules/perfective/perfective.service";
 import { ProgressiveService } from "../src/modules/progressive/progressive.service";
 
-import type { Event } from "../src/modules/calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../src/modules/caelundas-database/caelundas-database.types";
 import type { Input } from "../src/modules/input/input.types";
 import type {
   CalendarCommandOutput,
@@ -25,7 +25,11 @@ import type {
 } from "./calendar-command.types";
 
 /** An event the stand-in detector knows about, with its times in UTC. */
-export function detectable(summary: string, start: string, end = start): Event {
+export function detectable(
+  summary: string,
+  start: string,
+  end = start,
+): DetectedCalendarEvent {
   return {
     categories: ["aspects", "e2e"],
     description: `${summary} description`,
@@ -48,7 +52,7 @@ export function detectable(summary: string, start: string, end = start): Event {
  */
 export async function runCalendarCommand(
   run: CalendarCommandRun,
-  detectableEvents: readonly Event[],
+  detectableEvents: readonly DetectedCalendarEvent[],
 ): Promise<CalendarCommandOutput> {
   vi.stubEnv("START_DATE", run.startDate);
   vi.stubEnv("END_DATE", run.endDate);
@@ -76,7 +80,7 @@ export async function runCalendarCommand(
       {
         provide: PerfectiveService,
         useValue: {
-          detect: (input: Input): Event[] =>
+          detect: (input: Input): DetectedCalendarEvent[] =>
             detectableEvents.filter(
               (event) =>
                 event.start.isSameOrAfter(input.start) &&
@@ -86,7 +90,7 @@ export async function runCalendarCommand(
       },
       {
         provide: ProgressiveService,
-        useValue: { detect: (): Event[] => [] },
+        useValue: { detect: (): DetectedCalendarEvent[] => [] },
       },
     ],
   })

@@ -10,7 +10,7 @@ import { SextupleAspectsComposerService } from "./sextuple-aspects-composer.serv
 import { SextupleAspectsService } from "./sextuple-aspects.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 /**
  * Integration tests for Sextuple Aspects (Hexagram/Star of David) detection
@@ -153,7 +153,7 @@ describe("sextuple-aspects.events integration", () => {
     });
 
     it("creates progressive event from forming/dissolving Hexagram pair", () => {
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -175,7 +175,7 @@ describe("sextuple-aspects.events integration", () => {
           "➡️ ✡ ☉-☽-♂-♃-♀-♄ Jupiter, Mars, Moon, Saturn, Sun, Venus hexagram forming",
       };
 
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",

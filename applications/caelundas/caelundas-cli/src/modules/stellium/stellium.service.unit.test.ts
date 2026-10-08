@@ -9,7 +9,7 @@ import { ProgressiveCompoundEventService } from "../aspects/progressive-compound
 import { StelliumService } from "./stellium.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 describe(StelliumService, () => {
   let service: StelliumService;
@@ -265,7 +265,7 @@ describe(StelliumService, () => {
     });
 
     it("returns empty array when no stellium events exist", () => {
-      const events: Event[] = [
+      const events: DetectedCalendarEvent[] = [
         {
           categories: ["Astronomy", "Astrology", "Simple Aspect"],
           description: "Sun conjunct Moon",
@@ -290,7 +290,7 @@ describe(StelliumService, () => {
           bodies: string[];
           phase: "dissolving" | "forming" | "perfective";
           timestamp: moment.Moment;
-        }) => Event;
+        }) => DetectedCalendarEvent;
         getNeighbor: (
           edge: AspectBodies,
           current: "mars" | "moon" | "sun",
@@ -301,7 +301,9 @@ describe(StelliumService, () => {
           body2: "moon" | "sun";
           edges: AspectBodies[];
         }) => boolean;
-        pairStelliumGroup: (events: (Event | undefined)[]) => Event[];
+        pairStelliumGroup: (
+          events: (DetectedCalendarEvent | undefined)[],
+        ) => DetectedCalendarEvent[];
         phaseEmojiFor: (
           phase: "dissolving" | "forming" | "perfective",
         ) => string;
@@ -397,7 +399,7 @@ describe(StelliumService, () => {
     });
 
     it("creates progressive event from forming to dissolving pair", () => {
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -416,7 +418,7 @@ describe(StelliumService, () => {
         summary: "➡️ ✨ ☉-☽-♂-♀ Mars, Moon, Sun, Venus stellium forming",
       };
 
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -454,7 +456,7 @@ describe(StelliumService, () => {
     });
 
     it("does not create progressive event when only forming exists", () => {
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -479,7 +481,7 @@ describe(StelliumService, () => {
     });
 
     it("does not create progressive event when only dissolving exists", () => {
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -504,7 +506,7 @@ describe(StelliumService, () => {
     });
 
     it("handles multiple forming/dissolving pairs", () => {
-      const events: Event[] = [
+      const events: DetectedCalendarEvent[] = [
         {
           categories: [
             "Astronomy",
@@ -597,7 +599,7 @@ describe(StelliumService, () => {
     });
 
     it("handles different body combinations separately", () => {
-      const events: Event[] = [
+      const events: DetectedCalendarEvent[] = [
         // First body combination
         {
           categories: [
@@ -685,7 +687,7 @@ describe(StelliumService, () => {
     });
 
     it("handles different stellium sizes separately", () => {
-      const events: Event[] = [
+      const events: DetectedCalendarEvent[] = [
         // 4-body stellium
         {
           categories: [

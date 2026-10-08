@@ -13,8 +13,8 @@ import { EclipseEventService } from "./eclipse-event.service";
 import { EclipseGeometryService } from "./eclipse-geometry.service";
 import { EclipseTopocentricService } from "./eclipse-topocentric.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { EclipsePhase } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { NeighborValues } from "../math/math.types";
 import type { EclipseCoordinates, EclipseFrame } from "./eclipses.types";
 
@@ -410,7 +410,7 @@ describe(EclipseCalculationService, () => {
               string,
               { azimuth: number; elevation: number }
             >;
-          }) => Event[]
+          }) => DetectedCalendarEvent[]
         >(),
       isLunarEclipseActive: vi.fn<(current: EclipseCoordinates) => boolean>(),
       isLunarTopocentricActive:
@@ -430,7 +430,7 @@ describe(EclipseCalculationService, () => {
             date: Moment;
             frame: EclipseFrame;
             phase: EclipsePhase;
-          }) => Event
+          }) => DetectedCalendarEvent
         >(),
       buildSolarEclipseEvent:
         vi.fn<
@@ -438,7 +438,7 @@ describe(EclipseCalculationService, () => {
             date: Moment;
             frame: EclipseFrame;
             phase: EclipsePhase;
-          }) => Event
+          }) => DetectedCalendarEvent
         >(),
     };
     const mockedMathService = {
@@ -466,14 +466,14 @@ describe(EclipseCalculationService, () => {
         end: minute,
         start: minute,
         summary: "Solar",
-      } as Event;
+      } as DetectedCalendarEvent;
       const lunarEvent = {
         categories: ["Eclipse", "Lunar"],
         description: "Lunar",
         end: minute,
         start: minute,
         summary: "Lunar",
-      } as Event;
+      } as DetectedCalendarEvent;
 
       mockedEventService.buildSolarEclipseEvent.mockReturnValue(solarEvent);
       mockedEventService.buildLunarEclipseEvent.mockReturnValue(lunarEvent);
@@ -802,7 +802,7 @@ describe(EclipseCalculationService, () => {
             minute: Moment,
             solarPhase: "beginning" | "ending" | "maximum" | null,
             lunarPhase: "beginning" | "ending" | "maximum" | null,
-          ) => Event[];
+          ) => DetectedCalendarEvent[];
         }
       ).buildGeocentricEclipseEvents.bind(branchService);
       const minute = moment.utc("2024-04-08T18:00:00.000Z");
@@ -812,14 +812,14 @@ describe(EclipseCalculationService, () => {
         end: minute,
         start: minute,
         summary: "solar",
-      } as Event;
+      } as DetectedCalendarEvent;
       const lunarEvent = {
         categories: ["Eclipse", "Lunar"],
         description: "lunar",
         end: minute,
         start: minute,
         summary: "lunar",
-      } as Event;
+      } as DetectedCalendarEvent;
       mockedEventService.buildSolarEclipseEvent.mockReturnValue(solarEvent);
       mockedEventService.buildLunarEclipseEvent.mockReturnValue(lunarEvent);
 

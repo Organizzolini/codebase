@@ -12,13 +12,13 @@ import {
 } from "../caelundas/symbol-caelundas.constants";
 
 import type { AspectBodies } from "../aspects/aspects.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   Aspect,
   AspectPhase,
   Body,
   TripleAspect,
 } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { ProgressiveBodiesMeta } from "./triple-aspects.types";
 import type { Moment } from "moment-timezone";
 
@@ -47,7 +47,7 @@ export class TripleAspectsComposerService {
    * Builds progressive bodies meta.
    */
   private buildProgressiveBodiesMeta(
-    forming: Event,
+    forming: DetectedCalendarEvent,
     aspectCapitalized: string,
   ): null | ProgressiveBodiesMeta {
     const tripleAspectBodyNames = new Set(
@@ -164,10 +164,10 @@ export class TripleAspectsComposerService {
    * Pairs progressive group pairs.
    */
   private pairProgressiveGroupPairs(
-    formingEvents: Event[],
-    dissolvingEvents: Event[],
-  ): Event[] {
-    const results: Event[] = [];
+    formingEvents: DetectedCalendarEvent[],
+    dissolvingEvents: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
+    const results: DetectedCalendarEvent[] = [];
 
     for (
       let index = 0;
@@ -271,9 +271,9 @@ export class TripleAspectsComposerService {
    */
   buildProgressiveEvent(args: {
     aspectCapitalized: string;
-    dissolving: Event;
-    forming: Event;
-  }): Event | null {
+    dissolving: DetectedCalendarEvent;
+    forming: DetectedCalendarEvent;
+  }): DetectedCalendarEvent | null {
     const meta = this.buildProgressiveBodiesMeta(
       args.forming,
       args.aspectCapitalized,
@@ -323,7 +323,7 @@ export class TripleAspectsComposerService {
     phase: AspectPhase;
     timestamp: Moment;
     tripleAspect: TripleAspect;
-  }): Event {
+  }): DetectedCalendarEvent {
     const {
       body1,
       body2,
@@ -388,7 +388,7 @@ export class TripleAspectsComposerService {
   /**
    * Builds a stable progressive grouping key from sorted bodies plus aspect label.
    */
-  getProgressiveGroupKey(event: Event): string {
+  getProgressiveGroupKey(event: DetectedCalendarEvent): string {
     const tripleAspectBodyNames = new Set(
       tripleAspectBodies.map((body) => _.startCase(body)),
     );
@@ -422,7 +422,9 @@ export class TripleAspectsComposerService {
   /**
    * Pairs sorted forming/dissolving events for one triple-aspect group key.
    */
-  pairProgressiveGroup(groupEvents: Event[]): Event[] {
+  pairProgressiveGroup(
+    groupEvents: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     const formingEvents = groupEvents
       .filter((event) => event.categories.includes("Forming"))
       .toSorted((left, right) => left.start.valueOf() - right.start.valueOf());

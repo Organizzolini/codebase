@@ -17,8 +17,8 @@ import { MinorAspectsEventService } from "./minor-aspects-event.service";
 import { MinorAspectsProgressiveService } from "./minor-aspects-progressive.service";
 import { MinorAspectsService } from "./minor-aspects.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Body } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 
 vi.mock("fs", () => ({
@@ -482,7 +482,7 @@ describe(MinorAspectsService, () => {
       aspect: string,
       phase: string,
       timestamp: Moment,
-    ): Event => {
+    ): DetectedCalendarEvent => {
       return {
         categories: [
           "Astronomy",
@@ -627,7 +627,7 @@ describe(MinorAspectsService, () => {
         "Dissolving",
         moment.utc("2024-03-21T14:00:00.000Z"),
       );
-      const nonAspectEvent: Event = {
+      const nonAspectEvent: DetectedCalendarEvent = {
         categories: ["Solar", "Daily Cycle"],
         description: "Sunrise",
         end: moment.utc("2024-03-21T12:00:00.000Z"),

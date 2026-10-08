@@ -6,7 +6,7 @@ import { CalendarService } from "../calendar/calendar.service";
 import { EphemerisService } from "../ephemeris/ephemeris.service";
 import { MathService } from "../math/math.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { AzimuthElevationEphemeris } from "../ephemeris/ephemeris.types";
 import type { Moment } from "moment-timezone";
 
@@ -63,7 +63,7 @@ export class DailyCyclesBuilderService {
    * // event.summary === '🌙 ⏬ Lunar Nadir'
    * ```
    */
-  buildLunarNadirEvent(date: Moment): Event {
+  buildLunarNadirEvent(date: Moment): DetectedCalendarEvent {
     const description = "Lunar Nadir";
     const summary = `🌙 ⏬ ${description}`;
 
@@ -94,7 +94,7 @@ export class DailyCyclesBuilderService {
    * // event.summary === '🌙 ⏫ Lunar Zenith'
    * ```
    */
-  buildLunarZenithEvent(date: Moment): Event {
+  buildLunarZenithEvent(date: Moment): DetectedCalendarEvent {
     const description = "Lunar Zenith";
     const summary = `🌙 ⏫ ${description}`;
 
@@ -125,7 +125,7 @@ export class DailyCyclesBuilderService {
    * // event.summary === '🌙 🔼 Moonrise'
    * ```
    */
-  buildMoonriseEvent(date: Moment): Event {
+  buildMoonriseEvent(date: Moment): DetectedCalendarEvent {
     const description = "Moonrise";
     const summary = `🌙 🔼 ${description}`;
 
@@ -156,7 +156,7 @@ export class DailyCyclesBuilderService {
    * // event.summary === '🌙 🔽 Moonset'
    * ```
    */
-  buildMoonsetEvent(date: Moment): Event {
+  buildMoonsetEvent(date: Moment): DetectedCalendarEvent {
     const description = "Moonset";
     const summary = `🌙 🔽 ${description}`;
 
@@ -199,7 +199,7 @@ export class DailyCyclesBuilderService {
    * // Returns: { summary: "☀️ ⬇️ Solar Nadir", start: ..., end: ..., ... }
    * ```
    */
-  buildSolarNadirEvent(date: Moment): Event {
+  buildSolarNadirEvent(date: Moment): DetectedCalendarEvent {
     const description = "Solar Nadir";
     const summary = `☀️ ⏬ ${description}`;
 
@@ -241,7 +241,7 @@ export class DailyCyclesBuilderService {
    * // Returns: { summary: "☀️ ⬆️ Solar Zenith", start: ..., end: ..., ... }
    * ```
    */
-  buildSolarZenithEvent(date: Moment): Event {
+  buildSolarZenithEvent(date: Moment): DetectedCalendarEvent {
     const description = "Solar Zenith";
     const summary = `☀️ ⏫ ${description}`;
 
@@ -281,7 +281,7 @@ export class DailyCyclesBuilderService {
    * // Returns: { summary: "☀️ 🔼 Sunrise", start: ..., end: ..., ... }
    * ```
    */
-  buildSunriseEvent(date: Moment): Event {
+  buildSunriseEvent(date: Moment): DetectedCalendarEvent {
     const description = "Sunrise";
     const summary = `☀️ 🔼 ${description}`;
 
@@ -322,7 +322,7 @@ export class DailyCyclesBuilderService {
    * // Returns: { summary: "☀️ 🔽 Sunset", start: ..., end: ..., ... }
    * ```
    */
-  buildSunsetEvent(date: Moment): Event {
+  buildSunsetEvent(date: Moment): DetectedCalendarEvent {
     const description = "Sunset";
     const summary = `☀️ 🔽 ${description}`;
 

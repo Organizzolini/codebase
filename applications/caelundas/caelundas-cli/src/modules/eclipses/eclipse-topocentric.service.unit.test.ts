@@ -11,7 +11,7 @@ import { EclipseEventService } from "./eclipse-event.service";
 import { EclipseGeometryService } from "./eclipse-geometry.service";
 import { EclipseTopocentricService } from "./eclipse-topocentric.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { EclipseCoordinates } from "./eclipses.types";
 
 describe(EclipseTopocentricService, () => {
@@ -124,7 +124,7 @@ describe(EclipseTopocentricService, () => {
       end: moment.utc("2024-03-21T12:00:00.000Z"),
       start: moment.utc("2024-03-21T12:00:00.000Z"),
       summary: "Solar",
-    } satisfies Event);
+    } satisfies DetectedCalendarEvent);
     const events = service.getTopocentricEvents({
       currentCoordinates: solarActiveCoordinates,
       lunarPhase: "beginning",
@@ -161,7 +161,7 @@ describe(EclipseTopocentricService, () => {
       end: moment.utc("2024-03-21T12:00:00.000Z"),
       start: moment.utc("2024-03-21T12:00:00.000Z"),
       summary: "Lunar ends",
-    } satisfies Event);
+    } satisfies DetectedCalendarEvent);
 
     const endingEvents = service.getTopocentricEvents({
       currentCoordinates: lunarActiveCoordinates,
@@ -197,7 +197,7 @@ describe(EclipseTopocentricService, () => {
       end: moment.utc("2024-03-21T12:00:00.000Z"),
       start: moment.utc("2024-03-21T12:00:00.000Z"),
       summary: "Lunar max",
-    } satisfies Event);
+    } satisfies DetectedCalendarEvent);
 
     const maximumEvents = service.getTopocentricEvents({
       currentCoordinates: lunarActiveCoordinates,

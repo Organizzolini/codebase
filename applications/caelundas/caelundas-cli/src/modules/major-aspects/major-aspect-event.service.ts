@@ -11,12 +11,12 @@ import {
   symbolByMajorAspect,
 } from "../caelundas/symbol-caelundas.constants";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   AspectPhase,
   Body,
   MajorAspect,
 } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -57,7 +57,7 @@ export class MajorAspectEventService {
     majorAspect: MajorAspect;
     phase: AspectPhase;
     timestamp: Moment;
-  }): Event {
+  }): DetectedCalendarEvent {
     const { categories, description, summary } = this.buildAspectEventParts({
       body1: args.body1,
       body2: args.body2,
@@ -125,7 +125,7 @@ export class MajorAspectEventService {
     longitudeBody2: number;
     phase: AspectPhase;
     timestamp: Moment;
-  }): Event {
+  }): DetectedCalendarEvent {
     const { body1, body2, longitudeBody1, longitudeBody2, phase, timestamp } =
       args;
     const majorAspect = this.getMajorAspect({ longitudeBody1, longitudeBody2 });

@@ -21,8 +21,8 @@ import {
 } from "../caelundas/symbol-caelundas.constants";
 import { EphemerisService } from "../ephemeris/ephemeris.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Body, Decan, Sign } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 import type { Moment } from "moment-timezone";
 
@@ -95,7 +95,7 @@ export class IngressesComposerService {
     body: Body;
     date: Moment;
     longitude: number;
-  }): Event {
+  }): DetectedCalendarEvent {
     const event = this.buildDecanIngressEventObject(args);
     this.logger.info("🗓️ Built a calendar event", undefined, {
       at: args.date.toISOString(),
@@ -111,7 +111,7 @@ export class IngressesComposerService {
     body: Body;
     date: Moment;
     longitude: number;
-  }): Event {
+  }): DetectedCalendarEvent {
     const { body, date, longitude } = args;
     const sign = IngressesComposerService.getSign(longitude);
     const decan = this.resolveDecan(longitude);
@@ -144,7 +144,7 @@ export class IngressesComposerService {
     body: Body;
     date: Moment;
     longitude: number;
-  }): Event {
+  }): DetectedCalendarEvent {
     const { body, date, longitude } = args;
     const sign = IngressesComposerService.getSign(longitude);
     const bodyCapitalized = capitalize(body);
@@ -160,7 +160,7 @@ export class IngressesComposerService {
       summary,
     });
 
-    const peakIngressEvent: Event = {
+    const peakIngressEvent: DetectedCalendarEvent = {
       categories: [
         ...IngressesComposerService.ingressBaseCategories,
         "Peak",
@@ -181,9 +181,9 @@ export class IngressesComposerService {
    */
   buildProgressiveSpansForBody(
     bodyCapitalized: string,
-    events: Event[],
-  ): Event[] {
-    const progressiveSpans: Event[] = [];
+    events: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
+    const progressiveSpans: DetectedCalendarEvent[] = [];
     const sortedIngresses = _.sortBy(events, (event) => event.start.valueOf());
     for (let index = 0; index < sortedIngresses.length - 1; index++) {
       const entering = sortedIngresses[index];
@@ -207,7 +207,7 @@ export class IngressesComposerService {
     body: Body;
     date: Moment;
     longitude: number;
-  }): Event {
+  }): DetectedCalendarEvent {
     const { body, date, longitude } = args;
     const sign = IngressesComposerService.getSign(longitude);
     const bodyCapitalized = _.startCase(body);
@@ -223,7 +223,7 @@ export class IngressesComposerService {
       summary,
     });
 
-    const signIngressEvent: Event = {
+    const signIngressEvent: DetectedCalendarEvent = {
       categories: [
         ...IngressesComposerService.ingressBaseCategories,
         bodyCapitalized,
@@ -276,7 +276,9 @@ export class IngressesComposerService {
   /**
    * Keeps only sign-boundary ingress events, excluding decan and peak markers.
    */
-  filterSignIngressEvents(events: Event[]): Event[] {
+  filterSignIngressEvents(
+    events: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     return events.filter(
       (event) =>
         event.categories.includes("Ingress") &&
@@ -321,10 +323,10 @@ export class IngressesComposerService {
    * Builds a progressive sign-stay event from entering and next-sign exit instants.
    */
   getSignIngressDurationEvent(
-    entering: Event,
-    exiting: Event,
+    entering: DetectedCalendarEvent,
+    exiting: DetectedCalendarEvent,
     bodyCapitalized: string,
-  ): Event {
+  ): DetectedCalendarEvent {
     const { body, sign, signCapitalized } =
       this.extractSignAndBodyFromCategories(
         entering.categories,
@@ -350,7 +352,9 @@ export class IngressesComposerService {
   /**
    * Groups sign ingress events by body.
    */
-  groupSignIngressEventsByBody(events: Event[]): Record<string, Event[]> {
+  groupSignIngressEventsByBody(
+    events: DetectedCalendarEvent[],
+  ): Record<string, DetectedCalendarEvent[]> {
     return _.groupBy(events, (event) => {
       const bodyCapitalized = event.categories.find((category) =>
         signIngressBodies

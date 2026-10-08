@@ -12,7 +12,7 @@ import { QuadrupleAspectsComposerService } from "./quadruple-aspects-composer.se
 import { QuadrupleAspectsService } from "./quadruple-aspects.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 describe(QuadrupleAspectsService, () => {
   let service: QuadrupleAspectsService;
@@ -271,7 +271,7 @@ describe(QuadrupleAspectsService, () => {
 
   describe("detectProgressive", () => {
     it("creates progressive events from forming and dissolving pairs", () => {
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -290,7 +290,7 @@ describe(QuadrupleAspectsService, () => {
         summary: "Grand Cross forming",
       };
 
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -322,7 +322,7 @@ describe(QuadrupleAspectsService, () => {
     });
 
     it("handles multiple aspect types", () => {
-      const grandCrossForming: Event = {
+      const grandCrossForming: DetectedCalendarEvent = {
         categories: [
           "Quadruple Aspect",
           "Grand Cross",
@@ -338,7 +338,7 @@ describe(QuadrupleAspectsService, () => {
         summary: "Grand Cross forming",
       };
 
-      const grandCrossDissolving: Event = {
+      const grandCrossDissolving: DetectedCalendarEvent = {
         categories: [
           "Quadruple Aspect",
           "Grand Cross",
@@ -354,7 +354,7 @@ describe(QuadrupleAspectsService, () => {
         summary: "Grand Cross dissolving",
       };
 
-      const kiteForming: Event = {
+      const kiteForming: DetectedCalendarEvent = {
         categories: [
           "Quadruple Aspect",
           "Kite",
@@ -370,7 +370,7 @@ describe(QuadrupleAspectsService, () => {
         summary: "Kite forming",
       };
 
-      const kiteDissolving: Event = {
+      const kiteDissolving: DetectedCalendarEvent = {
         categories: [
           "Quadruple Aspect",
           "Kite",
@@ -403,7 +403,7 @@ describe(QuadrupleAspectsService, () => {
     });
 
     it("handles multiple body quartets", () => {
-      const quartet1Forming: Event = {
+      const quartet1Forming: DetectedCalendarEvent = {
         categories: [
           "Quadruple Aspect",
           "Grand Cross",
@@ -419,7 +419,7 @@ describe(QuadrupleAspectsService, () => {
         summary: "Grand Cross forming",
       };
 
-      const quartet1Dissolving: Event = {
+      const quartet1Dissolving: DetectedCalendarEvent = {
         categories: [
           "Quadruple Aspect",
           "Grand Cross",
@@ -435,7 +435,7 @@ describe(QuadrupleAspectsService, () => {
         summary: "Grand Cross dissolving",
       };
 
-      const quartet2Forming: Event = {
+      const quartet2Forming: DetectedCalendarEvent = {
         categories: [
           "Quadruple Aspect",
           "Kite",
@@ -451,7 +451,7 @@ describe(QuadrupleAspectsService, () => {
         summary: "Kite forming",
       };
 
-      const quartet2Dissolving: Event = {
+      const quartet2Dissolving: DetectedCalendarEvent = {
         categories: [
           "Quadruple Aspect",
           "Kite",
@@ -496,7 +496,7 @@ describe(QuadrupleAspectsService, () => {
     });
 
     it("filters out non-quadruple-aspect events", () => {
-      const quadrupleAspectEvent: Event = {
+      const quadrupleAspectEvent: DetectedCalendarEvent = {
         categories: [
           "Quadruple Aspect",
           "Grand Cross",
@@ -512,7 +512,7 @@ describe(QuadrupleAspectsService, () => {
         summary: "Grand Cross forming",
       };
 
-      const nonQuadrupleAspectEvent: Event = {
+      const nonQuadrupleAspectEvent: DetectedCalendarEvent = {
         categories: ["Other"],
         description: "Not a quadruple aspect",
         end: moment.utc("2024-03-21T10:00:00.000Z"),
@@ -539,7 +539,7 @@ describe(QuadrupleAspectsService, () => {
     });
 
     it("skips progressive when dissolving comes before forming", () => {
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Quadruple Aspect",
           "Grand Cross",
@@ -555,7 +555,7 @@ describe(QuadrupleAspectsService, () => {
         summary: "Grand Cross dissolving",
       };
 
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Quadruple Aspect",
           "Grand Cross",
@@ -584,7 +584,9 @@ describe(QuadrupleAspectsService, () => {
         caseName: "removes phase emojis from summary",
         dissolvingSummary: "⬅️ Grand Cross dissolving",
         formingSummary: "➡️ Grand Cross forming",
-        validateProgressiveEvent: (event: Event | undefined): void => {
+        validateProgressiveEvent: (
+          event: DetectedCalendarEvent | undefined,
+        ): void => {
           expect(event?.summary).toBe("Grand Cross forming");
         },
       },
@@ -592,7 +594,9 @@ describe(QuadrupleAspectsService, () => {
         caseName: "removes phase text from description",
         dissolvingSummary: "Grand Cross dissolving",
         formingSummary: "Grand Cross forming",
-        validateProgressiveEvent: (event: Event | undefined): void => {
+        validateProgressiveEvent: (
+          event: DetectedCalendarEvent | undefined,
+        ): void => {
           expect(event?.description).not.toMatch(
             /(forming|dissolving|perfective)/i,
           );
@@ -601,7 +605,7 @@ describe(QuadrupleAspectsService, () => {
     ])(
       "$caseName",
       ({ dissolvingSummary, formingSummary, validateProgressiveEvent }) => {
-        const formingEvent: Event = {
+        const formingEvent: DetectedCalendarEvent = {
           categories: [
             "Quadruple Aspect",
             "Grand Cross",
@@ -617,7 +621,7 @@ describe(QuadrupleAspectsService, () => {
           summary: formingSummary,
         };
 
-        const dissolvingEvent: Event = {
+        const dissolvingEvent: DetectedCalendarEvent = {
           categories: [
             "Quadruple Aspect",
             "Grand Cross",
@@ -645,7 +649,7 @@ describe(QuadrupleAspectsService, () => {
     );
 
     it("preserves focal body information in description", () => {
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Quadruple Aspect",
           "Kite",
@@ -662,7 +666,7 @@ describe(QuadrupleAspectsService, () => {
         summary: "Kite forming",
       };
 
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Quadruple Aspect",
           "Kite",
@@ -856,7 +860,7 @@ describe(QuadrupleAspectsService, () => {
             opp2: AspectBodies;
             previous: AspectBodies[];
             unionEdges: AspectBodies[];
-          }) => Event | null;
+          }) => DetectedCalendarEvent | null;
         }
       ).tryBuildGrandCross({
         current: [],
@@ -892,7 +896,7 @@ describe(QuadrupleAspectsService, () => {
             other0: "moon";
             other1: "mars";
             previous: AspectBodies[];
-          }) => Event | null;
+          }) => DetectedCalendarEvent | null;
         }
       ).resolveKiteEvent({
         baseBody: "sun",
@@ -955,7 +959,7 @@ describe(QuadrupleAspectsService, () => {
     });
 
     it("handles undefined sorted events while collecting progressive group events", () => {
-      const progressiveEvents: Event[] = [];
+      const progressiveEvents: DetectedCalendarEvent[] = [];
       const sortBySpy = vi.spyOn(_, "sortBy").mockReturnValue([
         {
           categories: [

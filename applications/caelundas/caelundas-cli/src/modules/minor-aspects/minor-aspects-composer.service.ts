@@ -19,12 +19,12 @@ import {
 } from "../caelundas/symbol-caelundas.constants";
 import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   AspectPhase,
   Body,
   MinorAspect,
 } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 import type {
   AssembleMinorAspectEventArguments,
@@ -56,7 +56,9 @@ export class MinorAspectsComposerService {
   /**
    * Assembles minor aspect event.
    */
-  assembleMinorAspectEvent(args: AssembleMinorAspectEventArguments): Event {
+  assembleMinorAspectEvent(
+    args: AssembleMinorAspectEventArguments,
+  ): DetectedCalendarEvent {
     const { body1, body2, minorAspect, phase, timestamp } = args;
     const body1Capitalized = capitalize(body1);
     const body2Capitalized = capitalize(body2);
@@ -93,7 +95,7 @@ export class MinorAspectsComposerService {
   /**
    * Builds a stable grouping key from sorted bodies plus aspect name for pairing.
    */
-  buildGroupKey(event: Event): string {
+  buildGroupKey(event: DetectedCalendarEvent): string {
     const bodiesCapitalized = _.sortBy(
       event.categories.filter((category) =>
         minorAspectBodies
@@ -192,7 +194,10 @@ export class MinorAspectsComposerService {
   /**
    * Creates one minor-aspect duration event from a matched forming/dissolving pair.
    */
-  getMinorAspectProgressiveEvent(beginning: Event, ending: Event): Event {
+  getMinorAspectProgressiveEvent(
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     const {
       aspect,
       aspectCapitalized,
@@ -228,8 +233,8 @@ export class MinorAspectsComposerService {
    */
   processAspectGroup(
     aspectGroupKey: string,
-    aspectGroupEvents: Event[],
-  ): Event[] {
+    aspectGroupEvents: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     if (!aspectGroupKey) {
       return [];
     }

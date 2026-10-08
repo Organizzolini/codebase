@@ -11,7 +11,7 @@ import { ProgressiveUtilitiesService } from "../progressive/progressive-utilitie
 
 import { SpecialtyAspectsProgressiveService } from "./specialty-aspects-progressive.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 describe(SpecialtyAspectsProgressiveService, () => {
   let service: SpecialtyAspectsProgressiveService;
@@ -49,14 +49,14 @@ describe(SpecialtyAspectsProgressiveService, () => {
       categories: string[];
     }) => { aspect: string; body1: string; body2: string };
     getSpecialtyAspectProgressiveEvent: (
-      beginning: Event,
-      ending: Event,
-    ) => Event;
+      beginning: DetectedCalendarEvent,
+      ending: DetectedCalendarEvent,
+    ) => DetectedCalendarEvent;
     processAspectGroup: (
       aspectGroupKey: string,
-      aspectGroupEvents: Event[],
-    ) => Event[];
-    specialtyAspectGroupKey: (event: Event) => string;
+      aspectGroupEvents: DetectedCalendarEvent[],
+    ) => DetectedCalendarEvent[];
+    specialtyAspectGroupKey: (event: DetectedCalendarEvent) => string;
   };
 
   it("is defined", () => {

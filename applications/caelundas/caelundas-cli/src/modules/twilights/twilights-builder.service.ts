@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 
 import { LoggerService } from "@codebase/logging";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -33,7 +33,7 @@ export class TwilightsBuilderService {
     date: Moment,
     description: string,
     emoji: string,
-  ): Event {
+  ): DetectedCalendarEvent {
     const summary = `${emoji} ${description}`;
     const dateString = date.clone().tz("America/New_York").toISOString(true);
     this.logger.info("🗓️ Built a calendar event", undefined, {
@@ -58,42 +58,42 @@ export class TwilightsBuilderService {
   /**
    * Builds the instant when Sun crosses -18 degrees upward.
    */
-  buildAstronomicalDawnEvent(date: Moment): Event {
+  buildAstronomicalDawnEvent(date: Moment): DetectedCalendarEvent {
     return this.buildTransitionEvent(date, "Astronomical Dawn", "🌠");
   }
 
   /**
    * Builds the instant when Sun crosses -18 degrees downward.
    */
-  buildAstronomicalDuskEvent(date: Moment): Event {
+  buildAstronomicalDuskEvent(date: Moment): DetectedCalendarEvent {
     return this.buildTransitionEvent(date, "Astronomical Dusk", "🌌");
   }
 
   /**
    * Builds the instant when Sun crosses -6 degrees upward.
    */
-  buildCivilDawnEvent(date: Moment): Event {
+  buildCivilDawnEvent(date: Moment): DetectedCalendarEvent {
     return this.buildTransitionEvent(date, "Civil Dawn", "🌄");
   }
 
   /**
    * Builds the instant when Sun crosses -6 degrees downward.
    */
-  buildCivilDuskEvent(date: Moment): Event {
+  buildCivilDuskEvent(date: Moment): DetectedCalendarEvent {
     return this.buildTransitionEvent(date, "Civil Dusk", "🌇");
   }
 
   /**
    * Builds the instant when Sun crosses -12 degrees upward.
    */
-  buildNauticalDawnEvent(date: Moment): Event {
+  buildNauticalDawnEvent(date: Moment): DetectedCalendarEvent {
     return this.buildTransitionEvent(date, "Nautical Dawn", "🌅");
   }
 
   /**
    * Builds the instant when Sun crosses -12 degrees downward.
    */
-  buildNauticalDuskEvent(date: Moment): Event {
+  buildNauticalDuskEvent(date: Moment): DetectedCalendarEvent {
     return this.buildTransitionEvent(date, "Nautical Dusk", "🌉");
   }
 
@@ -101,9 +101,9 @@ export class TwilightsBuilderService {
    * Builds evening astronomical-twilight interval from transition boundaries.
    */
   getAstronomicalTwilightEveningDurationEvent(
-    beginning: Event,
-    ending: Event,
-  ): Event {
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return {
       categories: [
         ...TwilightsBuilderService.twilightBaseCategories,
@@ -121,9 +121,9 @@ export class TwilightsBuilderService {
    * Builds morning astronomical-twilight interval from transition boundaries.
    */
   getAstronomicalTwilightMorningDurationEvent(
-    beginning: Event,
-    ending: Event,
-  ): Event {
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return {
       categories: [
         ...TwilightsBuilderService.twilightBaseCategories,
@@ -140,7 +140,10 @@ export class TwilightsBuilderService {
   /**
    * Builds daylight interval between civil dawn and civil dusk boundaries.
    */
-  getDaylightDurationEvent(beginning: Event, ending: Event): Event {
+  getDaylightDurationEvent(
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return {
       categories: [
         ...TwilightsBuilderService.twilightBaseCategories,
@@ -157,9 +160,9 @@ export class TwilightsBuilderService {
    * Builds evening nautical-twilight interval from transition boundaries.
    */
   getNauticalTwilightEveningDurationEvent(
-    beginning: Event,
-    ending: Event,
-  ): Event {
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return {
       categories: [
         ...TwilightsBuilderService.twilightBaseCategories,
@@ -177,9 +180,9 @@ export class TwilightsBuilderService {
    * Builds morning nautical-twilight interval from transition boundaries.
    */
   getNauticalTwilightMorningDurationEvent(
-    beginning: Event,
-    ending: Event,
-  ): Event {
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return {
       categories: [
         ...TwilightsBuilderService.twilightBaseCategories,
@@ -196,7 +199,10 @@ export class TwilightsBuilderService {
   /**
    * Builds night interval spanning from astronomical dusk to next astronomical dawn.
    */
-  getNightDurationEvent(beginning: Event, ending: Event): Event {
+  getNightDurationEvent(
+    beginning: DetectedCalendarEvent,
+    ending: DetectedCalendarEvent,
+  ): DetectedCalendarEvent {
     return {
       categories: [...TwilightsBuilderService.twilightBaseCategories, "Night"],
       description: "Night",

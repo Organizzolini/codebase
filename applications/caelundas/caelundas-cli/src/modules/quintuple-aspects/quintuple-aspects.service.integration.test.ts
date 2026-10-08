@@ -10,7 +10,7 @@ import { QuintupleAspectsComposerService } from "./quintuple-aspects-composer.se
 import { QuintupleAspectsService } from "./quintuple-aspects.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 /**
  * Integration tests for Quintuple Aspects (Pentagram) detection
@@ -112,7 +112,7 @@ describe("quintuple-aspects.events integration", () => {
     });
 
     it("creates progressive event from forming/dissolving Pentagram pair", () => {
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -133,7 +133,7 @@ describe("quintuple-aspects.events integration", () => {
           "➡️ ⬠ ☉-☽-♂-♃-♀ Jupiter, Mars, Moon, Sun, Venus pentagram forming",
       };
 
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",

@@ -9,8 +9,8 @@ import { symbolByLunarPhase } from "../caelundas/symbol-caelundas.constants";
 import { CalendarService } from "../calendar/calendar.service";
 import { EphemerisService } from "../ephemeris/ephemeris.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { LunarPhase } from "../caelundas/caelundas.types";
-import type { Event } from "../calendar/calendar.types";
 import type { IlluminationEphemeris } from "../ephemeris/ephemeris.types";
 import type { Moment } from "moment-timezone";
 
@@ -128,9 +128,9 @@ export class MonthlyLunarCycleService {
    * Derives monthly lunar cycle progressive event.
    */
   private getMonthlyLunarCycleProgressiveEvent(
-    entering: Event,
-    exiting: Event,
-  ): Event | null {
+    entering: DetectedCalendarEvent,
+    exiting: DetectedCalendarEvent,
+  ): DetectedCalendarEvent | null {
     const categories = entering.categories;
     const lunarPhase = this.extractLunarPhaseFromCategories(
       categories,
@@ -300,7 +300,7 @@ export class MonthlyLunarCycleService {
    * - Event timestamps use UTC but display shows local time in logs
    *
    * @see {@link symbolByLunarPhase} for Moon phase Unicode symbols
-   * @see {@link Event} for calendar event structure
+   * @see {@link DetectedCalendarEvent} for calendar event structure
    *
    * @example
    * ```typescript
@@ -314,7 +314,7 @@ export class MonthlyLunarCycleService {
   buildMonthlyLunarCycleEvent(args: {
     date: Moment;
     lunarPhase: LunarPhase;
-  }): Event {
+  }): DetectedCalendarEvent {
     const { date, lunarPhase } = args;
 
     const lunarPhaseCapitalized = _.startCase(lunarPhase);
@@ -372,7 +372,7 @@ export class MonthlyLunarCycleService {
   detect(args: {
     minute: Moment;
     moonIlluminationEphemeris: IlluminationEphemeris;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { minute, moonIlluminationEphemeris } = args;
     const currentIllumination =
       this.ephemerisService.getIlluminationFromEphemeris(
@@ -388,7 +388,7 @@ export class MonthlyLunarCycleService {
       moonIlluminationEphemeris,
       minute,
     );
-    const monthlyLunarCycleEvents: Event[] = [];
+    const monthlyLunarCycleEvents: DetectedCalendarEvent[] = [];
     for (const lunarPhase of lunarPhases) {
       if (
         this.isLunarPhase({
@@ -441,8 +441,8 @@ export class MonthlyLunarCycleService {
    * // ]
    * ```
    */
-  detectProgressive(events: Event[]): Event[] {
-    const progressiveEvents: Event[] = [];
+  detectProgressive(events: DetectedCalendarEvent[]): DetectedCalendarEvent[] {
+    const progressiveEvents: DetectedCalendarEvent[] = [];
 
     // Filter to monthly lunar cycle events only
     const lunarCycleEvents = events.filter((event) =>

@@ -15,7 +15,7 @@ import {
   MARS_MORNING_VISIBILITY_DESCRIPTION,
 } from "./phases.constants";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { PhaseParameters } from "./phases.types";
 
 const createTimestamp = (): moment.Moment =>
@@ -42,7 +42,7 @@ const configurePhaseCalculationServiceMock = (
   >,
 ): void => {
   vi.mocked(phaseCalculationService.filterByCategory).mockImplementation(
-    (events: Event[], category: string) =>
+    (events: DetectedCalendarEvent[], category: string) =>
       events.filter((event) => event.categories.includes(category)),
   );
   vi.mocked(phaseCalculationService.formatTimeZoneIso).mockReturnValue(
@@ -303,14 +303,14 @@ describe(MartianPhaseService, () => {
 
   describe("getMartianPhaseProgressiveEvents", () => {
     it("creates martian morning visibility duration events", () => {
-      const morningRise: Event = {
+      const morningRise: DetectedCalendarEvent = {
         categories: ["Planetary Phase", "Martian", "Morning Rise"],
         description: "Mars Morning Rise",
         end: moment.utc("2024-01-01T00:00:00.000Z"),
         start: moment.utc("2024-01-01T00:00:00.000Z"),
         summary: "Mars Morning Rise",
       };
-      const morningSet: Event = {
+      const morningSet: DetectedCalendarEvent = {
         categories: ["Planetary Phase", "Martian", "Morning Set"],
         description: "Mars Morning Set",
         end: moment.utc("2024-01-02T00:00:00.000Z"),
@@ -333,14 +333,14 @@ describe(MartianPhaseService, () => {
     });
 
     it("creates martian evening visibility duration events", () => {
-      const eveningRise: Event = {
+      const eveningRise: DetectedCalendarEvent = {
         categories: ["Planetary Phase", "Martian", "Evening Rise"],
         description: "Mars Evening Rise",
         end: moment.utc("2024-01-01T00:00:00.000Z"),
         start: moment.utc("2024-01-01T00:00:00.000Z"),
         summary: "Mars Evening Rise",
       };
-      const eveningSet: Event = {
+      const eveningSet: DetectedCalendarEvent = {
         categories: ["Planetary Phase", "Martian", "Evening Set"],
         description: "Mars Evening Set",
         end: moment.utc("2024-01-02T00:00:00.000Z"),

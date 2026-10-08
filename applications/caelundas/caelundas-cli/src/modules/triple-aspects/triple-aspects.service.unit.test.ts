@@ -13,7 +13,7 @@ import { TripleAspectsDetectorService } from "./triple-aspects-detector.service"
 import { TripleAspectsService } from "./triple-aspects.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 
 describe(TripleAspectsService, () => {
   let service: TripleAspectsService;
@@ -70,7 +70,7 @@ describe(TripleAspectsService, () => {
 
   describe("detectProgressive", () => {
     it("creates progressive event from matching forming and dissolving pair", () => {
-      const formingEvent: Event = {
+      const formingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",
@@ -89,7 +89,7 @@ describe(TripleAspectsService, () => {
         summary: "T-Square forming",
       };
 
-      const dissolvingEvent: Event = {
+      const dissolvingEvent: DetectedCalendarEvent = {
         categories: [
           "Astronomy",
           "Astrology",

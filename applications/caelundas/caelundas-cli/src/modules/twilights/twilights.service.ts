@@ -8,7 +8,7 @@ import { TwilightsBuilderService } from "./twilights-builder.service";
 import { TwilightsComposerService } from "./twilights-composer.service";
 import { TwilightsDetectorService } from "./twilights-detector.service";
 
-import type { Event } from "../calendar/calendar.types";
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { AzimuthElevationEphemeris } from "../ephemeris/ephemeris.types";
 import type { Twilight } from "./twilights.types";
 import type { Moment } from "moment-timezone";
@@ -58,7 +58,7 @@ export class TwilightsService {
    * Creates an astronomical dawn calendar event.
    * Marks when the sky begins to lighten (Sun at -18° elevation).
    */
-  buildAstronomicalDawnEvent(date: Moment): Event {
+  buildAstronomicalDawnEvent(date: Moment): DetectedCalendarEvent {
     return this.twilightsBuilderService.buildAstronomicalDawnEvent(date);
   }
 
@@ -68,7 +68,7 @@ export class TwilightsService {
    * Marks when the sky is dark enough for astronomical observation (Sun at −18° elevation).
    *
    */
-  buildAstronomicalDuskEvent(date: Moment): Event {
+  buildAstronomicalDuskEvent(date: Moment): DetectedCalendarEvent {
     return this.twilightsBuilderService.buildAstronomicalDuskEvent(date);
   }
 
@@ -78,7 +78,7 @@ export class TwilightsService {
    * Marks when outdoor activities are possible without artificial light (Sun at −6° elevation).
    *
    */
-  buildCivilDawnEvent(date: Moment): Event {
+  buildCivilDawnEvent(date: Moment): DetectedCalendarEvent {
     return this.twilightsBuilderService.buildCivilDawnEvent(date);
   }
 
@@ -88,7 +88,7 @@ export class TwilightsService {
    * Marks when artificial light becomes necessary for outdoor activities (Sun at −6° elevation).
    *
    */
-  buildCivilDuskEvent(date: Moment): Event {
+  buildCivilDuskEvent(date: Moment): DetectedCalendarEvent {
     return this.twilightsBuilderService.buildCivilDuskEvent(date);
   }
 
@@ -98,7 +98,7 @@ export class TwilightsService {
    * Marks when the horizon becomes visible at sea (Sun at −12° elevation).
    *
    */
-  buildNauticalDawnEvent(date: Moment): Event {
+  buildNauticalDawnEvent(date: Moment): DetectedCalendarEvent {
     return this.twilightsBuilderService.buildNauticalDawnEvent(date);
   }
 
@@ -108,7 +108,7 @@ export class TwilightsService {
    * Marks when the sea horizon becomes indistinguishable (Sun at −12° elevation).
    *
    */
-  buildNauticalDuskEvent(date: Moment): Event {
+  buildNauticalDuskEvent(date: Moment): DetectedCalendarEvent {
     return this.twilightsBuilderService.buildNauticalDuskEvent(date);
   }
 
@@ -133,7 +133,7 @@ export class TwilightsService {
   detect(args: {
     minute: Moment;
     sunAzimuthElevationEphemeris: AzimuthElevationEphemeris;
-  }): Event[] {
+  }): DetectedCalendarEvent[] {
     const { minute, sunAzimuthElevationEphemeris } = args;
     const sunElevationSnapshot = this.twilightsDetectorService.getSunElevations(
       sunAzimuthElevationEphemeris,
@@ -160,11 +160,15 @@ export class TwilightsService {
    *
    * @see {@link pairProgressiveEvents} for pairing logic
    */
-  detectProgressive(detectedEvents: Event[]): Event[] {
+  detectProgressive(
+    detectedEvents: DetectedCalendarEvent[],
+  ): DetectedCalendarEvent[] {
     const twilightCategoryEvents = detectedEvents.filter((event) =>
       event.categories.includes("Twilight"),
     );
-    const getEventsByCategory = (categoryName: string): Event[] =>
+    const getEventsByCategory = (
+      categoryName: string,
+    ): DetectedCalendarEvent[] =>
       twilightCategoryEvents.filter((event) =>
         event.categories.includes(categoryName),
       );
