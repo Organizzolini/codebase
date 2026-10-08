@@ -80,65 +80,103 @@ function wrap(longitude: number): number {
   return ((longitude % 360) + 360) % 360;
 }
 
-describe("phaseCalculationService east and west across 0° Aries", () => {
-  it("calls a planet just past 0° Aries, east of a Sun in late Pisces, eastern and evening", () => {
-    const parameters = gatherParameters(() => ({
-      planetLongitude: 4,
-      sunLongitude: 358,
-    }));
+describe(PhaseCalculationService, () => {
+  describe("east and west across 0° Aries", () => {
+    it("calls a planet just past 0° Aries, east of a Sun in late Pisces, eastern and evening", () => {
+      const parameters = gatherParameters(() => ({
+        planetLongitude: 4,
+        sunLongitude: 358,
+      }));
 
-    expect(service.isEastern(parameters)).toBe(true);
-    expect(service.isEvening(parameters)).toBe(true);
-    expect(service.isWestern(parameters)).toBe(false);
-    expect(service.isMorning(parameters)).toBe(false);
+      expect(service.isEastern(parameters)).toBe(true);
+      expect(service.isEvening(parameters)).toBe(true);
+      expect(service.isWestern(parameters)).toBe(false);
+      expect(service.isMorning(parameters)).toBe(false);
+    });
+
+    it("calls a planet in late Pisces, west of a Sun past 0° Aries, western and morning", () => {
+      const parameters = gatherParameters(() => ({
+        planetLongitude: 345,
+        sunLongitude: 13,
+      }));
+
+      expect(service.isWestern(parameters)).toBe(true);
+      expect(service.isMorning(parameters)).toBe(true);
+      expect(service.isEastern(parameters)).toBe(false);
+      expect(service.isEvening(parameters)).toBe(false);
+    });
+
+    it("calls a set an evening set when the planet closes on the Sun from the east across 0° Aries", () => {
+      // The gap is 6.051° a minute before and 6° now: it closes through the threshold.
+      const parameters = gatherParameters((index) => ({
+        planetLongitude: wrap(4 - 0.05 * index),
+        sunLongitude: wrap(358 + 0.001 * index),
+      }));
+
+      expect(service.isEveningSet(parameters)).toBe(true);
+      expect(service.isMorningSet(parameters)).toBe(false);
+    });
+
+    it("calls the greatest elongation of a planet in Pisces west of a Sun in Aries western", () => {
+      // Mercury's 3 April 2026 western elongation: 27.8° west, the Sun near 13° Aries.
+      const parameters = gatherParameters((index) => ({
+        planetLongitude: wrap(
+          13 + 0.001 * index - (27.8 - 0.000_01 * index ** 2),
+        ),
+        sunLongitude: 13 + 0.001 * index,
+      }));
+
+      expect(service.isWesternElongation(parameters)).toBe(true);
+      expect(service.isEasternElongation(parameters)).toBe(false);
+    });
+
+    it("calls the greatest elongation of a planet in Aries east of a Sun in Pisces eastern", () => {
+      // Mercury's 8 March 2025 eastern elongation: 18.2° east, the Sun near 348° Pisces.
+      const parameters = gatherParameters((index) => ({
+        planetLongitude: wrap(
+          348 + 0.001 * index + (18.2 - 0.000_01 * index ** 2),
+        ),
+        sunLongitude: 348 + 0.001 * index,
+      }));
+
+      expect(service.isEasternElongation(parameters)).toBe(true);
+      expect(service.isWesternElongation(parameters)).toBe(false);
+    });
   });
 
-  it("calls a planet in late Pisces, west of a Sun past 0° Aries, western and morning", () => {
-    const parameters = gatherParameters(() => ({
-      planetLongitude: 345,
-      sunLongitude: 13,
-    }));
+  describe("greatest elongation by angular separation", () => {
+    const radians = Math.PI / 180;
 
-    expect(service.isWestern(parameters)).toBe(true);
-    expect(service.isMorning(parameters)).toBe(true);
-    expect(service.isEastern(parameters)).toBe(false);
-    expect(service.isEvening(parameters)).toBe(false);
-  });
+    it("finds no greatest elongation where only the longitude gap peaks and the planet keeps climbing from the ecliptic", () => {
+      // The longitude gap peaks at 20°, but the latitude grows 0.01° a minute, so the true separation keeps widening.
+      const parameters = gatherParameters((index) => ({
+        planetLatitude: 3 + 0.01 * index,
+        planetLongitude: 120 + 0.001 * index - 0.000_01 * index ** 2,
+        sunLongitude: 100 + 0.001 * index,
+      }));
 
-  it("calls a set an evening set when the planet closes on the Sun from the east across 0° Aries", () => {
-    // The gap is 6.051° a minute before and 6° now: it closes through the threshold.
-    const parameters = gatherParameters((index) => ({
-      planetLongitude: wrap(4 - 0.05 * index),
-      sunLongitude: wrap(358 + 0.001 * index),
-    }));
+      expect(service.isElongation(parameters)).toBe(false);
+      expect(service.isEasternElongation(parameters)).toBe(false);
+    });
 
-    expect(service.isEveningSet(parameters)).toBe(true);
-    expect(service.isMorningSet(parameters)).toBe(false);
-  });
+    it("finds the greatest elongation where the true separation peaks while the longitude gap still widens", () => {
+      // The longitude gap widens 0.001° a minute; the latitude is set so the true separation is exactly 25° − 0.00001° × index².
+      const parameters = gatherParameters((index) => {
+        const longitudeGap = 20 + 0.001 * index;
+        const separation = 25 - 0.000_01 * index ** 2;
+        const latitude =
+          Math.acos(
+            Math.cos(separation * radians) / Math.cos(longitudeGap * radians),
+          ) / radians;
+        return {
+          planetLatitude: latitude,
+          planetLongitude: 100 + 0.001 * index + longitudeGap,
+          sunLongitude: 100 + 0.001 * index,
+        };
+      });
 
-  it("calls the greatest elongation of a planet in Pisces west of a Sun in Aries western", () => {
-    // Mercury's 3 April 2026 western elongation: 27.8° west, the Sun near 13° Aries.
-    const parameters = gatherParameters((index) => ({
-      planetLongitude: wrap(
-        13 + 0.001 * index - (27.8 - 0.000_01 * index ** 2),
-      ),
-      sunLongitude: 13 + 0.001 * index,
-    }));
-
-    expect(service.isWesternElongation(parameters)).toBe(true);
-    expect(service.isEasternElongation(parameters)).toBe(false);
-  });
-
-  it("calls the greatest elongation of a planet in Aries east of a Sun in Pisces eastern", () => {
-    // Mercury's 8 March 2025 eastern elongation: 18.2° east, the Sun near 348° Pisces.
-    const parameters = gatherParameters((index) => ({
-      planetLongitude: wrap(
-        348 + 0.001 * index + (18.2 - 0.000_01 * index ** 2),
-      ),
-      sunLongitude: 348 + 0.001 * index,
-    }));
-
-    expect(service.isEasternElongation(parameters)).toBe(true);
-    expect(service.isWesternElongation(parameters)).toBe(false);
+      expect(service.isElongation(parameters)).toBe(true);
+      expect(service.isEasternElongation(parameters)).toBe(true);
+    });
   });
 });

@@ -78,6 +78,50 @@ describe(MathService, () => {
     });
   });
 
+  describe("getAngularSeparation", () => {
+    it("equals the longitude gap for two bodies on the ecliptic", () => {
+      expect(service.getAngularSeparation([10, 0], [350, 0])).toBeCloseTo(
+        20,
+        12,
+      );
+      expect(service.getAngularSeparation([0, 0], [180, 0])).toBeCloseTo(
+        180,
+        12,
+      );
+    });
+
+    it("equals the latitude gap for two bodies at the same longitude", () => {
+      expect(service.getAngularSeparation([100, 30], [100, -15])).toBeCloseTo(
+        45,
+        12,
+      );
+    });
+
+    it("measures the great circle, not the sum of the gaps", () => {
+      // A body 90° along the ecliptic and one 90° above it are both 90° from the pole's foot.
+      expect(service.getAngularSeparation([0, 0], [90, 90])).toBeCloseTo(
+        90,
+        12,
+      );
+      // cos d = cos 3° × cos 4° for a 3° longitude gap and a 4° latitude gap.
+      expect(service.getAngularSeparation([359, 0], [2, 4])).toBeCloseTo(
+        Math.acos(
+          Math.cos((3 * Math.PI) / 180) * Math.cos((4 * Math.PI) / 180),
+        ) /
+          (Math.PI / 180),
+        12,
+      );
+    });
+
+    it("stays exact for separations of a few arcseconds", () => {
+      const oneArcsecond = 1 / MathService.arcsecondsPerDegree;
+
+      expect(
+        service.getAngularSeparation([45, 10], [45, 10 + oneArcsecond]),
+      ).toBeCloseTo(oneArcsecond, 12);
+    });
+  });
+
   describe("normalizeForComparison", () => {
     it("returns current unchanged when difference is <= 180", () => {
       expect(service.normalizeForComparison(50, 100)).toBe(50);

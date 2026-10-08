@@ -1,0 +1,26 @@
+{
+  "absent": ["☿⬅️📏 Mercury Western Elongation"],
+  "counts": {
+    "☿📏➡️ Mercury Eastern Elongation": 1
+  },
+  "events": [
+    {
+      "note": "Horizons: Mercury 25.1607° east of the Sun at 10:03:13 UT (parabolic fit to one-minute samples). The ecliptic longitude difference peaks earlier, at 05:50 UT",
+      "start": "2026-10-12T10:03:00Z",
+      "summary": "☿📏➡️ Mercury Eastern Elongation"
+    }
+  ],
+  "name": "Mercury's greatest eastern elongation on 12 October 2026",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "JPL Horizons API: geocentric apparent RA and Dec (quantity 2) of the planet and the Sun, one-minute steps, angular separation computed from them",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='199'&CENTER='500@399'&EPHEM_TYPE='OBSERVER'&START_TIME='2026-10-10 12:00'&STOP_TIME='2026-10-13 12:00'&STEP_SIZE='1 m'&QUANTITIES='2'&ANG_FORMAT='DEG'&CSV_FORMAT='YES'&EXTRA_PREC='YES'"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-10-13",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-10-12"
+  }
+}

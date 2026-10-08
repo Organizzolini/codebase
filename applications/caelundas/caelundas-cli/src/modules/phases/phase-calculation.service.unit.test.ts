@@ -114,23 +114,34 @@ describe(PhaseCalculationService, () => {
     ).toBe(true);
   });
 
-  it("evaluates elongation maxima from previous/current/next angles", () => {
-    mathService.getAngle
+  it("evaluates elongation maxima from previous/current/next angular separations", () => {
+    mathService.getAngularSeparation
       .mockReturnValueOnce(11)
       .mockReturnValueOnce(13)
       .mockReturnValueOnce(9);
     mathService.isMaximum.mockReturnValueOnce(true);
 
     const isElongation = service.isElongation({
+      currentLatitudePlanet: 2,
+      currentLatitudeSun: 0,
       currentLongitudePlanet: 10,
       currentLongitudeSun: 4,
+      nextLatitudePlanet: 3,
+      nextLatitudeSun: 0,
       nextLongitudePlanet: 11,
       nextLongitudeSun: 4,
+      previousLatitudePlanet: 1,
+      previousLatitudeSun: 0,
       previousLongitudePlanet: 9,
       previousLongitudeSun: 4,
     });
 
     expect(isElongation).toBe(true);
+    expect(mathService.getAngularSeparation).toHaveBeenNthCalledWith(
+      1,
+      [10, 2],
+      [4, 0],
+    );
     expect(mathService.isMaximum).toHaveBeenCalledWith({
       current: 11,
       next: 13,
@@ -170,20 +181,32 @@ describe(PhaseCalculationService, () => {
 
     expect(
       service.isEasternElongation({
+        currentLatitudePlanet: 0,
+        currentLatitudeSun: 0,
         currentLongitudePlanet: 10,
         currentLongitudeSun: 4,
+        nextLatitudePlanet: 0,
+        nextLatitudeSun: 0,
         nextLongitudePlanet: 11,
         nextLongitudeSun: 4,
+        previousLatitudePlanet: 0,
+        previousLatitudeSun: 0,
         previousLongitudePlanet: 9,
         previousLongitudeSun: 4,
       }),
     ).toBe(true);
     expect(
       service.isWesternElongation({
+        currentLatitudePlanet: 0,
+        currentLatitudeSun: 0,
         currentLongitudePlanet: 2,
         currentLongitudeSun: 4,
+        nextLatitudePlanet: 0,
+        nextLatitudeSun: 0,
         nextLongitudePlanet: 3,
         nextLongitudeSun: 4,
+        previousLatitudePlanet: 0,
+        previousLatitudeSun: 0,
         previousLongitudePlanet: 1,
         previousLongitudeSun: 4,
       }),

@@ -30,6 +30,10 @@ const fixtureNames = [
   "usno-tromso-moon-2026-12-20",
   "usno-vigo-evening-twilight-2026-06-20",
   "horizons-venus-evening-set-2025-03-19",
+  "horizons-mercury-western-elongation-2026-04-03",
+  "horizons-mercury-eastern-elongation-2025-03-08",
+  "horizons-mercury-eastern-elongation-2026-10-12",
+  "horizons-venus-eastern-elongation-2026-08-15",
 ];
 
 describe.each(fixtureNames)("reference fixture %s", (name) => {

@@ -1,0 +1,26 @@
+{
+  "absent": ["☿⬅️📏 Mercury Western Elongation"],
+  "counts": {
+    "☿📏➡️ Mercury Eastern Elongation": 1
+  },
+  "events": [
+    {
+      "note": "Horizons: Mercury 18.2481° east of the Sun at 06:09:15 UT (parabolic fit to one-minute samples), with Mercury in Aries and the Sun in Pisces. The ecliptic longitude difference peaks earlier, at 01:41 UT",
+      "start": "2025-03-08T06:09:00Z",
+      "summary": "☿📏➡️ Mercury Eastern Elongation"
+    }
+  ],
+  "name": "Mercury's greatest eastern elongation on 8 March 2025",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "JPL Horizons API: geocentric apparent RA and Dec (quantity 2) of the planet and the Sun, one-minute steps, angular separation computed from them",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='199'&CENTER='500@399'&EPHEM_TYPE='OBSERVER'&START_TIME='2025-03-07 00:00'&STOP_TIME='2025-03-10 00:00'&STEP_SIZE='1 m'&QUANTITIES='2'&ANG_FORMAT='DEG'&CSV_FORMAT='YES'&EXTRA_PREC='YES'"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2025-03-09",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2025-03-08"
+  }
+}

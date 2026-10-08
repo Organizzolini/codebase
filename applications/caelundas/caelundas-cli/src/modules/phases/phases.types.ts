@@ -55,12 +55,24 @@ export interface DetectPlanetaryEventsArguments {
   minute: Moment;
 }
 
-/** Arguments containing previous/current/next longitudes for elongation. */
+/**
+ * Arguments containing previous/current/next ecliptic positions for elongation.
+ *
+ * Latitudes are carried alongside longitudes because greatest elongation is
+ * the maximum of the true angular separation from the Sun, not of the
+ * longitude gap.
+ */
 export interface ElongationLongitudeArguments {
+  currentLatitudePlanet: number;
+  currentLatitudeSun: number;
   currentLongitudePlanet: number;
   currentLongitudeSun: number;
+  nextLatitudePlanet: number;
+  nextLatitudeSun: number;
   nextLongitudePlanet: number;
   nextLongitudeSun: number;
+  previousLatitudePlanet: number;
+  previousLatitudeSun: number;
   previousLongitudePlanet: number;
   previousLongitudeSun: number;
 }
@@ -72,6 +84,14 @@ export interface GatherCurrentEphemerisArguments {
   isoNow: string;
   planetCoordinateEphemeris: CoordinateEphemeris;
   sunCoordinateEphemeris: CoordinateEphemeris;
+}
+
+/** The planet's and sun's ecliptic coordinates at one timestamp. */
+export interface GatheredPositions {
+  latitudePlanet: number;
+  latitudeSun: number;
+  longitudePlanet: number;
+  longitudeSun: number;
 }
 
 /** Arguments used to sample next/previous margin ephemeris arrays. */
@@ -89,6 +109,13 @@ export interface GatherPhaseParametersArguments {
   minute: Moment;
   planetCoordinateEphemeris: CoordinateEphemeris;
   sunCoordinateEphemeris: CoordinateEphemeris;
+}
+
+/** Arguments used to read planet and sun positions at one timestamp. */
+export interface GatherPositionsArguments {
+  planetCoordinateEphemeris: CoordinateEphemeris;
+  sunCoordinateEphemeris: CoordinateEphemeris;
+  timestamp: string;
 }
 
 /** Direction for sampling margin windows around a minute. */
@@ -124,14 +151,20 @@ export interface MercurianPhaseEventArguments {
 export interface PhaseParameters {
   currentDistance: number;
   currentIllumination: number;
+  currentLatitudePlanet: number;
+  currentLatitudeSun: number;
   currentLongitudePlanet: number;
   currentLongitudeSun: number;
   nextDistances: number[];
   nextIlluminations: number[];
+  nextLatitudePlanet: number;
+  nextLatitudeSun: number;
   nextLongitudePlanet: number;
   nextLongitudeSun: number;
   previousDistances: number[];
   previousIlluminations: number[];
+  previousLatitudePlanet: number;
+  previousLatitudeSun: number;
   previousLongitudePlanet: number;
   previousLongitudeSun: number;
 }

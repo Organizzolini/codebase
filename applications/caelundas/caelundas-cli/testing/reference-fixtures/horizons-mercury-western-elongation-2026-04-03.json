@@ -1,0 +1,26 @@
+{
+  "absent": ["☿📏➡️ Mercury Eastern Elongation"],
+  "counts": {
+    "☿⬅️📏 Mercury Western Elongation": 1
+  },
+  "events": [
+    {
+      "note": "Horizons: Mercury 27.8195° west of the Sun at 22:33:38 UT (parabolic fit to one-minute samples), with Mercury in Pisces and the Sun in Aries. In-The-Sky.org lists 18:48 UT, the maximum of the ecliptic longitude difference rather than of the angular separation",
+      "start": "2026-04-03T22:34:00Z",
+      "summary": "☿⬅️📏 Mercury Western Elongation"
+    }
+  ],
+  "name": "Mercury's greatest western elongation on 3 April 2026",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "JPL Horizons API: geocentric apparent RA and Dec (quantity 2) of the planet and the Sun, one-minute steps, angular separation computed from them",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='199'&CENTER='500@399'&EPHEM_TYPE='OBSERVER'&START_TIME='2026-04-02 06:00'&STOP_TIME='2026-04-05 06:00'&STEP_SIZE='1 m'&QUANTITIES='2'&ANG_FORMAT='DEG'&CSV_FORMAT='YES'&EXTRA_PREC='YES'"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-04-04",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-04-03"
+  }
+}
