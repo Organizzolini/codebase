@@ -2,6 +2,8 @@ import { Column, Entity, Index, ManyToOne, OneToMany } from "typeorm";
 
 import { DeletableEntity } from "@codebase/database";
 
+import { BIGINT_NUMBER_TRANSFORMER } from "../entities.constants";
+
 import { Author } from "./Author.entity";
 import { Text } from "./Text.entity";
 import { Token } from "./Token.entity";
@@ -26,6 +28,7 @@ export class Line extends DeletableEntity {
 
   @Column("bigint", {
     comment: "The sequential 0-based index of the line within its text",
+    transformer: BIGINT_NUMBER_TRANSFORMER,
   })
   index!: number;
 

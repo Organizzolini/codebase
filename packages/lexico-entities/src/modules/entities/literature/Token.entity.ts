@@ -3,6 +3,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 import { DeletableEntity } from "@codebase/database";
 
 import { Word } from "../dictionary/Word.entity";
+import { BIGINT_NUMBER_TRANSFORMER } from "../entities.constants";
 
 import { Author } from "./Author.entity";
 import { Line } from "./Line.entity";
@@ -31,6 +32,7 @@ export class Token extends DeletableEntity {
 
   @Column("bigint", {
     comment: "The 0-based index of this token within its parent line",
+    transformer: BIGINT_NUMBER_TRANSFORMER,
   })
   index!: number;
 
