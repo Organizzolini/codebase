@@ -47,6 +47,7 @@ hand back a service.
 ```text
 src/index.ts — createNodes
   ├─ resolveToolInputs (plugin-inputs.utilities.ts)   ← the command line's cache inputs
+  ├─ resolveTsconfigInputs (plugin-tsconfig.utilities.ts) ← the loader's tsconfig chain
   └─ PluginService.inferTargets                       ← one gate per project.json
 
 src/executors/gate/hasher.ts → GateService.hashTask   ← own-project runs hashed by Nx,
@@ -71,6 +72,7 @@ src/
     plugin/                         # PluginService: options and inference
       plugin-context.utilities.ts   # Builds and caches the NestJS context
       plugin-inputs.utilities.ts    # resolveToolInputs: the command line's inputs
+      plugin-tsconfig.utilities.ts  # resolveTsconfigInputs: the root tsconfig's extends chain
 testing/                            # Shared test setup
 ```
 
@@ -85,12 +87,20 @@ The schema is named by path and listed in `files`, so the tarball ships it.
 
 - **Tool inputs** (`resolveToolInputs`): inside this workspace, a
   `package.json` and `src/**/!(*.test.*|*.spec.*)` glob per package in
-  `@codependix/cli`'s `workspace:` closure, plus `{workspaceRoot}/tsconfig.json`
-  in either case: `@swc-node/register` reads its options from the gate's
-  working directory (the workspace root), never from a package's own tsconfig. Each package is located
+  `@codependix/cli`'s `workspace:` closure. Each package is located
   through its entry and the manifest that names it; one that cannot be
   located is named in an Nx `logger.warn` and skipped. An installed command
   line yields one `externalDependencies` input instead. Never throws.
+- **Tsconfig inputs** (`resolveTsconfigInputs`): `@swc-node/register` reads
+  its options from `tsconfig.json` in the gate's working directory (the
+  workspace root) and every base it `extends`, never from a package's own
+  tsconfig. Each workspace file in that chain is a `{workspaceRoot}` input,
+  missing or unparsable ones included; a base under `node_modules`, named by
+  package or by path, is an `externalDependencies` entry only when the root
+  `package.json` declares its package from a registry, since Nx fails a task naming an
+  external dependency outside its graph.
+  Resolved apart from the tool inputs, so either failing keeps the other.
+  What it cannot name, it warns about. Never throws.
 - **Test exclusion lives inside the positive glob.** Nx's affected
   computation reads only positive `{workspaceRoot}` inputs and ignores a
   `!`-prefixed one, so a negated input would not stop a test-only edit from
@@ -113,7 +123,7 @@ nx run codependix-nx:pack            # Tarball in dist/tarballs — never publis
 ### Testing
 
 ```bash
-nx run codependix-nx:vitest:unit          # Services, the hasher, the loader, tool inputs
+nx run codependix-nx:vitest:unit          # Services, the hasher, the loader, tool and tsconfig inputs
 nx run codependix-nx:vitest:integration   # The real executor against a fixture workspace
 ```
 
@@ -134,6 +144,7 @@ See the [testing-strategy skill](../../../../.agents/skills/testing-strategy/SKI
 - [src/index.ts](src/index.ts): Plugin entry Nx loads
 - [src/modules/gate/gate.service.ts](src/modules/gate/gate.service.ts): The gate run and its hashing
 - [src/modules/plugin/plugin-inputs.utilities.ts](src/modules/plugin/plugin-inputs.utilities.ts): Tool inputs
+- [src/modules/plugin/plugin-tsconfig.utilities.ts](src/modules/plugin/plugin-tsconfig.utilities.ts): Tsconfig inputs
 - [src/executors/gate/loader.mjs](src/executors/gate/loader.mjs): The `--import` shim
 - [executors.json](executors.json): Executor, hasher, and schema
 - [project.json](project.json): Nx targets

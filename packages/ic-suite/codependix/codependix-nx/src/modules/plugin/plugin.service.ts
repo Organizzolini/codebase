@@ -90,8 +90,9 @@ export class PluginService {
    * sources through `^default`; the workspace configuration holds the rules,
    * so editing it invalidates every gate; the project's own configuration is
    * the one file only this project's gate reads; and the command line's own
-   * code decides every verdict, through the `toolInputs` the caller resolved
-   * with `resolveToolInputs`. No `configurations` are
+   * code and its loader's tsconfig chain decide every verdict, through the
+   * `toolInputs` the caller resolved with `resolveToolInputs` and
+   * `resolveTsconfigInputs`. No `configurations` are
    * declared, so an aggregator run with `--configuration=check` falls through
    * to the defaults rather than failing for a configuration this target lacks.
    */
