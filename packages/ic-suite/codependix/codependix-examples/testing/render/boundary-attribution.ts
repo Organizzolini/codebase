@@ -1,4 +1,9 @@
-import { renderBoundaryRun, runBoundaryCheck } from "./boundary-run";
+import {
+  describeBuilt,
+  describeExit,
+  renderBoundaryRun,
+  runBoundaryCheck,
+} from "./boundary-run";
 import { boundaryReportService } from "./builders";
 import { fence, fenceJson } from "./document";
 import { renderWorkspaceGraph } from "./nx-graphs";
@@ -144,8 +149,6 @@ export async function runCycleCheck(
   });
 }
 
-// 📄 Documents
-
 /** Runs the three-project cycle workspace. */
 export async function runRingCheck(
   args: ScenarioArguments,
@@ -156,6 +159,8 @@ export async function runRingCheck(
     workspace: SHOP_RING,
   });
 }
+
+// 📄 Documents
 
 /** Builds the example showing a cycle charged to every project on it. */
 async function buildCycleDocument(): Promise<ExampleDocument> {
@@ -195,7 +200,7 @@ async function buildCycleDocument(): Promise<ExampleDocument> {
       {
         body: fenceJson(everything.report),
         heading: "The same finding as `--format json` prints it",
-        note: "Under the `boundaries` key. `projects` is who the finding is charged to, `verdict` is `fail` because a charged project is judged, and `cycle` is the whole path. See [The boundary report](../../../codependix-cli/README.md#the-boundary-report).",
+        note: "This is the value of the report's `boundaries` key. `projects` is who the finding is charged to, `verdict` is `fail` because a charged project is judged, and `cycle` is the whole path. See [The boundary report](../../../codependix-cli/README.md#the-boundary-report).",
       },
     ],
     summary:
@@ -211,7 +216,11 @@ async function buildDependencyNoteDocument(): Promise<ExampleDocument> {
     {
       body: renderBoundaryRun(noted),
       heading: "A dependent of a cycle is told, not failed",
-      note: "The workspace is the one in [`boundary-cycles`](../boundary-cycles/README.md). `shop-web` depends on `shop-checkout`, so both halves of the cycle are built — but neither is judged. The finding is reported under the dependency it lives in, marked `note`, and the exit code is `0`. `shop-web` cannot fix it, and it did not break `shop-web`.",
+      note: [
+        "The workspace is the one in [`boundary-cycles`](../boundary-cycles/README.md). `shop-web` depends on `shop-checkout`, so both halves of the cycle are built — but neither is judged. The finding is reported under the dependency it lives in, marked `note`.",
+        describeExit(noted),
+        "`shop-web` cannot fix it, and it did not break `shop-web`.",
+      ].join(" "),
     },
     {
       body: renderBoundaryRun(
@@ -248,6 +257,11 @@ async function buildDependencyNoteDocument(): Promise<ExampleDocument> {
 
 /** Builds the example showing a forbidden edge charged to its source only. */
 async function buildForbiddenEdgeDocument(): Promise<ExampleDocument> {
+  const target = await runAccessCheck({
+    judged: ["shop-database"],
+    kind: "forbid",
+  });
+
   return {
     id: "boundary-forbidden-edges",
     jsonExports: [],
@@ -265,11 +279,13 @@ async function buildForbiddenEdgeDocument(): Promise<ExampleDocument> {
         note: "`web-never-reaches-the-database` condemns the edge `shop-web → shop-database`. The project that wrote the import is `shop-web`, so it is charged `shop-web` and nothing else.",
       },
       {
-        body: renderBoundaryRun(
-          await runAccessCheck({ judged: ["shop-database"], kind: "forbid" }),
-        ),
+        body: renderBoundaryRun(target),
         heading: "The target is not charged, so judging it finds nothing",
-        note: "`shop-database` did nothing wrong, and a dependency closure never includes dependents, so the edge is not even built. Naming the target is a clean run.",
+        note: [
+          "`shop-database` did nothing wrong, and a dependency closure never includes dependents, so the edge is never in the graph.",
+          describeBuilt(target),
+          describeExit(target),
+        ].join(" "),
       },
       {
         body: renderBoundaryRun(

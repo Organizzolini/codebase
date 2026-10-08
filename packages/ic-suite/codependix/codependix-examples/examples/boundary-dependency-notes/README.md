@@ -15,7 +15,7 @@ drifted; `:write` regenerates it.
 
 ## A dependent of a cycle is told, not failed
 
-The workspace is the one in [`boundary-cycles`](../boundary-cycles/README.md). `shop-web` depends on `shop-checkout`, so both halves of the cycle are built — but neither is judged. The finding is reported under the dependency it lives in, marked `note`, and the exit code is `0`. `shop-web` cannot fix it, and it did not break `shop-web`.
+The workspace is the one in [`boundary-cycles`](../boundary-cycles/README.md). `shop-web` depends on `shop-checkout`, so both halves of the cycle are built — but neither is judged. The finding is reported under the dependency it lives in, marked `note`. The exit code is `0`. `shop-web` cannot fix it, and it did not break `shop-web`.
 
 ```text
 judged:  shop-web

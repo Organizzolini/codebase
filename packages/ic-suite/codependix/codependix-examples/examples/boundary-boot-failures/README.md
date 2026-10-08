@@ -15,7 +15,7 @@ drifted; `:write` regenerates it.
 
 ## An application importing a module from another project
 
-Both projects are tagged `framework:nestjs`, so both have a container to boot. `storefront-catalog`'s module file throws as it is evaluated — deliberately, the way [`container-rooting`](../container-rooting/README.md)'s `failing-container` does — and `storefront-api`'s `MainModule` imports it.
+Both projects are tagged `framework:nestjs`, so both have a container to boot. `storefront-catalog`'s module file throws as it is evaluated — deliberately, the way [`container-rooting`](../container-rooting/README.md)'s `failing-container` does, standing in for the circular value import that fails a real container with `Cannot access 'X' before initialization` — and `storefront-api`'s `MainModule` imports it.
 
 ```mermaid
 graph LR
@@ -44,9 +44,9 @@ Judged projects: storefront-api.
 - **note** nestjsModules in dependency storefront-catalog, not failing: The storefront catalog cannot be loaded.
 ```
 
-## Judging the owner names no other project
+## Judging the failing project itself names no owner
 
-With `storefront-catalog` judged, the failing code is its own, so the failure carries no `ownerProject`. Nothing depends on it here, so it is the only container built.
+With `storefront-catalog` judged, the failing code is its own, so the failure carries no `ownerProject`. Nothing depends on it here. The run built `storefront-catalog`.
 
 ```text
 judged:  storefront-catalog

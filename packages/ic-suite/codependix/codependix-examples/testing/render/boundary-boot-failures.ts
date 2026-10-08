@@ -1,4 +1,8 @@
-import { renderBoundaryRun, runBoundaryCheck } from "./boundary-run";
+import {
+  describeBuilt,
+  renderBoundaryRun,
+  runBoundaryCheck,
+} from "./boundary-run";
 import { fenceJson } from "./document";
 import { renderWorkspaceGraph } from "./nx-graphs";
 import { EXAMPLES_DIRECTORY } from "./paths";
@@ -61,7 +65,7 @@ export async function buildBootFailureDocuments(): Promise<ExampleDocument[]> {
         {
           body: renderWorkspaceGraph(STOREFRONT),
           heading: "An application importing a module from another project",
-          note: "Both projects are tagged `framework:nestjs`, so both have a container to boot. `storefront-catalog`'s module file throws as it is evaluated — deliberately, the way [`container-rooting`](../container-rooting/README.md)'s `failing-container` does — and `storefront-api`'s `MainModule` imports it.",
+          note: "Both projects are tagged `framework:nestjs`, so both have a container to boot. `storefront-catalog`'s module file throws as it is evaluated — deliberately, the way [`container-rooting`](../container-rooting/README.md)'s `failing-container` does, standing in for the circular value import that fails a real container with `Cannot access 'X' before initialization` — and `storefront-api`'s `MainModule` imports it.",
         },
         {
           body: renderBoundaryRun(api),
@@ -70,8 +74,11 @@ export async function buildBootFailureDocuments(): Promise<ExampleDocument[]> {
         },
         {
           body: renderBoundaryRun(catalog),
-          heading: "Judging the owner names no other project",
-          note: "With `storefront-catalog` judged, the failing code is its own, so the failure carries no `ownerProject`. Nothing depends on it here, so it is the only container built.",
+          heading: "Judging the failing project itself names no owner",
+          note: [
+            "With `storefront-catalog` judged, the failing code is its own, so the failure carries no `ownerProject`. Nothing depends on it here.",
+            describeBuilt(catalog),
+          ].join(" "),
         },
         {
           body: fenceJson(api.report),

@@ -93,7 +93,7 @@ Judged projects: shop-admin, shop-ledger.
 
 ## The same finding as `--format json` prints it
 
-Under the `boundaries` key. `projects` is who the finding is charged to, `verdict` is `fail` because a charged project is judged, and `cycle` is the whole path. See [The boundary report](../../../codependix-cli/README.md#the-boundary-report).
+This is the value of the report's `boundaries` key. `projects` is who the finding is charged to, `verdict` is `fail` because a charged project is judged, and `cycle` is the whole path. See [The boundary report](../../../codependix-cli/README.md#the-boundary-report).
 
 ```json
 {

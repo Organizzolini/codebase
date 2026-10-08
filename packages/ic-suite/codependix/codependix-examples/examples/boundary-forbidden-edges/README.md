@@ -49,7 +49,7 @@ Judged projects: shop-web.
 
 ## The target is not charged, so judging it finds nothing
 
-`shop-database` did nothing wrong, and a dependency closure never includes dependents, so the edge is not even built. Naming the target is a clean run.
+`shop-database` did nothing wrong, and a dependency closure never includes dependents, so the edge is never in the graph. The run built `shop-database`. The exit code is `0`.
 
 ```text
 judged:  shop-database
