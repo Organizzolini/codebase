@@ -10,10 +10,7 @@ import type { Body } from "../caelundas/caelundas.types";
  *
  * @see {@link getAzimuthElevationFromEphemeris} for data retrieval
  */
-export type AzimuthElevationEphemeris = Record<
-  string,
-  { azimuth: number; elevation: number }
->;
+export type AzimuthElevationEphemeris = Record<string, HorizonPosition>;
 
 /**
  * Bodies for which azimuth/elevation ephemerides are generated.
@@ -95,6 +92,14 @@ export interface Ephemerides {
   diameterEphemerisByBody: Record<Body, DiameterEphemeris>;
   distanceEphemerisByBody: Record<Body, DistanceEphemeris>;
   illuminationEphemerisByBody: Record<Body, IlluminationEphemeris>;
+}
+
+/** Position in horizontal coordinates. */
+export interface HorizonPosition {
+  azimuth: number;
+  elevation: number;
+  semidiameter?: number;
+  trueElevation?: number;
 }
 
 /**
