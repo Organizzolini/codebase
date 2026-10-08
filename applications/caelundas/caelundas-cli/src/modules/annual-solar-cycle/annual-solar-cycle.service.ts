@@ -3,6 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { LoggerService } from "@codebase/logging";
 
 import { EphemerisService } from "../ephemeris/ephemeris.service";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { AnnualSolarCycleEventsService } from "./annual-solar-cycle-events.service";
 import {
@@ -41,6 +42,7 @@ export class AnnualSolarCycleService {
   constructor(
     private readonly logger: LoggerService,
     private readonly ephemerisService: EphemerisService,
+    private readonly progressiveUtilitiesService: ProgressiveUtilitiesService,
     private readonly annualSolarCycleEventsService: AnnualSolarCycleEventsService,
   ) {
     this.logger.setContext(AnnualSolarCycleService.name);
@@ -57,9 +59,14 @@ export class AnnualSolarCycleService {
     aphelionEvents: DetectedCalendarEvent[],
     perihelionEvents: DetectedCalendarEvent[],
   ): DetectedCalendarEvent[] {
-    return this.pairForwards(aphelionEvents, perihelionEvents).map(
-      ([beginning, ending]) =>
-        this.getSolarAdvancingDurationEvent(beginning, ending),
+    const advancingPairs =
+      this.progressiveUtilitiesService.pairProgressiveEvents(
+        aphelionEvents,
+        perihelionEvents,
+        SOLAR_ADVANCING_DESCRIPTION,
+      );
+    return advancingPairs.map(([beginning, ending]) =>
+      this.getSolarAdvancingDurationEvent(beginning, ending),
     );
   }
 
@@ -81,9 +88,14 @@ export class AnnualSolarCycleService {
     perihelionEvents: DetectedCalendarEvent[],
     aphelionEvents: DetectedCalendarEvent[],
   ): DetectedCalendarEvent[] {
-    return this.pairForwards(perihelionEvents, aphelionEvents).map(
-      ([beginning, ending]) =>
-        this.getSolarRetreatingDurationEvent(beginning, ending),
+    const retreatingPairs =
+      this.progressiveUtilitiesService.pairProgressiveEvents(
+        perihelionEvents,
+        aphelionEvents,
+        SOLAR_RETREATING_DESCRIPTION,
+      );
+    return retreatingPairs.map(([beginning, ending]) =>
+      this.getSolarRetreatingDurationEvent(beginning, ending),
     );
   }
 
@@ -137,38 +149,6 @@ export class AnnualSolarCycleService {
       start: beginning.start,
       summary: SOLAR_RETREATING_SUMMARY,
     };
-  }
-
-  /**
-   * Pairs each beginning with the earliest ending after it, so a span never
-   * runs backwards. A beginning followed by another beginning before any ending
-   * is left unpaired, as is a trailing beginning.
-   */
-  private pairForwards(
-    beginnings: DetectedCalendarEvent[],
-    endings: DetectedCalendarEvent[],
-  ): [DetectedCalendarEvent, DetectedCalendarEvent][] {
-    const byStart = (
-      a: DetectedCalendarEvent,
-      b: DetectedCalendarEvent,
-    ): number => a.start.valueOf() - b.start.valueOf();
-    const sortedBeginnings = beginnings.toSorted(byStart);
-    const sortedEndings = endings.toSorted(byStart);
-    const pairs: [DetectedCalendarEvent, DetectedCalendarEvent][] = [];
-    for (const [index, beginning] of sortedBeginnings.entries()) {
-      const nextBeginning = sortedBeginnings[index + 1];
-      const ending = sortedEndings.find(
-        (candidate) => candidate.start.valueOf() > beginning.start.valueOf(),
-      );
-      const reachesNextBeginning =
-        ending !== undefined &&
-        nextBeginning !== undefined &&
-        nextBeginning.start.valueOf() < ending.start.valueOf();
-      if (ending !== undefined && !reachesNextBeginning) {
-        pairs.push([beginning, ending]);
-      }
-    }
-    return pairs;
   }
 
   // 🌎 Public Methods
