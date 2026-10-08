@@ -36,6 +36,7 @@
   },
   "exports": {
     ".": "./src/index.ts",
+    "./main": "./src/main.ts",
     "./package.json": "./package.json"
   },
   "files": [
@@ -63,6 +64,7 @@
         "types": "./dist/src/index.d.ts",
         "default": "./dist/src/index.js"
       },
+      "./main": "./dist/src/main.js",
       "./package.json": "./package.json"
     },
     "main": "./dist/src/index.js",
