@@ -362,6 +362,55 @@ describe(CalendarService, () => {
       expect(calendar).toContain("TZNAME:EST");
     });
 
+    describe("content lines (RFC 5545 §3.1)", () => {
+      const longDescription = `🌕 ${"Full Moon in Libra opposite the Sun in Aries, ".repeat(4)}✨`;
+      const calendar = (): string =>
+        service.buildFileContent({
+          description: "A test calendar description",
+          events: [
+            {
+              categories: ["Astronomy", "Lunar Phase"],
+              description: longDescription,
+              end: moment.utc("2025-03-29T10:58:00Z"),
+              start: moment.utc("2025-03-29T10:58:00Z"),
+              summary: "Full Moon",
+            },
+          ],
+          name: "Test Calendar",
+          timezone: "America/New_York",
+        });
+
+      it("ends every line with CRLF", () => {
+        const content = calendar();
+
+        expect(content).not.toMatch(/(?<!\r)\n/);
+        expect(content.endsWith("END:VCALENDAR\r\n")).toBe(true);
+      });
+
+      it("folds every line to at most 75 octets", () => {
+        const lines = calendar().split("\r\n");
+
+        for (const line of lines) {
+          expect(Buffer.byteLength(line, "utf8")).toBeLessThanOrEqual(75);
+        }
+      });
+
+      it("unfolds a folded line back to its original value", () => {
+        const unfolded = calendar().replaceAll(/\r\n[ \t]/g, "");
+
+        expect(unfolded).toContain(`DESCRIPTION:${longDescription}\r\n`);
+      });
+
+      it("never splits a multi-octet character across a fold", () => {
+        // A split surrogate pair or UTF-8 sequence would not survive the round trip.
+        const lines = calendar().split("\r\n");
+
+        for (const line of lines) {
+          expect(Buffer.from(line, "utf8").toString("utf8")).toBe(line);
+        }
+      });
+    });
+
     it("omits optional calendar description and timezone fields when absent", () => {
       const calendar = service.buildFileContent({
         events: sampleEvents,
