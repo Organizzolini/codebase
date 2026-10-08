@@ -36,6 +36,9 @@ the reproduction that produces that exact message is in
 | `TypescriptProjectConfigurationError` | [`typescript-resolution`](examples/typescript-resolution) — the compiler's own diagnostics, and why a parse failure is fatal rather than skipped |
 | `💥 Failed running codependix`, naming one project | [`container-rooting`](examples/container-rooting) — one project's failure is isolated; every other project still completed |
 | `Found codependix boundary violations` | [`boundary-rules`](examples/boundary-rules) — a real edge or cycle in real code. Re-running `--write` never fixes one: either the edge goes, or the rule does |
+| A boundary finding names a project you did not edit, or lists several | [`boundary-cycles`](examples/boundary-cycles) — a cycle is charged to every project on it. [`boundary-forbidden-edges`](examples/boundary-forbidden-edges) — a forbidden or uncovered edge is charged to its source only |
+| `in dependency X, not failing` | [`boundary-dependency-notes`](examples/boundary-dependency-notes) — a finding in a dependency of a judged project is a note and the run stays green; naming that project, or one on the cycle, is what fails it |
+| A container boot failure with `(failed in code owned by X)` | [`boundary-boot-failures`](examples/boundary-boot-failures) — the failing container's own project fails, and the owner is read off the error's stack |
 | `--check needs a value` | [`check-and-write`](examples/check-and-write) — `--check` names which finding it gates. Name the set; do not drop the flag |
 | `--check does not accept "…"` | [`check-and-write`](examples/check-and-write) — `limits` is codometer's word and `depth` is callidescope's; only `reports` is shared |
 | `--write cannot be combined with --check reports` | [`check-and-write`](examples/check-and-write) — `--write --check boundaries` is legal, because a boundary has no destination to be stale |
@@ -119,6 +122,9 @@ refusal or a failure a reader will hit:
   shows that one project failing stops no other.
 - `typescript-resolution/broken` carries a `tsconfig.json` the compiler cannot
   parse.
+- `boundary-boot-failures/storefront-catalog` throws as its module file is
+  evaluated, so the application importing it cannot boot and the guide can show
+  whose failure that is.
 - `refusals/unsupported-type` names a graph type codependix does not have.
 - `configuration-resolution/unknown-fields` carries a field codependix has no
   opinion about, to show it is stripped rather than rejected.

@@ -158,6 +158,13 @@ lives in a dependency of a judged project and does not fail the run. The
 Markdown lists the same findings under each project they are charged to, a
 note marked as not failing.
 
+Who a finding is charged to is worked through, with the report each case
+prints, in four examples:
+[a cycle](../codependix-examples/examples/boundary-cycles/README.md),
+[a forbidden edge](../codependix-examples/examples/boundary-forbidden-edges/README.md),
+[a dependent of either](../codependix-examples/examples/boundary-dependency-notes/README.md),
+and [a container that cannot boot](../codependix-examples/examples/boundary-boot-failures/README.md).
+
 ## Packages
 
 | Package | Role |
@@ -165,7 +172,7 @@ note marked as not failing.
 | [`@codependix/cli`](.) | Orchestrates the four graph builders and delivers their exports |
 | [`@codependix/boundaries`](../codependix-boundaries/README.md) | Builds each level's graph for a workspace, judges it against the declared rules, and reports what breaks them. `--check boundaries` delegates to it wholesale |
 | [`@codependix/configuration`](../codependix-configuration/README.md) | Reads `codependix.config.ts` and resolves per-project export destinations and boundary rules |
-| [`@codependix/examples`](../codependix-examples/README.md) | Sixteen subjects built to be graphed, each with the guide codependix renders from it |
+| [`@codependix/examples`](../codependix-examples/README.md) | Twenty-one subjects built to be graphed, each with the guide codependix renders from it |
 | [`@codependix/nx-projects`](../codependix-nx-projects/README.md) | Builds a project's Nx Neighborhood and the whole-workspace Workspace Graph |
 | [`@codependix/nestjs-modules`](../codependix-nestjs-modules/README.md) | Explores a NestJS project's container and builds its module graph |
 | [`@codependix/file-imports`](../codependix-file-imports/README.md) | Builds a project's file-level import graph — a `typescript` module walking its own `ts.Program`, and a `python` module parsing `import`/`from ... import` statements |
