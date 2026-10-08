@@ -140,7 +140,7 @@ describe(QuadrupleAspectsBaseService, () => {
       "Mars, Moon, Sun, Venus grand cross",
     );
     expect(progressiveEvent.summary).toBe(
-      "⊞ ☉-☽-♂-♀ Mars, Moon, Sun, Venus grand cross forming",
+      "⊞ ☉-☽-♂-♀ Mars, Moon, Sun, Venus grand cross",
     );
   });
 

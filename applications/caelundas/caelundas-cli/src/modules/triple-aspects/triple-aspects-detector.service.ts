@@ -30,6 +30,14 @@ export class TripleAspectsDetectorService {
 
   // 🔏 Private Methods
 
+  /** Returns an edge's two bodies in canonical order, whatever order it stores them in. */
+  private canonicalPair(edge: AspectBodies): [Body, Body] {
+    const [first, second] = edge.bodies;
+    return this.aspectGraphService.canonicalBodyOrder(edge.bodies)[0] === first
+      ? [first, second]
+      : [second, first];
+  }
+
   /**
    * Handles check grand trine triplet.
    */
@@ -326,7 +334,10 @@ export class TripleAspectsDetectorService {
     previousAspectBodies: AspectBodies[];
   }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
-    const unionEdges = [...currentAspectBodies, ...previousAspectBodies];
+    const unionEdges = this.aspectGraphService.unionAspectBodies(
+      currentAspectBodies,
+      previousAspectBodies,
+    );
     const trines = this.groupAspectsByType(unionEdges).get("trine") || [];
 
     const bodiesInTrines = new Set<Body>();
@@ -335,7 +346,9 @@ export class TripleAspectsDetectorService {
       bodiesInTrines.add(trine.bodies[1]);
     }
 
-    const bodiesArray = [...bodiesInTrines];
+    const bodiesArray = this.aspectGraphService.canonicalBodyOrder([
+      ...bodiesInTrines,
+    ]);
     const events: DetectedCalendarEvent[] = [];
 
     for (const [body1, body2, body3] of this.getUniqueBodyTriplets(
@@ -367,15 +380,17 @@ export class TripleAspectsDetectorService {
     previousAspectBodies: AspectBodies[];
   }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
-    const unionEdges = [...currentAspectBodies, ...previousAspectBodies];
+    const unionEdges = this.aspectGraphService.unionAspectBodies(
+      currentAspectBodies,
+      previousAspectBodies,
+    );
     const aspectsByType = this.groupAspectsByType(unionEdges);
     const oppositions = aspectsByType.get("opposite") || [];
     const squares = aspectsByType.get("square") || [];
     const events: DetectedCalendarEvent[] = [];
 
     for (const opposition of oppositions) {
-      const body1 = opposition.bodies[0];
-      const body2 = opposition.bodies[1];
+      const [body1, body2] = this.canonicalPair(opposition);
       const body1SquareBodies =
         this.tripleAspectsComposerService.findBodiesWithAspectTo(
           body1,
@@ -420,15 +435,17 @@ export class TripleAspectsDetectorService {
     previousAspectBodies: AspectBodies[];
   }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
-    const unionEdges = [...currentAspectBodies, ...previousAspectBodies];
+    const unionEdges = this.aspectGraphService.unionAspectBodies(
+      currentAspectBodies,
+      previousAspectBodies,
+    );
     const aspectsByType = this.groupAspectsByType(unionEdges);
     const sextiles = aspectsByType.get("sextile") || [];
     const quincunxes = aspectsByType.get("quincunx") || [];
     const events: DetectedCalendarEvent[] = [];
 
     for (const sextile of sextiles) {
-      const body1 = sextile.bodies[0];
-      const body2 = sextile.bodies[1];
+      const [body1, body2] = this.canonicalPair(sextile);
       const body1QuincunxBodies =
         this.tripleAspectsComposerService.findBodiesWithAspectTo(
           body1,

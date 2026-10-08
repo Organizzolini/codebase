@@ -5,11 +5,12 @@ import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { ProgressiveCompoundEventService } from "../aspects/progressive-compound-event.service";
 import { aspectBodies as stelliumBodies } from "../caelundas/caelundas.constants";
-import { isKeyOf } from "../caelundas/caelundas.types";
 import {
   symbolByBody,
   symbolByStellium,
 } from "../caelundas/symbol-caelundas.constants";
+
+import { stelliumNameBySize } from "./stellium.constants";
 
 import type { AspectBodies } from "../aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
@@ -157,7 +158,7 @@ export class StelliumService {
     if (conjunctions.length < 6) return [];
     const events: DetectedCalendarEvent[] = [];
     for (const cluster of this.buildConjunctionClusters(conjunctions)) {
-      const bodies = [...cluster];
+      const bodies = this.aspectGraphService.canonicalBodyOrder([...cluster]);
       if (!this.allPairsConjunct(bodies, unionEdges)) continue;
       const result =
         this.compoundPhaseService.determineCompoundPhaseFromSnapshots({
@@ -191,9 +192,11 @@ export class StelliumService {
     const bodiesCapitalized = bodies.map((b) => _.startCase(b));
     const bodySymbols = bodies.map((b) => symbolByBody[b]);
     const stelliumType = `${bodies.length}-body`;
-    const stelliumSymbol = isKeyOf(symbolByStellium, stelliumType)
-      ? symbolByStellium[stelliumType]
-      : undefined;
+    const stelliumName = stelliumNameBySize[bodies.length];
+    if (stelliumName === undefined) {
+      throw new Error(`No stellium symbol for ${bodies.length} bodies`);
+    }
+    const stelliumSymbol = symbolByStellium[stelliumName];
 
     const description = `${_.sortBy([...bodiesCapitalized]).join(", ")} stellium ${phase}`;
     const phaseEmoji = this.phaseEmojiFor(phase);

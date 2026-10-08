@@ -451,6 +451,50 @@ describe(AspectsService, () => {
   });
 
   describe("detect", () => {
+    it("emits a compound aspect once when detectors repeat it", () => {
+      const minute = moment.utc("2026-10-20T12:00:00Z");
+      const kite = (order: string[]): DetectedCalendarEvent => ({
+        categories: [
+          "Astronomy",
+          "Astrology",
+          "Compound Aspect",
+          "Quadruple Aspect",
+          "Kite",
+          "Forming",
+          ...order,
+          "Venus Focal",
+        ],
+        description: "Jupiter, Mars, Moon, Venus kite forming (Venus focal)",
+        end: minute,
+        start: minute,
+        summary: `➡️ 🪁 ${order.join("-")} kite forming`,
+      });
+      const repeatingDetector = {
+        detect: vi
+          .fn<CompositeAspectDetector["detect"]>()
+          .mockReturnValue([
+            kite(["Moon", "Mars", "Jupiter", "Venus"]),
+            kite(["Moon", "Jupiter", "Mars", "Venus"]),
+          ]),
+      };
+      const delegatedService = new AspectsService(
+        [],
+        [repeatingDetector, repeatingDetector],
+        [],
+        new LoggerService(),
+      );
+
+      const { events } = delegatedService.detect({
+        coordinateEphemerisByBody: {} as Record<Body, CoordinateEphemeris>,
+        minute,
+        previousAspectBodies: [],
+      });
+
+      expect(events).toStrictEqual([
+        kite(["Moon", "Mars", "Jupiter", "Venus"]),
+      ]);
+    });
+
     it("combines detector outputs and progressive events", () => {
       const minute = moment.utc("2026-01-21T12:00:00Z");
       const simpleEvent = {

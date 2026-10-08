@@ -7,6 +7,7 @@ import { LoggerService } from "@codebase/logging";
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { TripleAspectsComposerService } from "./triple-aspects-composer.service";
 import { TripleAspectsDetectorService } from "./triple-aspects-detector.service";
@@ -14,6 +15,33 @@ import { TripleAspectsService } from "./triple-aspects.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
+import type { AspectPhase } from "../caelundas/caelundas.types";
+
+/** Builds a Lunar Apogee–Moon–Venus T-square boundary event, Venus focal. */
+function buildTSquareBoundary(
+  phase: AspectPhase,
+  isoMinute: string,
+): DetectedCalendarEvent {
+  const minute = moment.utc(isoMinute);
+  return {
+    categories: [
+      "Astronomy",
+      "Astrology",
+      "Compound Aspect",
+      "Triple Aspect",
+      "T Square",
+      phase === "forming" ? "Forming" : "Dissolving",
+      "Lunar Apogee",
+      "Moon",
+      "Venus",
+      "Venus Focal",
+    ],
+    description: `Lunar Apogee, Moon, Venus t-square ${phase} (Venus focal)`,
+    end: minute,
+    start: minute,
+    summary: `➡️ ⊤ 🌚-🌙-♀️ Lunar Apogee, Moon, Venus t-square ${phase} (Venus focal)`,
+  };
+}
 
 describe(TripleAspectsService, () => {
   let service: TripleAspectsService;
@@ -25,6 +53,7 @@ describe(TripleAspectsService, () => {
         AspectGraphService,
         AspectPhaseEmojiService,
         CompoundPhaseService,
+        ProgressiveUtilitiesService,
         TripleAspectsComposerService,
         TripleAspectsDetectorService,
         TripleAspectsService,
@@ -65,6 +94,83 @@ describe(TripleAspectsService, () => {
 
       expect(events.length).toBeGreaterThanOrEqual(1);
       expect(events[0]?.categories).toContain("Triple Aspect");
+    });
+
+    it("emits a T-square once when its legs are in both snapshots", () => {
+      const minute = moment.utc("2026-02-20T08:00:00.000Z");
+      const previousAspectBodies: AspectBodies[] = [
+        { aspect: "opposite", bodies: ["moon", "lunar apogee"] },
+        { aspect: "square", bodies: ["venus", "lunar apogee"] },
+      ];
+      const currentAspectBodies: AspectBodies[] = [
+        ...previousAspectBodies,
+        { aspect: "square", bodies: ["moon", "venus"] },
+      ];
+
+      const events = service.detect({
+        currentAspectBodies,
+        minute,
+        previousAspectBodies,
+      });
+
+      expect(events.map((event) => event.description)).toStrictEqual([
+        "Lunar Apogee, Moon, Venus t-square forming (Venus focal)",
+      ]);
+    });
+
+    it("stamps a T-square dissolving at the minute its leg leaves orb", () => {
+      const minute = moment.utc("2026-02-21T02:30:00.000Z");
+      const currentAspectBodies: AspectBodies[] = [
+        { aspect: "opposite", bodies: ["moon", "lunar apogee"] },
+        { aspect: "square", bodies: ["venus", "lunar apogee"] },
+      ];
+      const previousAspectBodies: AspectBodies[] = [
+        ...currentAspectBodies,
+        { aspect: "square", bodies: ["moon", "venus"] },
+      ];
+
+      const events = service.detect({
+        currentAspectBodies,
+        minute,
+        previousAspectBodies,
+      });
+
+      expect(
+        events.map((event) => [event.description, event.start.toISOString()]),
+      ).toStrictEqual([
+        [
+          "Lunar Apogee, Moon, Venus t-square dissolving (Venus focal)",
+          "2026-02-21T02:30:00.000Z",
+        ],
+      ]);
+    });
+
+    it("discovers a grand trine once with the same title in any edge order", () => {
+      const minute = moment.utc("2026-02-20T08:00:00.000Z");
+      const trines: AspectBodies[] = [
+        { aspect: "trine", bodies: ["sun", "mars"] },
+        { aspect: "trine", bodies: ["mars", "jupiter"] },
+        { aspect: "trine", bodies: ["sun", "jupiter"] },
+      ];
+      const reordered: AspectBodies[] = trines
+        .toReversed()
+        .map(({ aspect, bodies: [first, second] }) => ({
+          aspect,
+          bodies: [second, first],
+        }));
+
+      const summaries = [trines, reordered].map((edges) =>
+        service
+          .detect({
+            currentAspectBodies: edges,
+            minute,
+            previousAspectBodies: edges.slice(1),
+          })
+          .map((event) => event.summary),
+      );
+
+      expect(summaries[0]).toHaveLength(1);
+      expect(summaries[1]).toStrictEqual(summaries[0]);
     });
   });
 
@@ -116,6 +222,28 @@ describe(TripleAspectsService, () => {
       expect(progressiveEvents).toHaveLength(1);
       expect(progressiveEvents[0]?.description).toContain("t-square");
       expect(progressiveEvents[0]?.categories).toContain("Triple Aspect");
+    });
+
+    it("pairs two occurrences of one T-square into two spans despite duplicate boundaries", () => {
+      const boundaries = [
+        ["forming", "2026-02-20T08:00:00.000Z"],
+        ["dissolving", "2026-02-21T02:30:00.000Z"],
+        ["forming", "2026-03-19T21:15:00.000Z"],
+        ["dissolving", "2026-03-20T14:45:00.000Z"],
+      ] as const;
+      const events = boundaries.flatMap(([phase, isoMinute]) => [
+        buildTSquareBoundary(phase, isoMinute),
+        buildTSquareBoundary(phase, isoMinute),
+      ]);
+
+      const spans = service
+        .detectProgressive(events)
+        .map((span) => [span.start.toISOString(), span.end.toISOString()]);
+
+      expect(spans).toStrictEqual([
+        ["2026-02-20T08:00:00.000Z", "2026-02-21T02:30:00.000Z"],
+        ["2026-03-19T21:15:00.000Z", "2026-03-20T14:45:00.000Z"],
+      ]);
     });
 
     it("skips events without a progressive group key", () => {

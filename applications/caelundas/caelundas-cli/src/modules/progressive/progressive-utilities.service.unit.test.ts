@@ -217,4 +217,73 @@ describe(ProgressiveUtilitiesService, () => {
       },
     );
   });
+
+  describe("pairCompoundBoundaries", () => {
+    const boundary = (
+      phase: "Dissolving" | "Forming",
+      iso: string,
+    ): DetectedCalendarEvent => ({
+      ...createEvent(iso),
+      categories: ["Compound Aspect", phase],
+    });
+    const spansOf = (
+      pairs: [DetectedCalendarEvent, DetectedCalendarEvent][],
+    ): string[][] =>
+      pairs.map(([beginning, ending]) => [
+        beginning.start.toISOString(),
+        ending.start.toISOString(),
+      ]);
+
+    it("pairs each occurrence once however often its boundaries repeat", () => {
+      const pairs = service.pairCompoundBoundaries(
+        [
+          boundary("Forming", "2026-10-20T08:00:00.000Z"),
+          boundary("Forming", "2026-10-20T08:00:00.000Z"),
+          boundary("Dissolving", "2026-10-20T19:30:00.000Z"),
+          boundary("Dissolving", "2026-10-20T19:30:00.000Z"),
+          boundary("Forming", "2026-10-27T03:15:00.000Z"),
+          boundary("Dissolving", "2026-10-27T11:45:00.000Z"),
+        ],
+        "Kite",
+      );
+
+      expect(spansOf(pairs)).toStrictEqual([
+        ["2026-10-20T08:00:00.000Z", "2026-10-20T19:30:00.000Z"],
+        ["2026-10-27T03:15:00.000Z", "2026-10-27T11:45:00.000Z"],
+      ]);
+      expect(logger.warn).not.toHaveBeenCalled();
+    });
+
+    it("drops a pattern that forms and dissolves in the same minute", () => {
+      const pairs = service.pairCompoundBoundaries(
+        [
+          boundary("Forming", "2026-10-20T08:00:00.000Z"),
+          boundary("Dissolving", "2026-10-20T08:00:00.000Z"),
+        ],
+        "Kite",
+      );
+
+      expect(pairs).toStrictEqual([]);
+    });
+
+    it("warns and skips an occurrence whose dissolving is missing", () => {
+      const pairs = service.pairCompoundBoundaries(
+        [
+          boundary("Forming", "2026-10-20T08:00:00.000Z"),
+          boundary("Forming", "2026-10-27T03:15:00.000Z"),
+          boundary("Dissolving", "2026-10-27T11:45:00.000Z"),
+        ],
+        "Kite",
+      );
+
+      expect(spansOf(pairs)).toStrictEqual([
+        ["2026-10-27T03:15:00.000Z", "2026-10-27T11:45:00.000Z"],
+      ]);
+      expect(logger.warn).toHaveBeenCalledWith(
+        "🔀 Unpaired progressive events",
+        undefined,
+        expect.objectContaining({ label: "Kite", unpairedBeginnings: 1 }),
+      );
+    });
+  });
 });

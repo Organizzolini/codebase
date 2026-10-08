@@ -8,6 +8,7 @@ import { LoggerService } from "@codebase/logging";
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { TripleAspectsComposerService } from "./triple-aspects-composer.service";
 import { TripleAspectsDetectorService } from "./triple-aspects-detector.service";
@@ -51,6 +52,7 @@ describe(TripleAspectsDetectorService, () => {
         AspectGraphService,
         AspectPhaseEmojiService,
         CompoundPhaseService,
+        ProgressiveUtilitiesService,
         { provide: LoggerService, useValue: createMock<LoggerService>() },
       ],
     }).compile();

@@ -70,7 +70,7 @@ export class QuadrupleAspectsBaseService {
       ),
       end: dissolvingEvent.start,
       start: formingEvent.start,
-      summary: formingEvent.summary.replace(/^(➡️|⬅️|🎯)\s/, ""),
+      summary: this.aspectPhaseEmojiService.spanTitle(formingEvent.summary),
     };
   }
 
@@ -222,13 +222,14 @@ export class QuadrupleAspectsBaseService {
   }
 
   /**
-   * Finds grand trines.
+   * Finds each grand trine once, its bodies in canonical order, however many
+   * trine triples close the same triangle.
    */
   findGrandTrines(
     trines: AspectBodies[],
     unionEdges: AspectBodies[],
   ): Set<Body>[] {
-    const grandTrines: Set<Body>[] = [];
+    const grandTrinesByKey = new Map<string, Set<Body>>();
 
     for (let index = 0; index < trines.length; index++) {
       const trineI = trines[index];
@@ -245,12 +246,16 @@ export class QuadrupleAspectsBaseService {
             trineK,
             unionEdges,
           });
-          if (grandTrine) grandTrines.push(grandTrine);
+          if (!grandTrine) continue;
+          const ordered = this.aspectGraphService.canonicalBodyOrder([
+            ...grandTrine,
+          ]);
+          grandTrinesByKey.set(ordered.join("\u001F"), new Set(ordered));
         }
       }
     }
 
-    return grandTrines;
+    return [...grandTrinesByKey.values()];
   }
 
   /**

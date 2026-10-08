@@ -68,6 +68,17 @@ export class AspectsService {
     }
   }
 
+  /**
+   * Identifies a compound event by its minute and its sorted categories, which
+   * hold its bodies, pattern, phase and focal body but not the body order its
+   * title happened to use.
+   */
+  private compoundEventKey(event: DetectedCalendarEvent): string {
+    return [event.start.valueOf(), ...event.categories.toSorted()].join(
+      "\u001F",
+    );
+  }
+
   /** Runs composite-aspect detectors against current and previous aspect-body snapshots. */
   private detectCompositeAspects(
     currentAspectBodies: AspectBodies[],
@@ -79,11 +90,16 @@ export class AspectsService {
       minute,
       previousAspectBodies,
     };
-    const detectedEvents: DetectedCalendarEvent[] = [];
+    const eventsByKey = new Map<string, DetectedCalendarEvent>();
     for (const compositeAspectDetector of this.compositeAspectDetectors) {
-      detectedEvents.push(...compositeAspectDetector.detect(sharedArguments));
+      for (const event of compositeAspectDetector.detect(sharedArguments)) {
+        const key = this.compoundEventKey(event);
+        if (!eventsByKey.has(key)) {
+          eventsByKey.set(key, event);
+        }
+      }
     }
-    return detectedEvents;
+    return [...eventsByKey.values()];
   }
 
   /** Runs all simple-aspect detectors for a minute and flattens their detected events. */

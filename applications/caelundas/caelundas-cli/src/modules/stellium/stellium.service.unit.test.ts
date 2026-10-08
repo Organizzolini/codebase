@@ -5,6 +5,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { ProgressiveCompoundEventService } from "../aspects/progressive-compound-event.service";
+import { aspectBodies } from "../caelundas/caelundas.constants";
 
 import { StelliumService } from "./stellium.service";
 
@@ -217,6 +218,60 @@ describe(StelliumService, () => {
         expect(stellium?.categories).toContain("Forming");
         expect(stellium?.summary).toContain("➡️");
         expect(stellium?.description).toContain("stellium forming");
+      });
+
+      it("titles a stellium with its symbol and a span without its phase", () => {
+        const formingMinute = moment.utc("2026-01-17T12:00:00.000Z");
+        const dissolvingMinute = moment.utc("2026-01-19T08:00:00.000Z");
+        const cluster: AspectBodies[] = [
+          { aspect: "conjunct", bodies: ["sun", "mercury"] },
+          { aspect: "conjunct", bodies: ["sun", "venus"] },
+          { aspect: "conjunct", bodies: ["sun", "mars"] },
+          { aspect: "conjunct", bodies: ["mercury", "venus"] },
+          { aspect: "conjunct", bodies: ["mercury", "mars"] },
+          { aspect: "conjunct", bodies: ["venus", "mars"] },
+        ];
+        const boundaries = [
+          ...service.detect({
+            currentAspectBodies: cluster,
+            minute: formingMinute,
+            previousAspectBodies: cluster.slice(1),
+          }),
+          ...service.detect({
+            currentAspectBodies: cluster.slice(1),
+            minute: dissolvingMinute,
+            previousAspectBodies: cluster,
+          }),
+        ];
+
+        const titles = [
+          ...boundaries,
+          ...service.detectProgressive(boundaries),
+        ].map((event) => event.summary);
+
+        expect(titles).toStrictEqual([
+          "➡️ 🌟 ♂️-☿-☀️-♀️ Mars, Mercury, Sun, Venus stellium forming",
+          "⬅️ 🌟 ♂️-☿-☀️-♀️ Mars, Mercury, Sun, Venus stellium dissolving",
+          "🌟 ♂️-☿-☀️-♀️ Mars, Mercury, Sun, Venus stellium",
+        ]);
+      });
+
+      it("refuses a stellium size that has no symbol", () => {
+        const cluster = aspectBodies.slice(0, 13);
+        const conjunctions = cluster.flatMap((first, index) =>
+          cluster.slice(index + 1).map((second): AspectBodies => ({
+            aspect: "conjunct",
+            bodies: [first, second],
+          })),
+        );
+
+        expect(() =>
+          service.detect({
+            currentAspectBodies: conjunctions,
+            minute: moment.utc("2026-01-17T12:00:00.000Z"),
+            previousAspectBodies: [],
+          }),
+        ).toThrow("No stellium symbol for 13 bodies");
       });
 
       it("detects 5-body stellium", () => {
@@ -776,7 +831,7 @@ describe(StelliumService, () => {
     });
   });
 
-  it("derives dissolving phase timestamp from previous-minute pattern", () => {
+  it("stamps dissolving at the first minute the pattern is gone", () => {
     const minute = moment.utc("2024-03-21T12:00:00.000Z");
     const result = compoundPhaseService.determineCompoundPhaseFromSnapshots({
       checkPatternExists: (edges) => edges.length > 0,
@@ -787,7 +842,7 @@ describe(StelliumService, () => {
     });
 
     expect(result?.phase).toBe("dissolving");
-    expect(result?.eventMinute.toISOString()).toBe("2024-03-21T11:59:00.000Z");
+    expect(result?.eventMinute.toISOString()).toBe("2024-03-21T12:00:00.000Z");
   });
 
   it("returns perfective phase marker", () => {
