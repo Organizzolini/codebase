@@ -173,7 +173,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;**[lexico-api](applications/lexico/lexico-api)** - NestJS GraphQL API exposing Latin dictionary, literature, and Relay cursor-based search\
 &nbsp;&nbsp;&nbsp;&nbsp;**[components-web](packages/components-web)** - Shared React component library using shadcn/ui and Radix primitives\
 &nbsp;&nbsp;&nbsp;&nbsp;**[lexico-entities](packages/lexico-entities)** - TypeORM entities, migrations, and grammatical enumerations for the dictionary and literature schema\
-&nbsp;&nbsp;&nbsp;&nbsp;**[lexico-ingestion](applications/lexico-ingestion)** - NestJS CLI that scrapes and loads dictionary, literature, and etymology sources
+&nbsp;&nbsp;&nbsp;&nbsp;**[lexico-cli](applications/lexico/lexico-cli)** - NestJS CLI that scrapes and loads dictionary, literature, and etymology sources
 
 </details>
 
@@ -10851,7 +10851,7 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 | --- | --- | --- | --- | --- |
 | `applications/caelundas/caelundas-cli` | 16 | 16 | 0 | 12 |
 | `applications/lexico/lexico-web` | 9 | 9 | 0 | 9 |
-| `applications/lexico-ingestion` | 17 | 17 | 0 | 8 |
+| `applications/lexico/lexico-cli` | 17 | 17 | 0 | 8 |
 | `applications/meanderaw/meanderaw-cli` | 16 | 16 | 0 | 12 |
 | `packages/components-web` | 3 | 3 | 0 | 7 |
 | `packages/database` | 4 | 4 | 0 | 4 |

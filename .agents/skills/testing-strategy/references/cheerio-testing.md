@@ -10,9 +10,9 @@ Use this reference when writing or refactoring tests that parse HTML or XML with
 
 ## Current Standard In Lexico Ingestion
 
-For lexico-ingestion tests, helper functions are defined in:
+For lexico-cli tests, helper functions are defined in:
 
-- `applications/lexico-ingestion/testing/mocks.ts`
+- `applications/lexico/lexico-cli/testing/mocks.ts`
 
 Cheerio helper section:
 
@@ -72,13 +72,13 @@ const result = provider.parse($, rootElement);
 Run project-level checks with Nx:
 
 ```bash
-pnpm nx run lexico-ingestion:vitest:unit
-pnpm nx run lexico-ingestion:typecheck
-pnpm nx run lexico-ingestion:lint-code --configuration=check
+pnpm nx run lexico-cli:vitest:unit
+pnpm nx run lexico-cli:typecheck
+pnpm nx run lexico-cli:lint-code --configuration=check
 ```
 
 If the task is coverage-driven:
 
 ```bash
-pnpm nx run lexico-ingestion:vitest --configuration=coverage
+pnpm nx run lexico-cli:vitest --configuration=coverage
 ```

@@ -324,6 +324,7 @@
           "projects": [
             "caelundas-cli",
             "lexico-api",
+            "lexico-cli",
             "lexico-web",
             "meanderaw-cli"
           ]
@@ -1183,6 +1184,7 @@
           "projects": [
             "caelundas-cli",
             "lexico-api",
+            "lexico-cli",
             "lexico-web",
             "meanderaw-cli"
           ]

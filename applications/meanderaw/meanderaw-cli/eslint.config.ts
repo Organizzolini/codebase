@@ -20,7 +20,7 @@ export default [
         {
           // pg: TypeORM's postgres driver, which TypeORM resolves by name at
           // runtime, so nothing imports it — the same carve-out lexico-entities
-          // and lexico-ingestion make, and fallow's `ignoreDependencies` notes.
+          // and lexico-cli make, and fallow's `ignoreDependencies` notes.
           // vitest: a devDependency, imported by the harnesses in `testing/`,
           // which the build dependency check counts as source because they
           // are not `*.test.ts` themselves.

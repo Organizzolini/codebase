@@ -18,14 +18,14 @@ package belongs to one domain or to the workspace.
 - **Give every shared package its own scope.** This is what the workspace did
   before, and what `lexico-entities` still reflects. Rejected: a scope's job is
   to say what a change is _about_, and `logger` has more than ten consumers
-  across caelundas, meanderaw, lexico-ingestion, and most of the callidescope
+  across caelundas, meanderaw, lexico-cli, and most of the callidescope
   and codependix suites. A commit touching it is almost never about logging —
   it is about whatever made the logging need to change. `chore(logger)` names
   the file that moved, not the work.
 - **Remove the scope from every shared package, including `lexico-entities`,
   and fold it under `lexico`.** Rejected: `lexico-entities` has exactly one
   external consumer, so scoping it by consumer would collapse it onto
-  `lexico-ingestion` — which is not what a change to the Latin dictionary's
+  `lexico-cli` — which is not what a change to the Latin dictionary's
   schema is about either. A domain package's scope is already specific; there
   is nothing to gain by erasing it.
 - **Grandfather the inconsistency.** New shared packages get no scope, existing

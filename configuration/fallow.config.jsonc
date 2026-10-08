@@ -262,9 +262,9 @@
     "**/.opencode/skills/**/scripts/**",
     "**/.terraform/**",
     "**/.venv/**",
-    "**/applications/lexico-ingestion/data/**",
-    "**/applications/lexico-ingestion/src/modules/library/library.constants.ts",
-    "**/applications/lexico-ingestion/src/modules/literature/literature.constants.ts",
+    "**/applications/lexico/lexico-cli/data/**",
+    "**/applications/lexico/lexico-cli/src/modules/library/library.constants.ts",
+    "**/applications/lexico/lexico-cli/src/modules/literature/literature.constants.ts",
     "**/build/**",
     "**/conformetry-templates/**",
     // 🕸️ Codependix example subjects: input to be graphed, unreachable from any

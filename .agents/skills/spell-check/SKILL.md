@@ -70,7 +70,7 @@ Use the exact casing reported by cspell when adding dictionary words.
 
 Select dictionary by domain:
 
-- Lexico, Latin, lexico-ingestion, lexico-entities: `configuration/.cspell/lexico.txt`
+- Lexico, Latin, lexico-cli, lexico-entities: `configuration/.cspell/lexico.txt`
 - Astronomy or caelundas domain terms: `configuration/.cspell/astronomy.txt`
 - Infrastructure/Kubernetes/Terraform terms: `configuration/.cspell/infrastructure.txt`
 - Python toolchain terms: `configuration/.cspell/python.txt`

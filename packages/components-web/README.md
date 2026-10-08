@@ -11,7 +11,7 @@ The interface half of the [Lexico](../../applications/lexico/lexico-web/README.m
 | 🐺 [lexico-web](../../applications/lexico/lexico-web/README.md) | The SSR web application |
 | 🎨 [components-web](README.md) | This package — shared React components |
 | 📖 [lexico-entities](../lexico-entities/README.md) | TypeORM entities and migrations |
-| 🚰 [lexico-ingestion](../../applications/lexico-ingestion/README.md) | Dictionary and literature ingestion |
+| 🚰 [lexico-cli](../../applications/lexico/lexico-cli/README.md) | Dictionary and literature ingestion |
 
 ## Features
 

@@ -1,5 +1,5 @@
 /**
- * Test utilities and mocks for lexico-ingestion.
+ * Test utilities and mocks for lexico-cli.
  * Includes mocks for TypeORM repositories and helpers for Cheerio setup.
  */
 

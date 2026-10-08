@@ -4,7 +4,7 @@
 shared enumerations for [Lexico](../../applications/lexico/lexico-web/README.md).
 
 This package is the single definition of what a Latin word _is_ in this suite.
-[lexico-ingestion](../../applications/lexico-ingestion/README.md) writes
+[lexico-cli](../../applications/lexico/lexico-cli/README.md) writes
 through these entities, and the web application reads through them, so neither
 carries its own idea of the schema.
 
@@ -212,7 +212,7 @@ and migrations are verified against the database rather than against a mock.
 ## Related
 
 - 🐺 [lexico-web](../../applications/lexico/lexico-web/README.md) — the web application
-- 🚰 [lexico-ingestion](../../applications/lexico-ingestion/README.md) — fills these tables
+- 🚰 [lexico-cli](../../applications/lexico/lexico-cli/README.md) — fills these tables
 - 🎨 [components-web](../components-web/README.md) — the interface
 
 ## License
@@ -264,11 +264,11 @@ Dependency graphs exported by [codependix](https://github.com/Organizzolini/code
 graph LR
   database["database"]
   lexico_api["lexico-api"]
+  lexico_cli["lexico-cli"]
   lexico_entities["lexico-entities"]
-  lexico_ingestion["lexico-ingestion"]
   lexico_api --> lexico_entities
+  lexico_cli --> lexico_entities
   lexico_entities --> database
-  lexico_ingestion --> lexico_entities
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class lexico_entities subject
 ```
