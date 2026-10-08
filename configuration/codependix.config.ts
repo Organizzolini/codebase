@@ -45,8 +45,9 @@ export const projectDefaults = {
    * was published between it and #857.
    *
    * So rename here and re-splice every README in the same commit, and let
-   * `codebase:codependix:check` prove it — bearing in mind that it runs on
-   * `main` and nowhere else, so a pull request cannot catch this.
+   * `codebase:codependix:write` prove it: run it and read the diff for a
+   * block that was replaced, not appended. Nothing runs it on a pull
+   * request, so a pull request cannot catch this.
    */
   fileImports: {
     markdown: { anchor: "codependix-file-imports" },
