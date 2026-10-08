@@ -1,0 +1,39 @@
+{
+  "dependencies": {
+    "@tanstack/react-router": "catalog:",
+    "@tanstack/react-start": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@nx/eslint-plugin": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "jsdom": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vitest": "catalog:"
+  },
+  "name": "caelundas-web",
+  "private": true,
+  "type": "module",
+  "typeCoverage": {
+    "atLeast": 100,
+    "ignoreCatch": true,
+    "ignoreFiles": [
+      "**/*.test.ts",
+      "**/*.test.tsx",
+      "src/lib/routeTree.gen.ts",
+      "src/router.tsx",
+      "testing/render-route.tsx"
+    ],
+    "strict": true
+  },
+  "version": "0.0.1"
+}

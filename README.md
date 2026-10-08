@@ -100,7 +100,8 @@
 <details>
 <summary><strong>🛰️ caelundas</strong> - Swiss Ephemeris calendar generator that turns astronomical events into an `.ics` file</summary>
 
-&nbsp;&nbsp;&nbsp;&nbsp;**[caelundas-cli](applications/caelundas/caelundas-cli)** - Command-line application that detects astronomical events with Swiss Ephemeris and writes them to an `.ics` file
+&nbsp;&nbsp;&nbsp;&nbsp;**[caelundas-cli](applications/caelundas/caelundas-cli)** - Command-line application that detects astronomical events with Swiss Ephemeris and writes them to an `.ics` file\
+&nbsp;&nbsp;&nbsp;&nbsp;**[caelundas-web](applications/caelundas/caelundas-web)** - TanStack Start web application for browsing the astronomical events caelundas-cli detects
 
 </details>
 
