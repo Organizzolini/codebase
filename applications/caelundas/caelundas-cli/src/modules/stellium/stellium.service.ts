@@ -2,13 +2,13 @@ import { Injectable } from "@nestjs/common";
 import _ from "lodash";
 
 import { AspectGraphService } from "../aspects/aspect-graph.service";
-import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { ProgressiveCompoundEventService } from "../aspects/progressive-compound-event.service";
 import { aspectBodies as stelliumBodies } from "../caelundas/caelundas.constants";
 import {
   symbolByBody,
   symbolByStellium,
 } from "../caelundas/symbol-caelundas.constants";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { stelliumNameBySize } from "./stellium.constants";
 
@@ -22,7 +22,7 @@ import type { Moment } from "moment-timezone";
  *
  * Finds the maximal cliques of the conjunction graph, so a stellium is
  * reported even when a body outside it is conjunct with only some of it, then
- * computes forming/dissolving phases for each clique.
+ * dates each clique's forming and dissolving.
  */
 @Injectable()
 export class StelliumService {
@@ -30,8 +30,8 @@ export class StelliumService {
 
   constructor(
     private readonly aspectGraphService: AspectGraphService,
-    private readonly compoundPhaseService: CompoundPhaseService,
     private readonly progressiveCompoundEventService: ProgressiveCompoundEventService,
+    private readonly progressiveUtilitiesService: ProgressiveUtilitiesService,
   ) {}
 
   // 🔐 Private Fields
@@ -39,30 +39,6 @@ export class StelliumService {
   // 🔑 Public Fields
 
   // 🔏 Private Methods
-
-  /**
-   * Handles all pairs conjunct.
-   */
-  private allPairsConjunct(bodies: Body[], edges: AspectBodies[]): boolean {
-    for (let index = 0; index < bodies.length; index++) {
-      const bodyI = bodies[index];
-      if (!bodyI) continue;
-      for (let index_ = index + 1; index_ < bodies.length; index_++) {
-        const bodyJ = bodies[index_];
-        if (!bodyJ) continue;
-        if (
-          !this.haveAspect({
-            aspectType: "conjunct",
-            body1: bodyI,
-            body2: bodyJ,
-            edges,
-          })
-        )
-          return false;
-      }
-    }
-    return true;
-  }
 
   /**
    * Builds each body's set of conjunct neighbors.
@@ -108,8 +84,9 @@ export class StelliumService {
    * area of life or zodiac sign. The concentration of planetary energies
    * can indicate both talent and challenge in the associated domain.
    *
-   * @see {@link determineCompoundPhaseFromSnapshots} for phase calculation
-   * @see {@link haveAspect} for verifying conjunction relationships
+   * A stellium forms on the minute its clique appears and dissolves on the
+   * minute it stops being one. So when a body joins or leaves, the old
+   * stellium dissolves and the new one forms on the same minute.
    */
   private composeStelliums(args: {
     currentAspectBodies: AspectBodies[];
@@ -117,33 +94,19 @@ export class StelliumService {
     previousAspectBodies: AspectBodies[];
   }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
-    const unionEdges = this.aspectGraphService.unionAspectBodies(
-      currentAspectBodies,
-      previousAspectBodies,
+    const previousStelliums = this.findStelliumsByKey(previousAspectBodies);
+    const currentStelliums = this.findStelliumsByKey(currentAspectBodies);
+    const boundaries = [
+      ...this.missingFrom(currentStelliums, previousStelliums).map(
+        (bodies) => ({ bodies, phase: "forming" as const }),
+      ),
+      ...this.missingFrom(previousStelliums, currentStelliums).map(
+        (bodies) => ({ bodies, phase: "dissolving" as const }),
+      ),
+    ];
+    return boundaries.map(({ bodies, phase }) =>
+      this.createStelliumEvent({ bodies, phase, timestamp: minute }),
     );
-    const conjunctions =
-      this.groupAspectsByType(unionEdges).get("conjunct") ?? [];
-    if (conjunctions.length < 6) return [];
-    const events: DetectedCalendarEvent[] = [];
-    for (const bodies of this.findStelliumCliques(conjunctions)) {
-      const result =
-        this.compoundPhaseService.determineCompoundPhaseFromSnapshots({
-          checkPatternExists: (edges) => this.allPairsConjunct(bodies, edges),
-          currentAspectBodies,
-          currentMinute: minute,
-          patternBodies: bodies,
-          previousAspectBodies,
-        });
-      if (result)
-        events.push(
-          this.createStelliumEvent({
-            bodies,
-            phase: result.phase,
-            timestamp: result.eventMinute,
-          }),
-        );
-    }
-    return events;
   }
 
   /**
@@ -245,6 +208,25 @@ export class StelliumService {
   }
 
   /**
+   * Finds one snapshot's stelliums, keyed by their canonical bodies.
+   */
+  private findStelliumsByKey(
+    aspectBodies: AspectBodies[],
+  ): Map<string, Body[]> {
+    const conjunctions =
+      this.groupAspectsByType(
+        this.aspectGraphService.unionAspectBodies(aspectBodies, []),
+      ).get("conjunct") ?? [];
+    if (conjunctions.length < 6) return new Map();
+    return new Map(
+      this.findStelliumCliques(conjunctions).map((bodies) => [
+        bodies.join("-"),
+        bodies,
+      ]),
+    );
+  }
+
+  /**
    * Groups aspects by type.
    */
   private groupAspectsByType<T extends AspectBodies>(
@@ -254,42 +236,15 @@ export class StelliumService {
   }
 
   /**
-   * Handles have aspect.
+   * Lists the stelliums of `stelliums` that `others` does not hold.
    */
-  private haveAspect(args: {
-    aspectType: Aspect;
-    body1: Body;
-    body2: Body;
-    edges: AspectBodies[];
-  }): boolean {
-    return this.aspectGraphService.haveAspect(args);
-  }
-
-  /**
-   * Pairs stellium group.
-   */
-  private pairStelliumGroup(
-    group: DetectedCalendarEvent[],
-  ): DetectedCalendarEvent[] {
-    const result: DetectedCalendarEvent[] = [];
-    const sortedEvents = _.sortBy(group, "start");
-
-    for (let index = 0; index < sortedEvents.length; index++) {
-      const currentEvent = sortedEvents[index];
-      if (!currentEvent?.categories.includes("Forming")) continue;
-
-      for (let index_ = index + 1; index_ < sortedEvents.length; index_++) {
-        const dissolving = sortedEvents[index_];
-        if (dissolving?.categories.includes("Dissolving")) {
-          result.push(
-            this.buildProgressiveStelliumEvent(currentEvent, dissolving),
-          );
-          break;
-        }
-      }
-    }
-
-    return result;
+  private missingFrom(
+    stelliums: Map<string, Body[]>,
+    others: Map<string, Body[]>,
+  ): Body[][] {
+    return [...stelliums]
+      .filter(([key]) => !others.has(key))
+      .map(([, bodies]) => bodies);
   }
 
   /**
@@ -365,8 +320,16 @@ export class StelliumService {
     );
 
     const progressiveEvents: DetectedCalendarEvent[] = [];
-    for (const group of Object.values(groupedEvents)) {
-      progressiveEvents.push(...this.pairStelliumGroup(group));
+    for (const [groupKey, group] of Object.entries(groupedEvents)) {
+      const pairs = this.progressiveUtilitiesService.pairCompoundBoundaries(
+        group,
+        `Stellium ${groupKey}`,
+      );
+      for (const [forming, dissolving] of pairs) {
+        progressiveEvents.push(
+          this.buildProgressiveStelliumEvent(forming, dissolving),
+        );
+      }
     }
 
     return progressiveEvents;

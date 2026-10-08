@@ -1,6 +1,7 @@
 import { Module } from "@nestjs/common";
 
 import { AspectsUtilitiesModule } from "../aspects/aspects-utilities.module";
+import { ProgressiveUtilitiesModule } from "../progressive/progressive-utilities.module";
 
 import { StelliumService } from "./stellium.service";
 
@@ -12,7 +13,7 @@ import { StelliumService } from "./stellium.service";
 @Module({
   controllers: [],
   exports: [StelliumService],
-  imports: [AspectsUtilitiesModule],
+  imports: [AspectsUtilitiesModule, ProgressiveUtilitiesModule],
   providers: [StelliumService],
 })
 export class StelliumModule {}

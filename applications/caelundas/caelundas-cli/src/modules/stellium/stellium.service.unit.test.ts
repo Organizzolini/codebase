@@ -2,10 +2,13 @@ import { Test } from "@nestjs/testing";
 import moment from "moment-timezone";
 import { beforeAll, describe, expect, it } from "vitest";
 
+import { LoggerService } from "@codebase/logging";
+
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { ProgressiveCompoundEventService } from "../aspects/progressive-compound-event.service";
 import { aspectBodies } from "../caelundas/caelundas.constants";
+import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { StelliumService } from "./stellium.service";
 
@@ -25,7 +28,9 @@ describe(StelliumService, () => {
       providers: [
         AspectGraphService,
         CompoundPhaseService,
+        LoggerService,
         ProgressiveCompoundEventService,
+        ProgressiveUtilitiesService,
         StelliumService,
       ],
     }).compile();
@@ -384,6 +389,39 @@ describe(StelliumService, () => {
         ).toStrictEqual(["Mars, Mercury, Sun, Venus, Vesta stellium forming"]);
       });
 
+      it("dissolves a stellium and forms the larger one when a body joins", () => {
+        // 17 January 2026, 19:50 UT: the Mercury-Pluto leg turns two 5-body
+        // stelliums into one 6-body stellium.
+        const before = [
+          ...clique("mars", "mercury", "sun", "venus", "vesta"),
+          ...clique("mars", "pluto", "sun", "venus", "vesta"),
+        ];
+        const after = [
+          ...before,
+          { aspect: "conjunct", bodies: ["mercury", "pluto"] },
+        ] satisfies AspectBodies[];
+
+        expect(describeDetected(before, after)).toStrictEqual([
+          "Mars, Mercury, Pluto, Sun, Venus, Vesta stellium forming",
+          "Mars, Mercury, Sun, Venus, Vesta stellium dissolving",
+          "Mars, Pluto, Sun, Venus, Vesta stellium dissolving",
+        ]);
+      });
+
+      it("dissolves a stellium and forms the smaller one when a body leaves", () => {
+        const before = clique("moon", "pluto", "sun", "venus", "vesta");
+        const after = before.filter(
+          (edge) =>
+            !(edge.bodies.includes("moon") && edge.bodies.includes("sun")),
+        );
+
+        expect(describeDetected(before, after)).toStrictEqual([
+          "Moon, Pluto, Sun, Venus, Vesta stellium dissolving",
+          "Moon, Pluto, Venus, Vesta stellium forming",
+          "Pluto, Sun, Venus, Vesta stellium forming",
+        ]);
+      });
+
       it("reports a stellium once when its legs are in both snapshots twice", () => {
         const legs = clique("mars", "mercury", "sun", "venus");
         const reversed = legs.map((edge): AspectBodies => ({
@@ -399,6 +437,70 @@ describe(StelliumService, () => {
   });
 
   describe("detectProgressive", () => {
+    /** The boundary `detect` emits when `members` gain or lose their last leg. */
+    function boundary(
+      members: Body[],
+      phase: "dissolving" | "forming",
+      time: string,
+    ): DetectedCalendarEvent[] {
+      const legs = members.flatMap((first, index) =>
+        members.slice(index + 1).map((second): AspectBodies => ({
+          aspect: "conjunct",
+          bodies: [first, second],
+        })),
+      );
+      const [complete, broken] = [legs, legs.slice(1)];
+      return service.detect({
+        currentAspectBodies: phase === "forming" ? complete : broken,
+        minute: moment.utc(time),
+        previousAspectBodies: phase === "forming" ? broken : complete,
+      });
+    }
+
+    /** Each span as "start → end". */
+    function spansOf(events: DetectedCalendarEvent[]): string[] {
+      return service
+        .detectProgressive(events)
+        .map(
+          (event) =>
+            `${event.start.toISOString()} → ${event.end.toISOString()}`,
+        );
+    }
+
+    const members: Body[] = ["mars", "mercury", "sun", "venus"];
+
+    it("does not bridge a forming with no dissolving to a later occurrence's", () => {
+      expect(
+        spansOf([
+          ...boundary(members, "forming", "2026-01-15T00:00:00.000Z"),
+          ...boundary(members, "forming", "2026-01-16T00:00:00.000Z"),
+          ...boundary(members, "dissolving", "2026-01-17T00:00:00.000Z"),
+        ]),
+      ).toStrictEqual(["2026-01-16T00:00:00.000Z → 2026-01-17T00:00:00.000Z"]);
+    });
+
+    it("spans a stellium once when its boundaries repeat", () => {
+      const forming = boundary(members, "forming", "2026-01-15T00:00:00.000Z");
+      const dissolving = boundary(
+        members,
+        "dissolving",
+        "2026-01-17T00:00:00.000Z",
+      );
+
+      expect(
+        spansOf([...forming, ...forming, ...dissolving, ...dissolving]),
+      ).toStrictEqual(["2026-01-15T00:00:00.000Z → 2026-01-17T00:00:00.000Z"]);
+    });
+
+    it("drops a stellium that forms and dissolves on the same minute", () => {
+      expect(
+        spansOf([
+          ...boundary(members, "forming", "2026-01-15T00:00:00.000Z"),
+          ...boundary(members, "dissolving", "2026-01-15T00:00:00.000Z"),
+        ]),
+      ).toStrictEqual([]);
+    });
+
     it("returns empty array for empty input", () => {
       const events = service.detectProgressive([]);
 
@@ -419,114 +521,6 @@ describe(StelliumService, () => {
       const progressiveEvents = service.detectProgressive(events);
 
       expect(progressiveEvents).toHaveLength(0);
-    });
-
-    it("covers the remaining private helper branches", () => {
-      const internals = service as unknown as {
-        allPairsConjunct: (
-          bodies: (string | undefined)[],
-          edges: AspectBodies[],
-        ) => boolean;
-        createStelliumEvent: (parameters: {
-          bodies: string[];
-          phase: "dissolving" | "forming" | "perfective";
-          timestamp: moment.Moment;
-        }) => DetectedCalendarEvent;
-        haveAspect: (args: {
-          aspectType: "conjunct";
-          body1: "moon" | "sun";
-          body2: "moon" | "sun";
-          edges: AspectBodies[];
-        }) => boolean;
-        pairStelliumGroup: (
-          events: (DetectedCalendarEvent | undefined)[],
-        ) => DetectedCalendarEvent[];
-        phaseEmojiFor: (
-          phase: "dissolving" | "forming" | "perfective",
-        ) => string;
-      };
-
-      expect(internals.phaseEmojiFor("perfective")).toBe("🎯 ");
-      expect(
-        internals.createStelliumEvent({
-          bodies: ["sun", "moon", "mars", "venus", "jupiter", "saturn"],
-          phase: "perfective",
-          timestamp: moment.utc("2024-03-21T12:00:00.000Z"),
-        }).summary,
-      ).toContain("stellium perfective");
-      expect(
-        internals.pairStelliumGroup([
-          {
-            categories: [
-              "Astronomy",
-              "Astrology",
-              "Compound Aspect",
-              "Stellium",
-              "4 Body",
-            ],
-            description: "No forming event",
-            end: moment.utc("2024-03-21T12:00:00.000Z"),
-            start: moment.utc("2024-03-21T12:00:00.000Z"),
-            summary: "No forming event",
-          },
-          {
-            categories: [
-              "Astronomy",
-              "Astrology",
-              "Compound Aspect",
-              "Stellium",
-              "4 Body",
-              "Forming",
-            ],
-            description: "Forming without dissolving",
-            end: moment.utc("2024-03-21T12:30:00.000Z"),
-            start: moment.utc("2024-03-21T12:30:00.000Z"),
-            summary: "Forming without dissolving",
-          },
-        ]),
-      ).toHaveLength(0);
-
-      expect(
-        internals.allPairsConjunct(
-          ["sun", undefined, "moon"],
-          [{ aspect: "conjunct", bodies: ["sun", "moon"] }],
-        ),
-      ).toBe(true);
-      expect(
-        internals.allPairsConjunct(
-          ["sun", undefined, "moon", "mars"],
-          [{ aspect: "conjunct", bodies: ["sun", "moon"] }],
-        ),
-      ).toBe(false);
-      expect(internals.phaseEmojiFor("forming")).toBe("➡️ ");
-      expect(internals.phaseEmojiFor("dissolving")).toBe("⬅️ ");
-      expect(
-        internals.haveAspect({
-          aspectType: "conjunct",
-          body1: "moon",
-          body2: "sun",
-          edges: [{ aspect: "conjunct", bodies: ["sun", "moon"] }],
-        }),
-      ).toBe(true);
-      expect(
-        internals.pairStelliumGroup([
-          {
-            categories: [
-              "Astronomy",
-              "Astrology",
-              "Compound Aspect",
-              "Stellium",
-              "4 Body",
-              "Forming",
-            ],
-            description: "Forming with sparse follower",
-            end: moment.utc("2024-03-21T12:00:00.000Z"),
-            start: moment.utc("2024-03-21T12:00:00.000Z"),
-            summary: "Forming with sparse follower",
-          },
-          undefined,
-        ]),
-      ).toHaveLength(0);
     });
 
     it("creates progressive event from forming to dissolving pair", () => {

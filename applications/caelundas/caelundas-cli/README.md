@@ -2046,6 +2046,7 @@ flowchart LR
   SpecialtyAspectsModule --> EphemerisModule
   SpecialtyAspectsModule --> ProgressiveUtilitiesModule
   StelliumModule --> AspectsUtilitiesModule
+  StelliumModule --> ProgressiveUtilitiesModule
   TripleAspectsModule --> AspectsUtilitiesModule
   TripleAspectsModule --> ProgressiveUtilitiesModule
   TwilightsModule --> EphemerisModule
@@ -3356,15 +3357,16 @@ graph LR
   file_src_modules_specialty_aspects_specialty_aspects_service_unit_test_ts --> file_src_modules_specialty_aspects_specialty_aspects_service_ts
   file_src_modules_stellium_stellium_constants_ts --> file_src_modules_caelundas_symbol_caelundas_constants_ts
   file_src_modules_stellium_stellium_module_ts --> file_src_modules_aspects_aspects_utilities_module_ts
+  file_src_modules_stellium_stellium_module_ts --> file_src_modules_progressive_progressive_utilities_module_ts
   file_src_modules_stellium_stellium_module_ts --> file_src_modules_stellium_stellium_service_ts
   file_src_modules_stellium_stellium_service_ts --> file_src_modules_aspects_aspect_graph_service_ts
   file_src_modules_stellium_stellium_service_ts --> file_src_modules_aspects_aspects_types_ts
-  file_src_modules_stellium_stellium_service_ts --> file_src_modules_aspects_compound_phase_service_ts
   file_src_modules_stellium_stellium_service_ts --> file_src_modules_aspects_progressive_compound_event_service_ts
   file_src_modules_stellium_stellium_service_ts --> file_src_modules_caelundas_database_caelundas_database_types_ts
   file_src_modules_stellium_stellium_service_ts --> file_src_modules_caelundas_caelundas_constants_ts
   file_src_modules_stellium_stellium_service_ts --> file_src_modules_caelundas_caelundas_types_ts
   file_src_modules_stellium_stellium_service_ts --> file_src_modules_caelundas_symbol_caelundas_constants_ts
+  file_src_modules_stellium_stellium_service_ts --> file_src_modules_progressive_progressive_utilities_service_ts
   file_src_modules_stellium_stellium_service_ts --> file_src_modules_stellium_stellium_constants_ts
   file_src_modules_stellium_stellium_service_unit_test_ts --> file_src_modules_aspects_aspect_graph_service_ts
   file_src_modules_stellium_stellium_service_unit_test_ts --> file_src_modules_aspects_aspects_types_ts
@@ -3373,6 +3375,7 @@ graph LR
   file_src_modules_stellium_stellium_service_unit_test_ts --> file_src_modules_caelundas_database_caelundas_database_types_ts
   file_src_modules_stellium_stellium_service_unit_test_ts --> file_src_modules_caelundas_caelundas_constants_ts
   file_src_modules_stellium_stellium_service_unit_test_ts --> file_src_modules_caelundas_caelundas_types_ts
+  file_src_modules_stellium_stellium_service_unit_test_ts --> file_src_modules_progressive_progressive_utilities_service_ts
   file_src_modules_stellium_stellium_service_unit_test_ts --> file_src_modules_stellium_stellium_service_ts
   file_src_modules_triple_aspects_triple_aspects_composer_service_ts --> file_src_modules_aspects_aspect_graph_service_ts
   file_src_modules_triple_aspects_triple_aspects_composer_service_ts --> file_src_modules_aspects_aspect_phase_emoji_service_ts

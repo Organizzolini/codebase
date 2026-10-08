@@ -170,7 +170,10 @@ describe("stelliums against JPL Horizons positions", () => {
     );
   }
 
-  describe.each(["horizons-stellium-2025-12-19"])("%s", (name) => {
+  describe.each([
+    "horizons-stellium-2025-12-19",
+    "horizons-stellium-2026-01-15",
+  ])("%s", (name) => {
     const fixture = loadStelliumFixture(name);
 
     it("reports every stellium boundary the positions imply", () => {
