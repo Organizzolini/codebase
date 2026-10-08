@@ -464,7 +464,7 @@ describe(MajorAspectsService, () => {
   });
 
   describe("detectActive", () => {
-    it("lists the square already in orb at the minute before and this one", () => {
+    it("lists the square in orb at this minute and the minutes either side", () => {
       const minute = moment.utc("2026-10-01T04:00:00Z");
       const instants = [
         minute.clone().subtract(1, "minute"),

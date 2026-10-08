@@ -186,24 +186,20 @@ export class MinorAspectsService {
   }
 
   /**
-   * Lists the minor aspects already in orb at this minute and the one before,
+   * Lists the minor aspects in orb at this minute and the minutes either side,
    * so a sweep can seed its active-aspect registry at the window start.
    */
   detectActive(args: SimpleAspectDetectorArguments): AspectBodies[] {
     const { coordinateEphemerisByBody, minute } = args;
-    const previousMinute = minute.clone().subtract(1, "minute");
-    const nextMinute = minute.clone().add(1, "minute");
     return this.aspectsUtilitiesService.getActiveAspectBodies({
       aspects: minorAspects,
       bodies: minorAspectBodies,
-      getLongitudes: (body) =>
+      getLongitudesWindow: (window) =>
         this.minorAspectsEventService.getLongitudesWindowForBody({
-          body,
+          ...window,
           coordinateEphemerisByBody,
-          minute,
-          nextMinute,
-          previousMinute,
         }),
+      minute,
     });
   }
 
