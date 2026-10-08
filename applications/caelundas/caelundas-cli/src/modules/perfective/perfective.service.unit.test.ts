@@ -225,7 +225,13 @@ describe(PerfectiveService, () => {
       const seededAspectBodies: AspectBodies[] = [
         { aspect: "square", bodies: ["mars", "pluto"] },
       ];
-      const seededEvent = { summary: "seeded compound forming" } as never;
+      const seededEvent = {
+        categories: ["Astronomy", "Astrology", "Compound Aspect", "Forming"],
+        description: "Mars, Mercury, Pluto t-square forming",
+        end: firstMinute,
+        start: firstMinute,
+        summary: "seeded compound forming",
+      } satisfies DetectedCalendarEvent;
 
       datetimeMock.generateDates.mockReturnValue([firstDate, secondDate]);
       ephemerisAggMock.getEphemerides.mockReturnValue(emptyEphemerides);

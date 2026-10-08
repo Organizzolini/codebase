@@ -30,6 +30,15 @@ export interface CompositeAspectDetectorArguments {
 }
 
 /**
+ * One body's ecliptic longitude at the previous, current and next minute.
+ */
+export interface LongitudesWindow {
+  current: number;
+  next: number;
+  previous: number;
+}
+
+/**
  * Converts instantaneous aspect events into duration spans by pairing boundaries.
  */
 export interface ProgressiveAspectDetector {

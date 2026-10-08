@@ -204,23 +204,20 @@ export class SpecialtyAspectsService {
   }
 
   /**
-   * Lists the specialty aspects already in orb at this minute and the one before,
+   * Lists the specialty aspects in orb at this minute and the minutes either side,
    * so a sweep can seed its active-aspect registry at the window start.
    */
   detectActive(args: SimpleAspectDetectorArguments): AspectBodies[] {
     const { coordinateEphemerisByBody, minute } = args;
-    const previousMinute = minute.clone().subtract(1, "minute");
-    const nextMinute = minute.clone().add(1, "minute");
     return this.aspectsUtilitiesService.getActiveAspectBodies({
       aspects: specialtyAspects,
       bodies: specialtyAspectBodies,
-      getLongitudes: (body) =>
+      getLongitudesWindow: (window) =>
         this.specialtyAspectsEventService.getBodyLongitudesWindow({
-          ephemeris: coordinateEphemerisByBody[body],
-          minute,
-          nextMinute,
-          previousMinute,
+          ...window,
+          ephemeris: coordinateEphemerisByBody[window.body],
         }),
+      minute,
     });
   }
 

@@ -3,8 +3,10 @@ import { Injectable } from "@nestjs/common";
 import { angleByAspect, orbByAspect } from "../caelundas/caelundas.constants";
 import { MathService } from "../math/math.service";
 
+import { LONGITUDES_WINDOW_INSTANTS } from "./aspects.constants";
+
 import type { Aspect, AspectPhase, Body } from "../caelundas/caelundas.types";
-import type { AspectBodies } from "./aspects.types";
+import type { AspectBodies, LongitudesWindow } from "./aspects.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -266,38 +268,45 @@ export class AspectsUtilitiesService {
   }
 
   /**
-   * Lists each body pair held in one of `aspects` at both the previous minute
-   * and the current one: the registry a sweep would hold had it started earlier.
-   * A pair entering orb at the current minute is left out, since its forming
-   * event still fires.
+   * Lists each body pair held in one of `aspects` at the previous, current and
+   * next minute: the registry a sweep would hold had it started earlier. A
+   * pair entering or leaving orb at the current minute is left out, since its
+   * own forming or dissolving event fires there.
    */
   getActiveAspectBodies(args: {
     aspects: readonly Aspect[];
     bodies: readonly Body[];
-    getLongitudes: (body: Body) => { current: number; previous: number };
+    getLongitudesWindow: (window: {
+      body: Body;
+      minute: Moment;
+      nextMinute: Moment;
+      previousMinute: Moment;
+    }) => LongitudesWindow;
+    minute: Moment;
   }): AspectBodies[] {
-    const { aspects, bodies, getLongitudes } = args;
-    const longitudesByBody = new Map(
-      bodies.map((body) => [body, getLongitudes(body)]),
+    const { aspects, bodies, getLongitudesWindow, minute } = args;
+    const previousMinute = minute.clone().subtract(1, "minute");
+    const nextMinute = minute.clone().add(1, "minute");
+    const windowByBody = new Map(
+      bodies.map((body) => [
+        body,
+        getLongitudesWindow({ body, minute, nextMinute, previousMinute }),
+      ]),
     );
     return AspectsUtilitiesService.scanUniqueBodyPairs({
       bodies,
       getValue: ({ body1, body2 }): AspectBodies | null => {
-        const longitudes1 = longitudesByBody.get(body1);
-        const longitudes2 = longitudesByBody.get(body2);
-        if (!longitudes1 || !longitudes2) return null;
-        const aspect = aspects.find(
-          (candidate) =>
+        const window1 = windowByBody.get(body1);
+        const window2 = windowByBody.get(body2);
+        if (!window1 || !window2) return null;
+        const aspect = aspects.find((candidate) =>
+          LONGITUDES_WINDOW_INSTANTS.every((instant) =>
             this.isAspect({
               aspect: candidate,
-              longitudeBody1: longitudes1.previous,
-              longitudeBody2: longitudes2.previous,
-            }) &&
-            this.isAspect({
-              aspect: candidate,
-              longitudeBody1: longitudes1.current,
-              longitudeBody2: longitudes2.current,
+              longitudeBody1: window1[instant],
+              longitudeBody2: window2[instant],
             }),
+          ),
         );
         return aspect ? { aspect, bodies: [body1, body2] } : null;
       },
