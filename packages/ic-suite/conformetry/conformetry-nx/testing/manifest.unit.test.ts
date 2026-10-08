@@ -56,9 +56,10 @@ const packageFiles = isList(files)
  * Resolves one subpath through an `exports` map: the first string target whose
  * key matches exactly or as a single-wildcard pattern.
  *
- * Narrower than Node, which prefers the longest matching prefix and reads
- * conditional targets too — so it can only fail a map Node would accept,
- * never pass one Node would reject, for the maps this package declares.
+ * Simpler than Node, which prefers the longest matching prefix, honours `null`
+ * exclusions and reads conditional targets. That is enough for the flat maps
+ * this package declares, where one string key matches each subpath; a map
+ * with overlapping keys or `null` targets would need Node's full rules.
  */
 function resolveExport(
   exportsMap: Record<string, unknown>,
