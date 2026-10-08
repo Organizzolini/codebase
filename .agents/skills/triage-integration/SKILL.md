@@ -102,12 +102,14 @@ branch, and Nx forwards an explicit configuration down `dependsOn` — so an
 edge there would let `lint-code --configuration=write` publish from a
 branch.
 
-`callidescope-gate` and `codebase:codependix` are reached through
-`guard-code`'s `dependsOn` rather than named here, so `--configuration=check`
-forwards to codependix's `--check boundaries`. `nx affected` still scopes
-`callidescope-gate` to the projects a commit actually touched — a commit that
-deepens one project's call stacks fails that project's own task, which the
-workspace-wide `callidescope --check depth` run this replaced never could name.
+`callidescope-gate` and `codependix-gate` are reached through `guard-code`'s
+`dependsOn` rather than named here. Both are inferred per project and have no
+configurations, so `--configuration=check` falls through to their defaults.
+`nx affected` scopes each to the projects a commit actually touched — a commit
+that deepens one project's call stacks, or breaks one project's boundary,
+fails that project's own task, which the workspace-wide runs these replaced
+never could name. `codebase:codependix` is write-only and is not reachable from
+`guard-code`.
 
 There is no aggregate `synchronize` target: each synchronization command is its
 own Nx target on the `synchronization` project, named here directly. Naming
@@ -249,17 +251,19 @@ Config: [applications/affirmancy/project.json](../../../applications/affirmancy/
 
 Every synchronization command is its own Nx target on the `synchronization` project — `conformetry-generators`, `conventional-config`, `devcontainer-configuration`, `pull-request-template`, and `skill-exclusions` — run directly rather than through a shared aggregate, the same way `codebase:codometer` and `codebase:callidescope` are run. There is no `sync-*` target, no `scripts/sync-*.ts` script, and no `synchronization:synchronize` aggregate target — those were retired when the work moved into [tools/synchronization](../../../tools/synchronization). `lint-code`'s dependents name each derivation target directly.
 
-The `nestjs-module-graphs` and `nx-project-graphs` targets were retired too, per issue #296: [codependix](../../../packages/ic-suite/codependix/codependix-cli) now derives the same NestJS module graphs and Nx neighborhood graphs through its own anchor blocks, checked by `nx run codebase:codependix` instead.
+The `nestjs-module-graphs` and `nx-project-graphs` targets were retired too, per issue #296: [codependix](../../../packages/ic-suite/codependix/codependix-cli) now derives the same NestJS module graphs and Nx neighborhood graphs through its own anchor blocks, gated per project by `codependix-gate` and published by `nx run codebase:codependix:write` instead.
 
-| Check command                                             | Write command           | What it validates                                                                                                                                           |
-| --------------------------------------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `nx run synchronization:conformetry-generators:check`     | `:write`                | AGENTS.md generators table matches [configuration/conformetry.config.ts](../../../configuration/conformetry.config.ts)                                      |
-| `nx run synchronization:conventional-config:check`        | `:write`                | Types/scopes consistent across [configuration/conventional.config.cjs](../../../configuration/conventional.config.cjs), `.vscode/settings.json`, skill docs |
-| `nx run synchronization:devcontainer-configuration:check` | `:write`                | Cloud and local devcontainer configs share common fields                                                                                                    |
-| `nx run synchronization:pull-request-template:check`      | `:write`                | [.github/PULL_REQUEST_TEMPLATE.md](../../../.github/PULL_REQUEST_TEMPLATE.md) in sync with skills and prompts                                               |
-| `nx run synchronization:skill-exclusions:check`           | `:write`                | Installed-skill exclusion lists match `skills-lock.json`                                                                                                    |
-| `nx run codebase:sync-vscode-extensions:check`            | `:write`                | `.vscode/extensions.json` matches devcontainer extension lists                                                                                              |
-| `nx run codebase:codependix --configuration=check`        | `--configuration=write` | Each project's README codependix blocks match its real Nx, NestJS, and import graphs                                                                        |
+| Check command                                             | Write command                      | What it validates                                                                                                                                           |
+| --------------------------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nx run synchronization:conformetry-generators:check`     | `:write`                           | AGENTS.md generators table matches [configuration/conformetry.config.ts](../../../configuration/conformetry.config.ts)                                      |
+| `nx run synchronization:conventional-config:check`        | `:write`                           | Types/scopes consistent across [configuration/conventional.config.cjs](../../../configuration/conventional.config.cjs), `.vscode/settings.json`, skill docs |
+| `nx run synchronization:devcontainer-configuration:check` | `:write`                           | Cloud and local devcontainer configs share common fields                                                                                                    |
+| `nx run synchronization:pull-request-template:check`      | `:write`                           | [.github/PULL_REQUEST_TEMPLATE.md](../../../.github/PULL_REQUEST_TEMPLATE.md) in sync with skills and prompts                                               |
+| `nx run synchronization:skill-exclusions:check`           | `:write`                           | Installed-skill exclusion lists match `skills-lock.json`                                                                                                    |
+| `nx run codebase:sync-vscode-extensions:check`            | `:write`                           | `.vscode/extensions.json` matches devcontainer extension lists                                                                                              |
+| none on a branch (see below)                              | `nx run codebase:codependix:write` | Each project's README codependix blocks match its real Nx, NestJS, and import graphs                                                                        |
+
+A broken dependency boundary is not a sync check. `codependix-gate` is inferred per project and runs inside `guard-code`, so a boundary failure names the project it is charged to — run `pnpm exec nx run <project>:codependix-gate` to reproduce it, and read it with the [codependix-triage](../codependix-triage/SKILL.md) skill. The README blocks in the table are published from the default branch, so a branch has no check on them, and `codebase:codependix:write` is the only way to regenerate one by hand.
 
 > **Lesson**: If sync checks fail, it means a source of truth was edited without updating its counterpart. Example: editing `configuration/conformetry.config.ts` requires regenerating the `AGENTS.md` generators table. Editing `configuration/conventional.config.cjs` requires regenerating `.vscode/settings.json`, the PR template, and the types/scopes tables in AGENTS.md and the branch and commit skills.
 
@@ -319,7 +323,7 @@ pnpm exec nx run synchronization:devcontainer-configuration:write
 pnpm exec nx run synchronization:pull-request-template:write
 pnpm exec nx run synchronization:skill-exclusions:write
 pnpm exec nx run codebase:sync-vscode-extensions:write
-pnpm exec nx run codebase:codependix --configuration=write
+pnpm exec nx run codebase:codependix:write
 
 # Or every derivation at once
 pnpm exec nx run-many --targets=conformetry-generators,conventional-config,devcontainer-configuration,pull-request-template,skill-exclusions --configuration=write

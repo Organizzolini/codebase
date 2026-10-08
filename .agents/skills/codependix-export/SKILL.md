@@ -1,6 +1,6 @@
 ---
 name: codependix-export
-description: Run a codependix dependency graph export or boundary check, choose between --check boundaries, --check reports, and --write, point a run at a workspace root or a configuration file, or read a Mermaid block or JSON graph it produced. Use when running codependix or npx codependix, when a run exits 0 having written nothing, when --check is refused for carrying no value, when looking for a flag that selects one graph type, when wiring codependix into a CI step, or when reading an exported Nx Neighborhood, NestJS module graph, or file-level import graph. Covers the command-line host directly, without assuming any task runner.
+description: Run a codependix dependency graph export or boundary check, choose between --check boundaries, --check reports, and --write, point a run at a workspace root or a configuration file, or read a Mermaid block or JSON graph it produced. Use when running codependix or npx codependix, when a run exits 0 having written nothing, when --check is refused for carrying no value, when looking for a flag that selects one graph type, when wiring codependix into a CI step or an Nx task, when a codependix-gate target failed, or when reading an exported Nx Neighborhood, NestJS module graph, or file-level import graph. Covers the command-line host directly, without assuming any task runner.
 license: MIT
 ---
 
@@ -64,6 +64,9 @@ Combinations:
 
 - `--write --check boundaries` is legal — a boundary has no destination to be
   stale.
+- `--check boundaries` also accepts `--format`, `--json-output`, and
+  `--markdown-output`, which print its findings as a report — see _The boundary
+  report_ below.
 - `--write --check reports` is refused — an export cannot be stale in the run
   that just wrote it.
 - **A bare `--check`, or one whose value is only commas, is refused.** Read as
@@ -183,15 +186,20 @@ could resurrect an excluded project would make `exclude` advisory.
 matches a project's own Nx tags exactly.
 
 **They narrow what gets drawn and judged.** Naming a selection also narrows the
-whole-workspace graph's node set and every level `--check boundaries` judges to
-the selected projects. Naming neither selects everything, which is why the
-default behavior of both is unchanged.
+whole-workspace graph's node set to the selected projects, and makes them the
+only projects `--check boundaries` judges. Naming neither selects everything,
+which is why the default behavior of both is unchanged.
 
-> ⚠️ **A narrowed gate sees fewer edges.** `--check boundaries` is the branch
-> gate, so a CI job that passes `--projects` or `--tags` is asking for a
-> smaller check than a whole-workspace run, and a green result means less. Use
-> them to narrow a _local_ run; leave them off in CI unless narrowing is the
-> point.
+**The gate builds over their dependencies.** `--check boundaries` builds every
+level's graph over the selected projects plus everything they transitively
+depend on, and charges each finding to projects: a cycle to every project on
+it, a forbidden edge to its source's project, a container boot failure to the
+container's project. A finding fails the run only when it is charged to a
+selected project; one charged only to a dependency is logged as a non-failing
+note "in dependency". `--no-dependencies` builds over the selected projects
+alone — faster, but an edge leaving the selection is no longer drawn, so a
+cycle closing through a dependency goes unseen. A green `--no-dependencies`
+run means less than a green default run: keep it for local iteration.
 
 `include`/`exclude` never do this — they decide which projects have exports
 written for them, and have never reached the workspace graph or the gate. That
@@ -200,6 +208,32 @@ configuration fields.
 
 Two flags rather than Nx's own `--projects=tag:foo` spelling, deliberately:
 each shows up in `--help` under its own name. Do not "fix" the divergence.
+
+## Gating one project at a time
+
+`--check boundaries --projects <name>` is a per-project gate from a plain
+shell, and an Nx workspace gets it inferred. The `@codependix/nx` plugin adds a
+cached `codependix-gate` target to every project except the workspace root; it
+runs exactly that command, from the workspace root, under the decorator-preserving
+loader NestJS needs:
+
+```bash
+nx run lexico-entities:codependix-gate   # one project
+nx affected -t codependix-gate           # only what a change touched
+```
+
+Each project's gate fails for findings charged to that project. A broken
+boundary therefore fails the project that owns the edge — and every project on
+a cycle — rather than one workspace-wide task that names none of them. A
+dependent that merely builds on a broken project prints the finding as a note
+and passes; the broken project's own gate is the one that fails, so reproduce
+a failure by running the gate of the project it names.
+
+The target declares no configurations, so an aggregator run with
+`--configuration=check` falls through to its defaults, as callidescope's
+`callidescope-gate` does. In this repository `guard-code` depends on it. The
+workspace-wide `codebase:codependix` target is write-only: it publishes the
+exports on the default branch and gates nothing.
 
 ## What the run reports
 
@@ -217,14 +251,37 @@ Three findings are reported separately, and any one of them fails the run:
   disagree with a freshly built graph.
 - **Boundary violations** — under `--check boundaries`, edges and cycles
   breaking a declared rule. Each names its level, its scope, the rule, both
-  endpoints, and whatever the rule says about why it exists. They go to the
-  console and the exit code and nowhere else: a list of things currently
-  wrong is not a document worth publishing.
+  endpoints, the project or projects it is charged to, and whatever the rule
+  says about why it exists. They go to the console and the exit code, and into
+  a report only when `--format`, `--json-output`, or `--markdown-output` asks
+  for one. A list of things currently wrong is not a document worth
+  committing, so the exports `--write` splices into READMEs never hold it.
 
 A project resolving to `target: "none"` is left out of the results **entirely**
 rather than reported as up to date, so an exit code depends only on exports
 codependix was actually configured to produce. A `--check` run reporting `0`
 projects is telling you it was configured to produce nothing.
+
+## The boundary report
+
+Give a `--check boundaries` run `--format json`, `--json-output <path>`, or
+`--markdown-output <path>` and it prints its findings as a report. In JSON it
+is a `boundaries` key beside the graph types; in Markdown it is a
+`### Boundaries` section. A `--check boundaries`-only run exports nothing, so
+the report is all it prints. Without one of those flags a boundaries-only run
+prints nothing, and a run that also exports prints its graphs as it always did.
+
+```bash
+codependix map --check boundaries --projects lexico-entities --format json
+```
+
+`boundaries.judgedProjects` lists the projects whose findings fail the run.
+Each entry of `violations` and `failures` carries the charged `projects` and a
+`verdict`: `fail` fails the run, `note` is a finding in a dependency of a
+judged project and does not. A `failures` entry — a container that would not
+boot — also names `ownerProject` when the class it failed on belongs to a
+different project than the one whose container failed. Read the `fail` rows,
+and treat `note` rows as the dependency's own gate's business.
 
 ## Reading an export
 

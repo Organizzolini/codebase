@@ -62,10 +62,11 @@ on opposite sides of a pull request.
 | `reports` | A configured destination no longer holding what a fresh run would write |
 
 A boundary violation is caused by the branch and fixed by the branch, so it
-gates every pull request. A stale export moves with the workspace it
-describes and would fail every branch that changed a project graph rather
-than anything the branch itself did, so it is published on the default branch
-and gated nowhere. That is the same split
+gates every pull request, one project at a time — see
+[The per-project gate](#the-per-project-gate). A stale export moves with the
+workspace it describes and would fail every branch that changed a project
+graph rather than anything the branch itself did, so it is published on the
+default branch and gated nowhere. That is the same split
 [`callidescope`](../callidescope-cli/README.md) makes between `--check depth`
 and `--check reports`, and `reports` is deliberately spelled the same in both:
 it is the same finding, and two names for it would make the two reports
@@ -118,8 +119,13 @@ reported the same way, as a rejected command line rather than a crash.
 No mode is ever inferred, which is the rule `codometer`'s and
 `callidescope`'s flags follow too.
 
+In an Nx workspace the gate is a per-project `codependix-gate` target, and
+publishing is the one workspace-wide `write` run. This repository's `guard-code`
+reaches the first on every pull request, and its release workflow runs the
+second on the default branch:
+
 ```bash
-nx run codebase:codependix:check
+nx run <project>:codependix-gate
 nx run codebase:codependix:write
 ```
 
@@ -127,6 +133,21 @@ One project failing — a missing anchor, or a NestJS project that fails to
 boot its container — is reported and does not stop the rest: `--write` either
 fully succeeds or names exactly which projects failed while still completing
 every other one.
+
+### The per-project gate
+
+`--check boundaries --projects <name>` is a gate for one project, and needs no
+task runner. [`@codependix/nx`](../codependix-nx/README.md) infers it for an
+Nx workspace as a cached `codependix-gate` target on every project but the
+workspace root, so `nx affected -t codependix-gate` selects the projects a
+change touched and a failure names the project it is charged to rather than
+one workspace-wide task. The target declares no configurations, so
+`guard-code --configuration=check` falls through to its defaults, as
+`callidescope-gate` does.
+
+Publishing stays workspace-wide: one `--write` run produces every project's
+anchor blocks, which must reflect one commit, so `codebase:codependix` is
+`write`-only and is not part of `guard-code`.
 
 ### Where the output goes
 

@@ -1,6 +1,6 @@
 ---
 name: codependix-configure
-description: Write or edit a codependix.config.ts — which graph types run, per-project overrides, include and exclude globs, the whole-workspace graph, where each export lands, and the boundary rules every built graph is judged against. Use when a workspace has no codependix configuration yet, when a run produced no output because everything resolved to target none, when adding a JSON or Markdown destination, when choosing between an anchor block and a standalone file, when a configuration is rejected for a missing destination or an empty selector, when adding a forbid, allow, or acyclic rule, or when deciding whether one configuration can describe every project in a workspace.
+description: Write or edit a codependix.config.ts — which graph types run, per-project overrides, include and exclude globs, the whole-workspace graph, where each export lands, and the boundary rules every built graph is judged against. Use when a workspace has no codependix configuration yet, when a run produced no output because everything resolved to target none, when adding a JSON or Markdown destination, when choosing between an anchor block and a standalone file, when a configuration is rejected for a missing destination or an empty selector, when adding a forbid, allow, or acyclic rule, when registering the per-project Nx gate, or when deciding whether one configuration can describe every project in a workspace.
 license: MIT
 ---
 
@@ -138,7 +138,8 @@ still wins over both. See `codependix-export`.
 
 A configuration naming `defaults` but no `include` is the one to watch for.
 It exports nothing while still exiting zero, and `--check boundaries` judges
-every project regardless of `include`, so the gate stays green. An export run
+every project regardless of `include` — or the projects `--projects` and
+`--tags` name — so the gate stays green. An export run
 warns when it happens — `🕸️ Selected no project to export`.
 
 An excluded project resolves to `target: "none"` for every graph type
@@ -287,6 +288,49 @@ Four things to know before writing one:
 - **A level with no rules is never built.** Declaring `nestjs` rules means
   every container is booted in preview mode, and declaring `imports` rules
   means a `ts.Program` per project. Declare only the levels you actually gate.
+
+### Which project a finding fails
+
+A finding is charged to projects, and a run fails only when one is charged to a
+project it judges. The rule kind decides who that is:
+
+| Finding | Charged to |
+| ------- | ---------- |
+| `forbid` match, or an edge no `allow` rule covers | The project owning the edge's **source**, and no other |
+| `acyclic` cycle | Every project owning a node on the cycle, so a cycle across A and B fails both |
+| Container that cannot boot | The project whose container failed, named with the owner of the failing class when that is another project |
+
+A project that merely depends on a project with a finding is not failed: it
+sees the finding as a note, "in dependency". So a rule is written with the
+source project in mind — it is the one that has to change.
+
+## The per-project gate
+
+In an Nx workspace the `@codependix/nx` plugin infers a `codependix-gate` target
+for every project but the workspace root, which runs `--check boundaries
+--projects <project>` over that project and its dependencies. Register it once
+in `nx.json`:
+
+```json
+{
+  "plugins": [
+    {
+      "plugin": "@codependix/nx",
+      "options": {
+        "configurationPath": "configuration/codependix.config.ts",
+        "gateTargetName": "codependix-gate"
+      }
+    }
+  ]
+}
+```
+
+`configurationPath` names the one configuration every gate reads; omit it and
+`codependix.config.ts`, then `configuration/codependix.config.ts`, are
+searched. A project's own `codependix.config.*` is a cache input of its gate,
+so editing it re-runs that gate. Nothing else is configured per project: the
+rules in `boundaries` judge every project the same way. See `codependix-export`
+for running a gate.
 
 **Write rules that already hold.** A rule that arrives red is a backlog rather
 than a gate, and a red pipeline nobody can act on teaches people to ignore it.
