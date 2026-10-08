@@ -2,12 +2,10 @@ import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 
 import { DeletableEntity } from "@codebase/database";
 
-import { Word } from "../dictionary/Word.entity";
-
-import { Author } from "./Author.entity";
-import { Line } from "./Line.entity";
-import { Text } from "./Text.entity";
-
+import type { Word } from "../dictionary/Word.entity";
+import type { Author } from "./Author.entity";
+import type { Line } from "./Line.entity";
+import type { Text } from "./Text.entity";
 import type { Relation } from "typeorm";
 
 /**

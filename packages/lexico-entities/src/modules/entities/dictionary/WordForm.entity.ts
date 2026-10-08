@@ -3,8 +3,8 @@ import { Entity, Index, ManyToOne } from "typeorm";
 import { DeletableEntity } from "@codebase/database";
 
 import { Form } from "./form/Form.entity";
-import { Word } from "./Word.entity";
 
+import type { Word } from "./Word.entity";
 import type { Relation } from "typeorm";
 
 /**
