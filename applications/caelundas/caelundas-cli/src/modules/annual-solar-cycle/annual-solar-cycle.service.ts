@@ -2,9 +2,7 @@ import { Injectable } from "@nestjs/common";
 
 import { LoggerService } from "@codebase/logging";
 
-import { MARGIN_MINUTES } from "../caelundas/caelundas.constants";
 import { EphemerisService } from "../ephemeris/ephemeris.service";
-import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { AnnualSolarCycleEventsService } from "./annual-solar-cycle-events.service";
 import {
@@ -43,7 +41,6 @@ export class AnnualSolarCycleService {
   constructor(
     private readonly logger: LoggerService,
     private readonly ephemerisService: EphemerisService,
-    private readonly progressiveUtilitiesService: ProgressiveUtilitiesService,
     private readonly annualSolarCycleEventsService: AnnualSolarCycleEventsService,
   ) {
     this.logger.setContext(AnnualSolarCycleService.name);
@@ -60,15 +57,23 @@ export class AnnualSolarCycleService {
     aphelionEvents: DetectedCalendarEvent[],
     perihelionEvents: DetectedCalendarEvent[],
   ): DetectedCalendarEvent[] {
-    const advancingPairs =
-      this.progressiveUtilitiesService.pairProgressiveEvents(
-        aphelionEvents,
-        perihelionEvents,
-        SOLAR_ADVANCING_DESCRIPTION,
-      );
-    return advancingPairs.map(([beginning, ending]) =>
-      this.getSolarAdvancingDurationEvent(beginning, ending),
+    return this.pairForwards(aphelionEvents, perihelionEvents).map(
+      ([beginning, ending]) =>
+        this.getSolarAdvancingDurationEvent(beginning, ending),
     );
+  }
+
+  /**
+   * The minute of the pair whose radial speed is nearer zero, so the apsis is
+   * stamped at the nearest minute. A tie goes to the later minute.
+   */
+  private getNearestApsisMinute(
+    minute: Moment,
+    speeds: SolarDistanceSample,
+  ): Moment {
+    return Math.abs(speeds.previous) < Math.abs(speeds.current)
+      ? minute.clone().subtract(1, "minute")
+      : minute;
   }
 
   /** Pairs perihelion-to-aphelion markers into Solar Retreating duration events. */
@@ -76,14 +81,9 @@ export class AnnualSolarCycleService {
     perihelionEvents: DetectedCalendarEvent[],
     aphelionEvents: DetectedCalendarEvent[],
   ): DetectedCalendarEvent[] {
-    const retreatingPairs =
-      this.progressiveUtilitiesService.pairProgressiveEvents(
-        perihelionEvents,
-        aphelionEvents,
-        SOLAR_RETREATING_DESCRIPTION,
-      );
-    return retreatingPairs.map(([beginning, ending]) =>
-      this.getSolarRetreatingDurationEvent(beginning, ending),
+    return this.pairForwards(perihelionEvents, aphelionEvents).map(
+      ([beginning, ending]) =>
+        this.getSolarRetreatingDurationEvent(beginning, ending),
     );
   }
 
@@ -104,27 +104,22 @@ export class AnnualSolarCycleService {
     };
   }
 
-  /**
-   * Samples Sun-Earth distance at the minute and across the margin on either
-   * side, so an extremum is judged against its whole neighborhood.
-   */
-  private getSolarDistances(
+  /** Samples the Sun's radial speed at the minute and the minute before it. */
+  private getSolarDistanceSpeeds(
     minute: Moment,
     sunDistanceEphemeris: DistanceEphemeris,
   ): SolarDistanceSample {
-    const getDistance = (offsetMinutes: number): number =>
-      this.ephemerisService.getDistanceFromEphemeris(
+    const previousMinute = minute.clone().subtract(1, "minute");
+    return {
+      current: this.ephemerisService.getDistanceSpeedFromEphemeris(
         sunDistanceEphemeris,
-        minute.clone().add(offsetMinutes, "minutes").toISOString(),
-        "distance",
-      );
-    const previous = Array.from({ length: MARGIN_MINUTES }, (_, index) =>
-      getDistance(index - MARGIN_MINUTES),
-    );
-    const next = Array.from({ length: MARGIN_MINUTES }, (_, index) =>
-      getDistance(index + 1),
-    );
-    return { current: getDistance(0), next, previous };
+        minute.toISOString(),
+      ),
+      previous: this.ephemerisService.getDistanceSpeedFromEphemeris(
+        sunDistanceEphemeris,
+        previousMinute.toISOString(),
+      ),
+    };
   }
 
   /** Builds the progressive span event for Earth moving from perihelion toward aphelion. */
@@ -145,27 +140,35 @@ export class AnnualSolarCycleService {
   }
 
   /**
-   * Whether the sampled distance is the farthest across its whole margin.
-   *
-   * A single glitched minute in the ephemeris can fake a one-minute extremum;
-   * requiring the margin on both sides to be lower rejects it. Strict on the
-   * earlier side so a tie yields the first minute only.
+   * Pairs each beginning with the earliest ending after it, so a span never
+   * runs backwards. A beginning followed by another beginning before any ending
+   * is left unpaired, as is a trailing beginning.
    */
-  private isDistanceMaximum(samples: SolarDistanceSample): boolean {
-    const { current, next, previous } = samples;
-    return (
-      previous.every((distance) => distance < current) &&
-      next.every((distance) => distance <= current)
-    );
-  }
-
-  /** Whether the sampled distance is the nearest across its whole margin. */
-  private isDistanceMinimum(samples: SolarDistanceSample): boolean {
-    const { current, next, previous } = samples;
-    return (
-      previous.every((distance) => distance > current) &&
-      next.every((distance) => distance >= current)
-    );
+  private pairForwards(
+    beginnings: DetectedCalendarEvent[],
+    endings: DetectedCalendarEvent[],
+  ): [DetectedCalendarEvent, DetectedCalendarEvent][] {
+    const byStart = (
+      a: DetectedCalendarEvent,
+      b: DetectedCalendarEvent,
+    ): number => a.start.valueOf() - b.start.valueOf();
+    const sortedBeginnings = beginnings.toSorted(byStart);
+    const sortedEndings = endings.toSorted(byStart);
+    const pairs: [DetectedCalendarEvent, DetectedCalendarEvent][] = [];
+    for (const [index, beginning] of sortedBeginnings.entries()) {
+      const nextBeginning = sortedBeginnings[index + 1];
+      const ending = sortedEndings.find(
+        (candidate) => candidate.start.valueOf() > beginning.start.valueOf(),
+      );
+      const reachesNextBeginning =
+        ending !== undefined &&
+        nextBeginning !== undefined &&
+        nextBeginning.start.valueOf() < ending.start.valueOf();
+      if (ending !== undefined && !reachesNextBeginning) {
+        pairs.push([beginning, ending]);
+      }
+    }
+    return pairs;
   }
 
   // 🌎 Public Methods
@@ -282,11 +285,18 @@ export class AnnualSolarCycleService {
    * and apparent solar diameter. Perihelion typically occurs in early January,
    * aphelion in early July.
    *
-   * @see {@link getDistanceFromEphemeris} for distance retrieval
-   * @see {@link isDistanceMaximum} for aphelion detection
-   * @see {@link isDistanceMinimum} for perihelion detection
+   * @see {@link getDistanceSpeedFromEphemeris} for radial speed retrieval
    *
    * @remarks
+   * An apsis is a sign change of the Sun's radial speed between two adjacent
+   * minutes, stamped at whichever of the two has the smaller speed magnitude.
+   * The distance series is not used: the Swiss Ephemeris files store polynomial
+   * segments, and the distance steps by about 3e-9 AU where one segment hands
+   * over to the next (light-time correction repeats the step about eight
+   * minutes later). Near an apsis the distance changes by only about 1.5e-9 AU
+   * across half an hour, so such a step fakes or hides an extremum. The
+   * radial speed is smooth through the steps and crosses zero once per apsis.
+   *
    * Perihelion: ~147.1 million km (Earth moving fastest, ~30.3 km/s)
    * Aphelion: ~152.1 million km (Earth moving slowest, ~29.3 km/s)
    *
@@ -303,16 +313,19 @@ export class AnnualSolarCycleService {
     args: DetectSolarApsisEventsArguments,
   ): DetectedCalendarEvent[] {
     const { minute, sunDistanceEphemeris } = args;
-    const distances = this.getSolarDistances(minute, sunDistanceEphemeris);
+    const speeds = this.getSolarDistanceSpeeds(minute, sunDistanceEphemeris);
+    const apsisMinute = this.getNearestApsisMinute(minute, speeds);
     const solarApsisEvents: DetectedCalendarEvent[] = [];
-    if (this.isDistanceMaximum(distances)) {
+    // Receding (positive speed) turning to approaching: farthest point.
+    if (speeds.previous > 0 && speeds.current <= 0) {
       solarApsisEvents.push(
-        this.annualSolarCycleEventsService.buildAphelionEvent(minute),
+        this.annualSolarCycleEventsService.buildAphelionEvent(apsisMinute),
       );
     }
-    if (this.isDistanceMinimum(distances)) {
+    // Approaching (negative speed) turning to receding: nearest point.
+    if (speeds.previous < 0 && speeds.current >= 0) {
       solarApsisEvents.push(
-        this.annualSolarCycleEventsService.buildPerihelionEvent(minute),
+        this.annualSolarCycleEventsService.buildPerihelionEvent(apsisMinute),
       );
     }
     return solarApsisEvents;

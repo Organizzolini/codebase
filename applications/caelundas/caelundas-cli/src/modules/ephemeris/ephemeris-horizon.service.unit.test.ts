@@ -49,6 +49,7 @@ describe(EphemerisHorizonService, () => {
     vi.mocked(coordinateService.getBodyCoordinatesWithDistance).mockReturnValue(
       {
         distance: 1.01,
+        distanceSpeed: 0,
         latitude: -1.2,
         longitude: 120.5,
       },

@@ -358,6 +358,23 @@ export class EphemerisService {
   }
 
   /**
+   * Safely extracts the radial speed (AU per day, positive while receding)
+   * from a distance ephemeris.
+   *
+   * @throws When timestamp or field is missing from ephemeris.
+   */
+  public getDistanceSpeedFromEphemeris(
+    ephemeris: DistanceEphemeris,
+    timestamp: string,
+  ): number {
+    const data = ephemeris[timestamp];
+    if (data?.distanceSpeed === undefined) {
+      throw new Error(`Missing distance speed at ${timestamp}`);
+    }
+    return data.distanceSpeed;
+  }
+
+  /**
    * Aggregates all ephemeris data types for all relevant bodies across a date range.
    */
   public getEphemerides(args: {

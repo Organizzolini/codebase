@@ -128,8 +128,8 @@ describe("ephemeris.types", () => {
   describe("distanceEphemeris type", () => {
     it("accepts valid distance values", () => {
       const ephemeris: DistanceEphemeris = {
-        "2024-03-21T00:00:00.000Z": { distance: 1.0001 },
-        "2024-03-21T00:01:00.000Z": { distance: 1.0002 },
+        "2024-03-21T00:00:00.000Z": { distance: 1.0001, distanceSpeed: 0 },
+        "2024-03-21T00:01:00.000Z": { distance: 1.0002, distanceSpeed: 0 },
       };
 
       expect(ephemeris["2024-03-21T00:00:00.000Z"]?.distance).toBe(1.0001);
@@ -137,10 +137,10 @@ describe("ephemeris.types", () => {
 
     it("accepts distance in astronomical units", () => {
       const sunDistance: DistanceEphemeris = {
-        "2024-03-21T00:00:00.000Z": { distance: 1 }, // ~1 AU
+        "2024-03-21T00:00:00.000Z": { distance: 1, distanceSpeed: 0 }, // ~1 AU
       };
       const marsDistance: DistanceEphemeris = {
-        "2024-03-21T00:00:00.000Z": { distance: 1.5 }, // ~1.5 AU
+        "2024-03-21T00:00:00.000Z": { distance: 1.5, distanceSpeed: 0 }, // ~1.5 AU
       };
 
       expect(sunDistance["2024-03-21T00:00:00.000Z"]?.distance).toBeCloseTo(

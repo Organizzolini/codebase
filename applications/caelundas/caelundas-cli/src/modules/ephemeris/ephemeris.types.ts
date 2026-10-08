@@ -67,12 +67,19 @@ export type DiameterEphemeris = Record<string, { diameter: number }>;
 export type DiameterEphemerisBody = Extract<Body, "moon" | "sun">;
 
 /**
- * Time-indexed ephemeris of observer-body distance.
+ * Time-indexed ephemeris of observer-body distance and its rate of change.
  *
- * Keys are ISO timestamps, values are distances in astronomical units (AU).
- * Used for apsis detection (perihelion/aphelion, perigee/apogee).
+ * Keys are ISO timestamps. `distance` is in astronomical units (AU) and
+ * `distanceSpeed` is the radial speed in AU per day, positive while the body
+ * recedes. Apsis detection (perihelion/aphelion, perigee/apogee) reads the
+ * sign of `distanceSpeed`, not the distance itself: the distance series has
+ * small steps where the Swiss Ephemeris files change polynomial segment, while
+ * the speed stays smooth through them and crosses zero once per apsis.
  */
-export type DistanceEphemeris = Record<string, { distance: number }>;
+export type DistanceEphemeris = Record<
+  string,
+  { distance: number; distanceSpeed: number }
+>;
 
 /**
  * Bodies for which distance ephemerides are generated.
