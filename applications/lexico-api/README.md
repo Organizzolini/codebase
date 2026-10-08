@@ -82,6 +82,8 @@ graph LR
   file_src_modules_literature_authors_resolver_unit_test_ts["src/modules/literature/authors.resolver.unit.test.ts"]
   file_src_modules_literature_line_arguments_entities_ts["src/modules/literature/line-arguments.entities.ts"]
   file_src_modules_literature_lines_range_input_entities_ts["src/modules/literature/lines-range-input.entities.ts"]
+  file_src_modules_literature_lines_resolver_end_to_end_test_ts["src/modules/literature/lines.resolver.end-to-end.test.ts"]
+  file_src_modules_literature_lines_resolver_integration_test_ts["src/modules/literature/lines.resolver.integration.test.ts"]
   file_src_modules_literature_lines_resolver_ts["src/modules/literature/lines.resolver.ts"]
   file_src_modules_literature_lines_resolver_unit_test_ts["src/modules/literature/lines.resolver.unit.test.ts"]
   file_src_modules_literature_literature_arguments_entities_unit_test_ts["src/modules/literature/literature-arguments.entities.unit.test.ts"]
@@ -111,6 +113,7 @@ graph LR
   file_src_modules_literature_token_word_loader_ts["src/modules/literature/token-word.loader.ts"]
   file_src_modules_literature_token_word_loader_unit_test_ts["src/modules/literature/token-word.loader.unit.test.ts"]
   file_src_modules_literature_tokens_arguments_entities_ts["src/modules/literature/tokens-arguments.entities.ts"]
+  file_src_modules_literature_tokens_resolver_integration_test_ts["src/modules/literature/tokens.resolver.integration.test.ts"]
   file_src_modules_literature_tokens_resolver_ts["src/modules/literature/tokens.resolver.ts"]
   file_src_modules_literature_tokens_resolver_unit_test_ts["src/modules/literature/tokens.resolver.unit.test.ts"]
   file_src_modules_macrons_macrons_constants_ts["src/modules/macrons/macrons.constants.ts"]
@@ -153,6 +156,8 @@ graph LR
   file_testing_literature_search_corpus_ts["testing/literature-search-corpus.ts"]
   file_testing_literature_search_pagination_ts["testing/literature-search-pagination.ts"]
   file_testing_mocks_ts["testing/mocks.ts"]
+  file_testing_reading_application_ts["testing/reading-application.ts"]
+  file_testing_reading_passage_ts["testing/reading-passage.ts"]
   file_testing_relay_connection_walk_ts["testing/relay-connection-walk.ts"]
   file_testing_setup_ts["testing/setup.ts"]
   file_testing_word_lookups_ts["testing/word-lookups.ts"]
@@ -213,6 +218,16 @@ graph LR
   file_src_modules_literature_authors_resolver_unit_test_ts --> file_src_modules_literature_literature_service_ts
   file_src_modules_literature_authors_resolver_unit_test_ts --> file_src_modules_literature_texts_resolver_ts
   file_src_modules_literature_line_arguments_entities_ts --> file_src_modules_literature_lines_range_input_entities_ts
+  file_src_modules_literature_lines_resolver_end_to_end_test_ts --> file_src_modules_literature_literature_service_ts
+  file_src_modules_literature_lines_resolver_end_to_end_test_ts --> file_testing_database_ts
+  file_src_modules_literature_lines_resolver_end_to_end_test_ts --> file_testing_reading_application_ts
+  file_src_modules_literature_lines_resolver_end_to_end_test_ts --> file_testing_reading_passage_ts
+  file_src_modules_literature_lines_resolver_integration_test_ts --> file_src_lexico_api_types_ts
+  file_src_modules_literature_lines_resolver_integration_test_ts --> file_src_modules_literature_line_arguments_entities_ts
+  file_src_modules_literature_lines_resolver_integration_test_ts --> file_src_modules_literature_lines_resolver_ts
+  file_src_modules_literature_lines_resolver_integration_test_ts --> file_src_modules_literature_literature_service_ts
+  file_src_modules_literature_lines_resolver_integration_test_ts --> file_testing_database_ts
+  file_src_modules_literature_lines_resolver_integration_test_ts --> file_testing_reading_passage_ts
   file_src_modules_literature_lines_resolver_ts --> file_src_lexico_api_types_ts
   file_src_modules_literature_lines_resolver_ts --> file_src_modules_literature_line_arguments_entities_ts
   file_src_modules_literature_lines_resolver_ts --> file_src_modules_literature_literature_connection_entities_ts
@@ -290,6 +305,13 @@ graph LR
   file_src_modules_literature_token_word_loader_ts --> file_src_modules_literature_literature_service_ts
   file_src_modules_literature_token_word_loader_unit_test_ts --> file_src_modules_literature_literature_service_ts
   file_src_modules_literature_token_word_loader_unit_test_ts --> file_src_modules_literature_token_word_loader_ts
+  file_src_modules_literature_tokens_resolver_integration_test_ts --> file_src_lexico_api_types_ts
+  file_src_modules_literature_tokens_resolver_integration_test_ts --> file_src_modules_literature_literature_service_ts
+  file_src_modules_literature_tokens_resolver_integration_test_ts --> file_src_modules_literature_token_word_loader_ts
+  file_src_modules_literature_tokens_resolver_integration_test_ts --> file_src_modules_literature_tokens_arguments_entities_ts
+  file_src_modules_literature_tokens_resolver_integration_test_ts --> file_src_modules_literature_tokens_resolver_ts
+  file_src_modules_literature_tokens_resolver_integration_test_ts --> file_testing_database_ts
+  file_src_modules_literature_tokens_resolver_integration_test_ts --> file_testing_reading_passage_ts
   file_src_modules_literature_tokens_resolver_ts --> file_src_lexico_api_types_ts
   file_src_modules_literature_tokens_resolver_ts --> file_src_modules_literature_literature_connection_entities_ts
   file_src_modules_literature_tokens_resolver_ts --> file_src_modules_literature_literature_service_ts
@@ -367,6 +389,10 @@ graph LR
   file_testing_graphql_application_ts --> file_src_lexico_api_constants_ts
   file_testing_graphql_application_ts --> file_src_lexico_api_entities_ts
   file_testing_graphql_application_ts --> file_testing_word_lookups_ts
+  file_testing_reading_application_ts --> file_src_lexico_api_constants_ts
+  file_testing_reading_application_ts --> file_src_modules_literature_literature_module_ts
+  file_testing_reading_application_ts --> file_testing_database_ts
+  file_testing_reading_application_ts --> file_testing_reading_passage_ts
 ```
 <!-- codependix:end name="codependix-file-imports" -->
 
