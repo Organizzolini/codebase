@@ -2,9 +2,8 @@ import { Entity, Index, ManyToOne } from "typeorm";
 
 import { DeletableEntity } from "@codebase/database";
 
-import { Lexeme } from "./Lexeme.entity";
-import { Word } from "./Word.entity";
-
+import type { Lexeme } from "./Lexeme.entity";
+import type { Word } from "./Word.entity";
 import type { Relation } from "typeorm";
 
 /**

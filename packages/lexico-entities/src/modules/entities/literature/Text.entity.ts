@@ -9,9 +9,8 @@ import {
 
 import { DeletableEntity } from "@codebase/database";
 
-import { Author } from "./Author.entity";
-import { Line } from "./Line.entity";
-
+import type { Author } from "./Author.entity";
+import type { Line } from "./Line.entity";
 import type { Relation } from "typeorm";
 
 /**

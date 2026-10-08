@@ -2,7 +2,7 @@ import { Column, Entity, OneToMany } from "typeorm";
 
 import { DeletableEntity } from "@codebase/database";
 
-import { Text } from "./Text.entity";
+import type { Text } from "./Text.entity";
 
 /**
  * Represents an author of Latin literature.
