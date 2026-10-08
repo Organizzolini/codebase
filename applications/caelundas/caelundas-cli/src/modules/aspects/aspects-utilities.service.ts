@@ -4,6 +4,7 @@ import { angleByAspect, orbByAspect } from "../caelundas/caelundas.constants";
 import { MathService } from "../math/math.service";
 
 import type { Aspect, AspectPhase, Body } from "../caelundas/caelundas.types";
+import type { AspectBodies } from "./aspects.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -262,6 +263,45 @@ export class AspectsUtilitiesService {
       (previousDifference >= 0 && currentDifference <= 0) ||
       (previousDifference <= 0 && currentDifference >= 0)
     );
+  }
+
+  /**
+   * Lists each body pair held in one of `aspects` at both the previous minute
+   * and the current one: the registry a sweep would hold had it started earlier.
+   * A pair entering orb at the current minute is left out, since its forming
+   * event still fires.
+   */
+  getActiveAspectBodies(args: {
+    aspects: readonly Aspect[];
+    bodies: readonly Body[];
+    getLongitudes: (body: Body) => { current: number; previous: number };
+  }): AspectBodies[] {
+    const { aspects, bodies, getLongitudes } = args;
+    const longitudesByBody = new Map(
+      bodies.map((body) => [body, getLongitudes(body)]),
+    );
+    return AspectsUtilitiesService.scanUniqueBodyPairs({
+      bodies,
+      getValue: ({ body1, body2 }): AspectBodies | null => {
+        const longitudes1 = longitudesByBody.get(body1);
+        const longitudes2 = longitudesByBody.get(body2);
+        if (!longitudes1 || !longitudes2) return null;
+        const aspect = aspects.find(
+          (candidate) =>
+            this.isAspect({
+              aspect: candidate,
+              longitudeBody1: longitudes1.previous,
+              longitudeBody2: longitudes2.previous,
+            }) &&
+            this.isAspect({
+              aspect: candidate,
+              longitudeBody1: longitudes1.current,
+              longitudeBody2: longitudes2.current,
+            }),
+        );
+        return aspect ? { aspect, bodies: [body1, body2] } : null;
+      },
+    });
   }
 
   /**

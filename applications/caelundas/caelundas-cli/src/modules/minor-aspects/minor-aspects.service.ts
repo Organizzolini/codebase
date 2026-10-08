@@ -11,6 +11,10 @@ import {
 import { MinorAspectsEventService } from "./minor-aspects-event.service";
 import { MinorAspectsProgressiveService } from "./minor-aspects-progressive.service";
 
+import type {
+  AspectBodies,
+  SimpleAspectDetectorArguments,
+} from "../aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   AspectPhase,
@@ -36,7 +40,7 @@ export class MinorAspectsService {
 
   constructor(
     private readonly logger: LoggerService,
-    aspectsUtilitiesService: AspectsUtilitiesService,
+    private readonly aspectsUtilitiesService: AspectsUtilitiesService,
     private readonly minorAspectsEventService: MinorAspectsEventService,
     private readonly minorAspectsProgressiveService: MinorAspectsProgressiveService,
   ) {
@@ -178,6 +182,28 @@ export class MinorAspectsService {
       coordinateEphemerisByBody: args.coordinateEphemerisByBody,
       detect: (argumentsObject) => this.detectBodyPairAspect(argumentsObject),
       minute: args.minute,
+    });
+  }
+
+  /**
+   * Lists the minor aspects already in orb at this minute and the one before,
+   * so a sweep can seed its active-aspect registry at the window start.
+   */
+  detectActive(args: SimpleAspectDetectorArguments): AspectBodies[] {
+    const { coordinateEphemerisByBody, minute } = args;
+    const previousMinute = minute.clone().subtract(1, "minute");
+    const nextMinute = minute.clone().add(1, "minute");
+    return this.aspectsUtilitiesService.getActiveAspectBodies({
+      aspects: minorAspects,
+      bodies: minorAspectBodies,
+      getLongitudes: (body) =>
+        this.minorAspectsEventService.getLongitudesWindowForBody({
+          body,
+          coordinateEphemerisByBody,
+          minute,
+          nextMinute,
+          previousMinute,
+        }),
     });
   }
 

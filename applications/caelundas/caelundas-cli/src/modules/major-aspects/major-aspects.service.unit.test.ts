@@ -462,4 +462,41 @@ describe(MajorAspectsService, () => {
       expect(phase).toBeNull();
     });
   });
+
+  describe("detectActive", () => {
+    it("lists the square already in orb at the minute before and this one", () => {
+      const minute = moment.utc("2026-10-01T04:00:00Z");
+      const instants = [
+        minute.clone().subtract(1, "minute"),
+        minute,
+        minute.clone().add(1, "minute"),
+      ].map((instant) => instant.toISOString());
+      const coordinateEphemerisByBody = Object.fromEntries(
+        majorAspectBodies.map((body) => [
+          body,
+          Object.fromEntries(
+            instants.map((instant) => [
+              instant,
+              { latitude: 0, longitude: body === "mercury" ? 90.5 : 0 },
+            ]),
+          ),
+        ]),
+      ) as Record<Body, CoordinateEphemeris>;
+
+      const active = service.detectActive({
+        coordinateEphemerisByBody,
+        minute,
+      });
+
+      expect(active).toHaveLength(153);
+      expect(active).toContainEqual({
+        aspect: "square",
+        bodies: ["sun", "mercury"],
+      });
+      expect(active).toContainEqual({
+        aspect: "conjunct",
+        bodies: ["sun", "moon"],
+      });
+    });
+  });
 });
