@@ -27,8 +27,10 @@ import path from "node:path";
  *
  * In CI it is doubled, for the release commit, whose hook checks every bumped
  * package. v2.34.0's took 11m40s over 718 tasks with a critical path of 2m15s,
- * on a 4-CPU runner. The heaviest tasks, the per-project `codependix-gate` and
- * `callidescope-gate`, peak near 1.6 GB, so 8 stay under the runner's 16 GB.
+ * on a 4-CPU runner. The heaviest tasks then, `codebase:codependix` and
+ * `callidescope-gate`, peaked near 1.6 GB, so 8 stay under the runner's 16 GB.
+ * The per-project `codependix-gate` replaced the first and was measured on
+ * macOS at up to 1.3 GB (`lexico-api`), under that figure.
  */
 const ANALYSIS_PARALLELISM = process.env["CI"] ? 8 : 4;
 
