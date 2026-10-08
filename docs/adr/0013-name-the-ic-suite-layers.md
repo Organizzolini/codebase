@@ -138,3 +138,15 @@ package or promoting it out of the analysis layer.
   `codependix.config.ts` boundary rules this ADR's follow-on pull request adds,
   once keyed on those tags, will catch an untagged or misplaced package
   without anyone writing a rule that names it.
+
+## Note, 2026-10-08: codependix now has a plugin
+
+This ADR said "codependix has no plugin at all" and listed callidescope and
+conformetry as the only toolchains with an `nx` plugin layer. That stopped
+being true when `@codependix/nx` landed
+([#1429](https://github.com/Organizzolini/codebase/pull/1429)): it infers a
+per-project `codependix-gate` target, and it sits in the `nx` plugin layer
+above `cli`, tagged `layer:cli` as this ADR prescribes. The decisions above
+stand as written. `codependix-nx-projects` still keeps its name, and it is
+still the `analysis`-layer reader of the Nx project graph rather than the
+plugin; `codependix-nx` is the plugin.
