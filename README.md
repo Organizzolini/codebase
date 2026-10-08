@@ -182,7 +182,8 @@
 <details>
 <summary><strong>🏺 meanderaw</strong> - Greek meander (key/fret) applications that enumerate, measure, and classify meander patterns</summary>
 
-&nbsp;&nbsp;&nbsp;&nbsp;**[meanderaw-cli](applications/meanderaw/meanderaw-cli)** - CLI that enumerates Greek meander (key/fret) patterns into a Postgres database, measuring and classifying each by its Code
+&nbsp;&nbsp;&nbsp;&nbsp;**[meanderaw-cli](applications/meanderaw/meanderaw-cli)** - CLI that enumerates Greek meander (key/fret) patterns into a Postgres database, measuring and classifying each by its Code\
+&nbsp;&nbsp;&nbsp;&nbsp;**[meanderaw-web](applications/meanderaw/meanderaw-web)** - TanStack Start SSR web application for showing and exploring the meanders meanderaw-cli generates
 
 </details>
 
@@ -298,6 +299,7 @@ graph LR
   lexico_web["lexico-web"]
   logging["logging"]
   meanderaw_cli["meanderaw-cli"]
+  meanderaw_web["meanderaw-web"]
   synchronization["synchronization"]
   validation["validation"]
   caelundas_cli --> database
