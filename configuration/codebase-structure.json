@@ -443,6 +443,14 @@
                 "ruleId": "codebase-project"
               }
             ],
+            "name": "lexico"
+          },
+          {
+            "children": [
+              {
+                "ruleId": "codebase-project"
+              }
+            ],
             "name": "meanderaw"
           },
           {

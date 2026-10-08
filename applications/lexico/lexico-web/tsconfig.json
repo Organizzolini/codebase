@@ -8,15 +8,15 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noEmit": true,
-    "outDir": "../../dist/out-tsc",
+    "outDir": "../../../dist/out-tsc",
     "paths": {
-      "@/*": ["../../packages/components-web/src/*"],
+      "@/*": ["../../../packages/components-web/src/*"],
       "@codebase/components-web": [
-        "../../packages/components-web/src/index.ts"
+        "../../../packages/components-web/src/index.ts"
       ],
-      "codebase/configuration/*": ["../../configuration/*"],
+      "codebase/configuration/*": ["../../../configuration/*"],
       "eslint-plugin-better-max-params": [
-        "../../configuration/types/eslint-plugin-better-max-params/index.d.ts"
+        "../../../configuration/types/eslint-plugin-better-max-params/index.d.ts"
       ]
     },
     "strict": true,
@@ -29,7 +29,7 @@
     ]
   },
   "exclude": [],
-  "extends": "../../configuration/tsconfig.json",
+  "extends": "../../../configuration/tsconfig.json",
   "include": [
     "callidescope.config.ts",
     "codependix.config.ts",

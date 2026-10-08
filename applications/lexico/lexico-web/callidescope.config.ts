@@ -1,4 +1,4 @@
-import { projectDefaults } from "../../configuration/callidescope.config.js";
+import { projectDefaults } from "../../../configuration/callidescope.config.js";
 
 /**
  * What lexico is held to, measured rather than assumed.

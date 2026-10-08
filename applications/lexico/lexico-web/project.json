@@ -1,9 +1,9 @@
 {
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "implicitDependencies": ["components-web"],
-  "name": "lexico",
+  "name": "lexico-web",
   "projectType": "application",
-  "sourceRoot": "applications/lexico/src",
+  "sourceRoot": "applications/lexico/lexico-web/src",
   "tags": [
     "domain:lexico",
     "framework:react",
@@ -17,7 +17,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "vite build",
-        "cwd": "applications/lexico"
+        "cwd": "applications/lexico/lexico-web"
       },
       "outputs": ["{projectRoot}/dist"]
     },
@@ -30,7 +30,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "vite dev",
-        "cwd": "applications/lexico"
+        "cwd": "applications/lexico/lexico-web"
       }
     },
     "format-code": {},
@@ -55,7 +55,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "node .output/server/index.mjs",
-        "cwd": "applications/lexico"
+        "cwd": "applications/lexico/lexico-web"
       }
     },
     "stylelint": {},

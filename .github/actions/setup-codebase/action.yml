@@ -179,7 +179,8 @@ runs:
         key: |
           nx-graph-v3-${{ runner.os }}-${{ hashFiles(
           'pnpm-lock.yaml', 'nx.json', 'project.json',
-          'applications/*/project.json', 'applications/meanderaw/*/project.json',
+          'applications/*/project.json', 'applications/lexico/*/project.json',
+          'applications/meanderaw/*/project.json',
           'packages/*/project.json',
           'tools/*/project.json') }}
 

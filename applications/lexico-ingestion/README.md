@@ -2,7 +2,7 @@
 
 **Where the dictionary comes from.** A NestJS command-line application that
 scrapes, parses, and loads the sources behind
-[Lexico](../lexico/README.md) into the schema defined by
+[Lexico](../lexico/lexico-web/README.md) into the schema defined by
 [lexico-entities](../../packages/lexico-entities/README.md).
 
 ## Quick Start
@@ -97,7 +97,7 @@ nx run lexico-entities:migration:run
 
 ## Related
 
-- 🐺 [lexico](../lexico/README.md) — the web application
+- 🐺 [lexico-web](../lexico/lexico-web/README.md) — the web application
 - 📖 [lexico-entities](../../packages/lexico-entities/README.md) — the schema this writes to
 - 🎨 [components-web](../../packages/components-web/README.md) — the interface
 

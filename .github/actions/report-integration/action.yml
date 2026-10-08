@@ -65,6 +65,7 @@ runs:
         shopt -s nullglob
         for report in codometer-report.json \
           applications/*/codometer-report.json \
+          applications/lexico/*/codometer-report.json \
           applications/meanderaw/*/codometer-report.json \
           packages/*/codometer-report.json \
           packages/*/*/*/codometer-report.json \
@@ -108,6 +109,7 @@ runs:
         name: type-coverage-reports
         path: |
           applications/*/type-coverage-report.txt
+          applications/lexico/*/type-coverage-report.txt
           applications/meanderaw/*/type-coverage-report.txt
           packages/*/type-coverage-report.txt
           tools/*/type-coverage-report.txt

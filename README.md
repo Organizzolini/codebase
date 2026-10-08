@@ -169,7 +169,7 @@
 <details>
 <summary><strong>🐺 lexico</strong> - Latin-English dictionary suite: the web application, its components, its schema, and the ingestion that fills it</summary>
 
-&nbsp;&nbsp;&nbsp;&nbsp;**[lexico](applications/lexico)** - TanStack Start SSR dictionary web application\
+&nbsp;&nbsp;&nbsp;&nbsp;**[lexico-web](applications/lexico/lexico-web)** - TanStack Start SSR dictionary web application\
 &nbsp;&nbsp;&nbsp;&nbsp;**[lexico-api](applications/lexico-api)** - NestJS GraphQL API exposing Latin dictionary, literature, and Relay cursor-based search\
 &nbsp;&nbsp;&nbsp;&nbsp;**[components-web](packages/components-web)** - Shared React component library using shadcn/ui and Radix primitives\
 &nbsp;&nbsp;&nbsp;&nbsp;**[lexico-entities](packages/lexico-entities)** - TypeORM entities, migrations, and grammatical enumerations for the dictionary and literature schema\
@@ -10850,7 +10850,7 @@ The workspace's call graph, traced by [callidescope](packages/ic-suite/callidesc
 | Project | Deepest | Limit | Headroom | Widest |
 | --- | --- | --- | --- | --- |
 | `applications/caelundas/caelundas-cli` | 16 | 16 | 0 | 12 |
-| `applications/lexico` | 9 | 9 | 0 | 9 |
+| `applications/lexico/lexico-web` | 9 | 9 | 0 | 9 |
 | `applications/lexico-ingestion` | 17 | 17 | 0 | 8 |
 | `applications/meanderaw/meanderaw-cli` | 16 | 16 | 0 | 12 |
 | `packages/components-web` | 3 | 3 | 0 | 7 |

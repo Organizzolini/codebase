@@ -17,7 +17,7 @@ export default defineConfig({
       external: ["expo-sqlite"],
     },
   },
-  cacheDir: "../../node_modules/.vite/applications/lexico",
+  cacheDir: "../../../node_modules/.vite/applications/lexico/lexico-web",
   css: {
     devSourcemap: true,
   },
@@ -60,7 +60,7 @@ export default defineConfig({
     alias: {
       "@": path.resolve(
         import.meta.dirname,
-        "../../packages/components-web/src",
+        "../../../packages/components-web/src",
       ),
     },
     tsconfigPaths: true,
