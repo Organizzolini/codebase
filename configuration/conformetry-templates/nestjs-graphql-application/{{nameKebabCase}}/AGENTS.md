@@ -282,7 +282,7 @@ See the [triage-integration skill](../../.agents/skills/triage-integration/SKILL
 - [src/main.ts](src/main.ts): Application bootstrap
 - [src/modules/{{nameKebabCase}}/{{nameKebabCase}}.module.ts](src/modules/{{nameKebabCase}}/{{nameKebabCase}}.module.ts): Root NestJS module
 - [src/modules/{{nameKebabCase}}/{{nameKebabCase}}.constants.ts](src/modules/{{nameKebabCase}}/{{nameKebabCase}}.constants.ts): `environmentSchema` (Zod)
-- `@codebase/logging` (`packages/logging`): shared pino-backed `LoggerService` and `LoggerModule`
+- `@codebase/logging` (`projects/logging`): shared pino-backed `LoggerService` and `LoggerModule`
 - [src/modules/sample/sample.module.ts](src/modules/sample/sample.module.ts): Example GraphQL module
 - [project.json](project.json): Nx targets (`start`, `test`, `lint`, `typecheck`, `format`)
 - [.env.default](.env.default): Environment variable template

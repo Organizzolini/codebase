@@ -163,7 +163,7 @@ Use Cheerio helpers when tests parse HTML/XML (especially parser/service tests) 
 
 - **When**: Unit tests that need deterministic DOM setup, selector-based parsing, root-node parsing, and branch coverage for missing-node guards.
 - **How**: Prefer shared helpers over inline setup and avoid module-level Cheerio mocks for routine parsing tests.
-- **Where (lexico-cli)**: import helpers from `applications/lexico/lexico-cli/testing/mocks.ts` and keep fixtures minimal and behavior-focused.
+- **Where (lexico-cli)**: import helpers from `projects/lexico/lexico-cli/testing/mocks.ts` and keep fixtures minimal and behavior-focused.
 
 See the full guide with examples, do/don't guidance, and coverage tips: [Cheerio Testing Reference](./references/cheerio-testing.md).
 

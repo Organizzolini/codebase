@@ -128,7 +128,7 @@ The root `pyproject.toml` is the single Python configuration file: it declares t
 
 ```toml
 [tool.uv.workspace]
-members = ["applications/affirmancy"]
+members = ["projects/affirmancy"]
 
 [dependency-groups]
 dev = ["sqlfluff>=3.0", "vulture>=2.14", "yamllint>=1.35"]
@@ -144,7 +144,7 @@ Note that only ruff inherits: pyright and pytest read solely the `pyproject.toml
 
 ## uv Workspace Rules
 
-- **Members are listed explicitly.** A glob such as `applications/*` fails on the TypeScript projects, which have no `pyproject.toml`.
+- **Members are listed explicitly.** A glob such as `projects/*` fails on the TypeScript projects, which have no `pyproject.toml`.
 - **Sync from the repository root.** `uv sync --project <member>` prunes the other members' tools out of the shared `.venv`; a bare `uv sync` installs them all.
 - **`uv run` works from any member directory.** It resolves the workspace root and uses the shared `.venv` without pruning, so Nx targets keep their `cwd: {projectRoot}`.
 - **One resolution for all members.** Dependency conflicts between Python projects have to be settled, not isolated.

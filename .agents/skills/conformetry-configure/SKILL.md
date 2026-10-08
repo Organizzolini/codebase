@@ -59,7 +59,7 @@ the conformance bar — can differ per set of paths.
 directory or file the patterns found is dropped when an `exclude` glob matches
 it, with or without `tags`. Use it for vendored or generated code that sits
 among real instances, such as shadcn's component output:
-`exclude: ["applications/lexico/src/components/ui/**"]`.
+`exclude: ["projects/lexico/lexico-web/src/components/ui/**"]`.
 
 Under the Nx plugin, `tags` is what changes a group's meaning:
 
@@ -225,7 +225,7 @@ result, and `conformetry-generate` for the generation step itself.
 
 ## Seeing it rather than reading about it
 
-[`conformetry-examples`](https://github.com/JimmyPaolini/codebase/tree/main/packages/ic-suite/conformetry/conformetry-examples) is eleven self-contained examples, each
+[`conformetry-examples`](https://github.com/JimmyPaolini/codebase/tree/main/projects/ic-suite/conformetry/conformetry-examples) is eleven self-contained examples, each
 a complete configuration small enough to read in one sitting. The ones that
 answer configuration questions:
 
@@ -240,4 +240,4 @@ answer configuration questions:
 - **`failure-modes`** — a placeholder nobody supplied and no instance text
   reveals, refused by generation and reported by validation.
 
-See [its AGENTS.md](https://github.com/JimmyPaolini/codebase/blob/main/packages/ic-suite/conformetry/conformetry-examples/AGENTS.md) for the full index.
+See [its AGENTS.md](https://github.com/JimmyPaolini/codebase/blob/main/projects/ic-suite/conformetry/conformetry-examples/AGENTS.md) for the full index.

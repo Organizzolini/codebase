@@ -13,7 +13,7 @@ that the crossing disappears from the ink graph.
 
 This was written after the family drew something. Every number below is
 `MeanderTopologyService.measure` reading the six documents committed under
-`applications/meanderaw/meanderaw-cli/output/cross/*/*.svg`.
+`projects/meanderaw/meanderaw-cli/output/cross/*/*.svg`.
 
 ## Considered options
 

@@ -1,0 +1,56 @@
+{
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "name": "codometer-cli",
+  "projectType": "library",
+  "sourceRoot": "projects/ic-suite/codometer/codometer-cli",
+  "tags": [
+    "framework:nest-commander",
+    "framework:nestjs",
+    "generator:nestjs-command-project",
+    "language:typescript",
+    "layer:cli",
+    "name:codometer-cli",
+    "type:package"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "options": {
+        "configFile": "projects/ic-suite/codometer/codometer-cli/vite.config.ts",
+        "generatePackageJson": false,
+        "outputPath": "projects/ic-suite/codometer/codometer-cli/dist"
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "build-projects": {},
+    "codometer": {},
+    "dependency-cruiser": {},
+    "deprecate-code": {},
+    "format-code": {},
+    "guard-code": {},
+    "knip": {},
+    "lint-code": {},
+    "markdown-lint": {},
+    "oxfmt": {},
+    "oxlint": {},
+    "pack": {},
+    "prettier": {},
+    "spell-check": {},
+    "start": {
+      "cache": false,
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node --import @swc-node/register/esm-register projects/ic-suite/codometer/codometer-cli/src/main.ts",
+        "cwd": "{workspaceRoot}",
+        "env": {
+          "SWC_NODE_PROJECT": "projects/ic-suite/codometer/codometer-cli/tsconfig.json"
+        }
+      }
+    },
+    "test-code": {},
+    "type-coverage": {},
+    "typecheck": {},
+    "typecheck-code": {},
+    "yaml-lint": {}
+  }
+}

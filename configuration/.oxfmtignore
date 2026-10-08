@@ -35,13 +35,13 @@ dist
 node_modules
 out
 package-lock.json
-**/packages/components-web/src/components/**
-**/packages/components-web/src/hooks/**
-**/packages/components-web/src/lib/**
-**/applications/lexico/lexico-cli/data/**
-**/applications/lexico/lexico-cli/data/library/**
-**/applications/lexico/lexico-cli/src/modules/literature/literature.constants.ts
-**/applications/lexico/lexico-cli/src/modules/library/library.constants.ts
+**/projects/components-web/src/components/**
+**/projects/components-web/src/hooks/**
+**/projects/components-web/src/lib/**
+**/projects/lexico/lexico-cli/data/**
+**/projects/lexico/lexico-cli/data/library/**
+**/projects/lexico/lexico-cli/src/modules/literature/literature.constants.ts
+**/projects/lexico/lexico-cli/src/modules/library/library.constants.ts
 **/library.json
 pnpm-lock.yaml
 tmp
@@ -49,8 +49,8 @@ tmp
 # Conformetry example fixtures: a template file holds mustache where an
 # identifier belongs, so it is not parseable as the language its extension
 # names. Each example's own conformetry.config.ts is formatted normally.
-**/packages/ic-suite/conformetry/conformetry-examples/examples/*/instances/**
-**/packages/ic-suite/conformetry/conformetry-examples/examples/*/templates/**
+**/projects/ic-suite/conformetry/conformetry-examples/examples/*/instances/**
+**/projects/ic-suite/conformetry/conformetry-examples/examples/*/templates/**
 # Emitted from the conformetry configuration; the emitter's output is
 # authoritative, and reformatting it makes every conformetry command fail the
 # drift check after a `format` run.
@@ -59,11 +59,11 @@ tmp
 # fresh run would produce, byte for byte. Reformatting it makes
 # `callidescope-examples:callidescope` report it stale the moment `format` runs
 # — the same failure mode as the emitted conformetry plugin above.
-**/packages/ic-suite/callidescope/callidescope-examples/output/**
+**/projects/ic-suite/callidescope/callidescope-examples/output/**
 # The meander draw run writes its index and family pages here, gitignored and
 # gigabytes at the default edge budget, and nothing in it is this formatter's
 # to rewrite. `.prettierignore` excludes it for its own formatter.
-**/applications/meanderaw/meanderaw-cli/output/**
+**/projects/meanderaw/meanderaw-cli/output/**
 **/data/wikipedia
 **/data/wiktionary
 yarn.lock

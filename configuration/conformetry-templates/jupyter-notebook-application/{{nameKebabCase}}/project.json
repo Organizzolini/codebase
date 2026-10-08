@@ -1,7 +1,7 @@
 {
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
-  "sourceRoot": "applications/{{nameKebabCase}}/src",
+  "sourceRoot": "projects/{{nameKebabCase}}/src",
   "tags": [
     "generator:jupyter-notebook-application",
     "language:python",

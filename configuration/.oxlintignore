@@ -26,20 +26,20 @@ CHANGELOG.md
 
 # Generated files
 **/routeTree.gen.ts
-applications/lexico/lexico-web/src/lib/routeTree.gen.ts
+projects/lexico/lexico-web/src/lib/routeTree.gen.ts
 .claude/CLAUDE.md
 .github/copilot-instructions.md
 lint-staged.config.ts
-**/packages/components-web/src/components/**
-**/packages/components-web/src/hooks/**
-**/packages/components-web/src/lib/**
+**/projects/components-web/src/components/**
+**/projects/components-web/src/hooks/**
+**/projects/components-web/src/lib/**
 
 # Templates and data
 **/helm/**/templates/**
 **/src/modules/*/templates/**
-**/applications/lexico/lexico-cli/data/**
-**/applications/lexico/lexico-cli/src/modules/literature/literature.constants.ts
-**/applications/lexico/lexico-cli/src/modules/library/library.constants.ts
+**/projects/lexico/lexico-cli/data/**
+**/projects/lexico/lexico-cli/src/modules/literature/literature.constants.ts
+**/projects/lexico/lexico-cli/src/modules/library/library.constants.ts
 **/library.json
 
 # Vendored skill content (framework-managed, not codebase-authored source)

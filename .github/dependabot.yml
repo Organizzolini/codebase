@@ -76,7 +76,7 @@ updates:
         update-types: [version-update:semver-major]
 
   # One lockfile covers every uv workspace member (root plus
-  # applications/affirmancy), so a single root entry reaches both.
+  # projects/affirmancy), so a single root entry reaches both.
   #
   # This ecosystem is newer than the npm one above, and its workspace
   # handling has an open upstream bug (dependabot/dependabot-core#14004:

@@ -170,7 +170,7 @@ The `test-devcontainer.sh` script in `.devcontainer/scripts/` validates tool ins
 | Post-create artifacts         | `node_modules/` and `.nx/graph.json` exist (validates `postCreateCommand` ran)                |
 | Script permissions            | All `.devcontainer/scripts/*.sh` files are executable                                         |
 | Extensions sync               | `extensions` and `recommendations` arrays in `devcontainer.json` match                        |
-| Workspace structure           | `applications/`, `packages/`, `infrastructure/`, `tools/` dirs exist (mount sanity)           |
+| Workspace structure           | `projects/` and `infrastructure/` dirs exist (mount sanity)                                   |
 | Docker (DinD)                 | Docker daemon is reachable and `docker compose` is available                                  |
 | VS Code Machine settings sync | `.vscode/settings.json` is applied to Machine settings (skipped when VS Code is not attached) |
 

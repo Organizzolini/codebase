@@ -26,7 +26,7 @@ module.exports = {
         // TypeORM bidirectional entity relations (ManyToMany, OneToMany) require
         // value imports of the related entity class for decorator callbacks.
         // These intra-package cycles are intentional and unavoidable.
-        pathNot: "^packages/lexico-entities/src/modules/entities/",
+        pathNot: "^projects/lexico/lexico-entities/src/modules/entities/",
       },
       name: "no-circular",
       severity: "error",
@@ -43,14 +43,12 @@ module.exports = {
           String.raw`(^|/)package\.json$`,
           String.raw`(^|/)tsconfig\.json$`,
           String.raw`\.d\.ts$`,
-          String.raw`^applications/.+/project\.json$`,
-          String.raw`^applications/.+/vitest\.config\.ts$`,
-          String.raw`^applications/lexico/lexico-cli/src/modules/.+\.(types|constants)\.ts$`,
+          String.raw`^projects/.+/project\.json$`,
+          String.raw`^projects/.+/vitest\.config\.ts$`,
+          String.raw`^projects/lexico/lexico-cli/src/modules/.+\.(types|constants)\.ts$`,
           String.raw`^documentation/.*\.md$`,
-          String.raw`^packages/.+/project\.json$`,
           String.raw`^planning/.*\.md$`,
           String.raw`^scripts/.*\.sh$`,
-          String.raw`^tools/.+/project\.json$`,
         ],
       },
       name: "no-orphans",
@@ -71,7 +69,7 @@ module.exports = {
     {
       comment: "Production code should not depend on devDependencies",
       from: {
-        path: "^applications",
+        path: String.raw`^projects/(affirmancy|caelundas/[^/]+|lexico/lexico-(?:api|cli|web)|meanderaw/[^/]+)/`,
         pathNot: [
           String.raw`\.test\.(ts|tsx)$`,
           String.raw`\.spec\.(ts|tsx)$`,
@@ -124,7 +122,7 @@ module.exports = {
     },
     reporterOptions: {
       archi: {
-        collapsePattern: "^(applications|packages)/[^/]+",
+        collapsePattern: "^projects/((ic-suite/[^/]+|caelundas|lexico|meanderaw)/)?[^/]+",
       },
       dot: {
         collapsePattern: "^node_modules/[^/]+",

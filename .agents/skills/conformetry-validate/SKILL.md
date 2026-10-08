@@ -225,7 +225,7 @@ files, and before saying an implementation is finished.
 
 ## Reproducing a difference in a sandbox
 
-[`conformetry-examples`](https://github.com/JimmyPaolini/codebase/tree/main/packages/ic-suite/conformetry/conformetry-examples) carries one instance per kind of
+[`conformetry-examples`](https://github.com/JimmyPaolini/codebase/tree/main/projects/ic-suite/conformetry/conformetry-examples) carries one instance per kind of
 difference, deliberately broken, so a report can be understood without the
 surrounding project's conventions muddying it.
 
@@ -238,6 +238,6 @@ surrounding project's conventions muddying it.
 - **`ambiguous-attribution`** — an instance two templates explain equally well.
 - **`failure-modes`** — two things that conform for the wrong reasons.
 
-[Its AGENTS.md](https://github.com/JimmyPaolini/codebase/blob/main/packages/ic-suite/conformetry/conformetry-examples/AGENTS.md) maps report text to the example that reproduces
+[Its AGENTS.md](https://github.com/JimmyPaolini/codebase/blob/main/projects/ic-suite/conformetry/conformetry-examples/AGENTS.md) maps report text to the example that reproduces
 it, and lists which changes to an instance are differences and which are not.
 The broken instances there are broken on purpose — do not repair them.

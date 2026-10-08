@@ -23,7 +23,7 @@ dev = [
 [[package]]
 name = "affirmancy"
 version = "0.1.0"
-source = { editable = "applications/affirmancy" }
+source = { editable = "projects/affirmancy" }
 dependencies = [
     { name = "inflect" },
     { name = "ipykernel" },

@@ -35,7 +35,7 @@ Thank you for contributing! This guide covers the development workflow, code sta
   - [Code Ownership](#code-ownership)
   - [Environment Variables](#environment-variables)
     - [Root (`.env.default`)](#root-envdefault)
-    - [caelundas-cli (`applications/caelundas/caelundas-cli/.env.default`)](#caelundas-cli-applicationscaelundascaelundas-clienvdefault)
+    - [caelundas-cli (`projects/caelundas/caelundas-cli/.env.default`)](#caelundas-cli-projectscaelundascaelundas-clienvdefault)
   - [Dependency Update Workflow](#dependency-update-workflow)
   - [Additional Resources](#additional-resources)
   - [Getting Help](#getting-help)
@@ -170,9 +170,9 @@ gpg --armor --export "$(git config --get user.signingkey)"
 
 ```text
 codebase/
-├── applications/       # Deployable applications (6)
-├── packages/           # Shared libraries and toolchain packages (38)
-├── tools/              # Repository-internal CLIs (2)
+├── projects/           # Every project, one folder each
+│   ├── <domain>/       # caelundas/, lexico/, meanderaw/ — group one domain's projects
+│   └── ic-suite/       # The four IC-suite toolchains, nested one level deeper
 ├── configuration/      # Every shared tool config, plus the Husky hooks
 ├── docs/               # Architecture decision records and agent configuration
 ├── documentation/      # Development guides and planning notes
@@ -182,7 +182,7 @@ codebase/
 └── .agents/skills/     # Agent skills; every other agent entrypoint symlinks here
 ```
 
-Every project lives in `applications/`, `packages/`, or `tools/` — a file directly in one of those directories is a lint error, not a style preference. The full annotated project list is in [README.md](../README.md), kept in step with the workspace by the `check-readme-projects` target; `nx show projects` prints the same set.
+Every project lives at `projects/<project>/`, or one level deeper in a domain folder (`projects/caelundas/`, `projects/lexico/`, `projects/meanderaw/`) or the IC suite's `projects/ic-suite/<toolchain>/` — a file directly in `projects/` or in a grouping folder is a lint error, not a style preference. Whether a project is an application or a package is its `type:application` or `type:package` tag, not its folder: the tag is what the module-boundary rules read. The full annotated project list is in [README.md](../README.md), kept in step with the workspace by the `check-readme-projects` target; `nx show projects` prints the same set.
 
 **A package removed from the workspace can still look like a project on a stale checkout.** `check-readme-projects` and `nx show projects` both key off any directory holding its own `package.json`, not off what git tracks — so a checkout that had a since-removed package built or installed before the removal lands keeps that package's `node_modules/`, `coverage/`, and other untracked build output, and pnpm or Nx can keep treating the directory as a real project from those leftovers alone. `pull`ing the removal only deletes the tracked files; the untracked ones stay until something deletes them. If `check-readme-projects` names a project that was removed on `main`, or `nx show projects` lists one you know is gone, delete that directory outright rather than tracking down which file is still there — nothing in a removed package's directory is meant to survive.
 
@@ -265,7 +265,7 @@ Five workflows run on every pull request. Each maps to targets you can run local
 | Secure Code   | Secrets, Python AST, dependency vulnerabilities, licenses, infrastructure misconfiguration                               | `nx affected --target=secure-code`                |
 | Make Projects | Builds every buildable project and gates its declared bundle size                                                        | `nx affected --target=build-projects`             |
 | Comply Code   | Branch name, pull request title, body, labels, assignees, and release significance                                       | See [Pull Request Process](#pull-request-process) |
-| Enforce Code  | CODEOWNERS rules and workflow security                                                                                   | `tools/validation/src/main.ts audit-governance`   |
+| Enforce Code  | CODEOWNERS rules and workflow security                                                                                   | `projects/validation/src/main.ts audit-governance`   |
 
 🚀 Continuous Deployment runs post-merge on `main` to release the workspace and to build and verify the dev container image. Builds are verified before merge, in the merge queue, and a pull request that changes the dev container builds and tests it there too.
 
@@ -333,7 +333,7 @@ Four toolchains are developed in this repository and gate its own code. You are 
 | `codependix`   | Exports Nx, NestJS module, and file-level import graphs, and judges them against declared boundary rules                       | `codebase:codependix`, inside `guard-code` in the 💂 Guard check |
 | `callidescope` | Traces call stacks through injected dependencies and flags stacks that are too deep or callables that reach too widely         | the inferred per-project `callidescope-gate` target, inside `guard-code` in the 💂 Guard check |
 
-Each is documented in its command-line package — [conformetry-cli](../packages/ic-suite/conformetry/conformetry-cli/README.md), [codometer-cli](../packages/ic-suite/codometer/codometer-cli/README.md), [codependix-cli](../packages/ic-suite/codependix/codependix-cli/README.md), [callidescope-cli](../packages/ic-suite/callidescope/callidescope-cli/README.md) — and each has agent skills for the same three moments, which read just as well for a human: running it, configuring it, and acting on what it said (codependix adds a fourth, for reading a graph the repository already committed). They are the `conformetry-*`, `codometer-*`, `codependix-*`, and `callidescope-*` entries under [.agents/skills](../.agents/skills).
+Each is documented in its command-line package — [conformetry-cli](../projects/ic-suite/conformetry/conformetry-cli/README.md), [codometer-cli](../projects/ic-suite/codometer/codometer-cli/README.md), [codependix-cli](../projects/ic-suite/codependix/codependix-cli/README.md), [callidescope-cli](../projects/ic-suite/callidescope/callidescope-cli/README.md) — and each has agent skills for the same three moments, which read just as well for a human: running it, configuring it, and acting on what it said (codependix adds a fourth, for reading a graph the repository already committed). They are the `conformetry-*`, `codometer-*`, `codependix-*`, and `callidescope-*` entries under [.agents/skills](../.agents/skills).
 
 Conformetry is the one you should reach for deliberately rather than only meet as a failure: **generate rather than hand-craft**, because code written in a shape a template already describes starts life failing conformance. `nx g conformetry:` lists the generators, and `conformetry templates` describes what each one produces.
 
@@ -359,8 +359,8 @@ Both signing checks are run by Husky already — do not invoke `scripts/git/` si
 
 Worktrees are the normal way to run several branches side by side here, and three traps are specific to this repository.
 
-- **`pnpm-lock.yaml` goes dirty on its own.** `pnpm install` or `lint-code --write` rewrites the `applications/JimmyPaolini` entry, because a placeholder `package.json` is inconsistently present across checkouts. Revert the lockfile rather than trying to reconcile it.
-- **Never run `git submodule update --init` for `applications/JimmyPaolini`.** That submodule is deliberately left uninitialized everywhere, locally and in CI. A `-` prefix in `git submodule status` is expected here, not broken.
+- **`pnpm-lock.yaml` goes dirty on its own.** `pnpm install` or `lint-code --write` rewrites the `projects/JimmyPaolini` entry, because a placeholder `package.json` is inconsistently present across checkouts. Revert the lockfile rather than trying to reconcile it.
+- **Never run `git submodule update --init` for `projects/JimmyPaolini`.** That submodule is deliberately left uninitialized everywhere, locally and in CI. A `-` prefix in `git submodule status` is expected here, not broken.
 - **The stash stack is shared with every other worktree.** A bare `git stash pop` can take someone else's work. Prefer a temporary commit, or `git stash push -u -m "<unique-tag>"` and `git stash apply <sha>`.
 
 The branch name is not free-form in a worktree either — derive one from the tables below and validate it before creating anything, since an unvalidated branch cannot be pushed. If the branch already exists locally, attach a worktree to it rather than creating a second branch. See [using-git-worktrees](../.agents/skills/using-git-worktrees/SKILL.md).
@@ -579,7 +579,7 @@ Each project ships a `.env.default` template with safe placeholder values. `scri
 | `TF_VAR_linode_token`                        | Linode API token for Terraform provisioning                         |
 | `TF_VAR_linode_kubernetes_engine_cluster_id` | Linode Kubernetes Engine cluster ID for deployments                 |
 
-### caelundas-cli (`applications/caelundas/caelundas-cli/.env.default`)
+### caelundas-cli (`projects/caelundas/caelundas-cli/.env.default`)
 
 | Variable           | Default      | Purpose                                       |
 | ------------------ | ------------ | --------------------------------------------- |

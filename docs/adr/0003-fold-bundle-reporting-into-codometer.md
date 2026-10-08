@@ -5,7 +5,7 @@ metrics against a `main` baseline and splice a `## 🎒 Bundles` section into a
 pull request description — and contained nothing else. Now that every
 metric codometer measures (not just bytes) needs the same diff-and-report
 treatment, we deleted `tools/reporting` and moved its job onto codometer
-itself: `packages/ic-suite/codometer/codometer-changes` owns diffing two reports,
+itself: `projects/ic-suite/codometer/codometer-changes` owns diffing two reports,
 `packages/codometer-markdown` owns rendering and splicing markdown (shared
 with codometer-cli's existing README badge output), and `codometer-cli`
 gained a `changes` command that composes both. A single `## ⏲️ Codometer`

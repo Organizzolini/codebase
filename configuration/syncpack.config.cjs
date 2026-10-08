@@ -11,12 +11,9 @@ module.exports = {
   // Source files to analyze for dependency consistency
   source: [
     "package.json",
-    "applications/*/package.json",
-    "applications/lexico/*/package.json",
-    "applications/meanderaw/*/package.json",
-    "packages/*/package.json",
-    "packages/ic-suite/*/*/package.json",
-    "tools/*/package.json",
+    "projects/*/package.json",
+    "projects/*/*/package.json",
+    "projects/ic-suite/*/*/package.json",
   ],
 
   // Version groups: enforce workspace protocol for internal @codebase/* packages

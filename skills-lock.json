@@ -16,19 +16,19 @@
     "callidescope-configure": {
       "source": "Organizzolini/codebase",
       "sourceType": "github",
-      "skillPath": "packages/ic-suite/callidescope/callidescope-agents/skills/callidescope-configure/SKILL.md",
+      "skillPath": "projects/ic-suite/callidescope/callidescope-agents/skills/callidescope-configure/SKILL.md",
       "computedHash": "e5032273a246c4664598d239398a06ddfc56e65bd0eddcf2857e09faeb75ad22"
     },
     "callidescope-trace": {
       "source": "Organizzolini/codebase",
       "sourceType": "github",
-      "skillPath": "packages/ic-suite/callidescope/callidescope-agents/skills/callidescope-trace/SKILL.md",
+      "skillPath": "projects/ic-suite/callidescope/callidescope-agents/skills/callidescope-trace/SKILL.md",
       "computedHash": "8ceb8d33b45bada1e705ccf8d230d9121493ec5f6710fa29eb09320d7e4c0a60"
     },
     "callidescope-triage": {
       "source": "Organizzolini/codebase",
       "sourceType": "github",
-      "skillPath": "packages/ic-suite/callidescope/callidescope-agents/skills/callidescope-triage/SKILL.md",
+      "skillPath": "projects/ic-suite/callidescope/callidescope-agents/skills/callidescope-triage/SKILL.md",
       "computedHash": "eb988795e954121ac3a58b3342dd0815a5a2ca0ad0257823597ab9c87a7fed8f"
     },
     "code-review": {
@@ -46,61 +46,61 @@
     "codependix-configure": {
       "source": "Organizzolini/codebase",
       "sourceType": "github",
-      "skillPath": "packages/ic-suite/codependix/codependix-agents/skills/codependix-configure/SKILL.md",
+      "skillPath": "projects/ic-suite/codependix/codependix-agents/skills/codependix-configure/SKILL.md",
       "computedHash": "28826cf3f298192477299d1cd63a4252bfe93adbd6b012ae8dd3585a960eba72"
     },
     "codependix-export": {
       "source": "Organizzolini/codebase",
       "sourceType": "github",
-      "skillPath": "packages/ic-suite/codependix/codependix-agents/skills/codependix-export/SKILL.md",
+      "skillPath": "projects/ic-suite/codependix/codependix-agents/skills/codependix-export/SKILL.md",
       "computedHash": "c5b6fd94559467bf19466ef866c7f3218cde5be15a29c0699f63ffe37fb4289c"
     },
     "codependix-navigate": {
       "source": "Organizzolini/codebase",
       "sourceType": "github",
-      "skillPath": "packages/ic-suite/codependix/codependix-agents/skills/codependix-navigate/SKILL.md",
+      "skillPath": "projects/ic-suite/codependix/codependix-agents/skills/codependix-navigate/SKILL.md",
       "computedHash": "307a1ed39dc40d63555f5767503136fce21a6539def94ba1c9502d2af1632de5"
     },
     "codependix-triage": {
       "source": "Organizzolini/codebase",
       "sourceType": "github",
-      "skillPath": "packages/ic-suite/codependix/codependix-agents/skills/codependix-triage/SKILL.md",
+      "skillPath": "projects/ic-suite/codependix/codependix-agents/skills/codependix-triage/SKILL.md",
       "computedHash": "8ed6605dccef4acade28f7ac05e2cd420048bb6464ed799cba274c9c7d0128ac"
     },
     "codometer-configure": {
       "source": "Organizzolini/codebase",
       "sourceType": "github",
-      "skillPath": "packages/ic-suite/codometer/codometer-agents/skills/codometer-configure/SKILL.md",
+      "skillPath": "projects/ic-suite/codometer/codometer-agents/skills/codometer-configure/SKILL.md",
       "computedHash": "bcf48fb105088fa1e564b1fbc5ccf7ae7f449735a4135f7770c2970466482fbc"
     },
     "codometer-measure": {
       "source": "Organizzolini/codebase",
       "sourceType": "github",
-      "skillPath": "packages/ic-suite/codometer/codometer-agents/skills/codometer-measure/SKILL.md",
+      "skillPath": "projects/ic-suite/codometer/codometer-agents/skills/codometer-measure/SKILL.md",
       "computedHash": "222520cff3de4c3cd2f7762b24fdbea9505a4fd08d86759cd5580fd318998bf4"
     },
     "codometer-triage": {
       "source": "Organizzolini/codebase",
       "sourceType": "github",
-      "skillPath": "packages/ic-suite/codometer/codometer-agents/skills/codometer-triage/SKILL.md",
+      "skillPath": "projects/ic-suite/codometer/codometer-agents/skills/codometer-triage/SKILL.md",
       "computedHash": "62e8780c9c34bac6592d8d8d5dfb0930ece3477d6e1e5d49125a00ce82ebcc71"
     },
     "conformetry-configure": {
       "source": "Organizzolini/codebase",
       "sourceType": "github",
-      "skillPath": "packages/ic-suite/conformetry/conformetry-agents/skills/conformetry-configure/SKILL.md",
+      "skillPath": "projects/ic-suite/conformetry/conformetry-agents/skills/conformetry-configure/SKILL.md",
       "computedHash": "123a8fec41538a3898c339c5445bc007646cee7aa952161932150a7169a42bb0"
     },
     "conformetry-generate": {
       "source": "Organizzolini/codebase",
       "sourceType": "github",
-      "skillPath": "packages/ic-suite/conformetry/conformetry-agents/skills/conformetry-generate/SKILL.md",
+      "skillPath": "projects/ic-suite/conformetry/conformetry-agents/skills/conformetry-generate/SKILL.md",
       "computedHash": "6527c4a802523b52bf343ffaeca13aba772c3599b55ee3fe2d2c4c4434d4b776"
     },
     "conformetry-validate": {
       "source": "Organizzolini/codebase",
       "sourceType": "github",
-      "skillPath": "packages/ic-suite/conformetry/conformetry-agents/skills/conformetry-validate/SKILL.md",
+      "skillPath": "projects/ic-suite/conformetry/conformetry-agents/skills/conformetry-validate/SKILL.md",
       "computedHash": "20d9e8d3ffdbaccb36a2a4aae02c77eb76c22e4e6ca0fb133a10094d56067e9c"
     },
     "diagnosing-bugs": {

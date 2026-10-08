@@ -75,11 +75,11 @@
       "cache": true,
       "configurations": {
         "write": {
-          "command": "node --import @swc-node/register/esm-register packages/ic-suite/callidescope/callidescope-cli/src/main.ts callidescope --config configuration/callidescope.config.ts --write"
+          "command": "node --import @swc-node/register/esm-register projects/ic-suite/callidescope/callidescope-cli/src/main.ts callidescope --config configuration/callidescope.config.ts --write"
         }
       },
       "defaultConfiguration": "write",
-      "description": "Publish the workspace call-stack trace: every project's README block, the mermaid diagram, and the JSON report. The only configuration left is `write` — depth checking now runs through the inferred per-project `callidescope-gate` target, a dependency of `guard-code`, scoped by `nx affected` in the 💂 Guard check and `configuration/lint-staged.config.ts`, so a pull request and a commit gate the projects a change actually touched rather than the whole workspace. This target still stays out of `lint-code`'s `dependsOn` for the reason it always did, unchanged by that split because `write` is exactly the configuration that remains: Nx forwards an explicit configuration down `dependsOn`, so a target reachable from there would take `write` from `lint-code --configuration=write` and publish the report from a branch. `defaultConfiguration` is `write`, the only configuration left, so a bare `nx run codebase:callidescope` does what `:write` does. Publishing did not fan out the way gating did: one JSON report and one set of README blocks are what the whole workspace needs, and computing either per project would mean rebuilding the same call graph many times for one merged artifact, where gating benefits from being scoped to what changed and publishing does not. Four traced call-graph roots carry no gate of their own and never will, because a gate is inferred onto an Nx project and none of them is one. `configuration/` carries its own `tsconfig.json` and so is traced, measuring depth 3; three fixture roots under `packages/ic-suite/codependix/codependix-examples/examples/` are the same case at depth 0. All four keep being traced and published here on the default branch, so a regression in any of them still lands in the report; it only stops failing a pull request. The workspace root is a fifth gap of a different kind and is not one of the four: `configuration/.callidescopeignore` drops it as a project, for the reason recorded there, so the loose maintenance scripts it once owned are traced by nothing at all — which is also why the root project is skipped from gate inference, its scope being the workspace itself. The README glob is an input because `write` splices into those files: without it, a hand-edited report replays a cached run.",
+      "description": "Publish the workspace call-stack trace: every project's README block, the mermaid diagram, and the JSON report. The only configuration left is `write` — depth checking now runs through the inferred per-project `callidescope-gate` target, a dependency of `guard-code`, scoped by `nx affected` in the 💂 Guard check and `configuration/lint-staged.config.ts`, so a pull request and a commit gate the projects a change actually touched rather than the whole workspace. This target still stays out of `lint-code`'s `dependsOn` for the reason it always did, unchanged by that split because `write` is exactly the configuration that remains: Nx forwards an explicit configuration down `dependsOn`, so a target reachable from there would take `write` from `lint-code --configuration=write` and publish the report from a branch. `defaultConfiguration` is `write`, the only configuration left, so a bare `nx run codebase:callidescope` does what `:write` does. Publishing did not fan out the way gating did: one JSON report and one set of README blocks are what the whole workspace needs, and computing either per project would mean rebuilding the same call graph many times for one merged artifact, where gating benefits from being scoped to what changed and publishing does not. Four traced call-graph roots carry no gate of their own and never will, because a gate is inferred onto an Nx project and none of them is one. `configuration/` carries its own `tsconfig.json` and so is traced, measuring depth 3; three fixture roots under `projects/ic-suite/codependix/codependix-examples/examples/` are the same case at depth 0. All four keep being traced and published here on the default branch, so a regression in any of them still lands in the report; it only stops failing a pull request. The workspace root is a fifth gap of a different kind and is not one of the four: `configuration/.callidescopeignore` drops it as a project, for the reason recorded there, so the loose maintenance scripts it once owned are traced by nothing at all — which is also why the root project is skipped from gate inference, its scope being the workspace itself. The README glob is an input because `write` splices into those files: without it, a hand-edited report replays a cached run.",
       "executor": "nx:run-commands",
       "inputs": [
         "{workspaceRoot}/**/*.{cts,mts,ts,tsx}",
@@ -116,7 +116,7 @@
         }
       ],
       "options": {
-        "command": "NODE_OPTIONS='' node --import @swc-node/register/esm-register tools/validation/src/main.ts catalog-manifests",
+        "command": "NODE_OPTIONS='' node --import @swc-node/register/esm-register projects/validation/src/main.ts catalog-manifests",
         "cwd": "{workspaceRoot}"
       },
       "outputs": []
@@ -148,7 +148,7 @@
         }
       ],
       "options": {
-        "command": "NODE_OPTIONS='' node --import @swc-node/register/esm-register tools/validation/src/main.ts lockfile",
+        "command": "NODE_OPTIONS='' node --import @swc-node/register/esm-register projects/validation/src/main.ts lockfile",
         "cwd": "{workspaceRoot}"
       },
       "outputs": []
@@ -177,7 +177,7 @@
         }
       ],
       "options": {
-        "command": "NODE_OPTIONS='' node --import @swc-node/register/esm-register tools/validation/src/main.ts readme-projects",
+        "command": "NODE_OPTIONS='' node --import @swc-node/register/esm-register projects/validation/src/main.ts readme-projects",
         "cwd": "{workspaceRoot}"
       },
       "outputs": []
@@ -186,10 +186,10 @@
       "cache": true,
       "configurations": {
         "check": {
-          "command": "node --import @swc-node/register/esm-register packages/ic-suite/codependix/codependix-cli/src/main.ts map --directory . --config configuration/codependix.config.ts --check boundaries"
+          "command": "node --import @swc-node/register/esm-register projects/ic-suite/codependix/codependix-cli/src/main.ts map --directory . --config configuration/codependix.config.ts --check boundaries"
         },
         "write": {
-          "command": "node --import @swc-node/register/esm-register packages/ic-suite/codependix/codependix-cli/src/main.ts map --directory . --config configuration/codependix.config.ts --write"
+          "command": "node --import @swc-node/register/esm-register projects/ic-suite/codependix/codependix-cli/src/main.ts map --directory . --config configuration/codependix.config.ts --write"
         }
       },
       "defaultConfiguration": "check",
@@ -210,10 +210,10 @@
       "cache": true,
       "configurations": {
         "check": {
-          "command": "node --import @swc-node/register/esm-register packages/ic-suite/codometer/codometer-cli/src/main.ts measure --config configuration/codometer.config.ts --output-json --check limits"
+          "command": "node --import @swc-node/register/esm-register projects/ic-suite/codometer/codometer-cli/src/main.ts measure --config configuration/codometer.config.ts --output-json --check limits"
         },
         "write": {
-          "command": "node --import @swc-node/register/esm-register packages/ic-suite/codometer/codometer-cli/src/main.ts measure --config configuration/codometer.config.ts --output-json --output-markdown"
+          "command": "node --import @swc-node/register/esm-register projects/ic-suite/codometer/codometer-cli/src/main.ts measure --config configuration/codometer.config.ts --output-json --output-markdown"
         }
       },
       "defaultConfiguration": "check",
@@ -507,20 +507,18 @@
       "cache": true,
       "configurations": {
         "check": {
-          "command": "jscpd --config configuration/jscpd.config.json --no-tips --reporters console,threshold applications packages tools scripts configuration infrastructure || true"
+          "command": "jscpd --config configuration/jscpd.config.json --no-tips --reporters console,threshold projects scripts configuration infrastructure || true"
         }
       },
       "defaultConfiguration": "check",
       "description": "Run jscpd duplicate-code reporting and threshold status in advisory mode (never fails CI).",
       "executor": "nx:run-commands",
       "inputs": [
-        "{workspaceRoot}/applications/**/*",
         "{workspaceRoot}/configuration/**/*",
         "{workspaceRoot}/configuration/jscpd.config.json",
         "{workspaceRoot}/infrastructure/**/*",
-        "{workspaceRoot}/packages/**/*",
+        "{workspaceRoot}/projects/**/*",
         "{workspaceRoot}/scripts/**/*",
-        "{workspaceRoot}/tools/**/*",
         "shared-globals",
         {
           "externalDependencies": ["jscpd"]
@@ -818,7 +816,7 @@
       "cache": false,
       "executor": "nx:run-commands",
       "options": {
-        "command": "if [ -n \"$PULL_REQUEST_NUMBER\" ]; then NODE_OPTIONS='' node --import @swc-node/register/esm-register tools/synchronization/src/main.ts pull-request-labels write; else echo \"Skipping label reconciliation\"; fi",
+        "command": "if [ -n \"$PULL_REQUEST_NUMBER\" ]; then NODE_OPTIONS='' node --import @swc-node/register/esm-register projects/synchronization/src/main.ts pull-request-labels write; else echo \"Skipping label reconciliation\"; fi",
         "cwd": "{projectRoot}"
       }
     },
@@ -854,10 +852,10 @@
       "cache": true,
       "configurations": {
         "check": {
-          "command": "pnpm dlx sherif@1.10.0 -p applications/JimmyPaolini"
+          "command": "pnpm dlx sherif@1.10.0 -p projects/JimmyPaolini"
         },
         "write": {
-          "command": "pnpm dlx sherif@1.10.0 -p applications/JimmyPaolini --fix --no-install && nx run codebase:oxfmt:write"
+          "command": "pnpm dlx sherif@1.10.0 -p projects/JimmyPaolini --fix --no-install && nx run codebase:oxfmt:write"
         }
       },
       "defaultConfiguration": "check",
@@ -1120,7 +1118,7 @@
       "cache": false,
       "executor": "nx:run-commands",
       "options": {
-        "command": "if [ -n \"$PULL_REQUEST_NUMBER\" ] && [ \"$GITHUB_ACTOR\" != \"dependabot[bot]\" ]; then gh pr view \"$PULL_REQUEST_NUMBER\" --json body -q .body > pull_request_body.md && NODE_OPTIONS='' node --import @swc-node/register/esm-register tools/validation/src/main.ts pull-request-body pull_request_body.md && rm pull_request_body.md; else echo \"Skipping PR body validation\"; fi",
+        "command": "if [ -n \"$PULL_REQUEST_NUMBER\" ] && [ \"$GITHUB_ACTOR\" != \"dependabot[bot]\" ]; then gh pr view \"$PULL_REQUEST_NUMBER\" --json body -q .body > pull_request_body.md && NODE_OPTIONS='' node --import @swc-node/register/esm-register projects/validation/src/main.ts pull-request-body pull_request_body.md && rm pull_request_body.md; else echo \"Skipping PR body validation\"; fi",
         "cwd": "{projectRoot}"
       }
     },
@@ -1128,7 +1126,7 @@
       "cache": false,
       "executor": "nx:run-commands",
       "options": {
-        "command": "if [ -n \"$PULL_REQUEST_NUMBER\" ]; then NODE_OPTIONS='' node --import @swc-node/register/esm-register tools/validation/src/main.ts pull-request-release-significance \"$PULL_REQUEST_NUMBER\"; else echo \"Skipping release significance\"; fi",
+        "command": "if [ -n \"$PULL_REQUEST_NUMBER\" ]; then NODE_OPTIONS='' node --import @swc-node/register/esm-register projects/validation/src/main.ts pull-request-release-significance \"$PULL_REQUEST_NUMBER\"; else echo \"Skipping release significance\"; fi",
         "cwd": "{projectRoot}"
       }
     },
@@ -1152,8 +1150,8 @@
       "inputs": [
         "{projectRoot}/*.py",
         "{projectRoot}/scripts/**/*.py",
-        "{workspaceRoot}/applications/affirmancy/pyproject.toml",
         "{workspaceRoot}/configuration/vulture_whitelist.py",
+        "{workspaceRoot}/projects/affirmancy/pyproject.toml",
         "{workspaceRoot}/pyproject.toml",
         "{workspaceRoot}/uv.lock",
         "default",
@@ -1162,7 +1160,7 @@
         }
       ],
       "options": {
-        "command": "uv run vulture . configuration/vulture_whitelist.py --min-confidence 80 --exclude '*/applications/*,*/packages/*,*/tools/*,*/node_modules/*,*/dist/*,*/coverage/*,*/.venv/*'",
+        "command": "uv run vulture . configuration/vulture_whitelist.py --min-confidence 80 --exclude '*/projects/*,*/node_modules/*,*/dist/*,*/coverage/*,*/.venv/*'",
         "cwd": "{projectRoot}"
       }
     },

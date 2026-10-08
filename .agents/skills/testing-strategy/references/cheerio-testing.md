@@ -12,7 +12,7 @@ Use this reference when writing or refactoring tests that parse HTML or XML with
 
 For lexico-cli tests, helper functions are defined in:
 
-- `applications/lexico/lexico-cli/testing/mocks.ts`
+- `projects/lexico/lexico-cli/testing/mocks.ts`
 
 Cheerio helper section:
 

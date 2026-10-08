@@ -1,18 +1,16 @@
 packages:
-  - applications/*
-  - applications/caelundas/*
-  - "!applications/caelundas"
-  - applications/lexico/*
-  - "!applications/lexico"
-  - applications/meanderaw/*
-  - "!applications/meanderaw"
-  - packages/*
-  - packages/ic-suite/callidescope/*
-  - packages/ic-suite/codependix/*
-  - packages/ic-suite/codometer/*
-  - packages/ic-suite/conformetry/*
-  - "!packages/ic-suite"
-  - tools/*
+  - projects/*
+  - projects/caelundas/*
+  - "!projects/caelundas"
+  - projects/ic-suite/callidescope/*
+  - projects/ic-suite/codependix/*
+  - projects/ic-suite/codometer/*
+  - projects/ic-suite/conformetry/*
+  - "!projects/ic-suite"
+  - projects/lexico/*
+  - "!projects/lexico"
+  - projects/meanderaw/*
+  - "!projects/meanderaw"
 allowBuilds:
   '@apollo/protobufjs': true
   '@nestjs/core': true
@@ -148,6 +146,7 @@ catalog:
   fallow: ^3.24.1
   graphql: ^16.11.0
   husky: ^9.1.7
+  ignore: 7.0.12
   input-otp: ^1.4.2
   jiti: ^2.7.0
   jsdom: ^30.0.1

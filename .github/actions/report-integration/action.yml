@@ -64,12 +64,9 @@ runs:
         mkdir -p codometer-baseline
         shopt -s nullglob
         for report in codometer-report.json \
-          applications/*/codometer-report.json \
-          applications/lexico/*/codometer-report.json \
-          applications/meanderaw/*/codometer-report.json \
-          packages/*/codometer-report.json \
-          packages/*/*/*/codometer-report.json \
-          tools/*/codometer-report.json; do
+          projects/*/codometer-report.json \
+          projects/*/*/codometer-report.json \
+          projects/ic-suite/*/*/codometer-report.json; do
           mkdir -p "codometer-baseline/$(dirname "${report}")"
           cp "${report}" "codometer-baseline/${report}"
         done
@@ -108,11 +105,9 @@ runs:
       with:
         name: type-coverage-reports
         path: |
-          applications/*/type-coverage-report.txt
-          applications/lexico/*/type-coverage-report.txt
-          applications/meanderaw/*/type-coverage-report.txt
-          packages/*/type-coverage-report.txt
-          tools/*/type-coverage-report.txt
+          projects/*/type-coverage-report.txt
+          projects/*/*/type-coverage-report.txt
+          projects/ic-suite/*/*/type-coverage-report.txt
         retention-days: 30
 
     - name: 📊 Upload Test Coverage
@@ -122,9 +117,7 @@ runs:
         name: coverage-reports${{ inputs.shard && format('-{0}', inputs.shard) || '' }}
         path: |
           coverage/
-          applications/**/coverage/
-          packages/**/coverage/
-          tools/**/coverage/
+          projects/**/coverage/
         retention-days: 30
 
     - name: 🚦 Enforce Limits

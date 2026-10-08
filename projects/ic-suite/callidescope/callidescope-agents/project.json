@@ -1,0 +1,26 @@
+{
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "name": "callidescope-agents",
+  "projectType": "library",
+  "sourceRoot": "projects/ic-suite/callidescope/callidescope-agents",
+  "tags": ["language:typescript", "name:callidescope-agents", "type:package"],
+  "targets": {
+    "build-projects": {},
+    "codometer": {},
+    "deprecate-code": {},
+    "format-code": {},
+    "guard-code": {},
+    "knip": {},
+    "lint-code": {},
+    "markdown-lint": {},
+    "oxfmt": {},
+    "pack": {},
+    "prettier": {},
+    "spell-check": {},
+    "test-code": {},
+    "type-coverage": {},
+    "typecheck": {},
+    "typecheck-code": {},
+    "yaml-lint": {}
+  }
+}

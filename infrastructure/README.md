@@ -56,5 +56,5 @@ Code → Docker Build → Push to GHCR → Helm Upgrade → K8s Job → Retrieve
 ## Documentation
 
 - **[AGENTS.md](AGENTS.md)**: Complete infrastructure architecture, Helm chart config, Terraform setup, troubleshooting
-- **[caelundas AGENTS.md](../applications/caelundas/caelundas-cli/AGENTS.md)**: Application deployment example
+- **[caelundas AGENTS.md](../projects/caelundas/caelundas-cli/AGENTS.md)**: Application deployment example
 - **[Main AGENTS.md](../AGENTS.md)**: Codebase architecture and Nx workflows

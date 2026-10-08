@@ -16,30 +16,30 @@ notepads/
 # exactly what they were written to do. They are traced by their own
 # configuration instead, gated on report freshness rather than depth:
 # `nx run callidescope-examples:callidescope`.
-packages/ic-suite/callidescope/callidescope-examples/
+projects/ic-suite/callidescope/callidescope-examples/
 
 # The four agent-skill packages. Each publishes a toolchain's skill markdown
 # and holds barely a callable between them — nothing worth tracing, and no
 # real code underneath for a depth number to ever grow into.
-packages/ic-suite/callidescope/callidescope-agents/
-packages/ic-suite/codependix/codependix-agents/
-packages/ic-suite/codometer/codometer-agents/
-packages/ic-suite/conformetry/conformetry-agents/
+projects/ic-suite/callidescope/callidescope-agents/
+projects/ic-suite/codependix/codependix-agents/
+projects/ic-suite/codometer/codometer-agents/
+projects/ic-suite/conformetry/conformetry-agents/
 
 # The codependix, codometer, and conformetry examples packages. Each is a
 # fixture corpus built to be read or run, not a library — tracing one reports
 # on a corpus's incidental shape rather than on production code. Excluded
 # outright rather than left to inherit the workspace default, the same
-# reasoning that gives `packages/ic-suite/callidescope/callidescope-examples`
+# reasoning that gives `projects/ic-suite/callidescope/callidescope-examples`
 # above its own
 # report-freshness gate instead of a depth number. This also covers the
 # codependix examples package's deliberately unreadable project — its
 # `tsconfig.json` names a compiler target TypeScript rejects, which is the
 # fixture behind codependix's TypeScript resolution failure example, and it no
 # longer needs naming on its own now that the whole package is excluded.
-packages/ic-suite/codependix/codependix-examples/
-packages/ic-suite/codometer/codometer-examples/
-packages/ic-suite/conformetry/conformetry-examples/
+projects/ic-suite/codependix/codependix-examples/
+projects/ic-suite/codometer/codometer-examples/
+projects/ic-suite/conformetry/conformetry-examples/
 
 # The workspace root, as a project of its own. It holds a `tsconfig.json`, so
 # discovery finds it, and what it owns is whatever that config's `include`

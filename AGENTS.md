@@ -185,7 +185,10 @@ implementation run legitimate. Five repository rules override
 
 ## Projects
 
-Every project lives in `applications/`, `packages/`, or `tools/`. Read the
+Every project lives in `projects/`: directly as `projects/<project>`, or one
+level deeper when a domain groups several (`projects/lexico/<project>`, and
+`projects/ic-suite/<toolchain>/<project>` for the IC suite). Its
+`type:application` or `type:package` tag, not its folder, says which kind it is. Read the
 current set rather than a list kept here — a hand-maintained list drifts, and
 nothing would gate this one:
 
@@ -275,11 +278,11 @@ For naming conventions, abbreviations, formatting, and language-specific rules, 
 
 - **Never bypass git hooks** with `--no-verify` — fix the underlying issue instead.
 - **Do not run signing-check scripts manually**; Husky already runs these.
-- **Never run `git submodule update --init` for `applications/JimmyPaolini`.** That submodule is deliberately uninitialized everywhere. If `pnpm install` rewrites its `pnpm-lock.yaml` entry, **revert the lockfile** rather than reconciling it.
+- **Never run `git submodule update --init` for `projects/JimmyPaolini`.** That submodule is deliberately uninitialized everywhere. If `pnpm install` rewrites its `pnpm-lock.yaml` entry, **revert the lockfile** rather than reconciling it.
 - **Release Significance:** The PR title determines the semantic-release bump. Ensure the PR title's type is at least as significant as the highest commit on the branch.
 - **Pull Request Compliance:**
   - Every PR description must carry all 4 mandatory sections (`## 🌰 Summary`, `## 📝 Details`, `## 🧪 Testing`, `## 🔗 Related`) with real content and no unfilled placeholder comments. Never omit `🔗 Related` (link to specs, files, or documentation if no issue exists).
-  - Pre-flight validate PR descriptions locally using `tools/validation/src/main.ts pull-request-body <path-to-body>` before creating the PR.
+  - Pre-flight validate PR descriptions locally using `projects/validation/src/main.ts pull-request-body <path-to-body>` before creating the PR.
   - Set all required metadata at creation: `--assignee @me`, `--label type:<type>`, `--label scope:<scope>`, and `--label source:agent`.
 - **Conventional Naming:** If you need to view the current valid Types and Scopes without using a skill, read `configuration/conventional.config.cjs`.
 

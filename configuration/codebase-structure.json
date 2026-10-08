@@ -420,46 +420,6 @@
         "name": "README.md"
       },
       {
-        "children": [
-          {
-            "children": [
-              {
-                "ruleId": "any-file"
-              }
-            ],
-            "name": "JimmyPaolini"
-          },
-          {
-            "children": [
-              {
-                "ruleId": "codebase-project"
-              }
-            ],
-            "name": "caelundas"
-          },
-          {
-            "children": [
-              {
-                "ruleId": "codebase-project"
-              }
-            ],
-            "name": "lexico"
-          },
-          {
-            "children": [
-              {
-                "ruleId": "codebase-project"
-              }
-            ],
-            "name": "meanderaw"
-          },
-          {
-            "ruleId": "codebase-project"
-          }
-        ],
-        "name": "applications"
-      },
-      {
         "name": "codependix-workspace-graph.json"
       },
       {
@@ -535,7 +495,32 @@
         "name": "package.json"
       },
       {
+        "name": "pnpm-lock.yaml"
+      },
+      {
+        "name": "pnpm-workspace.yaml"
+      },
+      {
+        "name": "project.json"
+      },
+      {
         "children": [
+          {
+            "children": [
+              {
+                "ruleId": "any-file"
+              }
+            ],
+            "name": "JimmyPaolini"
+          },
+          {
+            "children": [
+              {
+                "ruleId": "codebase-project"
+              }
+            ],
+            "name": "caelundas"
+          },
           {
             "children": [
               {
@@ -574,19 +559,26 @@
             "name": "ic-suite"
           },
           {
+            "children": [
+              {
+                "ruleId": "codebase-project"
+              }
+            ],
+            "name": "lexico"
+          },
+          {
+            "children": [
+              {
+                "ruleId": "codebase-project"
+              }
+            ],
+            "name": "meanderaw"
+          },
+          {
             "ruleId": "codebase-project"
           }
         ],
-        "name": "packages"
-      },
-      {
-        "name": "pnpm-lock.yaml"
-      },
-      {
-        "name": "pnpm-workspace.yaml"
-      },
-      {
-        "name": "project.json"
+        "name": "projects"
       },
       {
         "name": "pyproject.toml"
@@ -604,14 +596,6 @@
       },
       {
         "name": "skills-lock.json"
-      },
-      {
-        "children": [
-          {
-            "ruleId": "codebase-project"
-          }
-        ],
-        "name": "tools"
       },
       {
         "name": "tsconfig.json"

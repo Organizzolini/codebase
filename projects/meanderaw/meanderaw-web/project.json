@@ -1,0 +1,60 @@
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "name": "meanderaw-web",
+  "projectType": "application",
+  "sourceRoot": "projects/meanderaw/meanderaw-web/src",
+  "tags": [
+    "domain:meanderaw",
+    "framework:react",
+    "framework:tanstack-start",
+    "generator:tanstack-application",
+    "language:typescript",
+    "type:application"
+  ],
+  "targets": {
+    "build": {
+      "description": "Build the application for production",
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite build",
+        "cwd": "{projectRoot}"
+      },
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "codometer": {},
+    "dependency-cruiser": {},
+    "deprecate-code": {},
+    "develop": {
+      "description": "Start the development server with hot reload",
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite dev",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "format-code": {},
+    "guard-code": {},
+    "knip": {},
+    "lint-code": {},
+    "markdown-lint": {},
+    "oxfmt": {},
+    "oxlint": {},
+    "prettier": {},
+    "preview": {
+      "dependsOn": ["build"],
+      "description": "Serve the production build locally",
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite preview",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "spell-check": {},
+    "stylelint": {},
+    "test-code": {},
+    "type-coverage": {},
+    "typecheck": {},
+    "typecheck-code": {},
+    "yaml-lint": {}
+  }
+}

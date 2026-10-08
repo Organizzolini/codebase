@@ -223,7 +223,7 @@ done
 # 🗂️ Workspace structure
 echo ""
 echo "🗂️  Workspace structure (mount sanity check)"
-for DIR in applications packages infrastructure tools; do
+for DIR in projects infrastructure; do
   if [[ -d "${WORKSPACE_ROOT}/${DIR}" ]]; then
     pass "${DIR}/ exists"
   else

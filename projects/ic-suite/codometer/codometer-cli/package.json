@@ -1,0 +1,87 @@
+{
+  "author": "Jimmy Paolini",
+  "bin": {
+    "codometer": "./dist/src/main.js"
+  },
+  "bugs": {
+    "url": "https://github.com/organizzolini/codebase/issues"
+  },
+  "dependencies": {
+    "@codometer/configuration": "workspace:*",
+    "@codometer/core": "workspace:*",
+    "@codometer/measurement": "workspace:*",
+    "@codometer/output": "workspace:*",
+    "@nestjs/common": "catalog:ic-suite",
+    "@nestjs/config": "catalog:",
+    "@nestjs/core": "catalog:ic-suite",
+    "nest-commander": "catalog:",
+    "pino": "catalog:",
+    "pino-pretty": "catalog:",
+    "reflect-metadata": "catalog:",
+    "zod": "catalog:"
+  },
+  "description": "Command-line tool for measuring repository size, counts, and comments against configured limits",
+  "devDependencies": {
+    "@codebase/logging": "workspace:*",
+    "@golevelup/ts-vitest": "catalog:",
+    "@nestjs/testing": "catalog:",
+    "@nx/eslint-plugin": "catalog:",
+    "@swc-node/register": "catalog:",
+    "@swc/core": "catalog:",
+    "@swc/helpers": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/projects/ic-suite/codometer/codometer-cli#readme",
+  "keywords": [
+    "budgets",
+    "cli",
+    "code-metrics",
+    "codometer",
+    "limits",
+    "measurement"
+  ],
+  "license": "MIT",
+  "main": "src/index.ts",
+  "name": "@codometer/cli",
+  "publishConfig": {
+    "access": "public",
+    "bin": {
+      "codometer": "./dist/src/main.js"
+    },
+    "exports": {
+      ".": {
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/src/index.js"
+      },
+      "./package.json": "./package.json"
+    },
+    "main": "./dist/src/index.js",
+    "registry": "https://registry.npmjs.org",
+    "types": "./dist/src/index.d.ts"
+  },
+  "repository": {
+    "directory": "projects/ic-suite/codometer/codometer-cli",
+    "type": "git",
+    "url": "git+https://github.com/organizzolini/codebase.git"
+  },
+  "type": "module",
+  "typeCoverage": {
+    "atLeast": 100,
+    "strict": true
+  },
+  "types": "src/index.ts",
+  "version": "0.0.7"
+}

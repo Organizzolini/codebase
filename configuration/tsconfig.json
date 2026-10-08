@@ -32,7 +32,7 @@
     // 🗺️ Codebase Path Aliases
     // Enables `import { Button } from "@codebase/components-web"` across projects
     "paths": {
-      "@codebase/components-web": ["../packages/components-web/src/index.ts"],
+      "@codebase/components-web": ["../projects/components-web/src/index.ts"],
       "codebase/configuration/*": ["./*"],
       "eslint-plugin-better-max-params": [
         "./types/eslint-plugin-better-max-params/index.d.ts"

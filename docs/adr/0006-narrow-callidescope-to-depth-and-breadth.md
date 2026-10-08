@@ -52,7 +52,7 @@ guessing, and it belongs with the resolution it governs.
   configuration cannot go on carrying a number that nothing reads while looking
   as though it were in force.
 - **The cap now costs nine fixture classes to demonstrate.**
-  `packages/ic-suite/callidescope/callidescope-examples/examples/implementation-fan-out` grew from
+  `projects/ic-suite/callidescope/callidescope-examples/examples/implementation-fan-out` grew from
   three sinks to nine, because eight is no longer configurable. Its guide used to
   say that demonstrating the cap at the default "would otherwise need nine";
   that is now what it does.
