@@ -92,6 +92,7 @@ describe("phases.events integration", () => {
       latitude: number;
       longitude: number;
       magnitude: number;
+      phaseAngle: number;
     }
   > {
     const step = config.step ?? 0.1;
@@ -103,6 +104,7 @@ describe("phases.events integration", () => {
         latitude: number;
         longitude: number;
         magnitude: number;
+        phaseAngle: number;
       }
     > = {};
 
@@ -116,6 +118,7 @@ describe("phases.events integration", () => {
         longitude: config.longitude + index * step,
         // Steadily dimming, so no minute is a greatest brilliancy.
         magnitude: index * 0.001,
+        phaseAngle: 90,
       };
     }
 

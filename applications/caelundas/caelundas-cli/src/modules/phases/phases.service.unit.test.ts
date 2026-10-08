@@ -37,6 +37,7 @@ const createMockPhaseInputs = (): DetectPlanetaryEventsArguments => {
     "2024-01-01T00:00:00.000Z": {
       illumination: 50,
       magnitude: -1,
+      phaseAngle: 90,
     },
   };
 

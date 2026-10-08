@@ -35,6 +35,9 @@ const fixtureNames = [
   "horizons-mercury-eastern-elongation-2026-10-12",
   "horizons-venus-eastern-elongation-2026-08-15",
   "horizons-venus-greatest-brilliancy-2026-09-24",
+  "horizons-venus-no-eastern-brilliancy-2026-10-20",
+  "horizons-venus-no-western-brilliancy-2026-10-27",
+  "horizons-mercury-no-brilliancy-2026-05-14",
 ];
 
 describe.each(fixtureNames)("reference fixture %s", (name) => {

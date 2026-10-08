@@ -480,4 +480,21 @@ export class EphemerisService {
     }
     return data.magnitude;
   }
+
+  /**
+   * Safely extracts the phase angle (Sun–body–observer, degrees) from ephemeris.
+   *
+   * @throws When timestamp or field is missing from ephemeris.
+   */
+  public getPhaseAngleFromEphemeris(
+    ephemeris: IlluminationEphemeris,
+    timestamp: string,
+    fieldName: string,
+  ): number {
+    const data = ephemeris[timestamp];
+    if (data?.phaseAngle === undefined) {
+      throw new Error(`Missing ${fieldName} at ${timestamp}`);
+    }
+    return data.phaseAngle;
+  }
 }

@@ -133,6 +133,7 @@ describe(MonthlyLunarCycleService, () => {
       ephemeris[minute.toISOString()] = {
         illumination,
         magnitude: 0,
+        phaseAngle: 0,
       };
     }
 

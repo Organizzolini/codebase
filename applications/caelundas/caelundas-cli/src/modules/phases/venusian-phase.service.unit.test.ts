@@ -27,6 +27,7 @@ const createPhaseParameters = (): PhaseParameters => ({
   currentLongitudePlanet: 100,
   currentLongitudeSun: 90,
   currentMagnitude: -1,
+  currentPhaseAngle: 90,
   nextLatitudePlanet: 0,
   nextLatitudeSun: 0,
   nextLongitudePlanet: 101,

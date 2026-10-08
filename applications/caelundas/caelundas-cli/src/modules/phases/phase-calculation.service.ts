@@ -7,6 +7,8 @@ import { EphemerisService } from "../ephemeris/ephemeris.service";
 import { MathService } from "../math/math.service";
 import { TwilightsService } from "../twilights/twilights.service";
 
+import { MAXIMUM_BRILLIANCY_PHASE_ANGLE_DEGREES } from "./phases.constants";
+
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
   CoordinateEphemeris,
@@ -120,6 +122,7 @@ export class PhaseCalculationService {
     | "currentLongitudePlanet"
     | "currentLongitudeSun"
     | "currentMagnitude"
+    | "currentPhaseAngle"
   > {
     const {
       illuminationEphemeris,
@@ -141,6 +144,11 @@ export class PhaseCalculationService {
         illuminationEphemeris,
         isoNow,
         "currentMagnitude",
+      ),
+      currentPhaseAngle: this.ephemerisService.getPhaseAngleFromEphemeris(
+        illuminationEphemeris,
+        isoNow,
+        "currentPhaseAngle",
       ),
     };
   }
@@ -240,13 +248,23 @@ export class PhaseCalculationService {
    * Determines whether the planet is at greatest brilliancy: its apparent
    * magnitude is lower (brighter) than every margin sample before it and no
    * higher than every margin sample after it.
+   *
+   * Two magnitude minima are not brilliancies and are refused: a thin
+   * crescent near inferior conjunction, past
+   * {@link MAXIMUM_BRILLIANCY_PHASE_ANGLE_DEGREES}, and a planet lost in the
+   * Sun's glare, closer to it than the rise and set threshold.
    */
   isBrightest(args: BrightnessesArguments): boolean {
     const { currentMagnitude, nextMagnitudes, previousMagnitudes } = args;
 
     return (
       currentMagnitude < Math.min(...previousMagnitudes) &&
-      currentMagnitude <= Math.min(...nextMagnitudes)
+      currentMagnitude <= Math.min(...nextMagnitudes) &&
+      args.currentPhaseAngle < MAXIMUM_BRILLIANCY_PHASE_ANGLE_DEGREES &&
+      this.getElongationAngle(
+        [args.currentLongitudePlanet, args.currentLatitudePlanet],
+        [args.currentLongitudeSun, args.currentLatitudeSun],
+      ) >= this.riseSetThreshold
     );
   }
 

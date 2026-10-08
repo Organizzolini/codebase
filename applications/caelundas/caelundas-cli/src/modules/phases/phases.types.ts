@@ -8,13 +8,19 @@ import type {
 import type { Moment } from "moment-timezone";
 
 /**
- * Apparent magnitudes at the current minute and across its margins.
+ * Apparent magnitudes at the current minute and across its margins, with the
+ * current phase angle and positions that decide whether the planet is visible.
  *
  * Greatest brilliancy is the least magnitude, so a minute is brightest when
  * every margin sample either side of it reads a larger magnitude.
  */
 export interface BrightnessesArguments {
+  currentLatitudePlanet: number;
+  currentLatitudeSun: number;
+  currentLongitudePlanet: number;
+  currentLongitudeSun: number;
   currentMagnitude: number;
+  currentPhaseAngle: number;
   nextMagnitudes: number[];
   previousMagnitudes: number[];
 }
@@ -141,6 +147,7 @@ export interface PhaseParameters {
   currentLongitudePlanet: number;
   currentLongitudeSun: number;
   currentMagnitude: number;
+  currentPhaseAngle: number;
   nextLatitudePlanet: number;
   nextLatitudeSun: number;
   nextLongitudePlanet: number;

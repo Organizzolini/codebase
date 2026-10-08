@@ -114,9 +114,12 @@ describe(PhaseCalculationService, () => {
 
     expect(
       service.isEasternBrightest({
+        currentLatitudePlanet: 0,
+        currentLatitudeSun: 0,
         currentLongitudePlanet: 10,
         currentLongitudeSun: 4,
         currentMagnitude: -4,
+        currentPhaseAngle: 90,
         nextMagnitudes: [-3],
         previousMagnitudes: [-3],
       }),
@@ -172,8 +175,18 @@ describe(PhaseCalculationService, () => {
   });
 
   it("identifies brightest samples when the current magnitude is below the surrounding values", () => {
+    mathService.getAngularSeparation.mockReturnValue(40);
+    const position = {
+      currentLatitudePlanet: 0,
+      currentLatitudeSun: 0,
+      currentLongitudePlanet: 140,
+      currentLongitudeSun: 100,
+      currentPhaseAngle: 117,
+    };
+
     expect(
       service.isBrightest({
+        ...position,
         currentMagnitude: -4.8,
         nextMagnitudes: [-4.7, -4.6],
         previousMagnitudes: [-4.6, -4.7],
@@ -181,11 +194,45 @@ describe(PhaseCalculationService, () => {
     ).toBe(true);
     expect(
       service.isBrightest({
+        ...position,
         currentMagnitude: -4.8,
         nextMagnitudes: [-4.7, -4.6],
         previousMagnitudes: [-4.9, -4.7],
       }),
     ).toBe(false);
+  });
+
+  it("refuses a magnitude minimum past the brilliancy phase angle or inside the rise and set threshold", () => {
+    const minimum = {
+      currentLatitudePlanet: 0,
+      currentLatitudeSun: 0,
+      currentLongitudePlanet: 140,
+      currentLongitudeSun: 100,
+      currentMagnitude: -4.8,
+      nextMagnitudes: [-4.7],
+      previousMagnitudes: [-4.7],
+    };
+
+    mathService.getAngularSeparation.mockReturnValue(40);
+
+    expect(service.isBrightest({ ...minimum, currentPhaseAngle: 159.9 })).toBe(
+      true,
+    );
+    expect(service.isBrightest({ ...minimum, currentPhaseAngle: 160 })).toBe(
+      false,
+    );
+
+    mathService.getAngularSeparation.mockReturnValue(5.9);
+
+    expect(service.isBrightest({ ...minimum, currentPhaseAngle: 90 })).toBe(
+      false,
+    );
+
+    mathService.getAngularSeparation.mockReturnValue(6);
+
+    expect(service.isBrightest({ ...minimum, currentPhaseAngle: 90 })).toBe(
+      true,
+    );
   });
 
   it("formats timezone-aware ISO timestamps", () => {

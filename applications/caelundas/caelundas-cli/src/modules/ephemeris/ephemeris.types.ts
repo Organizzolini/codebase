@@ -98,16 +98,17 @@ export interface Ephemerides {
 }
 
 /**
- * Time-indexed ephemeris of illumination fraction and apparent magnitude.
+ * Time-indexed ephemeris of illumination fraction, apparent magnitude and phase angle.
  *
  * Keys are ISO timestamps. `illumination` is the illuminated fraction as a
  * percentage (0-100); `magnitude` is the apparent visual magnitude, smaller
- * meaning brighter. Both come from the same phenomena call.
+ * meaning brighter; `phaseAngle` is the Sun–body–observer angle in degrees,
+ * 0° fully lit and 180° fully dark. All three come from the same phenomena call.
  * Used for lunar phase and planetary phase calculations.
  */
 export type IlluminationEphemeris = Record<
   string,
-  { illumination: number; magnitude: number }
+  { illumination: number; magnitude: number; phaseAngle: number }
 >;
 
 /**

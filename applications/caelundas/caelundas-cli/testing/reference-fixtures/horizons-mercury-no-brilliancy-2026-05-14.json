@@ -1,0 +1,23 @@
+{
+  "absent": ["☿🔆 Mercury Eastern Brightest", "☿🔆 Mercury Western Brightest"],
+  "events": [
+    {
+      "note": "Anchor: Horizons has Mercury's ecliptic longitude pass the Sun's between 14:24 and 14:25 UT, superior conjunction. The absence: pheno_ut has a local magnitude minimum, -2.504, at 14:15 UT with Mercury 0.15° from the Sun at phase angle 0.5°, invisible in the Sun's glare and on neither side of it, so it is not a greatest brilliancy",
+      "start": "2026-05-14T14:24:00Z",
+      "summary": "🎯 ☀️ ☌ ☿ Sun perfective conjunct Mercury"
+    }
+  ],
+  "name": "No Mercury greatest brilliancy at superior conjunction on 14 May 2026",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "JPL Horizons API: geocentric apparent magnitude, elongation, phase angle and observer ecliptic longitude (quantities 9, 23, 24, 31), one-minute steps, cross-checked against Swiss Ephemeris pheno_ut",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='199'&CENTER='500@399'&EPHEM_TYPE='OBSERVER'&START_TIME='2026-05-13 00:00'&STOP_TIME='2026-05-15 12:00'&STEP_SIZE='1 m'&QUANTITIES='9,23,24,31'&CSV_FORMAT='YES'&EXTRA_PREC='YES'"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-05-14",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-05-13"
+  }
+}

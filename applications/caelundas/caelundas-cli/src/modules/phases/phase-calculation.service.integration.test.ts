@@ -20,6 +20,7 @@ import type { PhaseParameters } from "./phases.types";
 interface SyntheticSample {
   illumination?: number;
   magnitude?: number;
+  phaseAngle?: number;
   planetLatitude?: number;
   planetLongitude: number;
   sunLongitude: number;
@@ -56,6 +57,7 @@ function gatherParameters(
     const {
       illumination,
       magnitude,
+      phaseAngle,
       planetLatitude,
       planetLongitude,
       sunLongitude,
@@ -71,6 +73,7 @@ function gatherParameters(
     illuminationEphemeris[timestamp] = {
       illumination: illumination ?? 50,
       magnitude: magnitude ?? 0,
+      phaseAngle: phaseAngle ?? 90,
     };
   }
 
@@ -211,6 +214,45 @@ describe(PhaseCalculationService, () => {
 
       expect(service.isBrightest(parameters)).toBe(false);
       expect(service.isWesternBrightest(parameters)).toBe(false);
+    });
+
+    it("finds no brightest minute at a magnitude minimum seen nearly edge-on, at a phase angle of 168°", () => {
+      // Venus near inferior conjunction on 21 October 2026: 8.4° from the Sun, phase angle 168.4°.
+      const parameters = gatherParameters((index) => ({
+        magnitude: -4.25 + 0.000_001 * index ** 2,
+        phaseAngle: 168.4,
+        planetLongitude: 108.4,
+        sunLongitude: 100,
+      }));
+
+      expect(service.isBrightest(parameters)).toBe(false);
+      expect(service.isEasternBrightest(parameters)).toBe(false);
+    });
+
+    it("finds no brightest minute at a magnitude minimum lost in the Sun's glare", () => {
+      // Mercury at superior conjunction on 14 May 2026: 0.15° from the Sun, phase angle 0.5°.
+      const parameters = gatherParameters((index) => ({
+        magnitude: -2.5 + 0.000_001 * index ** 2,
+        phaseAngle: 0.5,
+        planetLongitude: 99.85,
+        sunLongitude: 100,
+      }));
+
+      expect(service.isBrightest(parameters)).toBe(false);
+      expect(service.isWesternBrightest(parameters)).toBe(false);
+    });
+
+    it("finds the brightest minute at a magnitude minimum both lit enough and far enough from the Sun", () => {
+      // Venus at greatest brilliancy on 24 September 2026: about 40° east, phase angle about 117°.
+      const parameters = gatherParameters((index) => ({
+        magnitude: -4.8 + 0.000_001 * index ** 2,
+        phaseAngle: 117,
+        planetLongitude: 140,
+        sunLongitude: 100,
+      }));
+
+      expect(service.isBrightest(parameters)).toBe(true);
+      expect(service.isEasternBrightest(parameters)).toBe(true);
     });
   });
 });
