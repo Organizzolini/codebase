@@ -122,9 +122,6 @@ before its module finished evaluating, surfaces here as
 `Cannot access 'X' before initialization` — a boot failure, not an `acyclic`
 finding.
 
-When a container failure is charged to every judged project, and there is more
-than one, the line reads "all N judged projects" instead of a list.
-
 An application is rooted in `src/main.module.ts` and its `MainModule` export; a
 library package with no such file is rooted in a synthetic module built from
 every `*.module.ts` it defines, so a module file that cannot be imported on its
@@ -143,6 +140,15 @@ binary registers a decorator-preserving loader itself, and so does the Nx gate
 workspace); a hand-rolled invocation has to do the same. The loader reads the
 workspace root's `tsconfig.json`, so a root whose `tsconfig.json` does not emit
 decorator metadata fails the same way.
+
+### The Nx project graph could not be built
+
+The `nxProjects` level builds one graph for the whole workspace, so when it
+cannot be built the failure is charged to every judged project: each gate
+reports it, and when more than one project is judged the line reads
+"all N judged projects" instead of a list. It is one problem, not N. Look at
+the project graph itself, not at any one project — whatever stops it from
+building stops every gate the same way.
 
 ## A green run that judged less than expected
 

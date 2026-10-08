@@ -47,13 +47,13 @@
       "source": "Organizzolini/codebase",
       "sourceType": "github",
       "skillPath": "packages/ic-suite/codependix/codependix-agents/skills/codependix-configure/SKILL.md",
-      "computedHash": "5960218bc5034f0ac1aa6494b39bf1ad35e18dbd40dc8a46f64e5fd5bb366afe"
+      "computedHash": "ac5161b64a14c39d528e159dbcd0c6b75032b5221f245573f58f8c979553f43b"
     },
     "codependix-export": {
       "source": "Organizzolini/codebase",
       "sourceType": "github",
       "skillPath": "packages/ic-suite/codependix/codependix-agents/skills/codependix-export/SKILL.md",
-      "computedHash": "985a0414dbb2980dff86e70071283ab06eb0825318f008a5f151d3e54c415712"
+      "computedHash": "e3fa43391fa2c5d81ed660de66acd08312adbaa0a20d55c1802a7daaab65c3f9"
     },
     "codependix-navigate": {
       "source": "Organizzolini/codebase",
@@ -65,7 +65,7 @@
       "source": "Organizzolini/codebase",
       "sourceType": "github",
       "skillPath": "packages/ic-suite/codependix/codependix-agents/skills/codependix-triage/SKILL.md",
-      "computedHash": "9df1c0a01d818120f97490aaae0e8c62f14879a92e472b27e5b3ef379251ace4"
+      "computedHash": "f2332aa20baafb67fe4ad0c580d4af23053944f0570ea9d2f06178ec6a0d3ff6"
     },
     "codometer-configure": {
       "source": "Organizzolini/codebase",

@@ -300,11 +300,13 @@ boot — also names `ownerProject` when the class it failed on belongs to a
 different project than the one whose container failed. Read the `fail` rows,
 and treat `note` rows as the dependency's own gate's business.
 
-A failure — a container that would not boot — charged to every judged project,
-when there is more than one, prints as `all N judged projects` rather than a
-list, and the Markdown report lists it
-once under `#### All judged projects` instead of under each project. The JSON
-keeps the full `projects` array. A bullet's error text keeps its line breaks,
+A failure at the `nxProjects` level — the Nx project graph could not be built —
+is charged to every judged project, because none of them could be judged. When
+more than one is judged it prints as `all N judged projects` rather than a
+list, and the Markdown report lists it once under `#### All judged projects`
+instead of under each project. The JSON keeps the full `projects` array. Every
+other level builds its graph per project, so a failure there, a container that
+would not boot included, is charged to that one project. A bullet's error text keeps its line breaks,
 indented under the bullet, and `-->` is written `--&gt;` so the text cannot
 close an HTML comment.
 

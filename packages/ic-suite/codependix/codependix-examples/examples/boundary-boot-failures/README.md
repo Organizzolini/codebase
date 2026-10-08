@@ -46,7 +46,7 @@ Judged projects: storefront-api.
 
 ## Judging the failing project itself names no owner
 
-With `storefront-catalog` judged, the failing code is its own, so the failure carries no `ownerProject`. Nothing depends on it here. The run built `storefront-catalog`.
+With `storefront-catalog` judged, the failing code is its own, so the failure carries no `ownerProject`. It depends on nothing here. The run built `storefront-catalog`.
 
 ```text
 judged:  storefront-catalog

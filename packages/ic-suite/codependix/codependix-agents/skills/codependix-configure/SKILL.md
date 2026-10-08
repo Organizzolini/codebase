@@ -347,11 +347,12 @@ it.
 
 The gate is cached. A project's own `codependix.config.*` is one of its cache
 inputs, so editing it re-runs that gate. So is the codependix command line
-itself: its `package.json`, `tsconfig.json`, and sources when it is a package of
-the workspace, or its installed version when it comes from a registry. Test
-files are not inputs, so a test-only edit to the tool invalidates no gate, while
-any other edit re-runs them all. A package the plugin cannot resolve loses only
-its own inputs, and Nx's logger warns naming it.
+itself: its `package.json` and sources when it is a package of the workspace, or
+its installed version when it comes from a registry. So is the workspace root's
+`tsconfig.json`, which the loader reads. Test files are not inputs, so a
+test-only edit to the tool invalidates no gate beyond that package's own and
+its dependents', while any other edit re-runs them all. A package the plugin
+cannot resolve loses only its own inputs, and Nx's logger warns naming it.
 
 A gate whose `projects` or `tags` select anything other than its own project —
 on the command line, in the target's options, or in a named Nx configuration —

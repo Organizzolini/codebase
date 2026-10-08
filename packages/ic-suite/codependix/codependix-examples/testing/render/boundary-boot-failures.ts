@@ -76,7 +76,7 @@ export async function buildBootFailureDocuments(): Promise<ExampleDocument[]> {
           body: renderBoundaryRun(catalog),
           heading: "Judging the failing project itself names no owner",
           note: [
-            "With `storefront-catalog` judged, the failing code is its own, so the failure carries no `ownerProject`. Nothing depends on it here.",
+            "With `storefront-catalog` judged, the failing code is its own, so the failure carries no `ownerProject`. It depends on nothing here.",
             describeBuilt(catalog),
           ].join(" "),
         },
