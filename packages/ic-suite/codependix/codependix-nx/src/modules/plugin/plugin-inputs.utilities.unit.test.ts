@@ -189,13 +189,13 @@ describe(resolveToolInputs, () => {
 
     // `{workspaceRoot}` file globs rather than `{ input, projects }`: Nx's
     // affected computation follows the former and ignores the latter.
-    expect(resolveFrom(workspaceRoot).inputs).toStrictEqual(
-      ["cli", "core", "logging"].flatMap((name) => [
+    expect(resolveFrom(workspaceRoot).inputs).toStrictEqual([
+      ...["cli", "core", "logging"].flatMap((name) => [
         `{workspaceRoot}/packages/${name}/package.json`,
         `{workspaceRoot}/packages/${name}/src/**/!(*.test.*|*.spec.*)`,
-        `{workspaceRoot}/packages/${name}/tsconfig.json`,
       ]),
-    );
+      "{workspaceRoot}/tsconfig.json",
+    ]);
   });
 
   it("warns naming each package it could not resolve, and keeps the inputs of every package that did", () => {
@@ -210,7 +210,7 @@ describe(resolveToolInputs, () => {
     expect(isInput(inputs, "packages/logging/src/index.ts")).toBe(true);
   });
 
-  it("leaves test files out, and keeps the tsconfig the loader reads", () => {
+  it("leaves test files out, and names the workspace root's tsconfig the loader reads", () => {
     expect.hasAssertions();
 
     const { inputs } = resolveFrom(workspaceRoot);
@@ -218,7 +218,8 @@ describe(resolveToolInputs, () => {
     // Matched as Nx's affected computation matches them — one positive glob
     // each, since it ignores negated inputs outright.
     expect(isInput(inputs, "packages/core/src/a/a.service.ts")).toBe(true);
-    expect(isInput(inputs, "packages/core/tsconfig.json")).toBe(true);
+    expect(isInput(inputs, "tsconfig.json")).toBe(true);
+    expect(isInput(inputs, "packages/core/tsconfig.json")).toBe(false);
     expect(isInput(inputs, "packages/core/src/a/a.service.unit.test.ts")).toBe(
       false,
     );
@@ -235,6 +236,8 @@ describe(resolveToolInputs, () => {
     // a registry, so its version — not its files — is what changes.
     const { inputs, logger } = resolveFrom(consumerRoot);
 
+    // The loader reads the consumer's own root tsconfig, whichever way the
+    // command line was installed.
     expect(inputs).toStrictEqual([
       {
         externalDependencies: [
@@ -243,6 +246,7 @@ describe(resolveToolInputs, () => {
           "@codependix/core",
         ],
       },
+      "{workspaceRoot}/tsconfig.json",
     ]);
     expect(logger.warn).not.toHaveBeenCalled();
   });
