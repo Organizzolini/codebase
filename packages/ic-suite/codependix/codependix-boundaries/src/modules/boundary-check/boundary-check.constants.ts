@@ -5,11 +5,13 @@ import path from "node:path";
 import type { CodependixBoundaryLevel } from "../boundaries/boundaries.types";
 
 /**
- * The scope a violation found in the whole-workspace Nx graph is reported
- * under.
+ * The `scope` of the whole-workspace Nx graph — what the graph covers, not
+ * who a finding in it is charged to.
  *
- * The Nx level is judged once for the repository rather than once per
- * project, so it has no project name to report against.
+ * The Nx level is built once for the repository rather than once per
+ * project, so its graph has no one project to name. Each finding in it is
+ * charged to the projects owning its nodes instead — see
+ * `BoundariesService.chargeProjects`.
  */
 export const WORKSPACE_SCOPE = "workspace";
 
