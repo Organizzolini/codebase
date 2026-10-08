@@ -3,7 +3,7 @@
   "generators": {
     "sync": {
       "description": "Regenerate the workspace's conformetry generator plugin from the conformetry configuration.",
-      "factory": "./src/generators/sync/generator",
+      "factory": "@conformetry/nx/src/generators/sync/generator",
       "schema": "./src/generators/sync/schema.json"
     }
   }

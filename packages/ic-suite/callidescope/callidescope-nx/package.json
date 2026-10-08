@@ -43,7 +43,8 @@
     "dist",
     "executors.json",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "src/executors/*/schema.json"
   ],
   "homepage": "https://github.com/organizzolini/codebase/tree/main/packages/ic-suite/callidescope/callidescope-nx#readme",
   "keywords": [
@@ -59,6 +60,9 @@
   "name": "@callidescope/nx",
   "nx": {
     "executors": "./executors.json"
+  },
+  "peerDependencies": {
+    "typescript": "catalog:"
   },
   "publishConfig": {
     "access": "public",

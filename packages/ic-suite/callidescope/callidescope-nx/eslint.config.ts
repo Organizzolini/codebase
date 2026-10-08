@@ -17,6 +17,9 @@ export default [
           // are outside the build dependency check's scope.
           // pino, pino-pretty: runtime dependencies of the inlined @codebase/logging,
           // not imported directly in this package's TypeScript source.
+          // typescript: a peer of @callidescope/cli and @callidescope/graph,
+          // declared here so a consumer installs it; nothing in this package
+          // imports it.
           // vitest: referenced via tsconfig "types" array; it's a devDependency and
           // the @nx/dependency-checks rule misidentifies it as a production dependency.
           ignoredDependencies: [
@@ -24,6 +27,7 @@ export default [
             "@golevelup/ts-vitest",
             "pino",
             "pino-pretty",
+            "typescript",
             "vitest",
           ],
           ignoredFiles: ["{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}"],
