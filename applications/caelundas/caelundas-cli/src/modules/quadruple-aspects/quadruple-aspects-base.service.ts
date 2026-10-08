@@ -295,10 +295,10 @@ export class QuadrupleAspectsBaseService {
       quadrupleAspect,
       timestamp,
     } = eventArguments;
-    const body1DisplayName = _.startCase(body1);
-    const body2DisplayName = _.startCase(body2);
-    const body3DisplayName = _.startCase(body3);
-    const body4DisplayName = _.startCase(body4);
+    const body1DisplayName = bodyDisplayName(body1);
+    const body2DisplayName = bodyDisplayName(body2);
+    const body3DisplayName = bodyDisplayName(body3);
+    const body4DisplayName = bodyDisplayName(body4);
     const description = this.buildQuadrupleAspectDescription({
       bodiesSorted: _.sortBy([
         body1DisplayName,

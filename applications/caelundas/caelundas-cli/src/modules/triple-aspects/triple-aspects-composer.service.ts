@@ -6,7 +6,10 @@ import { LoggerService } from "@codebase/logging";
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { aspectBodies as tripleAspectBodies } from "../caelundas/caelundas.constants";
-import { bodyDisplayName } from "../caelundas/caelundas.types";
+import {
+  bodyDisplayName,
+  bodyFromDisplayName,
+} from "../caelundas/caelundas.types";
 import {
   symbolByBody,
   symbolByTripleAspect,
@@ -190,13 +193,9 @@ export class TripleAspectsComposerService {
     const body2Capitalized = bodiesCapitalized[1] ?? "";
     const body3Capitalized = bodiesCapitalized[2] ?? "";
 
-    const bodyMap: Record<string, Body> = Object.fromEntries(
-      tripleAspectBodies.map((body) => [bodyDisplayName(body), body]),
-    );
-
-    const body1 = bodyMap[body1Capitalized];
-    const body2 = bodyMap[body2Capitalized];
-    const body3 = bodyMap[body3Capitalized];
+    const body1 = this.resolveTripleBody(body1Capitalized);
+    const body2 = this.resolveTripleBody(body2Capitalized);
+    const body3 = this.resolveTripleBody(body3Capitalized);
 
     if (!body1 || !body2 || !body3) {
       this.logger.warn(
@@ -220,6 +219,15 @@ export class TripleAspectsComposerService {
       body3,
       body3Capitalized,
     };
+  }
+
+  /**
+   * Inverts a display name to a body tracked by triple aspects.
+   */
+  private resolveTripleBody(displayName: string): Body | undefined {
+    const body = bodyFromDisplayName(displayName);
+    const trackedBodies: ReadonlySet<string> = new Set(tripleAspectBodies);
+    return body !== undefined && trackedBodies.has(body) ? body : undefined;
   }
 
   // 🌎 Public Methods
@@ -292,9 +300,9 @@ export class TripleAspectsComposerService {
       tripleAspect,
     } = args;
 
-    const body1Capitalized = _.startCase(body1);
-    const body2Capitalized = _.startCase(body2);
-    const body3Capitalized = _.startCase(body3);
+    const body1Capitalized = bodyDisplayName(body1);
+    const body2Capitalized = bodyDisplayName(body2);
+    const body3Capitalized = bodyDisplayName(body3);
     const description = this.buildTripleAspectDescription({
       bodiesSorted: _.sortBy([
         body1Capitalized,

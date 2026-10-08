@@ -313,8 +313,8 @@ export function bodyFromDisplayName(displayName: string): Body | undefined {
  * `_.startCase` + `as Capitalize<T>` — the assertion is confined here.
  * @example
  * ```ts
- * const bodyCapitalized = capitalize(body);
- * // ^? Capitalize<Body>
+ * const signCapitalized = capitalize(sign);
+ * // ^? Capitalize<Sign>
  * ```
  */
 export function capitalize<T extends string>(str: T): Capitalize<T> {
