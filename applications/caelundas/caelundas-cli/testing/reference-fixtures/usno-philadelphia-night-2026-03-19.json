@@ -1,0 +1,32 @@
+{
+  "counts": {
+    "🌃 Night": 2
+  },
+  "events": [
+    {
+      "end": "2026-03-20T09:33:00Z",
+      "note": "USNO: astronomical twilight ends 00:43 UT on 20 March and begins 09:33 UT on 20 March, so the night of 19 March runs between them",
+      "start": "2026-03-20T00:43:00Z",
+      "summary": "🌃 Night"
+    },
+    {
+      "end": "2026-03-21T09:32:00Z",
+      "note": "USNO: astronomical twilight ends 00:44 UT on 21 March and begins 09:32 UT on 21 March. The window opens after the night of 18 March has begun, so its 19 March dawn ends no span, and the dusk of 21 March has no dawn inside the window",
+      "start": "2026-03-21T00:44:00Z",
+      "summary": "🌃 Night"
+    }
+  ],
+  "name": "Philadelphia nights from 19 to 21 March 2026",
+  "retrieved": "2026-10-07",
+  "source": {
+    "name": "US Naval Observatory, Astronomical Applications Department: Astronomical Twilight table for one year (Universal Time)",
+    "url": "https://aa.usno.navy.mil/calculated/rstt/year?ID=AA&year=2026&task=4&lat=39.9493&lon=-75.1717&label=&tz=0&tz_sign=-1&submit=Get+Data"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-03-21",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-03-19"
+  }
+}
