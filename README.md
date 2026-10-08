@@ -2431,6 +2431,7 @@ graph LR
   file_codependix_cli_src_main_end_to_end_test_ts["codependix-cli/src/main.end-to-end.test.ts"]
   file_codependix_cli_src_main_module_ts["codependix-cli/src/main.module.ts"]
   file_codependix_cli_src_main_ts["codependix-cli/src/main.ts"]
+  file_codependix_cli_src_main_unit_test_ts["codependix-cli/src/main.unit.test.ts"]
   file_codependix_cli_src_modules_map_map_command_integration_test_ts["codependix-cli/src/modules/map/map.command.integration.test.ts"]
   file_codependix_cli_src_modules_map_map_command_ts["codependix-cli/src/modules/map/map.command.ts"]
   file_codependix_cli_src_modules_map_map_command_unit_test_ts["codependix-cli/src/modules/map/map.command.unit.test.ts"]
