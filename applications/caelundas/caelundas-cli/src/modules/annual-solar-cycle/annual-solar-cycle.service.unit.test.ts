@@ -6,7 +6,6 @@ import { LoggerService } from "@codebase/logging";
 
 import { MARGIN_MINUTES } from "../caelundas/caelundas.constants";
 import { EphemerisModule } from "../ephemeris/ephemeris.module";
-import { MathService } from "../math/math.service";
 import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { AnnualSolarCycleEventsService } from "./annual-solar-cycle-events.service";
@@ -34,7 +33,6 @@ describe(AnnualSolarCycleService, () => {
         LoggerService,
         AnnualSolarCycleService,
         AnnualSolarCycleEventsService,
-        MathService,
         ProgressiveUtilitiesService,
       ],
     }).compile();
@@ -208,6 +206,7 @@ describe(AnnualSolarCycleService, () => {
         { length },
         (_, index) => (index - 29.4) * 1e-9,
       );
+      // Distance does not influence detection; only the speed series does.
       // Distance follows its smooth parabola, then a downward step that
       // persists and an upward step eight samples later (light-time shape).
       const stepSize = 3e-9;
