@@ -5,7 +5,7 @@
   },
   "events": [
     {
-      "note": "Sun minus Moon crosses 0° between 12:01 (−0.0013°) and 12:02 (+0.0072°) UT; USNO lists the New Moon at 12:01 UT. The Sun is the same query with COMMAND='10'.",
+      "note": "Sun minus Moon crosses 0° between 12:01 (−0.0013°) and 12:02 (+0.0072°) UT; USNO lists the New Moon at 12:01 UT. The Sun is the same query with COMMAND='10'. The absence of an exact Mercury–Venus conjunction rests on two hourly Horizons queries over 17–19 February 2026: Mercury (COMMAND='199') https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27199%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272026-02-17+00%3A00%27&STOP_TIME=%272026-02-19+00%3A00%27&STEP_SIZE=%271+h%27&QUANTITIES=%2731%27&TIME_TYPE=%27UT%27&CSV_FORMAT=%27YES%27 and Venus (COMMAND='299') https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND=%27299%27&OBJ_DATA=%27NO%27&MAKE_EPHEM=%27YES%27&EPHEM_TYPE=%27OBSERVER%27&CENTER=%27500%40399%27&START_TIME=%272026-02-17+00%3A00%27&STOP_TIME=%272026-02-19+00%3A00%27&STEP_SIZE=%271+h%27&QUANTITIES=%2731%27&TIME_TYPE=%27UT%27&CSV_FORMAT=%27YES%27. Mercury minus Venus stays between 7.68° and 7.81°, peaking at 7.8064° around 10:00–11:00 UT on the 17th, inside the 8° conjunction orb but never near 0°. The real conjunction follows on 28 February 2026 at 05:35 UT.",
       "start": "2026-02-17T12:01:00Z",
       "summary": "🎯 ☀️ ☌ 🌙 Sun perfective conjunct Moon"
     }

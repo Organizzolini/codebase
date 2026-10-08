@@ -232,6 +232,7 @@ export class AspectsUtilitiesService {
       longitudeBody1: longitudes.currentLongitudeBody1,
       longitudeBody2: longitudes.currentLongitudeBody2,
     });
+    // Defensive: unreachable while the orb gate holds, since the wrap lies 180° from the target.
     if (Math.abs(currentOffset - previousOffset) >= 180) {
       return false;
     }

@@ -182,7 +182,7 @@ describe(AspectsUtilitiesService, () => {
       ).toBe("dissolving");
     });
 
-    it("does not treat the ±180° wrap as a conjunction", () => {
+    it("is not a conjunction when the bodies are opposite, outside the conjunction orb", () => {
       expect(
         detect({
           aspects: ["conjunct"],
