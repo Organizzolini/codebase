@@ -9,8 +9,13 @@ import { beforeAll, describe, expect, it, vi } from "vitest";
 import { Author, Text } from "@codebase/lexico-entities";
 
 import { AuthorsResolver } from "./authors.resolver";
+import { LiteratureRelationsLoader } from "./literature-relations.loader";
 import { LiteratureService } from "./literature.service";
-import { toAuthorType, toTextType } from "./literature.utilities";
+import {
+  createEmptyConnection,
+  toAuthorType,
+  toTextType,
+} from "./literature.utilities";
 import { TextsResolver } from "./texts.resolver";
 
 describe(AuthorsResolver, () => {
@@ -23,6 +28,10 @@ describe(AuthorsResolver, () => {
         {
           provide: LiteratureService,
           useValue: createMock<LiteratureService>(),
+        },
+        {
+          provide: LiteratureRelationsLoader,
+          useValue: createMock<LiteratureRelationsLoader>(),
         },
       ],
     }).compile();
@@ -49,12 +58,23 @@ describe(AuthorsResolver, () => {
       findAuthorByLookup: vi
         .fn<LiteratureService["findAuthorByLookup"]>()
         .mockResolvedValue(author),
-      listTexts: vi
-        .fn<LiteratureService["listTexts"]>()
-        .mockResolvedValue([text]),
     });
+    const load = vi
+      .fn<LiteratureRelationsLoader["textsByAuthor"]["load"]>()
+      .mockResolvedValue({
+        ...createEmptyConnection<Text>(),
+        edges: [{ cursor: "t", node: text }],
+        totalCount: 1,
+      });
 
-    const authorsResolver = new AuthorsResolver(mockService);
+    const authorsResolver = new AuthorsResolver(
+      mockService,
+      createMock<LiteratureRelationsLoader>({
+        textsByAuthor: createMock<LiteratureRelationsLoader["textsByAuthor"]>({
+          load,
+        }),
+      }),
+    );
 
     await expect(
       authorsResolver.author({ id: "author-1" }),
@@ -69,8 +89,15 @@ describe(AuthorsResolver, () => {
       authorsResolver.author({ lookup: { slug: "virgil" } }),
     ).resolves.toStrictEqual(toAuthorType(author));
     await expect(
-      authorsResolver.resolveAuthorTexts(toAuthorType(author)),
-    ).resolves.toStrictEqual([toTextType(text)]);
+      authorsResolver.resolveAuthorTexts(toAuthorType(author), { first: 1 }),
+    ).resolves.toMatchObject({
+      edges: [{ cursor: "t", node: toTextType(text) }],
+      totalCount: 1,
+    });
+    expect(load).toHaveBeenCalledWith({
+      pagination: { first: 1 },
+      parentId: "author-1",
+    });
   });
 
   it("returns a paginated connection for authors", async () => {
@@ -94,7 +121,10 @@ describe(AuthorsResolver, () => {
         }),
     });
 
-    const authorsResolver = new AuthorsResolver(mockService);
+    const authorsResolver = new AuthorsResolver(
+      mockService,
+      createMock<LiteratureRelationsLoader>(),
+    );
 
     await expect(
       authorsResolver.authors({
@@ -130,7 +160,10 @@ describe(AuthorsResolver, () => {
         }),
     });
 
-    const authorsResolver = new AuthorsResolver(mockService);
+    const authorsResolver = new AuthorsResolver(
+      mockService,
+      createMock<LiteratureRelationsLoader>(),
+    );
 
     await expect(
       authorsResolver.searchAuthors({
@@ -151,6 +184,7 @@ describe(AuthorsResolver, () => {
 
     const authorsResolver = new AuthorsResolver(
       createMock<LiteratureService>(),
+      createMock<LiteratureRelationsLoader>(),
     );
 
     await expect(authorsResolver.author({})).resolves.toBeNull();
@@ -171,6 +205,10 @@ describe(AuthorsResolver, () => {
         {
           provide: LiteratureService,
           useValue: createMock<LiteratureService>(),
+        },
+        {
+          provide: LiteratureRelationsLoader,
+          useValue: createMock<LiteratureRelationsLoader>(),
         },
       ],
     }).compile();

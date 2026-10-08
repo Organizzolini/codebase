@@ -13,14 +13,6 @@ export interface EncliticDecompositionResult {
 }
 
 /**
- * One lexeme an English search matched, with its best translation's score.
- */
-export interface EnglishSearchMatch {
-  lexemeId: string;
-  score: number;
-}
-
-/**
  * One lexeme a search matched, with how it matched, before it is mapped to
  * the `LexemeSearchResult` the API returns.
  */
@@ -30,6 +22,29 @@ export interface LexemeSearchMatch {
   lexeme: Lexeme;
   score: number;
   source: SearchMatchSource;
+}
+
+/**
+ * A search match keyed by its lexeme's id, the shape a ranked page is loaded
+ * as before it is handed out.
+ */
+export interface RankedLexemeMatch extends LexemeSearchMatch {
+  id: string;
+}
+
+/**
+ * The SQL ranking every lexeme a search matched — one `lexemeId` and `score`
+ * row each — and the parameters it binds.
+ */
+export interface RankedLexemeQuery {
+  parameters: Record<string, unknown>;
+  sql: string;
+}
+
+/** A lexeme on a ranked page, with the score its best tier gave it. */
+export interface ScoredLexeme {
+  lexeme: Lexeme;
+  score: number;
 }
 
 /**

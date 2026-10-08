@@ -15,17 +15,25 @@ import {
   DATABASE_TIMEOUT_MILLISECONDS,
   startLexicoDatabaseTestingModule,
 } from "../../../testing/database";
+import { createLiteratureServices } from "../../../testing/literature-services";
 import {
   nodesOf,
   walkBackward,
   walkForward,
 } from "../../../testing/relay-connection-walk";
 
-import { LiteratureService } from "./literature.service";
 import { toTextType } from "./literature.utilities";
 import { TextsResolver } from "./texts.resolver";
 
+import type { Connection } from "../../lexico-api.types";
+import type { LineType } from "./line.entities";
+import type { TextType } from "./text.entities";
 import type { DatabaseTestingModule } from "@codebase/database/testing";
+
+/** The nodes of a connection, in page order. */
+function nodesIn<Node>(connection: Connection<Node>): Node[] {
+  return connection.edges.map((edge) => edge.node);
+}
 
 /** The titles of a list of texts, in the order given. */
 function titlesOf(texts: readonly { readonly title: string }[]): string[] {
@@ -42,6 +50,16 @@ describe("texts resolver integration suite", () => {
   let database: DatabaseTestingModule;
   let resolver: TextsResolver;
 
+  /** Pages every child text of a text. */
+  async function childTextsOf(text: Text): Promise<Connection<TextType>> {
+    return resolver.childTexts(toTextType(text), {});
+  }
+
+  /** Pages every line of a text. */
+  async function linesOf(text: Text): Promise<Connection<LineType>> {
+    return resolver.linesForText(toTextType(text), {});
+  }
+
   beforeAll(async () => {
     database = await startLexicoDatabaseTestingModule([
       Author,
@@ -51,15 +69,8 @@ describe("texts resolver integration suite", () => {
       Word,
     ]);
     catalog = await seedAuthorTextCatalog(database);
-    resolver = new TextsResolver(
-      new LiteratureService(
-        database.repository(Author),
-        database.repository(Line),
-        database.repository(Text),
-        database.repository(Token),
-        database.repository(Word),
-      ),
-    );
+    const { createLoader, service } = createLiteratureServices(database);
+    resolver = new TextsResolver(service, createLoader());
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
   afterAll(async () => {
@@ -266,14 +277,15 @@ describe("texts resolver integration suite", () => {
       expect.hasAssertions();
 
       expect(
-        titlesOf(await resolver.childTexts(toTextType(catalog.aeneid))),
+        titlesOf(nodesIn(await childTextsOf(catalog.aeneid))),
       ).toStrictEqual(["Book I", "Book II"]);
       expect(
-        titlesOf(await resolver.childTexts(toTextType(catalog.bookOne))),
+        titlesOf(nodesIn(await childTextsOf(catalog.bookOne))),
       ).toStrictEqual(["Proem"]);
-      await expect(
-        resolver.childTexts(toTextType(catalog.proem)),
-      ).resolves.toStrictEqual([]);
+      await expect(childTextsOf(catalog.proem)).resolves.toMatchObject({
+        edges: [],
+        totalCount: 0,
+      });
     });
 
     it("resolves no parent for a top-level text", async () => {
@@ -301,7 +313,7 @@ describe("texts resolver integration suite", () => {
     it("climbs from a child listed under its parent back to that parent", async () => {
       expect.hasAssertions();
 
-      const [child] = await resolver.childTexts(toTextType(catalog.aeneid));
+      const [child] = nodesIn(await childTextsOf(catalog.aeneid));
       const parent =
         child === undefined ? null : await resolver.parentText(child);
 
@@ -311,7 +323,7 @@ describe("texts resolver integration suite", () => {
     it("lists a text's lines in index order whatever order they were saved", async () => {
       expect.hasAssertions();
 
-      const lines = await resolver.linesForText(toTextType(catalog.proem));
+      const lines = nodesIn(await linesOf(catalog.proem));
 
       expect(lines.map((line) => line.label)).toStrictEqual([
         ...PROEM_LINE_LABELS,
@@ -324,9 +336,10 @@ describe("texts resolver integration suite", () => {
 
     it("lists no lines for a text whose lines all sit in its children", async () => {
       expect.hasAssertions();
-      await expect(
-        resolver.linesForText(toTextType(catalog.aeneid)),
-      ).resolves.toStrictEqual([]);
+      await expect(linesOf(catalog.aeneid)).resolves.toMatchObject({
+        edges: [],
+        totalCount: 0,
+      });
     });
   });
 });

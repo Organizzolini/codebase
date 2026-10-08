@@ -18,11 +18,14 @@ interface AuthorNode {
   readonly id: string;
   readonly name: string;
   readonly slug: string;
-  readonly texts: readonly {
-    readonly author: { readonly slug: string };
-    readonly parentText: null | { readonly slug: string };
-    readonly slug: string;
-  }[];
+  readonly texts: ConnectionPage<AuthorTextNode>;
+}
+
+/** A text as the `AUTHOR` query selects one. */
+interface AuthorTextNode {
+  readonly author: { readonly slug: string };
+  readonly parentText: null | { readonly slug: string };
+  readonly slug: string;
 }
 
 /** Looks up one author, with every text they wrote and each text's parent. */
@@ -32,7 +35,11 @@ const AUTHOR = `
       id
       name
       slug
-      texts { slug author { slug } parentText { slug } }
+      texts {
+        edges { cursor node { slug author { slug } parentText { slug } } }
+        pageInfo { endCursor hasNextPage hasPreviousPage startCursor }
+        totalCount
+      }
     }
   }
 `;
@@ -97,16 +104,17 @@ describe("authors resolver end-to-end suite", () => {
       });
 
       expect(author.slug).toBe("vergil");
-      expect(author.texts.map((text) => text.slug)).toStrictEqual([
+      expect(author.texts.totalCount).toBe(5);
+      expect(nodesOf([author.texts]).map((text) => text.slug)).toStrictEqual([
         "vergil/aeneid",
         "vergil/aeneid/1",
         "vergil/aeneid/2",
         "vergil/eclogues",
         "vergil/aeneid/1/proem",
       ]);
-      expect(author.texts.every((text) => text.author.slug === "vergil")).toBe(
-        true,
-      );
+      expect(
+        nodesOf([author.texts]).every((text) => text.author.slug === "vergil"),
+      ).toBe(true);
     });
 
     it("resolves each listed text's parent", async () => {
@@ -118,7 +126,7 @@ describe("authors resolver end-to-end suite", () => {
 
       expect(
         Object.fromEntries(
-          author.texts.map((text) => [
+          nodesOf([author.texts]).map((text) => [
             text.slug,
             text.parentText?.slug ?? null,
           ]),
@@ -153,7 +161,7 @@ describe("authors resolver end-to-end suite", () => {
         lookup: { slug: "cicero" },
       });
 
-      expect(author.texts).toStrictEqual([]);
+      expect(author.texts).toMatchObject({ edges: [], totalCount: 0 });
     });
 
     it("returns null without errors when neither an id nor a slug is given", async () => {

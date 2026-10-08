@@ -16,20 +16,14 @@ import {
 
 import { LexemeType } from "../lexemes/lexeme.entities";
 
-import {
-  SCORE_LEMMA_EXACT,
-  SCORE_PREFIX,
-  SCORE_WORD_EXACT,
-} from "./search.constants";
 import { LexemeSearchResult, SearchMatchSource } from "./search.entities";
 import {
   decomposeEnclitic,
   formatFormIdentifier,
-  mergeSearchResult,
+  toLatinMatchSource,
   toLexemeSearchResult,
+  toRankedScore,
 } from "./search.utilities";
-
-import type { LexemeSearchMatch } from "./search.types";
 
 describe("search utilities suite", () => {
   describe(decomposeEnclitic, () => {
@@ -267,149 +261,29 @@ describe("search utilities suite", () => {
     });
   });
 
-  describe(mergeSearchResult, () => {
-    it("adds candidate to empty map", () => {
-      expect.hasAssertions();
-
-      const map = new Map<string, LexemeSearchMatch>();
-      const lexeme = new Lexeme();
-      lexeme.id = "lex-1";
-
-      const candidate: LexemeSearchMatch = {
-        enclitic: "que",
-        identifiers: ["nominative singular"],
-        lexeme,
-        score: SCORE_WORD_EXACT,
-        source: SearchMatchSource.WORD_EXACT,
-      };
-
-      mergeSearchResult(map, candidate);
-
-      expect(map.get("lex-1")).toStrictEqual(candidate);
+  describe(toLatinMatchSource, () => {
+    it("names the tier each Latin score comes from", () => {
+      expect(
+        [1, 0.9, 0.8, 0.7, 0.4].map((score) => toLatinMatchSource(score)),
+      ).toStrictEqual([
+        SearchMatchSource.LEMMA_EXACT,
+        SearchMatchSource.WORD_EXACT,
+        SearchMatchSource.ENCLITIC,
+        SearchMatchSource.PREFIX,
+        SearchMatchSource.FUZZY,
+      ]);
     });
 
-    it("upgrades result when higher score candidate is merged", () => {
-      expect.hasAssertions();
-
-      const map = new Map<string, LexemeSearchMatch>();
-      const lexeme = new Lexeme();
-      lexeme.id = "lex-1";
-
-      const lowerCandidate: LexemeSearchMatch = {
-        enclitic: "que",
-        identifiers: ["prefix match"],
-        lexeme,
-        score: SCORE_PREFIX,
-        source: SearchMatchSource.PREFIX,
-      };
-      const higherCandidate: LexemeSearchMatch = {
-        enclitic: null,
-        identifiers: ["exact match"],
-        lexeme,
-        score: SCORE_LEMMA_EXACT,
-        source: SearchMatchSource.LEMMA_EXACT,
-      };
-
-      mergeSearchResult(map, lowerCandidate);
-      mergeSearchResult(map, higherCandidate);
-
-      const merged = map.get("lex-1");
-
-      expect(merged?.score).toBe(SCORE_LEMMA_EXACT);
-      expect(merged?.enclitic).toBe("que");
-      expect(merged?.identifiers).toContain("prefix match");
-      expect(merged?.identifiers).toContain("exact match");
-
-      const map2 = new Map<string, LexemeSearchMatch>();
-      mergeSearchResult(map2, {
-        enclitic: null,
-        identifiers: lowerCandidate.identifiers,
-        lexeme: lowerCandidate.lexeme,
-        score: lowerCandidate.score,
-        source: lowerCandidate.source,
-      });
-      mergeSearchResult(map2, {
-        enclitic: null,
-        identifiers: higherCandidate.identifiers,
-        lexeme: higherCandidate.lexeme,
-        score: higherCandidate.score,
-        source: higherCandidate.source,
-      });
-
-      expect(map2.get("lex-1")?.enclitic).toBeNull();
-
-      const map3 = new Map<string, LexemeSearchMatch>();
-      mergeSearchResult(map3, {
-        enclitic: null,
-        identifiers: lowerCandidate.identifiers,
-        lexeme: lowerCandidate.lexeme,
-        score: lowerCandidate.score,
-        source: lowerCandidate.source,
-      });
-      mergeSearchResult(map3, {
-        enclitic: "ne",
-        identifiers: higherCandidate.identifiers,
-        lexeme: higherCandidate.lexeme,
-        score: higherCandidate.score,
-        source: higherCandidate.source,
-      });
-
-      expect(map3.get("lex-1")?.enclitic).toBe("ne");
+    it("reads a score no tier gives as a fuzzy match", () => {
+      expect(toLatinMatchSource(0.55)).toBe(SearchMatchSource.FUZZY);
     });
+  });
 
-    it("preserves higher score when lower score candidate is merged with enclitic", () => {
-      expect.hasAssertions();
-
-      const map = new Map<string, LexemeSearchMatch>();
-      const lexeme = new Lexeme();
-      lexeme.id = "lex-1";
-
-      const higherCandidate: LexemeSearchMatch = {
-        enclitic: null,
-        identifiers: ["exact match"],
-        lexeme,
-        score: SCORE_LEMMA_EXACT,
-        source: SearchMatchSource.LEMMA_EXACT,
-      };
-      const lowerCandidate: LexemeSearchMatch = {
-        enclitic: "ne",
-        identifiers: ["prefix match"],
-        lexeme,
-        score: SCORE_PREFIX,
-        source: SearchMatchSource.PREFIX,
-      };
-
-      mergeSearchResult(map, higherCandidate);
-      mergeSearchResult(map, lowerCandidate);
-
-      const merged = map.get("lex-1");
-
-      expect(merged?.score).toBe(SCORE_LEMMA_EXACT);
-      expect(merged?.enclitic).toBe("ne");
-      expect(merged?.identifiers).toContain("exact match");
-      expect(merged?.identifiers).toContain("prefix match");
-
-      // Lower candidate with no enclitic merged into existing with enclitic
-      mergeSearchResult(map, {
-        enclitic: null,
-        identifiers: lowerCandidate.identifiers,
-        lexeme: lowerCandidate.lexeme,
-        score: lowerCandidate.score,
-        source: lowerCandidate.source,
-      });
-
-      expect(map.get("lex-1")?.enclitic).toBe("ne");
-
-      // Lower candidate with enclitic merged into existing that already has enclitic
-      mergeSearchResult(map, {
-        enclitic: "ve",
-        identifiers: lowerCandidate.identifiers,
-        lexeme: lowerCandidate.lexeme,
-        score: lowerCandidate.score,
-        source: lowerCandidate.source,
-      });
-
-      expect(map.get("lex-1")?.enclitic).toBe("ne");
+  describe(toRankedScore, () => {
+    it("reads a negated numeric sort key back as the score", () => {
+      expect(
+        ["-1", "-0.9", -0.6].map((key) => toRankedScore(key)),
+      ).toStrictEqual([1, 0.9, 0.6]);
     });
   });
 

@@ -8,16 +8,14 @@ import {
   DATABASE_TIMEOUT_MILLISECONDS,
   startLexicoDatabaseTestingModule,
 } from "../../../testing/database";
+import { createLiteratureServices } from "../../../testing/literature-services";
 import {
-  parseIndex,
   passageLineAt,
   passageTokensAt,
   type ReadingPassage,
   seedReadingPassage,
 } from "../../../testing/reading-passage";
 
-import { LiteratureService } from "./literature.service";
-import { TokenWordLoader } from "./token-word.loader";
 import { TokensResolver } from "./tokens.resolver";
 
 import type { Connection } from "../../lexico-api.types";
@@ -48,7 +46,7 @@ function summarize(connection: Connection<TokenType>): TokensPage {
 }
 
 /**
- * Executes the `tokens` connection query, and `Token.word` beneath it,
+ * Executes the `tokens` connection query, with each token's joined word,
  * through the real resolver and service against a migrated Postgres database.
  */
 describe("tokens resolver integration suite", () => {
@@ -80,14 +78,7 @@ describe("tokens resolver integration suite", () => {
       Word,
     ]);
     passage = await seedReadingPassage(database.dataSource);
-    const service = new LiteratureService(
-      database.repository(Author),
-      database.repository(Line),
-      database.repository(Text),
-      database.repository(Token),
-      database.repository(Word),
-    );
-    resolver = new TokensResolver(service, new TokenWordLoader(service));
+    resolver = new TokensResolver(createLiteratureServices(database).service);
   }, DATABASE_TIMEOUT_MILLISECONDS);
 
   afterAll(async () => {
@@ -108,7 +99,7 @@ describe("tokens resolver integration suite", () => {
         word: edge.node.word?.data ?? null,
       })),
     ).toStrictEqual(FIRST_LINE_TOKENS);
-    expect(connection.edges.map((edge) => parseIndex(edge.node))).toStrictEqual(
+    expect(connection.edges.map((edge) => edge.node.index)).toStrictEqual(
       FIRST_LINE_TOKENS.map((_token, index) => index),
     );
     expect(connection.totalCount).toBe(FIRST_LINE_TOKENS.length);
@@ -164,22 +155,5 @@ describe("tokens resolver integration suite", () => {
       startCursor: null,
       totalCount: 0,
     });
-  });
-
-  it("resolves each listed token to its already-loaded word and each marker to null", async () => {
-    expect.hasAssertions();
-
-    const connection = await resolver.tokens({
-      lineId: passageLineAt(passage, 2).id,
-    });
-    const words = await Promise.all(
-      connection.edges.map(async (edge) =>
-        resolver.resolveTokenWord(edge.node),
-      ),
-    );
-
-    expect(words.map((word) => word?.data ?? null)).toStrictEqual(
-      passageTokensAt(2).map((token) => token.word),
-    );
   });
 });

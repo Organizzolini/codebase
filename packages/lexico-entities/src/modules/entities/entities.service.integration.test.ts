@@ -10,6 +10,11 @@ import {
 } from "../lexico-database/data-source.constants";
 import { LexicoNamingStrategy } from "../lexico-database/lexico-database.constants";
 
+import { Author } from "./literature/Author.entity";
+import { Line } from "./literature/Line.entity";
+import { Text } from "./literature/Text.entity";
+import { Token } from "./literature/Token.entity";
+
 import type { StartedPostgresContainer } from "@codebase/database/testing";
 import type { DataSource } from "typeorm";
 
@@ -469,6 +474,58 @@ describe("entity integration schema", () => {
     expect(author?.id).toMatch(
       /^[\da-f]{8}-[\da-f]{4}-7[\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/,
     );
+  });
+
+  it("stores line and token indexes as bigints that read back as numbers", async () => {
+    const columns: { column_name: string; data_type: string }[] =
+      await integrationDataSource.query(
+        `SELECT table_name || '.' || column_name AS column_name, data_type FROM information_schema.columns WHERE table_schema = $1 AND table_name IN ('lines', 'tokens') AND column_name = 'index' ORDER BY table_name`,
+        [INTEGRATION_SCHEMA_NAME],
+      );
+    const author = await integrationDataSource
+      .getRepository(Author)
+      .save(Object.assign(new Author(), { name: "Ovid", slug: "ovid" }));
+    const text = await integrationDataSource.getRepository(Text).save(
+      Object.assign(new Text(), {
+        author,
+        slug: "ovid/elegies",
+        title: "Elegies",
+      }),
+    );
+    const line = await integrationDataSource.getRepository(Line).save(
+      Object.assign(new Line(), {
+        author,
+        data: "arma",
+        index: 7,
+        label: "8",
+        text,
+      }),
+    );
+    await integrationDataSource.getRepository(Token).save(
+      Object.assign(new Token(), {
+        author,
+        data: "arma",
+        index: 3,
+        isPunctuation: false,
+        line,
+        text,
+      }),
+    );
+
+    expect(columns).toStrictEqual([
+      { column_name: "lines.index", data_type: "bigint" },
+      { column_name: "tokens.index", data_type: "bigint" },
+    ]);
+    await expect(
+      integrationDataSource
+        .getRepository(Line)
+        .findOneByOrFail({ id: line.id }),
+    ).resolves.toMatchObject({ index: 7 });
+    await expect(
+      integrationDataSource
+        .getRepository(Token)
+        .findOneByOrFail({ line: { id: line.id } }),
+    ).resolves.toMatchObject({ index: 3 });
   });
 
   it("creates the expected tables, indexes, and uniqueness constraints", async () => {

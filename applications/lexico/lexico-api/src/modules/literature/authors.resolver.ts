@@ -12,13 +12,17 @@ import { PaginationArguments } from "../search/pagination-arguments.entities";
 
 import { AuthorArguments } from "./author-argument.entities";
 import { AuthorType } from "./author.entities";
-import { AuthorConnectionType } from "./literature-connection.entities";
+import {
+  AuthorConnectionType,
+  TextConnectionType,
+} from "./literature-connection.entities";
+import { LiteratureRelationsLoader } from "./literature-relations.loader";
 import { LiteratureService } from "./literature.service";
 import { toAuthorType, toTextType } from "./literature.utilities";
 import { SearchAuthorsArguments } from "./search-authors-arguments.entities";
-import { TextType } from "./text.entities";
 
 import type { Connection } from "../../lexico-api.types";
+import type { TextType } from "./text.entities";
 
 /**
  * GraphQL resolver for Authors.
@@ -30,6 +34,8 @@ export class AuthorsResolver {
   public constructor(
     @Inject(LiteratureService)
     private readonly literatureService: LiteratureService,
+    @Inject(LiteratureRelationsLoader)
+    private readonly literatureRelationsLoader: LiteratureRelationsLoader,
   ) {}
 
   // 🔎 Queries
@@ -68,13 +74,20 @@ export class AuthorsResolver {
     );
   }
 
-  /** Resolves the text list associated with an author. */
-  @ResolveField(() => [TextType], { name: "texts" })
+  /**
+   * Pages an author's texts in title order. The texts of every author in a
+   * response are loaded together.
+   */
+  @ResolveField(() => TextConnectionType, { name: "texts" })
   public async resolveAuthorTexts(
     @Parent() author: AuthorType,
-  ): Promise<TextType[]> {
-    const texts = await this.literatureService.listTexts(author.id);
-    return texts.map((text) => toTextType(text));
+    @Arguments() arguments_: PaginationArguments,
+  ): Promise<Connection<TextType>> {
+    const texts = await this.literatureRelationsLoader.textsByAuthor.load({
+      pagination: arguments_,
+      parentId: author.id,
+    });
+    return mapConnection(texts, toTextType);
   }
 
   // 🖋️ Mutations

@@ -98,7 +98,10 @@ describe("literature search end-to-end suite", () => {
     const SEARCH_AUTHORS = `
       query SearchAuthors($query: String!, $first: Int, $after: String, $last: Int, $before: String) {
         searchAuthors(query: $query, first: $first, after: $after, last: $last, before: $before) {
-          edges { cursor node { id name slug texts { id } } }
+          edges {
+            cursor
+            node { id name slug texts { edges { node { id } } totalCount } }
+          }
           ${PAGE_FIELDS}
         }
       }
@@ -113,7 +116,12 @@ describe("literature search end-to-end suite", () => {
             readonly id: string;
             readonly name: string;
             readonly slug: string;
-            readonly texts: readonly { readonly id: string }[];
+            readonly texts: {
+              readonly edges: readonly {
+                readonly node: { readonly id: string };
+              }[];
+              readonly totalCount: number;
+            };
           };
         }[];
       };
@@ -131,11 +139,14 @@ describe("literature search end-to-end suite", () => {
         id: corpus.author("horace").id,
         name: "Quintus Horatius Flaccus",
         slug: "horace",
-        texts: [
-          { id: corpus.text("horace/ars-poetica").id },
-          { id: corpus.text("horace/carmina").id },
-          { id: corpus.text("horace/satirae").id },
-        ],
+        texts: {
+          edges: [
+            { node: { id: corpus.text("horace/ars-poetica").id } },
+            { node: { id: corpus.text("horace/carmina").id } },
+            { node: { id: corpus.text("horace/satirae").id } },
+          ],
+          totalCount: 3,
+        },
       });
     });
 

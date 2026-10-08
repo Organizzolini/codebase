@@ -1,5 +1,7 @@
 // ♟️ Constants
 
+import { SearchMatchSource } from "./search.entities";
+
 /* cspell:words ILIKE absque atque cumque denique FULLTEXT itaque neque neve paene pleraque plerique plerumque quaeque qualiscumque quandocumque quantuscumque quicque quidque quilibet quinque quisque quivis quodque quoque sive ubique undique unusquisque uterque utrimque */
 
 /**
@@ -54,6 +56,25 @@ export const SCORE_TRANSLATION_EXACT = 1;
 export const SCORE_TRANSLATION_PREFIX = 0.8;
 export const SCORE_TRANSLATION_FULLTEXT = 0.6;
 export const SCORE_FUZZY = 0.4;
+
+/**
+ * The tier a Latin match's best score names. Every Latin tier scores
+ * differently, so a lexeme's score alone says which tier ranked it highest.
+ */
+export const LATIN_TIER_SOURCES: ReadonlyMap<number, SearchMatchSource> =
+  new Map([
+    [SCORE_ENCLITIC, SearchMatchSource.ENCLITIC],
+    [SCORE_FUZZY, SearchMatchSource.FUZZY],
+    [SCORE_LEMMA_EXACT, SearchMatchSource.LEMMA_EXACT],
+    [SCORE_PREFIX, SearchMatchSource.PREFIX],
+    [SCORE_WORD_EXACT, SearchMatchSource.WORD_EXACT],
+  ]);
+
+/**
+ * Most lexemes a prefix or substring headword match ranks per search term,
+ * the first by id, before translations are checked.
+ */
+export const LATIN_TIER_RESULT_LIMIT = 50;
 
 /**
  * Ranks one matched translation for an English search, given the `exactQuery`

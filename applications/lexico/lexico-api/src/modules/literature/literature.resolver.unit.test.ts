@@ -10,11 +10,11 @@ import { Author, Line, Text } from "@codebase/lexico-entities";
 
 import { AuthorsResolver } from "./authors.resolver";
 import { LinesResolver } from "./lines.resolver";
+import { LiteratureRelationsLoader } from "./literature-relations.loader";
 import { LiteratureResolver } from "./literature.resolver";
 import { LiteratureService } from "./literature.service";
 import { toAuthorType, toLineType, toTextType } from "./literature.utilities";
 import { TextsResolver } from "./texts.resolver";
-import { TokenWordLoader } from "./token-word.loader";
 import { TokensResolver } from "./tokens.resolver";
 
 describe(LiteratureResolver, () => {
@@ -97,8 +97,8 @@ describe(LiteratureResolver, () => {
           useValue: createMock<LiteratureService>(),
         },
         {
-          provide: TokenWordLoader,
-          useValue: createMock<TokenWordLoader>(),
+          provide: LiteratureRelationsLoader,
+          useValue: createMock<LiteratureRelationsLoader>(),
         },
       ],
     }).compile();
@@ -122,5 +122,48 @@ describe(LiteratureResolver, () => {
     expect(
       schema.getQueryType()?.getFields()["searchLiterature"],
     ).toBeDefined();
+    expect(
+      Object.fromEntries(
+        [
+          ["Author", "texts"],
+          ["Line", "tokens"],
+          ["Text", "childTexts"],
+          ["Text", "lines"],
+        ].map(([type = "", field = ""]) => {
+          const resolved = schema.getType(type);
+          const definition =
+            resolved !== undefined && "getFields" in resolved
+              ? resolved.getFields()[field]
+              : undefined;
+          return [
+            `${type}.${field}`,
+            {
+              arguments:
+                definition !== undefined && "args" in definition
+                  ? definition.args.map((argument) => argument.name).toSorted()
+                  : [],
+              type: String(definition?.type),
+            },
+          ];
+        }),
+      ),
+    ).toStrictEqual({
+      "Author.texts": {
+        arguments: ["after", "before", "first", "last"],
+        type: "TextConnection!",
+      },
+      "Line.tokens": {
+        arguments: ["after", "before", "first", "last"],
+        type: "TokenConnection!",
+      },
+      "Text.childTexts": {
+        arguments: ["after", "before", "first", "last"],
+        type: "TextConnection!",
+      },
+      "Text.lines": {
+        arguments: ["after", "before", "first", "last"],
+        type: "LineConnection!",
+      },
+    });
   });
 });
