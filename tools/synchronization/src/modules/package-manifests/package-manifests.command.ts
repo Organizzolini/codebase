@@ -14,7 +14,7 @@ import type {
 
 /**
  * CLI command that synchronizes package manifest metadata (license, repository,
- * homepage, and issue tracker) across all 28 publishable packages.
+ * homepage, and issue tracker) across all 29 publishable packages.
  */
 @Command({
   description: "Run the package-manifests command",

@@ -173,6 +173,7 @@ and [a container that cannot boot](../codependix-examples/examples/boundary-boot
 | [`@codependix/boundaries`](../codependix-boundaries/README.md) | Builds each level's graph for a workspace, judges it against the declared rules, and reports what breaks them. `--check boundaries` delegates to it wholesale |
 | [`@codependix/configuration`](../codependix-configuration/README.md) | Reads `codependix.config.ts` and resolves per-project export destinations and boundary rules |
 | [`@codependix/examples`](../codependix-examples/README.md) | Twenty-one subjects built to be graphed, each with the guide codependix renders from it |
+| [`@codependix/nx`](../codependix-nx/README.md) | Nx plugin: infers a per-project `codependix-gate` target that runs `--check boundaries` over the project and its Nx dependencies |
 | [`@codependix/nx-projects`](../codependix-nx-projects/README.md) | Builds a project's Nx Neighborhood and the whole-workspace Workspace Graph |
 | [`@codependix/nestjs-modules`](../codependix-nestjs-modules/README.md) | Explores a NestJS project's container and builds its module graph |
 | [`@codependix/file-imports`](../codependix-file-imports/README.md) | Builds a project's file-level import graph — a `typescript` module walking its own `ts.Program`, and a `python` module parsing `import`/`from ... import` statements |
@@ -233,6 +234,7 @@ graph LR
   codependix_configuration["codependix-configuration"]
   codependix_core["codependix-core"]
   codependix_examples["codependix-examples"]
+  codependix_nx["codependix-nx"]
   codependix_output["codependix-output"]
   logging["logging"]
   codependix_cli --> codependix_boundaries
@@ -241,6 +243,7 @@ graph LR
   codependix_cli --> codependix_output
   codependix_cli --> logging
   codependix_examples -.-> codependix_cli
+  codependix_nx --> codependix_cli
   classDef subject fill:#7c3aed,color:#fff,stroke:#4c1d95,stroke-width:2px
   class codependix_cli subject
 ```

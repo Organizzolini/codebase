@@ -23,7 +23,7 @@ import type {
 
 /**
  * Service that reconciles mechanically derivable package manifest metadata
- * across the 28 publishable packages.
+ * across the 29 publishable packages.
  */
 @Injectable()
 export class PackageManifestsService {

@@ -117,7 +117,7 @@
         }
       },
       "defaultConfiguration": "check",
-      "description": "Reconciles derived package manifest metadata (author, license, repository, homepage, bugs) across all 28 publishable packages against root package.json and project paths. `check` runs on pull requests; `write` runs on release.",
+      "description": "Reconciles derived package manifest metadata (author, license, repository, homepage, bugs) across all 29 publishable packages against root package.json and project paths. `check` runs on pull requests; `write` runs on release.",
       "executor": "nx:run-commands",
       "inputs": [
         "{projectRoot}/**/*.ts",
