@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import _ from "lodash";
 
 import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 

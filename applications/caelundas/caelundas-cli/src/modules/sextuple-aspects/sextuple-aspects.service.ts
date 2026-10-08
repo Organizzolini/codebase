@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import _ from "lodash";
 
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { MathService } from "../math/math.service";

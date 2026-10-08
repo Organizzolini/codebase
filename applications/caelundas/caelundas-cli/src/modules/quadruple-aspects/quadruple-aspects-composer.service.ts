@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import _ from "lodash";
 
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
