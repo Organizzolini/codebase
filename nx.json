@@ -89,6 +89,13 @@
         "gateTargetName": "callidescope-gate"
       },
       "plugin": "@callidescope/nx"
+    },
+    {
+      "options": {
+        "configurationPath": "configuration/codependix.config.ts",
+        "gateTargetName": "codependix-gate"
+      },
+      "plugin": "@codependix/nx"
     }
   ],
   "pluginsConfig": {
@@ -280,6 +287,7 @@
             "codependix-examples",
             "codependix-file-imports",
             "codependix-nestjs-modules",
+            "codependix-nx",
             "codependix-nx-projects",
             "codependix-output",
             "codometer-agents",

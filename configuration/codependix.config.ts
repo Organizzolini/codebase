@@ -432,6 +432,23 @@ const codependixConfiguration: CodependixConfiguration = {
           ],
         },
       },
+      {
+        from: { tags: ["name:codependix-nx"] },
+        kind: "allow",
+        message:
+          "The codependix chain points one way, and the Nx plugin sits on top of it so `@nx/devkit` never reaches a package that builds or judges a graph. It runs the command-line host rather than importing the analyzers, so nothing below may depend back on it.",
+        name: "codependix-nx-layer",
+        to: {
+          tags: [
+            "name:codependix-boundaries",
+            "name:codependix-cli",
+            "name:codependix-configuration",
+            "name:codependix-core",
+            "name:codependix-output",
+            "name:logging",
+          ],
+        },
+      },
       // ⏲️ Codometer
       {
         from: { tags: ["name:codometer-core"] },

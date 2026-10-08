@@ -1,6 +1,6 @@
 # Independent package versioning with cascading dependents
 
-The 28 publishable packages across the four IC suites (`conformetry`,
+The 29 publishable packages across the four IC suites (`conformetry`,
 `codometer`, `callidescope`, and `codependix`) are versioned independently using
 Nx Release (`nx release`), rather than in lockstep across the repository or per
 suite. Conventional commits determine semver bump specifiers for every package a
@@ -21,14 +21,14 @@ Releases in this repository operate at two distinct tiers:
    merges to `main` for fixed-version repository releases, generating root
    changelogs and GitHub release tags (e.g. `v2.20.0`). No packages are
    published to the public npm registry at this tier.
-2. **Publishable packages release:** The 28 publishable library packages use
+2. **Publishable packages release:** The 29 publishable library packages use
    `nx release` with independent versioning (`projectsRelationship: "independent"`)
    and per-package release tags (e.g. `conformetry-cli@0.1.0`).
 
 ## Considered options
 
 - **Repository-wide fixed lockstep versioning for all packages.** Rejected.
-  Lockstep versioning would force all 28 packages to bump their versions
+  Lockstep versioning would force all 29 packages to bump their versions
   whenever any application, internal tool, or unrelated package changes in the
   monorepo. This creates artificial churn on npm, produces empty changelogs for
   untouched libraries, invalidates consumer caches unnecessarily, and obscures

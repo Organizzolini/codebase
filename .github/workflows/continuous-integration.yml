@@ -58,7 +58,7 @@ jobs:
           # Meanderaw alone: uncached, it took over seven minutes beside every
           # other project's tests and waited for a free `--parallel` slot, so a
           # run that affects everything (an `nx.json` change) outlasted the
-          # 12-minute limit; alone it takes about three. ic-suite's 36 packages
+          # 12-minute limit; alone it takes about three. ic-suite's 37 packages
           # were most of what remained. The third leg, everything else, keeps
           # the `Test` name branch protection has always required. A leg whose
           # projects are unaffected runs nothing.
