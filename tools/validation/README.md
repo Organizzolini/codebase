@@ -10,7 +10,7 @@ each one.
 
 ```bash
 nx run validation:start:pull-request-metadata     # labels and assignees against the title
-nx run validation:start:pull-request-body         # the four headings, non-empty sections, and no unfilled template comment
+nx run validation:start:pull-request-body         # the four headings, each section's shape and length, and no unfilled template comment
 nx run validation:start:catalog-manifests         # catalog:/workspace:* in every manifest
 nx run validation:start:lockfile                  # pnpm-lock.yaml against the manifests
 ```
@@ -40,7 +40,7 @@ authentication checks stay in shell — see [AGENTS.md](AGENTS.md).
 | Check | Answers |
 | ----- | ------- |
 | `pull-request-metadata` | Do a pull request's labels and assignees agree with its title? |
-| `pull-request-body` | Does a pull request description carry all four headings with non-empty sections and no template comment left unfilled? |
+| `pull-request-body` | Does a pull request description carry all four headings, each section non-empty, in its shape, and within its word limit, with no template comment left unfilled? |
 | `catalog-manifests` | Does every workspace manifest pin externals as `catalog:` and internals as `workspace:*`? |
 | `lockfile` | Is `pnpm-lock.yaml` in sync with the manifests? |
 
@@ -71,6 +71,24 @@ actual content, and that no `<!-- … -->` prompt from
 survives unfilled. The comments are read from the template at runtime rather
 than listed here, so adding a prompt to the template starts it being checked
 with no code change.
+
+Each section is also parsed as CommonMark and held to one shape, with Summary
+and Details capped in words as `wc -w` counts them:
+
+| Section    | Holds                                           | Word limit |
+| ---------- | ----------------------------------------------- | ---------- |
+| 🌰 Summary | Only one paragraph                              | 48         |
+| 📝 Details | Only a bulleted list, one marker throughout     | 512        |
+| 🧪 Testing | Only an ordered list, whose items may hold code | —          |
+| 🔗 Related | A `-` list first, then anything                 | —          |
+
+Blocks that are nothing but comments are ignored. Details takes `-`, `*`, or
+`+` so long as one marker is used throughout, as markdownlint's MD004 does.
+Related is open-ended after its list so that an attribution line or any other
+trailer can close the description. The limits sit near the 75th percentile of
+past Summaries, to keep one readable at a glance, and between the 90th and 95th
+of past Details.
+The shapes and limits live in `SECTION_RULES`, not the template.
 
 ### `catalog-manifests`
 
@@ -654,6 +672,7 @@ graph LR
   file_src_modules_pull_request_body_pull_request_body_command_unit_test_ts --> file_src_modules_pull_request_body_pull_request_body_constants_ts
   file_src_modules_pull_request_body_pull_request_body_command_unit_test_ts --> file_src_modules_pull_request_body_pull_request_body_service_ts
   file_src_modules_pull_request_body_pull_request_body_command_unit_test_ts --> file_testing_mocks_ts
+  file_src_modules_pull_request_body_pull_request_body_constants_ts --> file_src_modules_pull_request_body_pull_request_body_types_ts
   file_src_modules_pull_request_body_pull_request_body_module_ts --> file_src_modules_pull_request_body_pull_request_body_command_ts
   file_src_modules_pull_request_body_pull_request_body_module_ts --> file_src_modules_pull_request_body_pull_request_body_service_ts
   file_src_modules_pull_request_body_pull_request_body_module_unit_test_ts --> file_src_modules_pull_request_body_pull_request_body_command_ts

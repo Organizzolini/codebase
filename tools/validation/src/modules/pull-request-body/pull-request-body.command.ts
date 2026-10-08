@@ -10,7 +10,9 @@ import {
   BODY_MISSING_MESSAGE,
   BODY_VALID_MESSAGE,
   EMPTY_SECTIONS_MESSAGE,
+  MALFORMED_SECTIONS_MESSAGE,
   MISSING_HEADINGS_MESSAGE,
+  OVERSIZED_SECTIONS_MESSAGE,
   PULL_REQUEST_BODY_VARIABLE,
   PULL_REQUEST_TEMPLATE_PATH,
   UNFILLED_COMMENTS_MESSAGE,
@@ -23,9 +25,10 @@ import type { BodyVerdict } from "./pull-request-body.types";
 /**
  * CLI command that checks a pull request description against its template.
  *
- * Three things, and a description that fails multiple is reported against all:
+ * Five things, and a description that fails several is reported against all:
  * every one of the four headings must be present, each section must contain
- * content, and no `<!-- … -->` prompt from the template may survive unfilled.
+ * content of the one shape it allows, Summary and Details must stay within
+ * their word limits, and no `<!-- … -->` prompt from the template may survive.
  *
  * Two input modes, neither of which needs a token. The description normally
  * arrives as `PULL_REQUEST_BODY`, which is the workflow mode. A path argument
@@ -37,7 +40,7 @@ import type { BodyVerdict } from "./pull-request-body.types";
  */
 @Command({
   description:
-    "Check that a pull request description carries every heading, non-empty sections, and no unfilled template comment",
+    "Check that a pull request description carries every heading, non-empty sections of the right shape and length, and no unfilled template comment",
   name: "pull-request-body",
 })
 @Injectable()
@@ -69,6 +72,21 @@ export class PullRequestBodyCommand extends CommandRunner {
     return process.exit(1);
   }
 
+  /** Prints one introduction and one line per failure, when there are any. */
+  private reportList(message: string, failures: readonly string[]): void {
+    if (failures.length === 0) {
+      return;
+    }
+
+    console.error(message);
+
+    for (const failure of failures) {
+      console.error(`- ${failure}`);
+    }
+
+    console.error("");
+  }
+
   /** Prints the failure lists and the guidance that closes them. */
   private reportVerdict(verdict: BodyVerdict): never {
     if (verdict.missingHeadings.length > 0) {
@@ -85,15 +103,9 @@ export class PullRequestBodyCommand extends CommandRunner {
       console.error("");
     }
 
-    if (verdict.unfilledComments.length > 0) {
-      console.error(UNFILLED_COMMENTS_MESSAGE);
-
-      for (const unfilledComment of verdict.unfilledComments) {
-        console.error(`- ${unfilledComment}`);
-      }
-
-      console.error("");
-    }
+    this.reportList(MALFORMED_SECTIONS_MESSAGE, verdict.malformedSections);
+    this.reportList(OVERSIZED_SECTIONS_MESSAGE, verdict.oversizedSections);
+    this.reportList(UNFILLED_COMMENTS_MESSAGE, verdict.unfilledComments);
 
     for (const guidanceLine of BODY_GUIDANCE_LINES) {
       console.error(guidanceLine);
@@ -147,9 +159,13 @@ export class PullRequestBodyCommand extends CommandRunner {
     });
 
     if (
-      verdict.missingHeadings.length === 0 &&
-      verdict.emptySections.length === 0 &&
-      verdict.unfilledComments.length === 0
+      [
+        verdict.missingHeadings,
+        verdict.emptySections,
+        verdict.malformedSections,
+        verdict.oversizedSections,
+        verdict.unfilledComments,
+      ].every((failures) => failures.length === 0)
     ) {
       console.info(BODY_VALID_MESSAGE);
 

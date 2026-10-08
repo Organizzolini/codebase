@@ -121,33 +121,33 @@ Write clear, comprehensive descriptions that help reviewers understand changes. 
 ```markdown
 ## 🌰 Summary
 
-<!-- Brief description of what this PR does (1-2 sentences) -->
+<!-- One plain paragraph of at most 48 words, readable at a glance: what this PR does and why -->
 
 ## 📝 Details
 
-- <!-- List of specific changes made -->
+- <!-- A bulleted list of the specific changes made, one marker throughout, at most 512 words in all -->
 
 ## 🧪 Testing
 
-1. <!-- How to manually verify these changes work correctly -->
+1. <!-- An ordered list of steps that verify these changes; a step may hold a code block -->
 
 ## 🔗 Related
 
-- <!-- Link any relevant documentation or related resources like internal documentation, GitHub issues/pull requests -->
+- <!-- Start with a `-` list linking related issues, pull requests, specs, or documentation; anything may follow it -->
 ```
 
 <!-- pr-template-end -->
 
 ### Description Guidelines
 
-| Section    | Purpose                                                                   | Required |
-| ---------- | ------------------------------------------------------------------------- | -------- |
-| 🌰 Summary | Brief overview of the PR (1-2 sentences)                                  | Yes      |
-| 📝 Details | Bulleted list of changes                                                  | Yes      |
-| 🧪 Testing | How to verify the changes (commands and manual steps)                     | Yes      |
-| 🔗 Related | Links to issues, specs, or related files/docs (never omit or leave empty) | Yes      |
+| Section    | Holds only                                                                                   | Word limit |
+| ---------- | -------------------------------------------------------------------------------------------- | ---------- |
+| 🌰 Summary | One plain paragraph saying what the PR does and why, readable at a glance                    | 48         |
+| 📝 Details | A bulleted list of changes using one marker throughout, nested bullets included              | 512        |
+| 🧪 Testing | An ordered list of verification steps; a step may hold a code block                          | —          |
+| 🔗 Related | A `-` list of issues, pull requests, specs, or docs first (never empty); anything may follow | —          |
 
-> ⚠️ **Strict Validation:** CI validates that all 4 headings (`## 🌰 Summary`, `## 📝 Details`, `## 🧪 Testing`, `## 🔗 Related`) are present and non-empty, and that no HTML template comments (`<!-- ... -->`) remain. If there is no tracking issue, link to the relevant spec, files, or documentation in `🔗 Related`.
+> ⚠️ **Strict Validation:** CI validates that all 4 headings (`## 🌰 Summary`, `## 📝 Details`, `## 🧪 Testing`, `## 🔗 Related`) are present and non-empty, that each holds only the shape in the table above and stays within its word limit, and that no HTML template comments (`<!-- ... -->`) remain. Words are counted as `wc -w` would. In Summary, Details, and Testing, a paragraph, heading, or code block sitting beside the list fails the section: indent a code block under its Testing step instead. Details may use `-`, `*`, or `+`, but only one of them, as markdownlint's MD004 requires. Related only has to open with its `-` list; an attribution line or any other closing content may follow. If there is no tracking issue, link to the relevant spec, files, or documentation in `🔗 Related`.
 
 ## Step-by-Step Workflow
 
@@ -198,10 +198,13 @@ Adds a user profile page where users can view and edit their information.
 
 ## 🧪 Testing
 
-```bash
-nx run lexico-web:vitest
-nx run lexico-web:develop  # Navigate to /profile
-```
+1. Run the unit tests:
+
+   ```bash
+   nx run lexico-web:vitest
+   ```
+
+2. Run `nx run lexico-web:develop` and navigate to `/profile`.
 
 ## 🔗 Related
 
@@ -249,7 +252,7 @@ All PRs must pass these checks before merging:
 | -------------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
 | Branch Name          | `validate-branch-name`                                 | Branch follows naming conventions                                                                                                |
 | PR Title             | `commitlint`                                           | Title follows commit message format                                                                                              |
-| PR Body              | Section validation                                     | Required sections: 🌰 Summary, 📝 Details, 🧪 Testing, 🔗 Related                                                                |
+| PR Body              | `validation pull-request-body`                         | Required sections: 🌰 Summary, 📝 Details, 🧪 Testing, 🔗 Related, each in its shape and within its word limit                   |
 | Release Significance | `validation pull-request-release-significance`         | Title's type is at least as significant as the most significant commit, and the title shares at least one scope with each commit |
 | Lint                 | `nx affected --target=lint-code`                       | Every static check: ESLint, oxlint, oxfmt, typecheck, spell-check, knip, and more                                                |
 | Test                 | `nx affected --target=vitest --configuration=coverage` | Unit and integration tests against the coverage gates                                                                            |
@@ -358,8 +361,8 @@ Before creating the PR, verify:
 - [ ] All changes are committed and pushed to remote
 - [ ] Title follows `<type>(<scope>): <gitmoji> <subject>` format (max 128 chars)
 - [ ] Subject uses imperative mood and lowercase after gitmoji
-- [ ] Description includes Summary, Details, and Testing sections
-- [ ] Related issues and documentation are linked in the Related section
+- [ ] Description includes Summary (one paragraph, ≤ 48 words), Details (bullets only, one marker, ≤ 512 words), and Testing (an ordered list only) sections
+- [ ] Related issues and documentation are linked in the Related section, opening with a `-` list
 - [ ] The title's type and scopes are at least as release-significant as every commit on the branch — see [Release Significance](../commit-code/SKILL.md#release-significance)
 - [ ] Local CI checks pass: `nx affected --target=lint-code --configuration=check --base=main && nx affected --target=vitest --configuration=coverage --base=main`
 
@@ -383,12 +386,8 @@ Adds autocomplete suggestions to the dictionary search input.
 
 ## 🧪 Testing
 
-```bash
-nx run lexico-web:vitest
-nx run lexico-web:develop
-```
-
-1. Navigate to search page and type a query.
+1. Run `nx run lexico-web:vitest`.
+2. Run `nx run lexico-web:develop`, navigate to the search page, and type a query.
 
 ## 🔗 Related
 
@@ -412,10 +411,12 @@ Fixes incorrect timezone handling for ephemeris calculations near DST boundaries
 
 ## 🧪 Testing
 
-```bash
-nx run caelundas-cli:vitest:unit
-nx run caelundas-cli:vitest:integration
-```
+1. Run both suites:
+
+   ```bash
+   nx run caelundas-cli:vitest:unit
+   nx run caelundas-cli:vitest:integration
+   ```
 
 ## 🔗 Related
 
@@ -443,12 +444,12 @@ Adds comprehensive CONTRIBUTING.md with setup instructions and guidelines.
 
 ## 🔗 Related
 
-- <!-- No related issues or documentation links -->
+- [CONTRIBUTING.md](.github/CONTRIBUTING.md), the guide this adds.
 ```
 
 ### Dependency Update PR
 
-````text
+```text
 Title: chore(dependencies): ⬆️ upgrade tanstack router to v1.50
 
 ## 🌰 Summary
@@ -463,28 +464,25 @@ Updates TanStack Router to latest version with bug fixes.
 
 ## 🧪 Testing
 
-```bash
-nx run lexico-web:vitest
-nx run lexico-web:develop
-```
-
-1. All routes should work as before.
+1. Run `nx run lexico-web:vitest`.
+2. Run `nx run lexico-web:develop` and confirm every route works as before.
 
 ## 🔗 Related
 
-- <!-- No related issues or documentation links -->
-````
+- [TanStack Router releases](https://github.com/TanStack/router/releases)
+```
 
 ## Troubleshooting
 
-| Issue             | Cause                     | Solution                                                                |
-| ----------------- | ------------------------- | ----------------------------------------------------------------------- |
-| CI failing        | Code issues               | Run lint, typecheck, test locally                                       |
-| Merge conflicts   | Branch out of date        | Rebase on main                                                          |
-| PR title rejected | Format incorrect          | Follow commit message conventions                                       |
-| PR body rejected  | Missing required sections | Add ## 🌰 Summary, ## 📝 Details, ## 🧪 Testing, ## 🔗 Related sections |
-| Tests failing     | Missing dependencies      | Run `pnpm install`                                                      |
-| Typecheck errors  | Type issues               | Fix TypeScript errors                                                   |
+| Issue             | Cause                                  | Solution                                                                                                   |
+| ----------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| CI failing        | Code issues                            | Run lint, typecheck, test locally                                                                          |
+| Merge conflicts   | Branch out of date                     | Rebase on main                                                                                             |
+| PR title rejected | Format incorrect                       | Follow commit message conventions                                                                          |
+| PR body rejected  | Missing required sections              | Add ## 🌰 Summary, ## 📝 Details, ## 🧪 Testing, ## 🔗 Related sections                                    |
+| PR body rejected  | Section in the wrong shape or too long | Match the [Description Guidelines](#description-guidelines) table; indent code blocks under a Testing step |
+| Tests failing     | Missing dependencies                   | Run `pnpm install`                                                                                         |
+| Typecheck errors  | Type issues                            | Fix TypeScript errors                                                                                      |
 
 If a rebase or force-push update goes wrong, use [restore-code](../restore-code/SKILL.md) to recover from your backup artifact.
 
