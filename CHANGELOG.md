@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.35.5](https://github.com/organizzolini/codebase/compare/v2.35.4...v2.35.5) (2026-10-08)
+
+### 🐛 Bug Fixes
+
+* **ic-suite:** 🐛 exit non-zero when an ic-suite cli command throws ([#1486](https://github.com/organizzolini/codebase/issues/1486)) ([7cd6b5c](https://github.com/organizzolini/codebase/commit/7cd6b5c1af92d56ffd112e2ea5b4d84d91fabbd2)), closes [#1480](https://github.com/organizzolini/codebase/issues/1480) [#1480](https://github.com/organizzolini/codebase/issues/1480) [#1479](https://github.com/organizzolini/codebase/issues/1479) [#1480](https://github.com/organizzolini/codebase/issues/1480)
+
 ## [2.35.4](https://github.com/organizzolini/codebase/compare/v2.35.3...v2.35.4) (2026-10-08)
 
 ### 🐛 Bug Fixes
