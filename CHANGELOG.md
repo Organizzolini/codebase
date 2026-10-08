@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.0](https://github.com/organizzolini/codebase/compare/v2.35.5...v3.0.0) (2026-10-08)
+
+### ⚠ BREAKING CHANGES
+
+* **codependix:** 💥 charge boundary findings to the projects they belong to (#1409)
+
+### ✨ Features
+
+* **codependix:** ✨ print boundary findings in the markdown and json output ([#1415](https://github.com/organizzolini/codebase/issues/1415)) ([5031d07](https://github.com/organizzolini/codebase/commit/5031d07e7b37b41d63311603e16c29cc6efacc7a)), closes [#1409](https://github.com/organizzolini/codebase/issues/1409) [#1401](https://github.com/organizzolini/codebase/issues/1401) [#1221](https://github.com/organizzolini/codebase/issues/1221) [#1409](https://github.com/organizzolini/codebase/issues/1409)
+* **codependix:** 💥 charge boundary findings to the projects they belong to ([#1409](https://github.com/organizzolini/codebase/issues/1409)) ([ff4cce2](https://github.com/organizzolini/codebase/commit/ff4cce25cb7f41a16fbdafcfe61663b910a02c75)), closes [#1201](https://github.com/organizzolini/codebase/issues/1201) [#1400](https://github.com/organizzolini/codebase/issues/1400) [#1221](https://github.com/organizzolini/codebase/issues/1221) [#1201](https://github.com/organizzolini/codebase/issues/1201) [#1218](https://github.com/organizzolini/codebase/issues/1218)
+
+### 📝 Documentation
+
+* **codependix:** 📝 add an example for each boundary attribution rule ([#1419](https://github.com/organizzolini/codebase/issues/1419)) ([3da2f6e](https://github.com/organizzolini/codebase/commit/3da2f6e499ee2a25d3c7037ed43b72127df2d1b9)), closes [#1402](https://github.com/organizzolini/codebase/issues/1402) [#1221](https://github.com/organizzolini/codebase/issues/1221) [#1415](https://github.com/organizzolini/codebase/issues/1415) [#1409](https://github.com/organizzolini/codebase/issues/1409)
+
 ## [2.35.5](https://github.com/organizzolini/codebase/compare/v2.35.4...v2.35.5) (2026-10-08)
 
 ### 🐛 Bug Fixes
