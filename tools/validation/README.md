@@ -13,6 +13,7 @@ nx run validation:start:pull-request-metadata     # labels and assignees against
 nx run validation:start:pull-request-body         # the four headings, non-empty sections, and no unfilled template comment
 nx run validation:start:catalog-manifests         # catalog:/workspace:* in every manifest
 nx run validation:start:lockfile                  # pnpm-lock.yaml against the manifests
+nx run validation:verify-publishable-packages     # pack ic-suite, install the tarballs, run the plugins
 ```
 
 It is the one-sided counterpart to
@@ -43,6 +44,7 @@ authentication checks stay in shell — see [AGENTS.md](AGENTS.md).
 | `pull-request-body` | Does a pull request description carry all four headings with non-empty sections and no template comment left unfilled? |
 | `catalog-manifests` | Does every workspace manifest pin externals as `catalog:` and internals as `workspace:*`? |
 | `lockfile` | Is `pnpm-lock.yaml` in sync with the manifests? |
+| `publishable-packages` | Do the packed ic-suite packages work when installed by someone else? |
 
 ### `pull-request-metadata`
 
@@ -86,6 +88,31 @@ something else, for the reason the manifest check does not: what "in sync" means
 is pnpm's answer, not one worth reimplementing. `--lockfile-only` means it never
 writes `node_modules`, so it cannot re-link packages under the tasks the
 pre-commit hook runs beside it.
+
+### `publishable-packages`
+
+Installs every publishable ic-suite package from the tarball `pnpm pack` wrote,
+into a throwaway consumer, and uses it the way a user would: each package's
+import typechecks under the consumer's own TypeScript, each command line runs
+`--help`, the project graph builds with `@callidescope/nx`, `@codependix/nx`,
+and `@conformetry/nx` registered, the conformetry generator writes an instance,
+and one inferred target per plugin passes a healthy fixture and fails a broken
+one with the message only a gate that ran would print. Run it through
+`verify-publishable-packages`, which packs first.
+
+**Where the consumer lives is the whole check.** One beneath this workspace
+resolves this workspace's `node_modules`, so an executor path into `./src`, an
+unshipped schema, or a loader resolved from the wrong root all pass there and
+fail for every real user. The consumer is created under
+`PUBLISHABLE_PACKAGES_CONSUMER_ROOT`, or the system temporary directory, and
+the check refuses either when it, or any directory above it, holds a
+`package.json`, `node_modules`, or `pnpm-workspace.yaml`. CI points it at
+`$RUNNER_TEMP`.
+
+It never publishes. Every command runs without a shell, without this
+workspace's `PATH` entries, Nx variables, or registry tokens, and with an
+empty user `.npmrc`; one carrying `publish`, `release`, `login`, or any other
+registry write is refused before it starts.
 
 ## Start
 

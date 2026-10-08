@@ -7,17 +7,18 @@ export const formatPublishablePackagesSuccessMessage = (
   packageCount: number,
   binaryCount: number,
 ): string =>
-  `✔ Verified all ${String(packageCount)} publishable package tarballs and ${String(binaryCount)} CLI binaries cleanly`;
+  `✔ Verified all ${String(packageCount)} publishable package tarballs and ${String(binaryCount)} CLI binaries from a consumer install`;
 
 /**
- * The `-<version>.tgz` suffix `pnpm pack` appends to a tarball name, for any
- * released or prerelease version rather than one fixed version.
+ * Names the tarballs a verification needs and `dist/tarballs` lacks.
  */
-export const TARBALL_VERSION_SUFFIX_PATTERN =
-  /-\d+\.\d+\.\d+(?:-[\da-z.-]+)?\.tgz$/i;
+export const formatMissingTarballsMessage = (
+  files: readonly string[],
+): string =>
+  `❌ dist/tarballs is missing ${files.join(", ")}. Run 'nx run validation:verify-publishable-packages', which packs every publishable package first.`;
 
 /**
  * Message logged when tarballs directory is missing.
  */
 export const TARBALLS_DIRECTORY_MISSING_MESSAGE =
-  "❌ Tarballs directory dist/tarballs does not exist. Run 'nx run-many -t pack' first.";
+  "❌ Tarballs directory dist/tarballs does not exist. Run 'nx run validation:verify-publishable-packages', which packs every publishable package first.";

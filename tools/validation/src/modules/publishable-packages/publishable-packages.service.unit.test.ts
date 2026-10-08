@@ -1,172 +1,130 @@
-import { execFileSync, spawnSync } from "node:child_process";
+import path from "node:path";
 
+import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { LoggerService } from "@codebase/logging";
 
-import { TARBALLS_DIRECTORY_MISSING_MESSAGE } from "./publishable-packages.constants";
+import { PublishablePackagesChecksService } from "./publishable-packages-checks.service";
+import { PublishablePackagesConsumerService } from "./publishable-packages-consumer.service";
+import {
+  formatMissingTarballsMessage,
+  TARBALLS_DIRECTORY_MISSING_MESSAGE,
+} from "./publishable-packages.constants";
 import { PublishablePackagesService } from "./publishable-packages.service";
+
+import type { DeepMocked } from "@golevelup/ts-vitest";
 
 /** Paths the mocked filesystem says exist. */
 const existingPaths = new Set<string>();
 
-/** Readdir mock return values. */
-let mockTarballFiles: string[] = [];
-
-/** ExecFileSync mock error trigger. */
-let typecheckShouldFail = false;
-let tarShouldFail = false;
-
-/** SpawnSync return status. */
-let spawnStatus = 0;
-
-/** Mock manifest JSON string. */
-let mockManifestJson = JSON.stringify({
-  bin: { conformetry: "bin/cli" },
-  name: "@conformetry/cli",
-  publishConfig: { access: "public" },
-});
+/** Mock manifest JSON string for `conformetry-cli`. */
+let mockManifestJson = "";
 
 vi.mock("node:fs", () => ({
   existsSync: vi.fn<(target: string) => boolean>((target: string) =>
     existingPaths.has(target),
   ),
-  mkdirSync: vi.fn<(path: string, options?: unknown) => void>(),
   readdirSync: vi.fn<
-    (
-      targetPath: string,
-      options?: unknown,
-    ) => string[] | { isDirectory: () => boolean; name: string }[]
-  >((targetPath: string, options?: unknown) => {
-    if (typeof options === "object" && options && "withFileTypes" in options) {
-      if (targetPath.endsWith("ic-suite")) {
-        return [
-          { isDirectory: () => true, name: "conformetry" },
-          { isDirectory: () => false, name: "README.md" },
-        ];
-      }
-      if (targetPath.endsWith("conformetry")) {
-        return [
-          { isDirectory: () => true, name: "conformetry-cli" },
-          { isDirectory: () => true, name: "conformetry-core" },
-          { isDirectory: () => false, name: "notes.txt" },
-        ];
-      }
-      return [];
+    (targetPath: string) => { isDirectory: () => boolean; name: string }[]
+  >((targetPath: string) => {
+    if (targetPath.endsWith("ic-suite")) {
+      return [
+        { isDirectory: () => true, name: "conformetry" },
+        { isDirectory: () => false, name: "README.md" },
+      ];
     }
-    return mockTarballFiles;
+    if (targetPath.endsWith("conformetry")) {
+      return [
+        { isDirectory: () => true, name: "conformetry-cli" },
+        { isDirectory: () => true, name: "conformetry-core" },
+        { isDirectory: () => true, name: "conformetry-examples" },
+        { isDirectory: () => false, name: "notes.txt" },
+      ];
+    }
+    return [];
   }),
   readFileSync: vi.fn<(targetPath: string) => string>((targetPath: string) => {
     if (targetPath.endsWith("project.json")) {
-      const name = targetPath.includes("conformetry-core")
-        ? "conformetry-core"
-        : "conformetry-cli";
-      return JSON.stringify({ name, tags: ["type:package"] });
+      const name = path.basename(path.dirname(targetPath));
+      const tags = name.endsWith("examples") ? [] : ["type:package"];
+      return JSON.stringify({ name, tags });
     }
     if (targetPath.includes("conformetry-core")) {
       return JSON.stringify({
         name: "@conformetry/core",
         publishConfig: { access: "public" },
+        version: "0.0.7",
       });
+    }
+    if (targetPath.includes("conformetry-examples")) {
+      return JSON.stringify({ name: "@conformetry/examples", private: true });
     }
     return mockManifestJson;
   }),
-  rmSync: vi.fn<(path: string, options?: unknown) => void>(),
-  writeFileSync: vi.fn<() => void>(),
 }));
 
-vi.mock("node:child_process", () => ({
-  execFileSync: vi.fn<(command: string, args?: string[]) => void>(
-    (_command: string, args?: string[]) => {
-      if (typecheckShouldFail && args?.includes("--noEmit")) {
-        throw new Error("TSC compilation error");
-      }
-      if (
-        tarShouldFail &&
-        args?.some((argument) => argument.includes("cli-bin-verify"))
-      ) {
-        throw new Error("Tar extraction error");
-      }
-    },
-  ),
-  spawnSync: vi.fn<
-    () => { output: unknown[]; status: number; stderr: string; stdout: string }
-  >(() => ({
-    output: [],
-    status: spawnStatus,
-    stderr: spawnStatus === 0 ? "" : "CLI execution error",
-    stdout: "CLI output",
-  })),
-}));
+const WORKSPACE = "/mock-workspace";
+const FAMILY = `${WORKSPACE}/packages/ic-suite/conformetry`;
+const TARBALLS = `${WORKSPACE}/dist/tarballs`;
+const CONSUMER = { directory: "/tmp/consumer", workspaceRoot: WORKSPACE };
 
 describe(PublishablePackagesService, () => {
   let service: PublishablePackagesService;
+  let consumerService: DeepMocked<PublishablePackagesConsumerService>;
+  let checksService: DeepMocked<PublishablePackagesChecksService>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       providers: [
         PublishablePackagesService,
         {
-          provide: LoggerService,
-          useValue: {
-            log: vi.fn<(message: string) => void>(),
-            setContext: vi.fn<(context: string) => void>(),
-          },
+          provide: PublishablePackagesChecksService,
+          useValue: createMock<PublishablePackagesChecksService>(),
         },
+        {
+          provide: PublishablePackagesConsumerService,
+          useValue: createMock<PublishablePackagesConsumerService>(),
+        },
+        { provide: LoggerService, useValue: createMock<LoggerService>() },
       ],
     }).compile();
 
     service = await module.resolve(PublishablePackagesService);
+    consumerService = module.get(PublishablePackagesConsumerService);
+    checksService = module.get(PublishablePackagesChecksService);
   });
 
   beforeEach(() => {
     vi.clearAllMocks();
     existingPaths.clear();
-    existingPaths.add("/mock-workspace/packages/ic-suite");
-    existingPaths.add("/mock-workspace/packages/ic-suite/conformetry");
-    existingPaths.add(
-      "/mock-workspace/packages/ic-suite/conformetry/conformetry-core/package.json",
-    );
-    existingPaths.add(
-      "/mock-workspace/packages/ic-suite/conformetry/conformetry-core/project.json",
-    );
-    existingPaths.add("/mock-workspace/packages/ic-suite/conformetry");
-    existingPaths.add(
-      "/mock-workspace/packages/ic-suite/conformetry/conformetry-cli",
-    );
-    existingPaths.add(
-      "/mock-workspace/packages/ic-suite/conformetry/conformetry-cli/package.json",
-    );
-    existingPaths.add(
-      "/mock-workspace/packages/ic-suite/conformetry/conformetry-cli/project.json",
-    );
-    existingPaths.add(`${process.cwd()}/packages/ic-suite`);
-    existingPaths.add(`${process.cwd()}/packages/ic-suite/conformetry`);
-    existingPaths.add(
-      `${process.cwd()}/packages/ic-suite/conformetry/conformetry-cli`,
-    );
-    existingPaths.add(
-      `${process.cwd()}/packages/ic-suite/conformetry/conformetry-cli/package.json`,
-    );
-    existingPaths.add(
-      `${process.cwd()}/packages/ic-suite/conformetry/conformetry-cli/project.json`,
-    );
-    mockTarballFiles = [
-      "conformetry-cli-0.0.1.tgz",
-      "codometer-cli-0.0.1.tgz",
-      "callidescope-cli-0.0.1.tgz",
-      "codependix-cli-0.0.1.tgz",
-    ];
+    for (const name of [
+      "conformetry-cli",
+      "conformetry-core",
+      "conformetry-examples",
+    ]) {
+      existingPaths.add(`${FAMILY}/${name}/package.json`);
+      existingPaths.add(`${FAMILY}/${name}/project.json`);
+    }
+    existingPaths.add(`${WORKSPACE}/packages/ic-suite`);
     mockManifestJson = JSON.stringify({
-      bin: { conformetry: "bin/cli" },
+      bin: { conformetry: "dist/src/main.js" },
       name: "@conformetry/cli",
       publishConfig: { access: "public" },
+      version: "0.0.7",
     });
-    typecheckShouldFail = false;
-    tarShouldFail = false;
-    spawnStatus = 0;
+    consumerService.createConsumer.mockReturnValue(CONSUMER);
+    consumerService.installConsumer.mockReturnValue([]);
+    checksService.verifyConsumer.mockReturnValue([]);
   });
+
+  /** Marks `dist/tarballs` and every publishable package's tarball present. */
+  const packAll = (): void => {
+    existingPaths.add(TARBALLS);
+    existingPaths.add(`${TARBALLS}/conformetry-cli-0.0.7.tgz`);
+    existingPaths.add(`${TARBALLS}/conformetry-core-0.0.7.tgz`);
+  };
 
   it("is defined", () => {
     expect.hasAssertions();
@@ -174,15 +132,31 @@ describe(PublishablePackagesService, () => {
   });
 
   describe("resolvePublishablePackages", () => {
-    it("returns empty array when packages/ic-suite directory does not exist", () => {
+    it("returns no packages when packages/ic-suite does not exist", () => {
       expect.hasAssertions();
-
-      const packages = service.resolvePublishablePackages("/non-existent");
-
-      expect(packages).toStrictEqual([]);
+      expect(service.resolvePublishablePackages("/non-existent")).toStrictEqual(
+        [],
+      );
     });
 
-    it("discovers publishable packages with various bin structures", () => {
+    it("keeps only published packages, sorted by name", () => {
+      expect.hasAssertions();
+      expect(service.resolvePublishablePackages(WORKSPACE)).toStrictEqual([
+        {
+          binary: "conformetry",
+          name: "@conformetry/cli",
+          tarball: "conformetry-cli",
+          version: "0.0.7",
+        },
+        {
+          name: "@conformetry/core",
+          tarball: "conformetry-core",
+          version: "0.0.7",
+        },
+      ]);
+    });
+
+    it("names a binary after the manifest's bin field", () => {
       expect.hasAssertions();
 
       mockManifestJson = JSON.stringify({
@@ -190,226 +164,110 @@ describe(PublishablePackagesService, () => {
         publishConfig: { access: "public" },
       });
 
-      let packages = service.resolvePublishablePackages(process.cwd());
-
-      expect(packages[0]?.binary).toBeUndefined();
+      expect(
+        service.resolvePublishablePackages(WORKSPACE)[0]?.binary,
+      ).toBeUndefined();
 
       mockManifestJson = JSON.stringify({
-        bin: "bin/cli",
+        bin: "dist/src/main.js",
         name: "@conformetry/cli",
         publishConfig: { access: "public" },
       });
 
-      packages = service.resolvePublishablePackages(process.cwd());
-
-      expect(packages[0]?.binary).toBe("conformetry-cli");
-
-      mockManifestJson = JSON.stringify({
-        bin: { conformetry: "bin/cli" },
-        name: "@conformetry/cli",
-        publishConfig: { access: "public" },
-      });
-
-      packages = service.resolvePublishablePackages(process.cwd());
-
-      expect(packages[0]?.binary).toBe("conformetry");
+      expect(service.resolvePublishablePackages(WORKSPACE)[0]?.binary).toBe(
+        "conformetry-cli",
+      );
     });
   });
 
   describe("verifyPublishablePackages", () => {
-    it("fails with an error message when dist/tarballs directory is missing", () => {
+    it("fails when dist/tarballs does not exist", () => {
+      expect.hasAssertions();
+      expect(service.verifyPublishablePackages(WORKSPACE)).toStrictEqual({
+        binaryCount: 1,
+        messages: [TARBALLS_DIRECTORY_MISSING_MESSAGE],
+        packageCount: 2,
+        succeeded: false,
+      });
+      expect(consumerService.createConsumer).not.toHaveBeenCalled();
+    });
+
+    it("fails before installing when a package has no tarball", () => {
       expect.hasAssertions();
 
-      const result = service.verifyPublishablePackages("/mock-workspace");
+      existingPaths.add(TARBALLS);
+      existingPaths.add(`${TARBALLS}/conformetry-cli-0.0.7.tgz`);
 
-      expect(result.succeeded).toBe(false);
-      expect(result.messages).toStrictEqual([
-        TARBALLS_DIRECTORY_MISSING_MESSAGE,
+      expect(
+        service.verifyPublishablePackages(WORKSPACE).messages,
+      ).toStrictEqual([
+        formatMissingTarballsMessage(["conformetry-core-0.0.7.tgz"]),
       ]);
+      expect(consumerService.createConsumer).not.toHaveBeenCalled();
     });
 
-    it("verifies cleanly when dist/tarballs exists and child processes exit with 0", () => {
+    it("installs every package into a consumer and checks it", () => {
       expect.hasAssertions();
 
-      existingPaths.add("/mock-workspace/dist/tarballs");
-      existingPaths.add(
-        "/mock-workspace/dist/tarballs/conformetry-cli-0.0.1.tgz",
+      packAll();
+      const result = service.verifyPublishablePackages(WORKSPACE);
+
+      expect(result).toStrictEqual({
+        binaryCount: 1,
+        messages: [],
+        packageCount: 2,
+        succeeded: true,
+      });
+      expect(consumerService.createConsumer).toHaveBeenCalledWith({
+        publishablePackages: service.resolvePublishablePackages(WORKSPACE),
+        tarballsDirectory: TARBALLS,
+        workspaceRoot: WORKSPACE,
+      });
+      expect(checksService.verifyConsumer).toHaveBeenCalledWith(
+        CONSUMER,
+        service.resolvePublishablePackages(WORKSPACE),
       );
-      existingPaths.add(
-        "/mock-workspace/dist/tarballs/codometer-cli-0.0.1.tgz",
+      expect(consumerService.removeConsumer).toHaveBeenCalledWith(CONSUMER);
+    });
+
+    it("reports a failed install without checking the consumer", () => {
+      expect.hasAssertions();
+
+      packAll();
+      consumerService.installConsumer.mockReturnValue(["❌ install failed"]);
+
+      expect(service.verifyPublishablePackages(WORKSPACE)).toMatchObject({
+        messages: ["❌ install failed"],
+        succeeded: false,
+      });
+      expect(checksService.verifyConsumer).not.toHaveBeenCalled();
+      expect(consumerService.removeConsumer).toHaveBeenCalledWith(CONSUMER);
+    });
+
+    it("reports every failed check", () => {
+      expect.hasAssertions();
+
+      packAll();
+      checksService.verifyConsumer.mockReturnValue(["❌ one", "❌ two"]);
+
+      expect(service.verifyPublishablePackages(WORKSPACE)).toMatchObject({
+        messages: ["❌ one", "❌ two"],
+        succeeded: false,
+      });
+    });
+
+    it("removes the consumer even when a check throws", () => {
+      expect.hasAssertions();
+
+      packAll();
+      checksService.verifyConsumer.mockImplementation(() => {
+        throw new Error("Refusing to run publish");
+      });
+
+      expect(() => service.verifyPublishablePackages(WORKSPACE)).toThrow(
+        "Refusing to run publish",
       );
-      existingPaths.add(
-        "/mock-workspace/dist/tarballs/callidescope-cli-0.0.1.tgz",
-      );
-      existingPaths.add(
-        "/mock-workspace/dist/tarballs/codependix-cli-0.0.1.tgz",
-      );
-
-      const result = service.verifyPublishablePackages("/mock-workspace");
-
-      expect(result.succeeded).toBe(true);
-      expect(result.messages).toStrictEqual([]);
-    });
-
-    it("unpacks a tarball of any version into its scoped package directory", () => {
-      expect.hasAssertions();
-
-      existingPaths.add("/mock-workspace/dist/tarballs");
-      mockTarballFiles = ["conformetry-cli-1.2.3.tgz"];
-
-      service.verifyPublishablePackages("/mock-workspace");
-
-      const extractionTargets = vi
-        .mocked(execFileSync)
-        .mock.calls.filter(([command]) => command === "tar")
-        .map(([, args]) => args?.[args.indexOf("-C") + 1]);
-
-      expect(extractionTargets).toContainEqual(
-        expect.stringMatching(/\/node_modules\/@conformetry\/cli$/),
-      );
-    });
-
-    it("runs each CLI binary from the tarball named for its manifest version", () => {
-      expect.hasAssertions();
-
-      existingPaths.add("/mock-workspace/dist/tarballs");
-      mockTarballFiles = ["conformetry-cli-1.2.3.tgz"];
-      mockManifestJson = JSON.stringify({
-        bin: { conformetry: "bin/cli" },
-        name: "@conformetry/cli",
-        publishConfig: { access: "public" },
-        version: "1.2.3",
-      });
-
-      service.verifyPublishablePackages("/mock-workspace");
-
-      const cliTarballs = vi
-        .mocked(execFileSync)
-        .mock.calls.filter(([, args]) =>
-          args?.some((argument) => argument.includes("cli-bin-verify")),
-        )
-        .map(([, args]) => args?.[args.indexOf("-xzf") + 1]);
-
-      expect(cliTarballs).toStrictEqual([
-        "/mock-workspace/dist/tarballs/conformetry-cli-1.2.3.tgz",
-      ]);
-    });
-
-    it("uses process.cwd when workspaceRoot is passed", () => {
-      expect.hasAssertions();
-
-      existingPaths.add(`${process.cwd()}/dist/tarballs`);
-
-      const result = service.verifyPublishablePackages(process.cwd());
-
-      expect(result.succeeded).toBe(true);
-      expect(result.messages).toStrictEqual([]);
-    });
-
-    it("verifies cleanly when bin is missing or an empty object in package.json", () => {
-      expect.hasAssertions();
-
-      existingPaths.add("/mock-workspace/dist/tarballs");
-      mockManifestJson = JSON.stringify({
-        name: "@conformetry/cli",
-        publishConfig: { access: "public" },
-      });
-
-      let result = service.verifyPublishablePackages("/mock-workspace");
-
-      expect(result.succeeded).toBe(true);
-      expect(result.messages).toStrictEqual([]);
-
-      mockManifestJson = JSON.stringify({
-        bin: {},
-        name: "@conformetry/cli",
-        publishConfig: { access: "public" },
-      });
-
-      result = service.verifyPublishablePackages("/mock-workspace");
-
-      expect(result.succeeded).toBe(true);
-      expect(result.messages).toStrictEqual([]);
-
-      mockManifestJson = JSON.stringify({
-        bin: { otherBinary: "bin/cli" },
-        name: "@conformetry/cli",
-        publishConfig: { access: "public" },
-      });
-
-      result = service.verifyPublishablePackages("/mock-workspace");
-
-      expect(result.succeeded).toBe(true);
-      expect(result.messages).toStrictEqual([]);
-    });
-
-    it("verifies cleanly when bin is a string in package.json during CLI binary check", () => {
-      expect.hasAssertions();
-
-      existingPaths.add("/mock-workspace/dist/tarballs");
-      mockManifestJson = JSON.stringify({
-        bin: "bin/cli",
-        name: "@conformetry/cli",
-        publishConfig: { access: "public" },
-      });
-
-      const result = service.verifyPublishablePackages("/mock-workspace");
-
-      expect(result.succeeded).toBe(true);
-      expect(result.messages).toStrictEqual([]);
-    });
-
-    it("reports failure when CLI binary exits with non-zero status code and empty stderr", () => {
-      expect.hasAssertions();
-
-      existingPaths.add("/mock-workspace/dist/tarballs");
-      spawnStatus = 1;
-
-      const result = service.verifyPublishablePackages("/mock-workspace");
-
-      expect(result.succeeded).toBe(false);
-      expect(result.messages.length).toBeGreaterThan(0);
-    });
-
-    it("reports failure when typecheck fails for a package", () => {
-      expect.hasAssertions();
-
-      existingPaths.add("/mock-workspace/dist/tarballs");
-      typecheckShouldFail = true;
-
-      const result = service.verifyPublishablePackages("/mock-workspace");
-
-      expect(result.succeeded).toBe(false);
-      expect(result.messages.length).toBeGreaterThan(0);
-      expect(result.messages[0]).toContain("Failed to typecheck");
-    });
-
-    it("reports failure when CLI binary extraction fails", () => {
-      expect.hasAssertions();
-
-      existingPaths.add("/mock-workspace/dist/tarballs");
-      tarShouldFail = true;
-
-      const result = service.verifyPublishablePackages("/mock-workspace");
-
-      expect(result.succeeded).toBe(false);
-      expect(result.messages.length).toBeGreaterThan(0);
-      expect(result.messages[0]).toContain("Failed to execute CLI binary");
-    });
-
-    it("reports failure when CLI binary execution throws an error", () => {
-      expect.hasAssertions();
-
-      existingPaths.add("/mock-workspace/dist/tarballs");
-      vi.mocked(spawnSync).mockImplementationOnce(() => {
-        throw new Error("Spawn execution failed");
-      });
-
-      const result = service.verifyPublishablePackages("/mock-workspace");
-
-      expect(result.succeeded).toBe(false);
-      expect(result.messages.length).toBeGreaterThan(0);
-      expect(result.messages[0]).toContain("Failed to execute CLI binary");
+      expect(consumerService.removeConsumer).toHaveBeenCalledWith(CONSUMER);
     });
   });
 });

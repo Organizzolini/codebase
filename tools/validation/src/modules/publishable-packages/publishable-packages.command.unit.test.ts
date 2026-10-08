@@ -102,4 +102,20 @@ describe(PublishablePackagesCommand, () => {
 
     expect(errorSpy).toHaveBeenCalledWith("Error 1");
   });
+
+  it("exits with code 1 when verification throws", async () => {
+    expect.hasAssertions();
+
+    vi.mocked(service.verifyPublishablePackages).mockImplementation(() => {
+      throw new Error("Refusing to run publish");
+    });
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const processExitSpy = mockProcessExit();
+
+    await expect(command.run()).rejects.toThrow("process.exit:1");
+
+    processExitSpy.mockRestore();
+
+    expect(errorSpy).toHaveBeenCalledWith("Error: Refusing to run publish");
+  });
 });
