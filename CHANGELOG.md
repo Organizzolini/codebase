@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.35.2](https://github.com/organizzolini/codebase/compare/v2.35.1...v2.35.2) (2026-10-08)
+
+### 🐛 Bug Fixes
+
+* **caelundas:** 🐛 name every body identically across events ([#1407](https://github.com/organizzolini/codebase/issues/1407)) ([7068538](https://github.com/organizzolini/codebase/commit/7068538a56c26f25bd44262b4ca7c98d7f007fff)), closes [#1349](https://github.com/organizzolini/codebase/issues/1349) [#1350](https://github.com/organizzolini/codebase/issues/1350) [#1351](https://github.com/organizzolini/codebase/issues/1351)
+
 ## [2.35.1](https://github.com/organizzolini/codebase/compare/v2.35.0...v2.35.1) (2026-10-08)
 
 ### 🐛 Bug Fixes
