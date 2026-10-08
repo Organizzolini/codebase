@@ -40,16 +40,17 @@ export function assertReferenceEvents(
       ),
   );
   const problems = [...failures, ...unexpected];
-  if (problems.length === 0) {
-    return;
+  if (problems.length > 0) {
+    expect.fail(
+      [
+        `${problems.length} of ${fixture.events.length + (fixture.absent?.length ?? 0)} reference checks failed for "${fixture.name}" (${fixture.source.name}, retrieved ${fixture.retrieved}):`,
+        ...problems,
+      ].join("\n"),
+    );
   }
 
-  expect.fail(
-    [
-      `${problems.length} of ${fixture.events.length + (fixture.absent?.length ?? 0)} reference checks failed for "${fixture.name}" (${fixture.source.name}, retrieved ${fixture.retrieved}):`,
-      ...problems,
-    ].join("\n"),
-  );
+  // Counts as an assertion on the passing path, so `expect.hasAssertions()` holds.
+  expect(problems).toHaveLength(0);
 }
 
 /**

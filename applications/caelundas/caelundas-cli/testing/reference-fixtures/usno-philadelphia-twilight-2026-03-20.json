@@ -1,0 +1,33 @@
+{
+  "events": [
+    {
+      "note": "USNO: Begin Civil Twilight 06:37 EDT (UTC-4)",
+      "start": "2026-03-20T10:37:00Z",
+      "summary": "🌄 Civil Dawn"
+    },
+    {
+      "note": "USNO: End Civil Twilight 19:40 EDT (UTC-4)",
+      "start": "2026-03-20T23:40:00Z",
+      "summary": "🌇 Civil Dusk"
+    },
+    {
+      "end": "2026-03-20T23:40:00Z",
+      "note": "Daylight runs from civil dawn to civil dusk: USNO 06:37 to 19:40 EDT (UTC-4)",
+      "start": "2026-03-20T10:37:00Z",
+      "summary": "☀️ Daylight"
+    }
+  ],
+  "name": "Philadelphia civil twilights on 20 March 2026",
+  "retrieved": "2026-10-07",
+  "source": {
+    "name": "US Naval Observatory, Astronomical Applications Department: Rise, Set and Transit API (one day)",
+    "url": "https://aa.usno.navy.mil/api/rstt/oneday?date=2026-03-20&coords=39.949309,-75.17169&tz=-4&dst=false"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-03-21",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-03-20"
+  }
+}

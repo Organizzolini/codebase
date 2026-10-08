@@ -78,5 +78,6 @@ tredicile
 trine
 undecile
 undecuple
+USNO
 yods
 zodiac
