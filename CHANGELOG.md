@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.34.1](https://github.com/organizzolini/codebase/compare/v2.34.0...v2.34.1) (2026-10-08)
+
+### ⚡ Performance Improvements
+
+* **lexico:** ⚡️ paginate literature connections in sql instead of in memory ([#1322](https://github.com/organizzolini/codebase/issues/1322)) ([d9e3d6b](https://github.com/organizzolini/codebase/commit/d9e3d6bf79c2cfa585ef8981b5848b7e24974c27)), closes [#1320](https://github.com/organizzolini/codebase/issues/1320) [#1180](https://github.com/organizzolini/codebase/issues/1180) [#1179](https://github.com/organizzolini/codebase/issues/1179) [#1170](https://github.com/organizzolini/codebase/issues/1170) [#1311](https://github.com/organizzolini/codebase/issues/1311) [#1320](https://github.com/organizzolini/codebase/issues/1320)
+
+### ♻️ Code Refactoring
+
+* **caelundas:** ♻️ use the CalendarEvent entity as caelundas' only event type ([#1393](https://github.com/organizzolini/codebase/issues/1393)) ([17e5a2e](https://github.com/organizzolini/codebase/commit/17e5a2ea8c06fd696083b4992c05edafa50ba800)), closes [#1340](https://github.com/organizzolini/codebase/issues/1340) [#1263](https://github.com/organizzolini/codebase/issues/1263) [#1310](https://github.com/organizzolini/codebase/issues/1310) [#1278](https://github.com/organizzolini/codebase/issues/1278)
+
 ## [2.34.0](https://github.com/organizzolini/codebase/compare/v2.33.7...v2.34.0) (2026-10-08)
 
 ### ✨ Features
