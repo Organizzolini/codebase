@@ -24,8 +24,13 @@ import path from "node:path";
  * undefined", so that wording alone does not identify the cause. A run killed
  * for memory does some work first; one killed for an over-long argument dies
  * instantly with no output at all. See `getStagedFilesFlags`.
+ *
+ * In CI it is doubled, for the release commit, whose hook checks every bumped
+ * package. v2.34.0's took 11m40s over 718 tasks with a critical path of 2m15s,
+ * on a 4-CPU runner. The heaviest tasks, `codebase:codependix` and
+ * `callidescope-gate`, peak near 1.6 GB, so 8 stay under the runner's 16 GB.
  */
-const ANALYSIS_PARALLELISM = 4;
+const ANALYSIS_PARALLELISM = process.env["CI"] ? 8 : 4;
 
 /**
  * Renders staged paths as one workspace-relative `--files=` flag each.
