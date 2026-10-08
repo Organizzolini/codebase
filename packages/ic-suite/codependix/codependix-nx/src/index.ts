@@ -1,6 +1,8 @@
 // 📤 Exports
 import path from "node:path";
 
+import { logger } from "@nx/devkit";
+
 import { resolvePluginService } from "./modules/plugin/plugin-context.utilities";
 import { resolveToolInputs } from "./modules/plugin/plugin-inputs.utilities";
 import { PROJECT_CONFIGURATION_GLOB } from "./modules/plugin/plugin.constants";
@@ -44,7 +46,10 @@ const createNodes: CreateNodes = [
     const targetsByProjectRoot = pluginService.inferTargets({
       options,
       projectConfigurationFiles,
-      toolInputs: resolveToolInputs(context.workspaceRoot),
+      toolInputs: resolveToolInputs({
+        logger,
+        workspaceRoot: context.workspaceRoot,
+      }),
       workspaceRoot: context.workspaceRoot,
     });
 
