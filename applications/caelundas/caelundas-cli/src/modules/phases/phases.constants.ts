@@ -21,6 +21,9 @@ export const MARTIAN_CATEGORY = "Martian";
  */
 export const MAXIMUM_BRILLIANCY_PHASE_ANGLE_DEGREES = 160;
 
+/** Elongation from the Sun, in degrees, at which an inner planet rises out of or sets into its glare. */
+export const RISE_SET_ELONGATION_DEGREES = 6;
+
 export const MORNING_RISE_CATEGORY = "Morning Rise";
 export const MORNING_SET_CATEGORY = "Morning Set";
 export const EVENING_RISE_CATEGORY = "Evening Rise";

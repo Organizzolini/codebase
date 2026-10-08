@@ -5,9 +5,11 @@ import { LoggerService } from "@codebase/logging";
 import { MARGIN_MINUTES } from "../caelundas/caelundas.constants";
 import { EphemerisService } from "../ephemeris/ephemeris.service";
 import { MathService } from "../math/math.service";
-import { TwilightsService } from "../twilights/twilights.service";
 
-import { MAXIMUM_BRILLIANCY_PHASE_ANGLE_DEGREES } from "./phases.constants";
+import {
+  MAXIMUM_BRILLIANCY_PHASE_ANGLE_DEGREES,
+  RISE_SET_ELONGATION_DEGREES,
+} from "./phases.constants";
 
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
@@ -46,8 +48,6 @@ export class PhaseCalculationService {
   }
 
   // 🔐 Private Fields
-
-  private readonly riseSetThreshold = TwilightsService.degreesByTwilight.civil;
 
   // 🔑 Public Fields
 
@@ -253,6 +253,10 @@ export class PhaseCalculationService {
    * crescent near inferior conjunction, past
    * {@link MAXIMUM_BRILLIANCY_PHASE_ANGLE_DEGREES}, and a planet lost in the
    * Sun's glare, closer to it than the rise and set threshold.
+   *
+   * This gate measures the true separation while rise and set use the
+   * longitude gap; near an inferior conjunction far from the ecliptic the
+   * two differ, and the phase-angle gate covers that difference.
    */
   isBrightest(args: BrightnessesArguments): boolean {
     const { currentMagnitude, nextMagnitudes, previousMagnitudes } = args;
@@ -264,7 +268,7 @@ export class PhaseCalculationService {
       this.getElongationAngle(
         [args.currentLongitudePlanet, args.currentLatitudePlanet],
         [args.currentLongitudeSun, args.currentLatitudeSun],
-      ) >= this.riseSetThreshold
+      ) >= RISE_SET_ELONGATION_DEGREES
     );
   }
 
@@ -372,8 +376,8 @@ export class PhaseCalculationService {
     );
 
     return (
-      previousAngle < this.riseSetThreshold &&
-      currentAngle >= this.riseSetThreshold
+      previousAngle < RISE_SET_ELONGATION_DEGREES &&
+      currentAngle >= RISE_SET_ELONGATION_DEGREES
     );
   }
 
@@ -398,8 +402,8 @@ export class PhaseCalculationService {
     );
 
     return (
-      previousAngle > this.riseSetThreshold &&
-      currentAngle <= this.riseSetThreshold
+      previousAngle > RISE_SET_ELONGATION_DEGREES &&
+      currentAngle <= RISE_SET_ELONGATION_DEGREES
     );
   }
 
