@@ -248,7 +248,7 @@ describe(CalendarService, () => {
         .slice(1) ?? []) {
         expect(component).toMatch(/TZOFFSETFROM:[+-]\d{4}/);
         expect(component).toMatch(/TZOFFSETTO:[+-]\d{4}/);
-        expect(component).toMatch(/DTSTART:\d{8}T\d{6}\n/);
+        expect(component).toMatch(/DTSTART:\d{8}T\d{6}\r\n/);
       }
     });
 
@@ -292,11 +292,11 @@ describe(CalendarService, () => {
         timezone: "Australia/Sydney",
       });
       const opening =
-        /X-LIC-LOCATION:[^\n]+\n([\s\S]*?)END:(?:STANDARD|DAYLIGHT)/.exec(
+        /X-LIC-LOCATION:[^\r\n]+\r\n([\s\S]*?)END:(?:STANDARD|DAYLIGHT)/.exec(
           calendar,
         )?.[1];
 
-      expect(opening).toMatch(/^BEGIN:DAYLIGHT\n/);
+      expect(opening).toMatch(/^BEGIN:DAYLIGHT\r\n/);
       expect(opening).toContain("TZOFFSETTO:+1100");
     });
 
