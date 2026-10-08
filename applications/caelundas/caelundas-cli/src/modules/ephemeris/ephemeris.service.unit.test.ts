@@ -132,7 +132,10 @@ describe(EphemerisService, () => {
                 }) => DistanceEphemeris
               >()
               .mockReturnValue({
-                "2024-03-21T00:00:00.000Z": { distance: 1.01 },
+                "2024-03-21T00:00:00.000Z": {
+                  distance: 1.01,
+                  distanceSpeed: 0,
+                },
               }),
             computeNodeBodyMinutes: vi
               .fn<
@@ -317,7 +320,7 @@ describe(EphemerisService, () => {
 
     it("returns distance values", () => {
       const ephemeris: DistanceEphemeris = {
-        "2024-03-21T00:00:00.000Z": { distance: 1.01 },
+        "2024-03-21T00:00:00.000Z": { distance: 1.01, distanceSpeed: 0 },
       };
 
       expect(
