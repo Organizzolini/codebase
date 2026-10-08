@@ -268,9 +268,36 @@ describe(CalendarService, () => {
         timezone: "Australia/Sydney",
       });
 
-      expect(calendar).toContain("TZOFFSETTO:+1100");
-      expect(calendar).toContain("BEGIN:DAYLIGHT");
-      expect(calendar).toContain("TZOFFSETTO:+1000");
+      expect(calendar).toMatch(
+        /BEGIN:DAYLIGHT[\s\S]*?TZOFFSETTO:\+1100[\s\S]*?END:DAYLIGHT/,
+      );
+      expect(calendar).toMatch(
+        /BEGIN:STANDARD[\s\S]*?TZOFFSETTO:\+1000[\s\S]*?END:STANDARD/,
+      );
+    });
+
+    it("labels the opening observance DAYLIGHT when daylight time is in force", () => {
+      const calendar = service.buildFileContent({
+        description: "A test calendar description",
+        events: [
+          {
+            categories: [],
+            description: "d",
+            end: moment.utc("2026-01-15T00:00:00Z"),
+            start: moment.utc("2026-01-15T00:00:00Z"),
+            summary: "s",
+          },
+        ],
+        name: "Test Calendar",
+        timezone: "Australia/Sydney",
+      });
+      const opening =
+        /X-LIC-LOCATION:[^\n]+\n([\s\S]*?)END:(?:STANDARD|DAYLIGHT)/.exec(
+          calendar,
+        )?.[1];
+
+      expect(opening).toMatch(/^BEGIN:DAYLIGHT\n/);
+      expect(opening).toContain("TZOFFSETTO:+1100");
     });
 
     it("keeps the instant of an event in the repeated fall-back hour", () => {

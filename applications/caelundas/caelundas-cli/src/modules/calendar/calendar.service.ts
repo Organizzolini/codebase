@@ -57,11 +57,11 @@ export class CalendarService {
   private buildObservance(parameters: {
     abbreviation: string;
     from: number;
+    kind: "DAYLIGHT" | "STANDARD";
     localStart: moment.Moment;
     to: number;
   }): string {
-    const { abbreviation, from, localStart, to } = parameters;
-    const kind = to > from ? "DAYLIGHT" : "STANDARD";
+    const { abbreviation, from, kind, localStart, to } = parameters;
     return `BEGIN:${kind}
 TZOFFSETFROM:${this.formatOffset(from)}
 TZOFFSETTO:${this.formatOffset(to)}
@@ -96,6 +96,9 @@ END:${kind}`;
       this.buildObservance({
         abbreviation: zone.abbr(window.start),
         from: initialOffset,
+        kind: moment.tz(window.start, timezone).isDST()
+          ? "DAYLIGHT"
+          : "STANDARD",
         localStart: moment.utc("1970-01-01T00:00:00"),
         to: initialOffset,
       }),
@@ -104,6 +107,9 @@ END:${kind}`;
         return this.buildObservance({
           abbreviation: zone.abbr(transition),
           from,
+          kind: moment.tz(transition, timezone).isDST()
+            ? "DAYLIGHT"
+            : "STANDARD",
           localStart: moment.utc(transition).add(from, "minutes"),
           to: -zone.utcOffset(transition),
         });
