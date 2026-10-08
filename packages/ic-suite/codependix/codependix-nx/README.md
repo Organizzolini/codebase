@@ -113,17 +113,39 @@ verdict, a change to that code would otherwise replay every cached pass:
   invalidates the cache. Nx hashes an external dependency together with
   everything it depends on, so the `@codependix/*` packages beneath those are
   covered too.
-- In either case, `{workspaceRoot}/tsconfig.json`. The loader
-  (`@swc-node/register`) takes its compiler options from `SWC_NODE_PROJECT` or
-  `TS_NODE_PROJECT`, else from the `tsconfig.json` in the gate's working
-  directory — the workspace root — and never from a package's own, so that
-  one file shapes every gate's verdict.
+- In either case, `{workspaceRoot}/tsconfig.json` and every tsconfig it
+  `extends`. The loader (`@swc-node/register`) takes its compiler options —
+  `emitDecoratorMetadata` among them, which decides how NestJS sources
+  compile — from `SWC_NODE_PROJECT` or `TS_NODE_PROJECT`, else from the
+  `tsconfig.json` in the gate's working directory, the workspace root, and
+  never from a package's own. That file reaches its bases through `extends`,
+  so inference follows the chain as TypeScript does — a string or an array,
+  through every level, comments and trailing commas allowed:
+  - A base in the workspace, by relative path or through a package of the
+    same workspace, is another `{workspaceRoot}` input. So is one that is
+    missing or cannot be parsed — the edit that fixes it invalidates the
+    gate — though what it would extend cannot be followed, and Nx's logger
+    warns naming it.
+  - A base an installed package provides, such as `@tsconfig/node24` —
+    named by package or by a path into `node_modules` — is named in an
+    `externalDependencies` input, so a version bump invalidates the cache,
+    but only when the root `package.json` declares the package. Nx fails
+    every task whose `externalDependencies` names a package missing from its
+    graph, so an undeclared one is skipped with a warning instead: declare it
+    in the root `package.json` to have it hashed.
+  - A base outside the workspace, or a package base that resolves to no file,
+    cannot be named by any input, and is skipped with a warning.
+
+  A `SWC_NODE_PROJECT` or `TS_NODE_PROJECT` pointing elsewhere is not
+  followed: add that file to the target's inputs yourself.
 
 Each workspace package is resolved on its own, through its entry rather than
 its manifest, so one that cannot be resolved costs only its own inputs: Nx's
 logger warns naming it, and every other package keeps its inputs. If the
 command line itself cannot be resolved while the graph is built, the tool
 inputs are left out and the warning names it — never failing the graph. The
+tsconfig chain is resolved apart from the command line, so either failing
+keeps the other's inputs. The
 target declares no `configurations`, so an aggregator run with
 `--configuration=check` falls through to the defaults.
 

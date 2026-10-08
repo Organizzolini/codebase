@@ -95,7 +95,25 @@ export const TOOL_PACKAGE_GLOBS = [
  *
  * `@swc-node/register` takes them from `SWC_NODE_PROJECT` or
  * `TS_NODE_PROJECT`, else from `tsconfig.json` in its working directory,
- * which is the workspace root. So this one file shapes every gate's
- * verdict, whichever way the command line was installed.
+ * which is the workspace root — and from every base that file `extends`. So
+ * this file and its chain shape every gate's verdict, whichever way the
+ * command line was installed. The input a gate keeps on its own when the
+ * chain cannot be followed.
  */
 export const WORKSPACE_TSCONFIG_INPUT = "{workspaceRoot}/tsconfig.json";
+
+/**
+ * The file a base package provides when `extends` names the package alone,
+ * with no path inside it — as TypeScript resolves it, short of a `tsconfig`
+ * field in the package's manifest, which is rare enough to leave out.
+ */
+export const PACKAGE_TSCONFIG_FILENAME = "tsconfig.json";
+
+/**
+ * Why a tsconfig base that names no package was skipped, as the warning
+ * naming it phrases it.
+ */
+export const SKIPPED_BASE_REASONS = {
+  outside: "it lies outside the workspace",
+  unresolved: "it resolves to no file",
+} as const;
