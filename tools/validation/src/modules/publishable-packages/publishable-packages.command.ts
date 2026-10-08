@@ -6,6 +6,8 @@ import { LoggerService } from "@codebase/logging";
 import { formatPublishablePackagesSuccessMessage } from "./publishable-packages.constants";
 import { PublishablePackagesService } from "./publishable-packages.service";
 
+import type { PublishablePackagesVerificationResult } from "./publishable-packages.types";
+
 /**
  * CLI command that verifies publishable package tarballs and CLI binaries.
  */
@@ -36,13 +38,23 @@ export class PublishablePackagesCommand extends CommandRunner {
 
   /**
    * Executes the publishable package tarball verification and exits 0 on success, 1 on failure.
+   *
+   * A thrown error exits 1 here because nest-commander's default handler
+   * prints it and still exits 0, which would read a refusal — a consumer
+   * location inside a workspace, a command that would publish — as a pass.
    */
   public async run(): Promise<void> {
     await Promise.resolve();
 
-    const result = this.publishablePackagesService.verifyPublishablePackages(
-      process.cwd(),
-    );
+    let result: PublishablePackagesVerificationResult;
+    try {
+      result = this.publishablePackagesService.verifyPublishablePackages(
+        process.cwd(),
+      );
+    } catch (error) {
+      console.error(String(error));
+      process.exit(1);
+    }
 
     if (result.succeeded) {
       console.info(

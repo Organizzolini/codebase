@@ -426,8 +426,9 @@ NX_WORKSPACE_DATA_DIRECTORY=/tmp/nx-data MACHINE_ID_FILES=/tmp/machine-id \
 | ------ | ------- | ------------ |
 | `bound-base-to-push.sh` | setup, after `nx-set-shas`, on a CI push with `nx-base: push-before` | Moves `NX_BASE` to the push's previous tip (`BEFORE`), keeping it when that is empty, all zeros, or not an ancestor of `NX_HEAD` |
 | `run-affected.sh` | `run-affected` | Runs `nx affected` for `TARGET` over `--base`/`--head`, or over `--stdin` with spelling files dropped when the change set has any and `INCLUDE_SPELLING` is not `true` |
+| `verify-publishable-packages.sh` | the 📦 Publishable Packages leg | Runs `validation:verify-publishable-packages` whole when an ic-suite package or `validation` is affected, dropping spelling files the same way, and skips otherwise |
 
-Both read everything from the environment, so either can be run locally. With
+All three read everything from the environment, so any of them can be run locally. With
 `pnpm` stubbed to print what it would have run:
 
 ```bash

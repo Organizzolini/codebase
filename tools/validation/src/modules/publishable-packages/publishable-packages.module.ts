@@ -2,6 +2,9 @@ import { Module } from "@nestjs/common";
 
 import { LoggerModule } from "@codebase/logging";
 
+import { PublishablePackagesChecksService } from "./publishable-packages-checks.service";
+import { PublishablePackagesConsumerService } from "./publishable-packages-consumer.service";
+import { PublishablePackagesProcessService } from "./publishable-packages-process.service";
 import { PublishablePackagesCommand } from "./publishable-packages.command";
 import { PublishablePackagesService } from "./publishable-packages.service";
 
@@ -12,6 +15,12 @@ import { PublishablePackagesService } from "./publishable-packages.service";
   controllers: [],
   exports: [PublishablePackagesCommand, PublishablePackagesService],
   imports: [LoggerModule],
-  providers: [PublishablePackagesCommand, PublishablePackagesService],
+  providers: [
+    PublishablePackagesChecksService,
+    PublishablePackagesCommand,
+    PublishablePackagesConsumerService,
+    PublishablePackagesProcessService,
+    PublishablePackagesService,
+  ],
 })
 export class PublishablePackagesModule {}
