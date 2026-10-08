@@ -5,6 +5,11 @@ import type { Asteroid, Node, Planet } from "../caelundas/caelundas.types";
 
 /** Swiss Ephemeris flag for converting ecliptic coordinates to horizontal (azimuth/elevation). */
 export const ECLIPTIC_TO_HORIZONTAL_FLAG: number = constants.SE_ECL2HOR;
+/**
+ * Observer height above sea level, in metres, for topocentric positions.
+ * Sea level matches the US Naval Observatory, which ignores site elevation.
+ */
+export const OBSERVER_ELEVATION_METERS = 0;
 /** Swiss Ephemeris flag selecting the proleptic Gregorian calendar for Julian Day conversions. */
 export const GREGORIAN_CALENDAR_FLAG: number = constants.SE_GREG_CAL;
 /** Swiss Ephemeris flag requesting osculating (instantaneous) orbital elements for the Moon. */
@@ -17,6 +22,12 @@ export const OSCULATING_ORBITAL_ELEMENTS_FLAG: number =
  */
 export const SWISS_EPHEMERIS_FLAGS: number =
   constants.SEFLG_SWIEPH | constants.SEFLG_SPEED;
+/**
+ * {@link SWISS_EPHEMERIS_FLAGS} plus `SEFLG_TOPOCTR`: the position seen from
+ * the observer that `set_topo` placed, parallax included, not from Earth's centre.
+ */
+export const TOPOCENTRIC_EPHEMERIS_FLAGS: number =
+  SWISS_EPHEMERIS_FLAGS | constants.SEFLG_TOPOCTR;
 
 /** Maps each planet name to its Swiss Ephemeris integer body identifier. */
 export const swissEphemerisConstantByPlanet: Record<Planet, number> = {

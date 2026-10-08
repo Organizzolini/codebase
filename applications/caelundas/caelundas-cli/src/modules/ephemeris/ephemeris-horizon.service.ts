@@ -51,17 +51,10 @@ export class EphemerisHorizonService {
     for (const date of this.time.generateMinutes(start, end)) {
       const { julianDayEphemerisTime, julianDayUniversalTime } =
         this.time.dateToJulianDays(date);
-      const { distance, latitude, longitude } =
-        this.coordinate.getBodyCoordinatesWithDistance(
-          body,
-          julianDayEphemerisTime,
-        );
       ephemeris[date.toISOString()] = this.computeAzimuthElevationForMinute({
         body,
-        distance,
+        julianDayEphemerisTime,
         julianDayUniversalTime,
-        latitude,
-        longitude,
         observerLatitude,
         observerLongitude,
       });
@@ -70,26 +63,31 @@ export class EphemerisHorizonService {
   }
 
   /**
-   * Computes horizontal coordinates (azimuth, elevation) for a single body at a specific moment.
+   * Computes horizontal coordinates (azimuth, elevation) for a single body at a specific moment,
+   * from its topocentric position: parallax is applied, so the Moon sits where the observer sees it.
    * Used internally by aggregation service. Returns azimuth and elevation angles.
    */
   public computeAzimuthElevationForMinute(args: {
     body: Exclude<Body, Node>;
-    distance: number;
+    julianDayEphemerisTime: number;
     julianDayUniversalTime: number;
-    latitude: number;
-    longitude: number;
     observerLatitude: number;
     observerLongitude: number;
   }): { azimuth: number; elevation: number } {
     const {
-      distance,
+      body,
+      julianDayEphemerisTime,
       julianDayUniversalTime,
-      latitude,
-      longitude,
       observerLatitude,
       observerLongitude,
     } = args;
+    const { distance, latitude, longitude } =
+      this.coordinate.getTopocentricBodyCoordinates({
+        body,
+        julianDayEphemerisTime,
+        observerLatitude,
+        observerLongitude,
+      });
     const azaltResult = azalt(
       julianDayUniversalTime,
       ECLIPTIC_TO_HORIZONTAL_FLAG,
