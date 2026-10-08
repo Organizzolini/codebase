@@ -29,6 +29,7 @@ const fixtureNames = [
   "usno-reykjavik-sun-2026-06-21",
   "usno-tromso-moon-2026-12-20",
   "usno-vigo-evening-twilight-2026-06-20",
+  "horizons-venus-evening-set-2025-03-19",
 ];
 
 describe.each(fixtureNames)("reference fixture %s", (name) => {

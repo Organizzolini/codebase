@@ -58,6 +58,21 @@ export class PhaseCalculationService {
   }
 
   /**
+   * Derives the signed elongation of the planet from the Sun, in (−180°, 180°].
+   *
+   * Positive means the planet lies east of the Sun (ahead of it in
+   * longitude), negative west. The difference is wrapped, so a planet at 4°
+   * Aries is 6° east of a Sun at 28° Pisces rather than 354° west of it.
+   */
+  private getSignedElongation(args: CurrentLongitudeArguments): number {
+    const difference =
+      this.mathService.normalizeDegrees(
+        args.currentLongitudePlanet - args.currentLongitudeSun + 180,
+      ) - 180;
+    return difference === -180 ? 180 : difference;
+  }
+
+  /**
    * Derives one brightness per sample, refusing mismatched sample arrays.
    *
    * The two arrays are read positionally — sample `n`'s distance against
@@ -298,10 +313,10 @@ export class PhaseCalculationService {
   }
 
   /**
-   * Determines whether planet is east of sun.
+   * Determines whether planet is east of sun, by the wrapped signed elongation.
    */
   isEastern(args: CurrentLongitudeArguments): boolean {
-    return args.currentLongitudePlanet > args.currentLongitudeSun;
+    return this.getSignedElongation(args) > 0;
   }
 
   /**
@@ -439,10 +454,10 @@ export class PhaseCalculationService {
   }
 
   /**
-   * Determines whether planet is west of sun.
+   * Determines whether planet is west of sun, by the wrapped signed elongation.
    */
   isWestern(args: CurrentLongitudeArguments): boolean {
-    return args.currentLongitudePlanet < args.currentLongitudeSun;
+    return this.getSignedElongation(args) < 0;
   }
 
   /**
