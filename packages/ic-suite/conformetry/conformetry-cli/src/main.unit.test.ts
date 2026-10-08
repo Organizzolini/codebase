@@ -5,7 +5,7 @@ interface CommandFactoryRunOptions {
   serviceErrorHandler: (error: Error) => void;
 }
 
-const mockLoggerError = vi.fn<(message: unknown) => void>();
+const mockLoggerError = vi.fn<(message: unknown, stack?: string) => void>();
 const mockLoggerSetContext = vi.fn<(context: string) => void>();
 const mockCommandFactoryRun = vi.fn<
   (_module: unknown, _options: CommandFactoryRunOptions) => Promise<void>
@@ -16,8 +16,8 @@ const mockCommandFactoryRun = vi.fn<
 // own package's tests.
 vi.mock("@codebase/logging", () => {
   class MockLoggerService {
-    error(message: unknown): void {
-      mockLoggerError(message);
+    error(message: unknown, stack?: string): void {
+      mockLoggerError(message, stack);
     }
 
     setContext(context: string): void {
@@ -113,7 +113,7 @@ describe("main", () => {
     runOptions.errorHandler(failure);
 
     expect(process.exitCode).toBe(1);
-    expect(mockLoggerError).toHaveBeenCalledWith(failure);
+    expect(mockLoggerError).toHaveBeenCalledWith(failure, undefined);
   });
 
   it("wires service error handler to mark process as failed", async () => {
@@ -125,6 +125,9 @@ describe("main", () => {
     runOptions.serviceErrorHandler(failure);
 
     expect(process.exitCode).toBe(1);
-    expect(mockLoggerError).toHaveBeenCalledWith(failure);
+    expect(mockLoggerError).toHaveBeenCalledWith(
+      failure.message,
+      failure.stack,
+    );
   });
 });
