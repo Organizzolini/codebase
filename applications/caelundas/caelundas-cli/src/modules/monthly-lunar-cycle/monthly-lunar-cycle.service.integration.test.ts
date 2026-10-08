@@ -11,10 +11,7 @@ import { MathService } from "../math/math.service";
 
 import { MonthlyLunarCycleService } from "./monthly-lunar-cycle.service";
 
-import type {
-  CoordinateEphemeris,
-  IlluminationEphemeris,
-} from "../ephemeris/ephemeris.types";
+import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 
 /**
  * Integration tests for lunar phase detection.
@@ -35,20 +32,17 @@ let service: MonthlyLunarCycleService;
 
 /**
  * Builds Sun and Moon ephemerides for the minute before, at and after
- * `minute`, with the Moon `elongations` degrees ahead of the Sun, and a flat
- * illumination that crosses no threshold.
+ * `minute`, with the Moon `elongations` degrees ahead of the Sun.
  */
 function createEphemerides(
   minute: Moment,
   elongations: { current: number; next: number; previous: number },
 ): {
   moonCoordinateEphemeris: CoordinateEphemeris;
-  moonIlluminationEphemeris: IlluminationEphemeris;
   sunCoordinateEphemeris: CoordinateEphemeris;
 } {
   const sunLongitude = 213.4;
   const moonCoordinateEphemeris: CoordinateEphemeris = {};
-  const moonIlluminationEphemeris: IlluminationEphemeris = {};
   const sunCoordinateEphemeris: CoordinateEphemeris = {};
   for (const [offset, elongation] of [
     [-1, elongations.previous],
@@ -64,11 +58,9 @@ function createEphemerides(
       latitude: -4.2,
       longitude: (sunLongitude + elongation) % 360,
     };
-    moonIlluminationEphemeris[timestamp] = { illumination: 40 };
   }
   return {
     moonCoordinateEphemeris,
-    moonIlluminationEphemeris,
     sunCoordinateEphemeris,
   };
 }

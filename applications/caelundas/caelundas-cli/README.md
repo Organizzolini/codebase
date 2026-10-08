@@ -74,7 +74,7 @@ aspect is in orb, the weeks a planet is retrograde.
 | Category | Events |
 | -------- | ------ |
 | Aspects | Major and minor aspects, plus triple, quadruple, quintuple, and sextuple configurations and stelliums |
-| Phases | New moon, first quarter, full moon, last quarter |
+| Phases | New moon, waxing crescent, first quarter, waxing gibbous, full moon, waning gibbous, last quarter, waning crescent |
 | Eclipses | Solar and lunar |
 | Retrogrades | Stations and retrograde periods |
 | Ingresses | Bodies entering a zodiac sign |
@@ -82,6 +82,29 @@ aspect is in orb, the weeks a planet is retrograde.
 | Monthly lunar cycle | Apogee and perigee |
 | Daily cycles | Sunrise, sunset, moonrise, moonset |
 | Twilights | Civil, nautical, and astronomical |
+
+### Moon phases
+
+Every Moon phase is timed by the Moon's apparent geocentric ecliptic longitude
+minus the Sun's, not by how much of the Moon is lit:
+
+| Phase | Moon − Sun longitude |
+| ----- | -------------------- |
+| New Moon | 0° |
+| Waxing Crescent | 45° |
+| First Quarter | 90° |
+| Waxing Gibbous | 135° |
+| Full Moon | 180° |
+| Waning Gibbous | 225° |
+| Last Quarter | 270° |
+| Waning Crescent | 315° |
+
+The four primary phases follow the definition the US Naval Observatory and
+the almanacs publish, and land within two minutes of their times. The
+crescent and gibbous phases begin at the octants halfway between them, so
+each of the eight phases spans 45° of elongation. Illumination would put the
+crescent and gibbous boundaries near 60° and 120°, not halfway, and its
+extremes miss New and Full Moon by up to half an hour.
 
 ## Stored events
 

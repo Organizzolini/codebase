@@ -58,12 +58,6 @@ describe("every 2026 primary Moon phase", () => {
         ...range,
         bodies: ["moon", "sun"],
       });
-    const illuminationEphemerisByBody =
-      ephemerisService.getIlluminationEphemerisByBody({
-        ...range,
-        bodies: ["moon"],
-        coordinates: [0, 0],
-      });
 
     return Array.from({ length: SCAN_MINUTES * 2 + 1 }, (_value, index) =>
       published.clone().add(index - SCAN_MINUTES, "minutes"),
@@ -71,7 +65,6 @@ describe("every 2026 primary Moon phase", () => {
       monthlyLunarCycleService.detect({
         minute,
         moonCoordinateEphemeris: coordinateEphemerisByBody.moon,
-        moonIlluminationEphemeris: illuminationEphemerisByBody.moon,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
       }),
     );

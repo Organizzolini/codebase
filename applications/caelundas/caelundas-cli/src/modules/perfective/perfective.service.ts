@@ -164,7 +164,6 @@ export class PerfectiveService {
       ...this.monthlyLunarCycleService.detect({
         minute,
         moonCoordinateEphemeris: coordinateEphemerisByBody.moon,
-        moonIlluminationEphemeris: illuminationEphemerisByBody.moon,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
       }),
       ...this.annualSolarCycleService.detect({

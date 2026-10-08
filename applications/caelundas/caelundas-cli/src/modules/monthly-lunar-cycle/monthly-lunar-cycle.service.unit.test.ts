@@ -15,10 +15,7 @@ import { MonthlyLunarCycleService } from "./monthly-lunar-cycle.service";
 
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { LunarPhase } from "../caelundas/caelundas.types";
-import type {
-  CoordinateEphemeris,
-  IlluminationEphemeris,
-} from "../ephemeris/ephemeris.types";
+import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 import type { LogData } from "@codebase/logging";
 
 vi.mock("fs", () => ({
@@ -105,16 +102,14 @@ describe(MonthlyLunarCycleService, () => {
    */
   function detectSeries(args: {
     elongations: number[];
-    illuminations?: number[];
     sunLongitudes?: number[];
   }): DetectedCalendarEvent[] {
-    const { elongations, illuminations = [], sunLongitudes = [] } = args;
+    const { elongations, sunLongitudes = [] } = args;
     const start = moment.utc("2026-10-26T04:00:00.000Z");
     const minutes = elongations.map((_elongation, index) =>
       start.clone().add(index, "minutes"),
     );
     const moonCoordinateEphemeris: CoordinateEphemeris = {};
-    const moonIlluminationEphemeris: IlluminationEphemeris = {};
     const sunCoordinateEphemeris: CoordinateEphemeris = {};
     for (const [index, minute] of minutes.entries()) {
       const sunLongitude = sunLongitudes[index] ?? 200;
@@ -127,15 +122,11 @@ describe(MonthlyLunarCycleService, () => {
         latitude: 5,
         longitude: (sunLongitude + elongation) % 360,
       };
-      moonIlluminationEphemeris[minute.toISOString()] = {
-        illumination: illuminations[index] ?? 40,
-      };
     }
     return minutes.slice(1, -1).flatMap((minute) =>
       service.detect({
         minute,
         moonCoordinateEphemeris,
-        moonIlluminationEphemeris,
         sunCoordinateEphemeris,
       }),
     );
@@ -211,29 +202,37 @@ describe(MonthlyLunarCycleService, () => {
       );
     });
 
-    it("reports a crescent when illumination crosses its threshold while waxing", () => {
-      const events = detectSeries({
-        elongations: [55, 55.5, 56, 56.5],
-        illuminations: [24.8, 24.9, 25.1, 25.2],
-      });
+    it.each([
+      {
+        elongations: [44.6, 44.9, 45.2, 45.5],
+        summary: "🌙 🌒 Waxing Crescent Moon",
+      },
+      {
+        elongations: [134.6, 134.9, 135.2, 135.5],
+        summary: "🌙 🌔 Waxing Gibbous Moon",
+      },
+      {
+        elongations: [224.6, 224.9, 225.2, 225.5],
+        summary: "🌙 🌖 Waning Gibbous Moon",
+      },
+      {
+        elongations: [314.6, 314.9, 315.2, 315.5],
+        summary: "🌙 🌘 Waning Crescent Moon",
+      },
+    ])(
+      "reports $summary once when Moon minus Sun longitude reaches its octant",
+      ({ elongations, summary }) => {
+        const events = detectSeries({ elongations });
 
-      expect(events.map((event) => event.summary)).toStrictEqual([
-        "🌙 🌒 Waxing Crescent Moon",
-      ]);
-    });
+        expect(events.map((event) => event.summary)).toStrictEqual([summary]);
+      },
+    );
 
-    it("ignores illumination when timing a primary phase", () => {
-      // Illumination peaks two minutes before the Moon reaches 180°.
-      const events = detectSeries({
-        elongations: [179, 179.3, 179.6, 179.9, 180.2, 180.5],
-        illuminations: [99, 99.9, 99.8, 99.7, 99.6, 99.5],
-      });
+    it("does not report a crescent where the Moon is 25% illuminated", () => {
+      // 25% illuminated is about 60° from the Sun, not the 45° octant.
+      const events = detectSeries({ elongations: [59.4, 59.9, 60.4, 60.9] });
 
-      expect(
-        events
-          .filter((event) => event.summary === "🌙 🌕 Full Moon")
-          .map((event) => event.start.toISOString()),
-      ).toStrictEqual(["2026-10-26T04:03:00.000Z"]);
+      expect(events).toStrictEqual([]);
     });
   });
 
@@ -521,31 +520,6 @@ describe(MonthlyLunarCycleService, () => {
   describe("private utility methods", () => {
     beforeEach(() => {
       vi.restoreAllMocks();
-    });
-
-    describe("illuminationByPhase", () => {
-      it("has correct illumination values for all phases", () => {
-        expect(MonthlyLunarCycleService.illuminationByPhase.new).toBe(0);
-        expect(
-          MonthlyLunarCycleService.illuminationByPhase["waxing crescent"],
-        ).toBe(0.25);
-        expect(
-          MonthlyLunarCycleService.illuminationByPhase["first quarter"],
-        ).toBe(0.5);
-        expect(
-          MonthlyLunarCycleService.illuminationByPhase["waxing gibbous"],
-        ).toBe(0.75);
-        expect(MonthlyLunarCycleService.illuminationByPhase.full).toBe(1);
-        expect(
-          MonthlyLunarCycleService.illuminationByPhase["waning gibbous"],
-        ).toBe(0.75);
-        expect(
-          MonthlyLunarCycleService.illuminationByPhase["last quarter"],
-        ).toBe(0.5);
-        expect(
-          MonthlyLunarCycleService.illuminationByPhase["waning crescent"],
-        ).toBe(0.25);
-      });
     });
 
     it("returns null when progressive categories contain an unknown lunar phase", () => {
