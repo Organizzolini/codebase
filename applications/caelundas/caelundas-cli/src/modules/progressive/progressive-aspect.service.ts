@@ -3,6 +3,8 @@ import _ from "lodash";
 
 import { LoggerService } from "@codebase/logging";
 
+import { bodyDisplayName } from "../caelundas/caelundas.types";
+
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { TypedAspectParts } from "./progressive.types";
 
@@ -37,7 +39,7 @@ export class ProgressiveAspectService {
     bodies: readonly string[];
     categories: string[];
   }): string {
-    const bodyLabels = new Set(bodies.map((body) => _.startCase(body)));
+    const bodyLabels = new Set(bodies.map((body) => bodyDisplayName(body)));
     const aspectLabels = new Set(aspects.map((aspect) => _.startCase(aspect)));
 
     const bodiesCapitalized = _.sortBy(
@@ -92,6 +94,15 @@ export class ProgressiveAspectService {
       groupedAspectEvents,
     )) {
       if (!aspectGroupKey) {
+        this.logger.warn(
+          "📐 Skipping progressive aspect events with an empty group key",
+          undefined,
+          {
+            aspectCategory,
+            events: aspectGroupEvents.length,
+            sample: aspectGroupEvents[0]?.categories,
+          },
+        );
         continue;
       }
 
@@ -237,7 +248,7 @@ export class ProgressiveAspectService {
     isAspect: (value: string) => value is TAspect;
     isBody: (value: string) => value is TBody;
   }): TypedAspectParts<TAspect, TBody> {
-    const bodyLabels = new Set(bodies.map((body) => _.startCase(body)));
+    const bodyLabels = new Set(bodies.map((body) => bodyDisplayName(body)));
     const aspectLabels = new Set(aspects.map((aspect) => _.startCase(aspect)));
 
     const bodiesCapitalized = _.sortBy(

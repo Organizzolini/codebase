@@ -6,7 +6,7 @@ import {
   MARGIN_MINUTES,
   retrogradeBodies,
 } from "../caelundas/caelundas.constants";
-import { capitalize } from "../caelundas/caelundas.types";
+import { bodyDisplayName, capitalize } from "../caelundas/caelundas.types";
 import {
   symbolByBody,
   symbolByOrbitalDirection,
@@ -133,7 +133,7 @@ export class RetrogradesService {
     const start = beginningEvent.start;
     const end = endingEvent.start;
 
-    const planetCapitalized = planet.charAt(0).toUpperCase() + planet.slice(1);
+    const planetCapitalized = bodyDisplayName(planet);
 
     // Extract planet symbol from beginning event summary (first non-whitespace character sequence)
     const symbolMatch = /^(\S+)/.exec(beginningEvent.summary);
@@ -247,7 +247,7 @@ export class RetrogradesService {
   }): DetectedCalendarEvent {
     const { body, direction, timestamp } = args;
 
-    const bodyCapitalized = capitalize(body);
+    const bodyCapitalized = bodyDisplayName(body);
     const orbitalDirectionCapitalized = capitalize(direction);
 
     const retrogradeBodySymbol = symbolByBody[body];
@@ -364,7 +364,7 @@ export class RetrogradesService {
 
     // Process each planet separately
     for (const planet of retrogradeBodies) {
-      const planetCapitalized = capitalize(planet);
+      const planetCapitalized = bodyDisplayName(planet);
       const beginnings = retrogradeEvents.filter(
         (event) =>
           event.description === `${planetCapitalized} Stationary Retrograde`,

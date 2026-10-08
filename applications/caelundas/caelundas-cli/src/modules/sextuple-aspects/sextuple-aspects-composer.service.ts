@@ -4,7 +4,7 @@ import _ from "lodash";
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { ProgressiveCompoundEventService } from "../aspects/progressive-compound-event.service";
 import { aspectBodies as sextupleAspectBodies } from "../caelundas/caelundas.constants";
-import { groupByToMap } from "../caelundas/caelundas.types";
+import { bodyDisplayName, groupByToMap } from "../caelundas/caelundas.types";
 import {
   symbolByBody,
   symbolBySextupleAspect,
@@ -359,7 +359,7 @@ export class SextupleAspectsComposerService {
     } = eventArguments;
 
     const bodiesList = [body1, body2, body3, body4, body5, body6];
-    const bodiesSorted = _.sortBy(bodiesList.map((b) => _.startCase(b)));
+    const bodiesSorted = _.sortBy(bodiesList.map((b) => bodyDisplayName(b)));
     const symbols = bodiesList.map((b) => symbolByBody[b]);
     const aspectSymbol = symbolBySextupleAspect[sextupleAspect];
 
@@ -393,7 +393,7 @@ export class SextupleAspectsComposerService {
 
     return _.groupBy(sextupleAspectEvents, (event) => {
       const filteredPlanets = event.categories.filter((category) =>
-        sextupleAspectBodies.map((b) => _.startCase(b)).includes(category),
+        sextupleAspectBodies.map((b) => bodyDisplayName(b)).includes(category),
       );
       const planets = _.sortBy(filteredPlanets);
       const aspect = event.categories.find((c) =>

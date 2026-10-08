@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import _ from "lodash";
 
-import { capitalize } from "../caelundas/caelundas.types";
+import { bodyDisplayName } from "../caelundas/caelundas.types";
 import { symbolByBody } from "../caelundas/symbol-caelundas.constants";
 
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
@@ -91,8 +91,8 @@ export class AspectEventFormattingService {
       timestamp,
     } = args;
 
-    const body1Capitalized = capitalize(body1);
-    const body2Capitalized = capitalize(body2);
+    const body1Capitalized = bodyDisplayName(body1);
+    const body2Capitalized = bodyDisplayName(body2);
     const baseCategories = [
       "Astronomy",
       "Astrology",

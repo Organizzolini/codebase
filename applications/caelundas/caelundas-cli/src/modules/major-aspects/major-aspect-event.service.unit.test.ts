@@ -34,6 +34,21 @@ describe(MajorAspectEventService, () => {
   });
 
   describe("buildMajorAspectEvent", () => {
+    it("names multi-word bodies in start case, matching the progressive grouping", () => {
+      const event = service.buildMajorAspectEvent({
+        body1: "moon",
+        body2: "north lunar node",
+        longitudeBody1: 10,
+        longitudeBody2: 10,
+        phase: "forming",
+        timestamp: moment.utc("2026-02-17T12:00:00.000Z"),
+      });
+
+      expect(event.description).toBe("Moon forming conjunct North Lunar Node");
+      expect(event.categories).toContain("North Lunar Node");
+      expect(event.categories).not.toContain("North lunar node");
+    });
+
     it("creates perfective conjunction event", () => {
       const timestamp = moment.utc("2024-03-21T12:00:00.000Z");
       const event = service.buildMajorAspectEvent({

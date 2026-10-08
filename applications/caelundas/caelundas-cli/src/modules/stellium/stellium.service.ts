@@ -4,6 +4,7 @@ import _ from "lodash";
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { ProgressiveCompoundEventService } from "../aspects/progressive-compound-event.service";
 import { aspectBodies as stelliumBodies } from "../caelundas/caelundas.constants";
+import { bodyDisplayName } from "../caelundas/caelundas.types";
 import {
   symbolByBody,
   symbolByStellium,
@@ -119,7 +120,7 @@ export class StelliumService {
     timestamp: Moment;
   }): DetectedCalendarEvent {
     const { bodies, phase, timestamp } = parameters;
-    const bodiesCapitalized = bodies.map((b) => _.startCase(b));
+    const bodiesCapitalized = bodies.map((b) => bodyDisplayName(b));
     const bodySymbols = bodies.map((b) => symbolByBody[b]);
     const stelliumType = `${bodies.length}-body`;
     const stelliumName = stelliumNameBySize[bodies.length];
@@ -261,7 +262,7 @@ export class StelliumService {
   private stelliumGroupKey(event: DetectedCalendarEvent): string {
     const planets = _.sortBy(
       event.categories.filter((category) =>
-        stelliumBodies.map((b) => _.startCase(b)).includes(category),
+        stelliumBodies.map((b) => bodyDisplayName(b)).includes(category),
       ),
     );
     const stelliumType = event.categories.find(

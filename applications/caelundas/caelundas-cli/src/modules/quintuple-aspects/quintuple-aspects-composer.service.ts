@@ -5,7 +5,7 @@ import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { CompoundPhaseService } from "../aspects/compound-phase.service";
 import { ProgressiveCompoundEventService } from "../aspects/progressive-compound-event.service";
 import { aspectBodies as quintupleAspectBodies } from "../caelundas/caelundas.constants";
-import { groupByToMap } from "../caelundas/caelundas.types";
+import { bodyDisplayName, groupByToMap } from "../caelundas/caelundas.types";
 import {
   symbolByBody,
   symbolByQuintupleAspect,
@@ -300,7 +300,7 @@ export class QuintupleAspectsComposerService {
     } = eventArguments;
 
     const bodiesList = [body1, body2, body3, body4, body5];
-    const bodiesSorted = _.sortBy(bodiesList.map((b) => _.startCase(b)));
+    const bodiesSorted = _.sortBy(bodiesList.map((b) => bodyDisplayName(b)));
     const symbols = bodiesList.map((b) => symbolByBody[b]);
     const aspectSymbol = symbolByQuintupleAspect[quintupleAspect];
 
@@ -334,7 +334,7 @@ export class QuintupleAspectsComposerService {
 
     return _.groupBy(quintupleAspectEvents, (event) => {
       const filteredPlanets = event.categories.filter((category) =>
-        quintupleAspectBodies.map((b) => _.startCase(b)).includes(category),
+        quintupleAspectBodies.map((b) => bodyDisplayName(b)).includes(category),
       );
       const planets = _.sortBy(filteredPlanets);
       const aspect = event.categories.find((c) => ["Pentagram"].includes(c));
