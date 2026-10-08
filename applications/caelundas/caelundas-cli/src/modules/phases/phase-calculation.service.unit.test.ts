@@ -47,49 +47,6 @@ describe(PhaseCalculationService, () => {
     expect(service).toBeDefined();
   });
 
-  it("derives brightness values from current and margin samples", () => {
-    const brightnesses = service.getBrightnesses({
-      currentDistance: 2,
-      currentIllumination: 8,
-      nextDistances: [2, 4],
-      nextIlluminations: [8, 8],
-      previousDistances: [2, 1],
-      previousIlluminations: [8, 2],
-    });
-
-    expect(brightnesses.currentBrightness).toBe(2);
-    expect(brightnesses.nextBrightnesses).toStrictEqual([2, 0.5]);
-    expect(brightnesses.previousBrightnesses).toStrictEqual([2, 2]);
-  });
-
-  it("throws when brightness distance and illumination lengths differ", () => {
-    expect(() =>
-      service.getBrightnesses({
-        currentDistance: 2,
-        currentIllumination: 8,
-        nextDistances: [2, 4],
-        nextIlluminations: [8],
-        previousDistances: [2, 1],
-        previousIlluminations: [8, 2],
-      }),
-    ).toThrow(
-      "next distances and illuminations arrays must have the same length",
-    );
-  });
-
-  it("throws when a brightness illumination sample is missing", () => {
-    expect(() =>
-      service.getBrightnesses({
-        currentDistance: 2,
-        currentIllumination: 8,
-        nextDistances: [2, 4],
-        nextIlluminations: [8, undefined] as unknown as number[],
-        previousDistances: [2, 1],
-        previousIlluminations: [8, 2],
-      }),
-    ).toThrow("Missing illumination at index 1");
-  });
-
   it("detects rise and set threshold crossings", () => {
     mathService.getAngle.mockReturnValueOnce(5).mockReturnValueOnce(7);
 
@@ -157,14 +114,11 @@ describe(PhaseCalculationService, () => {
 
     expect(
       service.isEasternBrightest({
-        currentDistance: 2,
-        currentIllumination: 8,
         currentLongitudePlanet: 10,
         currentLongitudeSun: 4,
-        nextDistances: [2],
-        nextIlluminations: [8],
-        previousDistances: [2],
-        previousIlluminations: [8],
+        currentMagnitude: -4,
+        nextMagnitudes: [-3],
+        previousMagnitudes: [-3],
       }),
     ).toBe(false);
 
@@ -217,17 +171,21 @@ describe(PhaseCalculationService, () => {
     isWesternSpy.mockRestore();
   });
 
-  it("identifies brightest samples when current brightness exceeds surrounding values", () => {
+  it("identifies brightest samples when the current magnitude is below the surrounding values", () => {
     expect(
       service.isBrightest({
-        currentDistance: 1,
-        currentIllumination: 10,
-        nextDistances: [1, 1],
-        nextIlluminations: [8, 7],
-        previousDistances: [1, 1],
-        previousIlluminations: [8, 7],
+        currentMagnitude: -4.8,
+        nextMagnitudes: [-4.7, -4.6],
+        previousMagnitudes: [-4.6, -4.7],
       }),
     ).toBe(true);
+    expect(
+      service.isBrightest({
+        currentMagnitude: -4.8,
+        nextMagnitudes: [-4.7, -4.6],
+        previousMagnitudes: [-4.9, -4.7],
+      }),
+    ).toBe(false);
   });
 
   it("formats timezone-aware ISO timestamps", () => {

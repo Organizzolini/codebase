@@ -132,6 +132,7 @@ describe(MonthlyLunarCycleService, () => {
       const illumination = illuminations[index] ?? illuminations.at(-1) ?? 0;
       ephemeris[minute.toISOString()] = {
         illumination,
+        magnitude: 0,
       };
     }
 

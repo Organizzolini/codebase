@@ -33,14 +33,10 @@ const createMockPhaseInputs = (): DetectPlanetaryEventsArguments => {
       longitude: 100,
     },
   };
-  const distanceEphemeris = {
-    "2024-01-01T00:00:00.000Z": {
-      distance: 1,
-    },
-  };
   const illuminationEphemeris = {
     "2024-01-01T00:00:00.000Z": {
       illumination: 50,
+      magnitude: -1,
     },
   };
 
@@ -66,12 +62,6 @@ const createMockPhaseInputs = (): DetectPlanetaryEventsArguments => {
       uranus: ephemeris,
       venus: ephemeris,
       vesta: ephemeris,
-    },
-    distanceEphemerisByBody: {
-      mars: distanceEphemeris,
-      mercury: distanceEphemeris,
-      sun: distanceEphemeris,
-      venus: distanceEphemeris,
     },
     illuminationEphemerisByBody: {
       mars: illuminationEphemeris,

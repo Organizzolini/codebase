@@ -32,7 +32,7 @@ export class EphemerisPhenomenaService {
 
   /**
    * Computes pheno for the Sun at a specific moment.
-   * Sun illumination is always 100%; diameter is computed via pheno_ut if requested.
+   * Sun illumination is always 100%; magnitude and diameter come from pheno_ut.
    *
    * @throws When pheno_ut fails.
    */
@@ -56,18 +56,21 @@ export class EphemerisPhenomenaService {
       swissEphemerisConstant,
       timestamp,
     } = args;
+    if (!needsIllumination && !needsDiameter) return;
+    const result = pheno_ut(
+      julianDayUniversalTime,
+      swissEphemerisConstant,
+      SWISS_EPHEMERIS_FLAGS,
+    );
+    if (result.flag < 0)
+      throw new Error(`pheno_ut failed for ${body}: ${result.error}`);
     if (needsIllumination)
-      illuminationEphemeris[timestamp] = { illumination: 100 };
-    if (needsDiameter) {
-      const result = pheno_ut(
-        julianDayUniversalTime,
-        swissEphemerisConstant,
-        SWISS_EPHEMERIS_FLAGS,
-      );
-      if (result.flag < 0)
-        throw new Error(`pheno_ut failed for ${body}: ${result.error}`);
+      illuminationEphemeris[timestamp] = {
+        illumination: 100,
+        magnitude: result.data[4],
+      };
+    if (needsDiameter)
       diameterEphemeris[timestamp] = { diameter: result.data[3] };
-    }
   }
 
   // 🌎 Public Methods
@@ -106,9 +109,10 @@ export class EphemerisPhenomenaService {
   }
 
   /**
-   * Computes minute-by-minute illumination fraction for requested bodies.
+   * Computes minute-by-minute illumination fraction and apparent magnitude for requested bodies.
    * Illumination is stored as a percentage (0-100). The Sun is always 100%.
-   * Uses pheno_ut() which returns a fraction (0-1); multiplied by 100 for storage.
+   * Uses pheno_ut() which returns a fraction (0-1) in data[1], multiplied by 100
+   * for storage, and the apparent magnitude in data[4].
    *
    * @throws When pheno_ut fails for a non-Sun body.
    */
@@ -124,10 +128,6 @@ export class EphemerisPhenomenaService {
     for (const date of this.time.generateMinutes(start, end)) {
       const { julianDayUniversalTime } = this.time.dateToJulianDays(date);
       const timestamp = date.toISOString();
-      if (body === "sun") {
-        ephemeris[timestamp] = { illumination: 100 };
-        continue;
-      }
       const result = pheno_ut(
         julianDayUniversalTime,
         swissEphemerisConstant,
@@ -136,13 +136,16 @@ export class EphemerisPhenomenaService {
       if (result.flag < 0) {
         throw new Error(`pheno_ut failed for ${body}: ${result.error}`);
       }
-      ephemeris[timestamp] = { illumination: result.data[1] * 100 };
+      ephemeris[timestamp] = {
+        illumination: body === "sun" ? 100 : result.data[1] * 100,
+        magnitude: result.data[4],
+      };
     }
     return ephemeris;
   }
 
   /**
-   * Computes pheno (illumination + diameter) for a non-Sun body at a specific moment.
+   * Computes pheno (illumination, magnitude and diameter) for a non-Sun body at a specific moment.
    * Stores results into the provided ephemeris maps if requested.
    *
    * @throws When pheno_ut fails.
@@ -176,7 +179,10 @@ export class EphemerisPhenomenaService {
       throw new Error(`pheno_ut failed for ${body}: ${result.error}`);
     }
     if (needsIllumination)
-      illuminationEphemeris[timestamp] = { illumination: result.data[1] * 100 };
+      illuminationEphemeris[timestamp] = {
+        illumination: result.data[1] * 100,
+        magnitude: result.data[4],
+      };
     if (needsDiameter)
       diameterEphemeris[timestamp] = { diameter: result.data[3] };
   }

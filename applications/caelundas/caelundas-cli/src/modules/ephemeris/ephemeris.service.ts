@@ -463,4 +463,21 @@ export class EphemerisService {
       ),
     };
   }
+
+  /**
+   * Safely extracts apparent visual magnitude from ephemeris.
+   *
+   * @throws When timestamp or field is missing from ephemeris.
+   */
+  public getMagnitudeFromEphemeris(
+    ephemeris: IlluminationEphemeris,
+    timestamp: string,
+    fieldName: string,
+  ): number {
+    const data = ephemeris[timestamp];
+    if (data?.magnitude === undefined) {
+      throw new Error(`Missing ${fieldName} at ${timestamp}`);
+    }
+    return data.magnitude;
+  }
 }

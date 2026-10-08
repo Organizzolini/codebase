@@ -12,13 +12,14 @@ import { PhaseCalculationService } from "./phase-calculation.service";
 
 import type {
   CoordinateEphemeris,
-  DistanceEphemeris,
   IlluminationEphemeris,
 } from "../ephemeris/ephemeris.types";
 import type { PhaseParameters } from "./phases.types";
 
 /** One minute of a synthetic planet and Sun, `index` minutes from the tested minute. */
 interface SyntheticSample {
+  illumination?: number;
+  magnitude?: number;
   planetLatitude?: number;
   planetLongitude: number;
   sunLongitude: number;
@@ -48,12 +49,17 @@ function gatherParameters(
 ): PhaseParameters {
   const planetCoordinateEphemeris: CoordinateEphemeris = {};
   const sunCoordinateEphemeris: CoordinateEphemeris = {};
-  const distanceEphemeris: DistanceEphemeris = {};
   const illuminationEphemeris: IlluminationEphemeris = {};
 
   for (let index = -MARGIN_MINUTES; index <= MARGIN_MINUTES + 1; index++) {
     const timestamp = minute.clone().add(index, "minutes").toISOString();
-    const { planetLatitude, planetLongitude, sunLongitude } = sample(index);
+    const {
+      illumination,
+      magnitude,
+      planetLatitude,
+      planetLongitude,
+      sunLongitude,
+    } = sample(index);
     planetCoordinateEphemeris[timestamp] = {
       latitude: planetLatitude ?? 0,
       longitude: planetLongitude,
@@ -62,12 +68,13 @@ function gatherParameters(
       latitude: 0,
       longitude: sunLongitude,
     };
-    distanceEphemeris[timestamp] = { distance: 1 };
-    illuminationEphemeris[timestamp] = { illumination: 50 };
+    illuminationEphemeris[timestamp] = {
+      illumination: illumination ?? 50,
+      magnitude: magnitude ?? 0,
+    };
   }
 
   return service.gatherPhaseParameters({
-    distanceEphemeris,
     illuminationEphemeris,
     minute,
     planetCoordinateEphemeris,
@@ -177,6 +184,33 @@ describe(PhaseCalculationService, () => {
 
       expect(service.isElongation(parameters)).toBe(true);
       expect(service.isEasternElongation(parameters)).toBe(true);
+    });
+  });
+
+  describe("greatest brilliancy by apparent magnitude", () => {
+    it("finds the brightest minute where the magnitude is least, though the illuminated fraction keeps growing", () => {
+      const parameters = gatherParameters((index) => ({
+        illumination: 25 + 0.01 * index,
+        magnitude: -4.8 + 0.000_001 * index ** 2,
+        planetLongitude: 140,
+        sunLongitude: 100,
+      }));
+
+      expect(service.isBrightest(parameters)).toBe(true);
+      expect(service.isEasternBrightest(parameters)).toBe(true);
+      expect(service.isWesternBrightest(parameters)).toBe(false);
+    });
+
+    it("finds no brightest minute where only the illuminated fraction peaks and the magnitude keeps dimming", () => {
+      const parameters = gatherParameters((index) => ({
+        illumination: 25 - 0.0001 * index ** 2,
+        magnitude: -4.8 + 0.0001 * index,
+        planetLongitude: 60,
+        sunLongitude: 100,
+      }));
+
+      expect(service.isBrightest(parameters)).toBe(false);
+      expect(service.isWesternBrightest(parameters)).toBe(false);
     });
   });
 });

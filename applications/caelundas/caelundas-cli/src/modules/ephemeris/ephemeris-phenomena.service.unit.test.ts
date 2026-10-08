@@ -15,7 +15,7 @@ vi.mock("sweph", async (importOriginal) => {
   return {
     ...original,
     pheno_ut: vi.fn<typeof pheno_ut>().mockReturnValue({
-      data: [0, 0.75, 0, 0.5, 0, 0] as never,
+      data: [0, 0.75, 0, 0.5, -1.5, 0] as never,
       error: "",
       flag: 258,
     }),
@@ -69,7 +69,7 @@ describe(EphemerisPhenomenaService, () => {
   });
 
   describe("computeIlluminationForBody", () => {
-    it("returns 100 for sun", () => {
+    it("returns 100 and the pheno magnitude for sun", () => {
       const result = service.computeIlluminationForBody({
         body: "sun",
         end: moment.utc("2024-03-21T00:01:00.000Z"),
@@ -77,11 +77,11 @@ describe(EphemerisPhenomenaService, () => {
       });
 
       for (const value of Object.values(result)) {
-        expect(value.illumination).toBe(100);
+        expect(value).toStrictEqual({ illumination: 100, magnitude: -1.5 });
       }
     });
 
-    it("returns pheno illumination percent for moon", () => {
+    it("returns pheno illumination percent and magnitude for moon", () => {
       const result = service.computeIlluminationForBody({
         body: "moon",
         end: moment.utc("2024-03-21T00:01:00.000Z"),
@@ -89,7 +89,7 @@ describe(EphemerisPhenomenaService, () => {
       });
 
       for (const value of Object.values(result)) {
-        expect(value.illumination).toBe(75);
+        expect(value).toStrictEqual({ illumination: 75, magnitude: -1.5 });
       }
     });
   });
@@ -144,7 +144,7 @@ describe(EphemerisPhenomenaService, () => {
       });
 
       expect(illuminationEphemeris).toStrictEqual({
-        "2024-03-21T00:00:00.000Z": { illumination: 100 },
+        "2024-03-21T00:00:00.000Z": { illumination: 100, magnitude: -1.5 },
       });
       expect(diameterEphemeris).toStrictEqual({
         "2024-03-21T00:00:00.000Z": { diameter: 0.5 },
@@ -188,7 +188,7 @@ describe(EphemerisPhenomenaService, () => {
       });
 
       expect(illuminationEphemeris).toStrictEqual({
-        "2024-03-21T00:00:00.000Z": { illumination: 100 },
+        "2024-03-21T00:00:00.000Z": { illumination: 100, magnitude: -1.5 },
       });
       expect(diameterEphemeris).toStrictEqual({});
     });
@@ -230,7 +230,7 @@ describe(EphemerisPhenomenaService, () => {
       });
 
       expect(illuminationEphemeris).toStrictEqual({
-        "2024-03-21T00:00:00.000Z": { illumination: 75 },
+        "2024-03-21T00:00:00.000Z": { illumination: 75, magnitude: -1.5 },
       });
       expect(diameterEphemeris).toStrictEqual({});
     });

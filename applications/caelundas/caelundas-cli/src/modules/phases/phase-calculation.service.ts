@@ -13,7 +13,6 @@ import type {
   Coordinates,
 } from "../ephemeris/ephemeris.types";
 import type {
-  BrightnessArguments,
   BrightnessesArguments,
   BrightnessLongitudeArguments,
   CurrentLongitudeArguments,
@@ -76,17 +75,6 @@ export class PhaseCalculationService {
   }
 
   /**
-   * Derives apparent brightness from illumination and distance.
-   *
-   * Inverse-square: the same illuminated fraction seen twice as far away
-   * reads a quarter as bright. Relative, not a magnitude — only ever compared
-   * against other samples of the same body.
-   */
-  private getBrightness(args: BrightnessArguments): number {
-    return args.illumination / args.distance ** 2;
-  }
-
-  /**
    * Derives the signed elongation of the planet from the Sun, in (−180°, 180°].
    *
    * Positive means the planet lies east of the Sun (ahead of it in
@@ -99,32 +87,6 @@ export class PhaseCalculationService {
         args.currentLongitudePlanet - args.currentLongitudeSun + 180,
       ) - 180;
     return difference === -180 ? 180 : difference;
-  }
-
-  /**
-   * Derives one brightness per sample, refusing mismatched sample arrays.
-   *
-   * The two arrays are read positionally — sample `n`'s distance against
-   * sample `n`'s illumination — so a length mismatch is not a shorter answer
-   * but a wrong one, and the `label` names which margin was malformed.
-   */
-  private mapBrightnessArray(
-    distances: number[],
-    illuminations: number[],
-    label: string,
-  ): number[] {
-    if (distances.length !== illuminations.length) {
-      throw new Error(
-        `${label} distances and illuminations arrays must have the same length`,
-      );
-    }
-    return distances.map((distance, index) => {
-      const illumination = illuminations[index];
-      if (illumination === undefined) {
-        throw new Error(`Missing illumination at index ${index}`);
-      }
-      return this.getBrightness({ distance, illumination });
-    });
   }
 
   // 🌎 Public Methods
@@ -153,15 +115,13 @@ export class PhaseCalculationService {
     args: GatherCurrentEphemerisArguments,
   ): Pick<
     PhaseParameters,
-    | "currentDistance"
-    | "currentIllumination"
     | "currentLatitudePlanet"
     | "currentLatitudeSun"
     | "currentLongitudePlanet"
     | "currentLongitudeSun"
+    | "currentMagnitude"
   > {
     const {
-      distanceEphemeris,
       illuminationEphemeris,
       isoNow,
       planetCoordinateEphemeris,
@@ -173,61 +133,42 @@ export class PhaseCalculationService {
       timestamp: isoNow,
     });
     return {
-      currentDistance: this.ephemerisService.getDistanceFromEphemeris(
-        distanceEphemeris,
-        isoNow,
-        "currentDistance",
-      ),
-      currentIllumination: this.ephemerisService.getIlluminationFromEphemeris(
-        illuminationEphemeris,
-        isoNow,
-        "currentIllumination",
-      ),
       currentLatitudePlanet: position.latitudePlanet,
       currentLatitudeSun: position.latitudeSun,
       currentLongitudePlanet: position.longitudePlanet,
       currentLongitudeSun: position.longitudeSun,
+      currentMagnitude: this.ephemerisService.getMagnitudeFromEphemeris(
+        illuminationEphemeris,
+        isoNow,
+        "currentMagnitude",
+      ),
     };
   }
 
   /**
-   * Gathers margin ephemeris arrays for brightness extrema detection.
+   * Gathers the margin of apparent magnitudes before or after the minute,
+   * for brightness extrema detection.
    */
   gatherMarginEphemeris(
     args: GatherMarginEphemerisArguments,
   ): MarginEphemerisSample {
-    const { direction, distanceEphemeris, illuminationEphemeris, minute } =
-      args;
+    const { direction, illuminationEphemeris, minute } = args;
 
-    const distances = Array.from(
+    const magnitudes = Array.from(
       { length: MARGIN_MINUTES },
       (_index, index) => {
         const m =
           direction === "previous"
             ? minute.clone().subtract(MARGIN_MINUTES - index, "minutes")
             : minute.clone().add(index + 1, "minute");
-        return this.ephemerisService.getDistanceFromEphemeris(
-          distanceEphemeris,
-          m.toISOString(),
-          `${direction}Distance`,
-        );
-      },
-    );
-    const illuminations = Array.from(
-      { length: MARGIN_MINUTES },
-      (_index, index) => {
-        const m =
-          direction === "previous"
-            ? minute.clone().subtract(MARGIN_MINUTES - index, "minutes")
-            : minute.clone().add(index + 1, "minute");
-        return this.ephemerisService.getIlluminationFromEphemeris(
+        return this.ephemerisService.getMagnitudeFromEphemeris(
           illuminationEphemeris,
           m.toISOString(),
-          `${direction}Illumination`,
+          `${direction}Magnitude`,
         );
       },
     );
-    return { distances, illuminations };
+    return { magnitudes };
   }
 
   /**
@@ -235,7 +176,6 @@ export class PhaseCalculationService {
    */
   gatherPhaseParameters(args: GatherPhaseParametersArguments): PhaseParameters {
     const {
-      distanceEphemeris,
       illuminationEphemeris,
       minute,
       planetCoordinateEphemeris,
@@ -245,7 +185,6 @@ export class PhaseCalculationService {
     const isoPrevious = minute.clone().subtract(1, "minute").toISOString();
     const isoNext = minute.clone().add(1, "minute").toISOString();
     const current = this.gatherCurrentEphemeris({
-      distanceEphemeris,
       illuminationEphemeris,
       isoNow,
       planetCoordinateEphemeris,
@@ -253,13 +192,11 @@ export class PhaseCalculationService {
     });
     const previous = this.gatherMarginEphemeris({
       direction: "previous",
-      distanceEphemeris,
       illuminationEphemeris,
       minute,
     });
     const next = this.gatherMarginEphemeris({
       direction: "next",
-      distanceEphemeris,
       illuminationEphemeris,
       minute,
     });
@@ -275,48 +212,16 @@ export class PhaseCalculationService {
     });
     return {
       ...current,
-      nextDistances: next.distances,
-      nextIlluminations: next.illuminations,
       nextLatitudePlanet: nextPosition.latitudePlanet,
       nextLatitudeSun: nextPosition.latitudeSun,
       nextLongitudePlanet: nextPosition.longitudePlanet,
       nextLongitudeSun: nextPosition.longitudeSun,
-      previousDistances: previous.distances,
-      previousIlluminations: previous.illuminations,
+      nextMagnitudes: next.magnitudes,
       previousLatitudePlanet: previousPosition.latitudePlanet,
       previousLatitudeSun: previousPosition.latitudeSun,
       previousLongitudePlanet: previousPosition.longitudePlanet,
       previousLongitudeSun: previousPosition.longitudeSun,
-    };
-  }
-
-  /**
-   * Derives brightnesses from current and margin illumination/distance samples.
-   *
-   * The margins are what make a brightness maximum detectable: a sample is
-   * only brightest if the samples either side of it are dimmer, so all three
-   * are computed together rather than one call at a time.
-   */
-  getBrightnesses(args: BrightnessesArguments): {
-    currentBrightness: number;
-    nextBrightnesses: number[];
-    previousBrightnesses: number[];
-  } {
-    return {
-      currentBrightness: this.getBrightness({
-        distance: args.currentDistance,
-        illumination: args.currentIllumination,
-      }),
-      nextBrightnesses: this.mapBrightnessArray(
-        args.nextDistances,
-        args.nextIlluminations,
-        "next",
-      ),
-      previousBrightnesses: this.mapBrightnessArray(
-        args.previousDistances,
-        args.previousIlluminations,
-        "previous",
-      ),
+      previousMagnitudes: previous.magnitudes,
     };
   }
 
@@ -332,15 +237,16 @@ export class PhaseCalculationService {
   }
 
   /**
-   * Determines whether planet is brightest among previous and next margin samples.
+   * Determines whether the planet is at greatest brilliancy: its apparent
+   * magnitude is lower (brighter) than every margin sample before it and no
+   * higher than every margin sample after it.
    */
   isBrightest(args: BrightnessesArguments): boolean {
-    const { currentBrightness, nextBrightnesses, previousBrightnesses } =
-      this.getBrightnesses(args);
+    const { currentMagnitude, nextMagnitudes, previousMagnitudes } = args;
 
     return (
-      currentBrightness > Math.max(...previousBrightnesses) &&
-      currentBrightness >= Math.max(...nextBrightnesses)
+      currentMagnitude < Math.min(...previousMagnitudes) &&
+      currentMagnitude <= Math.min(...nextMagnitudes)
     );
   }
 

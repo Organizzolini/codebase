@@ -1,0 +1,27 @@
+{
+  "absent": ["♀️🔆 Venus Western Brightest"],
+  "counts": {
+    "♀️🔆 Venus Eastern Brightest": 1
+  },
+  "events": [
+    {
+      "note": "Horizons APmag reaches its least value, -4.804, on a plateau from 23 to 25 September at three-decimal precision; a parabolic fit to ten-minute samples puts the minimum at 24 September 06:24 UT (05:56 to 07:57 UT depending on the fit window), hence the one-hour tolerance. Almanacs listing 18 September 23 UT (EarthSky, Sea and Sky) give greatest illuminated extent, the maximum of illuminated fraction over distance squared, not the least magnitude",
+      "start": "2026-09-24T06:24:00Z",
+      "summary": "♀️🔆 Venus Eastern Brightest",
+      "toleranceMinutes": 60
+    }
+  ],
+  "name": "Venus's greatest brilliancy by apparent magnitude in September 2026",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "JPL Horizons API: geocentric apparent visual magnitude (quantity 9, APmag) of Venus, ten-minute steps",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='299'&CENTER='500@399'&EPHEM_TYPE='OBSERVER'&START_TIME='2026-09-08 00:00'&STOP_TIME='2026-09-28 00:00'&STEP_SIZE='10 m'&QUANTITIES='9'&CSV_FORMAT='YES'&EXTRA_PREC='YES'"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-09-25",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-09-24"
+  }
+}

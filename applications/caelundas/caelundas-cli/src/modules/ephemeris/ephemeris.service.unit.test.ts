@@ -202,7 +202,7 @@ describe(EphemerisService, () => {
                 }) => IlluminationEphemeris
               >()
               .mockReturnValue({
-                "2024-03-21T00:00:00.000Z": { illumination: 75 },
+                "2024-03-21T00:00:00.000Z": { illumination: 75, magnitude: 0 },
               }),
           }),
         },
@@ -331,7 +331,7 @@ describe(EphemerisService, () => {
 
     it("returns illumination values", () => {
       const ephemeris: IlluminationEphemeris = {
-        "2024-03-21T00:00:00.000Z": { illumination: 75 },
+        "2024-03-21T00:00:00.000Z": { illumination: 75, magnitude: 0 },
       };
 
       expect(

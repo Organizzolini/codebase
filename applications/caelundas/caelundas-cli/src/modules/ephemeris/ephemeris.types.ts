@@ -5,13 +5,15 @@ import type { Body } from "../caelundas/caelundas.types";
 /**
  * Time-indexed ephemeris of horizontal coordinates (observer frame).
  *
- * Keys are ISO timestamps, values are {@link HorizonPosition}s. Positions are
- * topocentric: parallax is applied for the observer's location.
+ * Keys are ISO timestamps, values contain azimuth and elevation in degrees.
  * Used for calculating rise, set, and culmination events.
  *
  * @see {@link getAzimuthElevationFromEphemeris} for data retrieval
  */
-export type AzimuthElevationEphemeris = Record<string, HorizonPosition>;
+export type AzimuthElevationEphemeris = Record<
+  string,
+  { azimuth: number; elevation: number }
+>;
 
 /**
  * Bodies for which azimuth/elevation ephemerides are generated.
@@ -96,26 +98,17 @@ export interface Ephemerides {
 }
 
 /**
- * Where a body sits in one observer's sky at one minute, from its topocentric position.
- */
-export interface HorizonPosition {
-  /** Degrees, as Swiss Ephemeris `azalt` measures it. */
-  azimuth: number;
-  /** Apparent (refracted) elevation of the center, degrees; refraction is dropped below the horizon. */
-  elevation: number;
-  /** Topocentric angular radius, degrees: half the disc the observer sees. */
-  semidiameter: number;
-  /** True (airless, unrefracted) elevation of the center, degrees. */
-  trueElevation: number;
-}
-
-/**
- * Time-indexed ephemeris of illumination fraction.
+ * Time-indexed ephemeris of illumination fraction and apparent magnitude.
  *
- * Keys are ISO timestamps, values are illumination percentages (0-100).
+ * Keys are ISO timestamps. `illumination` is the illuminated fraction as a
+ * percentage (0-100); `magnitude` is the apparent visual magnitude, smaller
+ * meaning brighter. Both come from the same phenomena call.
  * Used for lunar phase and planetary phase calculations.
  */
-export type IlluminationEphemeris = Record<string, { illumination: number }>;
+export type IlluminationEphemeris = Record<
+  string,
+  { illumination: number; magnitude: number }
+>;
 
 /**
  * Bodies for which illumination ephemerides are generated.

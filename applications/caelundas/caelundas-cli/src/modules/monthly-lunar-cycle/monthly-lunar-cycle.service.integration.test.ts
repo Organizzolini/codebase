@@ -53,13 +53,15 @@ function createIlluminationEphemeris(
   for (let offset = 1; offset <= MARGIN_MINUTES; offset++) {
     ephemeris[minute.clone().subtract(offset, "minutes").toISOString()] = {
       illumination: previous,
+      magnitude: 0,
     };
     ephemeris[minute.clone().add(offset, "minutes").toISOString()] = {
       illumination: next,
+      magnitude: 0,
     };
   }
 
-  ephemeris[minute.toISOString()] = { illumination: current };
+  ephemeris[minute.toISOString()] = { illumination: current, magnitude: 0 };
 
   return ephemeris;
 }
