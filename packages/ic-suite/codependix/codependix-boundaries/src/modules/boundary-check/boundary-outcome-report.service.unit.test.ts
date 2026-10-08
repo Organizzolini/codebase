@@ -195,6 +195,18 @@ describe(BoundaryOutcomeReportService, () => {
       ).toBe("Judged projects: a, b.\n\nNo boundary findings.");
     });
 
+    // An unmatched selection is refused before a run starts, so only a
+    // workspace holding no project but its root can judge none.
+    it("says no project was judged rather than printing an empty list", () => {
+      expect(
+        service.renderMarkdown({
+          failures: [],
+          judgedProjects: [],
+          violations: [],
+        }),
+      ).toBe("Judged projects: none.\n\nNo boundary findings.");
+    });
+
     it("lists a finding under each project it is charged to", () => {
       const markdown = service.renderMarkdown(
         service.buildReport({

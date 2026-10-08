@@ -142,9 +142,17 @@ export class BoundaryOutcomeReportService {
    * Renders a report as the Markdown a combined document carries: the judged
    * projects, then every finding listed under each project it is charged to,
    * a note marked as not failing under the dependency it lives in.
+   *
+   * A run judging no project at all — a workspace holding nothing but its
+   * root, since an unmatched selection is refused before the run — says
+   * "none" rather than printing an empty list.
    */
   renderMarkdown(report: BoundaryReport): string {
-    const judged = `Judged projects: ${report.judgedProjects.join(", ")}.`;
+    const judged = `Judged projects: ${
+      report.judgedProjects.length === 0
+        ? "none"
+        : report.judgedProjects.join(", ")
+    }.`;
     const charged = [
       ...new Set([
         ...report.violations.flatMap((violation) => violation.projects),
