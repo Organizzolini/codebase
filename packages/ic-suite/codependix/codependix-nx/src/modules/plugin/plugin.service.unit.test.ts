@@ -41,12 +41,14 @@ describe(PluginService, () => {
       const targets = service.inferTargets({
         options: { configurationPath: "configuration/codependix.config.ts" },
         projectConfigurationFiles: ["packages/alpha/project.json"],
+        toolInputs: ["{workspaceRoot}/tool/src/**/*"],
         workspaceRoot: "/workspace",
       });
 
       // Pinned exactly: the inputs are what make `nx affected` and the cache
-      // correct, and `configurations` is absent so an aggregator's own
-      // configuration falls through to the defaults.
+      // correct — the command line's own sources last, since no judged project
+      // depends on them — and `configurations` is absent so an aggregator's
+      // own configuration falls through to the defaults.
       expect(targets).toStrictEqual(
         new Map([
           [
@@ -60,6 +62,7 @@ describe(PluginService, () => {
                   "^default",
                   "{workspaceRoot}/configuration/codependix.config.ts",
                   "{projectRoot}/codependix.config.*",
+                  "{workspaceRoot}/tool/src/**/*",
                 ],
                 options: {},
               },
@@ -78,6 +81,7 @@ describe(PluginService, () => {
           "project.json",
           "packages/alpha/project.json",
         ],
+        toolInputs: ["{workspaceRoot}/tool/src/**/*"],
         workspaceRoot: "/workspace",
       });
 
@@ -92,6 +96,7 @@ describe(PluginService, () => {
         service.inferTargets({
           options: {},
           projectConfigurationFiles: ["packages/alpha/codependix.config.ts"],
+          toolInputs: ["{workspaceRoot}/tool/src/**/*"],
           workspaceRoot: "/workspace",
         }).size,
       ).toBe(0);
@@ -103,6 +108,7 @@ describe(PluginService, () => {
       const targets = service.inferTargets({
         options: { gateTargetName: "boundaries" },
         projectConfigurationFiles: ["packages/alpha/project.json"],
+        toolInputs: ["{workspaceRoot}/tool/src/**/*"],
         workspaceRoot: "/workspace",
       });
 
@@ -125,6 +131,7 @@ describe(PluginService, () => {
       const targets = service.inferTargets({
         options: {},
         projectConfigurationFiles: ["packages/alpha/project.json"],
+        toolInputs: ["{workspaceRoot}/tool/src/**/*"],
         workspaceRoot: "/workspace",
       });
 

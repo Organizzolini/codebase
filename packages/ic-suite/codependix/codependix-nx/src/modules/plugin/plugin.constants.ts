@@ -67,3 +67,18 @@ export const DEFAULT_CONFIGURATION_PATHS = [
  * gate.
  */
 export const WORKSPACE_PROJECT_ROOT = ".";
+
+/** The package whose code decides every gate's verdict. */
+export const CLI_PACKAGE_NAME = "@codependix/cli";
+
+/** The dependency specifier prefix marking a package of the same workspace. */
+export const WORKSPACE_PROTOCOL = "workspace:";
+
+/**
+ * The files of a workspace package that change what a gate decides.
+ *
+ * Its sources and its manifest — not its README, which codependix itself
+ * regenerates on the default branch and which would otherwise invalidate
+ * every gate in the workspace each time it did.
+ */
+export const TOOL_PACKAGE_GLOBS = ["package.json", "src/**/*"] as const;

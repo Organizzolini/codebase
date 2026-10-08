@@ -9,6 +9,10 @@ import type { CreateNodesContext } from "@nx/devkit";
 
 const pluginService = createMock<PluginService>();
 
+vi.mock("./modules/plugin/plugin-inputs.utilities", () => ({
+  resolveToolInputs: (): string[] => ["{workspaceRoot}/tool/src/**/*"],
+}));
+
 vi.mock("./modules/plugin/plugin-context.utilities", () => ({
   resolveGateService: vi.fn<() => void>(),
   resolvePluginService: async (): Promise<PluginService> =>
@@ -85,7 +89,7 @@ describe("codependixPlugin", () => {
     ).resolves.toHaveLength(1);
   });
 
-  it("infers the whole workspace in one call, handing it the registration", async () => {
+  it("infers the whole workspace in one call, handing it the registration and the tool's inputs", async () => {
     expect.hasAssertions();
 
     await createNodes([
@@ -100,6 +104,7 @@ describe("codependixPlugin", () => {
         "packages/alpha/project.json",
         "packages/beta/project.json",
       ],
+      toolInputs: ["{workspaceRoot}/tool/src/**/*"],
       workspaceRoot: "/workspace",
     });
   });

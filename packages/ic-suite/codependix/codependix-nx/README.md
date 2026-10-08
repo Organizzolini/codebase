@@ -84,7 +84,23 @@ fails the dependency's own gate instead.
 
 The target is cached. Its inputs are the project's own sources and its
 dependencies' (`default`, `^default`), the workspace configuration the rules
-live in, and the project's own `codependix.config.*`. It declares no
+live in, the project's own `codependix.config.*`, and the codependix command
+line itself — because no judged project depends on the code that decides its
+verdict, a change to that code would otherwise replay every cached pass:
+
+- When `@codependix/cli` is a package of the same workspace, a
+  `{workspaceRoot}/<package>/src/**/*` and `{workspaceRoot}/<package>/package.json`
+  input for it and for every workspace package it reaches through
+  `workspace:` dependencies. File globs rather than `{ "input", "projects" }`
+  inputs, because Nx's affected computation follows `{workspaceRoot}` globs
+  and ignores the latter — so a branch that changes the command line selects
+  every gate.
+- When it is installed from a registry, an `externalDependencies` input naming
+  it and the `@codependix/*` packages it depends on, so a version bump
+  invalidates the cache.
+
+If the command line cannot be resolved while the graph is built, those inputs
+are left out rather than failing the graph. The target declares no
 `configurations`, so an aggregator run with `--configuration=check` falls
 through to the defaults.
 
@@ -190,6 +206,8 @@ graph LR
   file_src_modules_gate_gate_types_ts["src/modules/gate/gate.types.ts"]
   file_src_modules_plugin_plugin_context_utilities_ts["src/modules/plugin/plugin-context.utilities.ts"]
   file_src_modules_plugin_plugin_context_utilities_unit_test_ts["src/modules/plugin/plugin-context.utilities.unit.test.ts"]
+  file_src_modules_plugin_plugin_inputs_utilities_ts["src/modules/plugin/plugin-inputs.utilities.ts"]
+  file_src_modules_plugin_plugin_inputs_utilities_unit_test_ts["src/modules/plugin/plugin-inputs.utilities.unit.test.ts"]
   file_src_modules_plugin_plugin_constants_ts["src/modules/plugin/plugin.constants.ts"]
   file_src_modules_plugin_plugin_module_ts["src/modules/plugin/plugin.module.ts"]
   file_src_modules_plugin_plugin_service_ts["src/modules/plugin/plugin.service.ts"]
@@ -207,6 +225,7 @@ graph LR
   file_src_executors_gate_executor_unit_test_ts --> file_src_executors_gate_executor_ts
   file_src_executors_gate_executor_unit_test_ts --> file_src_modules_gate_gate_service_ts
   file_src_index_ts --> file_src_modules_plugin_plugin_context_utilities_ts
+  file_src_index_ts --> file_src_modules_plugin_plugin_inputs_utilities_ts
   file_src_index_ts --> file_src_modules_plugin_plugin_constants_ts
   file_src_index_unit_test_ts --> file_src_index_ts
   file_src_index_unit_test_ts --> file_src_modules_plugin_plugin_service_ts
@@ -228,6 +247,9 @@ graph LR
   file_src_modules_plugin_plugin_context_utilities_unit_test_ts --> file_src_modules_gate_gate_service_ts
   file_src_modules_plugin_plugin_context_utilities_unit_test_ts --> file_src_modules_plugin_plugin_context_utilities_ts
   file_src_modules_plugin_plugin_context_utilities_unit_test_ts --> file_src_modules_plugin_plugin_service_ts
+  file_src_modules_plugin_plugin_inputs_utilities_ts --> file_src_modules_plugin_plugin_constants_ts
+  file_src_modules_plugin_plugin_inputs_utilities_ts --> file_src_modules_plugin_plugin_types_ts
+  file_src_modules_plugin_plugin_inputs_utilities_unit_test_ts --> file_src_modules_plugin_plugin_inputs_utilities_ts
   file_src_modules_plugin_plugin_module_ts --> file_src_modules_plugin_plugin_service_ts
   file_src_modules_plugin_plugin_service_ts --> file_src_modules_plugin_plugin_constants_ts
   file_src_modules_plugin_plugin_service_ts --> file_src_modules_plugin_plugin_types_ts
