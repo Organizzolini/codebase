@@ -90,11 +90,27 @@ describe(EphemerisHorizonService, () => {
         19.09, 2.47, 0.0025,
       ]);
       expect(result).toStrictEqual({
-        azimuth: 180,
+        azimuth: 0,
+        eclipticLatitude: 2.47,
+        eclipticLongitude: 19.09,
         elevation: 44.8,
         semidiameter: expect.closeTo(0.266, 3) as number,
         trueElevation: 45,
       });
+    });
+
+    it("measures azimuth from North, where Swiss Ephemeris measures it from South", () => {
+      vi.mocked(azalt).mockReturnValueOnce([256.557, 10, 10.1]);
+
+      const result = service.computeAzimuthElevationForMinute({
+        body: "moon",
+        julianDayEphemerisTime: 2_460_395.5,
+        julianDayUniversalTime: 2_460_395.499_306,
+        observerLatitude: 40.7128,
+        observerLongitude: -74.006,
+      });
+
+      expect(result.azimuth).toBeCloseTo(76.557, 6);
     });
   });
 
@@ -134,7 +150,7 @@ describe(EphemerisHorizonService, () => {
       expect(Object.keys(result)).toHaveLength(2);
 
       for (const value of Object.values(result)) {
-        expect(value.azimuth).toBe(180);
+        expect(value.azimuth).toBe(0);
         expect(value.elevation).toBe(44.8);
       }
     });

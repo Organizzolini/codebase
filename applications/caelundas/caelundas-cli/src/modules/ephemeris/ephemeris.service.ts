@@ -27,6 +27,7 @@ import type {
   DiameterEphemerisBody,
   DistanceEphemeris,
   DistanceEphemerisBody,
+  HorizonPosition,
   IlluminationEphemeris,
   IlluminationEphemerisBody,
 } from "./ephemeris.types";
@@ -197,14 +198,14 @@ export class EphemerisService {
 
   /**
    * Safely extracts one field of a horizon position: azimuth, apparent or true
-   * elevation, or semidiameter.
+   * elevation, topocentric ecliptic latitude or longitude, or semidiameter.
    *
    * @throws When timestamp or field is missing from ephemeris.
    */
   public getAzimuthElevationFromEphemeris(
     ephemeris: AzimuthElevationEphemeris,
     timestamp: string,
-    fieldName: "azimuth" | "elevation" | "semidiameter" | "trueElevation",
+    fieldName: keyof HorizonPosition,
   ): number {
     const data = ephemeris[timestamp];
     if (data?.[fieldName] === undefined) {

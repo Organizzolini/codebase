@@ -75,7 +75,7 @@ aspect is in orb, the weeks a planet is retrograde.
 | -------- | ------ |
 | Aspects | Major and minor aspects, plus triple, quadruple, quintuple, and sextuple configurations and stelliums |
 | Phases | New moon, first quarter, full moon, last quarter |
-| Eclipses | Solar (total, annular, hybrid, partial) and lunar (total, partial, penumbral): begins at first contact (P1), peaks at greatest eclipse, ends at last contact (P4), as in NASA's eclipse tables |
+| Eclipses | Solar (total, annular, hybrid, partial) and lunar (total, partial, penumbral): begins at first contact (P1), peaks at greatest eclipse, ends at last contact (P4), as in NASA's eclipse tables. Local (📍) events follow the observer's sky: a solar eclipse from the topocentric Moon's first to last contact with the Sun (C1–C4) while the Sun is up, a lunar eclipse from P1 to P4 while the Moon is up, cut short at sunrise, sunset, moonrise or moonset. An eclipse not visible from the location has no local events |
 | Retrogrades | Stations and retrograde periods |
 | Ingresses | Bodies entering a zodiac sign |
 | Annual solar cycle | Solstices, equinoxes, cross-quarter points |
@@ -2646,11 +2646,15 @@ graph LR
   file_src_modules_eclipses_eclipse_topocentric_service_ts --> file_src_modules_eclipses_eclipse_geometry_service_ts
   file_src_modules_eclipses_eclipse_topocentric_service_ts --> file_src_modules_eclipses_eclipses_types_ts
   file_src_modules_eclipses_eclipse_topocentric_service_ts --> file_src_modules_ephemeris_ephemeris_types_ts
+  file_src_modules_eclipses_eclipse_topocentric_service_ts --> file_src_modules_math_math_service_ts
+  file_src_modules_eclipses_eclipse_topocentric_service_ts --> file_src_modules_math_math_types_ts
   file_src_modules_eclipses_eclipse_topocentric_service_unit_test_ts --> file_src_modules_caelundas_database_caelundas_database_types_ts
   file_src_modules_eclipses_eclipse_topocentric_service_unit_test_ts --> file_src_modules_eclipses_eclipse_event_service_ts
   file_src_modules_eclipses_eclipse_topocentric_service_unit_test_ts --> file_src_modules_eclipses_eclipse_geometry_service_ts
   file_src_modules_eclipses_eclipse_topocentric_service_unit_test_ts --> file_src_modules_eclipses_eclipse_topocentric_service_ts
+  file_src_modules_eclipses_eclipse_topocentric_service_unit_test_ts --> file_src_modules_eclipses_eclipses_types_ts
   file_src_modules_eclipses_eclipse_topocentric_service_unit_test_ts --> file_src_modules_ephemeris_ephemeris_service_ts
+  file_src_modules_eclipses_eclipse_topocentric_service_unit_test_ts --> file_src_modules_math_math_service_ts
   file_src_modules_eclipses_eclipse_topocentric_service_unit_test_ts --> file_testing_eclipse_test_utilities_ts
   file_src_modules_eclipses_eclipses_constants_ts --> file_src_modules_eclipses_eclipses_types_ts
   file_src_modules_eclipses_eclipses_module_ts --> file_src_modules_eclipses_eclipse_calculation_service_ts

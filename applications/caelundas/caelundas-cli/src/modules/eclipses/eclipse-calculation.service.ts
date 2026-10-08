@@ -85,60 +85,6 @@ export class EclipseCalculationService {
   }
 
   /**
-   * Whether `value` crosses zero upward nearest the current minute: a
-   * crossing between the previous minute and this one belongs here when it
-   * falls in its second half, and one between this minute and the next when
-   * it falls in its first half. Each crossing lands on exactly one minute.
-   */
-  private static crossesUpwardNearCurrent(
-    value: (geometry: EclipseContactGeometry) => number,
-    window: EclipseContactWindow,
-  ): boolean {
-    const previous = value(window.previous);
-    const current = value(window.current);
-    const next = value(window.next);
-    if (previous < 0 && current >= 0) {
-      return previous / (previous - current) >= 0.5;
-    }
-    if (current < 0 && next >= 0) {
-      return current / (current - next) < 0.5;
-    }
-    return false;
-  }
-
-  /**
-   * Classifies the contacts of one eclipse at the current minute: it
-   * begins at the external contact on the way in (P1) and ends at the
-   * external contact on the way out (P4).
-   */
-  private static getContactPhases(
-    window: EclipseContactWindow,
-    isMaximum: boolean,
-  ): EclipsePhase[] {
-    const phases: EclipsePhase[] = [];
-    if (
-      EclipseCalculationService.crossesUpwardNearCurrent(
-        (geometry) => geometry.contactLimit - geometry.separation,
-        window,
-      )
-    ) {
-      phases.push("beginning");
-    }
-    if (isMaximum && window.current.separation < window.current.contactLimit) {
-      phases.push("maximum");
-    }
-    if (
-      EclipseCalculationService.crossesUpwardNearCurrent(
-        (geometry) => geometry.separation - geometry.contactLimit,
-        window,
-      )
-    ) {
-      phases.push("ending");
-    }
-    return phases;
-  }
-
-  /**
    * Creates geocentric event payloads for detected eclipse phases. A type
    * the classifier could not settle (an eclipse grazing a boundary) falls
    * back to the weakest: partial for the Sun, penumbral for the Moon.
@@ -166,6 +112,43 @@ export class EclipseCalculationService {
         }),
       ),
     ];
+  }
+
+  /**
+   * Classifies the contacts of one eclipse at the current minute: it
+   * begins at the external contact on the way in (P1) and ends at the
+   * external contact on the way out (P4).
+   */
+  private getContactPhases(
+    window: EclipseContactWindow,
+    isMaximum: boolean,
+  ): EclipsePhase[] {
+    const values = (
+      value: (geometry: EclipseContactGeometry) => number,
+    ): { current: number; next: number; previous: number } => ({
+      current: value(window.current),
+      next: value(window.next),
+      previous: value(window.previous),
+    });
+    const phases: EclipsePhase[] = [];
+    if (
+      this.mathService.crossesUpwardNearCurrent(
+        values((geometry) => geometry.contactLimit - geometry.separation),
+      )
+    ) {
+      phases.push("beginning");
+    }
+    if (isMaximum && window.current.separation < window.current.contactLimit) {
+      phases.push("maximum");
+    }
+    if (
+      this.mathService.crossesUpwardNearCurrent(
+        values((geometry) => geometry.separation - geometry.contactLimit),
+      )
+    ) {
+      phases.push("ending");
+    }
+    return phases;
   }
 
   // 🌎 Public Methods
@@ -265,7 +248,7 @@ export class EclipseCalculationService {
       previous: window.previous.separation,
     });
 
-    return EclipseCalculationService.getContactPhases(window, isMaximum);
+    return this.getContactPhases(window, isMaximum);
   }
 
   /**
@@ -289,12 +272,12 @@ export class EclipseCalculationService {
       previous: this.eclipseClassificationService.getSolarGamma(previous),
     });
 
-    return EclipseCalculationService.getContactPhases(window, isMaximum);
+    return this.getContactPhases(window, isMaximum);
   }
 
   /**
-   * Computes topocentric eclipse events using geocentric phases, types and
-   * visibility; an unsettled type falls back as for geocentric events.
+   * Computes the observer's eclipse events, with the geocentric types and
+   * lunar maximum; an unsettled type falls back as for geocentric events.
    */
   getTopocentricEventsForDetect(args: {
     coordinates: {
@@ -319,19 +302,15 @@ export class EclipseCalculationService {
       moonAzimuthElevationEphemeris,
       sunAzimuthElevationEphemeris,
     } = args;
-    const maximumOf = (phases: EclipsePhase[]): EclipsePhase | null =>
-      phases.includes("maximum") ? "maximum" : null;
-
     return this.eclipseTopocentricService.getTopocentricEvents({
       currentCoordinates: coordinates.currentCoordinates,
+      isLunarMaximum: geocentricPhases.lunarPhases.includes("maximum"),
       lunarEclipseType: geocentricPhases.lunarType ?? "penumbral",
-      lunarPhase: maximumOf(geocentricPhases.lunarPhases),
       minute,
       moonAzimuthElevationEphemeris,
       nextCoordinates: coordinates.nextCoordinates,
       previousCoordinates: coordinates.previousCoordinates,
       solarEclipseType: geocentricPhases.solarType ?? "partial",
-      solarPhase: maximumOf(geocentricPhases.solarPhases),
       sunAzimuthElevationEphemeris,
     });
   }

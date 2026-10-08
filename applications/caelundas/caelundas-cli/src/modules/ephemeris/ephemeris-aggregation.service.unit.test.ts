@@ -75,6 +75,8 @@ describe(EphemerisAggregationService, () => {
     );
     vi.mocked(horizonService.computeAzimuthElevationForMinute).mockReturnValue({
       azimuth: 180,
+      eclipticLatitude: 0,
+      eclipticLongitude: 0,
       elevation: 44.8,
       semidiameter: 0.27,
       trueElevation: 45,
