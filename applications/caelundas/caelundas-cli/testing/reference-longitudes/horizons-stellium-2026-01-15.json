@@ -1,0 +1,583 @@
+{
+  "boundaries": [
+    {
+      "start": "2026-01-15T07:48:00Z",
+      "summary": "➡️ 🌟 ♇-☀️-♀️-⚶ Pluto, Sun, Venus, Vesta stellium forming"
+    },
+    {
+      "start": "2026-01-15T16:27:00Z",
+      "summary": "➡️ 🌟 ♂️-☀️-♀️-⚶ Mars, Sun, Venus, Vesta stellium forming"
+    },
+    {
+      "start": "2026-01-17T05:59:00Z",
+      "summary": "➡️ ⭐ ♂️-♇-☀️-♀️-⚶ Mars, Pluto, Sun, Venus, Vesta stellium forming"
+    },
+    {
+      "start": "2026-01-17T05:59:00Z",
+      "summary": "⬅️ 🌟 ♂️-☀️-♀️-⚶ Mars, Sun, Venus, Vesta stellium dissolving"
+    },
+    {
+      "start": "2026-01-17T05:59:00Z",
+      "summary": "⬅️ 🌟 ♇-☀️-♀️-⚶ Pluto, Sun, Venus, Vesta stellium dissolving"
+    },
+    {
+      "start": "2026-01-17T17:32:00Z",
+      "summary": "➡️ ⭐ ♂️-☿-☀️-♀️-⚶ Mars, Mercury, Sun, Venus, Vesta stellium forming"
+    },
+    {
+      "start": "2026-01-17T17:32:00Z",
+      "summary": "⬅️ 🌟 ♂️-☿-☀️-♀️ Mars, Mercury, Sun, Venus stellium dissolving"
+    },
+    {
+      "start": "2026-01-17T19:50:00Z",
+      "summary": "➡️ 💫 ♂️-☿-♇-☀️-♀️-⚶ Mars, Mercury, Pluto, Sun, Venus, Vesta stellium forming"
+    },
+    {
+      "start": "2026-01-17T19:50:00Z",
+      "summary": "⬅️ ⭐ ♂️-☿-☀️-♀️-⚶ Mars, Mercury, Sun, Venus, Vesta stellium dissolving"
+    },
+    {
+      "start": "2026-01-17T19:50:00Z",
+      "summary": "⬅️ ⭐ ♂️-♇-☀️-♀️-⚶ Mars, Pluto, Sun, Venus, Vesta stellium dissolving"
+    },
+    {
+      "start": "2026-01-18T03:04:00Z",
+      "summary": "➡️ 🌟 ♂️-☿-🌙-☀️ Mars, Mercury, Moon, Sun stellium forming"
+    },
+    {
+      "start": "2026-01-18T08:57:00Z",
+      "summary": "➡️ ⭐ ♂️-☿-🌙-☀️-♀️ Mars, Mercury, Moon, Sun, Venus stellium forming"
+    },
+    {
+      "start": "2026-01-18T08:57:00Z",
+      "summary": "⬅️ 🌟 ♂️-☿-🌙-☀️ Mars, Mercury, Moon, Sun stellium dissolving"
+    },
+    {
+      "start": "2026-01-18T13:12:00Z",
+      "summary": "➡️ 💫 ♂️-☿-🌙-♇-☀️-♀️ Mars, Mercury, Moon, Pluto, Sun, Venus stellium forming"
+    },
+    {
+      "start": "2026-01-18T13:12:00Z",
+      "summary": "⬅️ ⭐ ♂️-☿-🌙-☀️-♀️ Mars, Mercury, Moon, Sun, Venus stellium dissolving"
+    },
+    {
+      "start": "2026-01-18T13:43:00Z",
+      "summary": "➡️ 🌠 ♂️-☿-🌙-♇-☀️-♀️-⚶ Mars, Mercury, Moon, Pluto, Sun, Venus, Vesta stellium forming"
+    },
+    {
+      "start": "2026-01-18T13:43:00Z",
+      "summary": "⬅️ 💫 ♂️-☿-🌙-♇-☀️-♀️ Mars, Mercury, Moon, Pluto, Sun, Venus stellium dissolving"
+    },
+    {
+      "start": "2026-01-18T13:43:00Z",
+      "summary": "⬅️ 💫 ♂️-☿-♇-☀️-♀️-⚶ Mars, Mercury, Pluto, Sun, Venus, Vesta stellium dissolving"
+    },
+    {
+      "start": "2026-01-19T07:31:00Z",
+      "summary": "➡️ 💫 ♂️-☿-♇-☀️-♀️-⚶ Mars, Mercury, Pluto, Sun, Venus, Vesta stellium forming"
+    },
+    {
+      "start": "2026-01-19T07:31:00Z",
+      "summary": "➡️ 💫 ☿-🌙-♇-☀️-♀️-⚶ Mercury, Moon, Pluto, Sun, Venus, Vesta stellium forming"
+    },
+    {
+      "start": "2026-01-19T07:31:00Z",
+      "summary": "⬅️ 🌠 ♂️-☿-🌙-♇-☀️-♀️-⚶ Mars, Mercury, Moon, Pluto, Sun, Venus, Vesta stellium dissolving"
+    },
+    {
+      "start": "2026-01-19T09:26:00Z",
+      "summary": "➡️ ⭐ 🌙-♇-☀️-♀️-⚶ Moon, Pluto, Sun, Venus, Vesta stellium forming"
+    },
+    {
+      "start": "2026-01-19T09:26:00Z",
+      "summary": "⬅️ 💫 ☿-🌙-♇-☀️-♀️-⚶ Mercury, Moon, Pluto, Sun, Venus, Vesta stellium dissolving"
+    },
+    {
+      "start": "2026-01-19T12:29:00Z",
+      "summary": "➡️ 🌟 🌙-♇-♀️-⚶ Moon, Pluto, Venus, Vesta stellium forming"
+    },
+    {
+      "start": "2026-01-19T12:29:00Z",
+      "summary": "⬅️ ⭐ 🌙-♇-☀️-♀️-⚶ Moon, Pluto, Sun, Venus, Vesta stellium dissolving"
+    },
+    {
+      "start": "2026-01-19T18:57:00Z",
+      "summary": "⬅️ 🌟 🌙-♇-♀️-⚶ Moon, Pluto, Venus, Vesta stellium dissolving"
+    },
+    {
+      "start": "2026-01-24T17:24:00Z",
+      "summary": "➡️ ⭐ ♂️-☿-♇-☀️-⚶ Mars, Mercury, Pluto, Sun, Vesta stellium forming"
+    },
+    {
+      "start": "2026-01-24T17:24:00Z",
+      "summary": "➡️ ⭐ ☿-♇-☀️-♀️-⚶ Mercury, Pluto, Sun, Venus, Vesta stellium forming"
+    },
+    {
+      "start": "2026-01-24T17:24:00Z",
+      "summary": "⬅️ 💫 ♂️-☿-♇-☀️-♀️-⚶ Mars, Mercury, Pluto, Sun, Venus, Vesta stellium dissolving"
+    }
+  ],
+  "longitudesByMinute": {
+    "2026-01-15T07:47:00Z": {
+      "mars": 293.7316642,
+      "mercury": 291.1564762,
+      "moon": 255.9689667,
+      "pluto": 303.1638464,
+      "sun": 295.1633152,
+      "venus": 297.226047,
+      "vesta": 301.8217634
+    },
+    "2026-01-15T07:48:00Z": {
+      "mars": 293.7322027,
+      "mercury": 291.1576033,
+      "moon": 255.977268,
+      "pluto": 303.1638685,
+      "sun": 295.1640227,
+      "venus": 297.2269204,
+      "vesta": 301.8221283
+    },
+    "2026-01-15T07:49:00Z": {
+      "mars": 293.7327411,
+      "mercury": 291.1587304,
+      "moon": 255.9855693,
+      "pluto": 303.1638906,
+      "sun": 295.1647303,
+      "venus": 297.2277937,
+      "vesta": 301.8224933
+    },
+    "2026-01-15T16:26:00Z": {
+      "mars": 294.0111715,
+      "mercury": 291.7420034,
+      "moon": 260.2846683,
+      "pluto": 303.1753261,
+      "sun": 295.5305105,
+      "venus": 297.6793165,
+      "vesta": 302.0111799
+    },
+    "2026-01-15T16:27:00Z": {
+      "mars": 294.0117101,
+      "mercury": 291.7431327,
+      "moon": 260.2929985,
+      "pluto": 303.1753483,
+      "sun": 295.531218,
+      "venus": 297.6801899,
+      "vesta": 302.0115449
+    },
+    "2026-01-15T16:28:00Z": {
+      "mars": 294.0122488,
+      "mercury": 291.7442619,
+      "moon": 260.3013287,
+      "pluto": 303.1753704,
+      "sun": 295.5319255,
+      "venus": 297.6810632,
+      "vesta": 302.0119098
+    },
+    "2026-01-17T05:58:00Z": {
+      "mars": 295.2248194,
+      "mercury": 294.2954985,
+      "moon": 279.2143159,
+      "pluto": 303.2252008,
+      "sun": 297.1236789,
+      "venus": 299.6459786,
+      "vesta": 302.8328863
+    },
+    "2026-01-17T05:59:00Z": {
+      "mars": 295.2253587,
+      "mercury": 294.296637,
+      "moon": 279.2228048,
+      "pluto": 303.2252229,
+      "sun": 297.1243863,
+      "venus": 299.6468518,
+      "vesta": 302.8332511
+    },
+    "2026-01-17T06:00:00Z": {
+      "mars": 295.2258979,
+      "mercury": 294.2977756,
+      "moon": 279.2312937,
+      "pluto": 303.2252451,
+      "sun": 297.1250937,
+      "venus": 299.6477251,
+      "vesta": 302.8336159
+    },
+    "2026-01-17T17:31:00Z": {
+      "mars": 295.5985555,
+      "mercury": 295.0855587,
+      "moon": 285.1164294,
+      "pluto": 303.2405669,
+      "sun": 297.6138844,
+      "venus": 300.2511248,
+      "vesta": 303.0856759
+    },
+    "2026-01-17T17:32:00Z": {
+      "mars": 295.5990948,
+      "mercury": 295.0867003,
+      "moon": 285.1249745,
+      "pluto": 303.2405891,
+      "sun": 297.6145918,
+      "venus": 300.251998,
+      "vesta": 303.0860407
+    },
+    "2026-01-17T17:33:00Z": {
+      "mars": 295.5996342,
+      "mercury": 295.0878418,
+      "moon": 285.1335197,
+      "pluto": 303.2406112,
+      "sun": 297.6152991,
+      "venus": 300.2528712,
+      "vesta": 303.0864054
+    },
+    "2026-01-17T19:49:00Z": {
+      "mars": 295.6729935,
+      "mercury": 295.2431316,
+      "moon": 286.2964456,
+      "pluto": 303.2436279,
+      "sun": 297.7114975,
+      "venus": 300.3716271,
+      "vesta": 303.1360106
+    },
+    "2026-01-17T19:50:00Z": {
+      "mars": 295.6735329,
+      "mercury": 295.2442737,
+      "moon": 286.3050022,
+      "pluto": 303.2436501,
+      "sun": 297.7122048,
+      "venus": 300.3725003,
+      "vesta": 303.1363753
+    },
+    "2026-01-17T19:51:00Z": {
+      "mars": 295.6740724,
+      "mercury": 295.2454158,
+      "moon": 286.3135589,
+      "pluto": 303.2436722,
+      "sun": 297.7129121,
+      "venus": 300.3733735,
+      "vesta": 303.1367401
+    },
+    "2026-01-18T03:03:00Z": {
+      "mars": 295.9071267,
+      "mercury": 295.7392203,
+      "moon": 290.0179216,
+      "pluto": 303.253257,
+      "sun": 298.018475,
+      "venus": 300.7505912,
+      "vesta": 303.2942996
+    },
+    "2026-01-18T03:04:00Z": {
+      "mars": 295.9076662,
+      "mercury": 295.7403643,
+      "moon": 290.0265149,
+      "pluto": 303.2532792,
+      "sun": 298.0191823,
+      "venus": 300.7514644,
+      "vesta": 303.2946643
+    },
+    "2026-01-18T03:05:00Z": {
+      "mars": 295.9082057,
+      "mercury": 295.7415083,
+      "moon": 290.0351082,
+      "pluto": 303.2533014,
+      "sun": 298.0198896,
+      "venus": 300.7523376,
+      "vesta": 303.295029
+    },
+    "2026-01-18T08:56:00Z": {
+      "mars": 296.0975964,
+      "mercury": 296.143321,
+      "moon": 293.0566401,
+      "pluto": 303.2610919,
+      "sun": 298.2681497,
+      "venus": 301.0588191,
+      "vesta": 303.4230349
+    },
+    "2026-01-18T08:57:00Z": {
+      "mars": 296.098136,
+      "mercury": 296.1444665,
+      "moon": 293.0652635,
+      "pluto": 303.2611141,
+      "sun": 298.268857,
+      "venus": 301.0596923,
+      "vesta": 303.4233995
+    },
+    "2026-01-18T08:58:00Z": {
+      "mars": 296.0986756,
+      "mercury": 296.145612,
+      "moon": 293.0738871,
+      "pluto": 303.2611363,
+      "sun": 298.2695643,
+      "venus": 301.0605654,
+      "vesta": 303.4237642
+    },
+    "2026-01-18T13:11:00Z": {
+      "mars": 296.2352067,
+      "mercury": 296.4355716,
+      "moon": 295.2584186,
+      "pluto": 303.2667534,
+      "sun": 298.4485039,
+      "venus": 301.2814721,
+      "vesta": 303.516024
+    },
+    "2026-01-18T13:12:00Z": {
+      "mars": 296.2357464,
+      "mercury": 296.4367183,
+      "moon": 295.2670641,
+      "pluto": 303.2667756,
+      "sun": 298.4492111,
+      "venus": 301.2823452,
+      "vesta": 303.5163887
+    },
+    "2026-01-18T13:13:00Z": {
+      "mars": 296.2362861,
+      "mercury": 296.4378649,
+      "moon": 295.2757097,
+      "pluto": 303.2667978,
+      "sun": 298.4499184,
+      "venus": 301.2832183,
+      "vesta": 303.5167534
+    },
+    "2026-01-18T13:42:00Z": {
+      "mars": 296.2519369,
+      "mercury": 296.4711194,
+      "moon": 295.5264698,
+      "pluto": 303.2674417,
+      "sun": 298.4704289,
+      "venus": 301.3085394,
+      "vesta": 303.5273282
+    },
+    "2026-01-18T13:43:00Z": {
+      "mars": 296.2524766,
+      "mercury": 296.4722662,
+      "moon": 295.535118,
+      "pluto": 303.2674639,
+      "sun": 298.4711362,
+      "venus": 301.3094125,
+      "vesta": 303.5276929
+    },
+    "2026-01-18T13:44:00Z": {
+      "mars": 296.2530162,
+      "mercury": 296.473413,
+      "moon": 295.5437663,
+      "pluto": 303.2674861,
+      "sun": 298.4718435,
+      "venus": 301.3102857,
+      "vesta": 303.5280575
+    },
+    "2026-01-19T07:30:00Z": {
+      "mars": 296.8284587,
+      "mercury": 297.6983712,
+      "moon": 304.8126615,
+      "pluto": 303.2911688,
+      "sun": 299.2257357,
+      "venus": 302.2410162,
+      "vesta": 303.9167238
+    },
+    "2026-01-19T07:31:00Z": {
+      "mars": 296.8289986,
+      "mercury": 297.6995226,
+      "moon": 304.8214036,
+      "pluto": 303.291191,
+      "sun": 299.2264428,
+      "venus": 302.2418892,
+      "vesta": 303.9170884
+    },
+    "2026-01-19T07:32:00Z": {
+      "mars": 296.8295386,
+      "mercury": 297.7006741,
+      "moon": 304.8301458,
+      "pluto": 303.2912133,
+      "sun": 299.22715,
+      "venus": 302.2427623,
+      "vesta": 303.9174529
+    },
+    "2026-01-19T09:25:00Z": {
+      "mars": 296.8905534,
+      "mercury": 297.8308188,
+      "moon": 305.8185853,
+      "pluto": 303.2937251,
+      "sun": 299.3070598,
+      "venus": 302.3414189,
+      "vesta": 303.9586469
+    },
+    "2026-01-19T09:26:00Z": {
+      "mars": 296.8910934,
+      "mercury": 297.8319708,
+      "moon": 305.8273376,
+      "pluto": 303.2937473,
+      "sun": 299.3077669,
+      "venus": 302.3422919,
+      "vesta": 303.9590115
+    },
+    "2026-01-19T09:27:00Z": {
+      "mars": 296.8916333,
+      "mercury": 297.8331228,
+      "moon": 305.83609,
+      "pluto": 303.2937695,
+      "sun": 299.3084741,
+      "venus": 302.343165,
+      "vesta": 303.959376
+    },
+    "2026-01-19T12:28:00Z": {
+      "mars": 296.9893714,
+      "mercury": 298.0417042,
+      "moon": 307.4217424,
+      "pluto": 303.2977934,
+      "sun": 299.4364687,
+      "venus": 302.5011883,
+      "vesta": 304.0253568
+    },
+    "2026-01-19T12:29:00Z": {
+      "mars": 296.9899114,
+      "mercury": 298.042857,
+      "moon": 307.430511,
+      "pluto": 303.2978156,
+      "sun": 299.4371759,
+      "venus": 302.5020613,
+      "vesta": 304.0257213
+    },
+    "2026-01-19T12:30:00Z": {
+      "mars": 296.9904514,
+      "mercury": 298.0440098,
+      "moon": 307.4392798,
+      "pluto": 303.2978379,
+      "sun": 299.437883,
+      "venus": 302.5029344,
+      "vesta": 304.0260858
+    },
+    "2026-01-19T18:56:00Z": {
+      "mars": 297.1989127,
+      "mercury": 298.4893198,
+      "moon": 310.8306752,
+      "pluto": 303.3064211,
+      "sun": 299.7108339,
+      "venus": 302.8399267,
+      "vesta": 304.1667856
+    },
+    "2026-01-19T18:57:00Z": {
+      "mars": 297.1994528,
+      "mercury": 298.4904744,
+      "moon": 310.8394785,
+      "pluto": 303.3064433,
+      "sun": 299.711541,
+      "venus": 302.8407997,
+      "vesta": 304.1671501
+    },
+    "2026-01-19T18:58:00Z": {
+      "mars": 297.1999929,
+      "mercury": 298.4916289,
+      "moon": 310.8482819,
+      "pluto": 303.3064655,
+      "sun": 299.7122481,
+      "venus": 302.8416727,
+      "vesta": 304.1675146
+    },
+    "2026-01-24T17:23:00Z": {
+      "mars": 301.0428855,
+      "mercury": 306.8092506,
+      "moon": 15.7872524,
+      "pluto": 303.4644576,
+      "sun": 304.7334037,
+      "venus": 309.0424726,
+      "vesta": 306.7544542
+    },
+    "2026-01-24T17:24:00Z": {
+      "mars": 301.0434271,
+      "mercury": 306.8104375,
+      "moon": 15.7967569,
+      "pluto": 303.4644798,
+      "sun": 304.73411,
+      "venus": 309.043345,
+      "vesta": 306.7548179
+    },
+    "2026-01-24T17:25:00Z": {
+      "mars": 301.0439688,
+      "mercury": 306.8116245,
+      "moon": 15.8062615,
+      "pluto": 303.464502,
+      "sun": 304.7348162,
+      "venus": 309.0442174,
+      "vesta": 306.7551816
+    }
+  },
+  "name": "The January 2026 stellium growing from four bodies to seven and back",
+  "note": "Mars, Mercury, Sun and Venus are pairwise within 8 degrees before 15 January. Vesta is already conjunct with Venus, the Sun and Pluto, and Pluto with Venus, so every boundary below sits inside one conjunction component that is not a clique until 17 January 19:50 UT. Each membership change dissolves the old maximal clique and forms the new one on the same minute. The Mars, Mercury, Sun, Venus stellium is in effect before the first minute listed, so it only dissolves; the two 5-body stelliums formed on 24 January dissolve after the last minute listed. Each minute listed is a boundary T with T-1 and T+1: an edge is in T's registry when its bodies are within orb at T and T+1, because a leg's dissolving event marks its last minute in orb and the registry drops it then.",
+  "retrieved": "2026-10-08",
+  "source": {
+    "commandByBody": {
+      "mars": "499",
+      "mercury": "199",
+      "moon": "301",
+      "pluto": "999",
+      "sun": "10",
+      "venus": "299",
+      "vesta": "4;"
+    },
+    "name": "NASA JPL Horizons API: observer table, CENTER='500@399' (geocentric), QUANTITIES='31' (apparent ecliptic longitude of date), EXTRA_PREC='YES', listed times in UT",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api"
+  },
+  "spans": [
+    {
+      "end": "2026-01-17T05:59:00Z",
+      "start": "2026-01-15T07:48:00Z",
+      "summary": "🌟 ♇-☀️-♀️-⚶ Pluto, Sun, Venus, Vesta stellium"
+    },
+    {
+      "end": "2026-01-17T05:59:00Z",
+      "start": "2026-01-15T16:27:00Z",
+      "summary": "🌟 ♂️-☀️-♀️-⚶ Mars, Sun, Venus, Vesta stellium"
+    },
+    {
+      "end": "2026-01-17T19:50:00Z",
+      "start": "2026-01-17T05:59:00Z",
+      "summary": "⭐ ♂️-♇-☀️-♀️-⚶ Mars, Pluto, Sun, Venus, Vesta stellium"
+    },
+    {
+      "end": "2026-01-17T19:50:00Z",
+      "start": "2026-01-17T17:32:00Z",
+      "summary": "⭐ ♂️-☿-☀️-♀️-⚶ Mars, Mercury, Sun, Venus, Vesta stellium"
+    },
+    {
+      "end": "2026-01-18T13:43:00Z",
+      "start": "2026-01-17T19:50:00Z",
+      "summary": "💫 ♂️-☿-♇-☀️-♀️-⚶ Mars, Mercury, Pluto, Sun, Venus, Vesta stellium"
+    },
+    {
+      "end": "2026-01-18T08:57:00Z",
+      "start": "2026-01-18T03:04:00Z",
+      "summary": "🌟 ♂️-☿-🌙-☀️ Mars, Mercury, Moon, Sun stellium"
+    },
+    {
+      "end": "2026-01-18T13:12:00Z",
+      "start": "2026-01-18T08:57:00Z",
+      "summary": "⭐ ♂️-☿-🌙-☀️-♀️ Mars, Mercury, Moon, Sun, Venus stellium"
+    },
+    {
+      "end": "2026-01-18T13:43:00Z",
+      "start": "2026-01-18T13:12:00Z",
+      "summary": "💫 ♂️-☿-🌙-♇-☀️-♀️ Mars, Mercury, Moon, Pluto, Sun, Venus stellium"
+    },
+    {
+      "end": "2026-01-19T07:31:00Z",
+      "start": "2026-01-18T13:43:00Z",
+      "summary": "🌠 ♂️-☿-🌙-♇-☀️-♀️-⚶ Mars, Mercury, Moon, Pluto, Sun, Venus, Vesta stellium"
+    },
+    {
+      "end": "2026-01-24T17:24:00Z",
+      "start": "2026-01-19T07:31:00Z",
+      "summary": "💫 ♂️-☿-♇-☀️-♀️-⚶ Mars, Mercury, Pluto, Sun, Venus, Vesta stellium"
+    },
+    {
+      "end": "2026-01-19T09:26:00Z",
+      "start": "2026-01-19T07:31:00Z",
+      "summary": "💫 ☿-🌙-♇-☀️-♀️-⚶ Mercury, Moon, Pluto, Sun, Venus, Vesta stellium"
+    },
+    {
+      "end": "2026-01-19T12:29:00Z",
+      "start": "2026-01-19T09:26:00Z",
+      "summary": "⭐ 🌙-♇-☀️-♀️-⚶ Moon, Pluto, Sun, Venus, Vesta stellium"
+    },
+    {
+      "end": "2026-01-19T18:57:00Z",
+      "start": "2026-01-19T12:29:00Z",
+      "summary": "🌟 🌙-♇-♀️-⚶ Moon, Pluto, Venus, Vesta stellium"
+    }
+  ]
+}
