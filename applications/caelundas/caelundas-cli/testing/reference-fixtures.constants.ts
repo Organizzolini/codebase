@@ -13,6 +13,12 @@ export const REFERENCE_FIXTURES_DIRECTORY = path.join(
 
 const instantSchema = z.iso.datetime({ offset: false });
 
+/** The authority a reference fixture was captured from. */
+export const referenceSourceSchema = z.strictObject({
+  name: z.string().min(1),
+  url: z.url(),
+});
+
 export const referenceFixtureSchema = z.strictObject({
   absent: z.array(z.string()).optional(),
   counts: z.record(z.string(), z.int().nonnegative()).optional(),
@@ -29,7 +35,7 @@ export const referenceFixtureSchema = z.strictObject({
     .min(1),
   name: z.string().min(1),
   retrieved: z.iso.date(),
-  source: z.strictObject({ name: z.string().min(1), url: z.url() }),
+  source: referenceSourceSchema,
   toleranceMinutes: z.number().positive(),
   window: z.strictObject({
     endDate: z.iso.date(),

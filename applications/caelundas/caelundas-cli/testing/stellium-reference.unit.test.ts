@@ -8,36 +8,30 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { LoggerService } from "@codebase/logging";
 
 import { AspectGraphService } from "../src/modules/aspects/aspect-graph.service";
-import { CompoundPhaseService } from "../src/modules/aspects/compound-phase.service";
 import { ProgressiveCompoundEventService } from "../src/modules/aspects/progressive-compound-event.service";
-import { orbByAspect } from "../src/modules/caelundas/caelundas.constants";
+import {
+  aspectBodies,
+  orbByAspect,
+} from "../src/modules/caelundas/caelundas.constants";
 import { ProgressiveUtilitiesService } from "../src/modules/progressive/progressive-utilities.service";
 import { StelliumService } from "../src/modules/stellium/stellium.service";
 
+import {
+  REFERENCE_LONGITUDES_DIRECTORY,
+  stelliumLongitudeFixtureSchema,
+} from "./reference-longitudes.constants";
+
 import type { AspectBodies } from "../src/modules/aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../src/modules/caelundas-database/caelundas-database.types";
-import type { Body } from "../src/modules/caelundas/caelundas.types";
+import type { z } from "zod";
+
+/** A body the stellium step considers. */
+type AspectBody = (typeof aspectBodies)[number];
 
 /** An expected boundary (no `end`) or span, as a subscriber would read it. */
-interface ReferenceStelliumEvent {
-  end?: string;
-  start: string;
-  summary: string;
-}
+type ReferenceStelliumEvent = StelliumLongitudeFixture["boundaries"][number];
 
-/**
- * Horizons longitudes around each stellium boundary, and the boundaries and
- * spans those positions imply under the 8° conjunction orb.
- */
-interface StelliumLongitudeFixture {
-  boundaries: ReferenceStelliumEvent[];
-  longitudesByMinute: Record<string, Partial<Record<Body, number>>>;
-  name: string;
-  note: string;
-  retrieved: string;
-  source: { name: string; url: string };
-  spans: Required<ReferenceStelliumEvent>[];
-}
+type StelliumLongitudeFixture = z.infer<typeof stelliumLongitudeFixtureSchema>;
 
 const MILLISECONDS_PER_MINUTE = 60_000;
 
@@ -78,12 +72,10 @@ function isoMinute(minute: moment.Moment): string {
 
 /** Reads one committed Horizons longitude fixture by name. */
 function loadStelliumFixture(name: string): StelliumLongitudeFixture {
-  const file = path.join(
-    import.meta.dirname,
-    "reference-longitudes",
-    `${name}.json`,
+  const file = path.join(REFERENCE_LONGITUDES_DIRECTORY, `${name}.json`);
+  return stelliumLongitudeFixtureSchema.parse(
+    JSON.parse(fs.readFileSync(file, "utf8")),
   );
-  return JSON.parse(fs.readFileSync(file, "utf8")) as StelliumLongitudeFixture;
 }
 
 /**
@@ -99,8 +91,8 @@ function registryAt(
   const next =
     fixture.longitudesByMinute[isoMinute(minute.clone().add(1, "minute"))];
   if (!now || !next) throw new Error(`No longitudes around ${minute.format()}`);
-  const bodies = Object.keys(now) as Body[];
-  const withinOrb = (first: Body, second: Body): boolean =>
+  const bodies = aspectBodies.filter((body) => now[body] !== undefined);
+  const withinOrb = (first: AspectBody, second: AspectBody): boolean =>
     [now, next].every(
       (longitudes) =>
         separation(
@@ -144,7 +136,6 @@ describe("stelliums against JPL Horizons positions", () => {
     const module = await Test.createTestingModule({
       providers: [
         AspectGraphService,
-        CompoundPhaseService,
         LoggerService,
         ProgressiveCompoundEventService,
         ProgressiveUtilitiesService,

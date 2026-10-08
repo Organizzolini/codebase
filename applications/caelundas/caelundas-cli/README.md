@@ -2340,7 +2340,9 @@ graph LR
   file_testing_reference_fixtures_types_ts["testing/reference-fixtures.types.ts"]
   file_testing_reference_fixtures_utilities_ts["testing/reference-fixtures.utilities.ts"]
   file_testing_reference_fixtures_utilities_unit_test_ts["testing/reference-fixtures.utilities.unit.test.ts"]
+  file_testing_reference_longitudes_constants_ts["testing/reference-longitudes.constants.ts"]
   file_testing_setup_ts["testing/setup.ts"]
+  file_testing_stellium_cliques_unit_test_ts["testing/stellium-cliques.unit.test.ts"]
   file_testing_stellium_reference_unit_test_ts["testing/stellium-reference.unit.test.ts"]
   file_vitest_config_ts["vitest.config.ts"]
   file_src_main_end_to_end_test_ts --> file_src_constants_ts
@@ -3368,9 +3370,9 @@ graph LR
   file_src_modules_stellium_stellium_service_ts --> file_src_modules_caelundas_symbol_caelundas_constants_ts
   file_src_modules_stellium_stellium_service_ts --> file_src_modules_progressive_progressive_utilities_service_ts
   file_src_modules_stellium_stellium_service_ts --> file_src_modules_stellium_stellium_constants_ts
+  file_src_modules_stellium_stellium_service_ts --> file_src_modules_stellium_stellium_types_ts
   file_src_modules_stellium_stellium_service_unit_test_ts --> file_src_modules_aspects_aspect_graph_service_ts
   file_src_modules_stellium_stellium_service_unit_test_ts --> file_src_modules_aspects_aspects_types_ts
-  file_src_modules_stellium_stellium_service_unit_test_ts --> file_src_modules_aspects_compound_phase_service_ts
   file_src_modules_stellium_stellium_service_unit_test_ts --> file_src_modules_aspects_progressive_compound_event_service_ts
   file_src_modules_stellium_stellium_service_unit_test_ts --> file_src_modules_caelundas_database_caelundas_database_types_ts
   file_src_modules_stellium_stellium_service_unit_test_ts --> file_src_modules_caelundas_caelundas_constants_ts
@@ -3529,15 +3531,22 @@ graph LR
   file_testing_reference_fixtures_utilities_unit_test_ts --> file_src_modules_caelundas_database_caelundas_database_types_ts
   file_testing_reference_fixtures_utilities_unit_test_ts --> file_testing_reference_fixtures_types_ts
   file_testing_reference_fixtures_utilities_unit_test_ts --> file_testing_reference_fixtures_utilities_ts
+  file_testing_reference_longitudes_constants_ts --> file_src_modules_caelundas_caelundas_constants_ts
+  file_testing_reference_longitudes_constants_ts --> file_testing_reference_fixtures_constants_ts
+  file_testing_stellium_cliques_unit_test_ts --> file_src_modules_aspects_aspect_graph_service_ts
+  file_testing_stellium_cliques_unit_test_ts --> file_src_modules_aspects_aspects_types_ts
+  file_testing_stellium_cliques_unit_test_ts --> file_src_modules_aspects_progressive_compound_event_service_ts
+  file_testing_stellium_cliques_unit_test_ts --> file_src_modules_caelundas_caelundas_types_ts
+  file_testing_stellium_cliques_unit_test_ts --> file_src_modules_progressive_progressive_utilities_service_ts
+  file_testing_stellium_cliques_unit_test_ts --> file_src_modules_stellium_stellium_service_ts
   file_testing_stellium_reference_unit_test_ts --> file_src_modules_aspects_aspect_graph_service_ts
   file_testing_stellium_reference_unit_test_ts --> file_src_modules_aspects_aspects_types_ts
-  file_testing_stellium_reference_unit_test_ts --> file_src_modules_aspects_compound_phase_service_ts
   file_testing_stellium_reference_unit_test_ts --> file_src_modules_aspects_progressive_compound_event_service_ts
   file_testing_stellium_reference_unit_test_ts --> file_src_modules_caelundas_database_caelundas_database_types_ts
   file_testing_stellium_reference_unit_test_ts --> file_src_modules_caelundas_caelundas_constants_ts
-  file_testing_stellium_reference_unit_test_ts --> file_src_modules_caelundas_caelundas_types_ts
   file_testing_stellium_reference_unit_test_ts --> file_src_modules_progressive_progressive_utilities_service_ts
   file_testing_stellium_reference_unit_test_ts --> file_src_modules_stellium_stellium_service_ts
+  file_testing_stellium_reference_unit_test_ts --> file_testing_reference_longitudes_constants_ts
 ```
 <!-- codependix:end name="codependix-file-imports" -->
 

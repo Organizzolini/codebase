@@ -107,6 +107,13 @@
   "note": "Juno, Moon, Sun and Venus are pairwise within 8 degrees from 08:16 UT on 19 December, and Juno, Mars, Moon and Sun from 19:44 UT. Mars and Venus are about 10 degrees apart, so the five bodies form one conjunction component that is not a clique, and both stelliums are its maximal cliques. Each minute listed is a boundary T with T-1 and T+1: an edge is in T's registry when its bodies are within orb at T and T+1, because a leg's dissolving event marks its last minute in orb and the registry drops it then.",
   "retrieved": "2026-10-08",
   "source": {
+    "commandByBody": {
+      "juno": "3;",
+      "mars": "499",
+      "moon": "301",
+      "sun": "10",
+      "venus": "299"
+    },
     "name": "NASA JPL Horizons API: observer table, CENTER='500@399' (geocentric), QUANTITIES='31' (apparent ecliptic longitude of date), EXTRA_PREC='YES', listed times in UT",
     "url": "https://ssd.jpl.nasa.gov/api/horizons.api"
   },

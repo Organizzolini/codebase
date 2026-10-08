@@ -14,7 +14,8 @@ import { stelliumNameBySize } from "./stellium.constants";
 
 import type { AspectBodies } from "../aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
-import type { Aspect, AspectPhase, Body } from "../caelundas/caelundas.types";
+import type { Aspect, Body } from "../caelundas/caelundas.types";
+import type { StelliumPhase } from "./stellium.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -114,7 +115,7 @@ export class StelliumService {
    */
   private createStelliumEvent(parameters: {
     bodies: Body[];
-    phase: AspectPhase;
+    phase: StelliumPhase;
     timestamp: Moment;
   }): DetectedCalendarEvent {
     const { bodies, phase, timestamp } = parameters;
@@ -250,10 +251,8 @@ export class StelliumService {
   /**
    * Handles phase emoji for.
    */
-  private phaseEmojiFor(phase: AspectPhase): string {
-    if (phase === "forming") return "➡️ ";
-    if (phase === "perfective") return "🎯 ";
-    return "⬅️ ";
+  private phaseEmojiFor(phase: StelliumPhase): string {
+    return phase === "forming" ? "➡️ " : "⬅️ ";
   }
 
   /**

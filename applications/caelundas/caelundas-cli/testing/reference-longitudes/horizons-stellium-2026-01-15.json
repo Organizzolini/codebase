@@ -501,6 +501,15 @@
   "note": "Mars, Mercury, Sun and Venus are pairwise within 8 degrees before 15 January. Vesta is already conjunct with Venus, the Sun and Pluto, and Pluto with Venus, so every boundary below sits inside one conjunction component that is not a clique until 17 January 19:50 UT. Each membership change dissolves the old maximal clique and forms the new one on the same minute. The Mars, Mercury, Sun, Venus stellium is in effect before the first minute listed, so it only dissolves; the two 5-body stelliums formed on 24 January dissolve after the last minute listed. Each minute listed is a boundary T with T-1 and T+1: an edge is in T's registry when its bodies are within orb at T and T+1, because a leg's dissolving event marks its last minute in orb and the registry drops it then.",
   "retrieved": "2026-10-08",
   "source": {
+    "commandByBody": {
+      "mars": "499",
+      "mercury": "199",
+      "moon": "301",
+      "pluto": "999",
+      "sun": "10",
+      "venus": "299",
+      "vesta": "4;"
+    },
     "name": "NASA JPL Horizons API: observer table, CENTER='500@399' (geocentric), QUANTITIES='31' (apparent ecliptic longitude of date), EXTRA_PREC='YES', listed times in UT",
     "url": "https://ssd.jpl.nasa.gov/api/horizons.api"
   },
