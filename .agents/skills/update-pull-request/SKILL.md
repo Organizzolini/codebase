@@ -34,19 +34,19 @@ All PR title rules, validation requirements, and description templates follow th
 ```markdown
 ## 🌰 Summary
 
-<!-- Brief description of what this PR does (1-2 sentences) -->
+<!-- One plain paragraph of at most 48 words, readable at a glance: what this PR does and why -->
 
 ## 📝 Details
 
-- <!-- List of specific changes made -->
+- <!-- A bulleted list of the specific changes made, one marker throughout, at most 512 words in all -->
 
 ## 🧪 Testing
 
-1. <!-- How to manually verify these changes work correctly -->
+1. <!-- An ordered list of steps that verify these changes; a step may hold a code block -->
 
 ## 🔗 Related
 
-- <!-- Link any relevant documentation or related resources like internal documentation, GitHub issues/pull requests -->
+- <!-- Start with a `-` list linking related issues, pull requests, specs, or documentation; anything may follow it -->
 ```
 
 ## Workflow
@@ -85,9 +85,9 @@ From the diff, determine:
 1. **Primary type** — What kind of change is this? (`feat`, `fix`, `refactor`, `docs`, `chore`, etc.)
 2. **Scope** — Which project(s) or category is affected?
 3. **Gitmoji** — Which emoji matches the type?
-4. **Summary** — A 1-2 sentence description of the overall purpose
-5. **Detailed changes** — A complete bulleted list of every meaningful modification
-6. **Testing strategy** — Relevant `nx` commands and manual verification steps
+4. **Summary** — One plain paragraph of at most 48 words on the overall purpose, readable at a glance
+5. **Detailed changes** — A bulleted list of every meaningful modification, one marker throughout, at most 512 words
+6. **Testing strategy** — An ordered list of `nx` commands and manual verification steps
 7. **Affected projects** — Which Nx projects are touched (for testing commands)
 
 ### Step 4 — Discover Related Issues and Documentation
@@ -108,7 +108,7 @@ Use appropriate linking keywords:
 | `Resolves #N`     | Closes issue when PR merges |
 | `Related to #N`   | Links without closing       |
 
-If no related issues or documentation are found, omit the Related section content.
+If no related issues are found, link the relevant spec, files, or documentation instead — the Related section is never empty.
 
 ### Step 5 — Generate Updated Title
 
@@ -130,29 +130,31 @@ Use the PR template as the structure:
 ```markdown
 ## 🌰 Summary
 
-<!-- Brief description of what this PR does (1-2 sentences) -->
+<!-- One plain paragraph of at most 48 words, readable at a glance: what this PR does and why -->
 
 ## 📝 Details
 
-- <!-- List of specific changes made -->
+- <!-- A bulleted list of the specific changes made, one marker throughout, at most 512 words in all -->
 
 ## 🧪 Testing
 
-1. <!-- How to manually verify these changes work correctly -->
+1. <!-- An ordered list of steps that verify these changes; a step may hold a code block -->
 
 ## 🔗 Related
 
-- <!-- Link any relevant documentation or related resources like internal documentation, GitHub issues/pull requests -->
+- <!-- Start with a `-` list linking related issues, pull requests, specs, or documentation; anything may follow it -->
 ```
 
 <!-- pr-template-end -->
 
 Fill each section based on **only facts derived from the diff**:
 
-- **Summary**: Synthesize the overall purpose from the actual changes
-- **Details**: One bullet per meaningful change, present tense, specific file/component names
-- **Testing**: Include `nx run <project>:<target>` commands for affected projects, plus manual steps
-- **Related**: Include discovered issue links and relevant documentation links, or omit section if none found
+- **Summary**: One plain paragraph, at most 48 words, synthesizing the overall purpose from the actual changes — no lists, headings, or code blocks
+- **Details**: Bullets only, one marker throughout, at most 512 words in all — one bullet per meaningful change, present tense, specific file/component names; nested bullets are fine, a closing paragraph is not
+- **Testing**: An ordered list only — `nx run <project>:<target>` commands for affected projects, plus manual steps; indent a code block under its step rather than leaving it beside the list
+- **Related**: Opens with a `-` list of discovered issue links and relevant documentation links, never empty; anything, such as an attribution line, may follow
+
+These shapes and limits are enforced by `validation pull-request-body` — see the [create-pull-request skill](../create-pull-request/SKILL.md#description-guidelines).
 
 ### Step 7 — Update the Pull Request
 
@@ -180,10 +182,10 @@ Before submitting the update, verify:
 
 - [ ] Title follows `<type>(<scope>): <gitmoji> <subject>` format (max 128 chars)
 - [ ] Subject uses imperative mood and lowercase after gitmoji
-- [ ] Summary accurately reflects the diff (no speculative content)
-- [ ] Details list covers all meaningful changes from the diff
-- [ ] Testing section includes relevant `nx` commands for affected projects
-- [ ] Related issues use correct linking keywords and documentation links are included where relevant
+- [ ] Summary is one paragraph of at most 48 words and accurately reflects the diff (no speculative content)
+- [ ] Details is only a bulleted list with one marker, at most 512 words, covering all meaningful changes from the diff
+- [ ] Testing is only an ordered list and includes relevant `nx` commands for affected projects
+- [ ] Related opens with a `-` list; issues use correct linking keywords and documentation links are included where relevant
 - [ ] Description uses present tense ("Add", "Update", "Remove")
 
 ## Error Recovery

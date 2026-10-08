@@ -1,15 +1,15 @@
 ## 🌰 Summary
 
-<!-- Brief description of what this PR does (1-2 sentences) -->
+<!-- One plain paragraph of at most 48 words, readable at a glance: what this PR does and why -->
 
 ## 📝 Details
 
-- <!-- List of specific changes made -->
+- <!-- A bulleted list of the specific changes made, one marker throughout, at most 512 words in all -->
 
 ## 🧪 Testing
 
-1. <!-- How to manually verify these changes work correctly -->
+1. <!-- An ordered list of steps that verify these changes; a step may hold a code block -->
 
 ## 🔗 Related
 
-- <!-- Link any relevant documentation or related resources like internal documentation, GitHub issues/pull requests -->
+- <!-- Start with a `-` list linking related issues, pull requests, specs, or documentation; anything may follow it -->
