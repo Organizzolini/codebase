@@ -27,7 +27,7 @@ import path from "node:path";
  *
  * In CI it is doubled, for the release commit, whose hook checks every bumped
  * package. v2.34.0's took 11m40s over 718 tasks with a critical path of 2m15s,
- * on a 4-CPU runner. The heaviest tasks, `codebase:codependix` and
+ * on a 4-CPU runner. The heaviest tasks, the per-project `codependix-gate` and
  * `callidescope-gate`, peak near 1.6 GB, so 8 stay under the runner's 16 GB.
  */
 const ANALYSIS_PARALLELISM = process.env["CI"] ? 8 : 4;
@@ -145,12 +145,13 @@ const config = {
   // forwards an explicit configuration down `dependsOn`, so an edge there
   // would let `lint-code --configuration=write` publish from a branch.
 
-  // `callidescope-gate` and `codebase:codependix` reach a commit through
-  // `guard-code`'s `dependsOn` instead of being named here, so the `check`
-  // configuration below forwards to codependix's `--check boundaries`.
-  // `nx affected` still scopes `callidescope-gate` to the projects a commit
-  // touched, so a commit that deepens one project's call stacks fails that
-  // project's own task.
+  // `callidescope-gate` and `codependix-gate` reach a commit through
+  // `guard-code`'s `dependsOn` instead of being named here. Both are inferred
+  // per project and have no configurations, so the `check` configuration below
+  // falls through to their defaults. `nx affected` scopes each to the projects
+  // a commit touched, so a commit that deepens one project's call stacks or
+  // breaks one project's boundary fails that project's own task.
+  // `codebase:codependix` is write-only and is not reached from here.
 
   // There is no aggregate `synchronize` target to name instead: each
   // synchronization is its own Nx target on the `synchronization` project, run
