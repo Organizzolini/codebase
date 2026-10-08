@@ -87,12 +87,15 @@ jobs:
           # and one inferred target per Nx plugin. Runs whole, and only when an
           # ic-suite package or the check is affected — see
           # `scripts/nx/verify-publishable-packages.sh`. Never authenticates to
-          # a registry: nothing here holds a token, and setup-node is given no
-          # `registry-url`.
+          # a registry: no step is given an npm token, and setup-node is given
+          # no `registry-url`. Its checkout keeps no GitHub token either, since
+          # the consumer installs third-party code fresh from the registry. Its first run on #1473 took 4m05s with nothing
+          # cached: 2m49s to pack and check, 34s of that in the consumer. 15
+          # minutes leaves room for a runner several times slower.
           - target: verify-publishable-packages
             name: Publishable Packages
             emoji: 📦
-            timeout-minutes: 30
+            timeout-minutes: 15
 
     steps:
       - name: 🚦 Skip Conditionally
@@ -122,6 +125,8 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          persist-credentials: >-
+            ${{ matrix.check.target != 'verify-publishable-packages' }}
 
       - name: 🕋 Setup Codebase
         id: setup
