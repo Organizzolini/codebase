@@ -27,7 +27,9 @@ target, or with `codependix map --check boundaries --projects <project>`,
 adding `--format json` to read the findings as data. The finding that fails a
 gate is the one charged to its project; a line reading "in dependency X, not
 failing" is a note, and X's own gate is the one that fails. Fix it where the
-note says it lives, not in the project that printed it.
+note says it lives, not in the project that printed it. A finding charged to
+every judged project reads "all N judged projects" instead, so there is no
+other gate to look at: the fix goes where the finding says.
 
 **This is the one finding a re-run never fixes.** Nothing is stale and nothing
 needs regenerating: the edge is in the code, and one of two things has to give.
@@ -118,8 +120,9 @@ message names the project that owns the module or class it failed on when that
 is a different one — a project importing an entity package that throws on
 import fails alongside it, and the owner is where the repair goes. A
 value-import cycle between entity files, where a decorator reads a class
-before its module finished evaluating, surfaces here as `Cannot access 'X'
-before initialization` — a boot failure, not an `acyclic` finding.
+before its module finished evaluating, surfaces here as
+`Cannot access 'X' before initialization` — a boot failure, not an `acyclic`
+finding.
 
 An application is rooted in `src/main.module.ts` and its `MainModule` export; a
 library package with no such file is rooted in a synthetic module built from
@@ -134,8 +137,21 @@ If the CLI is being run from TypeScript sources through some other loader,
 check that decorator metadata survives it: NestJS constructor injection reads
 metadata that plain type-stripping erases, and the failure looks like a
 container that cannot resolve its own providers. The published `codependix`
-binary registers a decorator-preserving loader itself; a hand-rolled invocation
-has to do the same.
+binary registers a decorator-preserving loader itself, and so does the Nx gate
+(through `@codependix/nx/loader`, with no `@swc-node/register` needed in the
+workspace); a hand-rolled invocation has to do the same. The loader reads the
+workspace root's `tsconfig.json`, so a root whose `tsconfig.json` does not emit
+decorator metadata fails the same way.
+
+## A green run that judged less than expected
+
+A `--projects` or `--tags` list naming one project that exists beside one that
+does not still runs, and judges only the entries that matched. The run logs
+`🕸️ Ignored selection entries that matched no project` on stderr, listing the
+unmatched `projects` and `tags` with a hint to check the spelling, and exits as
+the matching entries decide. Read stderr after a green run whose selection came
+from a typed list, and fix the spelling before trusting it. A selection that
+matches nothing at all is refused instead.
 
 ## A rejected command line
 

@@ -206,6 +206,13 @@ name, a tag no project carries, or the workspace root (which is never a
 selectable project) exits non-zero as a rejected command line naming the
 patterns, rather than passing a gate that judged nothing.
 
+**A selection that matches only in part is warned about, not refused.**
+`--projects widgets,typo` judges `widgets` and logs the warning
+`🕸️ Ignored selection entries that matched no project` on stderr. It lists the
+`projects` and `tags` that matched nothing, with a `hint` to check the
+spelling. The exit code is unchanged, so a misspelled entry beside a good one
+shows up in the log rather than in the verdict.
+
 `include`/`exclude` never do this — they decide which projects have exports
 written for them, and have never reached the workspace graph or the gate. That
 difference is the whole reason the flags exist as flags rather than as
@@ -218,9 +225,10 @@ each shows up in `--help` under its own name. Do not "fix" the divergence.
 
 `--check boundaries --projects <name>` is a per-project gate from a plain
 shell, and an Nx workspace gets it inferred. The `@codependix/nx` plugin adds a
-cached `codependix-gate` target to every project except the workspace root; it
-runs exactly that command, from the workspace root, under the decorator-preserving
-loader NestJS needs:
+cached `codependix-gate` target to every project described by a `project.json`,
+except the workspace root. It runs exactly that command from the workspace
+root, under the decorator-preserving loader NestJS needs, which the plugin
+registers from its own dependencies:
 
 ```bash
 nx run lexico-entities:codependix-gate   # one project
@@ -234,7 +242,10 @@ dependent that merely builds on a broken project prints the finding as a note
 and passes; the broken project's own gate is the one that fails, so reproduce
 a failure by running the gate of the project it names.
 
-The target declares no configurations, so an aggregator run with
+The cache keys on the project, its dependencies, the configuration, and the
+codependix command line, test files excluded. A gate given `projects` or `tags`
+judges projects those inputs do not cover, so it is never replayed from the
+cache. The target declares no configurations, so an aggregator run with
 `--configuration=check` falls through to its defaults, as callidescope's
 `callidescope-gate` does. In this repository `guard-code` depends on it. The
 workspace-wide `codebase:codependix` target is write-only: it publishes the
@@ -287,6 +298,13 @@ judged project and does not. A `failures` entry — a container that would not
 boot — also names `ownerProject` when the class it failed on belongs to a
 different project than the one whose container failed. Read the `fail` rows,
 and treat `note` rows as the dependency's own gate's business.
+
+A failure charged to every judged project, when there is more than one, prints
+as `all N judged projects` rather than a list, and the Markdown report lists it
+once under `#### All judged projects` instead of under each project. The JSON
+keeps the full `projects` array. A bullet's error text keeps its line breaks,
+indented under the bullet, and `-->` is written `--&gt;` so the text cannot
+close an HTML comment.
 
 ## Reading an export
 

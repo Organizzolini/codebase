@@ -97,8 +97,8 @@ A Neighborhood covers **one hop in each direction** from the focal project
 
 - **`dependents` is the blast radius** of a breaking change: every listed
   project must build against the new shape. For breaking changes spanning
-  deeper layers, walk outward neighborhood by neighborhood or run `codependix
-  path`.
+  deeper layers, walk outward neighborhood by neighborhood or run
+  `codependix path`.
 - **`dependencies` is the allowed surface:** A project may only import what is
   declared here.
 - Edges marked `implicit` are Nx workspace configuration dependencies rather
@@ -134,8 +134,8 @@ Built by evaluating container modules:
 
 ## Confirming freshness before trusting committed graphs
 
-A committed graph reflects the repository state at the last `codependix map
---write`. To check whether committed graphs are up to date:
+A committed graph reflects the repository state at the last
+`codependix map --write`. To check whether committed graphs are up to date:
 
 ```bash
 # Check if any committed reports are stale without modifying files
