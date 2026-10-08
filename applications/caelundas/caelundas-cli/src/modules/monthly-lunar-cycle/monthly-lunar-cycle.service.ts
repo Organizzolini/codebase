@@ -310,16 +310,22 @@ export class MonthlyLunarCycleService {
    * @example
    * ```typescript
    * const allEvents = [
-   *   { summary: "🌕 🌑 New Moon", start: Jan 1, categories: [..., "New"] },
-   *   { summary: "🌕 🌓 First Quarter Moon", start: Jan 8, categories: [..., "First"] },
-   *   { summary: "🌕 🌕 Full Moon", start: Jan 15, categories: [..., "Full"] },
-   *   { summary: "🌕 🌗 Third Quarter Moon", start: Jan 22, categories: [..., "Third"] }
+   *   { summary: "🌙 🌑 New Moon", start: Oct 10, categories: [..., "New"] },
+   *   { summary: "🌙 🌒 Waxing Crescent Moon", start: Oct 14, categories: [..., "Waxing Crescent"] },
+   *   { summary: "🌙 🌓 First Quarter Moon", start: Oct 18, categories: [..., "First Quarter"] },
+   *   { summary: "🌙 🌔 Waxing Gibbous Moon", start: Oct 22, categories: [..., "Waxing Gibbous"] },
+   *   { summary: "🌙 🌕 Full Moon", start: Oct 26, categories: [..., "Full"] },
+   *   { summary: "🌙 🌖 Waning Gibbous Moon", start: Oct 29, categories: [..., "Waning Gibbous"] },
+   *   { summary: "🌙 🌗 Last Quarter Moon", start: Nov 1, categories: [..., "Last Quarter"] },
+   *   { summary: "🌙 🌘 Waning Crescent Moon", start: Nov 5, categories: [..., "Waning Crescent"] },
    * ];
-   * const durations = getMonthlyLunarCycleProgressiveEvents(allEvents);
-   * // Returns: [
-   * //   { summary: "🌕 🌑 New Moon", start: Jan 1, end: Jan 8, ... },
-   * //   { summary: "🌕 🌓 First Quarter Moon", start: Jan 8, end: Jan 15, ... },
-   * //   { summary: "🌕 🌕 Full Moon", start: Jan 15, end: Jan 22, ... }
+   * const durations = service.detectProgressive(allEvents);
+   * // Returns one span per consecutive pair, seven in all:
+   * // [
+   * //   { summary: "🌙 🌑 New Moon", start: Oct 10, end: Oct 14, ... },
+   * //   { summary: "🌙 🌒 Waxing Crescent Moon", start: Oct 14, end: Oct 18, ... },
+   * //   ...
+   * //   { summary: "🌙 🌗 Last Quarter Moon", start: Nov 1, end: Nov 5, ... }
    * // ]
    * ```
    */
