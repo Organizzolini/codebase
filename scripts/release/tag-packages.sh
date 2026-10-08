@@ -8,12 +8,17 @@
 # still bumps the package, so anything left uncommitted is committed here
 # instead, on its own.
 #
-# A package is newly versioned when a release commit set its manifest version
-# and no `<project>@<version>` tag names it yet; package-tags.sh tags each such
-# version on the commit that set it. Checkout fetches every tag, so only this
-# release's are missing, and a re-run creates nothing twice. A run that dies
-# with tags still missing leaves them for the next run's version-packages.sh,
-# which pushes them before Nx reads the tags.
+# A package is newly versioned when its `<project>@<version>` tag, the pattern
+# nx.json's `release.releaseTag` sets, does not exist yet. Checkout fetches
+# every tag, so only this release's are missing, and a re-run creates nothing
+# twice. A new package's hand-written `0.0.0` is never tagged: it has not been
+# released, and its first release is still to come.
+#
+# GitHub rejects any push to this repository that updates more than 6 refs,
+# and a first release tags 20 or more packages, so the tags go 6 at a time. A
+# rejected batch is retried, since GitHub rejected one of v2.35.0's moments
+# after accepting the batch before it. Tags still missing when the run ends are
+# pushed by the next run, which runs this script before versioning.
 #
 # Inputs, all from the environment:
 #   GIT_COMMITTER_NAME, GIT_COMMITTER_EMAIL
@@ -27,7 +32,14 @@ set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/release-group.sh"
 source "$(dirname "${BASH_SOURCE[0]}")/main-tip.sh"
-source "$(dirname "${BASH_SOURCE[0]}")/package-tags.sh"
+
+# The most refs GitHub accepts in one push to this repository.
+readonly REFS_PER_PUSH=6
+
+# How many times a rejected batch of tags is pushed in all, and the seconds
+# between attempts, which tests can shorten.
+readonly PUSH_ATTEMPTS=4
+readonly PUSH_RETRY_DELAY="${PUSH_RETRY_DELAY:-20}"
 
 # Prints every file version-packages.sh may have written that exists. Globs
 # rather than git path patterns, which fail the whole `git add` when one
@@ -62,5 +74,43 @@ commit_leftover_versions() {
   fi
 }
 
+# Tags HEAD for every release-group package whose version has no tag yet,
+# adding each tag it makes to `tags`.
+tag_new_versions() {
+  local group project root tag
+  group="$(release_group)"
+  while read -r project root; do
+    tag="${project}@$(jq -r .version "${root}/package.json")"
+    if [[ "${tag}" == *@0.0.0 ]] || git rev-parse --quiet --verify "refs/tags/${tag}" >/dev/null; then
+      continue
+    fi
+    git tag --annotate "${tag}" --message "${tag}"
+    tags+=("${tag}")
+  done <<<"${group}"
+}
+
+# Pushes the given refs, trying again after a rejection, up to PUSH_ATTEMPTS
+# times in all.
+push_with_retries() {
+  local attempt
+  for ((attempt = 1; attempt < PUSH_ATTEMPTS; attempt++)); do
+    git push origin "$@" && return 0
+    echo "🔁 Push rejected; trying again in ${PUSH_RETRY_DELAY}s"
+    sleep "${PUSH_RETRY_DELAY}"
+  done
+  git push origin "$@"
+}
+
 commit_leftover_versions
-tag_release_versions
+
+tags=()
+tag_new_versions
+echo "🏷️ Pushing ${#tags[@]} package tags, ${REFS_PER_PUSH} at a time"
+
+for ((start = 0; start < ${#tags[@]}; start += REFS_PER_PUSH)); do
+  refs=()
+  for tag in "${tags[@]:start:REFS_PER_PUSH}"; do
+    refs+=("refs/tags/${tag}")
+  done
+  push_with_retries "${refs[@]}"
+done

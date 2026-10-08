@@ -22,8 +22,6 @@
 set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/main-tip.sh"
-source "$(dirname "${BASH_SOURCE[0]}")/release-group.sh"
-source "$(dirname "${BASH_SOURCE[0]}")/package-tags.sh"
 
 git remote set-url origin \
   "https://x-access-token:${GITHUB_TOKEN:?}@github.com/${GITHUB_REPOSITORY:?}.git"
@@ -36,11 +34,10 @@ if main_has_moved_from "${base}"; then
   exit 0
 fi
 
-# Nx reads each package's current version from its tags, so a version a
-# release committed but never tagged reads as unreleased, and gets bumped
-# again along with every package it cascades to. That happened after v2.35.0's
-# tag push was cut short. Such versions are tagged and pushed first, on the
-# release commit that set them, which finishes that release instead.
-tag_release_versions
+# Nx reads each package's current version from its tag, so a version an
+# earlier run committed but never tagged reads as unreleased and is bumped
+# again, as after v2.35.0's tag push was cut short. tag-packages.sh pushes any
+# such tags first; on a fresh checkout it has nothing to commit.
+bash "$(dirname "${BASH_SOURCE[0]}")/tag-packages.sh"
 
 pnpm exec nx release --skip-publish

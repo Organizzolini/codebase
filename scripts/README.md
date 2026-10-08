@@ -707,12 +707,11 @@ version and the packages' versions, so a release adds one commit to `main`.
 
 | Script | Step | What it does |
 | ------ | ---- | ------------ |
-| `version-packages.sh` | 🏷️ Version Packages | Tags and pushes any version an earlier release committed but never tagged, then runs `nx release --skip-publish`, which versions each package and writes its `CHANGELOG.md` without committing, for semantic-release's release commit to carry |
-| `tag-packages.sh` | 🔖 Tag Packages | Commits any package versions semantic-release left uncommitted because the codebase had no release, then tags each newly versioned package `<project>@<version>` on the release commit that set its version, through `package-tags.sh` |
+| `version-packages.sh` | 🏷️ Version Packages | Runs `tag-packages.sh` to push any tags an earlier run left missing, then runs `nx release --skip-publish`, which versions each package and writes its `CHANGELOG.md` without committing, for semantic-release's release commit to carry |
+| `tag-packages.sh` | 🔖 Tag Packages | Commits any package versions semantic-release left uncommitted because the codebase had no release, then tags each newly versioned package `<project>@<version>` on `HEAD` and pushes the tags 6 at a time, since GitHub rejects a push that updates more than 6 refs, retrying a rejected push |
 | `publish-packages.sh` | 📦 Publish Packages | Publishes every release-group package not yet on npm, with provenance, then mirrors each package to GitHub Packages as `@<owner>/<project>` |
 | `link-packages.sh` | 🔗 Link Packages | Creates a storage record on the organization's Linked artifacts page for every published npm version that has none, and lists the versions this run published for 🔏 Attest Packages |
 | `tag-codebase.sh` | 🔖 Tag Codebase | Runs semantic-release, stepping aside instead when `main` moved before it started or while its release commit was being made |
-| `package-tags.sh` | sourced by the two above | Finds each version a release commit set that has no tag yet, tags it on that commit, and pushes the tags 6 at a time, since GitHub rejects a push that updates more than 6 refs, retrying a rejected push up to 3 times |
 | `release-group.sh` | sourced by the above | Lists the release group's projects and their directories from `nx.json` in two Nx calls, names and checks a package's npm version, and runs a step's registry calls six at a time |
 | `main-tip.sh` | sourced by the version, codebase and tag scripts | Reports whether `main` moved during the run, and sets the `RELEASE_SUPERSEDED` variable the later release steps skip on |
 
