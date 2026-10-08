@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
+import { bodies } from "./caelundas.constants";
 import {
+  bodyDisplayName,
+  bodyFromDisplayName,
   capitalize,
   groupByToMap,
   isAspect,
@@ -21,6 +24,19 @@ describe("caelundas.types", () => {
   it("capitalizes and uncapitalizes string literal types", () => {
     expect(capitalize("mars")).toBe("Mars");
     expect(uncapitalize("Mars")).toBe("mars");
+  });
+
+  it("names every body in start case and inverts it", () => {
+    expect(bodyDisplayName("north lunar node")).toBe("North Lunar Node");
+    expect(bodyDisplayName("lunar apogee")).toBe("Lunar Apogee");
+    expect(bodyDisplayName("moon")).toBe("Moon");
+    expect(bodyFromDisplayName("North Lunar Node")).toBe("north lunar node");
+    expect(bodyFromDisplayName("North lunar node")).toBeUndefined();
+    expect(bodyFromDisplayName("Forming")).toBeUndefined();
+
+    for (const body of bodies) {
+      expect(bodyFromDisplayName(bodyDisplayName(body))).toBe(body);
+    }
   });
 
   it("groups arrays into typed maps", () => {

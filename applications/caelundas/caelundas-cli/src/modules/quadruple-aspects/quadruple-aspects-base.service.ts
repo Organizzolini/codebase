@@ -4,6 +4,7 @@ import _ from "lodash";
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { aspectBodies as quadrupleAspectBodies } from "../caelundas/caelundas.constants";
+import { bodyDisplayName } from "../caelundas/caelundas.types";
 import {
   symbolByBody,
   symbolByQuadrupleAspect,
@@ -86,7 +87,7 @@ export class QuadrupleAspectsBaseService {
     const { bodiesSorted, focalOrApexBody, phase, quadrupleAspect } = args;
     const base = `${bodiesSorted.join(", ")} ${quadrupleAspect} ${phase}`;
     return focalOrApexBody
-      ? `${base} (${_.startCase(focalOrApexBody)} focal)`
+      ? `${base} (${bodyDisplayName(focalOrApexBody)} focal)`
       : base;
   }
 
@@ -356,7 +357,7 @@ export class QuadrupleAspectsBaseService {
     const planets = _.sortBy(
       event.categories.filter((category) =>
         quadrupleAspectBodies
-          .map((quadrupleAspectBody) => _.startCase(quadrupleAspectBody))
+          .map((quadrupleAspectBody) => bodyDisplayName(quadrupleAspectBody))
           .includes(category),
       ),
     );
@@ -400,7 +401,7 @@ export class QuadrupleAspectsBaseService {
       body4Capitalized,
     ];
     if (focalOrApexBody) {
-      categories.push(`${_.startCase(focalOrApexBody)} Focal`);
+      categories.push(`${bodyDisplayName(focalOrApexBody)} Focal`);
     }
     return categories;
   }

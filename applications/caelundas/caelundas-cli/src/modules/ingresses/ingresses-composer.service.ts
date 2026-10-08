@@ -8,6 +8,7 @@ import {
   signs,
 } from "../caelundas/caelundas.constants";
 import {
+  bodyDisplayName,
   capitalize,
   isBody,
   isDecan,
@@ -210,7 +211,7 @@ export class IngressesComposerService {
   }): DetectedCalendarEvent {
     const { body, date, longitude } = args;
     const sign = IngressesComposerService.getSign(longitude);
-    const bodyCapitalized = _.startCase(body);
+    const bodyCapitalized = bodyDisplayName(body);
     const signCapitalized = _.startCase(sign);
     const bodySymbol = symbolByBody[body];
     const signSymbol = symbolBySign[sign];
@@ -358,7 +359,7 @@ export class IngressesComposerService {
     return _.groupBy(events, (event) => {
       const bodyCapitalized = event.categories.find((category) =>
         signIngressBodies
-          .map((signIngressBody) => _.startCase(signIngressBody))
+          .map((signIngressBody) => bodyDisplayName(signIngressBody))
           .includes(category),
       );
       return bodyCapitalized || "";

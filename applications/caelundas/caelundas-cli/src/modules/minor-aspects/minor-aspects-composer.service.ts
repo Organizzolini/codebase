@@ -9,6 +9,7 @@ import {
   minorAspects,
 } from "../caelundas/caelundas.constants";
 import {
+  bodyDisplayName,
   capitalize,
   isBody,
   isMinorAspect,
@@ -99,7 +100,7 @@ export class MinorAspectsComposerService {
     const bodiesCapitalized = _.sortBy(
       event.categories.filter((category) =>
         minorAspectBodies
-          .map((minorAspectBody) => _.startCase(minorAspectBody))
+          .map((minorAspectBody) => bodyDisplayName(minorAspectBody))
           .includes(category),
       ),
     );
@@ -150,7 +151,7 @@ export class MinorAspectsComposerService {
   extractAspectComponents(categories: string[]): ExtractAspectComponentsResult {
     const bodiesCapitalized = categories
       .filter((c: string) =>
-        minorAspectBodies.map((b: string) => _.startCase(b)).includes(c),
+        minorAspectBodies.map((b: string) => bodyDisplayName(b)).includes(c),
       )
       .toSorted();
     const aspectCapitalized = categories.find((c: string) =>

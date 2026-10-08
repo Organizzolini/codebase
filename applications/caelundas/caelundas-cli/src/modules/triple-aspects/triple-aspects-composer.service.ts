@@ -6,6 +6,7 @@ import { LoggerService } from "@codebase/logging";
 import { AspectGraphService } from "../aspects/aspect-graph.service";
 import { AspectPhaseEmojiService } from "../aspects/aspect-phase-emoji.service";
 import { aspectBodies as tripleAspectBodies } from "../caelundas/caelundas.constants";
+import { bodyDisplayName } from "../caelundas/caelundas.types";
 import {
   symbolByBody,
   symbolByTripleAspect,
@@ -53,7 +54,7 @@ export class TripleAspectsComposerService {
     aspectCapitalized: string,
   ): null | ProgressiveBodiesMeta {
     const tripleAspectBodyNames = new Set(
-      tripleAspectBodies.map((body) => _.startCase(body)),
+      tripleAspectBodies.map((body) => bodyDisplayName(body)),
     );
     const bodiesCapitalized = _.sortBy(
       forming.categories.filter((category) =>
@@ -109,7 +110,7 @@ export class TripleAspectsComposerService {
     ];
 
     if (focalOrApexBody) {
-      categories.push(`${_.startCase(focalOrApexBody)} Focal`);
+      categories.push(`${bodyDisplayName(focalOrApexBody)} Focal`);
     }
 
     return categories;
@@ -127,7 +128,7 @@ export class TripleAspectsComposerService {
     const { bodiesSorted, focalOrApexBody, phase, tripleAspect } = args;
     const base = `${bodiesSorted[0]}, ${bodiesSorted[1]}, ${bodiesSorted[2]} ${tripleAspect} ${phase}`;
     return focalOrApexBody
-      ? `${base} (${_.startCase(focalOrApexBody)} focal)`
+      ? `${base} (${bodyDisplayName(focalOrApexBody)} focal)`
       : base;
   }
 
@@ -190,7 +191,7 @@ export class TripleAspectsComposerService {
     const body3Capitalized = bodiesCapitalized[2] ?? "";
 
     const bodyMap: Record<string, Body> = Object.fromEntries(
-      tripleAspectBodies.map((body) => [_.startCase(body), body]),
+      tripleAspectBodies.map((body) => [bodyDisplayName(body), body]),
     );
 
     const body1 = bodyMap[body1Capitalized];
@@ -347,7 +348,7 @@ export class TripleAspectsComposerService {
    */
   getProgressiveGroupKey(event: DetectedCalendarEvent): string {
     const tripleAspectBodyNames = new Set(
-      tripleAspectBodies.map((body) => _.startCase(body)),
+      tripleAspectBodies.map((body) => bodyDisplayName(body)),
     );
     const planets = _.sortBy(
       event.categories.filter((category) =>
