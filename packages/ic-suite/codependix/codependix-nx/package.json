@@ -58,6 +58,9 @@
   "nx": {
     "executors": "./executors.json"
   },
+  "peerDependencies": {
+    "typescript": "catalog:"
+  },
   "publishConfig": {
     "access": "public",
     "exports": {

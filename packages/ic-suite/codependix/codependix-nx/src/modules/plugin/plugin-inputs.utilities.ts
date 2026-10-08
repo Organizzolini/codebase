@@ -8,6 +8,7 @@ import {
   CLI_PACKAGE_NAME,
   TOOL_PACKAGE_GLOBS,
   WORKSPACE_PROTOCOL,
+  WORKSPACE_TSCONFIG_INPUT,
 } from "./plugin.constants";
 
 import type {
@@ -26,6 +27,8 @@ import type {
  * workspace they are `{workspaceRoot}` globs over each package's sources,
  * which is the input form Nx's affected computation follows as well as
  * hashes; an installed command line is pinned by its npm version instead.
+ * Either way the workspace root's `tsconfig.json` follows, which the loader
+ * reads.
  *
  * Nothing here throws: inference runs while Nx builds the project graph,
  * where a throw stops every command in the workspace. What cannot be resolved
@@ -46,12 +49,14 @@ export function resolveToolInputs(
       return [];
     }
 
-    return isInsideWorkspace({
+    const inputs = isInsideWorkspace({
       directory: cliDirectory,
       workspaceRoot: args.workspaceRoot,
     })
       ? resolveWorkspaceInputs({ ...args, cliDirectory })
       : resolveExternalInputs(cliDirectory);
+
+    return [...inputs, WORKSPACE_TSCONFIG_INPUT];
   } catch (error) {
     args.logger.warn(
       `🕸️ Skipped the cache inputs of ${CLI_PACKAGE_NAME}, so a change to it will not invalidate a cached codependix gate: ${String(error)}`,
@@ -199,9 +204,8 @@ function resolveExternalInputs(cliDirectory: string): InferredInput[] {
 }
 
 /**
- * Globs over the sources, manifest, and compiler options of the command line
- * and of every workspace package it reaches, sorted so the cache key is
- * stable.
+ * Globs over the sources and manifest of the command line and of every
+ * workspace package it reaches, sorted so the cache key is stable.
  */
 function resolveWorkspaceInputs(args: {
   cliDirectory: string;

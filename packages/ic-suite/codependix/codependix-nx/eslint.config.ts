@@ -16,6 +16,8 @@ export default [
           // names it, so only `implicitDependencies` draws the edge.
           // @swc-node/register, @swc/core: the loader that child process
           // runs under, passed to `node --import` as a string, and its peer.
+          // typescript: the loader's other peer, declared here so a consumer
+          // installs it; nothing in this package imports it.
           // @golevelup/ts-vitest: a devDependency used only in test files, which
           // are outside the build dependency check's scope.
           // vitest: referenced via tsconfig "types" array; it's a devDependency and
@@ -25,6 +27,7 @@ export default [
             "@golevelup/ts-vitest",
             "@swc-node/register",
             "@swc/core",
+            "typescript",
             "vitest",
           ],
           ignoredFiles: ["{projectRoot}/eslint.config.{js,cjs,mjs,ts,cts,mts}"],

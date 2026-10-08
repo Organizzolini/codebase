@@ -77,16 +77,25 @@ export const WORKSPACE_PROTOCOL = "workspace:";
 /**
  * The files of a workspace package that change what a gate decides.
  *
- * Its manifest, its compiler options (the loader reads them), and its
- * sources — not its tests, nor its README, which codependix regenerates on
- * the default branch. The tests are left out inside the one positive glob,
- * as an extglob: Nx's affected computation reads only positive
- * `{workspaceRoot}` inputs and ignores a negated one outright, so a `!`
- * input would still let a test-only edit select every gate. `testing/` sits
- * beside `src/`, so no glob here reaches it.
+ * Its manifest and its sources — not its tests, nor its README, which
+ * codependix regenerates on the default branch. The tests are left out
+ * inside the one positive glob, as an extglob: Nx's affected computation
+ * reads only positive `{workspaceRoot}` inputs and ignores a negated one
+ * outright, so a `!` input would still let a test-only edit select every
+ * gate. `testing/` sits beside `src/`, so no glob here reaches it. A
+ * package's own `tsconfig.json` is not here: the loader never reads it.
  */
 export const TOOL_PACKAGE_GLOBS = [
   "package.json",
   "src/**/!(*.test.*|*.spec.*)",
-  "tsconfig.json",
 ] as const;
+
+/**
+ * The compiler options the gate's loader reads.
+ *
+ * `@swc-node/register` takes them from `SWC_NODE_PROJECT` or
+ * `TS_NODE_PROJECT`, else from `tsconfig.json` in its working directory,
+ * which is the workspace root. So this one file shapes every gate's
+ * verdict, whichever way the command line was installed.
+ */
+export const WORKSPACE_TSCONFIG_INPUT = "{workspaceRoot}/tsconfig.json";
