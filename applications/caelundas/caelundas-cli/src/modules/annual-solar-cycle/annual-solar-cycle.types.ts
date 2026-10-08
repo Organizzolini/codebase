@@ -41,9 +41,12 @@ export interface SolarCycleLongitudes {
   previousLongitude: number;
 }
 
-/** Distances sampled for one-minute solar apsis extrema detection. */
+/**
+ * Distances sampled around a minute for solar apsis extrema detection: the
+ * minute itself, plus every minute of the margin before and after it.
+ */
 export interface SolarDistanceSample {
   current: number;
-  next: number;
-  previous: number;
+  next: number[];
+  previous: number[];
 }

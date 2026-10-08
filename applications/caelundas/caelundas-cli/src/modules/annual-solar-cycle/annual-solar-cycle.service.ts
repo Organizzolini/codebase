@@ -2,8 +2,8 @@ import { Injectable } from "@nestjs/common";
 
 import { LoggerService } from "@codebase/logging";
 
+import { MARGIN_MINUTES } from "../caelundas/caelundas.constants";
 import { EphemerisService } from "../ephemeris/ephemeris.service";
-import { MathService } from "../math/math.service";
 import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { AnnualSolarCycleEventsService } from "./annual-solar-cycle-events.service";
@@ -43,7 +43,6 @@ export class AnnualSolarCycleService {
   constructor(
     private readonly logger: LoggerService,
     private readonly ephemerisService: EphemerisService,
-    private readonly mathService: MathService,
     private readonly progressiveUtilitiesService: ProgressiveUtilitiesService,
     private readonly annualSolarCycleEventsService: AnnualSolarCycleEventsService,
   ) {
@@ -105,29 +104,27 @@ export class AnnualSolarCycleService {
     };
   }
 
-  /** Samples Sun-Earth distance at previous, current, and next minute for extrema checks. */
+  /**
+   * Samples Sun-Earth distance at the minute and across the margin on either
+   * side, so an extremum is judged against its whole neighborhood.
+   */
   private getSolarDistances(
     minute: Moment,
     sunDistanceEphemeris: DistanceEphemeris,
   ): SolarDistanceSample {
-    const previousMinute = minute.clone().subtract(1, "minute");
-    const nextMinute = minute.clone().add(1, "minute");
-    const current = this.ephemerisService.getDistanceFromEphemeris(
-      sunDistanceEphemeris,
-      minute.toISOString(),
-      "distance",
+    const getDistance = (offsetMinutes: number): number =>
+      this.ephemerisService.getDistanceFromEphemeris(
+        sunDistanceEphemeris,
+        minute.clone().add(offsetMinutes, "minutes").toISOString(),
+        "distance",
+      );
+    const previous = Array.from({ length: MARGIN_MINUTES }, (_, index) =>
+      getDistance(index - MARGIN_MINUTES),
     );
-    const previous = this.ephemerisService.getDistanceFromEphemeris(
-      sunDistanceEphemeris,
-      previousMinute.toISOString(),
-      "distance",
+    const next = Array.from({ length: MARGIN_MINUTES }, (_, index) =>
+      getDistance(index + 1),
     );
-    const next = this.ephemerisService.getDistanceFromEphemeris(
-      sunDistanceEphemeris,
-      nextMinute.toISOString(),
-      "distance",
-    );
-    return { current, next, previous };
+    return { current: getDistance(0), next, previous };
   }
 
   /** Builds the progressive span event for Earth moving from perihelion toward aphelion. */
@@ -145,6 +142,30 @@ export class AnnualSolarCycleService {
       start: beginning.start,
       summary: SOLAR_RETREATING_SUMMARY,
     };
+  }
+
+  /**
+   * Whether the sampled distance is the farthest across its whole margin.
+   *
+   * A single glitched minute in the ephemeris can fake a one-minute extremum;
+   * requiring the margin on both sides to be lower rejects it. Strict on the
+   * earlier side so a tie yields the first minute only.
+   */
+  private isDistanceMaximum(samples: SolarDistanceSample): boolean {
+    const { current, next, previous } = samples;
+    return (
+      previous.every((distance) => distance < current) &&
+      next.every((distance) => distance <= current)
+    );
+  }
+
+  /** Whether the sampled distance is the nearest across its whole margin. */
+  private isDistanceMinimum(samples: SolarDistanceSample): boolean {
+    const { current, next, previous } = samples;
+    return (
+      previous.every((distance) => distance > current) &&
+      next.every((distance) => distance >= current)
+    );
   }
 
   // 🌎 Public Methods
@@ -262,8 +283,8 @@ export class AnnualSolarCycleService {
    * aphelion in early July.
    *
    * @see {@link getDistanceFromEphemeris} for distance retrieval
-   * @see {@link isMaximum} for aphelion detection
-   * @see {@link isMinimum} for perihelion detection
+   * @see {@link isDistanceMaximum} for aphelion detection
+   * @see {@link isDistanceMinimum} for perihelion detection
    *
    * @remarks
    * Perihelion: ~147.1 million km (Earth moving fastest, ~30.3 km/s)
@@ -284,12 +305,12 @@ export class AnnualSolarCycleService {
     const { minute, sunDistanceEphemeris } = args;
     const distances = this.getSolarDistances(minute, sunDistanceEphemeris);
     const solarApsisEvents: DetectedCalendarEvent[] = [];
-    if (this.mathService.isMaximum({ ...distances })) {
+    if (this.isDistanceMaximum(distances)) {
       solarApsisEvents.push(
         this.annualSolarCycleEventsService.buildAphelionEvent(minute),
       );
     }
-    if (this.mathService.isMinimum({ ...distances })) {
+    if (this.isDistanceMinimum(distances)) {
       solarApsisEvents.push(
         this.annualSolarCycleEventsService.buildPerihelionEvent(minute),
       );
