@@ -7,7 +7,7 @@ import { StelliumService } from "./stellium.service";
 /**
  * NestJS module for stellium configuration detection.
  * Exports {@link StelliumService} which identifies concentrations of 4 or more
- * celestial bodies in close conjunction via graph traversal over active aspects.
+ * celestial bodies in close conjunction as maximal cliques of active conjunctions.
  */
 @Module({
   controllers: [],

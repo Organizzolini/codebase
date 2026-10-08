@@ -11,6 +11,7 @@ import { StelliumService } from "./stellium.service";
 
 import type { AspectBodies } from "../aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
+import type { Body } from "../caelundas/caelundas.types";
 
 describe(StelliumService, () => {
   let service: StelliumService;
@@ -310,6 +311,91 @@ describe(StelliumService, () => {
         expect(stellium?.categories).toContain("5 Body");
       });
     });
+
+    describe("maximal conjunction cliques", () => {
+      /** Every pair of `members` as a conjunction. */
+      function clique(...members: Body[]): AspectBodies[] {
+        return members.flatMap((first, index) =>
+          members.slice(index + 1).map((second): AspectBodies => ({
+            aspect: "conjunct",
+            bodies: [first, second],
+          })),
+        );
+      }
+
+      /** Descriptions of the stelliums detected at one minute, in order. */
+      function describeDetected(
+        previousAspectBodies: AspectBodies[],
+        currentAspectBodies: AspectBodies[],
+      ): string[] {
+        return service
+          .detect({
+            currentAspectBodies,
+            minute: moment.utc("2026-01-15T07:48:00.000Z"),
+            previousAspectBodies,
+          })
+          .map((event) => event.description)
+          .toSorted();
+      }
+
+      it("reports a stellium inside a conjunction component that is not a clique", () => {
+        // 15 January 2026: Mars, Mercury, Sun and Venus are one stellium, and
+        // Vesta and Pluto are conjunct with only some of it. The Sun-Pluto leg
+        // closes a second stellium inside the same component.
+        const before = [
+          ...clique("mars", "mercury", "sun", "venus"),
+          ...clique("pluto", "venus", "vesta"),
+          { aspect: "conjunct", bodies: ["sun", "vesta"] },
+        ] satisfies AspectBodies[];
+        const after = [
+          ...before,
+          { aspect: "conjunct", bodies: ["sun", "pluto"] },
+        ] satisfies AspectBodies[];
+
+        expect(describeDetected(before, after)).toStrictEqual([
+          "Pluto, Sun, Venus, Vesta stellium forming",
+        ]);
+      });
+
+      it("reports overlapping stelliums that share bodies", () => {
+        // 19 December 2025: Mars is conjunct with Juno, the Moon and the Sun
+        // but not Venus, so the Moon-Mars leg forms a second stellium beside
+        // Juno, Moon, Sun, Venus without disturbing it.
+        const before = [
+          ...clique("juno", "moon", "sun", "venus"),
+          ...clique("juno", "mars", "sun"),
+        ];
+        const after = [
+          ...before,
+          { aspect: "conjunct", bodies: ["moon", "mars"] },
+        ] satisfies AspectBodies[];
+
+        expect(describeDetected(before, after)).toStrictEqual([
+          "Juno, Mars, Moon, Sun stellium forming",
+        ]);
+      });
+
+      it("reports no stellium that lies inside a larger one", () => {
+        expect(
+          describeDetected(
+            [],
+            clique("mars", "mercury", "sun", "venus", "vesta"),
+          ),
+        ).toStrictEqual(["Mars, Mercury, Sun, Venus, Vesta stellium forming"]);
+      });
+
+      it("reports a stellium once when its legs are in both snapshots twice", () => {
+        const legs = clique("mars", "mercury", "sun", "venus");
+        const reversed = legs.map((edge): AspectBodies => ({
+          aspect: edge.aspect,
+          bodies: [edge.bodies[1], edge.bodies[0]],
+        }));
+
+        expect(
+          describeDetected(legs.slice(1), [...legs, ...reversed]),
+        ).toStrictEqual(["Mars, Mercury, Sun, Venus stellium forming"]);
+      });
+    });
   });
 
   describe("detectProgressive", () => {
@@ -346,10 +432,6 @@ describe(StelliumService, () => {
           phase: "dissolving" | "forming" | "perfective";
           timestamp: moment.Moment;
         }) => DetectedCalendarEvent;
-        getNeighbor: (
-          edge: AspectBodies,
-          current: "mars" | "moon" | "sun",
-        ) => "mars" | "moon" | "sun" | null;
         haveAspect: (args: {
           aspectType: "conjunct";
           body1: "moon" | "sun";
@@ -364,12 +446,6 @@ describe(StelliumService, () => {
         ) => string;
       };
 
-      expect(
-        internals.getNeighbor(
-          { aspect: "conjunct", bodies: ["sun", "moon"] },
-          "mars",
-        ),
-      ).toBeNull();
       expect(internals.phaseEmojiFor("perfective")).toBe("🎯 ");
       expect(
         internals.createStelliumEvent({

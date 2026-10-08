@@ -20,8 +20,9 @@ import type { Moment } from "moment-timezone";
 /**
  * Detects stellium configurations — concentrations of 4 or more bodies in close conjunction.
  *
- * Uses graph traversal over conjunction aspects to find clusters of bodies within
- * a small zodiacal arc, then computes forming/dissolving phases for each cluster.
+ * Finds the maximal cliques of the conjunction graph, so a stellium is
+ * reported even when a body outside it is conjunct with only some of it, then
+ * computes forming/dissolving phases for each clique.
  */
 @Injectable()
 export class StelliumService {
@@ -64,52 +65,18 @@ export class StelliumService {
   }
 
   /**
-   * Handles bfs cluster.
+   * Builds each body's set of conjunct neighbors.
    */
-  private bfsCluster(
-    startBody: Body,
+  private buildConjunctionNeighbors(
     conjunctions: AspectBodies[],
-    visited: Set<Body>,
-  ): Set<Body> {
-    const cluster = new Set<Body>();
-    const queue: Body[] = [startBody];
-
-    while (queue.length > 0) {
-      const current = queue.shift();
-      if (!current || cluster.has(current)) continue;
-
-      cluster.add(current);
-      visited.add(current);
-
-      for (const edge of conjunctions) {
-        const neighbor = this.getNeighbor(edge, current);
-        if (neighbor && !cluster.has(neighbor)) queue.push(neighbor);
-      }
+  ): Map<Body, Set<Body>> {
+    const neighbors = new Map<Body, Set<Body>>();
+    for (const { bodies } of conjunctions) {
+      const [first, second] = bodies;
+      neighbors.set(first, (neighbors.get(first) ?? new Set()).add(second));
+      neighbors.set(second, (neighbors.get(second) ?? new Set()).add(first));
     }
-
-    return cluster;
-  }
-
-  /**
-   * Builds conjunction clusters.
-   */
-  private buildConjunctionClusters(conjunctions: AspectBodies[]): Set<Body>[] {
-    const clusters: Set<Body>[] = [];
-    const visited = new Set<Body>();
-    const bodiesSet = new Set<Body>();
-
-    for (const edge of conjunctions) {
-      bodiesSet.add(edge.bodies[0]);
-      bodiesSet.add(edge.bodies[1]);
-    }
-
-    for (const startBody of bodiesSet) {
-      if (visited.has(startBody)) continue;
-      const cluster = this.bfsCluster(startBody, conjunctions, visited);
-      if (cluster.size >= 4) clusters.push(cluster);
-    }
-
-    return clusters;
+    return neighbors;
   }
 
   /**
@@ -133,11 +100,9 @@ export class StelliumService {
    * a small area of the zodiac (typically within 8° in the same sign).
    * All bodies must be in conjunction (0° ± orb) with each other.
    *
-   * Uses graph traversal to identify clusters of conjunct bodies:
-   * - Starts with each unvisited body
-   * - Breadth-first search to find all transitively conjunct bodies
-   * - Validates that all pairs in cluster are directly conjunct
-   * - Only accepts clusters with 4+ bodies.
+   * Each stellium is a maximal clique of the conjunction graph with 4+
+   * bodies: every pair is conjunct, and no other body is conjunct with all of
+   * them. A larger connected component can hold several, overlapping ones.
    *
    * Stelliums represent focused energy and emphasis in a particular
    * area of life or zodiac sign. The concentration of planetary energies
@@ -152,14 +117,15 @@ export class StelliumService {
     previousAspectBodies: AspectBodies[];
   }): DetectedCalendarEvent[] {
     const { currentAspectBodies, minute, previousAspectBodies } = args;
-    const unionEdges = [...currentAspectBodies, ...previousAspectBodies];
+    const unionEdges = this.aspectGraphService.unionAspectBodies(
+      currentAspectBodies,
+      previousAspectBodies,
+    );
     const conjunctions =
       this.groupAspectsByType(unionEdges).get("conjunct") ?? [];
     if (conjunctions.length < 6) return [];
     const events: DetectedCalendarEvent[] = [];
-    for (const cluster of this.buildConjunctionClusters(conjunctions)) {
-      const bodies = this.aspectGraphService.canonicalBodyOrder([...cluster]);
-      if (!this.allPairsConjunct(bodies, unionEdges)) continue;
+    for (const bodies of this.findStelliumCliques(conjunctions)) {
       const result =
         this.compoundPhaseService.determineCompoundPhaseFromSnapshots({
           checkPatternExists: (edges) => this.allPairsConjunct(bodies, edges),
@@ -220,12 +186,62 @@ export class StelliumService {
   }
 
   /**
-   * Derives neighbor.
+   * Extends `clique` with every candidate in turn, skipping the pivot's
+   * neighbors, and collects each clique that no excluded body could extend.
    */
-  private getNeighbor(edge: AspectBodies, current: Body): Body | null {
-    if (edge.bodies[0] === current) return edge.bodies[1];
-    if (edge.bodies[1] === current) return edge.bodies[0];
-    return null;
+  private extendCliques(args: {
+    candidates: Set<Body>;
+    clique: Body[];
+    excluded: Set<Body>;
+    found: Body[][];
+    neighbors: Map<Body, Set<Body>>;
+  }): void {
+    const { candidates, clique, excluded, found, neighbors } = args;
+    if (candidates.size === 0 && excluded.size === 0) {
+      found.push(clique);
+      return;
+    }
+    const neighborsOf = (body: Body): Set<Body> =>
+      neighbors.get(body) ?? new Set();
+    const pivot = _.maxBy(
+      [...candidates, ...excluded],
+      (body) => [...candidates].filter((c) => neighborsOf(body).has(c)).length,
+    );
+    const pivotNeighbors = pivot ? neighborsOf(pivot) : new Set<Body>();
+    for (const body of [...candidates].filter((c) => !pivotNeighbors.has(c))) {
+      const bodyNeighbors = neighborsOf(body);
+      this.extendCliques({
+        candidates: new Set(
+          [...candidates].filter((c) => bodyNeighbors.has(c)),
+        ),
+        clique: [...clique, body],
+        excluded: new Set([...excluded].filter((c) => bodyNeighbors.has(c))),
+        found,
+        neighbors,
+      });
+      candidates.delete(body);
+      excluded.add(body);
+    }
+  }
+
+  /**
+   * Finds the maximal cliques of four or more bodies in the conjunction graph:
+   * every pair of a clique is conjunct, and no other body is conjunct with
+   * all of it.
+   */
+  private findStelliumCliques(conjunctions: AspectBodies[]): Body[][] {
+    const neighbors = this.buildConjunctionNeighbors(conjunctions);
+    const found: Body[][] = [];
+    this.extendCliques({
+      candidates: new Set(neighbors.keys()),
+      clique: [],
+      excluded: new Set(),
+      found,
+      neighbors,
+    });
+    return found
+      .filter((clique) => clique.length >= 4)
+      .map((clique) => this.aspectGraphService.canonicalBodyOrder(clique));
   }
 
   /**
@@ -309,9 +325,9 @@ export class StelliumService {
    * typically within the same zodiac sign. This represents an area of
    * concentrated energy and focus in astrological interpretation.
    *
-   * The function uses graph traversal to identify all conjunction clusters
-   * and validates that each cluster forms a complete stellium (all pairs
-   * must be in conjunction, not just transitively connected).
+   * Each stellium is a maximal clique of conjunct bodies (all pairs in
+   * conjunction, not just transitively connected), so no reported stellium
+   * lies inside another.
    *
    * @see {@link composeStelliums} for stellium detection logic
    */
