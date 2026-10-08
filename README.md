@@ -2693,6 +2693,7 @@ graph LR
   file_codometer_cli_src_main_end_to_end_test_ts["codometer-cli/src/main.end-to-end.test.ts"]
   file_codometer_cli_src_main_module_ts["codometer-cli/src/main.module.ts"]
   file_codometer_cli_src_main_ts["codometer-cli/src/main.ts"]
+  file_codometer_cli_src_main_unit_test_ts["codometer-cli/src/main.unit.test.ts"]
   file_codometer_cli_src_main_utilities_ts["codometer-cli/src/main.utilities.ts"]
   file_codometer_cli_src_main_utilities_unit_test_ts["codometer-cli/src/main.utilities.unit.test.ts"]
   file_codometer_cli_src_modules_changes_changes_command_ts["codometer-cli/src/modules/changes/changes.command.ts"]
