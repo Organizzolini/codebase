@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "description": "Fail a project whose dependency graphs break a codependix boundary rule charged to it, built over the project and its Nx dependencies.",
+  "properties": {
+    "configurationPath": {
+      "description": "Path to the codependix configuration file, relative to the workspace root. The path this plugin is registered with in nx.json when omitted.",
+      "type": "string"
+    },
+    "dependencies": {
+      "default": true,
+      "description": "Build the graphs over the judged projects' Nx dependency closure. False builds over the judged projects alone.",
+      "type": "boolean"
+    },
+    "projects": {
+      "description": "Nx project names to judge, replacing the project this target belongs to.",
+      "items": { "type": "string" },
+      "type": "array"
+    },
+    "tags": {
+      "description": "Nx project tags to judge, selecting every project carrying ANY of them.",
+      "items": { "type": "string" },
+      "type": "array"
+    }
+  },
+  "required": [],
+  "title": "Codependix gate",
+  "type": "object"
+}
