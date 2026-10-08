@@ -101,6 +101,95 @@ describe(BoundaryReportService, () => {
     );
   });
 
+  describe("renderViolation", () => {
+    it("renders one line: the level, whom it is charged to, then the message", () => {
+      expect(
+        service.renderViolation({
+          isNote: false,
+          violation: buildViolation({ projects: ["a", "b"] }),
+        }),
+      ).toBe("nxProjects a, b: layers: a must not depend on b.");
+    });
+
+    it("renders a note's line marked as not failing", () => {
+      expect(
+        service.renderViolation({
+          isNote: true,
+          violation: buildViolation({ projects: ["a"] }),
+        }),
+      ).toBe(
+        "nxProjects in dependency a, not failing: layers: a must not depend on b.",
+      );
+    });
+  });
+
+  describe("describeCharge for a workspace-wide charge", () => {
+    const JUDGED = ["a", "b", "c"];
+
+    // Listing every name of a run with no selection prints the whole
+    // workspace on every line.
+    it("summarizes a charge to every judged project as a count", () => {
+      expect(
+        service.describeCharge({
+          isNote: false,
+          judgedProjects: JUDGED,
+          projects: ["c", "a", "b"],
+        }),
+      ).toBe("all 3 judged projects");
+    });
+
+    it("names the projects of a charge to only some of the judged ones", () => {
+      expect(
+        service.describeCharge({
+          isNote: false,
+          judgedProjects: JUDGED,
+          projects: ["a", "b"],
+        }),
+      ).toBe("a, b");
+    });
+
+    it("names the one project of a single-project run", () => {
+      expect(
+        service.describeCharge({
+          isNote: false,
+          judgedProjects: ["a"],
+          projects: ["a"],
+        }),
+      ).toBe("a");
+    });
+
+    it("keeps a note's dependency wording whatever was judged", () => {
+      expect(
+        service.describeCharge({
+          isNote: true,
+          judgedProjects: JUDGED,
+          projects: JUDGED,
+        }),
+      ).toBe("in dependency a, b, c, not failing");
+    });
+
+    it("says whether a charge reaches every judged project", () => {
+      expect(
+        service.isChargedToEveryProject({
+          judgedProjects: JUDGED,
+          projects: ["b", "c", "a"],
+        }),
+      ).toBe(true);
+      expect(
+        service.isChargedToEveryProject({
+          judgedProjects: JUDGED,
+          projects: ["a", "b"],
+        }),
+      ).toBe(false);
+      expect(
+        service.isChargedToEveryProject({
+          judgedProjects: ["a"],
+          projects: ["a"],
+        }),
+      ).toBe(false);
+    });
+  });
+
   it("renders nothing for no violations", () => {
     expect(service.renderViolations([])).toStrictEqual([]);
   });

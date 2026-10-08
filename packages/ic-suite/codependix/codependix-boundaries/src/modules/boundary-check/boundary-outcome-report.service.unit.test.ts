@@ -158,16 +158,17 @@ describe(BoundaryOutcomeReportService, () => {
 
   describe("renderFailures", () => {
     it("names the level, the charged projects and the error", () => {
-      expect(service.renderFailures([buildFailure()])).toStrictEqual([
+      expect(service.renderFailures([buildFailure()], [])).toStrictEqual([
         "nestjsModules lexico-cli: Cannot access 'Word' before initialization",
       ]);
     });
 
     it("names the project owning the code a failure broke on", () => {
       expect(
-        service.renderFailures([
-          buildFailure({ ownerProject: "lexico-entities" }),
-        ]),
+        service.renderFailures(
+          [buildFailure({ ownerProject: "lexico-entities" })],
+          [],
+        ),
       ).toStrictEqual([
         "nestjsModules lexico-cli: Cannot access 'Word' before initialization (failed in code owned by lexico-entities)",
       ]);
@@ -175,16 +176,128 @@ describe(BoundaryOutcomeReportService, () => {
 
     it("marks a note as not failing and names the dependency it lives in", () => {
       expect(
-        service.renderFailures([
-          buildFailure({ projects: ["lexico-entities"], verdict: "note" }),
-        ]),
+        service.renderFailures(
+          [buildFailure({ projects: ["lexico-entities"], verdict: "note" })],
+          [],
+        ),
       ).toStrictEqual([
         "nestjsModules in dependency lexico-entities, not failing: Cannot access 'Word' before initialization",
       ]);
     });
   });
 
+  describe("renderFailures for a workspace-wide failure", () => {
+    const WORKSPACE_WIDE = buildFailure({
+      error: "Cannot build the Nx graph",
+      level: "nxProjects",
+      projects: ["a", "b", "c"],
+    });
+
+    it("summarizes a failure charged to every judged project as a count", () => {
+      expect(
+        service.renderFailures([WORKSPACE_WIDE], ["a", "b", "c"]),
+      ).toStrictEqual([
+        "nxProjects all 3 judged projects: Cannot build the Nx graph",
+      ]);
+    });
+
+    it("names the projects when the failure reaches only some of those judged", () => {
+      expect(
+        service.renderFailures([WORKSPACE_WIDE], ["a", "b", "c", "d"]),
+      ).toStrictEqual(["nxProjects a, b, c: Cannot build the Nx graph"]);
+    });
+  });
+
   describe("renderMarkdown", () => {
+    /** Renders one failing failure as the Markdown a combined document holds. */
+    function renderFailure(error: string): string {
+      return service.renderMarkdown(
+        service.buildReport({
+          judgedProjects: ["lexico-cli"],
+          outcome: { failures: [buildFailure({ error })], violations: [] },
+        }),
+      );
+    }
+
+    // A raw second line would end the bullet, and a raw third would read as
+    // a paragraph of its own, outside the project's group.
+    it("indents a multi-line error under its bullet", () => {
+      expect(
+        renderFailure(
+          "Cannot boot\n    at Module.load (a.ts:1:1)\n\nCaused by: b",
+        ),
+      ).toBe(
+        [
+          "Judged projects: lexico-cli.",
+          "",
+          "#### lexico-cli",
+          "",
+          "- **fail** nestjsModules lexico-cli: Cannot boot",
+          "      at Module.load (a.ts:1:1)",
+          "",
+          "  Caused by: b",
+        ].join("\n"),
+      );
+    });
+
+    it("reads a Windows line ending as one line break", () => {
+      expect(renderFailure("first\r\nsecond")).toContain(
+        "- **fail** nestjsModules lexico-cli: first\n  second",
+      );
+    });
+
+    // `-->` ends the HTML comment an anchor block is written inside.
+    it("neutralizes a comment terminator in the error text", () => {
+      const markdown = renderFailure("saw --> in a message");
+
+      expect(markdown).not.toContain("-->");
+      expect(markdown).toContain("lexico-cli: saw --&gt; in a message");
+    });
+
+    it("keeps the raw error text in the JSON report", () => {
+      const report = service.buildReport({
+        judgedProjects: ["lexico-cli"],
+        outcome: {
+          failures: [buildFailure({ error: "a\nb --> c" })],
+          violations: [],
+        },
+      });
+
+      expect(report.failures[0]?.error).toBe("a\nb --> c");
+    });
+
+    it("lists a failure charged to every judged project once, as a count", () => {
+      const markdown = service.renderMarkdown(
+        service.buildReport({
+          judgedProjects: ["a", "b", "c"],
+          outcome: {
+            failures: [
+              buildFailure({
+                error: "Cannot build the Nx graph",
+                level: "nxProjects",
+                projects: ["a", "b", "c"],
+              }),
+            ],
+            violations: [buildViolation({ projects: ["b"] })],
+          },
+        }),
+      );
+
+      expect(markdown).toBe(
+        [
+          "Judged projects: a, b, c.",
+          "",
+          "#### All judged projects",
+          "",
+          "- **fail** nxProjects all 3 judged projects: Cannot build the Nx graph",
+          "",
+          "#### b",
+          "",
+          "- **fail** nxProjects b: layers: a must not depend on b.",
+        ].join("\n"),
+      );
+    });
+
     it("says so when a run judged projects and found nothing", () => {
       expect(
         service.renderMarkdown({

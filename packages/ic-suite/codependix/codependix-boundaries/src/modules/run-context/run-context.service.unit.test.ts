@@ -399,6 +399,88 @@ describe(RunContextService, () => {
     });
   });
 
+  // 🔎 A selection matching only in part
+
+  describe("findUnmatchedSelection", () => {
+    /** Builds a context whose command-line selection is the given one. */
+    async function buildContext(
+      selection: Pick<
+        ResolvedCodependixConfiguration["selection"],
+        "projects" | "tags"
+      >,
+    ): Promise<Awaited<ReturnType<RunContextService["build"]>>> {
+      vi.mocked(configurationService.loadConfiguration).mockResolvedValue({
+        boundaries: {
+          fileImports: { python: [], typescript: [] },
+          nestjsModules: [],
+          nxProjects: [],
+        },
+        exclude: [],
+        include: ["**"],
+        projectGraph: undefined,
+        selection: { dependencies: true, ...selection },
+        workspace: {},
+      });
+      // Matches by the one entry each probe narrows the selection to, the way
+      // the real service does: a name, or a tag the project carries.
+      vi.mocked(configurationService.isProjectSelected).mockImplementation(
+        (args) => {
+          const { projects, tags } = args.configuration.selection;
+
+          return (
+            projects.includes(args.projectName) ||
+            (args.projectTags ?? []).some((tag) => tags.includes(tag))
+          );
+        },
+      );
+
+      return service.build({
+        mode: "check",
+        options: {},
+        workingDirectory: "/workspace",
+      });
+    }
+
+    it("names every project pattern and tag that matched no project", async () => {
+      const context = await buildContext({
+        projects: ["widgets", "typo", "other-typo"],
+        tags: ["language:python", "scope:nothing"],
+      });
+
+      expect(service.findUnmatchedSelection(context)).toStrictEqual({
+        projects: ["typo", "other-typo"],
+        tags: ["scope:nothing"],
+      });
+    });
+
+    it("names nothing when every entry matched a project", async () => {
+      const context = await buildContext({
+        projects: ["widgets", "reporting"],
+        tags: ["framework:nestjs"],
+      });
+
+      expect(service.findUnmatchedSelection(context)).toStrictEqual({
+        projects: [],
+        tags: [],
+      });
+    });
+
+    it("names nothing for a run that named no selection", async () => {
+      const context = await buildContext({ projects: [], tags: [] });
+
+      expect(service.findUnmatchedSelection(context)).toStrictEqual({
+        projects: [],
+        tags: [],
+      });
+    });
+
+    it("still refuses a selection in which nothing matched at all", async () => {
+      await expect(
+        buildContext({ projects: ["typo"], tags: [] }),
+      ).rejects.toThrow(InputError);
+    });
+  });
+
   it("matches a project's root against the selection as a workspace-relative path", async () => {
     await service.build({
       mode: "write",

@@ -859,6 +859,62 @@ describe("map command", () => {
       ]);
     });
 
+    // A typo beside a correct name used to narrow the run silently, judging
+    // fewer projects than were named.
+    it("warns about the entries of a partly matching selection, judging the rest", async () => {
+      const { exitCode, loggedErrors, loggedWarns } = await check(
+        cycleWorkspace,
+        { projects: "a,a-typo", tags: "scope:nothing" },
+      );
+
+      expect(loggedWarns).toContainEqual([
+        "🕸️ Ignored selection entries that matched no project",
+        undefined,
+        {
+          hint: "check the spelling — the run judged only the entries that matched",
+          projects: ["a-typo"],
+          tags: ["scope:nothing"],
+        },
+      ]);
+      // The matched entry was still judged, so the cycle still fails the run
+      // — the warning changed nothing about the exit code.
+      expect(exitCode).toBe(1);
+      expect(loggedErrors).toContainEqual([
+        "🕸️ Found codependix boundary violations",
+        undefined,
+        {
+          summary: "1 boundary violation across 1 rule.",
+          violations: ["nxProjects a, b: no-cycles: a → b → a is a cycle."],
+        },
+      ]);
+    });
+
+    it("keeps a partly matching selection that finds nothing wrong passing", async () => {
+      const { exitCode, loggedErrors, loggedWarns } = await check(
+        cycleWorkspace,
+        { projects: "d,d-typo" },
+      );
+
+      expect(exitCode).toBe(0);
+      expect(loggedErrors).toStrictEqual([]);
+      expect(loggedWarns).toStrictEqual([
+        [
+          "🕸️ Ignored selection entries that matched no project",
+          undefined,
+          {
+            hint: "check the spelling — the run judged only the entries that matched",
+            projects: ["d-typo"],
+          },
+        ],
+      ]);
+    });
+
+    it("stays quiet about a selection every entry of which matched", async () => {
+      const { loggedWarns } = await check(cycleWorkspace, { projects: "d" });
+
+      expect(loggedWarns).toStrictEqual([]);
+    });
+
     it("passes a named project that depends on neither end of a cycle", async () => {
       const { exitCode, loggedErrors, loggedWarns } = await check(
         cycleWorkspace,

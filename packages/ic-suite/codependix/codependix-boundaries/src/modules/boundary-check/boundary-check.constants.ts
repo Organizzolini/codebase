@@ -60,3 +60,15 @@ export const FRAME_POSITION = /^\d+$/u;
  * even though it sits under the project's root, so it never names an owner.
  */
 export const NODE_MODULES_SEGMENT = `${path.sep}node_modules${path.sep}`;
+
+/**
+ * The indent that keeps a Markdown bullet's continuation line inside it —
+ * the width of the `- ` marker.
+ */
+export const CONTINUATION_INDENT = "  ";
+
+/**
+ * The heading of the one Markdown group holding every failure charged to
+ * every judged project, in place of a copy under each of them.
+ */
+export const WORKSPACE_GROUP_HEADING = "All judged projects";
