@@ -4,9 +4,16 @@ import { LoggerService } from "@codebase/logging";
 
 import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
+import { eclipseTypeLabelByType } from "./eclipses.constants";
+
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { EclipsePhase } from "../caelundas/caelundas.types";
-import type { EclipseFrame } from "./eclipses.types";
+import type {
+  EclipseFrame,
+  EclipseType,
+  LunarEclipseType,
+  SolarEclipseType,
+} from "./eclipses.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -27,82 +34,85 @@ export class EclipseEventService {
 
   private readonly categories = ["Astronomy", "Astrology", "Eclipse"];
 
+  private readonly phaseLabelByPhase: Record<
+    EclipsePhase,
+    { symbol: string; word: string }
+  > = {
+    beginning: { symbol: "▶️", word: "begins" },
+    ending: { symbol: "◀️", word: "ends" },
+    maximum: { symbol: "🎯", word: "maximum" },
+  };
+
+  private readonly symbolByBody = { Lunar: "🌙🐉", Solar: "☀️🐉" };
+
   // 🔑 Public Fields
 
   // 🔏 Private Methods
 
   /**
-   * Builds eclipse event.
+   * Builds one eclipse contact event, titled with its type, body and phase,
+   * for example "🌐 🌙🐉▶️ Total Lunar Eclipse begins".
    */
   private buildEclipseEvent(args: {
     body: "Lunar" | "Solar";
     date: Moment;
-    description: string;
     frame: EclipseFrame;
-    summary: string;
+    phase: EclipsePhase;
+    type: EclipseType;
   }): DetectedCalendarEvent {
-    const { body, date, description, frame, summary } = args;
+    const { body, date, frame, phase, type } = args;
     const frameLabel =
       frame === "geocentric" ? "Geocentric" : "Topocentric Visibility";
     const frameSymbol = frame === "geocentric" ? "🌐" : "📍";
-    const framedDescription = `${description} (${frameLabel})`;
-    const framedSummary = `${frameSymbol} ${summary}`;
+    const typeLabel = eclipseTypeLabelByType[type];
+    const { symbol, word } = this.phaseLabelByPhase[phase];
+    const title = `${typeLabel} ${body} Eclipse ${word}`;
+    const summary = `${frameSymbol} ${this.symbolByBody[body]}${symbol} ${title}`;
     const dateString = date.clone().tz("America/New_York").toISOString(true);
 
     this.logger.info("🗓️ Built a calendar event", undefined, {
       at: dateString,
-      summary: framedSummary,
+      summary,
     });
 
     return {
-      categories: [...this.categories, body, frameLabel],
-      description: framedDescription,
+      categories: [...this.categories, body, frameLabel, typeLabel],
+      description: `${title} (${frameLabel})`,
       end: date,
       start: date,
-      summary: framedSummary,
+      summary,
     };
   }
 
   /**
-   * Derives lunar eclipse duration event.
+   * Builds the span of one eclipse from its beginning to its ending, typed
+   * by the beginning's type category.
    */
-  private getLunarEclipseDurationEvent(
-    beginning: DetectedCalendarEvent,
-    ending: DetectedCalendarEvent,
-    frameLabel: "Geocentric" | "Topocentric Visibility",
-  ): DetectedCalendarEvent {
+  private getEclipseDurationEvent(args: {
+    beginning: DetectedCalendarEvent;
+    body: "Lunar" | "Solar";
+    ending: DetectedCalendarEvent;
+    frameLabel: "Geocentric" | "Topocentric Visibility";
+  }): DetectedCalendarEvent {
+    const { beginning, body, ending, frameLabel } = args;
     const frameSymbol = frameLabel === "Geocentric" ? "🌐" : "📍";
+    const typeLabel = Object.values(eclipseTypeLabelByType).find((label) =>
+      beginning.categories.includes(label),
+    );
+    const title = [typeLabel, `${body} Eclipse (${frameLabel})`]
+      .filter(Boolean)
+      .join(" ");
     return {
-      categories: [...this.categories, "Lunar", frameLabel],
-      description: `Lunar Eclipse (${frameLabel})`,
+      categories: [
+        ...this.categories,
+        body,
+        frameLabel,
+        ...(typeLabel ? [typeLabel] : []),
+      ],
+      description: title,
       end: ending.start,
       start: beginning.start,
-      summary: `${frameSymbol} 🌙🐉 Lunar Eclipse (${frameLabel})`,
-    };
-  }
-
-  /**
-   * Derives lunar eclipse phase labels.
-   */
-  private getLunarEclipsePhaseLabels(phase: EclipsePhase): {
-    description: string;
-    summary: string;
-  } {
-    if (phase === "maximum") {
-      return {
-        description: "Lunar Eclipse maximum",
-        summary: "🌙🐉🎯 Lunar Eclipse maximum",
-      };
-    }
-    if (phase === "beginning") {
-      return {
-        description: "Lunar Eclipse begins",
-        summary: "🌙🐉▶️ Lunar Eclipse begins",
-      };
-    }
-    return {
-      description: "Lunar Eclipse ends",
-      summary: "🌙🐉◀️ Lunar Eclipse ends",
+      summary: `${frameSymbol} ${this.symbolByBody[body]} ${title}`,
     };
   }
 
@@ -133,53 +143,8 @@ export class EclipseEventService {
     );
 
     return pairs.map(([beginning, ending]) =>
-      body === "Solar"
-        ? this.getSolarEclipseDurationEvent(beginning, ending, frameLabel)
-        : this.getLunarEclipseDurationEvent(beginning, ending, frameLabel),
+      this.getEclipseDurationEvent({ beginning, body, ending, frameLabel }),
     );
-  }
-
-  /**
-   * Derives solar eclipse duration event.
-   */
-  private getSolarEclipseDurationEvent(
-    beginning: DetectedCalendarEvent,
-    ending: DetectedCalendarEvent,
-    frameLabel: "Geocentric" | "Topocentric Visibility",
-  ): DetectedCalendarEvent {
-    const frameSymbol = frameLabel === "Geocentric" ? "🌐" : "📍";
-    return {
-      categories: [...this.categories, "Solar", frameLabel],
-      description: `Solar Eclipse (${frameLabel})`,
-      end: ending.start,
-      start: beginning.start,
-      summary: `${frameSymbol} ☀️🐉 Solar Eclipse (${frameLabel})`,
-    };
-  }
-
-  /**
-   * Derives solar eclipse phase labels.
-   */
-  private getSolarEclipsePhaseLabels(phase: EclipsePhase): {
-    description: string;
-    summary: string;
-  } {
-    if (phase === "maximum") {
-      return {
-        description: "Solar Eclipse maximum",
-        summary: "☀️🐉🎯 Solar Eclipse maximum",
-      };
-    }
-    if (phase === "beginning") {
-      return {
-        description: "Solar Eclipse begins",
-        summary: "☀️🐉▶️ Solar Eclipse begins",
-      };
-    }
-    return {
-      description: "Solar Eclipse ends",
-      summary: "☀️🐉◀️ Solar Eclipse ends",
-    };
   }
 
   // 🌎 Public Methods
@@ -191,16 +156,9 @@ export class EclipseEventService {
     date: Moment;
     frame: EclipseFrame;
     phase: EclipsePhase;
+    type: LunarEclipseType;
   }): DetectedCalendarEvent {
-    const { date, frame, phase } = args;
-    const { description, summary } = this.getLunarEclipsePhaseLabels(phase);
-    return this.buildEclipseEvent({
-      body: "Lunar",
-      date,
-      description,
-      frame,
-      summary,
-    });
+    return this.buildEclipseEvent({ ...args, body: "Lunar" });
   }
 
   /**
@@ -210,16 +168,9 @@ export class EclipseEventService {
     date: Moment;
     frame: EclipseFrame;
     phase: EclipsePhase;
+    type: SolarEclipseType;
   }): DetectedCalendarEvent {
-    const { date, frame, phase } = args;
-    const { description, summary } = this.getSolarEclipsePhaseLabels(phase);
-    return this.buildEclipseEvent({
-      body: "Solar",
-      date,
-      description,
-      frame,
-      summary,
-    });
+    return this.buildEclipseEvent({ ...args, body: "Solar" });
   }
 
   /**

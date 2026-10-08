@@ -12,7 +12,11 @@ import type {
   CoordinateEphemeris,
   DistanceEphemeris,
 } from "../ephemeris/ephemeris.types";
-import type { EclipseFrame } from "./eclipses.types";
+import type {
+  EclipseFrame,
+  LunarEclipseType,
+  SolarEclipseType,
+} from "./eclipses.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -45,6 +49,7 @@ export class EclipsesService {
     date: Moment;
     frame: EclipseFrame;
     phase: EclipsePhase;
+    type: LunarEclipseType;
   }): DetectedCalendarEvent {
     return this.eclipseEventService.buildLunarEclipseEvent(args);
   }
@@ -56,6 +61,7 @@ export class EclipsesService {
     date: Moment;
     frame: EclipseFrame;
     phase: EclipsePhase;
+    type: SolarEclipseType;
   }): DetectedCalendarEvent {
     return this.eclipseEventService.buildSolarEclipseEvent(args);
   }
@@ -100,7 +106,9 @@ export class EclipsesService {
           coordinates,
           geocentricPhases: {
             lunarPhases: geocentricResult.lunarPhases,
+            lunarType: geocentricResult.lunarType,
             solarPhases: geocentricResult.solarPhases,
+            solarType: geocentricResult.solarType,
           },
           minute: args.minute,
           moonAzimuthElevationEphemeris: args.moonAzimuthElevationEphemeris,

@@ -8,7 +8,11 @@ import { EclipseGeometryService } from "./eclipse-geometry.service";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { EclipsePhase } from "../caelundas/caelundas.types";
 import type { AzimuthElevationEphemeris } from "../ephemeris/ephemeris.types";
-import type { EclipseCoordinates } from "./eclipses.types";
+import type {
+  EclipseCoordinates,
+  LunarEclipseType,
+  SolarEclipseType,
+} from "./eclipses.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -38,6 +42,7 @@ export class EclipseTopocentricService {
   private getLunarTopocentricEvent(args: {
     currentCoordinates: EclipseCoordinates;
     currentVisible: boolean;
+    eclipseType: LunarEclipseType;
     geocentricPhase: EclipsePhase | null;
     minute: Moment;
     nextCoordinates: EclipseCoordinates;
@@ -66,6 +71,7 @@ export class EclipseTopocentricService {
           date: args.minute,
           frame: "topocentric",
           phase,
+          type: args.eclipseType,
         })
       : null;
   }
@@ -76,6 +82,7 @@ export class EclipseTopocentricService {
   private getSolarTopocentricEvent(args: {
     currentCoordinates: EclipseCoordinates;
     currentVisible: boolean;
+    eclipseType: SolarEclipseType;
     geocentricPhase: EclipsePhase | null;
     minute: Moment;
     nextCoordinates: EclipseCoordinates;
@@ -104,6 +111,7 @@ export class EclipseTopocentricService {
           date: args.minute,
           frame: "topocentric",
           phase,
+          type: args.eclipseType,
         })
       : null;
   }
@@ -145,11 +153,13 @@ export class EclipseTopocentricService {
    */
   getTopocentricEvents(args: {
     currentCoordinates: EclipseCoordinates;
+    lunarEclipseType: LunarEclipseType;
     lunarPhase: EclipsePhase | null;
     minute: Moment;
     moonAzimuthElevationEphemeris: AzimuthElevationEphemeris;
     nextCoordinates: EclipseCoordinates;
     previousCoordinates: EclipseCoordinates;
+    solarEclipseType: SolarEclipseType;
     solarPhase: EclipsePhase | null;
     sunAzimuthElevationEphemeris: AzimuthElevationEphemeris;
   }): DetectedCalendarEvent[] {
@@ -165,6 +175,7 @@ export class EclipseTopocentricService {
     const solarEvent = this.getSolarTopocentricEvent({
       currentCoordinates: args.currentCoordinates,
       currentVisible: visibilities.currentVisibility.isSolarVisible,
+      eclipseType: args.solarEclipseType,
       geocentricPhase: args.solarPhase,
       minute: args.minute,
       nextCoordinates: args.nextCoordinates,
@@ -180,6 +191,7 @@ export class EclipseTopocentricService {
     const lunarEvent = this.getLunarTopocentricEvent({
       currentCoordinates: args.currentCoordinates,
       currentVisible: visibilities.currentVisibility.isLunarVisible,
+      eclipseType: args.lunarEclipseType,
       geocentricPhase: args.lunarPhase,
       minute: args.minute,
       nextCoordinates: args.nextCoordinates,

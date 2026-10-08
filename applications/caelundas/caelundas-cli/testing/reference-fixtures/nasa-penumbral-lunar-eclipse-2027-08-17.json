@@ -1,25 +1,37 @@
 {
+  "absent": [
+    "🌐 🌙🐉 Lunar Eclipse (Geocentric)",
+    "🌐 🌙🐉▶️ Lunar Eclipse begins",
+    "🌐 🌙🐉◀️ Lunar Eclipse ends",
+    "🌐 🌙🐉🎯 Lunar Eclipse maximum"
+  ],
   "counts": {
-    "🌐 🌙🐉 Lunar Eclipse (Geocentric)": 1,
-    "🌐 🌙🐉▶️ Lunar Eclipse begins": 1,
-    "🌐 🌙🐉◀️ Lunar Eclipse ends": 1
+    "🌐 🌙🐉 Penumbral Lunar Eclipse (Geocentric)": 1,
+    "🌐 🌙🐉▶️ Penumbral Lunar Eclipse begins": 1,
+    "🌐 🌙🐉◀️ Penumbral Lunar Eclipse ends": 1,
+    "🌐 🌙🐉🎯 Penumbral Lunar Eclipse maximum": 1
   },
   "events": [
     {
       "note": "NASA P1 (penumbral eclipse begins) 05:24:29 UT, printed with ΔT 76 s",
       "start": "2027-08-17T05:24:29Z",
-      "summary": "🌐 🌙🐉▶️ Lunar Eclipse begins"
+      "summary": "🌐 🌙🐉▶️ Penumbral Lunar Eclipse begins"
+    },
+    {
+      "note": "NASA greatest eclipse 07:14:59.3 TD, printed as 07:13:43.3 UT with ΔT 76 s. Umbral magnitude −0.5254, so penumbral",
+      "start": "2027-08-17T07:13:43Z",
+      "summary": "🌐 🌙🐉🎯 Penumbral Lunar Eclipse maximum"
     },
     {
       "note": "NASA P4 (penumbral eclipse ends) 09:03:03 UT",
       "start": "2027-08-17T09:03:03Z",
-      "summary": "🌐 🌙🐉◀️ Lunar Eclipse ends"
+      "summary": "🌐 🌙🐉◀️ Penumbral Lunar Eclipse ends"
     },
     {
       "end": "2027-08-17T09:03:03Z",
       "note": "The geocentric span runs from P1 to P4",
       "start": "2027-08-17T05:24:29Z",
-      "summary": "🌐 🌙🐉 Lunar Eclipse (Geocentric)"
+      "summary": "🌐 🌙🐉 Penumbral Lunar Eclipse (Geocentric)"
     }
   ],
   "name": "The penumbral lunar eclipse of 17 August 2027, penumbral magnitude 0.5456",

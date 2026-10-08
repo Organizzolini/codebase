@@ -67,37 +67,6 @@ export class EclipseGeometryService {
   }
 
   /**
-   * Horizontal parallaxes and semidiameters of the Moon and Sun, in degrees,
-   * from their geocentric distances.
-   */
-  private static getDiscAngles(coordinates: EclipseCoordinates): {
-    moonParallax: number;
-    moonSemidiameter: number;
-    sunParallax: number;
-    sunSemidiameter: number;
-  } {
-    const { distanceMoon, distanceSun } = coordinates;
-    return {
-      moonParallax: EclipseGeometryService.getSubtendedAngle(
-        EARTH_EQUATORIAL_RADIUS_KILOMETERS,
-        distanceMoon,
-      ),
-      moonSemidiameter: EclipseGeometryService.getSubtendedAngle(
-        radiusKilometersByHorizonBody.moon,
-        distanceMoon,
-      ),
-      sunParallax: EclipseGeometryService.getSubtendedAngle(
-        EARTH_EQUATORIAL_RADIUS_KILOMETERS,
-        distanceSun,
-      ),
-      sunSemidiameter: EclipseGeometryService.getSubtendedAngle(
-        radiusKilometersByHorizonBody.sun,
-        distanceSun,
-      ),
-    };
-  }
-
-  /**
    * Angle in degrees subtended by `kilometers` at `distance` AU: a
    * semidiameter for a body's radius, a horizontal parallax for Earth's.
    */
@@ -259,6 +228,48 @@ export class EclipseGeometryService {
     };
   }
 
+  /** The antisolar point, which the axis of Earth's shadow passes through. */
+  getAntisolarPoint(coordinates: EclipseCoordinates): {
+    latitude: number;
+    longitude: number;
+  } {
+    return {
+      latitude: -coordinates.latitudeSun,
+      longitude: coordinates.longitudeSun + 180,
+    };
+  }
+
+  /**
+   * Horizontal parallaxes and semidiameters of the Moon and Sun, in degrees,
+   * from their geocentric distances.
+   */
+  getDiscAngles(coordinates: EclipseCoordinates): {
+    moonParallax: number;
+    moonSemidiameter: number;
+    sunParallax: number;
+    sunSemidiameter: number;
+  } {
+    const { distanceMoon, distanceSun } = coordinates;
+    return {
+      moonParallax: EclipseGeometryService.getSubtendedAngle(
+        EARTH_EQUATORIAL_RADIUS_KILOMETERS,
+        distanceMoon,
+      ),
+      moonSemidiameter: EclipseGeometryService.getSubtendedAngle(
+        radiusKilometersByHorizonBody.moon,
+        distanceMoon,
+      ),
+      sunParallax: EclipseGeometryService.getSubtendedAngle(
+        EARTH_EQUATORIAL_RADIUS_KILOMETERS,
+        distanceSun,
+      ),
+      sunSemidiameter: EclipseGeometryService.getSubtendedAngle(
+        radiusKilometersByHorizonBody.sun,
+        distanceSun,
+      ),
+    };
+  }
+
   /**
    * Lunar eclipse geometry: the Moon's distance from the axis of Earth's
    * shadow, and the penumbral contact distance. The penumbra's radius is
@@ -268,7 +279,7 @@ export class EclipseGeometryService {
     coordinates: EclipseCoordinates,
   ): EclipseContactGeometry {
     const { moonParallax, moonSemidiameter, sunParallax, sunSemidiameter } =
-      EclipseGeometryService.getDiscAngles(coordinates);
+      this.getDiscAngles(coordinates);
 
     return {
       contactLimit:
@@ -281,10 +292,7 @@ export class EclipseGeometryService {
           latitude: coordinates.latitudeMoon,
           longitude: coordinates.longitudeMoon,
         },
-        {
-          latitude: -coordinates.latitudeSun,
-          longitude: coordinates.longitudeSun + 180,
-        },
+        this.getAntisolarPoint(coordinates),
       ),
     };
   }
@@ -298,7 +306,7 @@ export class EclipseGeometryService {
     coordinates: EclipseCoordinates,
   ): EclipseContactGeometry {
     const { moonParallax, moonSemidiameter, sunParallax, sunSemidiameter } =
-      EclipseGeometryService.getDiscAngles(coordinates);
+      this.getDiscAngles(coordinates);
 
     return {
       contactLimit:
@@ -308,11 +316,19 @@ export class EclipseGeometryService {
           latitude: coordinates.latitudeMoon,
           longitude: coordinates.longitudeMoon,
         },
-        {
-          latitude: coordinates.latitudeSun,
-          longitude: coordinates.longitudeSun,
-        },
+        this.getSunPosition(coordinates),
       ),
+    };
+  }
+
+  /** The Sun's position, which the Moon covers in a solar eclipse. */
+  getSunPosition(coordinates: EclipseCoordinates): {
+    latitude: number;
+    longitude: number;
+  } {
+    return {
+      latitude: coordinates.latitudeSun,
+      longitude: coordinates.longitudeSun,
     };
   }
 }

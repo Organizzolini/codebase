@@ -25,23 +25,30 @@ export function getTestContactLimit(kind: "lunar" | "solar"): number {
 }
 
 /**
- * Coordinates with the Moon `alongTrack` degrees east of, and `crossTrack`
- * degrees north of, the eclipse target: the antisolar point for a lunar
- * eclipse, the Sun for a solar one. The Sun sits on the ecliptic.
+ * Coordinates with the Moon `alongTrack` degrees along, and `crossTrack`
+ * degrees across, a track through the eclipse target: the antisolar point
+ * for a lunar eclipse, the Sun for a solar one. The track runs east, tilted
+ * north by `tilt` radians as a real Moon's does; the Sun sits on the ecliptic.
  */
 export function getTrackCoordinates(args: {
   alongTrack: number;
   crossTrack: number;
+  distanceMoon?: number;
   kind: "lunar" | "solar";
+  tilt?: number;
 }): EclipseCoordinates {
+  const { alongTrack, crossTrack, tilt = 0 } = args;
   const targetLongitude =
     args.kind === "lunar" ? TEST_SUN_LONGITUDE + 180 : TEST_SUN_LONGITUDE;
   return {
-    distanceMoon: TEST_MOON_DISTANCE,
+    distanceMoon: args.distanceMoon ?? TEST_MOON_DISTANCE,
     distanceSun: TEST_SUN_DISTANCE,
-    latitudeMoon: args.crossTrack,
+    latitudeMoon: alongTrack * Math.sin(tilt) + crossTrack * Math.cos(tilt),
     latitudeSun: 0,
-    longitudeMoon: targetLongitude + args.alongTrack,
+    longitudeMoon:
+      targetLongitude +
+      alongTrack * Math.cos(tilt) -
+      crossTrack * Math.sin(tilt),
     longitudeSun: TEST_SUN_LONGITUDE,
   };
 }
@@ -52,8 +59,10 @@ export function getTrackCoordinates(args: {
  */
 export function getTrackWindow(args: {
   crossTrack: number;
+  distanceMoon?: number;
   kind: "lunar" | "solar";
   minutes: number;
+  tilt?: number;
 }): {
   current: EclipseCoordinates;
   next: EclipseCoordinates;
@@ -61,9 +70,8 @@ export function getTrackWindow(args: {
 } {
   const at = (minutes: number): EclipseCoordinates =>
     getTrackCoordinates({
+      ...args,
       alongTrack: minutes * TEST_TRACK_SPEED,
-      crossTrack: args.crossTrack,
-      kind: args.kind,
     });
   return {
     current: at(args.minutes),

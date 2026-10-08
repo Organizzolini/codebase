@@ -1,25 +1,37 @@
 {
+  "absent": [
+    "🌐 🌙🐉 Lunar Eclipse (Geocentric)",
+    "🌐 🌙🐉▶️ Lunar Eclipse begins",
+    "🌐 🌙🐉◀️ Lunar Eclipse ends",
+    "🌐 🌙🐉🎯 Lunar Eclipse maximum"
+  ],
   "counts": {
-    "🌐 🌙🐉 Lunar Eclipse (Geocentric)": 1,
-    "🌐 🌙🐉▶️ Lunar Eclipse begins": 1,
-    "🌐 🌙🐉◀️ Lunar Eclipse ends": 1
+    "🌐 🌙🐉 Penumbral Lunar Eclipse (Geocentric)": 1,
+    "🌐 🌙🐉▶️ Penumbral Lunar Eclipse begins": 1,
+    "🌐 🌙🐉◀️ Penumbral Lunar Eclipse ends": 1,
+    "🌐 🌙🐉🎯 Penumbral Lunar Eclipse maximum": 1
   },
   "events": [
     {
       "note": "NASA P1 (penumbral eclipse begins) 21:12:20 UT, printed with ΔT 76 s",
       "start": "2027-02-20T21:12:20Z",
-      "summary": "🌐 🌙🐉▶️ Lunar Eclipse begins"
+      "summary": "🌐 🌙🐉▶️ Penumbral Lunar Eclipse begins"
+    },
+    {
+      "note": "NASA greatest eclipse 23:14:06.2 TD, printed as 23:12:50.5 UT with ΔT 76 s. Umbral magnitude −0.0569, so penumbral",
+      "start": "2027-02-20T23:12:51Z",
+      "summary": "🌐 🌙🐉🎯 Penumbral Lunar Eclipse maximum"
     },
     {
       "note": "NASA P4 (penumbral eclipse ends) 01:13:19 UT",
       "start": "2027-02-21T01:13:19Z",
-      "summary": "🌐 🌙🐉◀️ Lunar Eclipse ends"
+      "summary": "🌐 🌙🐉◀️ Penumbral Lunar Eclipse ends"
     },
     {
       "end": "2027-02-21T01:13:19Z",
       "note": "The geocentric span runs from P1 to P4",
       "start": "2027-02-20T21:12:20Z",
-      "summary": "🌐 🌙🐉 Lunar Eclipse (Geocentric)"
+      "summary": "🌐 🌙🐉 Penumbral Lunar Eclipse (Geocentric)"
     }
   ],
   "name": "The penumbral lunar eclipse of 20 February 2027, umbral magnitude −0.0569",

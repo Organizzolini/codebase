@@ -140,11 +140,13 @@ describe(EclipseTopocentricService, () => {
     } satisfies DetectedCalendarEvent);
     const events = service.getTopocentricEvents({
       currentCoordinates: solarActiveCoordinates,
+      lunarEclipseType: "partial",
       lunarPhase: "beginning",
       minute: moment.utc("2024-03-21T12:00:00.000Z"),
       moonAzimuthElevationEphemeris: {},
       nextCoordinates: solarActiveCoordinates,
       previousCoordinates: inactiveCoordinates,
+      solarEclipseType: "hybrid",
       solarPhase: "beginning",
       sunAzimuthElevationEphemeris: {},
     });
@@ -155,6 +157,7 @@ describe(EclipseTopocentricService, () => {
     expect(firstSolarEventCall).toMatchObject({
       frame: "topocentric",
       phase: "beginning",
+      type: "hybrid",
     });
     expect(firstSolarEventCall?.date).toBeDefined();
     expect(eclipseEventService.buildLunarEclipseEvent).toHaveBeenCalledTimes(0);
@@ -178,11 +181,13 @@ describe(EclipseTopocentricService, () => {
 
     const endingEvents = service.getTopocentricEvents({
       currentCoordinates: lunarActiveCoordinates,
+      lunarEclipseType: "partial",
       lunarPhase: "maximum",
       minute: moment.utc("2024-03-21T12:01:00.000Z"),
       moonAzimuthElevationEphemeris: {},
       nextCoordinates: inactiveCoordinates,
       previousCoordinates: lunarActiveCoordinates,
+      solarEclipseType: "hybrid",
       solarPhase: "maximum",
       sunAzimuthElevationEphemeris: {},
     });
@@ -195,6 +200,7 @@ describe(EclipseTopocentricService, () => {
     expect(endingEventCall).toMatchObject({
       frame: "topocentric",
       phase: "ending",
+      type: "partial",
     });
     expect(endingEventCall?.date).toBeDefined();
 
@@ -214,11 +220,13 @@ describe(EclipseTopocentricService, () => {
 
     const maximumEvents = service.getTopocentricEvents({
       currentCoordinates: lunarActiveCoordinates,
+      lunarEclipseType: "partial",
       lunarPhase: "maximum",
       minute: moment.utc("2024-03-21T12:02:00.000Z"),
       moonAzimuthElevationEphemeris: {},
       nextCoordinates: lunarActiveCoordinates,
       previousCoordinates: lunarActiveCoordinates,
+      solarEclipseType: "hybrid",
       solarPhase: "maximum",
       sunAzimuthElevationEphemeris: {},
     });
@@ -244,11 +252,13 @@ describe(EclipseTopocentricService, () => {
 
     const events = service.getTopocentricEvents({
       currentCoordinates: inactiveCoordinates,
+      lunarEclipseType: "partial",
       lunarPhase: "maximum",
       minute: moment.utc("2024-03-21T12:03:00.000Z"),
       moonAzimuthElevationEphemeris: {},
       nextCoordinates: inactiveCoordinates,
       previousCoordinates: inactiveCoordinates,
+      solarEclipseType: "hybrid",
       solarPhase: "maximum",
       sunAzimuthElevationEphemeris: {},
     });

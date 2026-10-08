@@ -4,6 +4,7 @@ import { LoggerService } from "@codebase/logging";
 
 import { MathService } from "../math/math.service";
 
+import { EclipseClassificationService } from "./eclipse-classification.service";
 import { EclipseEventService } from "./eclipse-event.service";
 import { EclipseGeometryService } from "./eclipse-geometry.service";
 import { EclipseTopocentricService } from "./eclipse-topocentric.service";
@@ -19,6 +20,8 @@ import type {
   EclipseContactGeometry,
   EclipseContactWindow,
   EclipseCoordinates,
+  LunarEclipseType,
+  SolarEclipseType,
 } from "./eclipses.types";
 import type { Moment } from "moment-timezone";
 
@@ -33,6 +36,7 @@ export class EclipseCalculationService {
     private readonly logger: LoggerService,
     private readonly mathService: MathService,
     private readonly eclipseGeometryService: EclipseGeometryService,
+    private readonly eclipseClassificationService: EclipseClassificationService,
     private readonly eclipseTopocentricService: EclipseTopocentricService,
     private readonly eclipseEventService: EclipseEventService,
   ) {
@@ -100,50 +104,33 @@ export class EclipseCalculationService {
   }
 
   /**
-   * Creates geocentric event payloads for detected eclipse phases.
+   * Creates geocentric event payloads for detected eclipse phases. A type
+   * the classifier could not settle (an eclipse grazing a boundary) falls
+   * back to the weakest: partial for the Sun, penumbral for the Moon.
    */
   private buildGeocentricEclipseEvents(
     minute: Moment,
-    solarPhases: EclipsePhase[],
-    lunarPhases: EclipsePhase[],
+    solar: { phases: EclipsePhase[]; type: null | SolarEclipseType },
+    lunar: { phases: EclipsePhase[]; type: LunarEclipseType | null },
   ): DetectedCalendarEvent[] {
     return [
-      ...solarPhases.map((phase) =>
+      ...solar.phases.map((phase) =>
         this.eclipseEventService.buildSolarEclipseEvent({
           date: minute,
           frame: "geocentric",
           phase,
+          type: solar.type ?? "partial",
         }),
       ),
-      ...lunarPhases.map((phase) =>
+      ...lunar.phases.map((phase) =>
         this.eclipseEventService.buildLunarEclipseEvent({
           date: minute,
           frame: "geocentric",
           phase,
+          type: lunar.type ?? "penumbral",
         }),
       ),
     ];
-  }
-
-  /**
-   * Geocentric longitude difference of Moon and Sun at the previous, current
-   * and next minute.
-   */
-  private getLongitudeAngles(
-    current: EclipseCoordinates,
-    previous: EclipseCoordinates,
-    next: EclipseCoordinates,
-  ): { current: number; next: number; previous: number } {
-    const angle = (coordinates: EclipseCoordinates): number =>
-      this.mathService.getAngle(
-        coordinates.longitudeMoon,
-        coordinates.longitudeSun,
-      );
-    return {
-      current: angle(current),
-      next: angle(next),
-      previous: angle(previous),
-    };
   }
 
   // 🌎 Public Methods
@@ -166,7 +153,8 @@ export class EclipseCalculationService {
   }
 
   /**
-   * Builds geocentric eclipse events and returns their classified phases.
+   * Builds geocentric eclipse events and returns their classified phases
+   * and eclipse types.
    */
   getGeocentricEvents(args: {
     currentCoordinates: EclipseCoordinates;
@@ -176,30 +164,44 @@ export class EclipseCalculationService {
   }): {
     events: DetectedCalendarEvent[];
     lunarPhases: EclipsePhase[];
+    lunarType: LunarEclipseType | null;
     solarPhases: EclipsePhase[];
+    solarType: null | SolarEclipseType;
   } {
+    const { currentCoordinates, nextCoordinates, previousCoordinates } = args;
     const solarPhases = this.getSolarEclipsePhases(
-      args.currentCoordinates,
-      args.previousCoordinates,
-      args.nextCoordinates,
+      currentCoordinates,
+      previousCoordinates,
+      nextCoordinates,
     );
     const lunarPhases = this.getLunarEclipsePhases(
-      args.currentCoordinates,
-      args.previousCoordinates,
-      args.nextCoordinates,
+      currentCoordinates,
+      previousCoordinates,
+      nextCoordinates,
+    );
+    const solarType = this.eclipseClassificationService.getSolarEclipseType(
+      currentCoordinates,
+      previousCoordinates,
+      nextCoordinates,
+    );
+    const lunarType = this.eclipseClassificationService.getLunarEclipseType(
+      currentCoordinates,
+      previousCoordinates,
+      nextCoordinates,
     );
     const events = this.buildGeocentricEclipseEvents(
       args.minute,
-      solarPhases,
-      lunarPhases,
+      { phases: solarPhases, type: solarType },
+      { phases: lunarPhases, type: lunarType },
     );
 
-    return { events, lunarPhases, solarPhases };
+    return { events, lunarPhases, lunarType, solarPhases, solarType };
   }
 
   /**
    * Classifies the lunar eclipse phases at the current minute, in time
-   * order: beginning at P1, maximum, ending at P4.
+   * order: beginning at P1, maximum at greatest eclipse (the Moon nearest
+   * the shadow axis), ending at P4.
    */
   getLunarEclipsePhases(
     current: EclipseCoordinates,
@@ -211,16 +213,19 @@ export class EclipseCalculationService {
       next: this.eclipseGeometryService.getLunarContactGeometry(next),
       previous: this.eclipseGeometryService.getLunarContactGeometry(previous),
     };
-    const isMaximum = this.mathService.isMaximum(
-      this.getLongitudeAngles(current, previous, next),
-    );
+    const isMaximum = this.mathService.isMinimum({
+      current: window.current.separation,
+      next: window.next.separation,
+      previous: window.previous.separation,
+    });
 
     return EclipseCalculationService.getContactPhases(window, isMaximum);
   }
 
   /**
    * Classifies the solar eclipse phases at the current minute, in time
-   * order: beginning at global P1, maximum, ending at global P4.
+   * order: beginning at global P1, maximum at greatest eclipse (the shadow
+   * axis nearest Earth's center), ending at global P4.
    */
   getSolarEclipsePhases(
     current: EclipseCoordinates,
@@ -232,15 +237,18 @@ export class EclipseCalculationService {
       next: this.eclipseGeometryService.getSolarContactGeometry(next),
       previous: this.eclipseGeometryService.getSolarContactGeometry(previous),
     };
-    const isMaximum = this.mathService.isMinimum(
-      this.getLongitudeAngles(current, previous, next),
-    );
+    const isMaximum = this.mathService.isMinimum({
+      current: this.eclipseClassificationService.getSolarGamma(current),
+      next: this.eclipseClassificationService.getSolarGamma(next),
+      previous: this.eclipseClassificationService.getSolarGamma(previous),
+    });
 
     return EclipseCalculationService.getContactPhases(window, isMaximum);
   }
 
   /**
-   * Computes topocentric eclipse events using geocentric phases and visibility.
+   * Computes topocentric eclipse events using geocentric phases, types and
+   * visibility; an unsettled type falls back as for geocentric events.
    */
   getTopocentricEventsForDetect(args: {
     coordinates: {
@@ -250,7 +258,9 @@ export class EclipseCalculationService {
     };
     geocentricPhases: {
       lunarPhases: EclipsePhase[];
+      lunarType: LunarEclipseType | null;
       solarPhases: EclipsePhase[];
+      solarType: null | SolarEclipseType;
     };
     minute: Moment;
     moonAzimuthElevationEphemeris: AzimuthElevationEphemeris;
@@ -268,11 +278,13 @@ export class EclipseCalculationService {
 
     return this.eclipseTopocentricService.getTopocentricEvents({
       currentCoordinates: coordinates.currentCoordinates,
+      lunarEclipseType: geocentricPhases.lunarType ?? "penumbral",
       lunarPhase: maximumOf(geocentricPhases.lunarPhases),
       minute,
       moonAzimuthElevationEphemeris,
       nextCoordinates: coordinates.nextCoordinates,
       previousCoordinates: coordinates.previousCoordinates,
+      solarEclipseType: geocentricPhases.solarType ?? "partial",
       solarPhase: maximumOf(geocentricPhases.solarPhases),
       sunAzimuthElevationEphemeris,
     });

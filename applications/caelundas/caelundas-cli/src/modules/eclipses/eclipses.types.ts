@@ -41,3 +41,16 @@ export interface EclipseCoordinates {
  * - `topocentric`: Eclipse as seen from the observer's ground location (requires bodies above horizon).
  */
 export type EclipseFrame = "geocentric" | "topocentric";
+
+/**
+ * Kind of eclipse by the deepest shadow it reaches, as NASA's catalog names it.
+ * - lunar: `total` (inside the umbra), `partial` (partly), `penumbral` (only the penumbra)
+ * - solar: `total`, `annular`, `hybrid` (total at greatest, annular at the path's ends), `partial` (the umbra misses Earth)
+ */
+export type EclipseType = LunarEclipseType | SolarEclipseType;
+
+/** How deep a lunar eclipse goes: see {@link EclipseType}. */
+export type LunarEclipseType = "partial" | "penumbral" | "total";
+
+/** How deep a solar eclipse goes: see {@link EclipseType}. */
+export type SolarEclipseType = "annular" | "hybrid" | "partial" | "total";

@@ -5,6 +5,7 @@ import { MathModule } from "../math/math.module";
 import { ProgressiveUtilitiesModule } from "../progressive/progressive-utilities.module";
 
 import { EclipseCalculationService } from "./eclipse-calculation.service";
+import { EclipseClassificationService } from "./eclipse-classification.service";
 import { EclipseEventService } from "./eclipse-event.service";
 import { EclipseGeometryService } from "./eclipse-geometry.service";
 import { EclipseTopocentricService } from "./eclipse-topocentric.service";
@@ -20,6 +21,7 @@ import { EclipsesService } from "./eclipses.service";
   exports: [EclipsesService],
   imports: [EphemerisModule, MathModule, ProgressiveUtilitiesModule],
   providers: [
+    EclipseClassificationService,
     EclipseEventService,
     EclipseGeometryService,
     EclipseTopocentricService,

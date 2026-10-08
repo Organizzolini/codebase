@@ -1,4 +1,5 @@
 // ♟️ Constants
+import type { EclipseType } from "./eclipses.types";
 
 /**
  * Danjon's enlargement of Earth's shadow: the Moon's parallax is scaled by
@@ -12,3 +13,12 @@ export const EARTH_EQUATORIAL_RADIUS_KILOMETERS = 6378.137;
 
 /** Degrees per radian. */
 export const DEGREES_PER_RADIAN = 180 / Math.PI;
+
+/** Title-case name of each eclipse type, as it appears in summaries and categories. */
+export const eclipseTypeLabelByType: Record<EclipseType, string> = {
+  annular: "Annular",
+  hybrid: "Hybrid",
+  partial: "Partial",
+  penumbral: "Penumbral",
+  total: "Total",
+};

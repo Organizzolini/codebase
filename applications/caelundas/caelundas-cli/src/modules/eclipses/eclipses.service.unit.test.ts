@@ -85,12 +85,14 @@ describe(EclipsesService, () => {
         date: timestamp,
         frame: "geocentric",
         phase: "beginning",
+        type: "total",
       });
 
       expect(eclipseEventService.buildLunarEclipseEvent).toHaveBeenCalledWith({
         date: timestamp,
         frame: "geocentric",
         phase: "beginning",
+        type: "total",
       });
       expect(result).toStrictEqual(expectedEvent);
     });
@@ -106,12 +108,14 @@ describe(EclipsesService, () => {
         date: timestamp,
         frame: "geocentric",
         phase: "beginning",
+        type: "annular",
       });
 
       expect(eclipseEventService.buildSolarEclipseEvent).toHaveBeenCalledWith({
         date: timestamp,
         frame: "geocentric",
         phase: "beginning",
+        type: "annular",
       });
       expect(result).toStrictEqual(expectedEvent);
     });
@@ -166,7 +170,9 @@ describe(EclipsesService, () => {
       eclipseCalculationService.getGeocentricEvents.mockReturnValue({
         events: [geocentricEvent],
         lunarPhases: [],
+        lunarType: null,
         solarPhases: ["beginning"],
+        solarType: "total",
       });
       eclipseCalculationService.getTopocentricEventsForDetect.mockReturnValue([
         topocentricEvent,
@@ -186,7 +192,16 @@ describe(EclipsesService, () => {
       expect(result).toStrictEqual([geocentricEvent, topocentricEvent]);
       expect(
         eclipseCalculationService.getTopocentricEventsForDetect,
-      ).toHaveBeenCalledTimes(1);
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          geocentricPhases: {
+            lunarPhases: [],
+            lunarType: null,
+            solarPhases: ["beginning"],
+            solarType: "total",
+          },
+        }),
+      );
     });
 
     it("returns only geocentric events when visibility ephemeris is omitted", () => {
@@ -226,7 +241,9 @@ describe(EclipsesService, () => {
       eclipseCalculationService.getGeocentricEvents.mockReturnValue({
         events: [geocentricEvent],
         lunarPhases: ["maximum"],
+        lunarType: "penumbral",
         solarPhases: [],
+        solarType: null,
       });
       eclipseCalculationService.getTopocentricEventsForDetect.mockReturnValue(
         [],

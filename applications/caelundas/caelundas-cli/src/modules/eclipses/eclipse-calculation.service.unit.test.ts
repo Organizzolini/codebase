@@ -14,6 +14,7 @@ import { EphemerisService } from "../ephemeris/ephemeris.service";
 import { MathService } from "../math/math.service";
 
 import { EclipseCalculationService } from "./eclipse-calculation.service";
+import { EclipseClassificationService } from "./eclipse-classification.service";
 import { EclipseEventService } from "./eclipse-event.service";
 import { EclipseGeometryService } from "./eclipse-geometry.service";
 import { EclipseTopocentricService } from "./eclipse-topocentric.service";
@@ -33,6 +34,7 @@ describe(EclipseCalculationService, () => {
     const module = await Test.createTestingModule({
       providers: [
         EclipseCalculationService,
+        EclipseClassificationService,
         EclipseGeometryService,
         MathService,
         { provide: LoggerService, useValue: createMock<LoggerService>() },
@@ -68,6 +70,7 @@ describe(EclipseCalculationService, () => {
   function scanTrack(
     kind: "lunar" | "solar",
     crossTrack: number,
+    tilt = 0,
   ): Record<EclipsePhase, number[]> {
     const firedAt: Record<EclipsePhase, number[]> = {
       beginning: [],
@@ -79,6 +82,7 @@ describe(EclipseCalculationService, () => {
         crossTrack,
         kind,
         minutes,
+        tilt,
       });
       const phases =
         kind === "lunar"
@@ -109,6 +113,12 @@ describe(EclipseCalculationService, () => {
 
     it("peaks once, at closest approach", () => {
       expect(scanTrack(kind, 0.6).maximum).toStrictEqual([0]);
+    });
+
+    it("peaks at greatest eclipse, not at conjunction in longitude", () => {
+      // Tilted 0.1 rad, the track meets the target's longitude
+      // 0.6 · tan(0.1) / speed ≈ 7 minutes away from its closest approach.
+      expect(scanTrack(kind, 0.6, 0.1).maximum).toStrictEqual([0]);
     });
 
     it("still begins and ends when the Moon only grazes the contact limit", () => {
@@ -164,19 +174,22 @@ describe(EclipseCalculationService, () => {
       expect(result).toStrictEqual({
         events: [lunarEvent],
         lunarPhases: ["beginning"],
+        lunarType: "partial",
         solarPhases: [],
+        solarType: null,
       });
       expect(eclipseEventService.buildLunarEclipseEvent).toHaveBeenCalledWith({
         date: minute,
         frame: "geocentric",
         phase: "beginning",
+        type: "partial",
       });
       expect(eclipseEventService.buildSolarEclipseEvent).not.toHaveBeenCalled();
     });
   });
 
   describe("getTopocentricEventsForDetect", () => {
-    it("passes on only the geocentric maximum", () => {
+    it("passes on the geocentric maximum and type, the weakest type when unknown", () => {
       const window = getTrackWindow({
         crossTrack: 0.6,
         kind: "lunar",
@@ -193,7 +206,9 @@ describe(EclipseCalculationService, () => {
         },
         geocentricPhases: {
           lunarPhases: ["maximum"],
+          lunarType: "total",
           solarPhases: ["beginning", "ending"],
+          solarType: null,
         },
         minute,
         moonAzimuthElevationEphemeris: {},
@@ -201,7 +216,12 @@ describe(EclipseCalculationService, () => {
       });
 
       expect(topocentricService.getTopocentricEvents).toHaveBeenCalledWith(
-        expect.objectContaining({ lunarPhase: "maximum", solarPhase: null }),
+        expect.objectContaining({
+          lunarEclipseType: "total",
+          lunarPhase: "maximum",
+          solarEclipseType: "partial",
+          solarPhase: null,
+        }),
       );
     });
   });
