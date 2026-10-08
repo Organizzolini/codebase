@@ -1,0 +1,71 @@
+{
+  "author": "Jimmy Paolini",
+  "bugs": {
+    "url": "https://github.com/organizzolini/codebase/issues"
+  },
+  "dependencies": {
+    "@nestjs/common": "catalog:ic-suite",
+    "@nestjs/config": "catalog:",
+    "@nestjs/core": "catalog:ic-suite",
+    "pino": "catalog:",
+    "pino-pretty": "catalog:",
+    "reflect-metadata": "catalog:"
+  },
+  "description": "NestJS module container inspection and module-level dependency graph extraction for Codependix",
+  "devDependencies": {
+    "@codebase/logging": "workspace:*",
+    "@golevelup/ts-vitest": "catalog:",
+    "@nestjs/testing": "catalog:",
+    "@nx/eslint-plugin": "catalog:",
+    "@swc/helpers": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "vitest": "catalog:"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/projects/ic-suite/codependix/codependix-nestjs-modules#readme",
+  "keywords": [
+    "architecture",
+    "codependix",
+    "dependency-injection",
+    "module-graph",
+    "nestjs"
+  ],
+  "license": "MIT",
+  "main": "src/index.ts",
+  "name": "@codependix/nestjs-modules",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/src/index.js"
+      },
+      "./package.json": "./package.json"
+    },
+    "main": "./dist/src/index.js",
+    "registry": "https://registry.npmjs.org",
+    "types": "./dist/src/index.d.ts"
+  },
+  "repository": {
+    "directory": "projects/ic-suite/codependix/codependix-nestjs-modules",
+    "type": "git",
+    "url": "git+https://github.com/organizzolini/codebase.git"
+  },
+  "type": "module",
+  "typeCoverage": {
+    "atLeast": 100,
+    "strict": true
+  },
+  "types": "src/index.ts",
+  "version": "0.0.6"
+}

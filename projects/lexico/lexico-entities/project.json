@@ -1,0 +1,54 @@
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "name": "lexico-entities",
+  "projectType": "library",
+  "sourceRoot": "projects/lexico/lexico-entities",
+  "tags": [
+    "domain:lexico",
+    "framework:nestjs",
+    "framework:typeorm",
+    "language:typescript",
+    "type:package"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "options": {
+        "assets": [
+          {
+            "glob": "README.md",
+            "input": "projects/lexico/lexico-entities",
+            "output": "."
+          }
+        ],
+        "generatePackageJson": false,
+        "main": "projects/lexico/lexico-entities/src/index.ts",
+        "outputPath": "projects/lexico/lexico-entities/dist",
+        "tsConfig": "projects/lexico/lexico-entities/tsconfig.build.json"
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "build-projects": {},
+    "codometer": {},
+    "dependency-cruiser": {},
+    "deprecate-code": {},
+    "format-code": {},
+    "guard-code": {},
+    "knip": {},
+    "lint-code": {},
+    "markdown-lint": {},
+    "migration": { "options": { "module": "src/modules/lexico-database" } },
+    "oxfmt": {},
+    "oxlint": {},
+    "prettier": {},
+    "spell-check": {},
+    "sqlfluff-format": {},
+    "sqlfluff-lint": {},
+    "squawk": {},
+    "test-code": {},
+    "type-coverage": {},
+    "typecheck": {},
+    "typecheck-code": {},
+    "yaml-lint": {}
+  }
+}

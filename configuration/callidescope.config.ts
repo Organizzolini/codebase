@@ -41,7 +41,7 @@ import {
  * already checked: the four fields a project may set are validated when the
  * file is read and a fifth is refused by name, and every project's
  * `tsconfig.json` names its own file, so the object literal is compiled either
- * way. `packages/ic-suite/callidescope/callidescope-examples` is the annotated exception on purpose:
+ * way. `projects/ic-suite/callidescope/callidescope-examples` is the annotated exception on purpose:
  * its two configuration files are the worked examples of this shape, and it
  * depends on the configuration package for real.
  *
@@ -79,17 +79,17 @@ import {
  * `codependix-examples`, `codometer-examples`, and `conformetry-examples` are
  * fixture corpora rather than libraries: a depth number over one reports on a
  * corpus's incidental shape instead of on production code, the same reason
- * `packages/ic-suite/callidescope/callidescope-examples` is excluded below in favor of its own
+ * `projects/ic-suite/callidescope/callidescope-examples` is excluded below in favor of its own
  * report-freshness gate.
  *
  * A project cannot exclude itself this way — discovery finds a project's
  * `tsconfig.json` before that project's own `callidescope.config.ts` is ever
  * read, so removing a project from tracing has to happen at the workspace's
  * own file. `configuration/.callidescopeignore` is where all seven are named,
- * beside `packages/ic-suite/callidescope/callidescope-examples` and the other exclusions this
+ * beside `projects/ic-suite/callidescope/callidescope-examples` and the other exclusions this
  * workspace declares.
  *
- * Six projects under `applications/` and `tools/` declare their own measured
+ * Six application and tool projects under `projects/` declare their own measured
  * depth the same way — but two more things sit outside what either task covers
  * and still need writing down rather than left implicit.
  *
@@ -105,7 +105,7 @@ import {
  * measured against — and it keeps being traced and published by the
  * workspace `write` run.
  *
- * `applications/JimmyPaolini` and `applications/affirmancy` have no
+ * `projects/JimmyPaolini` and `projects/affirmancy` have no
  * `callidescope-gate` target at all — a different fact from taking the default. Taking the default
  * means a gate that runs and passes against the number below; these two have no
  * gate to pass. `JimmyPaolini` holds only a `package.json`, being the git
@@ -113,7 +113,7 @@ import {
  * `AGENTS.md`'s `### Git Worktrees`); `affirmancy` is a Python Jupyter
  * notebook application holding no `tsconfig.json`, and the plugin infers its
  * targets only onto a project that holds one
- * (`packages/ic-suite/callidescope/callidescope-nx/src/modules/plugin/plugin.service.ts:353`).
+ * (`projects/ic-suite/callidescope/callidescope-nx/src/modules/plugin/plugin.service.ts:353`).
  *
  * Imported by the six conformetry leaf analyzers above, which name
  * `maximumDepth: workspaceLimits.maximumDepth` explicitly rather than
@@ -199,7 +199,7 @@ export const workspaceLimits = {
  * them is in here to adopt.
  *
  * ```ts
- * import { projectDefaults } from "../../configuration/callidescope.config.js";
+ * import { projectDefaults } from "../../../configuration/callidescope.config.js";
  *
  * export default {
  *   ...projectDefaults,
@@ -223,7 +223,7 @@ export const workspaceLimits = {
  *
  * Every traced project spreads it, each writing its own `limits` beside the
  * spread the way the example above shows.
- * `packages/ic-suite/callidescope/callidescope-examples/callidescope.config.ts` is outside that count
+ * `projects/ic-suite/callidescope/callidescope-examples/callidescope.config.ts` is outside that count
  * altogether: the package is excluded from workspace tracing by
  * `.callidescopeignore`, and its own file is the annotated worked example this
  * file names above, standing alone with a full type import and its fields
@@ -302,14 +302,14 @@ export const projectDefaults = {
  * reason — there is nothing else left to default to.
  *
  * Every rule and finding this configuration turns on has a worked example in
- * `packages/ic-suite/callidescope/callidescope-examples`, which also demonstrates the opposite half
+ * `projects/ic-suite/callidescope/callidescope-examples`, which also demonstrates the opposite half
  * of the split above: it gates `reports` rather than `depth`, because its
  * traced source is frozen fixture code. `.callidescopeignore` keeps it out of
  * this run, because its fixtures exist to breach the limits set here.
  *
- * - `packages/ic-suite/callidescope/callidescope-examples/README.md` — how to read a stack, and how
+ * - `projects/ic-suite/callidescope/callidescope-examples/README.md` — how to read a stack, and how
  *   to act on a depth or breadth finding.
- * - `packages/ic-suite/callidescope/callidescope-examples/AGENTS.md` — a "callidescope reported X →
+ * - `projects/ic-suite/callidescope/callidescope-examples/AGENTS.md` — a "callidescope reported X →
  *   open this example" table, for an agent handed a failing run.
  */
 const callidescopeConfiguration: CallidescopeConfiguration = {
@@ -348,7 +348,7 @@ const callidescopeConfiguration: CallidescopeConfiguration = {
      */
     markdown: {
       description:
-        "The workspace's call graph, traced by [callidescope](packages/ic-suite/callidescope/callidescope-cli), regenerated by `nx run codebase:callidescope:write`. Projects are listed tightest-first: the rows at the top are the ones a ratchet cannot descend past.",
+        "The workspace's call graph, traced by [callidescope](projects/ic-suite/callidescope/callidescope-cli), regenerated by `nx run codebase:callidescope:write`. Projects are listed tightest-first: the rows at the top are the ones a ratchet cannot descend past.",
       heading: "## 🔭 Callidescope",
       path: "README.md",
     },

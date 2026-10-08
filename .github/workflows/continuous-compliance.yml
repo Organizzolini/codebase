@@ -7,8 +7,8 @@ name: 🦹 Continuous Compliance
 # 3. 🧑‍⚖️ Comply: Pull request metadata and commit message conventions, on
 #    pull requests and again on the merge queue group that will land them.
 #
-# Label reconciliation runs through `tools/synchronization`, and compliance
-# validation runs through `tools/validation`. All checks execute directly via
+# Label reconciliation runs through `projects/synchronization`, and compliance
+# validation runs through `projects/validation`. All checks execute directly via
 # Node.js without building an Nx project graph.
 
 on:
@@ -97,7 +97,7 @@ jobs:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
           NODE_OPTIONS='' node --import @swc-node/register/esm-register \
-            tools/synchronization/src/main.ts issue-labels
+            projects/synchronization/src/main.ts issue-labels
 
       # Issue events can arrive with no assignees. Default those to the
       # repository owner while leaving already-owned issues unchanged.
@@ -134,7 +134,7 @@ jobs:
           ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
           NODE_OPTIONS='' node --import @swc-node/register/esm-register \
-            tools/validation/src/main.ts issue-metadata "$ISSUE_NUMBER"
+            projects/validation/src/main.ts issue-metadata "$ISSUE_NUMBER"
 
       # Sweeps and audits all open issues and hierarchy relationships on
       # scheduled runs and manual dispatches.
@@ -144,7 +144,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           NODE_OPTIONS='' node --import @swc-node/register/esm-register \
-            tools/validation/src/main.ts issue-metadata --all
+            projects/validation/src/main.ts issue-metadata --all
 
   enforce:
     name: 👮 Enforce
@@ -186,7 +186,7 @@ jobs:
       - name: 👮 Audit Repository Governance
         run: |
           NODE_OPTIONS='' node --import @swc-node/register/esm-register \
-            tools/validation/src/main.ts audit-governance
+            projects/validation/src/main.ts audit-governance
 
   comply:
     name: 🧑‍⚖️ Comply
@@ -252,7 +252,7 @@ jobs:
           PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           NODE_OPTIONS='' node --import @swc-node/register/esm-register \
-            tools/synchronization/src/main.ts pull-request-labels write
+            projects/synchronization/src/main.ts pull-request-labels write
 
       # Validates that the pull request branch name conforms to Conventional
       # Commits. A merge group's branch is the queue's own, so it is not checked.
@@ -296,7 +296,7 @@ jobs:
         run: |
           gh pr view "$PULL_REQUEST_NUMBER" --json body -q .body > pull_request_body.md
           NODE_OPTIONS='' node --import @swc-node/register/esm-register \
-            tools/validation/src/main.ts pull-request-body pull_request_body.md
+            projects/validation/src/main.ts pull-request-body pull_request_body.md
           rm pull_request_body.md
 
       # Validates that PR title release significance matches or exceeds commits.
@@ -308,7 +308,7 @@ jobs:
             ${{ github.event.pull_request.number || steps.merge-group.outputs.pull-request-number }}
         run: |
           NODE_OPTIONS='' node --import @swc-node/register/esm-register \
-            tools/validation/src/main.ts pull-request-release-significance \
+            projects/validation/src/main.ts pull-request-release-significance \
             "$PULL_REQUEST_NUMBER"
 
       # Validates that the latest commit on main follows Conventional Commits.

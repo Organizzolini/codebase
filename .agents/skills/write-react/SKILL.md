@@ -21,7 +21,7 @@ the file by hand:
 | Hook | `nx g conformetry:react-hook --name=use-user --project=<project>` | `src/hooks/use-user.ts` |
 | Route | `nx g conformetry:tanstack-route --name=word.$id --path=/word/$id --project=<project>` | `src/routes/word.$id.tsx` |
 | Server functions | `nx g conformetry:tanstack-server-function --name=bookmarks --project=<project>` | `src/modules/bookmarks/` |
-| Application | `nx g conformetry:tanstack-application --name=<name> --directory=applications` | `applications/<name>/` |
+| Application | `nx g conformetry:tanstack-application --name=<name> --directory=projects` | `projects/<name>/` |
 
 A template is the standard its instances are validated against, bodies
 included: every declaration, statement, and section comment it writes must
@@ -120,7 +120,7 @@ import { Button, Card, Input, Label, cn } from "@codebase/components-web";
 // ❌ WRONG: Copying component code into lexico
 ```
 
-Never modify files in `packages/components-web/src/components/ui/` (shadcn-generated). Compose custom components in `packages/components-web/src/components/` instead.
+Never modify files in `projects/components-web/src/components/ui/` (shadcn-generated). Compose custom components in `projects/components-web/src/components/` instead.
 
 ## Styling with Tailwind CSS
 

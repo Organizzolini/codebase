@@ -26,7 +26,7 @@ You are a codebase researcher. Your task is to gather detailed information about
 
 ## Steps
 
-1. Read all `AGENTS.md` files: root `AGENTS.md`, and any in `applications/`, `packages/`, `infrastructure/`, `tools/`
+1. Read all `AGENTS.md` files: root `AGENTS.md`, and any in `projects/` and `infrastructure/`
 2. Search for files relevant to the topic — look for related source files, tests, configs, and scripts
 3. Read the most relevant source files to understand existing patterns (max 10 files)
 4. Check `nx.json` and affected `project.json` files for task targets, caching config, and project dependencies

@@ -155,7 +155,7 @@ for meanderaw's one exception.
 
 - Every database-backed project has its own database, schema, and role ([ADR 0022](../../../docs/adr/0022-give-every-database-project-its-own-database-schema-and-role.md)): `lexico_development`.`lexico`, `meanderaw_development`.`meanderaw`, and `caelundas_development`.`caelundas`. The dictionary and literature targets always read and write `lexico_development` with `-n lexico`; the other targets act on the database the root `.env`'s `POSTGRES_DB` names, `postgres` by default, unless given `--database`. Every target connects with the root's unprefixed `POSTGRES_*`, the shared container's admin login.
 - To dump a whole project, dump its database: `nx run codebase:postgres-data:dump-database --database=lexico_development`.
-- Lexico's tables used to live in `postgres`.`public`. A volume from before the move still holds that copy until the maintainer drops it; the [lexico-entities README](../../../packages/lexico-entities/README.md) documents the one-time move.
+- Lexico's tables used to live in `postgres`.`public`. A volume from before the move still holds that copy until the maintainer drops it; the [lexico-entities README](../../../projects/lexico/lexico-entities/README.md) documents the one-time move.
 
 - "Collections" in the context of this codebase typically map to PostgreSQL **tables**. Use the `table` commands when collections are requested.
 - Dumps created using these targets are saved to the `data/` folder, which is intentionally gitignored to prevent accidental commits of local database structures or sensitive data.

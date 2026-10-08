@@ -1,0 +1,102 @@
+{
+  "author": "Jimmy Paolini",
+  "bin": {
+    "conformetry-nx-bootstrap-generators": "./src/main.mjs"
+  },
+  "bugs": {
+    "url": "https://github.com/organizzolini/codebase/issues"
+  },
+  "dependencies": {
+    "@conformetry/configuration": "workspace:*",
+    "@conformetry/generation": "workspace:*",
+    "@conformetry/output": "workspace:*",
+    "@conformetry/validation": "workspace:*",
+    "@nestjs/common": "catalog:ic-suite",
+    "@nestjs/core": "catalog:ic-suite",
+    "@nx/devkit": "catalog:",
+    "pino": "catalog:",
+    "pino-pretty": "catalog:",
+    "reflect-metadata": "catalog:"
+  },
+  "description": "Nx plugin providing dynamic generator scaffolding and conformance verification targets for Conformetry",
+  "devDependencies": {
+    "@codebase/logging": "workspace:*",
+    "@golevelup/ts-vitest": "catalog:",
+    "@nestjs/testing": "catalog:",
+    "@nx/eslint-plugin": "catalog:",
+    "@swc/helpers": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "executors": "./executors.json",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./executors.json": "./executors.json",
+    "./generators.json": "./generators.json",
+    "./package.json": "./package.json",
+    "./src/executors/*": "./src/executors/*",
+    "./src/generators/*": "./src/generators/*"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "dist",
+    "executors.json",
+    "generators.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "generators": "./generators.json",
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/projects/ic-suite/conformetry/conformetry-nx#readme",
+  "keywords": [
+    "conformance",
+    "conformetry",
+    "generators",
+    "nx",
+    "nx-plugin",
+    "scaffolding"
+  ],
+  "license": "MIT",
+  "main": "src/index.ts",
+  "name": "@conformetry/nx",
+  "nx": {
+    "executors": "./executors.json",
+    "generators": "./generators.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "bin": {
+      "conformetry-nx-bootstrap-generators": "./dist/src/main.js"
+    },
+    "exports": {
+      ".": {
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/src/index.js"
+      },
+      "./executors.json": "./executors.json",
+      "./generators.json": "./generators.json",
+      "./package.json": "./package.json",
+      "./src/executors/*": "./dist/src/executors/*.js",
+      "./src/generators/*": "./dist/src/generators/*.js"
+    },
+    "main": "./dist/src/index.js",
+    "registry": "https://registry.npmjs.org",
+    "types": "./dist/src/index.d.ts"
+  },
+  "repository": {
+    "directory": "projects/ic-suite/conformetry/conformetry-nx",
+    "type": "git",
+    "url": "git+https://github.com/organizzolini/codebase.git"
+  },
+  "type": "module",
+  "typeCoverage": {
+    "atLeast": 100,
+    "strict": true
+  },
+  "types": "src/index.ts",
+  "version": "0.0.7"
+}

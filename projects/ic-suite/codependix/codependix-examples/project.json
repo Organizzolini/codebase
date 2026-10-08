@@ -1,0 +1,51 @@
+{
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "implicitDependencies": ["codependix-cli"],
+  "name": "codependix-examples",
+  "projectType": "library",
+  "sourceRoot": "projects/ic-suite/codependix/codependix-examples",
+  "tags": [
+    "framework:nestjs",
+    "language:typescript",
+    "name:codependix-examples",
+    "type:package"
+  ],
+  "targets": {
+    "build-projects": {},
+    "codometer": {},
+    "deprecate-code": {},
+    "examples": {
+      "cache": true,
+      "configurations": {
+        "check": {
+          "command": "node --import @swc-node/register/esm-register testing/render-examples.ts --check"
+        },
+        "write": {
+          "command": "node --import @swc-node/register/esm-register testing/render-examples.ts --write"
+        }
+      },
+      "defaultConfiguration": "check",
+      "description": "Render every codependix example and compare it against what is committed under `examples/`, or rewrite it. `check` is what keeps the guides honest: a resolver or scanner change that silently reverses one of the documented behaviors fails here rather than leaving a guide quoting a diagram the tool no longer renders. Unlike `codebase:codependix`, both configurations are safe on a branch — every example is built from subjects this package owns, so nothing here moves when the workspace around it does.",
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/examples/**", "default"],
+      "options": {
+        "cwd": "{projectRoot}"
+      },
+      "outputs": []
+    },
+    "format-code": {},
+    "guard-code": {},
+    "knip": {},
+    "lint-code": {},
+    "markdown-lint": {},
+    "oxfmt": {},
+    "pack": {},
+    "prettier": {},
+    "spell-check": {},
+    "test-code": {},
+    "type-coverage": {},
+    "typecheck": {},
+    "typecheck-code": {},
+    "yaml-lint": {}
+  }
+}

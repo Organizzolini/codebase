@@ -179,10 +179,8 @@ runs:
         key: |
           nx-graph-v3-${{ runner.os }}-${{ hashFiles(
           'pnpm-lock.yaml', 'nx.json', 'project.json',
-          'applications/*/project.json', 'applications/lexico/*/project.json',
-          'applications/meanderaw/*/project.json',
-          'packages/*/project.json',
-          'tools/*/project.json') }}
+          'projects/*/project.json', 'projects/*/*/project.json',
+          'projects/ic-suite/*/*/project.json') }}
 
     # Keyed per check via `nx-cache-scope`, not `github.job`, which every
     # matrix leg shares: under one key the first leg saved it and the Test

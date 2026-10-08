@@ -65,7 +65,7 @@ jobs:
           - target: test-code
             name: Test
             emoji: 🧑‍🔬
-            exclude: meanderaw-cli,packages/ic-suite/**
+            exclude: meanderaw-cli,projects/ic-suite/**
           - target: test-code
             name: Test Meanderaw
             emoji: 🧑‍🔬
@@ -74,7 +74,7 @@ jobs:
           - target: test-code
             name: Test IC Suite
             emoji: 🧑‍🔬
-            exclude: "*,!packages/ic-suite/**"
+            exclude: "*,!projects/ic-suite/**"
             shard: ic-suite
           - target: secure-code
             name: Secure

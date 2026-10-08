@@ -1,0 +1,16 @@
+# Stands in for the build directory every repository ignores.
+#
+# `generated/` is empty in a fresh checkout, and deliberately so: nothing
+# ignored is committed here, because a file that is both tracked and ignored
+# breaks `git add` — and so every pre-commit hook — for everyone who touches it
+# afterwards. Populate it from the committed samples beside the corpus to watch
+# discovery skip it:
+#
+#     cp -R projects/ic-suite/codometer/codometer-examples/examples/compiled projects/ic-suite/codometer/codometer-examples/examples/corpus/generated
+#     codometer --directory examples/corpus --json | jq '.targets[0].files'   # still 28
+#
+# Codometer reads this file itself rather than invoking git, so the codebase
+# target never sees `generated/` however many files are put in it — while a
+# declared target's globs reach them anyway, which is the whole reason targets
+# exist. See the package README's "Targets" section.
+generated/

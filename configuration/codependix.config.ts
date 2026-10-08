@@ -15,7 +15,7 @@ import {
  * those, and produces no export of its own.
  *
  * ```ts
- * import { projectDefaults } from "../../configuration/codependix.config.js";
+ * import { projectDefaults } from "../../../configuration/codependix.config.js";
  *
  * export default {
  *   ...projectDefaults,
@@ -70,7 +70,7 @@ export const projectDefaults = {
  *
  * Every field below, and every refusal a configuration can be rejected with, is
  * resolved by the real loader and rendered as a worked example in
- * `packages/ic-suite/codependix/codependix-examples` — see its `README.md`, and the
+ * `projects/ic-suite/codependix/codependix-examples` — see its `README.md`, and the
  * `configuration-resolution` and `refusals` examples in particular. This file is the only production configuration
  * codependix has; those are where the shape is explained.
  */
@@ -81,8 +81,8 @@ const codependixConfiguration: CodependixConfiguration = {
    * about stale exports and belongs on the default branch. A broken boundary
    * is caused by the branch and fixed by it, so it gates every pull request.
    *
-   * Every rule was verified to hold across `packages/`, `applications/`, and
-   * `tools/` before it was written down. That is deliberate, and the same
+   * Every rule was verified to hold across every project under `projects/`
+   * before it was written down. That is deliberate, and the same
    * reasoning `callidescope.config.ts` sets out for its `maximumDepth`: a rule
    * that arrives red is a backlog rather than a gate, and a red pipeline
    * nobody can act on teaches people to ignore it.

@@ -30,4 +30,4 @@ In development, meanders live in a Postgres database named `meanderaw_developmen
 - A clone of the repository no longer carries the rows. They are reproduced by sweeping, and the committed pages are the reviewable record of what a sweep produced.
 - A row's `id` changes on every sweep. Committed output must key on the Code instead: the index pages name each tile's SVG element `meander-<code>`, so they change only when a drawing does.
 - `clear` is a `TRUNCATE`. With no sequence there is no counter to restart, which is the job the SQLite version's `sqlite_sequence` reset did.
-- Every connection still runs `synchronize: true` with no migrations. That remains safe while the CLI is the database's only writer. A second consumer would need [lexico-entities](../../packages/lexico-entities)' migration discipline.
+- Every connection still runs `synchronize: true` with no migrations. That remains safe while the CLI is the database's only writer. A second consumer would need [lexico-entities](../../projects/lexico/lexico-entities)' migration discipline.

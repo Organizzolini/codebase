@@ -243,13 +243,13 @@ on any project.
 #### `nbstripout` (affirmancy only — Jupyter notebooks)
 
 Strips cell outputs from `.ipynb` files before staging. Runs automatically on `*.ipynb` staged files.
-Config: [applications/affirmancy/project.json](../../../applications/affirmancy/project.json)
+Config: [projects/affirmancy/project.json](../../../projects/affirmancy/project.json)
 
 #### Sync checks
 
-Every synchronization command is its own Nx target on the `synchronization` project — `conformetry-generators`, `conventional-config`, `devcontainer-configuration`, `pull-request-template`, and `skill-exclusions` — run directly rather than through a shared aggregate, the same way `codebase:codometer` and `codebase:callidescope` are run. There is no `sync-*` target, no `scripts/sync-*.ts` script, and no `synchronization:synchronize` aggregate target — those were retired when the work moved into [tools/synchronization](../../../tools/synchronization). `lint-code`'s dependents name each derivation target directly.
+Every synchronization command is its own Nx target on the `synchronization` project — `conformetry-generators`, `conventional-config`, `devcontainer-configuration`, `pull-request-template`, and `skill-exclusions` — run directly rather than through a shared aggregate, the same way `codebase:codometer` and `codebase:callidescope` are run. There is no `sync-*` target, no `scripts/sync-*.ts` script, and no `synchronization:synchronize` aggregate target — those were retired when the work moved into [projects/synchronization](../../../projects/synchronization). `lint-code`'s dependents name each derivation target directly.
 
-The `nestjs-module-graphs` and `nx-project-graphs` targets were retired too, per issue #296: [codependix](../../../packages/ic-suite/codependix/codependix-cli) now derives the same NestJS module graphs and Nx neighborhood graphs through its own anchor blocks, checked by `nx run codebase:codependix` instead.
+The `nestjs-module-graphs` and `nx-project-graphs` targets were retired too, per issue #296: [codependix](../../../projects/ic-suite/codependix/codependix-cli) now derives the same NestJS module graphs and Nx neighborhood graphs through its own anchor blocks, checked by `nx run codebase:codependix` instead.
 
 | Check command                                             | Write command           | What it validates                                                                                                                                           |
 | --------------------------------------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -267,7 +267,7 @@ There is no command that regenerates a skills table of contents. The synchroniza
 
 #### `check-lockfile` (package.json / pnpm-workspace.yaml changes)
 
-Command: `validation lockfile`, the [lockfile](../../../tools/validation/src/modules/lockfile/lockfile.command.ts) check
+Command: `validation lockfile`, the [lockfile](../../../projects/validation/src/modules/lockfile/lockfile.command.ts) check
 
 lint-staged runs it as the CLI directly rather than through its `codebase:check-lockfile` Nx target, so one command does not cost another project graph build. Run it by hand through the target:
 
@@ -533,7 +533,7 @@ Remaining Actions
 | commitlint                          | [configuration/commitlint.config.ts](../../../configuration/commitlint.config.ts)                                                                      |
 | validate-branch-name                | [validate-branch-name.config.cjs](../../../validate-branch-name.config.cjs)                                                                            |
 | Conventional commits (types/scopes) | [configuration/conventional.config.cjs](../../../configuration/conventional.config.cjs)                                                                |
-| check-lockfile                      | [tools/validation/src/modules/lockfile/lockfile.constants.ts](../../../tools/validation/src/modules/lockfile/lockfile.constants.ts)                    |
+| check-lockfile                      | [projects/validation/src/modules/lockfile/lockfile.constants.ts](../../../projects/validation/src/modules/lockfile/lockfile.constants.ts)              |
 
 ### Git Conventions
 

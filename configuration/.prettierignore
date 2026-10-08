@@ -28,18 +28,18 @@ yarn.lock
 **/meanderaw-cli/output
 **/data/wiktionary
 **/data/wikipedia
-**/applications/lexico/lexico-cli/data
-**/applications/lexico/lexico-cli/data/library/**
-**/applications/lexico/lexico-cli/src/modules/literature/literature.constants.ts
-**/applications/lexico/lexico-cli/src/modules/library/library.constants.ts
+**/projects/lexico/lexico-cli/data
+**/projects/lexico/lexico-cli/data/library/**
+**/projects/lexico/lexico-cli/src/modules/literature/literature.constants.ts
+**/projects/lexico/lexico-cli/src/modules/library/library.constants.ts
 **/library.json
 
 # 👔 Conformetry example fixtures
 # Templates hold mustache where identifiers belong; instances are drifted on
 # purpose. Each example's own conformetry.config.ts is formatted normally.
 **/conformetry-templates/**
-**/packages/ic-suite/conformetry/conformetry-examples/examples/*/instances/**
-**/packages/ic-suite/conformetry/conformetry-examples/examples/*/templates/**
+**/projects/ic-suite/conformetry/conformetry-examples/examples/*/instances/**
+**/projects/ic-suite/conformetry/conformetry-examples/examples/*/templates/**
 
 # 🧪 Coverage
 **/coverage
@@ -64,10 +64,10 @@ CHANGELOG.md
 # ⚙️ Generated files
 **/routeTree.gen.ts
 projectStructure.cache.json
-**/packages/components-web/src/lib/utils
-**/packages/components-web/src/components/**
-**/packages/components-web/src/lib/**
-**/packages/components-web/src/hooks/**
+**/projects/components-web/src/lib/utils
+**/projects/components-web/src/components/**
+**/projects/components-web/src/lib/**
+**/projects/components-web/src/hooks/**
 
 # 🏗 Infrastructure templates
 **/helm/**/templates/**
@@ -145,7 +145,7 @@ projectStructure.cache.json
 # Callidescope writes this report and then checks the file back against what a
 # fresh run would produce, byte for byte. Reformatting it reports it stale the
 # moment a format run touches it.
-**/packages/ic-suite/callidescope/callidescope-examples/output/**
+**/projects/ic-suite/callidescope/callidescope-examples/output/**
 
 # 🕸️ Every dependency graph codependix writes as JSON. It renders them with
 # `JSON.stringify(…, 2)`, which puts one array element per line; oxfmt collapses

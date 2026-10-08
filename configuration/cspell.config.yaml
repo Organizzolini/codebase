@@ -30,16 +30,16 @@ ignorePaths:
   - "**/coverage"
   - "**/dist"
   - "**/supabase/data.sql"
-  - "**/applications/lexico/lexico-cli/data/**"
-  - "**/applications/lexico/lexico-cli/src/modules/literature/literature.constants.ts"
-  - "**/applications/lexico/lexico-cli/src/modules/library/library.constants.ts"
+  - "**/projects/lexico/lexico-cli/data/**"
+  - "**/projects/lexico/lexico-cli/src/modules/literature/literature.constants.ts"
+  - "**/projects/lexico/lexico-cli/src/modules/library/library.constants.ts"
   - "**/documentation/planning/**"
   # 🌀 Every meander the `draw` command writes. The SVGs are already covered by
   # the `*.svg` entry above; the index page listing them is markup, and its link
   # text is three thousand mosaic tile identifiers — `ddddd-dots` and its
   # siblings — which are coordinates in a parameter space rather than words.
   # `.codometerignore` and `.prettierignore` exclude the same directory.
-  - "**/applications/meanderaw/meanderaw-cli/output/**"
+  - "**/projects/meanderaw/meanderaw-cli/output/**"
   # cspell:ignore mermiad
   # 🔭 Everything callidescope's examples run writes. The report carries each
   # traced callable's own JSDoc summary verbatim, so a word a source file
@@ -47,7 +47,7 @@ ignorePaths:
   # refusal is written around — arrives here stripped of the `cspell:ignore`
   # comment that exempts it at the source, and JSON has nowhere to put one
   # back. Spelling is checked where the prose is authored; this is a copy.
-  - "**/packages/ic-suite/callidescope/callidescope-examples/output/**"
+  - "**/projects/ic-suite/callidescope/callidescope-examples/output/**"
   # 🧩 Installed agent skills, one entry per skill in skills-lock.json. Owned
   # upstream rather than authored here, so their prose stays spelled the way
   # their sources spelled it. Listed individually rather than as
@@ -116,15 +116,15 @@ ignorePaths:
   - "**/.agents/skills/writing-skills/**"
   # installed-skills-end
   - "**/node_modules"
-  - "**/packages/components-web/src/components/**"
-  - "**/packages/components-web/src/hooks/**"
-  - "**/packages/components-web/src/lib/**"
+  - "**/projects/components-web/src/components/**"
+  - "**/projects/components-web/src/hooks/**"
+  - "**/projects/components-web/src/lib/**"
   - "**/pnpm-lock.yaml"
   - "**/routeTree.gen.ts"
   - "**/terraform.tfstate*"
   - coverage
   - dist
-  - applications/lexico/lexico-cli/data/**
+  - projects/lexico/lexico-cli/data/**
 dictionaryDefinitions:
   - name: astronomy
     path: .cspell/astronomy.txt

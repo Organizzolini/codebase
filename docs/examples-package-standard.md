@@ -2,10 +2,10 @@
 
 Four packages exist for one reason: a toolchain's behavior should be somewhere a
 reader can **run** rather than only somewhere they can read about. They are
-[callidescope-examples](../packages/ic-suite/callidescope/callidescope-examples),
-[codependix-examples](../packages/ic-suite/codependix/codependix-examples),
-[codometer-examples](../packages/ic-suite/codometer/codometer-examples), and
-[conformetry-examples](../packages/ic-suite/conformetry/conformetry-examples), and they share one
+[callidescope-examples](../projects/ic-suite/callidescope/callidescope-examples),
+[codependix-examples](../projects/ic-suite/codependix/codependix-examples),
+[codometer-examples](../projects/ic-suite/codometer/codometer-examples), and
+[conformetry-examples](../projects/ic-suite/conformetry/conformetry-examples), and they share one
 shape so that understanding any one of them predicts the others.
 
 A fifth such package conforms to the same shape. Nothing checks this

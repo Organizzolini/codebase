@@ -1,0 +1,76 @@
+{
+  "author": "Jimmy Paolini",
+  "bugs": {
+    "url": "https://github.com/organizzolini/codebase/issues"
+  },
+  "dependencies": {
+    "@codependix/boundaries": "workspace:*",
+    "@codependix/configuration": "workspace:*",
+    "@codependix/core": "workspace:*",
+    "@codependix/file-imports": "workspace:*",
+    "@codependix/nestjs-modules": "workspace:*",
+    "@codependix/nx-projects": "workspace:*",
+    "@nestjs/common": "catalog:ic-suite",
+    "pino": "catalog:",
+    "pino-pretty": "catalog:",
+    "reflect-metadata": "catalog:"
+  },
+  "description": "Mermaid diagram rendering, Markdown anchor splicing, and JSON export for Codependix dependency graphs",
+  "devDependencies": {
+    "@codebase/logging": "workspace:*",
+    "@golevelup/ts-vitest": "catalog:",
+    "@nestjs/testing": "catalog:",
+    "@nx/eslint-plugin": "catalog:",
+    "@swc/helpers": "catalog:",
+    "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/projects/ic-suite/codependix/codependix-output#readme",
+  "keywords": [
+    "codependix",
+    "dependency-visualization",
+    "markdown-anchors",
+    "mermaid",
+    "output"
+  ],
+  "license": "MIT",
+  "main": "src/index.ts",
+  "name": "@codependix/output",
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/src/index.js"
+      },
+      "./package.json": "./package.json"
+    },
+    "main": "./dist/src/index.js",
+    "registry": "https://registry.npmjs.org",
+    "types": "./dist/src/index.d.ts"
+  },
+  "repository": {
+    "directory": "projects/ic-suite/codependix/codependix-output",
+    "type": "git",
+    "url": "git+https://github.com/organizzolini/codebase.git"
+  },
+  "type": "module",
+  "typeCoverage": {
+    "atLeast": 100,
+    "strict": true
+  },
+  "types": "src/index.ts",
+  "version": "0.0.6"
+}

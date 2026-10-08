@@ -5,12 +5,12 @@
 # root with `[project]` installs only the root package and silently skips the
 # members.
 #
-# Members are listed explicitly: a glob such as `applications/*` fails on the
+# Members are listed explicitly: a glob such as `projects/*` fails on the
 # TypeScript projects, which have no `pyproject.toml`. Add every new Python
 # project to this list.
 
 [tool.uv.workspace]
-members = ["applications/affirmancy"]
+members = ["projects/affirmancy"]
 
 # Tools the workspace-root Nx targets invoke, over files outside any project.
 [dependency-groups]
@@ -67,7 +67,7 @@ indent_width = 2
 max_line_length = 120
 # PostgreSQL and Supabase use quoted identifiers with special chars in policy/function names
 exclude_rules = ["RF05"]
-ignore_paths = ["packages/lexico-entities/src/modules/lexico-database/migrations/"]
+ignore_paths = ["projects/lexico/lexico-entities/src/modules/lexico-database/migrations/"]
 
 [tool.sqlfluff.rules.capitalisation.keywords]
 capitalisation_policy = "lower"

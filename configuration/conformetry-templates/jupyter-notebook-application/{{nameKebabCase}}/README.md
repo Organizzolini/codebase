@@ -17,14 +17,14 @@ uv sync
 ## Run tests
 
 ```bash
-cd applications/{{nameKebabCase}}
+cd projects/{{nameKebabCase}}
 uv run pytest
 ```
 
 ## Lint / format / typecheck
 
 ```bash
-cd applications/{{nameKebabCase}}
+cd projects/{{nameKebabCase}}
 uv run ruff check .
 uv run ruff format .
 uv run pyright

@@ -209,7 +209,7 @@ nx run lexico-web:develop  # Navigate to /profile
 EOF
 
 NODE_OPTIONS='' node --import @swc-node/register/esm-register \
-  tools/validation/src/main.ts pull-request-body /tmp/pr_body.md
+  projects/validation/src/main.ts pull-request-body /tmp/pr_body.md
 ````
 
 #### Using GitHub CLI (preferred)
@@ -348,7 +348,7 @@ This codebase uses **squash merging** by default:
 - All commits in the PR become a single commit on main
 - PR title becomes the commit message
 - Keep PR title clean and following conventions
-- **The title is the only thing semantic-release reads** — every commit's own type is discarded once squashed. Pick the title's type and scope overlap to match the branch's work, while keeping the title at least as significant as the most significant commit; see [commit-code's Release Significance section](../commit-code/SKILL.md#release-significance) for the type-to-bump mapping and the [pull-request-release-significance](../../../tools/validation/src/modules/pull-request-release-significance/pull-request-release-significance.command.ts) check that enforces it
+- **The title is the only thing semantic-release reads** — every commit's own type is discarded once squashed. Pick the title's type and scope overlap to match the branch's work, while keeping the title at least as significant as the most significant commit; see [commit-code's Release Significance section](../commit-code/SKILL.md#release-significance) for the type-to-bump mapping and the [pull-request-release-significance](../../../projects/validation/src/modules/pull-request-release-significance/pull-request-release-significance.command.ts) check that enforces it
 
 ## Pre-Flight Checklist
 

@@ -94,7 +94,7 @@ const config: KnipConfig = {
   ignoreExportsUsedInFile: true,
 
   // JimmyPaolini is a GitHub profile page with no buildable code — skip analysis
-  ignoreWorkspaces: ["applications/JimmyPaolini", "applications/affirmancy"],
+  ignoreWorkspaces: ["projects/JimmyPaolini", "projects/affirmancy"],
 
   workspaces: {
     // Root workspace: scripts, base configs, and Nx configuration files
@@ -126,11 +126,11 @@ const config: KnipConfig = {
         "**/*.spec.ts",
         "**/dist/**",
         "**/coverage/**",
-        "applications/JimmyPaolini/**",
+        "projects/JimmyPaolini/**",
         "pnpm-workspace.yaml", // Catalog dependencies are shared across workspace; knip would flag all as unused in root
         "configuration/conformetry-templates/**", // Generator templates are placeholder files, not executable workspace code
-        "packages/ic-suite/codometer/codometer-examples/examples/compiled/**", // Stand-in build output, committed so a target example has something to measure
-        "packages/ic-suite/codometer/codometer-examples/examples/corpus/**", // Sample corpus written to be counted; uncalled and unimported by construction
+        "projects/ic-suite/codometer/codometer-examples/examples/compiled/**", // Stand-in build output, committed so a target example has something to measure
+        "projects/ic-suite/codometer/codometer-examples/examples/corpus/**", // Sample corpus written to be counted; uncalled and unimported by construction
         // Skill scripts are invoked by the skill framework, not imported in code
         "**/.agents/skills/**",
         "**/.claude/skills/**",
@@ -144,7 +144,7 @@ const config: KnipConfig = {
     },
 
     // caelundas: Node.js CLI for astronomical calendar generation
-    "applications/caelundas/caelundas-cli": {
+    "projects/caelundas/caelundas-cli": {
       // The data source and the migrations are read by the TypeORM command
       // line the `migration` target runs, by path rather than by import.
       entry: [
@@ -163,7 +163,7 @@ const config: KnipConfig = {
     // `vite.config.mts` rather than imported, so knip is told where they are;
     // both sit under `src/lib/` because `codebase-structure.json` restricts a
     // `src/` root to entry-point names.
-    "applications/lexico/lexico-web": {
+    "projects/lexico/lexico-web": {
       entry: [
         "src/lib/client.tsx",
         "src/lib/routeTree.gen.ts",
@@ -180,7 +180,7 @@ const config: KnipConfig = {
     },
 
     // lexico-api: NestJS GraphQL API
-    "applications/lexico/lexico-api": {
+    "projects/lexico/lexico-api": {
       ignoreDependencies: [
         // Apollo 5's Express integration, which @nestjs/apollo resolves by
         // name at startup; without it GraphQLModule refuses to boot.
@@ -194,7 +194,7 @@ const config: KnipConfig = {
     // codometer command line and the corpus exists to be counted — so knip is
     // told where the entry points really are rather than left to conclude the
     // whole package is dead.
-    "packages/ic-suite/codometer/codometer-examples": {
+    "projects/ic-suite/codometer/codometer-examples": {
       entry: [
         "codometer.config.ts",
         "examples/**/*.config.ts",
@@ -211,7 +211,7 @@ const config: KnipConfig = {
     },
 
     // components-web: Shared React component library (shadcn/ui)
-    "packages/components-web": {
+    "projects/components-web": {
       entry: ["src/components/**/*.tsx"],
       project: ["src/**/*.ts", "src/**/*.tsx"],
     },
@@ -219,13 +219,13 @@ const config: KnipConfig = {
     // database: Shared Postgres package. The migration SQL extraction script
     // is run by name from the `migration` target defaults in nx.json rather
     // than imported, so knip is told it is an entry point.
-    "packages/database": {
+    "projects/database": {
       entry: ["scripts/**/*.ts"],
       project: ["src/**/*.ts", "scripts/**/*.ts"],
     },
 
     // lexico-entities: Shared TypeORM entities
-    "packages/lexico-entities": {
+    "projects/lexico/lexico-entities": {
       entry: [
         "src/index.ts",
         "src/modules/lexico-database/data-source.constants.ts",
@@ -238,7 +238,7 @@ const config: KnipConfig = {
     },
 
     // lexico-cli: Data ingestion CLI for the Lexico database
-    "applications/lexico/lexico-cli": {
+    "projects/lexico/lexico-cli": {
       ignore: [
         "testing/**", // Test fixtures and setup
       ],
@@ -250,7 +250,7 @@ const config: KnipConfig = {
     },
 
     // meanderaw: Greek meander (key/fret) SVG generator CLI
-    "applications/meanderaw/meanderaw-cli": {
+    "projects/meanderaw/meanderaw-cli": {
       // The CLI, the REPL its own target runs, and the sweep's worker
       // thread — spawned by URL, so nothing imports it. The data source and
       // the migrations are read by the TypeORM command line the `migration`
@@ -266,14 +266,14 @@ const config: KnipConfig = {
     },
 
     // logger: Shared pino-backed NestJS LoggerService and LoggerModule
-    "packages/logging": {
+    "projects/logging": {
       entry: ["src/index.ts"],
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",
     },
 
     // synchronization: NestJS CLI tool for codebase config synchronization commands
-    "tools/synchronization": {
+    "projects/synchronization": {
       entry: ["src/main.ts", "src/files.ts"], // Main CLI entry + public file-list constant exports
       ignore: [
         "testing/**", // Test fixtures and setup
@@ -282,7 +282,7 @@ const config: KnipConfig = {
     },
 
     // validation: NestJS CLI tool for the repository's one-sided checks
-    "tools/validation": {
+    "projects/validation": {
       entry: ["src/main.ts", "src/repl.ts"], // Main CLI entry + the REPL its own target runs
       ignore: [
         "testing/**", // Test fixtures and setup
@@ -292,12 +292,12 @@ const config: KnipConfig = {
 
     // callidescope packages: the call-stack linting CLI and the configuration
     // it reads.
-    "packages/ic-suite/callidescope/callidescope-cli": {
+    "projects/ic-suite/callidescope/callidescope-cli": {
       entry: ["src/main.ts", "src/repl.ts"],
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",
     },
-    "packages/ic-suite/callidescope/callidescope-configuration": {
+    "projects/ic-suite/callidescope/callidescope-configuration": {
       entry: ["src/index.ts"],
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",
@@ -311,7 +311,7 @@ const config: KnipConfig = {
     // it declares has stopped being used. Ignoring `examples/` instead would
     // leave every dependency looking unused, and `knip --fix` would delete
     // them.
-    "packages/ic-suite/callidescope/callidescope-examples": {
+    "projects/ic-suite/callidescope/callidescope-examples": {
       entry: [
         "callidescope.workspace.config.ts",
         "examples/**/*.ts",
@@ -325,12 +325,12 @@ const config: KnipConfig = {
       project:
         "{callidescope.workspace.config.ts,examples/**/*.ts,src/**/*.ts,testing/**/*.ts}",
     },
-    "packages/ic-suite/callidescope/callidescope-graph": {
+    "projects/ic-suite/callidescope/callidescope-graph": {
       entry: ["src/index.ts"],
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",
     },
-    "packages/ic-suite/callidescope/callidescope-nx": {
+    "projects/ic-suite/callidescope/callidescope-nx": {
       // An Nx plugin is loaded by name, never imported: the plugin entry and
       // every executor Nx resolves from `executors.json` are all roots nothing
       // in this workspace references.
@@ -338,18 +338,18 @@ const config: KnipConfig = {
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",
     },
-    "packages/ic-suite/callidescope/callidescope-output": {
+    "projects/ic-suite/callidescope/callidescope-output": {
       entry: ["src/index.ts"],
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",
     },
     // codometer packages: the measurement CLI and the configuration it reads
-    "packages/ic-suite/codometer/codometer-cli": {
+    "projects/ic-suite/codometer/codometer-cli": {
       entry: ["src/main.ts", "src/repl.ts"],
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",
     },
-    "packages/ic-suite/codometer/codometer-configuration": {
+    "projects/ic-suite/codometer/codometer-configuration": {
       entry: ["src/index.ts"],
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",
@@ -358,7 +358,7 @@ const config: KnipConfig = {
     // codependix packages: the examples package, whose `examples/` directory
     // holds subjects to be graphed and the guides rendered from them, neither of
     // which anything imports.
-    "packages/ic-suite/codependix/codependix-examples": {
+    "projects/ic-suite/codependix/codependix-examples": {
       entry: ["testing/render-examples.ts", "testing/**/*.test.ts"],
       ignoreDependencies: [
         // Imported by the example NestJS containers under `examples/`, which are
@@ -371,16 +371,16 @@ const config: KnipConfig = {
     },
 
     // conformetry packages: NestJS service/command application scaffolds
-    "packages/ic-suite/conformetry/conformetry-cli": {
+    "projects/ic-suite/conformetry/conformetry-cli": {
       entry: ["src/main.ts", "src/repl.ts"],
       project: "src/**/*.ts",
     },
-    "packages/ic-suite/conformetry/conformetry-core": {
+    "projects/ic-suite/conformetry/conformetry-core": {
       entry: ["src/index.ts"],
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",
     },
-    "packages/ic-suite/conformetry/conformetry-configuration": {
+    "projects/ic-suite/conformetry/conformetry-configuration": {
       entry: ["src/index.ts"],
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",
@@ -390,32 +390,32 @@ const config: KnipConfig = {
     // point in its own right — without saying so, knip reports the whole
     // package as unused. The fixture trees are excluded because a template
     // file is not valid TypeScript until it has been rendered.
-    "packages/ic-suite/conformetry/conformetry-examples": {
+    "projects/ic-suite/conformetry/conformetry-examples": {
       entry: ["examples/*/conformetry.config.ts", "examples/*/*.ts"],
       ignore: ["examples/*/instances/**", "examples/*/templates/**"],
       project: "examples/**/*.ts",
     },
-    "packages/ic-suite/conformetry/conformetry-generation": {
+    "projects/ic-suite/conformetry/conformetry-generation": {
       entry: ["src/index.ts"],
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",
     },
-    "packages/ic-suite/conformetry/conformetry-languages": {
+    "projects/ic-suite/conformetry/conformetry-languages": {
       entry: ["src/index.ts"],
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",
     },
-    "packages/ic-suite/conformetry/conformetry-nx": {
+    "projects/ic-suite/conformetry/conformetry-nx": {
       entry: ["src/index.ts"],
       ignore: ["src/**/*.test.ts", "src/**/templates/**", "testing/**"],
       project: "src/**/*.ts",
     },
-    "packages/ic-suite/conformetry/conformetry-output": {
+    "projects/ic-suite/conformetry/conformetry-output": {
       entry: ["src/index.ts"],
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",
     },
-    "packages/ic-suite/conformetry/conformetry-validation": {
+    "projects/ic-suite/conformetry/conformetry-validation": {
       entry: ["src/index.ts"],
       ignore: ["src/**/*.test.ts", "testing/**"],
       project: "src/**/*.ts",

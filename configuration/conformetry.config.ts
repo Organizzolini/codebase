@@ -40,9 +40,9 @@ function defineInputs(
  * overwrites, so every frontend instance group leaves it out of validation.
  */
 const SHADCN_GENERATED_PATTERNS = [
-  "packages/components-web/src/components/ui/**",
-  "packages/components-web/src/hooks/**",
-  "packages/components-web/src/lib/**",
+  "projects/components-web/src/components/ui/**",
+  "projects/components-web/src/hooks/**",
+  "projects/components-web/src/lib/**",
 ];
 
 const conformetryConfiguration: ConformetryNxConfiguration = [
@@ -56,20 +56,20 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
       description: z.string().describe("Application description"),
       name: z.string().describe("Application name in kebab-case"),
     }),
-    instances: [{ patterns: ["applications/affirmancy"] }],
+    instances: [{ patterns: ["projects/affirmancy"] }],
     name: "jupyter-notebook-application",
     templatePath:
       "configuration/conformetry-templates/jupyter-notebook-application",
   },
   {
     description:
-      "A standalone NestJS CLI application template built on nest-commander, for a new command-line tool in applications/, packages/, or tools/",
+      "A standalone NestJS CLI application template built on nest-commander, for a new command-line tool in projects/",
     inputs: defineInputs({
       name: z.string().describe("Project name (kebab-case)"),
       type: z
         .string()
         .describe(
-          "Project type directory (applications, packages, or tools), or a deeper packages/ nesting such as packages/ic-suite/callidescope",
+          "Directory the project nests under: projects, a domain folder such as projects/lexico, or a deeper nesting such as projects/ic-suite/callidescope",
         ),
       workspaceRelativePrefix: z
         .string()
@@ -79,30 +79,30 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
     }),
     instances: [
       {
-        patterns: ["packages/ic-suite/callidescope/callidescope-cli"],
+        patterns: ["projects/ic-suite/callidescope/callidescope-cli"],
         substitutions: {
-          type: "packages/ic-suite/callidescope",
+          type: "projects/ic-suite/callidescope",
           workspaceRelativePrefix: "../../../../",
         },
       },
       {
-        patterns: ["packages/ic-suite/codependix/codependix-cli"],
+        patterns: ["projects/ic-suite/codependix/codependix-cli"],
         substitutions: {
-          type: "packages/ic-suite/codependix",
+          type: "projects/ic-suite/codependix",
           workspaceRelativePrefix: "../../../../",
         },
       },
       {
-        patterns: ["packages/ic-suite/codometer/codometer-cli"],
+        patterns: ["projects/ic-suite/codometer/codometer-cli"],
         substitutions: {
-          type: "packages/ic-suite/codometer",
+          type: "projects/ic-suite/codometer",
           workspaceRelativePrefix: "../../../../",
         },
       },
       {
-        patterns: ["packages/ic-suite/conformetry/conformetry-cli"],
+        patterns: ["projects/ic-suite/conformetry/conformetry-cli"],
         substitutions: {
-          type: "packages/ic-suite/conformetry",
+          type: "projects/ic-suite/conformetry",
           workspaceRelativePrefix: "../../../../",
         },
       },
@@ -129,7 +129,7 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
       type: z
         .string()
         .describe(
-          "Project type directory (applications, packages, or tools), or a deeper packages/ nesting such as packages/ic-suite/callidescope",
+          "Directory the project nests under: projects, a domain folder such as projects/lexico, or a deeper nesting such as projects/ic-suite/callidescope",
         ),
       workspaceRelativePrefix: z
         .string()
@@ -143,7 +143,7 @@ const conformetryConfiguration: ConformetryNxConfiguration = [
   },
   {
     description:
-      "A standalone TanStack Start web application template — server rendering, file-based routes, Tailwind CSS, and Vitest — for a new frontend in applications/",
+      "A standalone TanStack Start web application template — server rendering, file-based routes, Tailwind CSS, and Vitest — for a new frontend in projects/",
     inputs: defineInputs({
       name: z.string().describe("Application name in kebab-case"),
     }),

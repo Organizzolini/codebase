@@ -1,0 +1,68 @@
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "implicitDependencies": ["components-web"],
+  "name": "lexico-web",
+  "projectType": "application",
+  "sourceRoot": "projects/lexico/lexico-web/src",
+  "tags": [
+    "domain:lexico",
+    "framework:react",
+    "framework:tanstack-start",
+    "language:typescript",
+    "type:application"
+  ],
+  "targets": {
+    "build": {
+      "description": "Build the application for production",
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite build",
+        "cwd": "projects/lexico/lexico-web"
+      },
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "build-projects": {},
+    "codometer": {},
+    "dependency-cruiser": {},
+    "deprecate-code": {},
+    "develop": {
+      "description": "Start development server with hot reload",
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite dev",
+        "cwd": "projects/lexico/lexico-web"
+      }
+    },
+    "format-code": {},
+    "guard-code": {},
+    "knip": {},
+    "lint-code": {},
+    "markdown-lint": {},
+    "oxfmt": {},
+    "oxlint": {},
+    "prettier": {},
+    "preview": {
+      "description": "Preview the production build",
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vite preview",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "spell-check": {},
+    "start": {
+      "description": "Start the production server",
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node .output/server/index.mjs",
+        "cwd": "projects/lexico/lexico-web"
+      }
+    },
+    "stylelint": {},
+    "test-code": {},
+    "type-coverage": {},
+    "typecheck": {},
+    "typecheck-code": {},
+    "yaml-lint": {}
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "name": "meanderaw-cli",
+  "projectType": "application",
+  "sourceRoot": "projects/meanderaw/meanderaw-cli",
+  "tags": [
+    "domain:meanderaw",
+    "framework:nest-commander",
+    "framework:nestjs",
+    "framework:typeorm",
+    "generator:nestjs-command-project",
+    "language:typescript",
+    "type:application"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "options": {
+        "assets": [
+          {
+            "glob": "README.md",
+            "input": "projects/meanderaw/meanderaw-cli",
+            "output": "."
+          }
+        ],
+        "generatePackageJson": false,
+        "main": "projects/meanderaw/meanderaw-cli/src/main.ts",
+        "outputPath": "projects/meanderaw/meanderaw-cli/dist",
+        "tsConfig": "projects/meanderaw/meanderaw-cli/tsconfig.build.json"
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "build-projects": {},
+    "codometer": {},
+    "dependency-cruiser": {},
+    "deprecate-code": {},
+    "form-codebase": {},
+    "format-code": {},
+    "gate-codebase": {},
+    "guard-code": {},
+    "knip": {},
+    "lint-code": {},
+    "lint-codebase": {},
+    "make-projects": {},
+    "markdown-lint": {},
+    "migration": {
+      "options": { "module": "src/modules/meanderaw-database" }
+    },
+    "oxfmt": {},
+    "oxlint": {},
+    "prettier": {},
+    "repl": {
+      "cache": false,
+      "description": "Start an interactive NestJS REPL for Meanderaw services",
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node --import @swc-node/register/esm-register src/repl.ts",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "spell-check": {},
+    "sqlfluff-format": {},
+    "sqlfluff-lint": {},
+    "squawk": {},
+    "start": {
+      "cache": false,
+      "description": "Run the Meanderaw application, which always writes the Postgres database MEANDERAW_POSTGRES_DATABASE names: with no arguments it clears its meander rows and regenerates a draw run into it \u2014 the lattice's unit space, enumerated and classified, then the historical corpus's hardcoded Codes beyond that budget \u2014 and --args=\"--rows <n> --columns <n> --code <code>\" writes that one row. Nothing else depends on this target, so no aggregate target rewrites the database as a side effect; keep it that way. `build` compiles this project rather than drawing anything, so populating the database is this target's job.",
+      "executor": "nx:run-commands",
+      "inputs": [
+        "^production",
+        "default",
+        {
+          "externalDependencies": ["@swc-node/register"]
+        }
+      ],
+      "options": {
+        "command": "node --import @swc-node/register/esm-register src/main.ts {args}",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test-code": {},
+    "test-coverage": {},
+    "tidy-codebase": {},
+    "type-codebase": {},
+    "type-coverage": {},
+    "typecheck": {},
+    "typecheck-code": {},
+    "yaml-lint": {}
+  }
+}

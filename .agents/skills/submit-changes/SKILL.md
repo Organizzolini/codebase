@@ -129,7 +129,7 @@ gh pr list --head <branch> --state open
    EOF
 
    NODE_OPTIONS='' node --import @swc-node/register/esm-register \
-     tools/validation/src/main.ts pull-request-body /tmp/pr_body.md
+     projects/validation/src/main.ts pull-request-body /tmp/pr_body.md
    ```
 
    Fix any reported issues (e.g. missing headings or leftover template comments) before proceeding.

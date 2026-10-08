@@ -2,7 +2,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "name": "{{nameKebabCase}}",
   "projectType": "application",
-  "sourceRoot": "applications/{{nameKebabCase}}/src",
+  "sourceRoot": "projects/{{nameKebabCase}}/src",
   "tags": [
     "framework:react",
     "framework:tanstack-start",

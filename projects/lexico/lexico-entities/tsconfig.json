@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": ["ES2023"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "target": "esnext",
+    "types": ["node"]
+  },
+  "exclude": ["dist", "node_modules"],
+  "extends": "../../../configuration/tsconfig.json",
+  "include": [
+    "*.config.mts",
+    "callidescope.config.ts",
+    "codependix.config.ts",
+    "codometer.config.ts",
+    "eslint.config.ts",
+    "src/**/*.ts",
+    "testing/**/*.ts",
+    "vitest.config.ts"
+  ]
+}

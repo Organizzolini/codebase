@@ -9,8 +9,7 @@
   "duplicates": {
     "crossLanguage": true,
     "ignore": [
-      "packages/*/src/modules/*-database/migrations/**/*.ts",
-      "applications/**/src/modules/*-database/migrations/**/*.ts",
+      "projects/**/src/modules/*-database/migrations/**/*.ts",
     ],
     "ignoreDefaults": true,
     "ignoreImports": true,
@@ -32,61 +31,61 @@
   ],
   "entry": [
     "**/scripts/**/*.{js,mjs,ts,sh}",
-    "{applications,packages,tools}/**/src/index.ts",
-    "{applications,packages,tools}/**/src/main.ts",
-    "{applications,packages,tools}/**/src/modules/**/*.module.ts",
+    "projects/**/src/index.ts",
+    "projects/**/src/main.ts",
+    "projects/**/src/modules/**/*.module.ts",
     // Nx resolves these from executors.json and generators.json, which is not
     // an import, so nothing reaches them through the module graph.
-    "{applications,packages,tools}/**/src/executors/**/executor.ts",
-    "{applications,packages,tools}/**/src/generators/**/generator.ts",
-    "{applications,packages,tools}/**/src/generators.ts",
-    "{applications,packages,tools}/**/src/repl.ts",
+    "projects/**/src/executors/**/executor.ts",
+    "projects/**/src/generators/**/generator.ts",
+    "projects/**/src/generators.ts",
+    "projects/**/src/repl.ts",
     // A worker thread's entry point is spawned by URL, never imported.
-    "{applications,packages,tools}/**/src/worker.ts",
-    "{applications,packages,tools}/**/testing/**/*.ts",
+    "projects/**/src/worker.ts",
+    "projects/**/testing/**/*.ts",
     // conformetry-examples: every example is read and run rather than imported,
     // so nothing in the module graph reaches one. knip names the same paths in
     // its own entry list for the same reason.
-    "packages/ic-suite/conformetry/conformetry-examples/examples/*/*.ts",
+    "projects/ic-suite/conformetry/conformetry-examples/examples/*/*.ts",
     // codometer finds these by walking up from the project it is measuring,
     // never by importing them, so nothing in the module graph reaches one.
     // knip names the root file in its own entry list for the same reason.
-    "{applications,packages,tools}/**/codometer.config.cjs",
-    "{applications,packages,tools}/**/codometer.config.ts",
+    "projects/**/codometer.config.cjs",
+    "projects/**/codometer.config.ts",
     "codometer.config.ts",
     // Read by the codometer command line, one per documented behavior, and
     // reached by nothing in the module graph for the same reason.
-    "packages/ic-suite/codometer/codometer-examples/examples/**/*.config.ts",
+    "projects/ic-suite/codometer/codometer-examples/examples/**/*.config.ts",
     // A project's own callidescope configuration, found the same way: a run
     // resolves one beside every project it traces, by name, never by import.
     // The workspace file this repository passes with `--config` sits under
     // `configuration/` and is already covered by the entry below.
-    "{applications,packages,tools}/**/callidescope.config.ts",
+    "projects/**/callidescope.config.ts",
     // A project's own codependix configuration, found the same way: a run
     // resolves one beside every project it maps, by name, never by import.
     // The workspace file this repository passes with `--config` sits under
     // `configuration/` and is already covered by the entry below.
-    "{applications,packages,tools}/**/codependix.config.ts",
+    "projects/**/codependix.config.ts",
     "configuration/**",
     // Every fixture in the callidescope examples package exists to be traced,
     // not imported — an orphan-root fixture is *defined* by having no caller.
     // Declared as entry points rather than excluded, exactly as
     // `configuration/knip.config.ts` declares the same files, so what they
     // import stays in the module graph instead of reading as unreachable too.
-    "packages/ic-suite/callidescope/callidescope-examples/examples/**/*.ts",
-    "packages/ic-suite/callidescope/callidescope-examples/src/**/*.ts",
+    "projects/ic-suite/callidescope/callidescope-examples/examples/**/*.ts",
+    "projects/ic-suite/callidescope/callidescope-examples/src/**/*.ts",
     // lexico names its client entry and generated route tree in
     // vite.config.mts rather than importing them, and both sit under
     // src/lib/ because a src/ root only admits entry-point names. The
     // vite plugin detects a client entry by convention at src/client.tsx,
     // so a relocated one has to be declared. knip names the same paths in
     // its own entry list for the same reason.
-    "applications/lexico/lexico-web/src/lib/client.tsx",
-    "applications/lexico/lexico-web/src/lib/routeTree.gen.ts",
-    "applications/lexico/lexico-web/src/router.tsx",
-    "applications/caelundas/caelundas-cli/src/modules/caelundas-database/migrations/**/*.ts",
-    "packages/lexico-entities/src/modules/lexico-database/migrations/**/*.ts",
-    "applications/meanderaw/meanderaw-cli/src/modules/meanderaw-database/migrations/**/*.ts",
+    "projects/lexico/lexico-web/src/lib/client.tsx",
+    "projects/lexico/lexico-web/src/lib/routeTree.gen.ts",
+    "projects/lexico/lexico-web/src/router.tsx",
+    "projects/caelundas/caelundas-cli/src/modules/caelundas-database/migrations/**/*.ts",
+    "projects/lexico/lexico-entities/src/modules/lexico-database/migrations/**/*.ts",
+    "projects/meanderaw/meanderaw-cli/src/modules/meanderaw-database/migrations/**/*.ts",
     "configuration/release.config.cjs",
     "validate-branch-name.config.cjs",
   ],
@@ -243,16 +242,16 @@
   ],
   "ignoreExportsUsedInFile": true,
   "ignorePatterns": [
-    // pnpm-workspace.yaml's `packages/*` glob matches every direct child of
-    // `packages/`, including the pure grouping folder `packages/ic-suite`
-    // that holds no package.json of its own — it exists only to nest the four
-    // IC-suite toolchains one level deeper, at `packages/ic-suite/*/*`, which
-    // is a separate, already-matched pattern. `applications/lexico` and
-    // `applications/meanderaw` are the same kind of grouping folder for the
-    // lexico and meanderaw applications.
-    "applications/lexico",
-    "applications/meanderaw",
-    "packages/ic-suite",
+    // pnpm-workspace.yaml's `projects/*` glob matches every direct child of
+    // `projects/`, including the pure grouping folders that hold no
+    // package.json of their own — `projects/ic-suite` nests the four IC-suite
+    // toolchains, and `projects/caelundas`, `projects/lexico`, and
+    // `projects/meanderaw` each nest one domain's projects. Their projects are
+    // matched by separate, more specific patterns.
+    "projects/caelundas",
+    "projects/ic-suite",
+    "projects/lexico",
+    "projects/meanderaw",
     "**/*.min.js",
     "**/.agents/skills/**/scripts/**",
     "**/.claude/skills/**/scripts/**",
@@ -262,16 +261,16 @@
     "**/.opencode/skills/**/scripts/**",
     "**/.terraform/**",
     "**/.venv/**",
-    "**/applications/lexico/lexico-cli/data/**",
-    "**/applications/lexico/lexico-cli/src/modules/library/library.constants.ts",
-    "**/applications/lexico/lexico-cli/src/modules/literature/literature.constants.ts",
+    "**/projects/lexico/lexico-cli/data/**",
+    "**/projects/lexico/lexico-cli/src/modules/library/library.constants.ts",
+    "**/projects/lexico/lexico-cli/src/modules/literature/literature.constants.ts",
     "**/build/**",
     "**/conformetry-templates/**",
     // 🕸️ Codependix example subjects: input to be graphed, unreachable from any
     // entry point by construction. One carries a `tsconfig.json` the compiler is
     // meant to refuse, and another a module that throws the moment it is
     // imported, so neither belongs in a module graph of this repository's code.
-    "**/packages/ic-suite/codependix/codependix-examples/examples/*/*/**",
+    "**/projects/ic-suite/codependix/codependix-examples/examples/*/*/**",
     "**/coverage/**",
     "**/data/library/**",
     "**/data/wikipedia/**",
@@ -280,10 +279,10 @@
     "**/helm/**/templates/**",
     "**/library.json",
     "**/node_modules/**",
-    "**/packages/ic-suite/codometer/codometer-examples/examples/compiled/**",
-    "**/packages/ic-suite/codometer/codometer-examples/examples/corpus/**",
-    "**/packages/ic-suite/conformetry/conformetry-examples/examples/*/instances/**",
-    "**/packages/ic-suite/conformetry/conformetry-examples/examples/*/templates/**",
+    "**/projects/ic-suite/codometer/codometer-examples/examples/compiled/**",
+    "**/projects/ic-suite/codometer/codometer-examples/examples/corpus/**",
+    "**/projects/ic-suite/conformetry/conformetry-examples/examples/*/instances/**",
+    "**/projects/ic-suite/conformetry/conformetry-examples/examples/*/templates/**",
     "**/pnpm-lock.yaml",
     "**/src/lib/database.types.ts",
     "**/routeTree.gen.ts",
@@ -293,8 +292,8 @@
     ".claude/skills/**",
     ".github/copilot-instructions.md",
     ".github/skills/**",
-    "applications/affirmancy/**",
-    "applications/JimmyPaolini/**",
+    "projects/affirmancy/**",
+    "projects/JimmyPaolini/**",
     "**/CHANGELOG.md",
     "CLAUDE.md",
     "notepads/**",

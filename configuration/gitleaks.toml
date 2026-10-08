@@ -33,4 +33,4 @@ paths = ["\\.vscode/.*"]
 
 [[allowlists]]
 description = "Ignore affirmancy LLM output (generated content, high entropy strings expected)"
-paths = ["applications/affirmancy/output/.*"]
+paths = ["projects/affirmancy/output/.*"]

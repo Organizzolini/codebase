@@ -45,7 +45,7 @@ crash.log
 *.ics
 
 # Subrepositories 🌳
-applications/JimmyPaolini
+projects/JimmyPaolini
 
 # Test Coverage 🧪
 coverage
@@ -70,7 +70,7 @@ codometer-report.json
 tmp
 dist
 last-lint-staged-output.log
-applications/caelundas/caelundas-cli/output
+projects/caelundas/caelundas-cli/output
 vite.config.*.timestamp*
 data/**
 .fallow
