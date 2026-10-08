@@ -9,8 +9,8 @@ import {
   OBSERVER_ELEVATION_METERS,
   OSCULATING_ORBITAL_ELEMENTS_FLAG,
   SWISS_EPHEMERIS_FLAGS,
-  TOPOCENTRIC_EPHEMERIS_FLAGS,
   swissEphemerisConstantByNode,
+  TOPOCENTRIC_EPHEMERIS_FLAGS,
 } from "./ephemeris.constants";
 
 import type { Body, Node } from "../caelundas/caelundas.types";
@@ -202,7 +202,7 @@ export class EphemerisCoordinateService {
 
   /**
    * Computes a body's apparent ecliptic coordinates as seen from an observer
-   * on the Earth's surface (sea level), rather than from the Earth's centre.
+   * on the Earth's surface (sea level), rather than from the Earth's center.
    *
    * @remarks
    * The difference is parallax: up to about 1° for the Moon, under 9″ for the
@@ -219,8 +219,12 @@ export class EphemerisCoordinateService {
     observerLatitude: number;
     observerLongitude: number;
   }): { distance: number; latitude: number; longitude: number } {
-    const { body, julianDayEphemerisTime, observerLatitude, observerLongitude } =
-      args;
+    const {
+      body,
+      julianDayEphemerisTime,
+      observerLatitude,
+      observerLongitude,
+    } = args;
     set_topo(observerLongitude, observerLatitude, OBSERVER_ELEVATION_METERS);
     return this.computeBodyCoordinates(
       body,

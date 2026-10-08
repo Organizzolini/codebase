@@ -1,13 +1,13 @@
 import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
 import moment from "moment-timezone";
+import { azalt } from "sweph";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { EphemerisCoordinateService } from "./ephemeris-coordinate.service";
 import { EphemerisHorizonService } from "./ephemeris-horizon.service";
 import { EphemerisTimeService } from "./ephemeris-time.service";
 
-import { azalt } from "sweph";
 import type * as Sweph from "sweph";
 
 vi.mock("sweph", async (importOriginal) => {
@@ -46,13 +46,11 @@ describe(EphemerisHorizonService, () => {
     coordinateService = await module.resolve(EphemerisCoordinateService);
     timeService = await module.resolve(EphemerisTimeService);
 
-    vi.mocked(coordinateService.getTopocentricBodyCoordinates).mockReturnValue(
-      {
-        distance: 0.0025,
-        latitude: 2.47,
-        longitude: 19.09,
-      },
-    );
+    vi.mocked(coordinateService.getTopocentricBodyCoordinates).mockReturnValue({
+      distance: 0.0025,
+      latitude: 2.47,
+      longitude: 19.09,
+    });
     vi.mocked(timeService.dateToJulianDays).mockReturnValue({
       julianDayEphemerisTime: 2_460_395.5,
       julianDayUniversalTime: 2_460_395.499_306,
@@ -91,7 +89,30 @@ describe(EphemerisHorizonService, () => {
       expect(vi.mocked(azalt).mock.lastCall?.[5]).toStrictEqual([
         19.09, 2.47, 0.0025,
       ]);
-      expect(result).toStrictEqual({ azimuth: 180, elevation: 44.8 });
+      expect(result).toStrictEqual({
+        azimuth: 180,
+        elevation: 44.8,
+        semidiameter: expect.closeTo(0.266, 3) as number,
+        trueElevation: 45,
+      });
+    });
+  });
+
+  describe("computeSemidiameter", () => {
+    it("gives the Moon's angular radius from its distance", () => {
+      // 1737.4 km at 384,400 km subtends 15.54 arcminutes.
+      expect(
+        service.computeSemidiameter({
+          body: "moon",
+          distance: 384_400 / 149_597_870.7,
+        }) * 60,
+      ).toBeCloseTo(15.54, 2);
+    });
+
+    it("throws for a body with no known radius", () => {
+      expect(() =>
+        service.computeSemidiameter({ body: "mars", distance: 1 }),
+      ).toThrow('No radius known for body "mars"');
     });
   });
 

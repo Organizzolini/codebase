@@ -1,0 +1,61 @@
+{
+  "counts": {
+    "☀️ 🔼 Sunrise": 2,
+    "☀️ 🔽 Sunset": 2
+  },
+  "events": [
+    {
+      "note": "USNO 2026-06-21: Sun Set 00:04 GMT (UTC+0), after midnight, so it belongs to 21 June",
+      "start": "2026-06-21T00:04:00Z",
+      "summary": "☀️ 🔽 Sunset"
+    },
+    {
+      "note": "USNO 2026-06-21: Sun Rise 02:55 GMT (UTC+0)",
+      "start": "2026-06-21T02:55:00Z",
+      "summary": "☀️ 🔼 Sunrise"
+    },
+    {
+      "note": "USNO 2026-06-22: Sun Set 00:04 GMT (UTC+0)",
+      "start": "2026-06-22T00:04:00Z",
+      "summary": "☀️ 🔽 Sunset"
+    },
+    {
+      "note": "USNO 2026-06-22: Sun Rise 02:56 GMT (UTC+0)",
+      "start": "2026-06-22T02:56:00Z",
+      "summary": "☀️ 🔼 Sunrise"
+    },
+    {
+      "note": "USNO 2026-06-21: Moon Set 01:11 GMT (UTC+0)",
+      "start": "2026-06-21T01:11:00Z",
+      "summary": "🌙 🔽 Moonset"
+    },
+    {
+      "note": "USNO 2026-06-21: Moon Rise 13:14 GMT (UTC+0)",
+      "start": "2026-06-21T13:14:00Z",
+      "summary": "🌙 🔼 Moonrise"
+    },
+    {
+      "note": "USNO 2026-06-22: Moon Set 01:03 GMT (UTC+0)",
+      "start": "2026-06-22T01:03:00Z",
+      "summary": "🌙 🔽 Moonset"
+    },
+    {
+      "note": "USNO 2026-06-22: Moon Rise 14:51 GMT (UTC+0)",
+      "start": "2026-06-22T14:51:00Z",
+      "summary": "🌙 🔼 Moonrise"
+    }
+  ],
+  "name": "Reykjavík sunrise and sunset around the June solstice, 21 and 22 June 2026",
+  "retrieved": "2026-10-07",
+  "source": {
+    "name": "US Naval Observatory, Astronomical Applications Department: Rise, Set and Transit API (one day)",
+    "url": "https://aa.usno.navy.mil/api/rstt/oneday?date=2026-06-21&coords=64.1466,-21.9426&tz=0&dst=false"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-06-22",
+    "latitude": 64.1466,
+    "longitude": -21.9426,
+    "startDate": "2026-06-21"
+  }
+}

@@ -73,6 +73,8 @@ describe(EphemerisAggregationService, () => {
     vi.mocked(horizonService.computeAzimuthElevationForMinute).mockReturnValue({
       azimuth: 180,
       elevation: 44.8,
+      semidiameter: 0.27,
+      trueElevation: 45,
     });
     vi.mocked(timeService.dateToJulianDays).mockReturnValue({
       julianDayEphemerisTime: 2_460_395.5,

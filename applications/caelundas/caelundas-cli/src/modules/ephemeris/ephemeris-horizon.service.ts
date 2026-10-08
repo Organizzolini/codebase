@@ -3,12 +3,17 @@ import { azalt } from "sweph";
 
 import { EphemerisCoordinateService } from "./ephemeris-coordinate.service";
 import { EphemerisTimeService } from "./ephemeris-time.service";
-import { ECLIPTIC_TO_HORIZONTAL_FLAG } from "./ephemeris.constants";
+import {
+  ECLIPTIC_TO_HORIZONTAL_FLAG,
+  KILOMETERS_PER_ASTRONOMICAL_UNIT,
+  radiusKilometersByHorizonBody,
+} from "./ephemeris.constants";
 
 import type { Body, Node } from "../caelundas/caelundas.types";
 import type {
   AzimuthElevationEphemeris,
   AzimuthElevationEphemerisBody,
+  HorizonPosition,
 } from "./ephemeris.types";
 import type { Moment } from "moment-timezone";
 
@@ -63,9 +68,9 @@ export class EphemerisHorizonService {
   }
 
   /**
-   * Computes horizontal coordinates (azimuth, elevation) for a single body at a specific moment,
-   * from its topocentric position: parallax is applied, so the Moon sits where the observer sees it.
-   * Used internally by aggregation service. Returns azimuth and elevation angles.
+   * Computes horizontal coordinates for a single body at a specific moment, from its
+   * topocentric position: parallax is applied, so the Moon sits where the observer sees it.
+   * Returns azimuth, apparent and true elevation, and the topocentric semidiameter.
    */
   public computeAzimuthElevationForMinute(args: {
     body: Exclude<Body, Node>;
@@ -73,7 +78,7 @@ export class EphemerisHorizonService {
     julianDayUniversalTime: number;
     observerLatitude: number;
     observerLongitude: number;
-  }): { azimuth: number; elevation: number } {
+  }): HorizonPosition {
     const {
       body,
       julianDayEphemerisTime,
@@ -96,6 +101,31 @@ export class EphemerisHorizonService {
       0,
       [longitude, latitude, distance],
     );
-    return { azimuth: azaltResult[0], elevation: azaltResult[2] };
+    return {
+      azimuth: azaltResult[0],
+      elevation: azaltResult[2],
+      semidiameter: this.computeSemidiameter({ body, distance }),
+      trueElevation: azaltResult[1],
+    };
+  }
+
+  /**
+   * Computes a body's angular radius, in degrees, from its distance in AU.
+   *
+   * @throws When the body has no known radius (only the Sun and Moon do).
+   */
+  public computeSemidiameter(args: {
+    body: Exclude<Body, Node>;
+    distance: number;
+  }): number {
+    const { body, distance } = args;
+    const radius = (
+      radiusKilometersByHorizonBody as Partial<Record<string, number>>
+    )[body];
+    if (radius === undefined) {
+      throw new Error(`No radius known for body "${body}"`);
+    }
+    const distanceKilometers = distance * KILOMETERS_PER_ASTRONOMICAL_UNIT;
+    return (Math.asin(radius / distanceKilometers) * 180) / Math.PI;
   }
 }

@@ -17,7 +17,11 @@ import {
  */
 const fixtureNames = [
   "usno-march-equinox-2026",
+  "usno-philadelphia-moonset-2026-05-19",
+  "usno-philadelphia-rise-set-2026-03-20",
   "usno-philadelphia-twilight-2026-03-20",
+  "usno-reykjavik-sun-2026-06-21",
+  "usno-tromso-moon-2026-12-20",
 ];
 
 describe.each(fixtureNames)("reference fixture %s", (name) => {

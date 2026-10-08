@@ -130,7 +130,7 @@ describe(EphemerisCoordinateService, () => {
   });
 
   describe("getTopocentricBodyCoordinates", () => {
-    it("computes the position seen from the observer, not from Earth's centre", () => {
+    it("computes the position seen from the observer, not from Earth's center", () => {
       const result = service.getTopocentricBodyCoordinates({
         body: "moon",
         julianDayEphemerisTime: 2_460_395.5,
