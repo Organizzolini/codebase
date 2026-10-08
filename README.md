@@ -2049,6 +2049,7 @@ graph LR
   file_callidescope_cli_src_main_end_to_end_test_ts["callidescope-cli/src/main.end-to-end.test.ts"]
   file_callidescope_cli_src_main_module_ts["callidescope-cli/src/main.module.ts"]
   file_callidescope_cli_src_main_ts["callidescope-cli/src/main.ts"]
+  file_callidescope_cli_src_main_unit_test_ts["callidescope-cli/src/main.unit.test.ts"]
   file_callidescope_cli_src_modules_address_lookup_address_lookup_constants_ts["callidescope-cli/src/modules/address-lookup/address-lookup.constants.ts"]
   file_callidescope_cli_src_modules_address_lookup_address_lookup_constants_unit_test_ts["callidescope-cli/src/modules/address-lookup/address-lookup.constants.unit.test.ts"]
   file_callidescope_cli_src_modules_address_lookup_address_lookup_module_ts["callidescope-cli/src/modules/address-lookup/address-lookup.module.ts"]
