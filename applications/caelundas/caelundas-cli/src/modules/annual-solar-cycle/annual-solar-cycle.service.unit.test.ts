@@ -178,6 +178,54 @@ describe(AnnualSolarCycleService, () => {
       );
     });
 
+    it("ignores a single-minute dip on a rising distance", () => {
+      const currentMinute = moment.utc("2026-01-03T18:10:00.000Z");
+
+      // Distance rising throughout, with one glitched minute dipping below its neighbors
+      const distances: number[] = [];
+      for (let index = 0; index < MARGIN_MINUTES * 2 + 1; index++) {
+        distances.push(1 + index * 0.000_000_1);
+      }
+      distances[MARGIN_MINUTES] =
+        1 + MARGIN_MINUTES * 0.000_000_1 - 0.000_000_3;
+
+      const sunDistanceEphemeris = createDistanceEphemeris(
+        currentMinute,
+        distances,
+      );
+
+      const events = service.getSolarApsisEvents({
+        minute: currentMinute,
+        sunDistanceEphemeris,
+      });
+
+      expect(events).toHaveLength(0);
+    });
+
+    it("ignores a single-minute spike on a rising distance", () => {
+      const currentMinute = moment.utc("2026-01-03T18:09:00.000Z");
+
+      // Distance rising throughout, with one glitched minute spiking above its neighbors
+      const distances: number[] = [];
+      for (let index = 0; index < MARGIN_MINUTES * 2 + 1; index++) {
+        distances.push(1 + index * 0.000_000_1);
+      }
+      distances[MARGIN_MINUTES] =
+        1 + MARGIN_MINUTES * 0.000_000_1 + 0.000_000_3;
+
+      const sunDistanceEphemeris = createDistanceEphemeris(
+        currentMinute,
+        distances,
+      );
+
+      const events = service.getSolarApsisEvents({
+        minute: currentMinute,
+        sunDistanceEphemeris,
+      });
+
+      expect(events).toHaveLength(0);
+    });
+
     it("returns empty array when no apsis events occur", () => {
       const currentMinute = moment.utc("2024-04-15T12:00:00.000Z");
 
