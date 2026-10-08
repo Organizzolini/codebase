@@ -22,3 +22,6 @@ export const eclipseTypeLabelByType: Record<EclipseType, string> = {
   penumbral: "Penumbral",
   total: "Total",
 };
+
+/** Milliseconds between two consecutive minutes of a sweep. */
+export const MILLISECONDS_PER_MINUTE = 60_000;

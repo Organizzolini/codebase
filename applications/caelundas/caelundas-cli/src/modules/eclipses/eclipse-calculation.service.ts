@@ -8,6 +8,7 @@ import { EclipseClassificationService } from "./eclipse-classification.service";
 import { EclipseEventService } from "./eclipse-event.service";
 import { EclipseGeometryService } from "./eclipse-geometry.service";
 import { EclipseTopocentricService } from "./eclipse-topocentric.service";
+import { MILLISECONDS_PER_MINUTE } from "./eclipses.constants";
 
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { EclipsePhase } from "../caelundas/caelundas.types";
@@ -20,6 +21,8 @@ import type {
   EclipseContactGeometry,
   EclipseContactWindow,
   EclipseCoordinates,
+  EclipseOccurrence,
+  EclipseType,
   LunarEclipseType,
   SolarEclipseType,
 } from "./eclipses.types";
@@ -45,9 +48,41 @@ export class EclipseCalculationService {
 
   // 🔐 Private Fields
 
+  /**
+   * The lunar and solar eclipses in progress. A sweep visits minutes in
+   * order, so each occurrence keeps the type estimated at its first minute
+   * and titles its begins, maximum, ends and span alike, even when later
+   * estimates near a type boundary would differ.
+   */
+  private lunarOccurrence: EclipseOccurrence<LunarEclipseType> | null = null;
+
+  private solarOccurrence: EclipseOccurrence<SolarEclipseType> | null = null;
+
   // 🔑 Public Fields
 
   // 🔏 Private Methods
+
+  /**
+   * Carries an eclipse occurrence into `minute`: it keeps its type when it
+   * was seen the minute before, starts with `estimate` when it is new, and
+   * ends (null) when no eclipse is in progress.
+   */
+  private static continueOccurrence<TType extends EclipseType>(
+    occurrence: EclipseOccurrence<TType> | null,
+    minute: Moment,
+    estimate: null | TType,
+  ): EclipseOccurrence<TType> | null {
+    if (estimate === null) {
+      return null;
+    }
+    const minuteMilliseconds = minute.valueOf();
+    const isContinuing =
+      occurrence?.minute === minuteMilliseconds - MILLISECONDS_PER_MINUTE;
+    return {
+      minute: minuteMilliseconds,
+      type: isContinuing ? occurrence.type : estimate,
+    };
+  }
 
   /**
    * Whether `value` crosses zero upward nearest the current minute: a
@@ -154,7 +189,8 @@ export class EclipseCalculationService {
 
   /**
    * Builds geocentric eclipse events and returns their classified phases
-   * and eclipse types.
+   * and eclipse types. Each eclipse keeps the type it had at its first
+   * minute; call this for consecutive minutes, as the sweep does.
    */
   getGeocentricEvents(args: {
     currentCoordinates: EclipseCoordinates;
@@ -179,16 +215,26 @@ export class EclipseCalculationService {
       previousCoordinates,
       nextCoordinates,
     );
-    const solarType = this.eclipseClassificationService.getSolarEclipseType(
-      currentCoordinates,
-      previousCoordinates,
-      nextCoordinates,
+    this.solarOccurrence = EclipseCalculationService.continueOccurrence(
+      this.solarOccurrence,
+      args.minute,
+      this.eclipseClassificationService.getSolarEclipseType(
+        currentCoordinates,
+        previousCoordinates,
+        nextCoordinates,
+      ),
     );
-    const lunarType = this.eclipseClassificationService.getLunarEclipseType(
-      currentCoordinates,
-      previousCoordinates,
-      nextCoordinates,
+    this.lunarOccurrence = EclipseCalculationService.continueOccurrence(
+      this.lunarOccurrence,
+      args.minute,
+      this.eclipseClassificationService.getLunarEclipseType(
+        currentCoordinates,
+        previousCoordinates,
+        nextCoordinates,
+      ),
     );
+    const solarType = this.solarOccurrence?.type ?? null;
+    const lunarType = this.lunarOccurrence?.type ?? null;
     const events = this.buildGeocentricEclipseEvents(
       args.minute,
       { phases: solarPhases, type: solarType },

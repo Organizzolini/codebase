@@ -25,6 +25,19 @@ export function getTestContactLimit(kind: "lunar" | "solar"): number {
 }
 
 /**
+ * Distance from the shadow axis inside which the whole Moon is in the umbra
+ * (U2/U3) for the test distances: 1.01·π☾ + π☉ − s☉ − s☾.
+ */
+export function getTestTotalityLimit(): number {
+  return (
+    1.01 * subtend(6378.137, TEST_MOON_DISTANCE) +
+    subtend(6378.137, TEST_SUN_DISTANCE) -
+    subtend(695_700, TEST_SUN_DISTANCE) -
+    subtend(1737.4, TEST_MOON_DISTANCE)
+  );
+}
+
+/**
  * Coordinates with the Moon `alongTrack` degrees along, and `crossTrack`
  * degrees across, a track through the eclipse target: the antisolar point
  * for a lunar eclipse, the Sun for a solar one. The track runs east, tilted

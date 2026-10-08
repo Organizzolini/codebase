@@ -8,6 +8,8 @@ import { LoggerService } from "@codebase/logging";
 import { TEST_TRACK_SPEED } from "../../../testing/eclipse-test.constants";
 import {
   getTestContactLimit,
+  getTestTotalityLimit,
+  getTrackCoordinates,
   getTrackWindow,
 } from "../../../testing/eclipse-test.utilities";
 import { EphemerisService } from "../ephemeris/ephemeris.service";
@@ -152,7 +154,7 @@ describe(EclipseCalculationService, () => {
   });
 
   describe("getGeocentricEvents", () => {
-    it("builds one geocentric event per phase, solar first", () => {
+    it("builds a lunar event for a lunar contact and no solar event", () => {
       const minute = moment.utc("2026-03-03T08:44:00.000Z");
       const solarEvent = { summary: "solar" } as DetectedCalendarEvent;
       const lunarEvent = { summary: "lunar" } as DetectedCalendarEvent;
@@ -185,6 +187,46 @@ describe(EclipseCalculationService, () => {
         type: "partial",
       });
       expect(eclipseEventService.buildSolarEclipseEvent).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("eclipse type stability", () => {
+    it("keeps one type from P1 through P4 on a track that curves across a type boundary", () => {
+      // The track bends away from the axis toward its ends, so its tangent
+      // at P1 projects a closest approach inside totality while the Moon
+      // passes 0.01° outside it: a per-minute estimate flips type.
+      const closest = getTestTotalityLimit() + 0.01;
+      const bend = 0.02 / 150 ** 2;
+      const at = (minutes: number): ReturnType<typeof getTrackCoordinates> =>
+        getTrackCoordinates({
+          alongTrack: minutes * TEST_TRACK_SPEED,
+          crossTrack: closest + bend * minutes ** 2,
+          kind: "lunar",
+        });
+      const start = moment.utc("2026-03-03T11:34:00.000Z");
+      const typeByPhase: Record<string, string[]> = {};
+
+      for (let minutes = -SCAN_MINUTES; minutes <= SCAN_MINUTES; minutes++) {
+        const { lunarPhases, lunarType } = service.getGeocentricEvents({
+          currentCoordinates: at(minutes),
+          minute: start.clone().add(minutes, "minutes"),
+          nextCoordinates: at(minutes + 1),
+          previousCoordinates: at(minutes - 1),
+        });
+        for (const phase of lunarPhases) {
+          typeByPhase[phase] = [
+            ...(typeByPhase[phase] ?? []),
+            String(lunarType),
+          ];
+        }
+      }
+
+      expect(Object.keys(typeByPhase).toSorted()).toStrictEqual([
+        "beginning",
+        "ending",
+        "maximum",
+      ]);
+      expect(new Set(Object.values(typeByPhase).flat()).size).toBe(1);
     });
   });
 

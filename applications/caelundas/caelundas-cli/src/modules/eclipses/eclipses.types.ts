@@ -43,6 +43,15 @@ export interface EclipseCoordinates {
 export type EclipseFrame = "geocentric" | "topocentric";
 
 /**
+ * The type given to the eclipse in progress, and the last minute (epoch
+ * milliseconds) it was seen, so later minutes of it reuse that type.
+ */
+export interface EclipseOccurrence<TType extends EclipseType> {
+  minute: number;
+  type: TType;
+}
+
+/**
  * Kind of eclipse by the deepest shadow it reaches, as NASA's catalog names it.
  * - lunar: `total` (inside the umbra), `partial` (partly), `penumbral` (only the penumbra)
  * - solar: `total`, `annular`, `hybrid` (total at greatest, annular at the path's ends), `partial` (the umbra misses Earth)
