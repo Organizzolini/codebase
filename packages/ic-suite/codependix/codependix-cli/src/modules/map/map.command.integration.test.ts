@@ -817,6 +817,41 @@ describe("map command", () => {
       ]);
     });
 
+    // D5 at the command line: the cycle fails whichever end was named.
+    it("fails a cross-project cycle for the other named project too", async () => {
+      const { exitCode, loggedErrors } = await check(cycleWorkspace, {
+        projects: "b",
+      });
+
+      expect(exitCode).toBe(1);
+      expect(loggedErrors).toContainEqual([
+        "🕸️ Found codependix boundary violations",
+        undefined,
+        {
+          summary: "1 boundary violation across 1 rule.",
+          violations: ["nxProjects a, b: no-cycles: a → b → a is a cycle."],
+        },
+      ]);
+    });
+
+    // A misspelled name in a hook must not become a green gate that judged
+    // nothing at all.
+    it("rejects a selection that matches no project", async () => {
+      const { exitCode, loggedErrors } = await check(cycleWorkspace, {
+        projects: "a-typo",
+      });
+
+      expect(exitCode).toBe(1);
+      expect(loggedErrors).toContainEqual([
+        "🕸️ Rejected the command line",
+        undefined,
+        {
+          reason:
+            "--projects a-typo matched no project, so there is nothing to judge or draw.",
+        },
+      ]);
+    });
+
     it("passes a named project that depends on neither end of a cycle", async () => {
       const { exitCode, loggedErrors, loggedWarns } = await check(
         cycleWorkspace,

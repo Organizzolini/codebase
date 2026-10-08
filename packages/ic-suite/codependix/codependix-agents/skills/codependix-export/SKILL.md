@@ -196,6 +196,11 @@ selected project; one charged only to a dependency is logged as a non-failing
 note "in dependency". `--no-dependencies` builds over the selected projects
 alone — faster, but an edge leaving the selection is no longer drawn.
 
+**A selection that matches nothing is refused**, in every mode: a misspelled
+name, a tag no project carries, or the workspace root (which is never a
+selectable project) exits non-zero as a rejected command line naming the
+patterns, rather than passing a gate that judged nothing.
+
 `include`/`exclude` never do this — they decide which projects have exports
 written for them, and have never reached the workspace graph or the gate. That
 difference is the whole reason the flags exist as flags rather than as

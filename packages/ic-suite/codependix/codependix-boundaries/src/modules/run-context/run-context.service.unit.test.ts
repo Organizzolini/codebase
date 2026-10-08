@@ -1,4 +1,4 @@
-import { ConfigurationService } from "@codependix/configuration";
+import { ConfigurationService, InputError } from "@codependix/configuration";
 import { NeighborhoodService } from "@codependix/nx-projects";
 import { createMock } from "@golevelup/ts-vitest";
 import { Test } from "@nestjs/testing";
@@ -6,6 +6,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { RunContextService } from "./run-context.service";
 
+import type { ResolvedCodependixConfiguration } from "@codependix/configuration";
 import type { NxProject } from "@codependix/nx-projects";
 
 /** The projects the mocked workspace reports, tagged for selection. */
@@ -292,6 +293,109 @@ describe(RunContextService, () => {
       expect(
         neighborhoodService.resolveDependencyClosure,
       ).not.toHaveBeenCalled();
+    });
+  });
+
+  // 🚫 A selection matching nothing
+
+  describe("a selection matching no project", () => {
+    /** A configuration whose command-line selection is the given one. */
+    function buildSelectionConfiguration(
+      selection: ResolvedCodependixConfiguration["selection"],
+    ): ResolvedCodependixConfiguration {
+      return {
+        boundaries: {
+          fileImports: { python: [], typescript: [] },
+          nestjsModules: [],
+          nxProjects: [],
+        },
+        exclude: [],
+        include: ["**"],
+        projectGraph: undefined,
+        selection,
+        workspace: {},
+      };
+    }
+
+    beforeEach(() => {
+      vi.mocked(configurationService.isProjectSelected).mockReturnValue(false);
+    });
+
+    // A misspelled name would otherwise judge nothing and pass: a green gate
+    // that checked nothing at all.
+    it("refuses the run, naming every pattern that matched nothing", async () => {
+      vi.mocked(configurationService.loadConfiguration).mockResolvedValue(
+        buildSelectionConfiguration({
+          dependencies: true,
+          projects: ["lexico-entity", "codebase"],
+          tags: ["scope:nothing"],
+        }),
+      );
+
+      const built = service.build({
+        mode: "check",
+        options: { projects: "lexico-entity,codebase", tags: "scope:nothing" },
+        workingDirectory: "/workspace",
+      });
+
+      await expect(built).rejects.toThrow(InputError);
+      await expect(built).rejects.toThrow(
+        "--projects lexico-entity,codebase and --tags scope:nothing matched no project, so there is nothing to judge or draw.",
+      );
+    });
+
+    it("refuses a project selection alone the same way", async () => {
+      vi.mocked(configurationService.loadConfiguration).mockResolvedValue(
+        buildSelectionConfiguration({
+          dependencies: true,
+          projects: ["codebase"],
+          tags: [],
+        }),
+      );
+
+      await expect(
+        service.build({
+          mode: "check",
+          options: { projects: "codebase" },
+          workingDirectory: "/workspace",
+        }),
+      ).rejects.toThrow(
+        "--projects codebase matched no project, so there is nothing to judge or draw.",
+      );
+    });
+
+    it("refuses a tag selection alone the same way", async () => {
+      vi.mocked(configurationService.loadConfiguration).mockResolvedValue(
+        buildSelectionConfiguration({
+          dependencies: true,
+          projects: [],
+          tags: ["scope:nothing"],
+        }),
+      );
+
+      await expect(
+        service.build({
+          mode: "write",
+          options: { tags: "scope:nothing" },
+          workingDirectory: "/workspace",
+        }),
+      ).rejects.toThrow(
+        "--tags scope:nothing matched no project, so there is nothing to judge or draw.",
+      );
+    });
+
+    // No selection at all is not an empty one: it selects every project, and
+    // a workspace with none has nothing to refuse.
+    it("builds an empty workspace when nothing was selected", async () => {
+      vi.mocked(neighborhoodService.readProjects).mockReturnValue([]);
+
+      const context = await service.build({
+        mode: "check",
+        options: {},
+        workingDirectory: "/workspace",
+      });
+
+      expect(context.selectedProjects).toStrictEqual([]);
     });
   });
 

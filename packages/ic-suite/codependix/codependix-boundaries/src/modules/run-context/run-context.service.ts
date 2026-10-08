@@ -7,6 +7,8 @@ import {
 import { NeighborhoodService } from "@codependix/nx-projects";
 import { Injectable } from "@nestjs/common";
 
+import { emptySelectionError } from "./run-context.constants";
+
 import type { GraphRunContext } from "./run-context.types";
 import type {
   CodependixGraphType,
@@ -136,6 +138,10 @@ export class RunContextService {
   /**
    * Resolves the two project sets a run acts on: the selection it judges,
    * and the build set every boundary graph is drawn over.
+   *
+   * A `--projects`/`--tags` selection matching no project is refused here,
+   * before any pass runs — see `emptySelectionError`. No selection at all
+   * selects every project, so only a named one can come back empty.
    */
   private resolveProjectSets(args: {
     configuration: ResolvedCodependixConfiguration;
@@ -143,7 +149,15 @@ export class RunContextService {
     projects: NxProject[];
     workingDirectory: string;
   }): Pick<GraphRunContext, "buildProjects" | "selectedProjects"> {
+    const { selection } = args.configuration;
     const selectedProjects = this.selectProjects(args);
+
+    if (
+      selectedProjects.length === 0 &&
+      selection.projects.length + selection.tags.length > 0
+    ) {
+      throw emptySelectionError(selection);
+    }
 
     return {
       buildProjects: this.resolveBuildProjects({ ...args, selectedProjects }),

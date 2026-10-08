@@ -96,7 +96,10 @@ fails the run only when it is charged to a named project. One charged only to
 a dependency is logged as a note, "in dependency", without failing:
 the named project is built on it, but it is not that project's to fix.
 `--no-dependencies` builds over the named projects alone. With neither flag
-every project is judged.
+every project is judged. A `--projects`/`--tags` selection that matches no
+project at all — a misspelled name, a tag nobody carries, or the workspace
+root — is refused as a rejected command line rather than run as a gate that
+judges nothing.
 
 ### When no mode is named
 
