@@ -77,8 +77,16 @@ export const WORKSPACE_PROTOCOL = "workspace:";
 /**
  * The files of a workspace package that change what a gate decides.
  *
- * Its sources and its manifest — not its README, which codependix itself
- * regenerates on the default branch and which would otherwise invalidate
- * every gate in the workspace each time it did.
+ * Its manifest, its compiler options (the loader reads them), and its
+ * sources — not its tests, nor its README, which codependix regenerates on
+ * the default branch. The tests are left out inside the one positive glob,
+ * as an extglob: Nx's affected computation reads only positive
+ * `{workspaceRoot}` inputs and ignores a negated one outright, so a `!`
+ * input would still let a test-only edit select every gate. `testing/` sits
+ * beside `src/`, so no glob here reaches it.
  */
-export const TOOL_PACKAGE_GLOBS = ["package.json", "src/**/*"] as const;
+export const TOOL_PACKAGE_GLOBS = [
+  "package.json",
+  "src/**/!(*.test.*|*.spec.*)",
+  "tsconfig.json",
+] as const;

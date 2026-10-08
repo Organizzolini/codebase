@@ -1,18 +1,19 @@
 // ♟️ Constants
 
 /**
- * The loader the codependix command line runs under.
+ * The module that registers the loader the codependix command line runs
+ * under, as this package exports it.
  *
  * Booting a NestJS container imports the workspace's own TypeScript sources,
  * and constructor injection reads the decorator metadata only a compiler that
  * emits it provides. `@swc-node/register` does; `tsx` and esbuild silently do
  * not, and a container then boots with every injected dependency undefined.
  *
- * Passed to `--import` as the bare specifier, so Node resolves it from the
- * workspace root the command line runs in — the same loader, and the same
- * `tsconfig.json` beside it, that the workspace's own sources are built with.
+ * Resolved through this package's own exports, so the hook comes from this
+ * plugin's dependencies wherever it is installed. The module is
+ * `src/executors/gate/loader.mjs`, shipped as written in either place.
  */
-export const LOADER_SPECIFIER = "@swc-node/register/esm-register";
+export const LOADER_SPECIFIER = "@codependix/nx/loader";
 
 /**
  * The codependix command line's entry, as `@codependix/cli` exports it.

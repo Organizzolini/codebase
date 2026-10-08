@@ -52,3 +52,28 @@ export interface ResolvePluginOptionsArguments {
   /** Whatever the `nx.json` registration holds, unvalidated. */
   readonly options: unknown;
 }
+
+/** Arguments for resolving the command line's own cache inputs. */
+export interface ResolveToolInputsArguments {
+  /** Where a package that cannot be resolved is named. */
+  readonly logger: ToolInputsLogger;
+  /**
+   * The module `@codependix/cli` is resolved from, as a path or file URL —
+   * this plugin's own, unless a caller stands in for an install elsewhere.
+   */
+  readonly resolveFrom?: string | undefined;
+  readonly workspaceRoot: string;
+}
+
+/** The part of Nx's logger that tool input resolution reports through. */
+export interface ToolInputsLogger {
+  warn: (message: string) => void;
+}
+
+/** The workspace packages a command line reaches, and the names it could not. */
+export interface WorkspacePackages {
+  /** Real directories, the command line's own included. */
+  readonly directories: Set<string>;
+  /** Dependency names that resolved to no installed package, sorted. */
+  readonly unresolved: string[];
+}

@@ -1,6 +1,6 @@
 // 🛠️ Utilities
 
-import { readFileSync, realpathSync } from "node:fs";
+import { existsSync, readFileSync, realpathSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
 
@@ -10,7 +10,12 @@ import {
   WORKSPACE_PROTOCOL,
 } from "./plugin.constants";
 
-import type { InferredInput } from "./plugin.types";
+import type {
+  InferredInput,
+  ResolveToolInputsArguments,
+  ToolInputsLogger,
+  WorkspacePackages,
+} from "./plugin.types";
 
 /**
  * The cache inputs that tie a gate to the codependix command line it runs.
@@ -20,100 +25,170 @@ import type { InferredInput } from "./plugin.types";
  * to the judging logic would replay every cached verdict. Inside this
  * workspace they are `{workspaceRoot}` globs over each package's sources,
  * which is the input form Nx's affected computation follows as well as
- * hashes; an installed command line is pinned by its npm version instead,
- * listed with the codependix packages it depends on.
+ * hashes; an installed command line is pinned by its npm version instead.
  *
- * Anything that fails here yields no inputs rather than an error: inference
- * runs while Nx builds the project graph, where a throw stops every command
- * in the workspace.
+ * Nothing here throws: inference runs while Nx builds the project graph,
+ * where a throw stops every command in the workspace. What cannot be resolved
+ * is left out and named in a warning instead.
  */
-export function resolveToolInputs(workspaceRoot: string): InferredInput[] {
+export function resolveToolInputs(
+  args: ResolveToolInputsArguments,
+): InferredInput[] {
   try {
-    const cliDirectory = locateCommandLine();
+    const cliDirectory = locatePackage({
+      fromFile: args.resolveFrom ?? import.meta.url,
+      name: CLI_PACKAGE_NAME,
+    });
 
-    return toWorkspacePath({ directory: cliDirectory, workspaceRoot }) ===
-      undefined
-      ? resolveExternalInputs(cliDirectory)
-      : resolveWorkspaceInputs({ cliDirectory, workspaceRoot });
-  } catch {
+    if (cliDirectory === undefined) {
+      warnUnresolved({ logger: args.logger, names: [CLI_PACKAGE_NAME] });
+
+      return [];
+    }
+
+    return isInsideWorkspace({
+      directory: cliDirectory,
+      workspaceRoot: args.workspaceRoot,
+    })
+      ? resolveWorkspaceInputs({ ...args, cliDirectory })
+      : resolveExternalInputs(cliDirectory);
+  } catch (error) {
+    args.logger.warn(
+      `🕸️ Skipped the cache inputs of ${CLI_PACKAGE_NAME}, so a change to it will not invalidate a cached codependix gate: ${String(error)}`,
+    );
+
     return [];
   }
 }
 
 /**
- * Collects a workspace package and every workspace package it depends on,
+ * Collects a workspace package and every workspace package it reaches,
  * development dependencies included: a package this repository bundles at
  * build time, such as its logger, still runs from source here.
+ *
+ * Each dependency is located on its own, so one that cannot be resolved is
+ * reported and skipped rather than costing every other package its inputs.
  */
-function collectWorkspacePackages(args: {
-  packageDirectory: string;
-  visited: Set<string>;
-}): Set<string> {
-  args.visited.add(args.packageDirectory);
+function collectWorkspacePackages(cliDirectory: string): WorkspacePackages {
+  const directories = new Set([cliDirectory]);
+  const unresolved = new Set<string>();
+  const pending = [cliDirectory];
 
-  const dependencies = readDependencies(args.packageDirectory)
-    .filter(([, specifier]) => String(specifier).startsWith(WORKSPACE_PROTOCOL))
-    .map(([name]) =>
-      locateDependency({ fromDirectory: args.packageDirectory, name }),
-    )
-    .filter((dependency) => !args.visited.has(dependency));
+  for (
+    let current = pending.pop();
+    current !== undefined;
+    current = pending.pop()
+  ) {
+    const names = readDependencies(current)
+      .filter(([, specifier]) =>
+        String(specifier).startsWith(WORKSPACE_PROTOCOL),
+      )
+      .map(([name]) => name);
 
-  for (const dependency of dependencies) {
-    collectWorkspacePackages({
-      packageDirectory: dependency,
-      visited: args.visited,
-    });
+    for (const name of names) {
+      const dependency = locatePackage({
+        fromFile: path.join(current, "package.json"),
+        name,
+      });
+
+      if (dependency === undefined) {
+        unresolved.add(name);
+      } else if (!directories.has(dependency)) {
+        directories.add(dependency);
+        pending.push(dependency);
+      }
+    }
   }
 
-  return args.visited;
+  return { directories, unresolved: [...unresolved].toSorted() };
 }
 
-/** The real directory of the `@codependix/cli` this plugin runs. */
-function locateCommandLine(): string {
-  return path.dirname(
-    realpathSync(
-      createRequire(import.meta.url).resolve(
-        `${CLI_PACKAGE_NAME}/package.json`,
-      ),
-    ),
+/** Whether a real directory sits in the workspace rather than an install. */
+function isInsideWorkspace(args: {
+  directory: string;
+  workspaceRoot: string;
+}): boolean {
+  const relative = path.relative(
+    realpathSync(args.workspaceRoot),
+    args.directory,
+  );
+
+  return !(
+    relative.startsWith("..") ||
+    path.isAbsolute(relative) ||
+    relative.split(path.sep).includes("node_modules")
   );
 }
 
 /**
- * Finds the real directory a package directory's dependency is linked from,
- * through Node's own resolver — which is why every package here exports its
- * `./package.json`. One that does not throws, and the caller falls back.
+ * Finds the real directory of the package a file would import by name, or
+ * nothing when it cannot.
+ *
+ * Resolves the package's entry and climbs to the manifest that names it,
+ * rather than asking for `<name>/package.json` — which only resolves when a
+ * package exports its manifest, and nothing obliges one to.
  */
-function locateDependency(args: {
-  fromDirectory: string;
+function locatePackage(args: {
+  fromFile: string;
   name: string;
-}): string {
-  return path.dirname(
-    realpathSync(
-      createRequire(path.join(args.fromDirectory, "package.json")).resolve(
-        `${args.name}/package.json`,
-      ),
-    ),
-  );
+}): string | undefined {
+  let directory: string;
+
+  try {
+    directory = path.dirname(
+      realpathSync(createRequire(args.fromFile).resolve(args.name)),
+    );
+  } catch {
+    return undefined;
+  }
+
+  for (; ; directory = path.dirname(directory)) {
+    if (readManifest(directory)["name"] === args.name) {
+      return directory;
+    }
+    if (path.dirname(directory) === directory) {
+      return undefined;
+    }
+  }
 }
 
-/** Reads the dependency maps of the manifest in a package directory. */
-function readDependencies(packageDirectory: string): [string, unknown][] {
-  const manifest = toRecord(
-    JSON.parse(
-      readFileSync(path.join(packageDirectory, "package.json"), "utf8"),
-    ) as unknown,
-  );
+/** Every dependency a package's manifest declares, in either map. */
+function readDependencies(directory: string): [string, unknown][] {
+  const manifest = readManifest(directory);
 
-  return [
-    ...Object.entries(toRecord(manifest["dependencies"])),
-    ...Object.entries(toRecord(manifest["devDependencies"])),
-  ];
+  return Object.entries({
+    ...toRecord(manifest["dependencies"]),
+    ...toRecord(manifest["devDependencies"]),
+  });
+}
+
+/**
+ * Reads a package directory's manifest, or an empty one when there is none or
+ * it cannot be parsed — which leaves that directory naming no package.
+ */
+function readManifest(directory: string): Record<string, unknown> {
+  const manifestPath = path.join(directory, "package.json");
+
+  try {
+    const manifest = existsSync(manifestPath)
+      ? (JSON.parse(readFileSync(manifestPath, "utf8")) as unknown)
+      : undefined;
+
+    // Narrowed in place rather than through `toRecord`, which would put this
+    // one frame past the depth this package is held to.
+    return typeof manifest === "object" && manifest !== null
+      ? { ...manifest }
+      : {};
+  } catch {
+    return {};
+  }
 }
 
 /**
  * Pins an installed command line by version: it and the codependix packages
- * it depends on, as npm packages Nx hashes by their locked version.
+ * it depends on, as npm packages Nx hashes by their locked version. Nx
+ * follows an external dependency's own dependencies when it hashes one, so
+ * the packages beneath these are covered without being listed.
  */
 function resolveExternalInputs(cliDirectory: string): InferredInput[] {
   const packages = readDependencies(cliDirectory)
@@ -124,20 +199,25 @@ function resolveExternalInputs(cliDirectory: string): InferredInput[] {
 }
 
 /**
- * Globs over the sources and manifest of the command line and of every
- * workspace package it reaches, sorted so the cache key is stable.
+ * Globs over the sources, manifest, and compiler options of the command line
+ * and of every workspace package it reaches, sorted so the cache key is
+ * stable.
  */
 function resolveWorkspaceInputs(args: {
   cliDirectory: string;
+  logger: ToolInputsLogger;
   workspaceRoot: string;
 }): InferredInput[] {
   const realWorkspaceRoot = realpathSync(args.workspaceRoot);
-  const packages = collectWorkspacePackages({
-    packageDirectory: args.cliDirectory,
-    visited: new Set(),
-  });
+  const { directories, unresolved } = collectWorkspacePackages(
+    args.cliDirectory,
+  );
 
-  return [...packages]
+  if (unresolved.length > 0) {
+    warnUnresolved({ logger: args.logger, names: unresolved });
+  }
+
+  return [...directories]
     .flatMap((directory) =>
       TOOL_PACKAGE_GLOBS.map(
         (glob) =>
@@ -152,19 +232,12 @@ function toRecord(value: unknown): Record<string, unknown> {
   return typeof value === "object" && value !== null ? { ...value } : {};
 }
 
-/** The workspace-relative path of a directory, or nothing when it is outside. */
-function toWorkspacePath(args: {
-  directory: string;
-  workspaceRoot: string;
-}): string | undefined {
-  const relative = path.relative(
-    realpathSync(args.workspaceRoot),
-    args.directory,
+/** Names the packages whose changes a cached gate will not notice. */
+function warnUnresolved(args: {
+  logger: ToolInputsLogger;
+  names: readonly string[];
+}): void {
+  args.logger.warn(
+    `🕸️ Skipped the cache inputs of ${args.names.join(", ")}, which could not be resolved, so a change to ${args.names.length === 1 ? "it" : "them"} will not invalidate a cached codependix gate.`,
   );
-  const isOutside =
-    relative.startsWith("..") ||
-    path.isAbsolute(relative) ||
-    relative.split(path.sep).includes("node_modules");
-
-  return isOutside ? undefined : relative;
 }
