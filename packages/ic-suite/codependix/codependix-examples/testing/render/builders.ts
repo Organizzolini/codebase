@@ -1,6 +1,10 @@
 import {
   BoundariesService,
+  BoundaryCheckService,
   BoundaryCyclesService,
+  BoundaryFailureService,
+  BoundaryGraphService,
+  BoundaryOutcomeReportService,
   BoundaryReportService,
   BoundarySelectorService,
 } from "@codependix/boundaries";
@@ -117,7 +121,7 @@ export async function closeConfigurationService(): Promise<void> {
  * resolver are providers nothing outside the package can name.
  *
  * A function rather than a top-level `await`, which would make this shared
- * module async for the sake of one of its sixteen builders and boot a
+ * module async for the sake of one of its eighteen builders and boot a
  * container for callers that never touch configuration at all.
  */
 export async function getConfigurationService(): Promise<ConfigurationService> {
@@ -145,6 +149,28 @@ export const boundariesService = new BoundariesService(
 
 /** Renders boundary violations into the lines a run prints. */
 export const boundaryReportService = new BoundaryReportService();
+
+/** Reports what a boundary pass found, charged to projects and judged. */
+export const boundaryOutcomeReportService = new BoundaryOutcomeReportService(
+  boundaryReportService,
+);
+
+/**
+ * Judges every level against its rules and charges what it finds to projects.
+ *
+ * The same class `codependix map --check boundaries` runs, wired by hand with
+ * the builders above rather than resolved from a container.
+ */
+export const boundaryCheckService = new BoundaryCheckService(
+  boundariesService,
+  new BoundaryFailureService(neighborhoodService),
+  new BoundaryGraphService(),
+  moduleGraphService,
+  nestjsProjectService,
+  pythonService,
+  typescriptService,
+  workspaceGraphService,
+);
 
 /** Combines project-level file imports into a workspace graph. */
 export const fileImportsWorkspaceGraphService =
