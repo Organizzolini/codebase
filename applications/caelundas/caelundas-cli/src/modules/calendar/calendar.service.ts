@@ -53,36 +53,120 @@ export class CalendarService {
 
   // 🌎 Public Methods
 
-  /**
-   * Generates VTIMEZONE definition for iCalendar timezone support.
-   */
-  private buildTimezoneContent(timezone: string): string {
-    if (timezone === "America/New_York") {
-      return `BEGIN:VTIMEZONE
-TZID:America/New_York
-X-LIC-LOCATION:America/New_York
-BEGIN:DAYLIGHT
-TZOFFSETFROM:-0500
-TZOFFSETTO:-0400
-TZNAME:EDT
-DTSTART:19700308T020000
-RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU
-END:DAYLIGHT
-BEGIN:STANDARD
-TZOFFSETFROM:-0400
-TZOFFSETTO:-0500
-TZNAME:EST
-DTSTART:19701101T020000
-RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU
-END:STANDARD
-END:VTIMEZONE`;
-    }
+  /** Builds one STANDARD or DAYLIGHT observance of a VTIMEZONE. */
+  private buildObservance(parameters: {
+    abbreviation: string;
+    from: number;
+    kind: "DAYLIGHT" | "STANDARD";
+    localStart: moment.Moment;
+    to: number;
+  }): string {
+    const { abbreviation, from, kind, localStart, to } = parameters;
+    return `BEGIN:${kind}
+TZOFFSETFROM:${this.formatOffset(from)}
+TZOFFSETTO:${this.formatOffset(to)}
+TZNAME:${abbreviation}
+DTSTART:${localStart.format("YYYYMMDDTHHmmss")}
+END:${kind}`;
+  }
 
-    // For other timezones, return a basic VTIMEZONE
-    // In production, you'd want a more comprehensive timezone database
+  /**
+   * Generates a VTIMEZONE definition from the IANA rules in moment-timezone.
+   *
+   * Emits an initial observance for the offset in force at the start of the
+   * covered years, followed by one explicit observance per transition within
+   * them, so every zone gets valid STANDARD and DAYLIGHT components.
+   */
+  private buildTimezoneContent(
+    timezone: string,
+    events: DetectedCalendarEvent[],
+  ): string {
+    const zone = moment.tz.zone(timezone);
+    if (!zone) {
+      throw new Error(`Unknown IANA timezone: ${timezone}`);
+    }
+    const instants = events.flatMap((event) => [event.start, event.end]);
+    const bounds = instants.length > 0 ? instants : [moment.utc()];
+    const window = {
+      end: moment.max(bounds).clone().utc().add(1, "year").valueOf(),
+      start: moment.min(bounds).clone().utc().subtract(1, "year").valueOf(),
+    };
+    const initialOffset = -zone.utcOffset(window.start);
+    const observances = [
+      this.buildObservance({
+        abbreviation: zone.abbr(window.start),
+        from: initialOffset,
+        kind: moment.tz(window.start, timezone).isDST()
+          ? "DAYLIGHT"
+          : "STANDARD",
+        localStart: moment.utc("1970-01-01T00:00:00"),
+        to: initialOffset,
+      }),
+      ...this.findTransitions(zone, window).map((transition) => {
+        const from = -zone.utcOffset(transition - 1);
+        return this.buildObservance({
+          abbreviation: zone.abbr(transition),
+          from,
+          kind: moment.tz(transition, timezone).isDST()
+            ? "DAYLIGHT"
+            : "STANDARD",
+          localStart: moment.utc(transition).add(from, "minutes"),
+          to: -zone.utcOffset(transition),
+        });
+      }),
+    ];
+
     return `BEGIN:VTIMEZONE
 TZID:${timezone}
+X-LIC-LOCATION:${timezone}
+${observances.join("\n")}
 END:VTIMEZONE`;
+  }
+
+  /** Returns the transition instants of a zone within a window, in ascending order. */
+  private findTransitions(
+    zone: moment.MomentZone,
+    window: { end: number; start: number },
+  ): number[] {
+    return zone.untils.filter(
+      (until) =>
+        Number.isFinite(until) && until > window.start && until <= window.end,
+    );
+  }
+
+  /**
+   * Formats an event instant for DTSTART or DTEND.
+   *
+   * Uses the zone's local time with a TZID, except in the repeated fall-back
+   * hour, where one local time names two instants and a UTC instant keeps the
+   * true one.
+   */
+  private formatEventTime(
+    name: "DTEND" | "DTSTART",
+    instant: moment.Moment,
+    timezone: string,
+  ): string {
+    const pattern = "YYYYMMDDTHHmmss";
+    const local = moment.tz(instant, timezone).format(pattern);
+    const repeated = [-120, -60, -30, 30, 60, 120].some(
+      (minutes) =>
+        moment
+          .tz(instant.clone().add(minutes, "minutes"), timezone)
+          .format(pattern) === local,
+    );
+    if (!repeated) {
+      return `${name};TZID=${timezone}:${local}`;
+    }
+    return `${name}:${instant.clone().utc().format(pattern)}Z`;
+  }
+
+  /** Formats a UTC offset given in minutes east of UTC as `+HHMM` or `-HHMM`. */
+  private formatOffset(minutesEast: number): string {
+    const sign = minutesEast < 0 ? "-" : "+";
+    const absolute = Math.abs(minutesEast);
+    const hours = String(Math.trunc(absolute / 60)).padStart(2, "0");
+    const minutes = String(absolute % 60).padStart(2, "0");
+    return `${sign}${hours}${minutes}`;
   }
 
   /** Generates a deterministic event identity string used as the VEVENT UID source. */
@@ -107,14 +191,12 @@ END:VTIMEZONE`;
     timezone = "America/New_York",
   ): string {
     const createdAt = moment().format("YYYYMMDDTHHmmss");
-    const start = moment.tz(event.start, timezone).format("YYYYMMDDTHHmmss");
-    const end = moment.tz(event.end, timezone).format("YYYYMMDDTHHmmss");
 
     return `BEGIN:VEVENT
 UID:${this.generateUid(event)}
 DTSTAMP:${createdAt}Z
-DTSTART;TZID=${timezone}:${start}
-DTEND;TZID=${timezone}:${end}
+${this.formatEventTime("DTSTART", event.start, timezone)}
+${this.formatEventTime("DTEND", event.end, timezone)}
 ${this.buildEventProperties(event)}
 SEQUENCE:0
 LAST-MODIFIED:${createdAt}Z
@@ -162,7 +244,7 @@ X-WR-CALNAME:${name}`;
     }
 
     if (timezone) {
-      vcalendar += `\nX-WR-TIMEZONE:${timezone}\n${this.buildTimezoneContent(timezone)}`;
+      vcalendar += `\nX-WR-TIMEZONE:${timezone}\n${this.buildTimezoneContent(timezone, events)}`;
     }
 
     vcalendar += `\n${events.map((event) => this.buildEventContent(event, timezone)).join("\n")}
