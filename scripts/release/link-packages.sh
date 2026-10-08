@@ -26,15 +26,16 @@ readonly REPOSITORY_NAME="${repository#*/}"
 # identify the package by. npm itself reports only a sha512 integrity.
 #
 # The tarball's address is built rather than looked up, and fetched with
-# retries, because npm's metadata can trail a publish by minutes: a version
-# this run just published may not be listed yet.
+# retries for up to 8 minutes, because npm can trail a publish by minutes. In
+# v2.34.0 npm served each new tarball about 4 minutes after pnpm reported it
+# published, and answered 404 until then.
 npm_tarball_digest() {
   local specifier="$1"
   local name="${specifier%@*}" version="${specifier##*@}"
   local tarball
-  tarball="$(mktemp "${RUNNER_TEMP:?}/npm-tarball.XXXXXX")"
+  tarball="$(mktemp "${RUNNER_TEMP:?}/npm-tarball.XXXXXX")" || return 1
   if ! curl --silent --show-error --fail --location --output "${tarball}" \
-    --retry 6 --retry-all-errors --retry-delay 10 \
+    --retry 48 --retry-all-errors --retry-delay 10 --retry-max-time 480 \
     "${NPM_REGISTRY_URL}${name}/-/${name##*/}-${version}.tgz"; then
     rm -f "${tarball}"
     return 1
@@ -91,15 +92,20 @@ link_npm_packages() {
 # Links the package in the given directory, as link_npm_packages describes,
 # using its `published` and `subjects`. Each line it adds to `subjects` is one
 # short append, so several packages can link at once.
+#
+# Every failure returns explicitly rather than relying on `set -e`, which bash
+# ignores here: link_npm_packages runs this inside `||`, and that disables it
+# for everything the list runs, background calls included. v2.34.0 posted
+# empty digests that way when its tarball downloads failed.
 link_npm_package() {
   local root="$1"
   local specifier digest
-  specifier="$(package_specifier "${root}")"
+  specifier="$(package_specifier "${root}")" || return 1
   if grep -qxF "${specifier}" "${published}"; then
-    digest="$(npm_tarball_digest "${specifier}")"
+    digest="$(npm_tarball_digest "${specifier}")" || return 1
     echo "${digest#sha256:}  ${specifier}" >>"${subjects}"
   elif is_on_npm "${specifier}"; then
-    digest="$(npm_tarball_digest "${specifier}")"
+    digest="$(npm_tarball_digest "${specifier}")" || return 1
   else
     return 0
   fi
@@ -108,7 +114,7 @@ link_npm_package() {
     return 0
   fi
   echo "🔗 Linking ${specifier} to ${repository}"
-  create_npm_storage_record "${specifier}" "${digest}"
+  create_npm_storage_record "${specifier}" "${digest}" || return 1
 }
 
 group_roots="$(release_group_roots)"
