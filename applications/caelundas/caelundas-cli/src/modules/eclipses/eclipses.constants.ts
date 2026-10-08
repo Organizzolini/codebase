@@ -25,3 +25,9 @@ export const eclipseTypeLabelByType: Record<EclipseType, string> = {
 
 /** Milliseconds between two consecutive minutes of a sweep. */
 export const MILLISECONDS_PER_MINUTE = 60_000;
+
+/**
+ * The longest a solar eclipse can last at one place, in minutes, with room
+ * to spare: about three and a half hours from first to last contact.
+ */
+export const LOCAL_SOLAR_ECLIPSE_MAXIMUM_MINUTES = 300;

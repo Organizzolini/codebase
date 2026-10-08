@@ -1,4 +1,13 @@
 /**
+ * The topocentric Moon's least separation from the Sun over a local solar
+ * eclipse, degrees, and the observer's Sun and Moon at the minute nearest it.
+ */
+export interface ClosestApproach {
+  sample: TopocentricSample;
+  separation: number;
+}
+
+/**
  * How far one eclipse has to go at one minute, seen from Earth's center.
  *
  * The eclipse is in progress while `separation` is below `contactLimit`;
