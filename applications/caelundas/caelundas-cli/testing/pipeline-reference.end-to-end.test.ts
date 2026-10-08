@@ -17,7 +17,9 @@ import {
  */
 const fixtureNames = [
   "usno-march-equinox-2026",
+  "usno-philadelphia-night-2026-03-19",
   "usno-philadelphia-twilight-2026-03-20",
+  "usno-vigo-evening-twilight-2026-06-20",
 ];
 
 describe.each(fixtureNames)("reference fixture %s", (name) => {
@@ -32,6 +34,19 @@ describe.each(fixtureNames)("reference fixture %s", (name) => {
       const { events } = await runPipelineWindow(fixture.window);
 
       assertReferenceEvents(events, fixture);
+    },
+  );
+
+  it(
+    "emits no span that ends before it starts",
+    { timeout: PIPELINE_TEST_TIMEOUT_MILLISECONDS },
+    async () => {
+      const { events } = await runPipelineWindow(fixture.window);
+      const inverted = events.filter((event) =>
+        event.end.isBefore(event.start),
+      );
+
+      expect(inverted.map((event) => event.summary)).toStrictEqual([]);
     },
   );
 });
