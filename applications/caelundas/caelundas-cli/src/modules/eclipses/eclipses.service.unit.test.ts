@@ -121,24 +121,24 @@ describe(EclipsesService, () => {
     it("combines geocentric and topocentric events when visibility ephemeris is provided", () => {
       const coordinates = {
         currentCoordinates: {
-          diameterMoon: 0.5,
-          diameterSun: 0.5,
+          distanceMoon: 0.0025,
+          distanceSun: 0.99,
           latitudeMoon: 0,
           latitudeSun: 0,
           longitudeMoon: 100,
           longitudeSun: 100,
         },
         nextCoordinates: {
-          diameterMoon: 0.5,
-          diameterSun: 0.5,
+          distanceMoon: 0.0025,
+          distanceSun: 0.99,
           latitudeMoon: 0,
           latitudeSun: 0,
           longitudeMoon: 101,
           longitudeSun: 100,
         },
         previousCoordinates: {
-          diameterMoon: 0.5,
-          diameterSun: 0.5,
+          distanceMoon: 0.0025,
+          distanceSun: 0.99,
           latitudeMoon: 0,
           latitudeSun: 0,
           longitudeMoon: 99,
@@ -165,8 +165,8 @@ describe(EclipsesService, () => {
       );
       eclipseCalculationService.getGeocentricEvents.mockReturnValue({
         events: [geocentricEvent],
-        lunarPhase: null,
-        solarPhase: "beginning",
+        lunarPhases: [],
+        solarPhases: ["beginning"],
       });
       eclipseCalculationService.getTopocentricEventsForDetect.mockReturnValue([
         topocentricEvent,
@@ -177,10 +177,10 @@ describe(EclipsesService, () => {
         minute,
         moonAzimuthElevationEphemeris: {},
         moonCoordinateEphemeris: {},
-        moonDiameterEphemeris: {},
+        moonDistanceEphemeris: {},
         sunAzimuthElevationEphemeris: {},
         sunCoordinateEphemeris: {},
-        sunDiameterEphemeris: {},
+        sunDistanceEphemeris: {},
       });
 
       expect(result).toStrictEqual([geocentricEvent, topocentricEvent]);
@@ -199,24 +199,24 @@ describe(EclipsesService, () => {
       ]);
       eclipseCalculationService.getAllEclipseCoordinates.mockReturnValue({
         currentCoordinates: {
-          diameterMoon: 0.5,
-          diameterSun: 0.5,
+          distanceMoon: 0.0025,
+          distanceSun: 0.99,
           latitudeMoon: 0,
           latitudeSun: 0,
           longitudeMoon: 280,
           longitudeSun: 100,
         },
         nextCoordinates: {
-          diameterMoon: 0.5,
-          diameterSun: 0.5,
+          distanceMoon: 0.0025,
+          distanceSun: 0.99,
           latitudeMoon: 0,
           latitudeSun: 0,
           longitudeMoon: 281,
           longitudeSun: 100,
         },
         previousCoordinates: {
-          diameterMoon: 0.5,
-          diameterSun: 0.5,
+          distanceMoon: 0.0025,
+          distanceSun: 0.99,
           latitudeMoon: 0,
           latitudeSun: 0,
           longitudeMoon: 279,
@@ -225,8 +225,8 @@ describe(EclipsesService, () => {
       });
       eclipseCalculationService.getGeocentricEvents.mockReturnValue({
         events: [geocentricEvent],
-        lunarPhase: "maximum",
-        solarPhase: null,
+        lunarPhases: ["maximum"],
+        solarPhases: [],
       });
       eclipseCalculationService.getTopocentricEventsForDetect.mockReturnValue(
         [],
@@ -236,9 +236,9 @@ describe(EclipsesService, () => {
       const result = service.detect({
         minute,
         moonCoordinateEphemeris: {},
-        moonDiameterEphemeris: {},
+        moonDistanceEphemeris: {},
         sunCoordinateEphemeris: {},
-        sunDiameterEphemeris: {},
+        sunDistanceEphemeris: {},
       });
 
       expect(result).toStrictEqual([geocentricEvent]);

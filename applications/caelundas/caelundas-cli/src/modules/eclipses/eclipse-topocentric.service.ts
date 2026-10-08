@@ -2,8 +2,6 @@ import { Injectable } from "@nestjs/common";
 
 import { LoggerService } from "@codebase/logging";
 
-import { MathService } from "../math/math.service";
-
 import { EclipseEventService } from "./eclipse-event.service";
 import { EclipseGeometryService } from "./eclipse-geometry.service";
 
@@ -22,7 +20,6 @@ export class EclipseTopocentricService {
 
   constructor(
     private readonly logger: LoggerService,
-    private readonly mathService: MathService,
     private readonly eclipseGeometryService: EclipseGeometryService,
     private readonly eclipseEventService: EclipseEventService,
   ) {
@@ -34,27 +31,6 @@ export class EclipseTopocentricService {
   // 🔑 Public Fields
 
   // 🔏 Private Methods
-
-  /**
-   * Derives current longitude/latitude separation angles and eclipse diameter sum.
-   */
-  private getCurrentAnglesAndDiameter(current: EclipseCoordinates): {
-    currentDiameter: number;
-    currentLatitudeAngle: number;
-    currentLongitudeAngle: number;
-  } {
-    return {
-      currentDiameter: current.diameterSun + current.diameterMoon,
-      currentLatitudeAngle: this.mathService.getAngle(
-        current.latitudeMoon,
-        current.latitudeSun,
-      ),
-      currentLongitudeAngle: this.mathService.getAngle(
-        current.longitudeMoon,
-        current.longitudeSun,
-      ),
-    };
-  }
 
   /**
    * Creates a topocentric lunar eclipse event when visibility and phase align.
@@ -220,17 +196,13 @@ export class EclipseTopocentricService {
   }
 
   /**
-   * Checks whether lunar geometry is currently within eclipse limits.
+   * Checks whether a lunar eclipse is in progress geocentrically: the Moon
+   * lies inside the penumbral contact distance from the shadow axis.
    */
   isLunarEclipseActive(current: EclipseCoordinates): boolean {
-    const { currentDiameter, currentLatitudeAngle, currentLongitudeAngle } =
-      this.getCurrentAnglesAndDiameter(current);
-    const oppositionThreshold = 180 - currentDiameter;
-
-    return (
-      currentLatitudeAngle < currentDiameter &&
-      currentLongitudeAngle >= oppositionThreshold
-    );
+    const { contactLimit, separation } =
+      this.eclipseGeometryService.getLunarContactGeometry(current);
+    return separation < contactLimit;
   }
 
   /**
@@ -244,16 +216,13 @@ export class EclipseTopocentricService {
   }
 
   /**
-   * Checks whether solar geometry is currently within eclipse limits.
+   * Checks whether a solar eclipse is in progress geocentrically: the Moon's
+   * penumbra falls somewhere on Earth.
    */
   isSolarEclipseActive(current: EclipseCoordinates): boolean {
-    const { currentDiameter, currentLatitudeAngle, currentLongitudeAngle } =
-      this.getCurrentAnglesAndDiameter(current);
-
-    return (
-      currentLatitudeAngle < currentDiameter &&
-      currentLongitudeAngle <= currentDiameter
-    );
+    const { contactLimit, separation } =
+      this.eclipseGeometryService.getSolarContactGeometry(current);
+    return separation < contactLimit;
   }
 
   /**

@@ -70,6 +70,7 @@ const createMockPhaseInputs = (): DetectPlanetaryEventsArguments => {
     distanceEphemerisByBody: {
       mars: distanceEphemeris,
       mercury: distanceEphemeris,
+      moon: distanceEphemeris,
       sun: distanceEphemeris,
       venus: distanceEphemeris,
     },

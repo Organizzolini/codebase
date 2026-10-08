@@ -124,17 +124,17 @@ export class PerfectiveService {
     const {
       azimuthElevationEphemerisByBody,
       coordinateEphemerisByBody,
-      diameterEphemerisByBody,
+      distanceEphemerisByBody,
     } = ephemerides;
     return [
       ...this.eclipsesService.detect({
         minute,
         moonAzimuthElevationEphemeris: azimuthElevationEphemerisByBody.moon,
         moonCoordinateEphemeris: coordinateEphemerisByBody.moon,
-        moonDiameterEphemeris: diameterEphemerisByBody.moon,
+        moonDistanceEphemeris: distanceEphemerisByBody.moon,
         sunAzimuthElevationEphemeris: azimuthElevationEphemerisByBody.sun,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
-        sunDiameterEphemeris: diameterEphemerisByBody.sun,
+        sunDistanceEphemeris: distanceEphemerisByBody.sun,
       }),
       ...this.dailyCyclesService.detect({
         minute,

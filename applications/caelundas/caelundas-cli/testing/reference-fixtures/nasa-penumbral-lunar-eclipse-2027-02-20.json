@@ -1,0 +1,38 @@
+{
+  "counts": {
+    "🌐 🌙🐉 Lunar Eclipse (Geocentric)": 1,
+    "🌐 🌙🐉▶️ Lunar Eclipse begins": 1,
+    "🌐 🌙🐉◀️ Lunar Eclipse ends": 1
+  },
+  "events": [
+    {
+      "note": "NASA P1 (penumbral eclipse begins) 21:12:20 UT, printed with ΔT 76 s",
+      "start": "2027-02-20T21:12:20Z",
+      "summary": "🌐 🌙🐉▶️ Lunar Eclipse begins"
+    },
+    {
+      "note": "NASA P4 (penumbral eclipse ends) 01:13:19 UT",
+      "start": "2027-02-21T01:13:19Z",
+      "summary": "🌐 🌙🐉◀️ Lunar Eclipse ends"
+    },
+    {
+      "end": "2027-02-21T01:13:19Z",
+      "note": "The geocentric span runs from P1 to P4",
+      "start": "2027-02-20T21:12:20Z",
+      "summary": "🌐 🌙🐉 Lunar Eclipse (Geocentric)"
+    }
+  ],
+  "name": "The penumbral lunar eclipse of 20 February 2027, umbral magnitude −0.0569",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "NASA Goddard Space Flight Center, Fred Espenak: lunar eclipse diagram and contacts (Danjon shadow rule)",
+    "url": "https://eclipse.gsfc.nasa.gov/LEplot/LEplot2001/LE2027Feb20N.pdf"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2027-02-21",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2027-02-20"
+  }
+}

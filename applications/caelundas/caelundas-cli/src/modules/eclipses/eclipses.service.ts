@@ -10,7 +10,7 @@ import type { EclipsePhase } from "../caelundas/caelundas.types";
 import type {
   AzimuthElevationEphemeris,
   CoordinateEphemeris,
-  DiameterEphemeris,
+  DistanceEphemeris,
 } from "../ephemeris/ephemeris.types";
 import type { EclipseFrame } from "./eclipses.types";
 import type { Moment } from "moment-timezone";
@@ -67,18 +67,18 @@ export class EclipsesService {
     minute: Moment;
     moonAzimuthElevationEphemeris?: AzimuthElevationEphemeris;
     moonCoordinateEphemeris: CoordinateEphemeris;
-    moonDiameterEphemeris: DiameterEphemeris;
+    moonDistanceEphemeris: DistanceEphemeris;
     sunAzimuthElevationEphemeris?: AzimuthElevationEphemeris;
     sunCoordinateEphemeris: CoordinateEphemeris;
-    sunDiameterEphemeris: DiameterEphemeris;
+    sunDistanceEphemeris: DistanceEphemeris;
   }): DetectedCalendarEvent[] {
     const coordinates = this.eclipseCalculationService.getAllEclipseCoordinates(
       {
         minute: args.minute,
         moonCoordinateEphemeris: args.moonCoordinateEphemeris,
-        moonDiameterEphemeris: args.moonDiameterEphemeris,
+        moonDistanceEphemeris: args.moonDistanceEphemeris,
         sunCoordinateEphemeris: args.sunCoordinateEphemeris,
-        sunDiameterEphemeris: args.sunDiameterEphemeris,
+        sunDistanceEphemeris: args.sunDistanceEphemeris,
       },
     );
 
@@ -99,8 +99,8 @@ export class EclipsesService {
         ...this.eclipseCalculationService.getTopocentricEventsForDetect({
           coordinates,
           geocentricPhases: {
-            lunarPhase: geocentricResult.lunarPhase,
-            solarPhase: geocentricResult.solarPhase,
+            lunarPhases: geocentricResult.lunarPhases,
+            solarPhases: geocentricResult.solarPhases,
           },
           minute: args.minute,
           moonAzimuthElevationEphemeris: args.moonAzimuthElevationEphemeris,

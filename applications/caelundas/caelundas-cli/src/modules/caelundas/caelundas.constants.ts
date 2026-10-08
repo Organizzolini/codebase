@@ -22,7 +22,7 @@ type DiameterEphemerisBody = Extract<Body, "moon" | "sun">;
 /** Bodies for which distance ephemerides are generated. */
 type DistanceEphemerisBody = Extract<
   Body,
-  "mars" | "mercury" | "sun" | "venus"
+  "mars" | "mercury" | "moon" | "sun" | "venus"
 >;
 /** Bodies for which illumination ephemerides are generated. */
 type IlluminationEphemerisBody = Extract<
@@ -233,10 +233,11 @@ export const diameterBodies: DiameterEphemerisBody[] = ["sun", "moon"];
 
 /**
  * Bodies queried for distance ephemeris.
- * Used for apsis and phase detection.
+ * Used for apsis, phase and eclipse detection.
  */
 export const distanceBodies: DistanceEphemerisBody[] = [
   "sun",
+  "moon",
   "mercury",
   "venus",
   "mars",

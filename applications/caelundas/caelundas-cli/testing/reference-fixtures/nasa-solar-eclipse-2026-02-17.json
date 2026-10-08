@@ -1,0 +1,38 @@
+{
+  "counts": {
+    "🌐 ☀️🐉 Solar Eclipse (Geocentric)": 1,
+    "🌐 ☀️🐉▶️ Solar Eclipse begins": 1,
+    "🌐 ☀️🐉◀️ Solar Eclipse ends": 1
+  },
+  "events": [
+    {
+      "note": "NASA P1, first external contact of the penumbra with Earth, 09:56:14.4 UT, printed with ΔT 83.2 s",
+      "start": "2026-02-17T09:56:14Z",
+      "summary": "🌐 ☀️🐉▶️ Solar Eclipse begins"
+    },
+    {
+      "note": "NASA P4, last external contact of the penumbra with Earth, 14:27:29.8 UT",
+      "start": "2026-02-17T14:27:30Z",
+      "summary": "🌐 ☀️🐉◀️ Solar Eclipse ends"
+    },
+    {
+      "end": "2026-02-17T14:27:30Z",
+      "note": "The geocentric span runs from P1 to P4",
+      "start": "2026-02-17T09:56:14Z",
+      "summary": "🌐 ☀️🐉 Solar Eclipse (Geocentric)"
+    }
+  ],
+  "name": "The annular solar eclipse of 17 February 2026, global contacts",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "NASA Goddard Space Flight Center, Fred Espenak: solar eclipse diagram, global contacts and greatest eclipse",
+    "url": "https://eclipse.gsfc.nasa.gov/SEplot/SEplot2001/SE2026Feb17A.GIF"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-02-18",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-02-17"
+  }
+}

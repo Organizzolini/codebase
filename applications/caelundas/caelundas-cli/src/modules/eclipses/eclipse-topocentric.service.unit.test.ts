@@ -5,40 +5,27 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { LoggerService } from "@codebase/logging";
 
-import { MathService } from "../math/math.service";
+import { getTrackCoordinates } from "../../../testing/eclipse-test.utilities";
+import { EphemerisService } from "../ephemeris/ephemeris.service";
 
 import { EclipseEventService } from "./eclipse-event.service";
 import { EclipseGeometryService } from "./eclipse-geometry.service";
 import { EclipseTopocentricService } from "./eclipse-topocentric.service";
 
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
-import type { EclipseCoordinates } from "./eclipses.types";
 
 describe(EclipseTopocentricService, () => {
   let service: EclipseTopocentricService;
-  let eclipseGeometryService: DeepMocked<EclipseGeometryService>;
+  let eclipseGeometryService: EclipseGeometryService;
   let eclipseEventService: DeepMocked<EclipseEventService>;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       providers: [
         EclipseTopocentricService,
+        EclipseGeometryService,
         { provide: LoggerService, useValue: createMock<LoggerService>() },
-        {
-          provide: MathService,
-          useValue: createMock<MathService>({
-            getAngle: vi.fn<MathService["getAngle"]>(
-              (value1: number, value2: number) => Math.abs(value1 - value2),
-            ),
-          }),
-        },
-        {
-          provide: EclipseGeometryService,
-          useValue: createMock<EclipseGeometryService>({
-            getAllTopocentricVisibilities:
-              vi.fn<EclipseGeometryService["getAllTopocentricVisibilities"]>(),
-          }),
-        },
+        { provide: EphemerisService, useValue: createMock<EphemerisService>() },
         {
           provide: EclipseEventService,
           useValue: createMock<EclipseEventService>({
@@ -56,32 +43,35 @@ describe(EclipseTopocentricService, () => {
     eclipseEventService = module.get(EclipseEventService);
   });
 
-  const solarActiveCoordinates: EclipseCoordinates = {
-    diameterMoon: 0.6,
-    diameterSun: 0.5,
-    latitudeMoon: 1,
-    latitudeSun: 1.2,
-    longitudeMoon: 10,
-    longitudeSun: 10.5,
-  };
+  /** Mocks the next topocentric visibility sample. */
+  function mockVisibilityOnce(
+    visibilities: ReturnType<
+      EclipseGeometryService["getAllTopocentricVisibilities"]
+    >,
+  ): void {
+    vi.spyOn(
+      eclipseGeometryService,
+      "getAllTopocentricVisibilities",
+    ).mockReturnValueOnce(visibilities);
+  }
 
-  const lunarActiveCoordinates: EclipseCoordinates = {
-    diameterMoon: 0.6,
-    diameterSun: 0.5,
-    latitudeMoon: 1,
-    latitudeSun: 1.2,
-    longitudeMoon: 179.8,
-    longitudeSun: 0.1,
-  };
+  const solarActiveCoordinates = getTrackCoordinates({
+    alongTrack: 0.5,
+    crossTrack: 0.2,
+    kind: "solar",
+  });
 
-  const inactiveCoordinates: EclipseCoordinates = {
-    diameterMoon: 0.6,
-    diameterSun: 0.5,
-    latitudeMoon: 10,
-    latitudeSun: 0,
-    longitudeMoon: 100,
-    longitudeSun: 10,
-  };
+  const lunarActiveCoordinates = getTrackCoordinates({
+    alongTrack: -0.5,
+    crossTrack: 0.2,
+    kind: "lunar",
+  });
+
+  const inactiveCoordinates = getTrackCoordinates({
+    alongTrack: 90,
+    crossTrack: 10,
+    kind: "solar",
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -89,6 +79,29 @@ describe(EclipseTopocentricService, () => {
 
   it("is defined", () => {
     expect(service).toBeDefined();
+  });
+
+  it("treats penumbral contact as the edge of geocentric activity", () => {
+    expect(
+      service.isLunarEclipseActive(
+        getTrackCoordinates({ alongTrack: 1.4, crossTrack: 0, kind: "lunar" }),
+      ),
+    ).toBe(true);
+    expect(
+      service.isLunarEclipseActive(
+        getTrackCoordinates({ alongTrack: 1.6, crossTrack: 0, kind: "lunar" }),
+      ),
+    ).toBe(false);
+    expect(
+      service.isSolarEclipseActive(
+        getTrackCoordinates({ alongTrack: 1.45, crossTrack: 0, kind: "solar" }),
+      ),
+    ).toBe(true);
+    expect(
+      service.isSolarEclipseActive(
+        getTrackCoordinates({ alongTrack: 1.6, crossTrack: 0, kind: "solar" }),
+      ),
+    ).toBe(false);
   });
 
   it("detects solar and lunar topocentric activity predicates", () => {
@@ -112,7 +125,7 @@ describe(EclipseTopocentricService, () => {
   });
 
   it("builds a beginning topocentric solar eclipse event", () => {
-    eclipseGeometryService.getAllTopocentricVisibilities.mockReturnValueOnce({
+    mockVisibilityOnce({
       currentVisibility: { isLunarVisible: false, isSolarVisible: true },
       nextVisibility: { isLunarVisible: false, isSolarVisible: true },
       previousVisibility: { isLunarVisible: false, isSolarVisible: false },
@@ -149,7 +162,7 @@ describe(EclipseTopocentricService, () => {
   });
 
   it("builds ending and maximum lunar events when phase and visibility conditions match", () => {
-    eclipseGeometryService.getAllTopocentricVisibilities.mockReturnValueOnce({
+    mockVisibilityOnce({
       currentVisibility: { isLunarVisible: true, isSolarVisible: false },
       nextVisibility: { isLunarVisible: false, isSolarVisible: false },
       previousVisibility: { isLunarVisible: true, isSolarVisible: false },
@@ -185,7 +198,7 @@ describe(EclipseTopocentricService, () => {
     });
     expect(endingEventCall?.date).toBeDefined();
 
-    eclipseGeometryService.getAllTopocentricVisibilities.mockReturnValueOnce({
+    mockVisibilityOnce({
       currentVisibility: { isLunarVisible: true, isSolarVisible: false },
       nextVisibility: { isLunarVisible: true, isSolarVisible: false },
       previousVisibility: { isLunarVisible: true, isSolarVisible: false },
@@ -223,7 +236,7 @@ describe(EclipseTopocentricService, () => {
   });
 
   it("returns no events when topocentric activity is inactive", () => {
-    eclipseGeometryService.getAllTopocentricVisibilities.mockReturnValueOnce({
+    mockVisibilityOnce({
       currentVisibility: { isLunarVisible: true, isSolarVisible: true },
       nextVisibility: { isLunarVisible: true, isSolarVisible: true },
       previousVisibility: { isLunarVisible: true, isSolarVisible: true },

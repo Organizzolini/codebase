@@ -74,14 +74,15 @@ export type DistanceEphemeris = Record<string, { distance: number }>;
 
 /**
  * Bodies for which distance ephemerides are generated.
- * Includes Sun (for apsis) and inner planets with visible orbital variations.
+ * Includes Sun (for apsis), Moon (for eclipse parallax and semidiameter) and
+ * inner planets with visible orbital variations.
  *
  * @remarks A copy of this type exists in `caelundas.constants.ts` to avoid a circular
  * import. Update both when the body set changes.
  */
 export type DistanceEphemerisBody = Extract<
   Body,
-  "mars" | "mercury" | "sun" | "venus"
+  "mars" | "mercury" | "moon" | "sun" | "venus"
 >;
 
 /**

@@ -16,6 +16,10 @@ import {
  * add its name here: a failing case goes in first, the fix after it.
  */
 const fixtureNames = [
+  "nasa-lunar-eclipse-2026-03-03",
+  "nasa-penumbral-lunar-eclipse-2027-02-20",
+  "nasa-penumbral-lunar-eclipse-2027-08-17",
+  "nasa-solar-eclipse-2026-02-17",
   "usno-march-equinox-2026",
   "usno-philadelphia-moonset-2026-05-19",
   "usno-philadelphia-rise-set-2026-03-20",
