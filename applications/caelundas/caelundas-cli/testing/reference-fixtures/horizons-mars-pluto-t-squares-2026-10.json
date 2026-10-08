@@ -1,12 +1,12 @@
 {
   "events": [
     {
-      "note": "In effect before the window opens, so it is reported at the first minute, 00:00 EDT. Horizons at 2026-10-01 04:00 UT: Mercury 210.900, Mars 121.785, Pluto 303.121, so Mercury squares Mars (89.1) and Pluto (92.2) while Mars opposes Pluto (181.3). Jessica Davidson's October 2026 forecast describes the same Mars-Pluto T-square.",
+      "note": "Query: COMMAND 199, 299, 499 and 999 over 2026-10-01 03:59-04:00. In effect before the window opens, so it is reported at the first minute, 00:00 EDT. Horizons at 2026-10-01 04:00 UT: Mercury 210.900, Mars 121.785, Pluto 303.121, so Mercury squares Mars (89.1) and Pluto (92.2) while Mars opposes Pluto (181.3). Jessica Davidson's October 2026 forecast describes the same Mars-Pluto T-square.",
       "start": "2026-10-01T04:00:00Z",
       "summary": "➡️ ⊤ ♂️-♇-☿ Mars, Mercury, Pluto t-square forming (Mercury focal)"
     },
     {
-      "note": "Forms when Venus-Mars enters the 6 degree square orb: Horizons puts Venus minus Mars at 96.0003 at 08:24 UT and 95.9999 at 08:25 UT. Venus-Pluto (84.7) and Mars-Pluto were already in orb when the window opened.",
+      "note": "Query: COMMAND 299 and 499 over 2026-10-02 08:00-09:00; 999 over 2026-10-01 03:59-04:00. Forms when Venus-Mars enters the 6 degree square orb: Horizons puts Venus minus Mars at 96.0003 at 08:24 UT and 95.9999 at 08:25 UT. Venus-Pluto (84.7) and Mars-Pluto were already in orb when the window opened.",
       "start": "2026-10-02T08:25:00Z",
       "summary": "➡️ ⊤ ♂️-♇-♀️ Mars, Pluto, Venus t-square forming (Venus focal)"
     }
@@ -14,8 +14,8 @@
   "name": "The Mars-Pluto T-squares in effect at the start of October 2026",
   "retrieved": "2026-10-08",
   "source": {
-    "name": "NASA JPL Horizons: geocentric apparent ecliptic longitudes (quantity 31) of Mercury, Venus, Mars and Pluto",
-    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='299'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='2026-10-02%2008:00'&STOP_TIME='2026-10-02%2009:00'&STEP_SIZE='1%20m'&QUANTITIES='31'"
+    "name": "NASA JPL Horizons API: observer table, CENTER='500@399', QUANTITIES='31' (apparent ecliptic longitude), STEP_SIZE='1 m', UT",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api"
   },
   "toleranceMinutes": 2,
   "window": {
