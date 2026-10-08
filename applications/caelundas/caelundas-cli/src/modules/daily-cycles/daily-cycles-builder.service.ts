@@ -421,18 +421,23 @@ export class DailyCyclesBuilderService {
   }): { current: number; next: number; previous: number } {
     const { body, ephemeris, minute } = args;
     const clearanceAt = (timestamp: Moment): number => {
-      const position = ephemeris[timestamp.toISOString()];
-      if (position === undefined) {
-        throw new Error(
-          `Missing horizon position at ${timestamp.toISOString()}`,
+      const isoTimestamp = timestamp.toISOString();
+      const trueElevation =
+        this.ephemerisService.getAzimuthElevationFromEphemeris(
+          ephemeris,
+          isoTimestamp,
+          "trueElevation",
         );
-      }
       const semidiameter =
         body === "sun"
           ? DailyCyclesBuilderService.sunSemidiameterDegrees
-          : position.semidiameter;
+          : this.ephemerisService.getAzimuthElevationFromEphemeris(
+              ephemeris,
+              isoTimestamp,
+              "semidiameter",
+            );
       return (
-        position.trueElevation +
+        trueElevation +
         DailyCyclesBuilderService.horizonRefractionDegrees +
         semidiameter
       );

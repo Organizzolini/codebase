@@ -9,7 +9,6 @@ import {
   radiusKilometersByHorizonBody,
 } from "./ephemeris.constants";
 
-import type { Body, Node } from "../caelundas/caelundas.types";
 import type {
   AzimuthElevationEphemeris,
   AzimuthElevationEphemerisBody,
@@ -73,7 +72,7 @@ export class EphemerisHorizonService {
    * Returns azimuth, apparent and true elevation, and the topocentric semidiameter.
    */
   public computeAzimuthElevationForMinute(args: {
-    body: Exclude<Body, Node>;
+    body: AzimuthElevationEphemerisBody;
     julianDayEphemerisTime: number;
     julianDayUniversalTime: number;
     observerLatitude: number;
@@ -110,21 +109,14 @@ export class EphemerisHorizonService {
   }
 
   /**
-   * Computes a body's angular radius, in degrees, from its distance in AU.
-   *
-   * @throws When the body has no known radius (only the Sun and Moon do).
+   * Computes the Sun's or the Moon's angular radius, in degrees, from its distance in AU.
    */
   public computeSemidiameter(args: {
-    body: Exclude<Body, Node>;
+    body: AzimuthElevationEphemerisBody;
     distance: number;
   }): number {
     const { body, distance } = args;
-    const radius = (
-      radiusKilometersByHorizonBody as Partial<Record<string, number>>
-    )[body];
-    if (radius === undefined) {
-      throw new Error(`No radius known for body "${body}"`);
-    }
+    const radius = radiusKilometersByHorizonBody[body];
     const distanceKilometers = distance * KILOMETERS_PER_ASTRONOMICAL_UNIT;
     return (Math.asin(radius / distanceKilometers) * 180) / Math.PI;
   }

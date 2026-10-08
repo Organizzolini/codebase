@@ -1,6 +1,9 @@
 import { Injectable } from "@nestjs/common";
 
-import { nodes } from "../caelundas/caelundas.constants";
+import {
+  azimuthElevationBodies,
+  nodes,
+} from "../caelundas/caelundas.constants";
 
 import {
   swissEphemerisConstantByAsteroid,
@@ -8,6 +11,7 @@ import {
 } from "./ephemeris.constants";
 
 import type { Body, Node } from "../caelundas/caelundas.types";
+import type { AzimuthElevationEphemerisBody } from "./ephemeris.types";
 
 /**
  * Body and node constant lookups and classification predicates for Swiss Ephemeris.
@@ -20,6 +24,9 @@ export class EphemerisConstantsService {
 
   // 🔐 Private Fields
 
+  private readonly horizonBodySet: ReadonlySet<string> = new Set<string>(
+    azimuthElevationBodies,
+  );
   private readonly nodeSet: ReadonlySet<string> = new Set<string>(nodes);
 
   // 🔑 Public Fields
@@ -49,6 +56,13 @@ export class EphemerisConstantsService {
     throw new Error(
       `No Swiss Ephemeris constant for body "${body}". Comets are not supported.`,
     );
+  }
+
+  /**
+   * Checks whether a body gets a horizon (azimuth/elevation) ephemeris: the Sun or the Moon.
+   */
+  public isHorizonBody(body: string): body is AzimuthElevationEphemerisBody {
+    return this.horizonBodySet.has(body);
   }
 
   /**

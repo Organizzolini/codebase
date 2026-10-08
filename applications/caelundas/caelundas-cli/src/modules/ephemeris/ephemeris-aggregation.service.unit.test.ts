@@ -57,6 +57,9 @@ describe(EphemerisAggregationService, () => {
     vi.mocked(
       constantsService.getSwissEphemerisConstantForBody,
     ).mockReturnValue(0);
+    vi.mocked(constantsService.isHorizonBody).mockImplementation(
+      (body: string) => body === "sun" || body === "moon",
+    );
     vi.mocked(constantsService.isNode).mockImplementation(
       (body: string) => body.includes("node") || body === "lunar perigee",
     );
