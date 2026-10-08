@@ -33,7 +33,7 @@ jobs:
   continuous-integration:
     name: ${{ matrix.check.emoji }} ${{ matrix.check.name }}
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: ${{ matrix.check.timeout-minutes || 12 }}
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     strategy:
       fail-fast: false
@@ -82,6 +82,17 @@ jobs:
           - target: build-projects
             name: Build
             emoji: 👷
+          # Packs every publishable ic-suite package and installs the tarballs
+          # into a consumer outside the checkout, then runs its command lines
+          # and one inferred target per Nx plugin. Runs whole, and only when an
+          # ic-suite package or the check is affected — see
+          # `scripts/nx/verify-publishable-packages.sh`. Never authenticates to
+          # a registry: nothing here holds a token, and setup-node is given no
+          # `registry-url`.
+          - target: verify-publishable-packages
+            name: Publishable Packages
+            emoji: 📦
+            timeout-minutes: 30
 
     steps:
       - name: 🚦 Skip Conditionally
@@ -120,7 +131,9 @@ jobs:
           gitleaks: ${{ matrix.check.target == 'secure-code' && 'true' || 'false' }}
           trivy: ${{ matrix.check.target == 'secure-code' && 'true' || 'false' }}
           python-dependencies: >-
-            ${{ matrix.check.target != 'build-projects' && 'true' || 'false' }}
+            ${{ matrix.check.target != 'build-projects' &&
+            matrix.check.target != 'verify-publishable-packages' && 'true' ||
+            'false' }}
           uv: "true"
           nx-cache: "true"
           nx-cache-scope: >-
@@ -140,10 +153,20 @@ jobs:
         run: pnpm exec nx run codebase:secure-code-ci
 
       - name: ${{ matrix.check.emoji }} ${{ matrix.check.name }}
+        if: >-
+          steps.check-skip.outputs.skip != 'true' &&
+          matrix.check.target == 'verify-publishable-packages'
+        env:
+          NX_VERBOSE_LOGGING: ${{ inputs.verbose || false }}
+          PUBLISHABLE_PACKAGES_CONSUMER_ROOT: ${{ runner.temp }}/publishable-packages
+        run: bash scripts/nx/verify-publishable-packages.sh
+
+      - name: ${{ matrix.check.emoji }} ${{ matrix.check.name }}
         id: run-check
         if: >-
           steps.check-skip.outputs.skip != 'true' &&
-          matrix.check.target != 'secure-code'
+          matrix.check.target != 'secure-code' &&
+          matrix.check.target != 'verify-publishable-packages'
         continue-on-error: ${{ matrix.check.target == 'build-projects' }}
         env:
           NX_VERBOSE_LOGGING: ${{ inputs.verbose || false }}
