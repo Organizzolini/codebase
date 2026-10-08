@@ -96,12 +96,12 @@ live in, the project's own `codependix.config.*`, and the codependix command
 line itself — because no judged project depends on the code that decides its
 verdict, a change to that code would otherwise replay every cached pass:
 
-- When `@codependix/cli` is a package of the same workspace, three
+- When `@codependix/cli` is a package of the same workspace, two
   `{workspaceRoot}` inputs for it and for every workspace package it reaches
-  through `workspace:` dependencies: `<package>/package.json`,
-  `<package>/tsconfig.json` (the loader reads it), and
+  through `workspace:` dependencies: `<package>/package.json` and
   `<package>/src/**/!(*.test.*|*.spec.*)` — the sources without their tests,
-  so a test-only edit to the command line invalidates no gate. File globs
+  so a test-only edit to the command line invalidates no gate beyond that
+  package's own and its dependents'. File globs
   rather than `{ "input", "projects" }` inputs, because Nx's affected
   computation follows `{workspaceRoot}` globs and ignores the latter — so a
   branch that changes the command line's sources selects every gate, and one
@@ -113,6 +113,11 @@ verdict, a change to that code would otherwise replay every cached pass:
   invalidates the cache. Nx hashes an external dependency together with
   everything it depends on, so the `@codependix/*` packages beneath those are
   covered too.
+- In either case, `{workspaceRoot}/tsconfig.json`. The loader
+  (`@swc-node/register`) takes its compiler options from `SWC_NODE_PROJECT` or
+  `TS_NODE_PROJECT`, else from the `tsconfig.json` in the gate's working
+  directory — the workspace root — and never from a package's own, so that
+  one file shapes every gate's verdict.
 
 Each workspace package is resolved on its own, through its entry rather than
 its manifest, so one that cannot be resolved costs only its own inputs: Nx's
@@ -122,13 +127,14 @@ inputs are left out and the warning names it — never failing the graph. The
 target declares no `configurations`, so an aggregator run with
 `--configuration=check` falls through to the defaults.
 
-**A gate given `projects` or `tags` is never replayed from the cache.** Its
-inputs cover its own project and that project's dependencies, not the
-projects such a run judges, so a hash built from them could replay a pass
-after an edit to the very project that now fails. The executor's hasher gives
-such a run a hash no other run shares, whether the selection came from the
-command line, the target's options, or a configuration; a gate judging only
-its own project is hashed from its inputs exactly as Nx would hash it. Because
+**A gate whose `projects` or `tags` select anything other than its own project
+is never replayed from the cache.** Its inputs cover its own project and that project's dependencies,
+not the projects such a run judges, so a hash built from them could replay a
+pass after an edit to the very project that now fails. The executor's hasher
+gives such a run a hash no other run shares, whether the selection came from
+the command line, the target's options, or a configuration; a gate judging
+only its own project — including one whose `projects` names exactly that
+project — is hashed from its inputs exactly as Nx would hash it. Because
 the target has a hasher, `nx show target inputs` prints a custom-hasher
 warning instead of a file list — the inputs above still decide the hash.
 
