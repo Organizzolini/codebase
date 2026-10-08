@@ -1,7 +1,7 @@
 {
   "events": [
     {
-      "note": "Query: COMMAND 10, 599 and '2060;' over 2026-01-15 04:59-05:01. In effect before the window opens, so it is reported at the first minute, 00:00 EST. Horizons, 2026-01-15 04:59-05:01 UT: Sun 295.044-295.046, Jupiter 109.456, Chiron 22.673. Sun opposes Jupiter (185.6, orb 8), and Chiron squares the Sun (87.6) and Jupiter (86.8, orb 6) at all three minutes. The summary lists the symbols in the order the de-duplicated candidate names its bodies (PR #1423); the bodies, phase and focal body are unchanged.",
+      "note": "Query: COMMAND 10, 599 and '2060;' over 2026-01-15 04:59-05:01. In effect before the window opens, so it is reported at the first minute, 00:00 EST. Horizons, 2026-01-15 04:59-05:01 UT: Sun 295.044-295.046, Jupiter 109.456, Chiron 22.673. Sun opposes Jupiter (185.6, orb 8), and Chiron squares the Sun (87.6) and Jupiter (86.8, orb 6) at all three minutes. The symbols list the opposition pair in canonical body order, Jupiter then the Sun, then the focal body, Chiron (PR #1423).",
       "start": "2026-01-15T05:00:00Z",
       "summary": "➡️ ⊤ ♃-☀️-⚷ Chiron, Jupiter, Sun t-square forming (Chiron focal)"
     },
