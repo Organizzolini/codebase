@@ -219,6 +219,42 @@ describe(StelliumService, () => {
         expect(stellium?.description).toContain("stellium forming");
       });
 
+      it("titles a stellium with its symbol and a span without its phase", () => {
+        const formingMinute = moment.utc("2026-01-17T12:00:00.000Z");
+        const dissolvingMinute = moment.utc("2026-01-19T08:00:00.000Z");
+        const cluster: AspectBodies[] = [
+          { aspect: "conjunct", bodies: ["sun", "mercury"] },
+          { aspect: "conjunct", bodies: ["sun", "venus"] },
+          { aspect: "conjunct", bodies: ["sun", "mars"] },
+          { aspect: "conjunct", bodies: ["mercury", "venus"] },
+          { aspect: "conjunct", bodies: ["mercury", "mars"] },
+          { aspect: "conjunct", bodies: ["venus", "mars"] },
+        ];
+        const boundaries = [
+          ...service.detect({
+            currentAspectBodies: cluster,
+            minute: formingMinute,
+            previousAspectBodies: cluster.slice(1),
+          }),
+          ...service.detect({
+            currentAspectBodies: cluster.slice(1),
+            minute: dissolvingMinute,
+            previousAspectBodies: cluster,
+          }),
+        ];
+
+        const titles = [
+          ...boundaries,
+          ...service.detectProgressive(boundaries),
+        ].map((event) => event.summary);
+
+        expect(titles).toStrictEqual([
+          "➡️ 🌟 ♂️-☿-☀️-♀️ Mars, Mercury, Sun, Venus stellium forming",
+          "⬅️ 🌟 ♂️-☿-☀️-♀️ Mars, Mercury, Sun, Venus stellium dissolving",
+          "🌟 ♂️-☿-☀️-♀️ Mars, Mercury, Sun, Venus stellium",
+        ]);
+      });
+
       it("detects 5-body stellium", () => {
         const currentMinute = moment.utc("2024-03-21T12:00:00.000Z");
 

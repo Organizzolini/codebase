@@ -350,11 +350,10 @@ describe(SextupleAspectsService, () => {
       expect(progressiveEvents).toHaveLength(1);
       expect(progressiveEvents[0]?.start).toStrictEqual(formingEvent.start);
       expect(progressiveEvents[0]?.end).toStrictEqual(dissolvingEvent.start);
-      // Note: The emoji regex doesn't strip properly due to multi-byte chars
-      // Just verify it's attempting to strip and categories are correct
       expect(progressiveEvents[0]?.summary).toContain(
-        "Jupiter, Mars, Moon, Saturn, Sun, Venus hexagram forming",
+        "Jupiter, Mars, Moon, Saturn, Sun, Venus hexagram",
       );
+      expect(progressiveEvents[0]?.summary).not.toContain("forming");
       expect(progressiveEvents[0]?.description).toBe(
         "Jupiter, Mars, Moon, Saturn, Sun, Venus hexagram",
       );

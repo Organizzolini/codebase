@@ -370,6 +370,34 @@ describe(QuadrupleAspectsService, () => {
   });
 
   describe("detectProgressive", () => {
+    it.each([
+      ["kite", kiteEdges],
+      ["grand cross", grandCrossEdges],
+    ])("titles a %s span without its phase", (_name, edges) => {
+      const boundaries = [
+        ...service.detect({
+          currentAspectBodies: edges,
+          minute: moment.utc("2026-10-21T03:39:00.000Z"),
+          previousAspectBodies: edges.slice(1),
+        }),
+        ...service.detect({
+          currentAspectBodies: edges.slice(1),
+          minute: moment.utc("2026-10-21T14:22:00.000Z"),
+          previousAspectBodies: edges,
+        }),
+      ];
+      const formingTitle = boundaries[0]?.summary ?? "";
+
+      const spanTitles = service
+        .detectProgressive(boundaries)
+        .map((span) => span.summary);
+
+      expect(spanTitles).toStrictEqual([
+        formingTitle.replace("➡️ ", "").replace(" forming", ""),
+      ]);
+      expect(spanTitles[0]).not.toMatch(/forming|dissolving/u);
+    });
+
     it("pairs two occurrences of one kite into two spans despite duplicate boundaries", () => {
       const boundaries = [
         ["forming", "2026-10-20T08:00:00.000Z"],
@@ -709,7 +737,7 @@ describe(QuadrupleAspectsService, () => {
         validateProgressiveEvent: (
           event: DetectedCalendarEvent | undefined,
         ): void => {
-          expect(event?.summary).toBe("Grand Cross forming");
+          expect(event?.summary).toBe("Grand Cross");
         },
       },
       {

@@ -148,7 +148,7 @@ export class AspectEventFormattingService {
       description: forming.description.replace(descriptionPattern, ""),
       end: dissolving.start,
       start: forming.start,
-      summary: forming.summary.replace(/^(?:➡️|🎯|⬅️)\s/u, ""),
+      summary: this.spanTitle(forming.summary),
     };
   }
 
@@ -183,5 +183,15 @@ export class AspectEventFormattingService {
     }
 
     return "⬅️ ";
+  }
+
+  /**
+   * Turns a boundary title into its span's title by dropping the leading phase
+   * emoji and the phase word, which a span covering the whole occurrence has not got.
+   */
+  spanTitle(boundarySummary: string): string {
+    return boundarySummary
+      .replace(/^(?:➡️|🎯|⬅️)\s/u, "")
+      .replace(/ (?:forming|exact|perfective|dissolving)(?= \(|$)/u, "");
   }
 }

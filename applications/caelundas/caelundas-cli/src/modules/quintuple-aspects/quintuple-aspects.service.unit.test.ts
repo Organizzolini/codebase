@@ -588,7 +588,7 @@ describe(QuintupleAspectsService, () => {
         validateProgressiveEvent: (
           event: DetectedCalendarEvent | undefined,
         ): void => {
-          expect(event?.summary).toBe("Pentagram forming");
+          expect(event?.summary).toBe("Pentagram");
         },
       },
       {

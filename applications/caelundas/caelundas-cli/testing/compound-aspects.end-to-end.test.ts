@@ -105,5 +105,26 @@ describe(
         ),
       ).toStrictEqual([]);
     });
+
+    it("titles compound spans without a phase or a missing symbol", async () => {
+      expect.hasAssertions();
+
+      const { events } = await runPipelineWindow(octoberWindow);
+      const compoundTitles = events
+        .filter((event) => event.categories.includes("Compound Aspect"))
+        .map((event) => ({
+          isSpan: !event.end.isSame(event.start),
+          summary: event.summary,
+        }));
+
+      expect(compoundTitles.some(({ isSpan }) => isSpan)).toBe(true);
+      expect(
+        compoundTitles.filter(
+          ({ isSpan, summary }) =>
+            summary.includes("undefined") ||
+            (isSpan && / (?:forming|dissolving)\b/u.test(summary)),
+        ),
+      ).toStrictEqual([]);
+    });
   },
 );

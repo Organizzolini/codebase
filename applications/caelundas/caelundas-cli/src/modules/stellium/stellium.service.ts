@@ -11,6 +11,8 @@ import {
   symbolByStellium,
 } from "../caelundas/symbol-caelundas.constants";
 
+import { stelliumSizeNames } from "./stellium.constants";
+
 import type { AspectBodies } from "../aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Aspect, AspectPhase, Body } from "../caelundas/caelundas.types";
@@ -157,7 +159,7 @@ export class StelliumService {
     if (conjunctions.length < 6) return [];
     const events: DetectedCalendarEvent[] = [];
     for (const cluster of this.buildConjunctionClusters(conjunctions)) {
-      const bodies = [...cluster];
+      const bodies = this.aspectGraphService.canonicalBodyOrder([...cluster]);
       if (!this.allPairsConjunct(bodies, unionEdges)) continue;
       const result =
         this.compoundPhaseService.determineCompoundPhaseFromSnapshots({
@@ -191,9 +193,10 @@ export class StelliumService {
     const bodiesCapitalized = bodies.map((b) => _.startCase(b));
     const bodySymbols = bodies.map((b) => symbolByBody[b]);
     const stelliumType = `${bodies.length}-body`;
-    const stelliumSymbol = isKeyOf(symbolByStellium, stelliumType)
-      ? symbolByStellium[stelliumType]
-      : undefined;
+    const stelliumName = `${stelliumSizeNames[bodies.length] ?? ""} stellium`;
+    const stelliumSymbol = isKeyOf(symbolByStellium, stelliumName)
+      ? symbolByStellium[stelliumName]
+      : symbolByStellium["duodecuple stellium"];
 
     const description = `${_.sortBy([...bodiesCapitalized]).join(", ")} stellium ${phase}`;
     const phaseEmoji = this.phaseEmojiFor(phase);

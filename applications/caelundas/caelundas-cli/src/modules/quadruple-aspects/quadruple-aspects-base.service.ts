@@ -70,7 +70,7 @@ export class QuadrupleAspectsBaseService {
       ),
       end: dissolvingEvent.start,
       start: formingEvent.start,
-      summary: formingEvent.summary.replace(/^(➡️|⬅️|🎯)\s/, ""),
+      summary: this.aspectPhaseEmojiService.spanTitle(formingEvent.summary),
     };
   }
 
