@@ -1,3 +1,13 @@
+## 0.0.6 (2026-10-08)
+
+### 🚀 Features
+
+- **conformetry,lexico:** ✨ add frontend conformetry templates and infer validation inputs ([#1301](https://github.com/organizzolini/codebase/pull/1301))
+
+### 🧱 Updated Dependencies
+
+- Updated conformetry-configuration to 0.0.6
+
 ## 0.0.5 (2026-10-06)
 
 ### 💅 Refactors

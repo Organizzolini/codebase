@@ -1,3 +1,12 @@
+## 0.0.5 (2026-10-08)
+
+### 🧱 Updated Dependencies
+
+- Updated codependix-configuration to 0.0.5
+- Updated codependix-boundaries to 0.0.5
+- Updated codependix-output to 0.0.5
+- Updated codependix-core to 0.0.5
+
 ## 0.0.4 (2026-10-06)
 
 ### 💅 Refactors

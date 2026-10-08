@@ -99,7 +99,7 @@ Call stacks traced through `applications/lexico`, deepest first. Each frame show
 
 | Measure | Value |
 | --- | --- |
-| Callables | 211 |
+| Callables | 212 |
 | Files | 37 |
 | Calls traced | 129 |
 | Call stacks | 24 |
@@ -121,9 +121,9 @@ What this project is judged against, as declared in its own `callidescope.config
 **1. `SearchResultsList`** — depth 9 · orphan-root
 
 ```text
-🚀 SearchResultsList(properties: SearchResultsListProperties): ReactNode [applications/lexico/src/routes/search.tsx:165]
+🚀 SearchResultsList(properties: SearchResultsListProperties): ReactNode [applications/lexico/src/routes/search.tsx:182]
    ↳ Search results list.
-  └─> map(…)(entry: EntrySearchResult): JSX.Element [applications/lexico/src/routes/search.tsx:170]
+  └─> map(…)(entry: EntrySearchResult): JSX.Element [applications/lexico/src/routes/search.tsx:187]
     └─> transformForms(partOfSpeech: string, forms: Forms): TransformResult [applications/lexico/src/lib/forms.ts:100]
        ↳ Transform forms based on part of speech.
       └─> dispatchFormTransform(pos: string, forms: Forms): TransformResult [applications/lexico/src/lib/forms.ts:298]
@@ -162,7 +162,7 @@ What this project is judged against, as declared in its own `callidescope.config
 **3. `WordForms`** — depth 8 · orphan-root
 
 ```text
-🚀 WordForms(properties: WordFormsProperties): ReactNode [applications/lexico/src/routes/word.$id.tsx:51]
+🚀 WordForms(properties: WordFormsProperties): ReactNode [applications/lexico/src/routes/word.$id.tsx:56]
    ↳ Word forms.
   └─> transformForms(partOfSpeech: string, forms: Forms): TransformResult [applications/lexico/src/lib/forms.ts:100]
      ↳ Transform forms based on part of speech.
@@ -203,7 +203,7 @@ What this project is judged against, as declared in its own `callidescope.config
 **5. `LibraryPage`** — depth ≥ 6 · orphan-root
 
 ```text
-🚀 LibraryPage(): ReactNode [applications/lexico/src/routes/library.tsx:270]
+🚀 LibraryPage(): ReactNode [applications/lexico/src/routes/library.tsx:277]
    ↳ Library page component that displays and manages user's saved texts.
   └─> useLibraryPage(): LibraryPageState [applications/lexico/src/routes/hooks/useLibraryPage.ts:67]
      ↳ Hook managing the library page state and operations. Handles text CRUD operations, form state, and UI dialogs.
@@ -230,22 +230,22 @@ What this project is judged against, as declared in its own `callidescope.config
 **7. `BookmarksPage`** — depth ≥ 4 · orphan-root
 
 ```text
-🚀 BookmarksPage(): ReactNode [applications/lexico/src/routes/bookmarks.tsx:103]
+🚀 BookmarksPage(): ReactNode [applications/lexico/src/routes/bookmarks.tsx:110]
    ↳ Bookmarks page component that displays user's bookmarked entries.
-  └─> useCallback(…)(entryId: string): Promise<void> [applications/lexico/src/routes/bookmarks.tsx:127]
-    └─> setBookmarks(…)(previous: BookmarkedEntry[]): BookmarkedEntry[] [applications/lexico/src/routes/bookmarks.tsx:131]
-      └─> filter(…)(b: BookmarkedEntry): boolean [applications/lexico/src/routes/bookmarks.tsx:131]
+  └─> useCallback(…)(entryId: string): Promise<void> [applications/lexico/src/routes/bookmarks.tsx:137]
+    └─> setBookmarks(…)(previous: BookmarkedEntry[]): BookmarkedEntry[] [applications/lexico/src/routes/bookmarks.tsx:141]
+      └─> filter(…)(b: BookmarkedEntry): boolean [applications/lexico/src/routes/bookmarks.tsx:141]
 ```
 
 **8. `SearchPage`** — depth ≥ 4 · orphan-root
 
 ```text
-🚀 SearchPage(): ReactNode [applications/lexico/src/routes/search.tsx:68]
+🚀 SearchPage(): ReactNode [applications/lexico/src/routes/search.tsx:75]
    ↳ Search page component that allows users to search for Latin entries.
-  └─> useDebounce<T>(value: T, delay: number): T [applications/lexico/src/routes/search.tsx:203]
+  └─> useDebounce<T>(value: T, delay: number): T [applications/lexico/src/routes/search.tsx:220]
      ↳ Custom hook that debounces a value by the specified delay.
-    └─> useEffect(…)(): () => void [applications/lexico/src/routes/search.tsx:206]
-      └─> setTimeout(…)(): void [applications/lexico/src/routes/search.tsx:207]
+    └─> useEffect(…)(): () => void [applications/lexico/src/routes/search.tsx:223]
+      └─> setTimeout(…)(): void [applications/lexico/src/routes/search.tsx:224]
 ```
 
 **9. `FormCell`** — depth 3 · orphan-root
@@ -280,9 +280,10 @@ What this project is judged against, as declared in its own `callidescope.config
 **12. `PronunciationButton`** — depth ≥ 3 · orphan-root
 
 ```text
-🚀 PronunciationButton(properties: PronunciationButtonProperties): ReactElement [applications/lexico/src/components/PronunciationButton.tsx:19]
-  └─> useCallback(…)(): Promise<void> [applications/lexico/src/components/PronunciationButton.tsx:30]
-    └─> addEventListener(…)(): void [applications/lexico/src/components/PronunciationButton.tsx:49]
+🚀 PronunciationButton(properties: Readonly<PronunciationButtonProperties>): ReactNode [applications/lexico/src/components/pronunciation-button.tsx:26]
+   ↳ Plays the pronunciation of a word in the chosen dialect.
+  └─> useCallback(…)(): Promise<void> [applications/lexico/src/components/pronunciation-button.tsx:37]
+    └─> addEventListener(…)(): void [applications/lexico/src/components/pronunciation-button.tsx:56]
 ```
 
 **13. `Logo`** — depth 2 · orphan-root
@@ -336,47 +337,47 @@ What this project is judged against, as declared in its own `callidescope.config
 **19. `BookmarksList`** — depth 2 · orphan-root
 
 ```text
-🚀 BookmarksList(properties: BookmarksListProperties): ReactNode [applications/lexico/src/routes/bookmarks.tsx:83]
+🚀 BookmarksList(properties: BookmarksListProperties): ReactNode [applications/lexico/src/routes/bookmarks.tsx:88]
    ↳ Bookmarks list.
-  └─> map(…)(entry: BookmarkedEntry): JSX.Element [applications/lexico/src/routes/bookmarks.tsx:87]
+  └─> map(…)(entry: BookmarkedEntry): JSX.Element [applications/lexico/src/routes/bookmarks.tsx:92]
 ```
 
 **20. `LibraryTextGrid`** — depth 2 · orphan-root
 
 ```text
-🚀 LibraryTextGrid(…): ReactNode [applications/lexico/src/routes/library.tsx:438]
+🚀 LibraryTextGrid(…): ReactNode [applications/lexico/src/routes/library.tsx:455]
    ↳ Library text grid.
-  └─> map(…)(text: UserText): JSX.Element [applications/lexico/src/routes/library.tsx:453]
+  └─> map(…)(text: UserText): JSX.Element [applications/lexico/src/routes/library.tsx:470]
 ```
 
 **21. `anonymous`** — depth 2 · orphan-root
 
 ```text
-🚀 anonymous(): undefined [applications/lexico/src/routes/settings.tsx:67]
-  └─> handleSignIn(): Promise<void> [applications/lexico/src/routes/settings.tsx:24]
+🚀 anonymous(): undefined [applications/lexico/src/routes/settings.tsx:81]
+  └─> handleSignIn(): Promise<void> [applications/lexico/src/routes/settings.tsx:29]
      ↳ Handle sign in.
 ```
 
 **22. `anonymous`** — depth 2 · orphan-root
 
 ```text
-🚀 anonymous(): undefined [applications/lexico/src/routes/settings.tsx:92]
-  └─> handleSignOut(): Promise<void> [applications/lexico/src/routes/settings.tsx:41]
+🚀 anonymous(): undefined [applications/lexico/src/routes/settings.tsx:107]
+  └─> handleSignOut(): Promise<void> [applications/lexico/src/routes/settings.tsx:52]
 ```
 
 **23. `anonymous`** — depth 2 · orphan-root
 
 ```text
-🚀 anonymous(): undefined [applications/lexico/src/routes/settings.tsx:129]
-  └─> handleDeleteAccount(): Promise<void> [applications/lexico/src/routes/settings.tsx:46]
+🚀 anonymous(): undefined [applications/lexico/src/routes/settings.tsx:144]
+  └─> handleDeleteAccount(): Promise<void> [applications/lexico/src/routes/settings.tsx:57]
 ```
 
-**24. `WordPage`** — depth ≥ 2 · orphan-root
+**24. `WordIdPage`** — depth ≥ 2 · orphan-root
 
 ```text
-🚀 WordPage(): ReactNode [applications/lexico/src/routes/word.$id.tsx:78]
+🚀 WordIdPage(): ReactNode [applications/lexico/src/routes/word.$id.tsx:85]
    ↳ Word detail page component that displays full entry information.
-  └─> useEffect(…)(): void [applications/lexico/src/routes/word.$id.tsx:83]
+  └─> useEffect(…)(): void [applications/lexico/src/routes/word.$id.tsx:91]
 ```
 
 </details>
@@ -396,14 +397,14 @@ What this project is judged against, as declared in its own `callidescope.config
 | --- | --- | --- | --- |
 | `VerbFormsTable` | 5 | `useMemo(…)`, `map(…)`, `map(…)`, `map(…)`, `renderVerbFormContent` | `applications/lexico/src/components/entry/verb-forms-table.tsx:261` |
 | `transformVerbForms` | 5 | `transformIndicativeForms`, `transformSubjunctiveForms`, `transformImperativeForms`, `transformNonFiniteForms`, `transformVerbalNounForms` | `applications/lexico/src/lib/forms.ts:140` |
-| `SearchPage` | 5 | `useDebounce`, `useEffect(…)`, `useEffect(…)`, `useCallback(…)`, `useEffect(…)` | `applications/lexico/src/routes/search.tsx:68` |
+| `SearchPage` | 5 | `useDebounce`, `useEffect(…)`, `useEffect(…)`, `useCallback(…)`, `useEffect(…)` | `applications/lexico/src/routes/search.tsx:75` |
 | `Translations` | 4 | `cn`, `map(…)`, `map(…)`, `map(…)` | `applications/lexico/src/components/entry/translations.tsx:26` |
 | `FormTabs` | 3 | `cn`, `map(…)`, `map(…)` | `applications/lexico/src/components/entry/form-tabs.tsx:32` |
 | `AdjectiveFormsTable` | 3 | `useMemo(…)`, `map(…)`, `renderAdjectiveGenderContent` | `applications/lexico/src/components/entry/adjective-forms-table.tsx:73` |
 | `groupAdjectiveForms` | 3 | `some(…)`, `groupByGender`, `buildDegreeGroupsFromForms` | `applications/lexico/src/components/entry/adjective-forms-table.tsx:165` |
 | `restructureVerbForms` | 3 | `some(…)`, `map(…)`, `flatMap(…)` | `applications/lexico/src/components/entry/verb-forms-table.tsx:239` |
-| `BookmarksPage` | 3 | `useCallback(…)`, `useEffect(…)`, `useCallback(…)` | `applications/lexico/src/routes/bookmarks.tsx:103` |
-| `WordPage` | 3 | `useEffect(…)`, `useCallback(…)`, `map(…)` | `applications/lexico/src/routes/word.$id.tsx:78` |
+| `BookmarksPage` | 3 | `useCallback(…)`, `useEffect(…)`, `useCallback(…)` | `applications/lexico/src/routes/bookmarks.tsx:110` |
+| `WordIdPage` | 3 | `useEffect(…)`, `useCallback(…)`, `map(…)` | `applications/lexico/src/routes/word.$id.tsx:85` |
 | `FormCell` | 2 | `computeBorderClasses`, `cn` | `applications/lexico/src/components/entry/form-cell.tsx:57` |
 | `FormsTable` | 2 | `cn`, `map(…)` | `applications/lexico/src/components/entry/forms-table.tsx:27` |
 | `restructureAdjectiveForms` | 2 | `flatMap(…)`, `filter(…)` | `applications/lexico/src/components/entry/adjective-forms-table.tsx:236` |
@@ -438,9 +439,9 @@ What this project is judged against, as declared in its own `callidescope.config
 | `map(…)` | 1 | `renderTranslation` | `applications/lexico/src/components/entry/translations.tsx:66` |
 | `map(…)` | 1 | `renderTranslation` | `applications/lexico/src/components/entry/translations.tsx:71` |
 | `EntryCard` | 1 | `cn` | `applications/lexico/src/components/entry/entry-card.tsx:104` |
-| `BookmarksList` | 1 | `map(…)` | `applications/lexico/src/routes/bookmarks.tsx:83` |
-| `useCallback(…)` | 1 | `setBookmarks(…)` | `applications/lexico/src/routes/bookmarks.tsx:127` |
-| `setBookmarks(…)` | 1 | `filter(…)` | `applications/lexico/src/routes/bookmarks.tsx:131` |
+| `BookmarksList` | 1 | `map(…)` | `applications/lexico/src/routes/bookmarks.tsx:88` |
+| `useCallback(…)` | 1 | `setBookmarks(…)` | `applications/lexico/src/routes/bookmarks.tsx:137` |
+| `setBookmarks(…)` | 1 | `filter(…)` | `applications/lexico/src/routes/bookmarks.tsx:141` |
 | `useCallback(…)` | 1 | `fetchTextsAsync` | `applications/lexico/src/routes/hooks/useLibraryPage.ts:71` |
 | `useCallback(…)` | 1 | `createTextAsync` | `applications/lexico/src/routes/hooks/useLibraryPage.ts:81` |
 | `useCallback(…)` | 1 | `updateTextAsync` | `applications/lexico/src/routes/hooks/useLibraryPage.ts:95` |
@@ -450,18 +451,18 @@ What this project is judged against, as declared in its own `callidescope.config
 | `setTexts(…)` | 1 | `filter(…)` | `applications/lexico/src/routes/hooks/useLibraryPage.ts:228` |
 | `updateTextAsync` | 1 | `setTexts(…)` | `applications/lexico/src/routes/hooks/useLibraryPage.ts:265` |
 | `setTexts(…)` | 1 | `map(…)` | `applications/lexico/src/routes/hooks/useLibraryPage.ts:292` |
-| `LibraryPage` | 1 | `useLibraryPage` | `applications/lexico/src/routes/library.tsx:270` |
-| `LibraryTextGrid` | 1 | `map(…)` | `applications/lexico/src/routes/library.tsx:438` |
-| `SearchResultsList` | 1 | `map(…)` | `applications/lexico/src/routes/search.tsx:165` |
-| `map(…)` | 1 | `transformForms` | `applications/lexico/src/routes/search.tsx:170` |
-| `useDebounce` | 1 | `useEffect(…)` | `applications/lexico/src/routes/search.tsx:203` |
-| `useEffect(…)` | 1 | `setTimeout(…)` | `applications/lexico/src/routes/search.tsx:206` |
-| `anonymous` | 1 | `handleSignIn` | `applications/lexico/src/routes/settings.tsx:67` |
-| `anonymous` | 1 | `handleSignOut` | `applications/lexico/src/routes/settings.tsx:92` |
-| `anonymous` | 1 | `handleDeleteAccount` | `applications/lexico/src/routes/settings.tsx:129` |
-| `PronunciationButton` | 1 | `useCallback(…)` | `applications/lexico/src/components/PronunciationButton.tsx:19` |
-| `useCallback(…)` | 1 | `addEventListener(…)` | `applications/lexico/src/components/PronunciationButton.tsx:30` |
-| `WordForms` | 1 | `transformForms` | `applications/lexico/src/routes/word.$id.tsx:51` |
+| `LibraryPage` | 1 | `useLibraryPage` | `applications/lexico/src/routes/library.tsx:277` |
+| `LibraryTextGrid` | 1 | `map(…)` | `applications/lexico/src/routes/library.tsx:455` |
+| `SearchResultsList` | 1 | `map(…)` | `applications/lexico/src/routes/search.tsx:182` |
+| `map(…)` | 1 | `transformForms` | `applications/lexico/src/routes/search.tsx:187` |
+| `useDebounce` | 1 | `useEffect(…)` | `applications/lexico/src/routes/search.tsx:220` |
+| `useEffect(…)` | 1 | `setTimeout(…)` | `applications/lexico/src/routes/search.tsx:223` |
+| `anonymous` | 1 | `handleSignIn` | `applications/lexico/src/routes/settings.tsx:81` |
+| `anonymous` | 1 | `handleSignOut` | `applications/lexico/src/routes/settings.tsx:107` |
+| `anonymous` | 1 | `handleDeleteAccount` | `applications/lexico/src/routes/settings.tsx:144` |
+| `PronunciationButton` | 1 | `useCallback(…)` | `applications/lexico/src/components/pronunciation-button.tsx:26` |
+| `useCallback(…)` | 1 | `addEventListener(…)` | `applications/lexico/src/components/pronunciation-button.tsx:37` |
+| `WordForms` | 1 | `transformForms` | `applications/lexico/src/routes/word.$id.tsx:56` |
 
 </details>
 <!-- callidescope:end -->
@@ -618,43 +619,43 @@ graph LR
 
 ### Project
 
-![Lines of Code](https://img.shields.io/badge/Lines_of_Code-5480-22c55e?style=flat-square)
-![Repository Size](https://img.shields.io/badge/Repository_Size-166.06_kB-6b7280?style=flat-square)
-![Folders](https://img.shields.io/badge/Folders-9-4a4a4a?style=flat-square)
-![Source Files](https://img.shields.io/badge/Source_Files-41-3178c6?style=flat-square)
+![Lines of Code](https://img.shields.io/badge/Lines_of_Code-5787-22c55e?style=flat-square)
+![Repository Size](https://img.shields.io/badge/Repository_Size-172.53_kB-6b7280?style=flat-square)
+![Folders](https://img.shields.io/badge/Folders-10-4a4a4a?style=flat-square)
+![Source Files](https://img.shields.io/badge/Source_Files-50-3178c6?style=flat-square)
 
 ### Measured Targets
 
-![Client entry JavaScript Size](https://img.shields.io/badge/Client_entry_JavaScript_Size-143.05_kB_gzip-6b7280?style=flat-square)
-![Client route JavaScript Size](https://img.shields.io/badge/Client_route_JavaScript_Size-83.13_kB_gzip-6b7280?style=flat-square)
-![Client CSS Size](https://img.shields.io/badge/Client_CSS_Size-15.45_kB_gzip-6b7280?style=flat-square)
-![Server JavaScript Size](https://img.shields.io/badge/Server_JavaScript_Size-165.76_kB_gzip-6b7280?style=flat-square)
+![Client entry JavaScript Size](https://img.shields.io/badge/Client_entry_JavaScript_Size-143.12_kB_gzip-6b7280?style=flat-square)
+![Client route JavaScript Size](https://img.shields.io/badge/Client_route_JavaScript_Size-83.74_kB_gzip-6b7280?style=flat-square)
+![Client CSS Size](https://img.shields.io/badge/Client_CSS_Size-15.39_kB_gzip-6b7280?style=flat-square)
+![Server JavaScript Size](https://img.shields.io/badge/Server_JavaScript_Size-166.39_kB_gzip-6b7280?style=flat-square)
 
 ### TypeScript
 
-![TypeScript Files](https://img.shields.io/badge/TypeScript_Files-39-3178c6?style=flat-square)
+![TypeScript Files](https://img.shields.io/badge/TypeScript_Files-48-3178c6?style=flat-square)
 ![Interfaces](https://img.shields.io/badge/Interfaces-79-0ea5e9?style=flat-square)
 ![Generic Declarations](https://img.shields.io/badge/Generic_Declarations-3-0369a1?style=flat-square)
 ![Enums](https://img.shields.io/badge/Enums-0-f97316?style=flat-square)
 ![Decorators](https://img.shields.io/badge/Decorators-0-db2777?style=flat-square)
-![Doc Comments](https://img.shields.io/badge/Doc_Comments-279-6366f1?style=flat-square)
+![Doc Comments](https://img.shields.io/badge/Doc_Comments-289-6366f1?style=flat-square)
 ![Static Methods](https://img.shields.io/badge/Static_Methods-0-166534?style=flat-square)
 
 ### JavaScript
 
 ![JavaScript Files](https://img.shields.io/badge/JavaScript_Files-2-f7df1e?style=flat-square)
-![Test Files](https://img.shields.io/badge/Test_Files-1-10b981?style=flat-square)
-![External Packages](https://img.shields.io/badge/External_Packages-18-8b5cf6?style=flat-square)
+![Test Files](https://img.shields.io/badge/Test_Files-8-10b981?style=flat-square)
+![External Packages](https://img.shields.io/badge/External_Packages-16-8b5cf6?style=flat-square)
 ![Classes](https://img.shields.io/badge/Classes-0-7c3aed?style=flat-square)
-![Functions](https://img.shields.io/badge/Functions-221-16a34a?style=flat-square)
+![Functions](https://img.shields.io/badge/Functions-240-16a34a?style=flat-square)
 ![Methods](https://img.shields.io/badge/Methods-0-15803d?style=flat-square)
-![Sync Functions](https://img.shields.io/badge/Sync_Functions-186-4ade80?style=flat-square)
-![Async Functions](https://img.shields.io/badge/Async_Functions-35-059669?style=flat-square)
-![Constants](https://img.shields.io/badge/Constants-289-dc2626?style=flat-square)
-![Imports](https://img.shields.io/badge/Imports-157-0284c7?style=flat-square)
-![Exported Symbols](https://img.shields.io/badge/Exported_Symbols-82-ea580c?style=flat-square)
-![Comments](https://img.shields.io/badge/Comments-416-64748b?style=flat-square)
-![Comment Lines](https://img.shields.io/badge/Comment_Lines-655-475569?style=flat-square)
+![Sync Functions](https://img.shields.io/badge/Sync_Functions-196-4ade80?style=flat-square)
+![Async Functions](https://img.shields.io/badge/Async_Functions-44-059669?style=flat-square)
+![Constants](https://img.shields.io/badge/Constants-287-dc2626?style=flat-square)
+![Imports](https://img.shields.io/badge/Imports-189-0284c7?style=flat-square)
+![Exported Symbols](https://img.shields.io/badge/Exported_Symbols-83-ea580c?style=flat-square)
+![Comments](https://img.shields.io/badge/Comments-479-64748b?style=flat-square)
+![Comment Lines](https://img.shields.io/badge/Comment_Lines-729-475569?style=flat-square)
 ![TODO Comments](https://img.shields.io/badge/TODO_Comments-0-ca8a04?style=flat-square)
 
 ### Python
@@ -678,12 +679,12 @@ graph LR
 ![JSON Lines](https://img.shields.io/badge/JSON_Lines-160-ca8a04?style=flat-square)
 ![JSON Objects](https://img.shields.io/badge/JSON_Objects-36-7c3aed?style=flat-square)
 ![JSON Arrays](https://img.shields.io/badge/JSON_Arrays-12-8b5cf6?style=flat-square)
-![JSON Properties](https://img.shields.io/badge/JSON_Properties-108-0284c7?style=flat-square)
+![JSON Properties](https://img.shields.io/badge/JSON_Properties-106-0284c7?style=flat-square)
 ![JSON Strings](https://img.shields.io/badge/JSON_Strings-87-16a34a?style=flat-square)
 ![JSON Numbers](https://img.shields.io/badge/JSON_Numbers-1-059669?style=flat-square)
 ![JSON Booleans](https://img.shields.io/badge/JSON_Booleans-8-0ea5e9?style=flat-square)
 ![JSON Nulls](https://img.shields.io/badge/JSON_Nulls-0-64748b?style=flat-square)
-![JSON Items](https://img.shields.io/badge/JSON_Items-33-475569?style=flat-square)
+![JSON Items](https://img.shields.io/badge/JSON_Items-35-475569?style=flat-square)
 ![JSON Nodes](https://img.shields.io/badge/JSON_Nodes-144-dc2626?style=flat-square)
 ![JSON Max Depth](https://img.shields.io/badge/JSON_Max_Depth-5-ea580c?style=flat-square)
 
