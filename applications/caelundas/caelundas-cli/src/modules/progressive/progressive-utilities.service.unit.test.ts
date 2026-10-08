@@ -156,6 +156,24 @@ describe(ProgressiveUtilitiesService, () => {
     );
   });
 
+  it("pairs an ending that coincides with the next beginning with the earlier one", () => {
+    const firstBeginning = createEvent("2026-01-01T00:00:00.000Z");
+    const firstEnding = createEvent("2026-01-02T00:00:00.000Z");
+    const secondBeginning = createEvent("2026-01-02T00:00:00.000Z");
+    const secondEnding = createEvent("2026-01-03T00:00:00.000Z");
+
+    const pairs = service.pairProgressiveEvents(
+      [firstBeginning, secondBeginning],
+      [firstEnding, secondEnding],
+      "touching occurrences",
+    );
+
+    expect(pairs).toStrictEqual([
+      [firstBeginning, firstEnding],
+      [secondBeginning, secondEnding],
+    ]);
+  });
+
   it("never emits a span that ends before it starts", () => {
     const beginnings = [
       createEvent("2026-07-01T00:00:00.000Z"),
