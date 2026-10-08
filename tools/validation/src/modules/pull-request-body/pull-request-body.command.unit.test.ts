@@ -73,6 +73,13 @@ const validBody = [
   "",
 ].join("\n");
 
+/** The lines that close every failure report. */
+const guidanceLines = [
+  "PR description must include: ## 🌰 Summary, ## 📝 Details, ## 🧪 Testing, ## 🔗 Related, with every template comment replaced by real content.",
+  "Section shapes: 🌰 Summary holds only one plain paragraph (at most 48 words); 📝 Details holds only a bulleted list, one marker throughout (at most 512 words); 🧪 Testing holds only an ordered list; 🔗 Related holds a list whose items start with `-`, then anything.",
+  "See: .github/PULL_REQUEST_TEMPLATE.md",
+];
+
 describe(PullRequestBodyCommand, () => {
   let command: PullRequestBodyCommand;
   let reportLines: string[];
@@ -207,8 +214,7 @@ describe(PullRequestBodyCommand, () => {
     expect(reportLines).toStrictEqual([
       "❌ Empty required sections: 📝 Details",
       "",
-      "PR description must include: ## 🌰 Summary, ## 📝 Details, ## 🧪 Testing, ## 🔗 Related, with every template comment replaced by real content.",
-      "See: .github/PULL_REQUEST_TEMPLATE.md",
+      ...guidanceLines,
     ]);
   });
 
@@ -223,8 +229,41 @@ describe(PullRequestBodyCommand, () => {
       "❌ Unfilled template comments remain:",
       "- <!-- List of specific changes made -->",
       "",
-      "PR description must include: ## 🌰 Summary, ## 📝 Details, ## 🧪 Testing, ## 🔗 Related, with every template comment replaced by real content.",
-      "See: .github/PULL_REQUEST_TEMPLATE.md",
+      ...guidanceLines,
+    ]);
+  });
+
+  it("reports a malformed section alone", async () => {
+    expect.hasAssertions();
+
+    process.env[PULL_REQUEST_BODY_VARIABLE] = validBody.replace(
+      "1. Run the suite",
+      "- Run the suite",
+    );
+
+    await expect(runCommand()).resolves.toBe(true);
+    expect(reportLines).toStrictEqual([
+      "❌ Sections not in their required shape:",
+      "- 🧪 Testing must hold only an ordered list",
+      "",
+      ...guidanceLines,
+    ]);
+  });
+
+  it("reports an oversized section alone", async () => {
+    expect.hasAssertions();
+
+    process.env[PULL_REQUEST_BODY_VARIABLE] = validBody.replace(
+      "Moves four checks into a validation application.",
+      "word ".repeat(200),
+    );
+
+    await expect(runCommand()).resolves.toBe(true);
+    expect(reportLines).toStrictEqual([
+      "❌ Sections over their word limit:",
+      "- 🌰 Summary has 200 words, over its limit of 48",
+      "",
+      ...guidanceLines,
     ]);
   });
 
@@ -241,8 +280,7 @@ describe(PullRequestBodyCommand, () => {
       "❌ Unfilled template comments remain:",
       "- <!-- List of specific changes made -->",
       "",
-      "PR description must include: ## 🌰 Summary, ## 📝 Details, ## 🧪 Testing, ## 🔗 Related, with every template comment replaced by real content.",
-      "See: .github/PULL_REQUEST_TEMPLATE.md",
+      ...guidanceLines,
     ]);
   });
 
@@ -261,8 +299,7 @@ describe(PullRequestBodyCommand, () => {
       "- <!-- How to manually verify these changes work correctly -->",
       "- <!-- Link any relevant documentation or related resources -->",
       "",
-      "PR description must include: ## 🌰 Summary, ## 📝 Details, ## 🧪 Testing, ## 🔗 Related, with every template comment replaced by real content.",
-      "See: .github/PULL_REQUEST_TEMPLATE.md",
+      ...guidanceLines,
     ]);
   });
 

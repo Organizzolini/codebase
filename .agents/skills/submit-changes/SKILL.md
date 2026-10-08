@@ -117,10 +117,10 @@ gh pr list --head <branch> --state open
 
 1. Title: Same format as the commit message — `<type>(<scope>): <gitmoji> <subject>`
 2. Body: Auto-generate from the diff using the PR template structure (all 4 sections are mandatory and non-empty):
-   - **🌰 Summary**: Overall purpose in 1-2 sentences
-   - **📝 Details**: Bulleted list of meaningful changes
-   - **🧪 Testing**: Relevant `nx run <project>:<target>` commands and manual steps
-   - **🔗 Related**: Issue links discovered from branch name, commits, `gh issue list --search`, or related files/documentation (never omit or leave empty)
+   - **🌰 Summary**: Overall purpose as one plain paragraph of at most 48 words
+   - **📝 Details**: Only a bulleted list of meaningful changes, one marker throughout, at most 512 words
+   - **🧪 Testing**: Only an ordered list of `nx run <project>:<target>` commands and manual steps; indent any code block under its step
+   - **🔗 Related**: Opens with a `-` list of issue links discovered from branch name, commits, `gh issue list --search`, or related files/documentation (never omit or leave empty); anything may follow the list
 3. Pre-flight validate the PR body locally before submission:
 
    ```bash

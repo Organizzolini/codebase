@@ -3507,6 +3507,9 @@ importers:
       reflect-metadata:
         specifier: 'catalog:'
         version: 0.2.2
+      remark:
+        specifier: 'catalog:'
+        version: 15.0.1(supports-color@10.2.2)
       zod:
         specifier: 'catalog:'
         version: 4.6.5
@@ -3529,6 +3532,9 @@ importers:
       '@swc/helpers':
         specifier: 'catalog:'
         version: 0.5.23
+      '@types/mdast':
+        specifier: 'catalog:'
+        version: 4.0.4
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.2

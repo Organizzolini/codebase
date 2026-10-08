@@ -6,6 +6,7 @@
     "@nestjs/core": "catalog:",
     "nest-commander": "catalog:",
     "reflect-metadata": "catalog:",
+    "remark": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -15,6 +16,7 @@
     "@swc-node/register": "catalog:",
     "@swc/core": "catalog:",
     "@swc/helpers": "catalog:",
+    "@types/mdast": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "typescript": "catalog:",
