@@ -7,6 +7,8 @@ import moment from "moment-timezone";
 
 import { LoggerService } from "@codebase/logging";
 
+import { CONTENT_LINE_OCTETS } from "./calendar.constants";
+
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Environment, Input } from "../input/input.types";
 import type {
@@ -50,8 +52,6 @@ export class CalendarService {
     }
     return properties;
   }
-
-  // 🌎 Public Methods
 
   /** Builds one STANDARD or DAYLIGHT observance of a VTIMEZONE. */
   private buildObservance(parameters: {
@@ -135,6 +135,30 @@ END:VTIMEZONE`;
   }
 
   /**
+   * Folds one content line into chunks of at most 75 octets (RFC 5545 §3.1).
+   *
+   * Each continuation chunk starts with a single space, which counts toward its
+   * 75 octets. Chunks break between code points, never inside a UTF-8 sequence.
+   */
+  private foldContentLine(line: string): string[] {
+    const chunks: string[] = [];
+    let chunk = "";
+    let chunkOctets = 0;
+    for (const character of line) {
+      const octets = Buffer.byteLength(character, "utf8");
+      if (chunkOctets + octets > CONTENT_LINE_OCTETS) {
+        chunks.push(chunk);
+        chunk = " ";
+        chunkOctets = 1;
+      }
+      chunk += character;
+      chunkOctets += octets;
+    }
+    chunks.push(chunk);
+    return chunks;
+  }
+
+  /**
    * Formats an event instant for DTSTART or DTEND.
    *
    * Uses the zone's local time with a TZID, except in the repeated fall-back
@@ -169,6 +193,8 @@ END:VTIMEZONE`;
     return `${sign}${hours}${minutes}`;
   }
 
+  // 🌎 Public Methods
+
   /** Generates a deterministic event identity string used as the VEVENT UID source. */
   private generateUid(event: DetectedCalendarEvent): string {
     let id = `${event.summary}::${event.description}::${event.start.toISOString()}`;
@@ -176,6 +202,12 @@ END:VTIMEZONE`;
       id += `::${event.end.toISOString()}`;
     }
     return id;
+  }
+
+  /** Serializes LF-built content as folded content lines, each ended by CRLF. */
+  private toContentLines(content: string): string {
+    const lines = content.replace(/\n$/, "").split("\n");
+    return `${lines.flatMap((line) => this.foldContentLine(line)).join("\r\n")}\r\n`;
   }
 
   /**
@@ -251,7 +283,7 @@ X-WR-CALNAME:${name}`;
 END:VCALENDAR
 `;
 
-    return vcalendar;
+    return this.toContentLines(vcalendar);
   }
 
   /**
