@@ -203,7 +203,7 @@ describe(ProgressiveService, () => {
       expect(result[0]).toStrictEqual([beginning1, ending1]);
     });
 
-    it("emits a console warning when beginning and ending counts differ", () => {
+    it("emits a warning when an event is left unpaired", () => {
       const warnSpy = vi
         .spyOn(LoggerService.prototype, "warn")
         .mockReturnValue(undefined);
@@ -215,9 +215,14 @@ describe(ProgressiveService, () => {
       );
 
       expect(warnSpy).toHaveBeenCalledWith(
-        "🔀 Mismatched progressive event counts",
+        "🔀 Unpaired progressive events",
         undefined,
-        { beginnings: 2, endings: 1, label: "my-label" },
+        {
+          label: "my-label",
+          paired: 1,
+          unpairedBeginnings: 1,
+          unpairedEndings: 0,
+        },
       );
 
       warnSpy.mockRestore();

@@ -69,9 +69,14 @@ describe(ProgressiveUtilitiesService, () => {
 
     expect(pairs).toStrictEqual([[beginning, ending]]);
     expect(logger.warn).toHaveBeenCalledWith(
-      "🔀 Mismatched progressive event counts",
+      "🔀 Unpaired progressive events",
       undefined,
-      { beginnings: 1, endings: 3, label: "unequal" },
+      {
+        label: "unequal",
+        paired: 1,
+        unpairedBeginnings: 0,
+        unpairedEndings: 2,
+      },
     );
   });
 
@@ -127,10 +132,10 @@ describe(ProgressiveUtilitiesService, () => {
     ]);
   });
 
-  it("never pairs an ending with more than one beginning", () => {
+  it("leaves a beginning unpaired when the next beginning comes before any ending", () => {
     const firstBeginning = createEvent("2026-01-01T00:00:00.000Z");
-    const secondBeginning = createEvent("2026-01-01T06:00:00.000Z");
-    const ending = createEvent("2026-01-02T00:00:00.000Z");
+    const secondBeginning = createEvent("2026-02-01T00:00:00.000Z");
+    const ending = createEvent("2026-02-02T00:00:00.000Z");
 
     const pairs = service.pairProgressiveEvents(
       [firstBeginning, secondBeginning],
@@ -138,7 +143,17 @@ describe(ProgressiveUtilitiesService, () => {
       "missing ending",
     );
 
-    expect(pairs).toStrictEqual([[firstBeginning, ending]]);
+    expect(pairs).toStrictEqual([[secondBeginning, ending]]);
+    expect(logger.warn).toHaveBeenCalledWith(
+      "🔀 Unpaired progressive events",
+      undefined,
+      {
+        label: "missing ending",
+        paired: 1,
+        unpairedBeginnings: 1,
+        unpairedEndings: 0,
+      },
+    );
   });
 
   it("never emits a span that ends before it starts", () => {
@@ -174,9 +189,14 @@ describe(ProgressiveUtilitiesService, () => {
 
     expect(pairs).toStrictEqual([]);
     expect(logger.warn).toHaveBeenCalledWith(
-      "🔀 Mismatched progressive event counts",
+      "🔀 Unpaired progressive events",
       undefined,
-      { beginnings: 1, endings: 1, label: "Mercury retrograde" },
+      {
+        label: "Mercury retrograde",
+        paired: 0,
+        unpairedBeginnings: 1,
+        unpairedEndings: 1,
+      },
     );
   });
 });

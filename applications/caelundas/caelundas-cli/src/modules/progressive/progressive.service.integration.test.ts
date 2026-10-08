@@ -103,24 +103,32 @@ describe("progressiveService span pairing", () => {
   });
 
   it("emits no retrograde span for a window between two Mercury retrogrades", () => {
-    const perfective = [
+    // Station times are illustrative: only their order matters to pairing.
+    const station = (
+      direction: "direct" | "retrograde",
+      iso: string,
+    ): DetectedCalendarEvent =>
       retrogradesService.buildRetrogradeEvent({
         body: "mercury",
-        direction: "direct",
-        timestamp: at("2026-07-23T21:00:00Z"),
-      }),
-      retrogradesService.buildRetrogradeEvent({
-        body: "mercury",
-        direction: "retrograde",
-        timestamp: at("2026-10-24T07:00:00Z"),
-      }),
-    ];
+        direction,
+        timestamp: at(iso),
+      });
+    const between = progressiveService.detect([
+      station("direct", "2026-07-23T21:00:00Z"),
+      station("retrograde", "2026-10-24T07:00:00Z"),
+    ]);
+    const control = progressiveService.detect([
+      station("retrograde", "2026-06-29T17:00:00Z"),
+      station("direct", "2026-07-23T21:00:00Z"),
+    ]);
 
-    const progressive = progressiveService.detect(perfective);
+    expect(spans(between, "☿ ↩️ Mercury Retrograde")).toStrictEqual([]);
+    expect(spans(control, "☿ ↩️ Mercury Retrograde")).toStrictEqual([
+      { end: "2026-07-23T21:00:00.000Z", start: "2026-06-29T17:00:00.000Z" },
+    ]);
 
-    expect(spans(progressive, "☿ ↩️ Mercury Retrograde")).toStrictEqual([]);
-
-    expectNoInvertedSpans(progressive);
+    expectNoInvertedSpans(between);
+    expectNoInvertedSpans(control);
   });
 
   it("pairs every later occurrence of an aspect when the window opens inside its orb", () => {
