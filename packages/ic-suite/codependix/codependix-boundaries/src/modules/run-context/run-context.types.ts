@@ -69,3 +69,12 @@ export interface GraphRunContext {
   selectedProjects: NxProject[];
   workingDirectory: string;
 }
+
+/**
+ * The `--projects` patterns and `--tags` tags a run was given that matched
+ * no project — see `RunContextService.findUnmatchedSelection`.
+ */
+export interface UnmatchedSelection {
+  readonly projects: readonly string[];
+  readonly tags: readonly string[];
+}

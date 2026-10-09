@@ -36,6 +36,9 @@ const FAILURE: JudgedBoundaryFinding<BoundaryCheckFailure> = {
   verdict: "fail",
 };
 
+/** The projects the findings above are charged to, judged by the run. */
+const JUDGED_PROJECTS = ["a", "b", "lexico-cli", "lexico-entities"];
+
 describe(ReportingService, () => {
   let service: ReportingService;
   let loggerService: LoggerService;
@@ -82,17 +85,23 @@ describe(ReportingService, () => {
 
   describe("reportBoundaries", () => {
     it("passes with no failures and no violations", () => {
-      expect(service.reportBoundaries({ failures: [], violations: [] })).toBe(
-        true,
-      );
+      expect(
+        service.reportBoundaries(
+          { failures: [], violations: [] },
+          JUDGED_PROJECTS,
+        ),
+      ).toBe(true);
       expect(loggerService.error).not.toHaveBeenCalled();
     });
 
     it("logs and fails on a failure charged to a judged project", () => {
-      const passed = service.reportBoundaries({
-        failures: [FAILURE],
-        violations: [],
-      });
+      const passed = service.reportBoundaries(
+        {
+          failures: [FAILURE],
+          violations: [],
+        },
+        JUDGED_PROJECTS,
+      );
 
       expect(passed).toBe(false);
       expect(loggerService.error).toHaveBeenCalledWith(
@@ -109,10 +118,13 @@ describe(ReportingService, () => {
     // D3: the container that cannot boot fails, and the line names the
     // dependency owning the class it failed on.
     it("names the project owning the code a failure broke on", () => {
-      service.reportBoundaries({
-        failures: [{ ...FAILURE, ownerProject: "lexico-entities" }],
-        violations: [],
-      });
+      service.reportBoundaries(
+        {
+          failures: [{ ...FAILURE, ownerProject: "lexico-entities" }],
+          violations: [],
+        },
+        JUDGED_PROJECTS,
+      );
 
       expect(loggerService.error).toHaveBeenCalledWith(
         "💥 Failed running codependix",
@@ -126,12 +138,15 @@ describe(ReportingService, () => {
     });
 
     it("passes on findings that are only notes, warning about each", () => {
-      const passed = service.reportBoundaries({
-        failures: [
-          { ...FAILURE, projects: ["lexico-entities"], verdict: "note" },
-        ],
-        violations: [{ ...VIOLATION, projects: ["b"], verdict: "note" }],
-      });
+      const passed = service.reportBoundaries(
+        {
+          failures: [
+            { ...FAILURE, projects: ["lexico-entities"], verdict: "note" },
+          ],
+          violations: [{ ...VIOLATION, projects: ["b"], verdict: "note" }],
+        },
+        JUDGED_PROJECTS,
+      );
 
       expect(passed).toBe(true);
       expect(loggerService.error).not.toHaveBeenCalled();
@@ -150,13 +165,16 @@ describe(ReportingService, () => {
     });
 
     it("fails on a judged violation and still warns about a note beside it", () => {
-      const passed = service.reportBoundaries({
-        failures: [],
-        violations: [
-          VIOLATION,
-          { ...VIOLATION, projects: ["b"], verdict: "note" },
-        ],
-      });
+      const passed = service.reportBoundaries(
+        {
+          failures: [],
+          violations: [
+            VIOLATION,
+            { ...VIOLATION, projects: ["b"], verdict: "note" },
+          ],
+        },
+        JUDGED_PROJECTS,
+      );
 
       expect(passed).toBe(false);
       expect(loggerService.error).toHaveBeenCalledWith(
@@ -171,10 +189,13 @@ describe(ReportingService, () => {
     });
 
     it("logs and fails on a boundary violation, rendered through BoundaryReportService", () => {
-      const passed = service.reportBoundaries({
-        failures: [],
-        violations: [VIOLATION],
-      });
+      const passed = service.reportBoundaries(
+        {
+          failures: [],
+          violations: [VIOLATION],
+        },
+        JUDGED_PROJECTS,
+      );
 
       expect(passed).toBe(false);
       expect(loggerService.error).toHaveBeenCalledWith(
@@ -185,6 +206,80 @@ describe(ReportingService, () => {
           violations: ["nxProjects a: layers: a must not depend on b."],
         },
       );
+    });
+  });
+
+  describe("reportBoundaries for a workspace-wide failure", () => {
+    // Naming every project of a run with no selection prints the workspace.
+    it("counts a failure charged to every judged project instead of naming them", () => {
+      service.reportBoundaries(
+        {
+          failures: [
+            {
+              ...FAILURE,
+              error: "Cannot build the Nx graph",
+              level: "nxProjects",
+              projects: ["a", "b", "c"],
+            },
+          ],
+          violations: [],
+        },
+        ["c", "b", "a"],
+      );
+
+      expect(loggerService.error).toHaveBeenCalledWith(
+        "💥 Failed running codependix",
+        undefined,
+        {
+          failures: [
+            "nxProjects all 3 judged projects: Cannot build the Nx graph",
+          ],
+        },
+      );
+    });
+  });
+
+  describe("reportUnmatchedSelection", () => {
+    it("stays quiet when every entry matched a project", () => {
+      service.reportUnmatchedSelection({ projects: [], tags: [] });
+
+      expect(loggerService.warn).not.toHaveBeenCalled();
+    });
+
+    it("warns naming every project pattern and tag that matched nothing", () => {
+      service.reportUnmatchedSelection({
+        projects: ["typo", "other-typo"],
+        tags: ["scope:nothing"],
+      });
+
+      expect(loggerService.warn).toHaveBeenCalledWith(
+        "🕸️ Ignored selection entries that matched no project",
+        undefined,
+        {
+          hint: "check the spelling — the run judged only the entries that matched",
+          projects: ["typo", "other-typo"],
+          tags: ["scope:nothing"],
+        },
+      );
+    });
+
+    it("leaves out the kind of entry that matched everything", () => {
+      service.reportUnmatchedSelection({ projects: ["typo"], tags: [] });
+
+      expect(loggerService.warn).toHaveBeenCalledWith(
+        "🕸️ Ignored selection entries that matched no project",
+        undefined,
+        {
+          hint: "check the spelling — the run judged only the entries that matched",
+          projects: ["typo"],
+        },
+      );
+    });
+
+    it("never fails the run", () => {
+      service.reportUnmatchedSelection({ projects: ["typo"], tags: [] });
+
+      expect(process.exitCode).toBe(0);
     });
   });
 
@@ -381,6 +476,7 @@ describe(ReportingService, () => {
         service.reportPassOutcomes({
           boundaryOutcome: undefined,
           exportRun: undefined,
+          selectedProjects: JUDGED_PROJECTS.map((name) => ({ name })),
         }),
       ).toBe(true);
     });
@@ -404,6 +500,7 @@ describe(ReportingService, () => {
             ],
           },
         },
+        selectedProjects: JUDGED_PROJECTS.map((name) => ({ name })),
       });
 
       expect(passed).toBe(false);
@@ -413,6 +510,7 @@ describe(ReportingService, () => {
       const passed = service.reportPassOutcomes({
         boundaryOutcome: { failures: [], violations: [VIOLATION] },
         exportRun: CURRENT_RUN,
+        selectedProjects: JUDGED_PROJECTS.map((name) => ({ name })),
       });
 
       expect(passed).toBe(false);
@@ -422,6 +520,7 @@ describe(ReportingService, () => {
       const passed = service.reportPassOutcomes({
         boundaryOutcome: { failures: [], violations: [] },
         exportRun: CURRENT_RUN,
+        selectedProjects: JUDGED_PROJECTS.map((name) => ({ name })),
       });
 
       expect(passed).toBe(true);

@@ -11,6 +11,7 @@ import type { MapRunResult } from "../graph-run/graph-run.types";
 import type {
   BoundaryCheckOutcome,
   BoundaryVerdict,
+  UnmatchedSelection,
 } from "@codependix/boundaries";
 import type { GraphRunOutcome } from "@codependix/core";
 
@@ -70,6 +71,7 @@ export class ReportingService {
       {
         failures: this.boundaryOutcomeReportService.renderFailures(
           notes.failures,
+          [],
         ),
         violations: this.boundaryReportService.renderNotes(notes.violations),
       },
@@ -86,14 +88,22 @@ export class ReportingService {
    * Violations go to the console and the exit code and nowhere else: a list of
    * things currently wrong is not a document worth publishing on the default
    * branch, and not one worth checking for staleness either.
+   *
+   * `judgedProjects` lets a failure charged to every one of them be counted
+   * rather than listed. A note never is: its charge is the dependency it
+   * lives in.
    */
-  reportBoundaries(outcome: BoundaryCheckOutcome): boolean {
+  reportBoundaries(
+    outcome: BoundaryCheckOutcome,
+    judgedProjects: readonly string[],
+  ): boolean {
     const failing = this.filterVerdict(outcome, "fail");
 
     if (failing.failures.length > 0) {
       this.logger.error("💥 Failed running codependix", undefined, {
         failures: this.boundaryOutcomeReportService.renderFailures(
           failing.failures,
+          judgedProjects,
         ),
       });
     }
@@ -201,18 +211,23 @@ export class ReportingService {
    *
    * Both are weighed independently rather than the first failure
    * short-circuiting the second: a run gating both should report both, not
-   * only the one that happened to run first.
+   * only the one that happened to run first. `selectedProjects` are the
+   * projects the boundary pass judged.
    */
   reportPassOutcomes(args: {
     boundaryOutcome: BoundaryCheckOutcome | undefined;
     exportRun: MapRunResult | undefined;
+    selectedProjects: readonly { readonly name: string }[];
   }): boolean {
     const exportsPassed =
       args.exportRun === undefined ||
       this.reportOutcome(args.exportRun.outcome);
     const boundariesPassed =
       args.boundaryOutcome === undefined ||
-      this.reportBoundaries(args.boundaryOutcome);
+      this.reportBoundaries(
+        args.boundaryOutcome,
+        args.selectedProjects.map((project) => project.name),
+      );
 
     return exportsPassed && boundariesPassed;
   }
@@ -233,5 +248,28 @@ export class ReportingService {
     if (args.boundaryOutcome !== undefined) {
       this.logger.info("🕸️ Verified every declared codependix boundary holds");
     }
+  }
+
+  /**
+   * Warns about every `--projects` pattern and `--tags` tag that matched no
+   * project, when the rest of the selection matched at least one.
+   *
+   * A selection in which nothing matched never reaches here — the run is
+   * refused before it starts. This is the partial case: a typo beside a
+   * correct name, which the run narrows past, judging fewer projects than
+   * were named. Never failing, since what did match was still judged.
+   */
+  reportUnmatchedSelection(unmatched: UnmatchedSelection): void {
+    if (unmatched.projects.length + unmatched.tags.length === 0) return;
+
+    this.logger.warn(
+      "🕸️ Ignored selection entries that matched no project",
+      undefined,
+      {
+        hint: "check the spelling — the run judged only the entries that matched",
+        ...(unmatched.projects.length > 0 && { projects: unmatched.projects }),
+        ...(unmatched.tags.length > 0 && { tags: unmatched.tags }),
+      },
+    );
   }
 }

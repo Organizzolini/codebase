@@ -23,7 +23,7 @@ import type {
   GraphRunContext,
 } from "@codependix/boundaries";
 import type { MapCommandOptions } from "@codependix/configuration";
-import type { RunMode } from "@codependix/core";
+import type { CodependixRunMode, RunMode } from "@codependix/core";
 import type {
   CombinedGraphExports,
   CombinedOutputFormat,
@@ -104,6 +104,30 @@ export class MapCommand extends CommandRunner {
   }
 
   /**
+   * Resolves the context every pass reads, warning about any `--projects` or
+   * `--tags` entry that matched no project.
+   *
+   * The warning belongs before the first pass: a typo beside a correct name
+   * narrows the run silently, so it has to be named before the run judges
+   * fewer projects than were asked for.
+   */
+  private async resolveContext(args: {
+    mode: CodependixRunMode;
+    options: MapCommandOptions;
+  }): Promise<GraphRunContext> {
+    const context = await this.runContextService.build({
+      ...args,
+      workingDirectory: path.resolve(args.options.directory ?? process.cwd()),
+    });
+
+    this.reportingService.reportUnmatchedSelection(
+      this.runContextService.findUnmatchedSelection(context),
+    );
+
+    return context;
+  }
+
+  /**
    * Prints and writes the combined output: every active graph type's data
    * when the export pass ran, and the boundary pass's findings beside it when
    * `buildBoundaryReport` carries them.
@@ -166,10 +190,9 @@ export class MapCommand extends CommandRunner {
     options: MapCommandOptions;
   }): Promise<void> {
     const { format, mode, options } = args;
-    const context = await this.runContextService.build({
+    const context = await this.resolveContext({
       mode: mode.writes ? "write" : "check",
       options,
-      workingDirectory: path.resolve(options.directory ?? process.cwd()),
     });
     const exportRun = this.configurationService.touchesFiles(mode)
       ? await this.runExports(context)
@@ -187,7 +210,11 @@ export class MapCommand extends CommandRunner {
     });
 
     if (
-      !this.reportingService.reportPassOutcomes({ boundaryOutcome, exportRun })
+      !this.reportingService.reportPassOutcomes({
+        boundaryOutcome,
+        exportRun,
+        selectedProjects: context.selectedProjects,
+      })
     ) {
       process.exitCode = 1;
       return;

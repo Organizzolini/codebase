@@ -9,7 +9,7 @@ import { Injectable } from "@nestjs/common";
 
 import { emptySelectionError } from "./run-context.constants";
 
-import type { GraphRunContext } from "./run-context.types";
+import type { GraphRunContext, UnmatchedSelection } from "./run-context.types";
 import type {
   CodependixGraphType,
   CodependixProjectConfiguration,
@@ -42,6 +42,30 @@ export class RunContextService {
   // 🔑 Public Fields
 
   // 🔏 Private Methods
+
+  /**
+   * Whether the selection a configuration carries claims one project.
+   *
+   * The one place a project is read into the shape `isProjectSelected`
+   * matches against — its name, its root relative to the workspace, and its
+   * tags — so the run's selection and the probe for an entry that matched
+   * nothing cannot disagree about what a pattern matches.
+   */
+  private isSelectedBy(args: {
+    configuration: ResolvedCodependixConfiguration;
+    project: NxProject;
+    workingDirectory: string;
+  }): boolean {
+    return this.configurationService.isProjectSelected({
+      configuration: args.configuration,
+      projectName: args.project.name,
+      projectRoot: path.relative(
+        args.workingDirectory,
+        args.project.absoluteRoot,
+      ),
+      projectTags: args.project.tags,
+    });
+  }
 
   /**
    * Loads every project's own `codependix.config.ts`, keyed by project name.
@@ -180,11 +204,10 @@ export class RunContextService {
     workingDirectory: string;
   }): NxProject[] {
     return args.projects.filter((project) =>
-      this.configurationService.isProjectSelected({
+      this.isSelectedBy({
         configuration: args.configuration,
-        projectName: project.name,
-        projectRoot: path.relative(args.workingDirectory, project.absoluteRoot),
-        projectTags: project.tags,
+        project,
+        workingDirectory: args.workingDirectory,
       }),
     );
   }
@@ -242,6 +265,49 @@ export class RunContextService {
       projectConfigurations,
       projects,
       workingDirectory,
+    };
+  }
+
+  /**
+   * The `--projects` patterns and `--tags` tags that matched no project.
+   *
+   * Each entry is probed alone, with the selection narrowed to it, so the
+   * answer is exactly what that entry would have selected had it been the
+   * only one given. Only meaningful for a context `build` returned: a
+   * selection in which *nothing* matched never gets that far, since `build`
+   * refuses it. What is left is the partial case — a misspelled name beside
+   * a correct one — which the run silently narrows past, judging fewer
+   * projects than were asked for.
+   */
+  findUnmatchedSelection(
+    context: Pick<
+      GraphRunContext,
+      "configuration" | "projects" | "workingDirectory"
+    >,
+  ): UnmatchedSelection {
+    const { configuration, projects, workingDirectory } = context;
+    const matches = (selection: {
+      projects: string[];
+      tags: string[];
+    }): boolean =>
+      projects.some((project) =>
+        this.isSelectedBy({
+          configuration: {
+            ...configuration,
+            selection: { ...configuration.selection, ...selection },
+          },
+          project,
+          workingDirectory,
+        }),
+      );
+
+    return {
+      projects: configuration.selection.projects.filter(
+        (entry) => !matches({ projects: [entry], tags: [] }),
+      ),
+      tags: configuration.selection.tags.filter(
+        (tag) => !matches({ projects: [], tags: [tag] }),
+      ),
     };
   }
 }
