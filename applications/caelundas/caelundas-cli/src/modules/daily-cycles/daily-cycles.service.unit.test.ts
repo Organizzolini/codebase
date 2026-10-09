@@ -29,7 +29,14 @@ function horizon(
   elevation: number,
   trueElevation = elevation,
 ): HorizonPosition {
-  return { azimuth, elevation, semidiameter: 0.27, trueElevation };
+  return {
+    azimuth,
+    eclipticLatitude: 0,
+    eclipticLongitude: 0,
+    elevation,
+    semidiameter: 0.27,
+    trueElevation,
+  };
 }
 
 /** Three consecutive minutes of true elevation around `minute`, as an ephemeris. */
@@ -42,6 +49,8 @@ function riseSetEphemeris(args: {
   const [previous, current, next] = trueElevations;
   const sample = (trueElevation: number): HorizonPosition => ({
     azimuth: 90,
+    eclipticLatitude: 0,
+    eclipticLongitude: 0,
     elevation: trueElevation,
     semidiameter,
     trueElevation,

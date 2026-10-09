@@ -16,6 +16,7 @@ import { MathService } from "../math/math.service";
 import { IngressesComposerService } from "./ingresses-composer.service";
 import { IngressesService } from "./ingresses.service";
 
+import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { Body } from "../caelundas/caelundas.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 
@@ -266,11 +267,14 @@ describe(IngressesService, () => {
   });
 
   describe("getPeakIngressEvents", () => {
-    it("detects peak ingress when crossing 15° midpoint", () => {
-      const currentMinute = moment("2024-06-15T16:00:00.000Z");
+    // Every body has NaN longitudes except mars, which moves from
+    // `previousLongitude` to `currentLongitude` over one minute.
+    const detectMars = (
+      previousLongitude: number,
+      currentLongitude: number,
+    ): DetectedCalendarEvent[] => {
+      const currentMinute = moment("2026-10-25T12:00:00.000Z");
       const previousMinute = currentMinute.clone().subtract(1, "minute");
-
-      // Create ephemeris for all bodies with NaN longitudes except mars
       const coordinateEphemerisByBody = {} as Record<Body, CoordinateEphemeris>;
       for (const body of peakIngressBodies) {
         coordinateEphemerisByBody[body] = {
@@ -281,50 +285,49 @@ describe(IngressesService, () => {
           },
         };
       }
-
-      // Mars crossing 15° peak in Leo
       coordinateEphemerisByBody.mars = {
-        [currentMinute.toISOString()]: { latitude: 0, longitude: 135.1 },
-        [previousMinute.toISOString()]: { latitude: 0, longitude: 134.9 },
+        [currentMinute.toISOString()]: {
+          latitude: 0,
+          longitude: currentLongitude,
+        },
+        [previousMinute.toISOString()]: {
+          latitude: 0,
+          longitude: previousLongitude,
+        },
       };
-
-      const events = service.getPeakIngressEvents({
+      return service.getPeakIngressEvents({
         coordinateEphemerisByBody,
         minute: currentMinute,
       });
+    };
+
+    it("detects peak ingress when crossing 15° midpoint", () => {
+      // Mars crossing 15° peak in Leo
+      const events = detectMars(134.9, 135.1);
 
       expect(events).toHaveLength(1);
       expect(events[0]?.categories).toContain("Peak");
     });
 
     it("does not detect ingress when no peak boundary is crossed", () => {
-      const currentMinute = moment("2024-06-20T12:00:00.000Z");
-      const previousMinute = currentMinute.clone().subtract(1, "minute");
-
-      // Create ephemeris for all bodies with NaN longitudes except mars
-      const coordinateEphemerisByBody = {} as Record<Body, CoordinateEphemeris>;
-      for (const body of peakIngressBodies) {
-        coordinateEphemerisByBody[body] = {
-          [currentMinute.toISOString()]: { latitude: 0, longitude: Number.NaN },
-          [previousMinute.toISOString()]: {
-            latitude: 0,
-            longitude: Number.NaN,
-          },
-        };
-      }
-
       // Mars at 140.5° (no peak boundary)
-      coordinateEphemerisByBody.mars = {
-        [currentMinute.toISOString()]: { latitude: 0, longitude: 140.5 },
-        [previousMinute.toISOString()]: { latitude: 0, longitude: 140.4 },
-      };
+      expect(detectMars(140.4, 140.5)).toHaveLength(0);
+    });
 
-      const events = service.getPeakIngressEvents({
-        coordinateEphemerisByBody,
-        minute: currentMinute,
-      });
+    it("detects a backward crossing of 15 degrees", () => {
+      expect(detectMars(195.1, 194.9)).toHaveLength(1);
+    });
 
-      expect(events).toHaveLength(0);
+    it("does not detect a peak when re-entering a sign backwards", () => {
+      // 210.01 -> 209.99 is Scorpio -> Libra, 180.01 -> 179.99 is Libra ->
+      // Virgo, 30.01 -> 29.99 is Taurus -> Aries; none is a peak.
+      expect(detectMars(210.01, 209.99)).toHaveLength(0);
+      expect(detectMars(180.01, 179.99)).toHaveLength(0);
+      expect(detectMars(30.01, 29.99)).toHaveLength(0);
+    });
+
+    it("does not detect a peak when entering a sign forwards", () => {
+      expect(detectMars(29.99, 30.01)).toHaveLength(0);
     });
   });
 
@@ -730,6 +733,12 @@ describe(IngressesService, () => {
 
         expect(
           s.isPeakIngress({ currentLongitude: 45.1, previousLongitude: 44.9 }),
+        ).toBe(true);
+      });
+
+      it("returns true when crossing 15 degrees backwards", () => {
+        expect(
+          s.isPeakIngress({ currentLongitude: 44.9, previousLongitude: 45.1 }),
         ).toBe(true);
       });
 

@@ -1,3 +1,5 @@
+antisolar
+antumbra
 apoapsis
 APOG
 apside
@@ -25,6 +27,7 @@ caelunday
 coeli
 CSPICE
 Cyice
+Danjon
 decan
 decans
 duodecuple
@@ -35,6 +38,7 @@ ephemeris
 epimethean
 epimethian
 ERFA
+Espenak
 geopos
 hexadecan
 hexadecans
@@ -61,6 +65,7 @@ quincunx
 samhain
 SEFLG
 semidiameter
+semidiameters
 semisextile
 semisquare
 semo

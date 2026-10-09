@@ -69,7 +69,9 @@ export class EphemerisHorizonService {
   /**
    * Computes horizontal coordinates for a single body at a specific moment, from its
    * topocentric position: parallax is applied, so the Moon sits where the observer sees it.
-   * Returns azimuth, apparent and true elevation, and the topocentric semidiameter.
+   * Returns azimuth, apparent and true elevation, the topocentric ecliptic position
+   * and the topocentric semidiameter. Swiss Ephemeris measures azimuth from South,
+   * so it is turned half a circle to measure from North.
    */
   public computeAzimuthElevationForMinute(args: {
     body: AzimuthElevationEphemerisBody;
@@ -101,7 +103,9 @@ export class EphemerisHorizonService {
       [longitude, latitude, distance],
     );
     return {
-      azimuth: azaltResult[0],
+      azimuth: (azaltResult[0] + 180) % 360,
+      eclipticLatitude: latitude,
+      eclipticLongitude: longitude,
       elevation: azaltResult[2],
       semidiameter: this.computeSemidiameter({ body, distance }),
       trueElevation: azaltResult[1],

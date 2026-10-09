@@ -193,6 +193,53 @@ describe(MathService, () => {
     });
   });
 
+  describe("crossesUpwardNearCurrent", () => {
+    it("claims a crossing in the second half of the minute before", () => {
+      expect(
+        service.crossesUpwardNearCurrent({ current: 1, next: 2, previous: -3 }),
+      ).toBe(true);
+    });
+
+    it("leaves a crossing in the first half of the minute before to it", () => {
+      expect(
+        service.crossesUpwardNearCurrent({ current: 3, next: 4, previous: -1 }),
+      ).toBe(false);
+    });
+
+    it("claims a crossing in the first half of the minute after", () => {
+      expect(
+        service.crossesUpwardNearCurrent({
+          current: -1,
+          next: 3,
+          previous: -2,
+        }),
+      ).toBe(true);
+    });
+
+    it("leaves a crossing in the second half of the minute after to it", () => {
+      expect(
+        service.crossesUpwardNearCurrent({
+          current: -3,
+          next: 1,
+          previous: -4,
+        }),
+      ).toBe(false);
+    });
+
+    it("ignores downward crossings and values that stay on one side", () => {
+      expect(
+        service.crossesUpwardNearCurrent({
+          current: -1,
+          next: -2,
+          previous: 1,
+        }),
+      ).toBe(false);
+      expect(
+        service.crossesUpwardNearCurrent({ current: 2, next: 3, previous: 1 }),
+      ).toBe(false);
+    });
+  });
+
   describe("getCombinations", () => {
     it("returns empty array for k=0", () => {
       expect(service.getCombinations([1, 2, 3], 0)).toStrictEqual([[]]);

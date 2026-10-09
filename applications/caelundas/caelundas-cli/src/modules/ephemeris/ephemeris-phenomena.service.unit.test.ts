@@ -106,46 +106,15 @@ describe(EphemerisPhenomenaService, () => {
     expect(service).toBeDefined();
   });
 
-  describe("computeDiameterForBody", () => {
-    it("returns diameter from pheno data[3]", () => {
-      const result = service.computeDiameterForBody({
-        body: "sun",
-        end: moment.utc("2024-03-21T00:01:00.000Z"),
-        start: moment.utc("2024-03-21T00:00:00.000Z"),
-      });
-
-      for (const value of Object.values(result)) {
-        expect(value.diameter).toBe(0.5);
-      }
-    });
-
-    it("throws when pheno diameter calculation fails", () => {
-      vi.mocked(pheno_ut).mockReturnValueOnce({
-        data: [0, 0, 0, 0, 0],
-        error: "diameter failure",
-        flag: -1,
-      });
-
-      expect(() =>
-        service.computeDiameterForBody({
-          body: "moon",
-          end: moment.utc("2024-03-21T00:01:00.000Z"),
-          start: moment.utc("2024-03-21T00:00:00.000Z"),
-        }),
-      ).toThrow("pheno_ut failed for moon: diameter failure");
-    });
-  });
-
   describe("computePhenoForMinute", () => {
-    it("sets sun illumination and diameter", () => {
+    it("sets sun illumination without calling pheno_ut", () => {
       const illuminationEphemeris = {};
-      const diameterEphemeris = {};
+      vi.mocked(pheno_ut).mockClear();
+
       service.computePhenoForMinute({
         body: "sun",
-        diameterEphemeris,
         illuminationEphemeris,
         julianDayUniversalTime: 2_460_395.499_306,
-        needsDiameter: true,
         needsIllumination: true,
         swissEphemerisConstant: 0,
         timestamp: "2024-03-21T00:00:00.000Z",
@@ -158,55 +127,7 @@ describe(EphemerisPhenomenaService, () => {
           phaseAngle: 0,
         },
       });
-      expect(diameterEphemeris).toStrictEqual({
-        "2024-03-21T00:00:00.000Z": { diameter: 0.5 },
-      });
-    });
-
-    it("throws when sun diameter calculation fails", () => {
-      vi.mocked(pheno_ut).mockReturnValueOnce({
-        data: [0, 0, 0, 0, 0],
-        error: "sun diameter failure",
-        flag: -1,
-      });
-
-      expect(() =>
-        service.computePhenoForMinute({
-          body: "sun",
-          diameterEphemeris: {},
-          illuminationEphemeris: {},
-          julianDayUniversalTime: 2_460_395.499_306,
-          needsDiameter: true,
-          needsIllumination: true,
-          swissEphemerisConstant: 0,
-          timestamp: "2024-03-21T00:00:00.000Z",
-        }),
-      ).toThrow("pheno_ut failed for sun: sun diameter failure");
-    });
-
-    it("writes only sun illumination when diameter is not requested", () => {
-      const illuminationEphemeris = {};
-      const diameterEphemeris = {};
-
-      service.computePhenoForMinute({
-        body: "sun",
-        diameterEphemeris,
-        illuminationEphemeris,
-        julianDayUniversalTime: 2_460_395.499_306,
-        needsDiameter: false,
-        needsIllumination: true,
-        swissEphemerisConstant: 0,
-        timestamp: "2024-03-21T00:00:00.000Z",
-      });
-
-      expect(illuminationEphemeris).toStrictEqual({
-        "2024-03-21T00:00:00.000Z": {
-          illumination: 100,
-          magnitude: -26.74,
-          phaseAngle: 0,
-        },
-      });
-      expect(diameterEphemeris).toStrictEqual({});
+      expect(pheno_ut).not.toHaveBeenCalled();
     });
 
     it("throws when pheno fails", () => {
@@ -219,10 +140,8 @@ describe(EphemerisPhenomenaService, () => {
       expect(() =>
         service.computePhenoForMinute({
           body: "moon",
-          diameterEphemeris: {},
           illuminationEphemeris: {},
           julianDayUniversalTime: 2_460_395.499_306,
-          needsDiameter: true,
           needsIllumination: true,
           swissEphemerisConstant: 0,
           timestamp: "2024-03-21T00:00:00.000Z",
@@ -230,16 +149,13 @@ describe(EphemerisPhenomenaService, () => {
       ).toThrow("pheno_ut failed for moon");
     });
 
-    it("writes only requested non-sun outputs for pheno", () => {
+    it("writes non-sun illumination from pheno", () => {
       const illuminationEphemeris = {};
-      const diameterEphemeris = {};
 
       service.computePhenoForMinute({
         body: "moon",
-        diameterEphemeris,
         illuminationEphemeris,
         julianDayUniversalTime: 2_460_395.499_306,
-        needsDiameter: false,
         needsIllumination: true,
         swissEphemerisConstant: 0,
         timestamp: "2024-03-21T00:00:00.000Z",
@@ -252,48 +168,37 @@ describe(EphemerisPhenomenaService, () => {
           phaseAngle: 95,
         },
       });
-      expect(diameterEphemeris).toStrictEqual({});
     });
 
-    it("writes diameter only when illumination is not requested", () => {
+    it("writes no non-sun outputs when illumination is not requested", () => {
       const illuminationEphemeris = {};
-      const diameterEphemeris = {};
 
       service.computePhenoForMinute({
         body: "moon",
-        diameterEphemeris,
         illuminationEphemeris,
         julianDayUniversalTime: 2_460_395.499_306,
-        needsDiameter: true,
         needsIllumination: false,
         swissEphemerisConstant: 0,
         timestamp: "2024-03-21T00:00:00.000Z",
       });
 
       expect(illuminationEphemeris).toStrictEqual({});
-      expect(diameterEphemeris).toStrictEqual({
-        "2024-03-21T00:00:00.000Z": { diameter: 0.5 },
-      });
     });
 
-    it("writes no sun outputs when neither illumination nor diameter is requested", () => {
+    it("writes no sun outputs when illumination is not requested", () => {
       const illuminationEphemeris = {};
-      const diameterEphemeris = {};
       vi.mocked(pheno_ut).mockClear();
 
       service.computePhenoForMinute({
         body: "sun",
-        diameterEphemeris,
         illuminationEphemeris,
         julianDayUniversalTime: 2_460_395.499_306,
-        needsDiameter: false,
         needsIllumination: false,
         swissEphemerisConstant: 0,
         timestamp: "2024-03-21T00:00:00.000Z",
       });
 
       expect(illuminationEphemeris).toStrictEqual({});
-      expect(diameterEphemeris).toStrictEqual({});
       expect(pheno_ut).not.toHaveBeenCalled();
     });
   });

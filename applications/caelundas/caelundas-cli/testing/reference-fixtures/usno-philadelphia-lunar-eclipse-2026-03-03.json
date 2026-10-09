@@ -1,0 +1,38 @@
+{
+  "counts": {
+    "📍 🌙🐉 Total Lunar Eclipse (Topocentric Visibility)": 1,
+    "📍 🌙🐉▶️ Total Lunar Eclipse begins": 1,
+    "📍 🌙🐉◀️ Total Lunar Eclipse ends": 1
+  },
+  "events": [
+    {
+      "note": "NASA P1 08:44:22 UT (https://eclipse.gsfc.nasa.gov/LEplot/LEplot2001/LE2026Mar03T.pdf); the Moon has been up since USNO's moonrise at 22:15 UT on 2 March",
+      "start": "2026-03-03T08:44:22Z",
+      "summary": "📍 🌙🐉▶️ Total Lunar Eclipse begins"
+    },
+    {
+      "note": "USNO moonset 11:33 UT ends the eclipse for Philadelphia, before P4 at 14:22:59. Greatest eclipse (11:33:37 UT) falls within a minute of moonset, so the local maximum is not asserted either way",
+      "start": "2026-03-03T11:33:00Z",
+      "summary": "📍 🌙🐉◀️ Total Lunar Eclipse ends"
+    },
+    {
+      "end": "2026-03-03T11:33:00Z",
+      "note": "The local span runs from P1 to moonset",
+      "start": "2026-03-03T08:44:22Z",
+      "summary": "📍 🌙🐉 Total Lunar Eclipse (Topocentric Visibility)"
+    }
+  ],
+  "name": "The total lunar eclipse of 3 March 2026 seen from Philadelphia, cut short by moonset",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "US Naval Observatory, Moon rise and set for Philadelphia (39.949309, -75.17169), UT",
+    "url": "https://aa.usno.navy.mil/api/rstt/oneday?date=2026-03-03&coords=39.949309,-75.17169&tz=0"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-03-04",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-03-03"
+  }
+}

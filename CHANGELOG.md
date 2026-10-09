@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.3](https://github.com/organizzolini/codebase/compare/v3.0.2...v3.0.3) (2026-10-09)
+
+### 🐛 Bug Fixes
+
+* **caelundas:** 🐛 make peak ingress direction-aware ([#1418](https://github.com/organizzolini/codebase/issues/1418)) ([53b28bf](https://github.com/organizzolini/codebase/commit/53b28bf36273f40e33dfa9bcf13ca2ab0dcc5384)), closes [#1383](https://github.com/organizzolini/codebase/issues/1383) [#1384](https://github.com/organizzolini/codebase/issues/1384) [#1341](https://github.com/organizzolini/codebase/issues/1341) [#1408](https://github.com/organizzolini/codebase/issues/1408)
+
 ## [3.0.2](https://github.com/organizzolini/codebase/compare/v3.0.1...v3.0.2) (2026-10-09)
 
 ### 🐛 Bug Fixes

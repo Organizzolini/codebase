@@ -764,4 +764,37 @@ describe(SpecialtyAspectsService, () => {
       ).toBeNull();
     });
   });
+
+  describe("detectActive", () => {
+    it("lists the quintile in orb at this minute and the minutes either side", () => {
+      const minute = moment.utc("2026-10-01T04:00:00Z");
+      const instants = [
+        minute.clone().subtract(1, "minute"),
+        minute,
+        minute.clone().add(1, "minute"),
+      ].map((instant) => instant.toISOString());
+      const coordinateEphemerisByBody = Object.fromEntries(
+        specialtyAspectBodies.map((body) => [
+          body,
+          Object.fromEntries(
+            instants.map((instant) => [
+              instant,
+              { latitude: 0, longitude: body === "mercury" ? 72.5 : 0 },
+            ]),
+          ),
+        ]),
+      ) as Record<Body, CoordinateEphemeris>;
+
+      const active = service.detectActive({
+        coordinateEphemerisByBody,
+        minute,
+      });
+
+      expect(active).toHaveLength(17);
+      expect(active).toContainEqual({
+        aspect: "quintile",
+        bodies: ["sun", "mercury"],
+      });
+    });
+  });
 });

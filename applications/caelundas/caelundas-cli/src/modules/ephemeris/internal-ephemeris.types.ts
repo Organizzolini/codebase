@@ -2,7 +2,6 @@ import type { Body, Node } from "../caelundas/caelundas.types";
 import type {
   AzimuthElevationEphemeris,
   CoordinateEphemeris,
-  DiameterEphemeris,
   DistanceEphemeris,
   IlluminationEphemeris,
 } from "./ephemeris.types";
@@ -15,7 +14,6 @@ import type { Moment } from "moment-timezone";
 export interface EphemerisAccumulators {
   readonly azimuthElevationEphemeris: AzimuthElevationEphemeris;
   readonly coordinateEphemeris: CoordinateEphemeris;
-  readonly diameterEphemeris: DiameterEphemeris;
   readonly distanceEphemeris: DistanceEphemeris;
   readonly illuminationEphemeris: IlluminationEphemeris;
 }
@@ -26,7 +24,6 @@ export interface EphemerisAccumulators {
 export interface EphemerisEntries {
   readonly azimuthEntries: [Body, AzimuthElevationEphemeris][];
   readonly coordinateEntries: [Body, CoordinateEphemeris][];
-  readonly diameterEntries: [Body, DiameterEphemeris][];
   readonly distanceEntries: [Body, DistanceEphemeris][];
   readonly illuminationEntries: [Body, IlluminationEphemeris][];
 }
@@ -37,7 +34,6 @@ export interface EphemerisEntries {
  */
 export interface EphemerisFeatureSets {
   readonly azimuthElevationSet: Set<Body>;
-  readonly diameterSet: Set<Body>;
   readonly distanceSet: Set<Body>;
   readonly illuminationSet: Set<Body>;
 }
@@ -58,7 +54,6 @@ export interface NonNodeBodyMinuteProcessingArguments {
   readonly body: Exclude<Body, Node>;
   readonly date: Moment;
   readonly needsAzimuth: boolean;
-  readonly needsDiameter: boolean;
   readonly needsDistance: boolean;
   readonly needsIllumination: boolean;
   readonly observerLatitude: number;
