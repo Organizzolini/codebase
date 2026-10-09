@@ -41,9 +41,11 @@ export interface SolarCycleLongitudes {
   previousLongitude: number;
 }
 
-/** Distances sampled for one-minute solar apsis extrema detection. */
+/**
+ * Radial speeds (AU per day) of the Sun at a minute and the minute before it,
+ * for sign-change apsis detection.
+ */
 export interface SolarDistanceSample {
   current: number;
-  next: number;
   previous: number;
 }
