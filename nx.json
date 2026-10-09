@@ -575,16 +575,13 @@
       "dependsOn": [
         "callidescope-gate",
         "check-catalog-manifests",
-        {
-          "projects": ["codebase"],
-          "target": "codependix"
-        },
         "check-lockfile",
         "check-readme-projects",
+        "codependix-gate",
         "conformetry-validate",
         "sync-vscode-extensions"
       ],
-      "description": "Aggregator for guard-code. `callidescope-gate` is callidescope's inferred per-project call-stack gate; it has no configurations, so the one `guard-code` is run with falls through to its defaults. `codependix` is pinned to the `codebase` project so every project's guard reaches the one workspace-wide boundary check, which Nx runs once however many projects are affected; `check` forwards to its `--check boundaries`.",
+      "description": "Aggregator for guard-code. `callidescope-gate` and `codependix-gate` are the inferred per-project gates, call-stack depth and dependency boundaries; neither has configurations, so the one `guard-code` is run with falls through to their defaults. `codependix-gate` builds its graphs over the project it is run for and that project's dependencies, charges each finding to the project that owns it, and fails only for a finding charged to that project, so `nx affected` scopes it to the projects a change touched. The workspace-wide `codebase:codependix` target is not reachable from here: it is write-only, and the release workflow runs it on the default branch.",
       "executor": "nx:noop"
     },
     "knip": [

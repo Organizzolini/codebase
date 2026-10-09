@@ -1,6 +1,6 @@
 ---
 name: codependix-triage
-description: Act on a codependix run that failed or reported drift — a boundary violation, a --check reports run that found stale exports, a project that failed its export, a missing anchor block, a NestJS container that failed to boot, a rejected command line, or a --write that produced no files at all. Use when codependix exits non-zero, when an edge or a cycle breaks a declared rule, when a committed Mermaid block disagrees with a fresh run, when a graph export is missing for one project but not others, or before hand-editing an exported diagram or loosening a rule to make a check pass.
+description: Act on a codependix run that failed or reported drift — a boundary violation, a --check reports run that found stale exports, a project that failed its export, a missing anchor block, a NestJS container that failed to boot, a rejected command line, or a --write that produced no files at all. Use when codependix exits non-zero, when a codependix-gate target fails, when an edge or a cycle breaks a declared rule, when a committed Mermaid block disagrees with a fresh run, when a graph export is missing for one project but not others, or before hand-editing an exported diagram or loosening a rule to make a check pass.
 license: MIT
 ---
 
@@ -16,7 +16,18 @@ wrote nothing at all is usually neither.
 
 `--check boundaries` found an edge, or a cycle, that a declared rule
 condemns. Each violation names the graph level, the scope it was found in, the
-rule, both endpoints, and whatever the rule says about why it exists.
+rule, both endpoints, the project or projects it is charged to, and whatever
+the rule says about why it exists.
+
+**Start from the project the failure names.** In an Nx workspace each project
+has its own `codependix-gate` target, so a red `nx run <project>:codependix-gate`
+means a finding is charged to that project: a forbidden edge to the project
+owning its source, a cycle to every project on it. Reproduce it with the same
+target, or with `codependix map --check boundaries --projects <project>`,
+adding `--format json` to read the findings as data. The finding that fails a
+gate is the one charged to its project; a line reading "in dependency X, not
+failing" is a note, and X's own gate is the one that fails. Fix it where the
+note says it lives, not in the project that printed it.
 
 **This is the one finding a re-run never fixes.** Nothing is stale and nothing
 needs regenerating: the edge is in the code, and one of two things has to give.
@@ -101,6 +112,14 @@ database contacted, so what breaks this pass is always something that throws
 while modules are being _registered_ — a module whose static `forRoot` argument
 reads a variable that is absent, a top-level throw in a module file, or a
 project whose root module does not export what the pass expects. Look there.
+
+The failure is charged to the project whose container failed to boot, and its
+message names the project that owns the module or class it failed on when that
+is a different one — a project importing an entity package that throws on
+import fails alongside it, and the owner is where the repair goes. A
+value-import cycle between entity files, where a decorator reads a class
+before its module finished evaluating, surfaces here as `Cannot access 'X'
+before initialization` — a boot failure, not an `acyclic` finding.
 
 An application is rooted in `src/main.module.ts` and its `MainModule` export; a
 library package with no such file is rooted in a synthetic module built from
