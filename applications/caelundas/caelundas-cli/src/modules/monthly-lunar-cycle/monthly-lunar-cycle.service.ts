@@ -9,10 +9,12 @@ import { symbolByLunarPhase } from "../caelundas/symbol-caelundas.constants";
 import { CalendarService } from "../calendar/calendar.service";
 import { EphemerisService } from "../ephemeris/ephemeris.service";
 
+import { LunarApsidesService } from "./lunar-apsides.service";
 import { ELONGATION_BY_LUNAR_PHASE } from "./monthly-lunar-cycle.constants";
 
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { LunarPhase } from "../caelundas/caelundas.types";
+import type { DistanceEphemeris } from "../ephemeris/ephemeris.types";
 import type {
   DetectMonthlyLunarCycleArguments,
   ElongationWindow,
@@ -35,6 +37,7 @@ export class MonthlyLunarCycleService {
     private readonly calendarService: CalendarService,
     private readonly logger: LoggerService,
     private readonly ephemerisService: EphemerisService,
+    private readonly lunarApsidesService: LunarApsidesService,
   ) {
     this.logger.setContext(MonthlyLunarCycleService.name);
   }
@@ -286,6 +289,18 @@ export class MonthlyLunarCycleService {
     return this.getLunarPhases(args).map((lunarPhase) =>
       this.buildMonthlyLunarCycleEvent({ date: minute, lunarPhase }),
     );
+  }
+
+  /**
+   * Detects a lunar apogee or perigee at a specific minute.
+   *
+   * @see {@link LunarApsidesService.detect} for the radial-speed test
+   */
+  detectApsides(args: {
+    minute: Moment;
+    moonDistanceEphemeris: DistanceEphemeris;
+  }): DetectedCalendarEvent[] {
+    return this.lunarApsidesService.detect(args);
   }
 
   /**

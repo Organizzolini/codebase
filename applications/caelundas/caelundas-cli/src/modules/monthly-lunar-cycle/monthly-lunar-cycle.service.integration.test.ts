@@ -9,6 +9,7 @@ import { CalendarService } from "../calendar/calendar.service";
 import { EphemerisModule } from "../ephemeris/ephemeris.module";
 import { MathService } from "../math/math.service";
 
+import { LunarApsidesService } from "./lunar-apsides.service";
 import { MonthlyLunarCycleService } from "./monthly-lunar-cycle.service";
 
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
@@ -70,6 +71,7 @@ describe("monthly-lunar-cycle.events integration", () => {
     const module = await Test.createTestingModule({
       imports: [EphemerisModule],
       providers: [
+        LunarApsidesService,
         MonthlyLunarCycleService,
         CalendarService,
         {

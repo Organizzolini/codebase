@@ -170,6 +170,10 @@ export class PerfectiveService {
         moonCoordinateEphemeris: coordinateEphemerisByBody.moon,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
       }),
+      ...this.monthlyLunarCycleService.detectApsides({
+        minute,
+        moonDistanceEphemeris: distanceEphemerisByBody.moon,
+      }),
       ...this.annualSolarCycleService.detect({
         minute,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
