@@ -207,10 +207,22 @@ export class EphemerisService {
     fieldName: "azimuth" | "elevation" | "semidiameter" | "trueElevation",
   ): number {
     const data = ephemeris[timestamp];
-    if (data?.[fieldName] === undefined) {
+    if (data === undefined) {
       throw new Error(`Missing ${fieldName} at ${timestamp}`);
     }
-    return data[fieldName];
+    if (fieldName === "semidiameter") {
+      if (data.semidiameter === undefined) {
+        throw new Error(`Missing ${fieldName} at ${timestamp}`);
+      }
+      return data.semidiameter;
+    }
+    if (fieldName === "trueElevation") {
+      if (data.trueElevation === undefined) {
+        throw new Error(`Missing ${fieldName} at ${timestamp}`);
+      }
+      return data.trueElevation;
+    }
+    return fieldName === "azimuth" ? data.azimuth : data.elevation;
   }
 
   /**
