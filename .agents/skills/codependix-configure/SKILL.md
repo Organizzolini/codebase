@@ -201,10 +201,10 @@ draws the graph over the projects it named, and writes it wherever
 { projectGraph: "artifacts/graph.json" }
 ```
 
-A path, relative to the workspace root, to the JSON `nx graph
---file=graph.json` emits. Named, it is read instead of resolving the process
-working directory's own graph — the only way to graph a workspace the process
-is not standing in. Left out, nothing changes.
+A path, relative to the workspace root, to the JSON
+`nx graph --file=graph.json` emits. Named, it is read instead of resolving the
+process working directory's own graph — the only way to graph a workspace the
+process is not standing in. Left out, nothing changes.
 
 The file is **trusted**: only a file that is not a project graph at all is
 refused. See `codependix-export` for what that does and does not cover.
@@ -289,6 +289,10 @@ Four things to know before writing one:
   every container is booted in preview mode, and declaring `imports` rules
   means a `ts.Program` per project. Declare only the levels you actually gate.
 
+**Write rules that already hold.** A rule that arrives red is a backlog rather
+than a gate, and a red pipeline nobody can act on teaches people to ignore it.
+Verify a candidate rule against the whole workspace before committing it.
+
 ### Which project a finding fails
 
 A finding is charged to projects, and a run fails only when one is charged to a
@@ -311,9 +315,10 @@ owner.
 ## The per-project gate
 
 In an Nx workspace the `@codependix/nx` plugin infers a `codependix-gate` target
-for every project but the workspace root, which runs `--check boundaries
---projects <project>` over that project and its dependencies. Register it once
-in `nx.json`:
+for every project described by a `project.json`, except the workspace root. It
+runs `--check boundaries --projects <project>` over that project and its
+dependencies. A project Nx infers from a `package.json` alone gets no gate until
+it is given a `project.json`. Register the plugin once in `nx.json`:
 
 ```json
 {
@@ -331,11 +336,25 @@ in `nx.json`:
 
 `configurationPath` names the one configuration every gate reads; omit it and
 `codependix.config.ts`, then `configuration/codependix.config.ts`, are
-searched. A project's own `codependix.config.*` is a cache input of its gate,
-so editing it re-runs that gate. Nothing else is configured per project: the
-rules in `boundaries` judge every project the same way. See `codependix-export`
-for running a gate.
+searched. Nothing else is configured per project: the rules in `boundaries`
+judge every project the same way. See `codependix-export` for running a gate.
 
-**Write rules that already hold.** A rule that arrives red is a backlog rather
-than a gate, and a red pipeline nobody can act on teaches people to ignore it.
-Verify a candidate rule against the whole workspace before committing it.
+The gate runs the command line under the `@swc-node/register` hooks the plugin
+registers itself, so the workspace installs nothing for them. The workspace root
+does need a `tsconfig.json` that emits decorator metadata, because the hooks
+read it from the working directory and NestJS constructor injection depends on
+it.
+
+The gate is cached. A project's own `codependix.config.*` is one of its cache
+inputs, so editing it re-runs that gate. So is the codependix command line
+itself: its `package.json` and sources when it is a package of the workspace, or
+its installed version when it comes from a registry. So is the workspace root's
+`tsconfig.json`, which the loader reads. Test files are not inputs, so a
+test-only edit to the tool invalidates no gate beyond that package's own and
+its dependents', while any other edit re-runs them all. A package the plugin
+cannot resolve loses only its own inputs, and Nx's logger warns naming it.
+
+A gate whose `projects` or `tags` select anything other than its own project —
+on the command line, in the target's options, or in a named Nx configuration —
+is never replayed from the cache, because it judges projects its inputs do not
+cover. A gate judging only its own project is cached as usual.

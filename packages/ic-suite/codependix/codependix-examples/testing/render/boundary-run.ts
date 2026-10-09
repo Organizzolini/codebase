@@ -49,6 +49,34 @@ export interface BoundaryRunArguments {
 
 // 🏃 Running
 
+/** Names the projects a run built, so a guide quotes the run rather than a guess. */
+export function describeBuilt(run: BoundaryRun): string {
+  const names = run.builtProjects.map((name) => `\`${name}\``).join(", ");
+
+  return `The run built ${names}.`;
+}
+
+/** Names a run's exit code, so a guide quotes the run rather than a guess. */
+export function describeExit(run: BoundaryRun): string {
+  return `The exit code is \`${run.exitCode}\`.`;
+}
+
+/** Counts a run's findings, so a guide quotes the run rather than a guess. */
+export function describeFindings(run: BoundaryRun): string {
+  const count = run.outcome.violations.length + run.outcome.failures.length;
+
+  return count === 0
+    ? "The run found nothing."
+    : `The run found ${String(count)} finding${count === 1 ? "" : "s"}.`;
+}
+
+/** Names the projects a run judged, so a guide quotes the run rather than a guess. */
+export function describeJudged(run: BoundaryRun): string {
+  const names = run.judged.map((name) => `\`${name}\``).join(", ");
+
+  return `The run judged ${names}.`;
+}
+
 /**
  * Renders a run the way a reader would see it: what was judged, what was
  * built, the exit code, and each project's findings.

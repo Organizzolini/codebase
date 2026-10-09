@@ -15,7 +15,7 @@ drifted; `:write` regenerates it.
 
 ## A dependent of a cycle is told, not failed
 
-The workspace is the one in [`boundary-cycles`](../boundary-cycles/README.md). `shop-web` depends on `shop-checkout`, so both halves of the cycle are built — but neither is judged. The finding is reported under the dependency it lives in, marked `note`, and the exit code is `0`. `shop-web` cannot fix it, and it did not break `shop-web`.
+The workspace is the one in [`boundary-cycles`](../boundary-cycles/README.md). `shop-web` depends on `shop-checkout`, which is one half of the cycle. The run judged `shop-web`. The run built `shop-checkout`, `shop-pricing`, `shop-web`. The finding is reported under the dependency it lives in, marked `note`. The exit code is `0`. `shop-web` cannot fix it, and it did not break `shop-web`.
 
 ```text
 judged:  shop-web
@@ -55,7 +55,7 @@ Judged projects: shop-pricing, shop-web.
 
 ## `--no-dependencies` never builds the dependencies at all
 
-Only `shop-web` is built, so the cycle behind it is not in the graph and there is nothing to note. Charging still works as before — a finding in a project that is built is charged to the projects that own it — but a dependency left out of the build cannot have a finding.
+The run built `shop-web`. The run found nothing. Charging still works as before — a finding in a project that is built is charged to the projects that own it — but a dependency left out of the build cannot have a finding.
 
 ```text
 judged:  shop-web
