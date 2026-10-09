@@ -5,7 +5,7 @@ import { z } from "zod";
 
 import { aspectBodies } from "../src/modules/caelundas/caelundas.constants";
 
-import { referenceSourceSchema } from "./reference-fixtures.constants";
+import { referenceFixtureSchema } from "./reference-fixtures.constants";
 
 /** Where committed reference longitude fixtures live, one `<name>.json` each. */
 export const REFERENCE_LONGITUDES_DIRECTORY = path.join(
@@ -37,7 +37,7 @@ export const stelliumLongitudeFixtureSchema = z.strictObject({
   name: z.string().min(1),
   note: z.string().min(1),
   retrieved: z.iso.date(),
-  source: referenceSourceSchema.extend({
+  source: referenceFixtureSchema.extend({
     commandByBody: z.partialRecord(bodySchema, z.string().min(1)),
   }),
   spans: z.array(stelliumEventSchema.required({ end: true })).min(1),

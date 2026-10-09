@@ -2,15 +2,17 @@ import { Injectable } from "@nestjs/common";
 
 import { LoggerService } from "@codebase/logging";
 
-import { MathService } from "../math/math.service";
-
 import { EclipseEventService } from "./eclipse-event.service";
 import { EclipseGeometryService } from "./eclipse-geometry.service";
 
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { EclipsePhase } from "../caelundas/caelundas.types";
 import type { AzimuthElevationEphemeris } from "../ephemeris/ephemeris.types";
-import type { EclipseCoordinates } from "./eclipses.types";
+import type {
+  EclipseCoordinates,
+  LunarEclipseType,
+  SolarEclipseType,
+} from "./eclipses.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -22,7 +24,6 @@ export class EclipseTopocentricService {
 
   constructor(
     private readonly logger: LoggerService,
-    private readonly mathService: MathService,
     private readonly eclipseGeometryService: EclipseGeometryService,
     private readonly eclipseEventService: EclipseEventService,
   ) {
@@ -36,32 +37,12 @@ export class EclipseTopocentricService {
   // 🔏 Private Methods
 
   /**
-   * Derives current longitude/latitude separation angles and eclipse diameter sum.
-   */
-  private getCurrentAnglesAndDiameter(current: EclipseCoordinates): {
-    currentDiameter: number;
-    currentLatitudeAngle: number;
-    currentLongitudeAngle: number;
-  } {
-    return {
-      currentDiameter: current.diameterSun + current.diameterMoon,
-      currentLatitudeAngle: this.mathService.getAngle(
-        current.latitudeMoon,
-        current.latitudeSun,
-      ),
-      currentLongitudeAngle: this.mathService.getAngle(
-        current.longitudeMoon,
-        current.longitudeSun,
-      ),
-    };
-  }
-
-  /**
    * Creates a topocentric lunar eclipse event when visibility and phase align.
    */
   private getLunarTopocentricEvent(args: {
     currentCoordinates: EclipseCoordinates;
     currentVisible: boolean;
+    eclipseType: LunarEclipseType;
     geocentricPhase: EclipsePhase | null;
     minute: Moment;
     nextCoordinates: EclipseCoordinates;
@@ -90,6 +71,7 @@ export class EclipseTopocentricService {
           date: args.minute,
           frame: "topocentric",
           phase,
+          type: args.eclipseType,
         })
       : null;
   }
@@ -100,6 +82,7 @@ export class EclipseTopocentricService {
   private getSolarTopocentricEvent(args: {
     currentCoordinates: EclipseCoordinates;
     currentVisible: boolean;
+    eclipseType: SolarEclipseType;
     geocentricPhase: EclipsePhase | null;
     minute: Moment;
     nextCoordinates: EclipseCoordinates;
@@ -128,6 +111,7 @@ export class EclipseTopocentricService {
           date: args.minute,
           frame: "topocentric",
           phase,
+          type: args.eclipseType,
         })
       : null;
   }
@@ -169,11 +153,13 @@ export class EclipseTopocentricService {
    */
   getTopocentricEvents(args: {
     currentCoordinates: EclipseCoordinates;
+    lunarEclipseType: LunarEclipseType;
     lunarPhase: EclipsePhase | null;
     minute: Moment;
     moonAzimuthElevationEphemeris: AzimuthElevationEphemeris;
     nextCoordinates: EclipseCoordinates;
     previousCoordinates: EclipseCoordinates;
+    solarEclipseType: SolarEclipseType;
     solarPhase: EclipsePhase | null;
     sunAzimuthElevationEphemeris: AzimuthElevationEphemeris;
   }): DetectedCalendarEvent[] {
@@ -189,6 +175,7 @@ export class EclipseTopocentricService {
     const solarEvent = this.getSolarTopocentricEvent({
       currentCoordinates: args.currentCoordinates,
       currentVisible: visibilities.currentVisibility.isSolarVisible,
+      eclipseType: args.solarEclipseType,
       geocentricPhase: args.solarPhase,
       minute: args.minute,
       nextCoordinates: args.nextCoordinates,
@@ -204,6 +191,7 @@ export class EclipseTopocentricService {
     const lunarEvent = this.getLunarTopocentricEvent({
       currentCoordinates: args.currentCoordinates,
       currentVisible: visibilities.currentVisibility.isLunarVisible,
+      eclipseType: args.lunarEclipseType,
       geocentricPhase: args.lunarPhase,
       minute: args.minute,
       nextCoordinates: args.nextCoordinates,
@@ -220,17 +208,13 @@ export class EclipseTopocentricService {
   }
 
   /**
-   * Checks whether lunar geometry is currently within eclipse limits.
+   * Checks whether a lunar eclipse is in progress geocentrically: the Moon
+   * lies inside the penumbral contact distance from the shadow axis.
    */
   isLunarEclipseActive(current: EclipseCoordinates): boolean {
-    const { currentDiameter, currentLatitudeAngle, currentLongitudeAngle } =
-      this.getCurrentAnglesAndDiameter(current);
-    const oppositionThreshold = 180 - currentDiameter;
-
-    return (
-      currentLatitudeAngle < currentDiameter &&
-      currentLongitudeAngle >= oppositionThreshold
-    );
+    const { contactLimit, separation } =
+      this.eclipseGeometryService.getLunarContactGeometry(current);
+    return separation < contactLimit;
   }
 
   /**
@@ -244,16 +228,13 @@ export class EclipseTopocentricService {
   }
 
   /**
-   * Checks whether solar geometry is currently within eclipse limits.
+   * Checks whether a solar eclipse is in progress geocentrically: the Moon's
+   * penumbra falls somewhere on Earth.
    */
   isSolarEclipseActive(current: EclipseCoordinates): boolean {
-    const { currentDiameter, currentLatitudeAngle, currentLongitudeAngle } =
-      this.getCurrentAnglesAndDiameter(current);
-
-    return (
-      currentLatitudeAngle < currentDiameter &&
-      currentLongitudeAngle <= currentDiameter
-    );
+    const { contactLimit, separation } =
+      this.eclipseGeometryService.getSolarContactGeometry(current);
+    return separation < contactLimit;
   }
 
   /**

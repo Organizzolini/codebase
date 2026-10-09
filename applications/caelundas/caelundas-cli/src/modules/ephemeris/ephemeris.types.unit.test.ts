@@ -228,17 +228,18 @@ describe("ephemeris.types", () => {
       expect(bodies).toContain("moon");
     });
 
-    it("accepts sun, venus, mercury, mars for DistanceEphemerisBody", () => {
+    it("accepts sun, moon, venus, mercury, mars for DistanceEphemerisBody", () => {
       const bodies: DistanceEphemerisBody[] = [
         "sun",
+        "moon",
         "venus",
         "mercury",
         "mars",
       ];
 
-      expect(bodies).toHaveLength(4);
+      expect(bodies).toHaveLength(5);
       expect(bodies).toContain("sun");
-      expect(bodies).not.toContain("moon");
+      expect(bodies).toContain("moon");
     });
 
     it("accepts all bodies for CoordinateEphemerisBody", () => {

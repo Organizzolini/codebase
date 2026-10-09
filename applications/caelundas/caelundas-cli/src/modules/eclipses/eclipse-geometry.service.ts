@@ -2,15 +2,27 @@ import { Injectable } from "@nestjs/common";
 
 import { LoggerService } from "@codebase/logging";
 
+import {
+  KILOMETERS_PER_ASTRONOMICAL_UNIT,
+  radiusKilometersByHorizonBody,
+} from "../ephemeris/ephemeris.constants";
 import { EphemerisService } from "../ephemeris/ephemeris.service";
-import { MathService } from "../math/math.service";
+
+import {
+  DANJON_SHADOW_ENLARGEMENT,
+  DEGREES_PER_RADIAN,
+  EARTH_EQUATORIAL_RADIUS_KILOMETERS,
+} from "./eclipses.constants";
 
 import type {
   AzimuthElevationEphemeris,
   CoordinateEphemeris,
-  DiameterEphemeris,
+  DistanceEphemeris,
 } from "../ephemeris/ephemeris.types";
-import type { EclipseCoordinates } from "./eclipses.types";
+import type {
+  EclipseContactGeometry,
+  EclipseCoordinates,
+} from "./eclipses.types";
 import type { Moment } from "moment-timezone";
 
 /**
@@ -23,7 +35,6 @@ export class EclipseGeometryService {
   constructor(
     private readonly logger: LoggerService,
     private readonly ephemerisService: EphemerisService,
-    private readonly mathService: MathService,
   ) {
     this.logger.setContext(EclipseGeometryService.name);
   }
@@ -35,93 +46,76 @@ export class EclipseGeometryService {
   // 🔏 Private Methods
 
   /**
-   * Derives eclipse coordinate diameters.
+   * Great-circle separation of two ecliptic positions, in degrees. The
+   * haversine form stays accurate at the small separations eclipses need.
    */
-  private getEclipseCoordinateDiameters(
-    minuteIso: string,
-    moonDiameterEphemeris: DiameterEphemeris,
-    sunDiameterEphemeris: DiameterEphemeris,
-  ): { diameterMoon: number; diameterSun: number } {
-    return {
-      diameterMoon: this.ephemerisService.getDiameterFromEphemeris(
-        moonDiameterEphemeris,
-        minuteIso,
-        "currentDiameterMoon",
-      ),
-      diameterSun: this.ephemerisService.getDiameterFromEphemeris(
-        sunDiameterEphemeris,
-        minuteIso,
-        "currentDiameterSun",
-      ),
-    };
+  private static getAngularSeparation(
+    first: { latitude: number; longitude: number },
+    second: { latitude: number; longitude: number },
+  ): number {
+    const latitude1 = first.latitude / DEGREES_PER_RADIAN;
+    const latitude2 = second.latitude / DEGREES_PER_RADIAN;
+    const latitudeHalf = (latitude2 - latitude1) / 2;
+    const longitudeHalf =
+      (second.longitude - first.longitude) / DEGREES_PER_RADIAN / 2;
+    const haversine =
+      Math.sin(latitudeHalf) ** 2 +
+      Math.cos(latitude1) * Math.cos(latitude2) * Math.sin(longitudeHalf) ** 2;
+    return (
+      2 * Math.asin(Math.min(1, Math.sqrt(haversine))) * DEGREES_PER_RADIAN
+    );
   }
 
   /**
-   * Derives eclipse coordinate latitudes and longitudes.
+   * Angle in degrees subtended by `kilometers` at `distance` AU: a
+   * semidiameter for a body's radius, a horizontal parallax for Earth's.
    */
-  private getEclipseCoordinateLatitudesAndLongitudes(
-    minuteIso: string,
-    moonCoordinateEphemeris: CoordinateEphemeris,
-    sunCoordinateEphemeris: CoordinateEphemeris,
-  ): {
-    latitudeMoon: number;
-    latitudeSun: number;
-    longitudeMoon: number;
-    longitudeSun: number;
-  } {
-    return {
-      latitudeMoon: this.ephemerisService.getCoordinateFromEphemeris(
-        moonCoordinateEphemeris,
-        minuteIso,
-        "latitude",
-      ),
-      latitudeSun: this.ephemerisService.getCoordinateFromEphemeris(
-        sunCoordinateEphemeris,
-        minuteIso,
-        "latitude",
-      ),
-      longitudeMoon: this.ephemerisService.getCoordinateFromEphemeris(
-        moonCoordinateEphemeris,
-        minuteIso,
-        "longitude",
-      ),
-      longitudeSun: this.ephemerisService.getCoordinateFromEphemeris(
-        sunCoordinateEphemeris,
-        minuteIso,
-        "longitude",
-      ),
-    };
+  private static getSubtendedAngle(
+    kilometers: number,
+    distance: number,
+  ): number {
+    return (
+      Math.asin(kilometers / (distance * KILOMETERS_PER_ASTRONOMICAL_UNIT)) *
+      DEGREES_PER_RADIAN
+    );
   }
 
   /**
-   * Derives eclipse coordinates.
+   * Derives eclipse coordinates for one minute.
    */
   private getEclipseCoordinates(args: {
     minuteIso: string;
     moonCoordinateEphemeris: CoordinateEphemeris;
-    moonDiameterEphemeris: DiameterEphemeris;
+    moonDistanceEphemeris: DistanceEphemeris;
     sunCoordinateEphemeris: CoordinateEphemeris;
-    sunDiameterEphemeris: DiameterEphemeris;
+    sunDistanceEphemeris: DistanceEphemeris;
   }): EclipseCoordinates {
-    const {
-      minuteIso,
-      moonCoordinateEphemeris,
-      moonDiameterEphemeris,
-      sunCoordinateEphemeris,
-      sunDiameterEphemeris,
-    } = args;
+    const { minuteIso } = args;
+    const coordinate = (
+      ephemeris: CoordinateEphemeris,
+      field: "latitude" | "longitude",
+    ): number =>
+      this.ephemerisService.getCoordinateFromEphemeris(
+        ephemeris,
+        minuteIso,
+        field,
+      );
 
     return {
-      ...this.getEclipseCoordinateDiameters(
+      distanceMoon: this.ephemerisService.getDistanceFromEphemeris(
+        args.moonDistanceEphemeris,
         minuteIso,
-        moonDiameterEphemeris,
-        sunDiameterEphemeris,
+        "distanceMoon",
       ),
-      ...this.getEclipseCoordinateLatitudesAndLongitudes(
+      distanceSun: this.ephemerisService.getDistanceFromEphemeris(
+        args.sunDistanceEphemeris,
         minuteIso,
-        moonCoordinateEphemeris,
-        sunCoordinateEphemeris,
+        "distanceSun",
       ),
+      latitudeMoon: coordinate(args.moonCoordinateEphemeris, "latitude"),
+      latitudeSun: coordinate(args.sunCoordinateEphemeris, "latitude"),
+      longitudeMoon: coordinate(args.moonCoordinateEphemeris, "longitude"),
+      longitudeSun: coordinate(args.sunCoordinateEphemeris, "longitude"),
     };
   }
 
@@ -165,9 +159,9 @@ export class EclipseGeometryService {
   getAllEclipseCoordinates(args: {
     minute: Moment;
     moonCoordinateEphemeris: CoordinateEphemeris;
-    moonDiameterEphemeris: DiameterEphemeris;
+    moonDistanceEphemeris: DistanceEphemeris;
     sunCoordinateEphemeris: CoordinateEphemeris;
-    sunDiameterEphemeris: DiameterEphemeris;
+    sunDistanceEphemeris: DistanceEphemeris;
   }): {
     currentCoordinates: EclipseCoordinates;
     nextCoordinates: EclipseCoordinates;
@@ -179,9 +173,9 @@ export class EclipseGeometryService {
 
     const common = {
       moonCoordinateEphemeris: args.moonCoordinateEphemeris,
-      moonDiameterEphemeris: args.moonDiameterEphemeris,
+      moonDistanceEphemeris: args.moonDistanceEphemeris,
       sunCoordinateEphemeris: args.sunCoordinateEphemeris,
-      sunDiameterEphemeris: args.sunDiameterEphemeris,
+      sunDistanceEphemeris: args.sunDistanceEphemeris,
     };
 
     return {
@@ -234,38 +228,107 @@ export class EclipseGeometryService {
     };
   }
 
-  /**
-   * Derives eclipse geometry angles.
-   */
-  getEclipseAngles(
-    current: EclipseCoordinates,
-    previous: EclipseCoordinates,
-    next: EclipseCoordinates,
-  ): {
-    currentDiameter: number;
-    currentLatitudeAngle: number;
-    currentLongitudeAngle: number;
-    nextLongitudeAngle: number;
-    previousLongitudeAngle: number;
+  /** The antisolar point, which the axis of Earth's shadow passes through. */
+  getAntisolarPoint(coordinates: EclipseCoordinates): {
+    latitude: number;
+    longitude: number;
   } {
     return {
-      currentDiameter: current.diameterSun + current.diameterMoon,
-      currentLatitudeAngle: this.mathService.getAngle(
-        current.latitudeMoon,
-        current.latitudeSun,
+      latitude: -coordinates.latitudeSun,
+      longitude: coordinates.longitudeSun + 180,
+    };
+  }
+
+  /**
+   * Horizontal parallaxes and semidiameters of the Moon and Sun, in degrees,
+   * from their geocentric distances.
+   */
+  getDiscAngles(coordinates: EclipseCoordinates): {
+    moonParallax: number;
+    moonSemidiameter: number;
+    sunParallax: number;
+    sunSemidiameter: number;
+  } {
+    const { distanceMoon, distanceSun } = coordinates;
+    return {
+      moonParallax: EclipseGeometryService.getSubtendedAngle(
+        EARTH_EQUATORIAL_RADIUS_KILOMETERS,
+        distanceMoon,
       ),
-      currentLongitudeAngle: this.mathService.getAngle(
-        current.longitudeMoon,
-        current.longitudeSun,
+      moonSemidiameter: EclipseGeometryService.getSubtendedAngle(
+        radiusKilometersByHorizonBody.moon,
+        distanceMoon,
       ),
-      nextLongitudeAngle: this.mathService.getAngle(
-        next.longitudeMoon,
-        next.longitudeSun,
+      sunParallax: EclipseGeometryService.getSubtendedAngle(
+        EARTH_EQUATORIAL_RADIUS_KILOMETERS,
+        distanceSun,
       ),
-      previousLongitudeAngle: this.mathService.getAngle(
-        previous.longitudeMoon,
-        previous.longitudeSun,
+      sunSemidiameter: EclipseGeometryService.getSubtendedAngle(
+        radiusKilometersByHorizonBody.sun,
+        distanceSun,
       ),
+    };
+  }
+
+  /**
+   * Lunar eclipse geometry: the Moon's distance from the axis of Earth's
+   * shadow, and the penumbral contact distance. The penumbra's radius is
+   * 1.01·π☾ + π☉ + s☉ (Danjon), so the Moon's limb touches it at that plus s☾.
+   */
+  getLunarContactGeometry(
+    coordinates: EclipseCoordinates,
+  ): EclipseContactGeometry {
+    const { moonParallax, moonSemidiameter, sunParallax, sunSemidiameter } =
+      this.getDiscAngles(coordinates);
+
+    return {
+      contactLimit:
+        DANJON_SHADOW_ENLARGEMENT * moonParallax +
+        sunParallax +
+        sunSemidiameter +
+        moonSemidiameter,
+      separation: EclipseGeometryService.getAngularSeparation(
+        {
+          latitude: coordinates.latitudeMoon,
+          longitude: coordinates.longitudeMoon,
+        },
+        this.getAntisolarPoint(coordinates),
+      ),
+    };
+  }
+
+  /**
+   * Solar eclipse geometry: the geocentric Sun–Moon separation, and the
+   * separation at which the Moon's penumbra first or last touches Earth
+   * (global P1/P4), π☾ − π☉ + s☉ + s☾.
+   */
+  getSolarContactGeometry(
+    coordinates: EclipseCoordinates,
+  ): EclipseContactGeometry {
+    const { moonParallax, moonSemidiameter, sunParallax, sunSemidiameter } =
+      this.getDiscAngles(coordinates);
+
+    return {
+      contactLimit:
+        moonParallax - sunParallax + sunSemidiameter + moonSemidiameter,
+      separation: EclipseGeometryService.getAngularSeparation(
+        {
+          latitude: coordinates.latitudeMoon,
+          longitude: coordinates.longitudeMoon,
+        },
+        this.getSunPosition(coordinates),
+      ),
+    };
+  }
+
+  /** The Sun's position, which the Moon covers in a solar eclipse. */
+  getSunPosition(coordinates: EclipseCoordinates): {
+    latitude: number;
+    longitude: number;
+  } {
+    return {
+      latitude: coordinates.latitudeSun,
+      longitude: coordinates.longitudeSun,
     };
   }
 }
