@@ -48,7 +48,9 @@
     "executors.json",
     "generators.json",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "src/executors/*/schema.json",
+    "src/generators/*/schema.json"
   ],
   "generators": "./generators.json",
   "homepage": "https://github.com/organizzolini/codebase/tree/main/packages/ic-suite/conformetry/conformetry-nx#readme",

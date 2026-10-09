@@ -12,6 +12,27 @@ export interface CodependixPluginOptions {
 }
 
 /**
+ * What one `extends` entry names: a file the gate's inputs can name, an
+ * installed package Nx hashes by version, or what no input can name — a file
+ * outside the workspace, an installed package the root manifest does not
+ * declare, or a package base that resolves to no file.
+ */
+export type ExtendedBase =
+  | { readonly file: string; readonly kind: "file" }
+  | { readonly kind: "outside" }
+  | { readonly kind: "package"; readonly name: string }
+  | { readonly kind: "undeclared"; readonly name: string }
+  | { readonly kind: "unresolved" };
+
+/** Every base a root tsconfig reaches through its `extends` chain. */
+export interface ExtendsChain {
+  /** Real paths of the workspace files in the chain, the root's own included. */
+  readonly files: Set<string>;
+  /** Installed packages providing a base, each declared by the root manifest. */
+  readonly packages: Set<string>;
+}
+
+/**
  * One cache input of an inferred target: a file glob, or the npm packages an
  * installed command line is versioned by.
  */
@@ -35,7 +56,10 @@ export interface InferTargetsArguments {
   readonly options: unknown;
   /** Every file Nx matched, workspace-root relative. */
   readonly projectConfigurationFiles: readonly string[];
-  /** The command line's own inputs, from `resolveToolInputs`. */
+  /**
+   * The command line's own inputs and its loader's tsconfig chain, from
+   * `resolveToolInputs` and `resolveTsconfigInputs`.
+   */
   readonly toolInputs: readonly InferredInput[];
   readonly workspaceRoot: string;
 }
@@ -51,4 +75,36 @@ export interface ResolvePluginOptionsArguments {
   readonly exists: (candidatePath: string) => boolean;
   /** Whatever the `nx.json` registration holds, unvalidated. */
   readonly options: unknown;
+}
+
+/** Arguments for resolving the command line's own cache inputs. */
+export interface ResolveToolInputsArguments {
+  /** Where a package that cannot be resolved is named. */
+  readonly logger: ToolInputsLogger;
+  /**
+   * The module `@codependix/cli` is resolved from, as a path or file URL —
+   * this plugin's own, unless a caller stands in for an install elsewhere.
+   */
+  readonly resolveFrom?: string | undefined;
+  readonly workspaceRoot: string;
+}
+
+/** Arguments for resolving the cache inputs of the loader's compiler options. */
+export interface ResolveTsconfigInputsArguments {
+  /** Where a base that cannot be read or hashed is named. */
+  readonly logger: ToolInputsLogger;
+  readonly workspaceRoot: string;
+}
+
+/** The part of Nx's logger that tool input resolution reports through. */
+export interface ToolInputsLogger {
+  warn: (message: string) => void;
+}
+
+/** The workspace packages a command line reaches, and the names it could not. */
+export interface WorkspacePackages {
+  /** Real directories, the command line's own included. */
+  readonly directories: Set<string>;
+  /** Dependency names that resolved to no installed package, sorted. */
+  readonly unresolved: string[];
 }

@@ -3,22 +3,22 @@
   "executors": {
     "breadth": {
       "description": "Print one callable's direct callers and callees, resolved against a project and its Nx dependencies.",
-      "implementation": "./src/executors/breadth/executor",
+      "implementation": "@callidescope/nx/src/executors/breadth/executor",
       "schema": "./src/executors/breadth/schema.json"
     },
     "depth": {
       "description": "Print every call stack above and below one callable, resolved against a project and its Nx dependencies.",
-      "implementation": "./src/executors/depth/executor",
+      "implementation": "@callidescope/nx/src/executors/depth/executor",
       "schema": "./src/executors/depth/schema.json"
     },
     "gate": {
       "description": "Fail a project whose call stacks broke the depth or breadth limits it is held to, resolved against the project and its Nx dependencies.",
-      "implementation": "./src/executors/gate/executor",
+      "implementation": "@callidescope/nx/src/executors/gate/executor",
       "schema": "./src/executors/gate/schema.json"
     },
     "trace": {
       "description": "Trace a project's call stacks with callidescope, following its Nx dependencies.",
-      "implementation": "./src/executors/trace/executor",
+      "implementation": "@callidescope/nx/src/executors/trace/executor",
       "schema": "./src/executors/trace/schema.json"
     }
   }

@@ -75,10 +75,57 @@ export const CLI_PACKAGE_NAME = "@codependix/cli";
 export const WORKSPACE_PROTOCOL = "workspace:";
 
 /**
+ * The dependency specifier prefixes marking a package that comes from this
+ * workspace's own files rather than a registry, which Nx's graph need not
+ * hold as an external node.
+ */
+export const LOCAL_DEPENDENCY_PROTOCOLS = [
+  "file:",
+  "link:",
+  "portal:",
+  WORKSPACE_PROTOCOL,
+] as const;
+
+/**
  * The files of a workspace package that change what a gate decides.
  *
- * Its sources and its manifest — not its README, which codependix itself
- * regenerates on the default branch and which would otherwise invalidate
- * every gate in the workspace each time it did.
+ * Its manifest and its sources — not its tests, nor its README, which
+ * codependix regenerates on the default branch. The tests are left out
+ * inside the one positive glob, as an extglob: Nx's affected computation
+ * reads only positive `{workspaceRoot}` inputs and ignores a negated one
+ * outright, so a `!` input would still let a test-only edit select every
+ * gate. `testing/` sits beside `src/`, so no glob here reaches it. A
+ * package's own `tsconfig.json` is not here: the loader never reads it.
  */
-export const TOOL_PACKAGE_GLOBS = ["package.json", "src/**/*"] as const;
+export const TOOL_PACKAGE_GLOBS = [
+  "package.json",
+  "src/**/!(*.test.*|*.spec.*)",
+] as const;
+
+/**
+ * The compiler options the gate's loader reads.
+ *
+ * `@swc-node/register` takes them from `SWC_NODE_PROJECT` or
+ * `TS_NODE_PROJECT`, else from `tsconfig.json` in its working directory,
+ * which is the workspace root — and from every base that file `extends`. So
+ * this file and its chain shape every gate's verdict, whichever way the
+ * command line was installed. The input a gate keeps on its own when the
+ * chain cannot be followed.
+ */
+export const WORKSPACE_TSCONFIG_INPUT = "{workspaceRoot}/tsconfig.json";
+
+/**
+ * The file a base package provides when `extends` names the package alone,
+ * with no path inside it — as TypeScript resolves it, short of a `tsconfig`
+ * field in the package's manifest, which is rare enough to leave out.
+ */
+export const PACKAGE_TSCONFIG_FILENAME = "tsconfig.json";
+
+/**
+ * Why a tsconfig base that names no package was skipped, as the warning
+ * naming it phrases it.
+ */
+export const SKIPPED_BASE_REASONS = {
+  outside: "it lies outside the workspace",
+  unresolved: "it resolves to no file",
+} as const;

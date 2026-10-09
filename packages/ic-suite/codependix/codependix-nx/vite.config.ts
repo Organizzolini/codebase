@@ -11,6 +11,10 @@ export default createViteLibraryConfig({
       packageDirectory,
       "src/executors/gate/executor.ts",
     ),
+    "src/executors/gate/hasher": path.resolve(
+      packageDirectory,
+      "src/executors/gate/hasher.ts",
+    ),
     "src/index": path.resolve(packageDirectory, "src/index.ts"),
   },
   packageDirectory,

@@ -1,90 +1,113 @@
-# CodependixNx: NestJS Service Application
+# CodependixNx: Nx Plugin
 
 ## Quick Start
 
-**Type**: Node.js service application (NestJS + `NestFactory`)
+**Type**: Nx plugin — one inferred target and its executor, built on a NestJS
+application context
 
-**Purpose**: <!-- Briefly describe the specific purpose of this service application -->
+**Purpose**: Infers `codependix-gate` onto every `project.json` project but the
+workspace root, so `nx affected -t codependix-gate` checks codependix
+boundaries per project and fails the task named after the project whose
+boundary broke.
 
-An Nx plugin. It infers one target, `codependix-gate`, onto every project but
-the workspace root, backed by an executor that runs `codependix map --check
-boundaries --projects <project>` **as a child process** under `node --import
-@swc-node/register/esm-register`, from the workspace root. A child process
-rather than an in-process call, because the boundary check boots NestJS
-containers from their TypeScript sources and constructor injection there
-needs the decorator metadata only that loader emits — `tsx` and esbuild
-silently break it. The command line's entry is resolved through
-`@codependix/cli`'s `./main` package export, never a path into this
-repository, so an installed copy runs `dist/src/main.js`.
+The executor runs `codependix map --check boundaries --projects <project>`
+**as a child process**, from the workspace root, under `node --import
+<file URL of @codependix/nx/loader>`. A child process rather than an
+in-process call, because the boundary check boots NestJS containers from
+their TypeScript sources and constructor injection there needs the decorator
+metadata only `@swc-node/register` emits — `tsx` and esbuild silently break
+it. `src/executors/gate/loader.mjs` registers those hooks resolved from this
+package's own dependencies, never the consumer's root. The command line's
+entry is resolved through `@codependix/cli`'s `./main` package export, so an
+installed copy runs `dist/src/main.js`.
 
 The command line builds over the project's Nx dependency closure and fails
 only on a finding charged to the project; this plugin adds selection and
-caching, not judgment. It deliberately ships **no CLI of its own**.
-
-`PluginService` (`src/modules/plugin`) reads the `nx.json` registration and
-infers the target; `GateService` (`src/modules/gate`) re-reads that
-registration for the executor — Nx hands plugin options only to
-`createNodes` — builds the command line, and runs it. `src/index.ts` is the
-plugin entry Nx loads. Integration-test fixtures live under this package's
-gitignored `tmp/`, never `os.tmpdir()`: the swc loader breaks outside the
-workspace on Linux.
+caching, not judgment. It deliberately ships **no CLI of its own**, and it
+depends on `@codependix/cli` alone — the `codependix-nx-layer` rule in
+`configuration/codependix.config.ts` holds it to that.
 
 ## Architecture Overview
 
 ### Tech Stack
 
-- **Framework**: NestJS (modules, dependency injection, providers)
-- **Bootstrap**: `NestFactory.create` (standard NestJS bootstrap)
-- **Env validation**: `@nestjs/config` + `zod` (`environmentSchema` in `.constants.ts`)
-- **Logging**: `@codebase/logging` — a `pino`-backed `LoggerService` (`Scope.TRANSIENT`)
+- **Framework**: NestJS application context (`NestFactory.createApplicationContext`),
+  built once per process and cached on `globalThis`
+- **Nx**: `@nx/devkit` — `createNodes`, an executor, a custom hasher, and
+  Nx's `logger` for warnings
+- **Loader**: `@swc-node/register`, registered by this package's own shim
 - **Language**: Strict TypeScript
+
+There is no environment schema, no `main.ts`, and no logger module: Nx calls
+plugins from bare module-level functions, which bootstrap the context and
+hand back a service.
 
 ### Execution Flow
 
 ```text
-src/main.ts
-  └─ NestFactory.create(MainModule)
-       └─ domain service modules            ← add under src/modules/
+src/index.ts — createNodes
+  ├─ resolveToolInputs (plugin-inputs.utilities.ts)   ← the command line's cache inputs
+  ├─ resolveTsconfigInputs (plugin-tsconfig.utilities.ts) ← the loader's tsconfig chain
+  └─ PluginService.inferTargets                       ← one gate per project.json
+
+src/executors/gate/hasher.ts → GateService.hashTask   ← own-project runs hashed by Nx,
+                                                        selection of other projects never replayed
+src/executors/gate/executor.ts → GateService.run
+  └─ node --import <loader URL> <@codependix/cli/main> map --check boundaries …
 ```
 
 ### Directory Layout
 
 ```text
 src/
-  main.ts                           # Bootstrap — do not modify
-  main.module.ts                    # Root NestJS module (imports ConfigModule, LoggerModule)
-  constants.ts                      # Zod environmentSchema for env validation
+  index.ts                          # Plugin entry: createNodes, public exports
+  main.module.ts                    # Root module: GateModule, PluginModule
+  executors/gate/
+    executor.ts                     # Nx executor → GateService.run
+    hasher.ts                       # Nx hasher → GateService.hashTask
+    loader.mjs                      # Registers the swc hooks; passed to --import
+    schema.json                     # Executor options; shipped as-is in the tarball
   modules/
-    <domain>/                       # Add feature modules here
-      <domain>.module.ts
-      <domain>.service.ts
-      <domain>.types.ts
-      <domain>.constants.ts
-      <domain>.<tier>.test.ts
-testing/                            # Shared test utilities
+    gate/                           # GateService: arguments, selection, spawn, hashing
+    plugin/                         # PluginService: options and inference
+      plugin-context.utilities.ts   # Builds and caches the NestJS context
+      plugin-inputs.utilities.ts    # resolveToolInputs: the command line's inputs
+      plugin-tsconfig.utilities.ts  # resolveTsconfigInputs: the root tsconfig's extends chain
+testing/                            # Shared test setup
 ```
+
+`executors.json` names the executor and hasher by package specifier
+(`@codependix/nx/src/executors/gate/*`), which Nx resolves through this
+package's exports — the TypeScript sources here, `dist/` in an installed copy.
+The schema is named by path and listed in `files`, so the tarball ships it.
 
 ## Development
 
-### Adding Business Logic
+### Caching rules
 
-1. **Add domain service modules** — create `src/modules/<domain>/` with a NestJS module, service, types, and constants.
-2. **Register in root module** — import the new module in `main.module.ts`.
-3. **Validate env vars** — extend `environmentSchema` in `constants.ts` with all required environment variables.
-
-### Logging
-
-`LoggerService` and `LoggerModule` come from `@codebase/logging` — this project does not define its own logger. Add `"@codebase/logging": "workspace:*"` to `dependencies`, then import `LoggerModule` once in the root module; it is `@Global()`, so feature modules inject `LoggerService` without importing it.
-
-`LoggerService` is `Scope.TRANSIENT` — each injecting class gets its own instance. Always call `setContext` in the constructor:
-
-```ts
-constructor(private readonly logger: LoggerService) {
-  this.logger.setContext(MyService.name);
-}
-```
-
-Outputs structured JSON in production (`NODE_ENV=production`) and pretty-printed logs in development.
+- **Tool inputs** (`resolveToolInputs`): inside this workspace, a
+  `package.json` and `src/**/!(*.test.*|*.spec.*)` glob per package in
+  `@codependix/cli`'s `workspace:` closure. Each package is located
+  through its entry and the manifest that names it; one that cannot be
+  located is named in an Nx `logger.warn` and skipped. An installed command
+  line yields one `externalDependencies` input instead. Never throws.
+- **Tsconfig inputs** (`resolveTsconfigInputs`): `@swc-node/register` reads
+  its options from `tsconfig.json` in the gate's working directory (the
+  workspace root) and every base it `extends`, never from a package's own
+  tsconfig. Each workspace file in that chain is a `{workspaceRoot}` input,
+  missing or unparsable ones included; a base under `node_modules`, named by
+  package or by path, is an `externalDependencies` entry only when the root
+  `package.json` declares its package from a registry, since Nx fails a task naming an
+  external dependency outside its graph.
+  Resolved apart from the tool inputs, so either failing keeps the other.
+  What it cannot name, it warns about. Never throws.
+- **Test exclusion lives inside the positive glob.** Nx's affected
+  computation reads only positive `{workspaceRoot}` inputs and ignores a
+  `!`-prefixed one, so a negated input would not stop a test-only edit from
+  selecting every gate.
+- **Selection runs are never cached.** A gate whose effective `projects` or
+  `tags` (target options, then configuration, then command line) select any
+  project but its own gets a random hash from `GateService.hashTask`.
 
 ### Key Commands
 
@@ -92,153 +115,38 @@ Always prefer running tasks through Nx rather than calling the underlying tools 
 
 ```bash
 nx run codependix-nx:typecheck-code,lint-code,format-code,deprecate-code,guard-code   # Every static check, in one graph
-nx run codependix-nx:typecheck       # tsc --noEmit
-nx run codependix-nx:oxfmt           # Formatting
+nx run codependix-nx:type-coverage   # Strict, at 100
 nx run codependix-nx:build           # Compile for publication
+nx run codependix-nx:pack            # Tarball in dist/tarballs — never publish to rehearse
 ```
 
 ### Testing
 
-Follow the codebase's strict three-tier testing strategy. Co-locate test files with the source they test.
-
 ```bash
-nx run codependix-nx:vitest:unit          # Fast (<100ms) — pure logic, mocked DI
-nx run codependix-nx:vitest:integration   # Moderate (1-2s) — real database/API I/O
-nx run codependix-nx:vitest:end-to-end    # Slow (30-60s) — full service initialization
+nx run codependix-nx:vitest:unit          # Services, the hasher, the loader, tool and tsconfig inputs
+nx run codependix-nx:vitest:integration   # The real executor against a fixture workspace
 ```
 
-| Tier        | File pattern            | What to test                                     |
-| ----------- | ----------------------- | ------------------------------------------------ |
-| Unit        | `*.unit.test.ts`        | Pure functions, service methods with mocked deps |
-| Integration | `*.integration.test.ts` | Database queries, external API clients           |
-| End-to-end  | `*.end-to-end.test.ts`  | Full `NestFactory.create()` execution            |
+Fixtures live under this package's gitignored `tmp/`, never `os.tmpdir()`:
+the swc loader resolves its helpers from the importing file's directory, so a
+fixture outside the workspace passes on macOS and fails on Linux. The tool
+input tests write a fixture closure with real `node_modules` links rather than
+reading this repository's, whose size changes with every new dependency.
+
+A consumer rehearsal needs a directory **outside** this repository: Node
+resolves bare specifiers by climbing parent directories, so a consumer under
+`tmp/` silently borrows this workspace's `node_modules`.
 
 See the [testing-strategy skill](../../../../.agents/skills/testing-strategy/SKILL.md) and [testing-mocks skill](../../../../.agents/skills/testing-mocks/SKILL.md) for patterns and mock conventions.
 
-## Writing Modules
-
-Use the generator to scaffold new domain modules, then implement the service:
-
-```bash
-nx g conformetry:nestjs-service-module --name=<domain>
-```
-
-This creates five files in `src/modules/<domain>/`:
-
-| File                            | Purpose                                                 |
-| ------------------------------- | ------------------------------------------------------- |
-| `<domain>.module.ts`            | Declares providers, imports, and exports                |
-| `<domain>.service.ts`           | Business logic — the only place you write domain code   |
-| `<domain>.constants.ts`         | Regex, enums, static config — never inline magic values |
-| `<domain>.types.ts`             | TypeScript types scoped to this module                  |
-| `<domain>.service.unit.test.ts` | Unit tests bootstrapped with `Test.createTestingModule` |
-
-### Module file
-
-Register the service in both `providers` and `exports` so consumers can inject it:
-
-```ts
-@Module({
-  controllers: [],
-  exports: [MyDomainService],
-  imports: [LoggerModule],
-  providers: [MyDomainService],
-})
-export class MyDomainModule {}
-```
-
-Add a JSDoc comment on the module class describing what domain it owns.
-
-### Service file
-
-Follow the section-comment layout from the template — it keeps large services scannable:
-
-```ts
-@Injectable()
-export class MyDomainService {
-  // 🏗 Dependency Injection
-  constructor(private readonly logger: LoggerService) {
-    this.logger.setContext(MyDomainService.name);
-  }
-
-  // 🔐 Private Fields
-
-  // 🔑 Public Fields
-
-  // 🔏 Private Methods
-
-  // 🌎 Public Methods
-}
-```
-
-Key rules:
-
-- **Call `setContext` in every constructor** — always use `MyClass.name`, never a string literal.
-- **Inject `LoggerService` as the last constructor parameter** (after repository/domain deps).
-- **Private first** — keep internal helpers in the `🔏 Private Methods` section, expose only what callers need under `🌎 Public Methods`.
-- **`readonly` everything in the constructor** — all injected deps must be `private readonly`.
-- **One service per module** — if a service grows too large, extract a sub-domain into its own module.
-
-### Constants file
-
-Move all inline values to `.constants.ts` to keep services readable:
-
-```ts
-// ♟️ Constants
-export const DEFAULT_PAGE_SIZE = 100;
-```
-
-### Types file
-
-Put all module-local TypeScript types and interfaces in `.types.ts`:
-
-```ts
-// 🏷️ Types
-export interface ParsedEntry {
-  word: string;
-  partOfSpeech: string;
-}
-```
-
-Do not re-export types from `index.ts` unless they are part of the public API consumed by other modules.
-
-### Registering in the root module
-
-After generating a module, import it in `main.module.ts`:
-
-```ts
-@Module({
-  imports: [
-    ConfigModule.forRoot({ ... }),
-    LoggerModule,
-    MyDomainModule,   // ← add here
-  ],
-  providers: [],
-})
-export class MainModule {}
-```
-
-## Best Practices
-
-- **Never** put business logic in `main.ts` — it bootstraps `NestFactory` only.
-- **Validate at the boundary** — all env vars must be declared in `environmentSchema`; access via `ConfigService`, not `process.env`.
-- **Type imports** — use `import { type Foo }` for type-only imports (enforced by ESLint).
-- **No `any` types** — use `unknown` or proper typing; strict mode is enabled.
-
-See the [write-typescript skill](../../../../.agents/skills/write-typescript/SKILL.md) for strict mode patterns.
-
-## Troubleshooting
-
-- **Dependency injection failure** — verify the service is `@Injectable()`, exported from its module, and that module is imported by the consuming module.
-- **Env var validation error on startup** — add the missing variable to `environmentSchema` in `src/constants.ts` and to `.env.default`.
-
-See the [triage-integration skill](../../../../.agents/skills/triage-integration/SKILL.md) for lint and git hook failures.
-
 ## Key Files
 
-- [src/main.ts](src/main.ts): Application bootstrap
-- [src/main.module.ts](src/main.module.ts): Root NestJS module
-- [src/constants.ts](src/constants.ts): `environmentSchema` (Zod)
-- `@codebase/logging` (`packages/logging`): shared pino-backed `LoggerService` and `LoggerModule`
-- [project.json](project.json): Nx targets (`develop`, `build`, `test`, `lint`, `typecheck`, `format`)
-- [.env.default](.env.default): Environment variable template
+- [src/index.ts](src/index.ts): Plugin entry Nx loads
+- [src/modules/gate/gate.service.ts](src/modules/gate/gate.service.ts): The gate run and its hashing
+- [src/modules/plugin/plugin-inputs.utilities.ts](src/modules/plugin/plugin-inputs.utilities.ts): Tool inputs
+- [src/modules/plugin/plugin-tsconfig.utilities.ts](src/modules/plugin/plugin-tsconfig.utilities.ts): Tsconfig inputs
+- [src/executors/gate/loader.mjs](src/executors/gate/loader.mjs): The `--import` shim
+- [executors.json](executors.json): Executor, hasher, and schema
+- [project.json](project.json): Nx targets
+
+See the [triage-integration skill](../../../../.agents/skills/triage-integration/SKILL.md) for lint and git hook failures.
