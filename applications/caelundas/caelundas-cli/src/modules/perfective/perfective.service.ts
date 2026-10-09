@@ -59,19 +59,14 @@ export class PerfectiveService {
   private detectDayEvents(args: {
     coordinates: Coordinates;
     date: Moment;
-    previousAspectBodies: AspectBodies[];
+    /** Undefined on the sweep's first day, which seeds the registry instead. */
+    previousAspectBodies: AspectBodies[] | undefined;
     timezone: string;
   }): {
     events: DetectedCalendarEvent[];
     previousAspectBodies: AspectBodies[];
   } {
-    const {
-      coordinates,
-      date,
-      previousAspectBodies: initialAspectBodies,
-      timezone,
-    } = args;
-    let previousAspectBodies = initialAspectBodies;
+    const { coordinates, date, timezone } = args;
     const startOfDay = date.clone().startOf("day");
     const endOfDay = date.clone().endOf("day");
     const ephemerides = this.ephemerisService.getEphemerides({
@@ -81,6 +76,15 @@ export class PerfectiveService {
       timezone,
     });
     const events: DetectedCalendarEvent[] = [];
+    let previousAspectBodies = args.previousAspectBodies;
+    if (previousAspectBodies === undefined) {
+      const seeded = this.aspectsService.seed({
+        coordinateEphemerisByBody: ephemerides.coordinateEphemerisByBody,
+        minute: startOfDay,
+      });
+      previousAspectBodies = seeded.aspectBodies;
+      events.push(...seeded.events);
+    }
     for (const minute of this.datetimeService.generateMinutes(
       startOfDay,
       endOfDay,
@@ -207,7 +211,7 @@ export class PerfectiveService {
   detect(input: Input): DetectedCalendarEvent[] {
     const { end, latitude, longitude, start, timezone } = input;
     const coordinates: Coordinates = [longitude, latitude];
-    let previousAspectBodies: AspectBodies[] = [];
+    let previousAspectBodies: AspectBodies[] | undefined;
     const perfectiveEvents: DetectedCalendarEvent[] = [];
     for (const date of this.datetimeService.generateDates(
       start,

@@ -1,0 +1,26 @@
+{
+  "absent": ["♀️ → ♎︎⛰️ Venus peak ingress Libra"],
+  "counts": {
+    "♀️ → ♎︎ Venus ingress Libra": 1
+  },
+  "events": [
+    {
+      "note": "Horizons ObsEcLon crosses 210 degrees backwards at 2026-10-25T09:10:00Z; the re-entry into Libra is a sign ingress, not a peak",
+      "start": "2026-10-25T09:10:00Z",
+      "summary": "♀️ → ♎︎ Venus ingress Libra"
+    }
+  ],
+  "name": "Venus re-enters Libra backwards on 25 October 2026",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "NASA JPL Horizons, observer table quantity 31 (ObsEcLon), geocentric, 1-minute step",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='299'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='2026-10-24 00:00'&STOP_TIME='2026-10-27 00:00'&STEP_SIZE='1m'&QUANTITIES='31'"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-10-26",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-10-25"
+  }
+}

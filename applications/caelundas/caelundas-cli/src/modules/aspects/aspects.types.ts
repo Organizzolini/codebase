@@ -14,6 +14,15 @@ export interface AspectBodies {
 }
 
 /**
+ * One body's ecliptic longitude at the previous, current and next minute.
+ */
+export interface BodyLongitudesWindow {
+  current: number;
+  next: number;
+  previous: number;
+}
+
+/**
  * Detects multi-body aspect patterns from already-detected simple aspect edges.
  */
 export interface CompositeAspectDetector {
@@ -30,18 +39,6 @@ export interface CompositeAspectDetectorArguments {
 }
 
 /**
- * Ecliptic longitudes of two bodies at the previous, current, and next minute.
- */
-export interface LongitudesWindow {
-  currentLongitudeBody1: number;
-  currentLongitudeBody2: number;
-  nextLongitudeBody1: number;
-  nextLongitudeBody2: number;
-  previousLongitudeBody1: number;
-  previousLongitudeBody2: number;
-}
-
-/**
  * Converts instantaneous aspect events into duration spans by pairing boundaries.
  */
 export interface ProgressiveAspectDetector {
@@ -53,6 +50,8 @@ export interface ProgressiveAspectDetector {
  */
 export interface SimpleAspectDetector {
   detect(arguments_: SimpleAspectDetectorArguments): DetectedCalendarEvent[];
+  /** Lists this family's aspects already in orb at the minute, to seed a sweep. */
+  detectActive(arguments_: SimpleAspectDetectorArguments): AspectBodies[];
 }
 
 /**
