@@ -1,0 +1,22 @@
+{
+  "events": [
+    {
+      "note": "Horizons ObsEcLon passes 15 degrees forwards between 05:30 and 05:31 UT",
+      "start": "2026-03-20T05:31:00Z",
+      "summary": "🌙 → ♈⛰️ Moon peak ingress Aries"
+    }
+  ],
+  "name": "The Moon reaches 15 degrees Aries on 20 March 2026",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "NASA JPL Horizons, observer table quantity 31 (ObsEcLon), geocentric, 1-minute step",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='301'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='2026-03-19 00:00'&STOP_TIME='2026-03-22 00:00'&STEP_SIZE='1m'&QUANTITIES='31'"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-03-21",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-03-20"
+  }
+}

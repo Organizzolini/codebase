@@ -1,0 +1,26 @@
+{
+  "absent": ["♄ → ♓︎⛰️ Saturn peak ingress Pisces"],
+  "counts": {
+    "♄ → ♓︎ Saturn ingress Pisces": 1
+  },
+  "events": [
+    {
+      "note": "Horizons ObsEcLon crosses 0 degrees backwards at 2025-09-01T08:06:00Z; the re-entry into Pisces is a sign ingress, not a peak",
+      "start": "2025-09-01T08:06:00Z",
+      "summary": "♄ → ♓︎ Saturn ingress Pisces"
+    }
+  ],
+  "name": "Saturn re-enters Pisces backwards across 0 degrees on 1 September 2025",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "NASA JPL Horizons, observer table quantity 31 (ObsEcLon), geocentric, 1-minute step",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='699'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='2025-08-30 00:00'&STOP_TIME='2025-09-03 00:00'&STEP_SIZE='1m'&QUANTITIES='31'"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2025-09-02",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2025-09-01"
+  }
+}

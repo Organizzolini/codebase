@@ -378,7 +378,12 @@ export class IngressesComposerService {
   }
 
   /**
-   * Returns `true` when longitude crosses the in-sign midpoint threshold (15 degrees).
+   * Returns `true` when longitude crosses the in-sign midpoint threshold (15 degrees),
+   * moving forward or backward within a single sign.
+   *
+   * @remarks
+   * A move between two signs is a sign ingress, never a peak, so a body that
+   * re-enters a sign backwards (retrograde) does not report a spurious peak.
    */
   isPeakIngress(args: {
     currentLongitude: number;
@@ -386,17 +391,16 @@ export class IngressesComposerService {
   }): boolean {
     const { currentLongitude, previousLongitude } = args;
 
-    const previousSign = IngressesComposerService.getSign(previousLongitude);
-    const { minimum: previousMinimum } =
-      IngressesComposerService.degreeRangeBySign[previousSign];
-    const previousDifference = previousLongitude - previousMinimum;
+    const sign = IngressesComposerService.getSign(currentLongitude);
+    if (sign !== IngressesComposerService.getSign(previousLongitude)) {
+      return false;
+    }
 
-    const currentSign = IngressesComposerService.getSign(currentLongitude);
-    const { minimum: currentMinimum } =
-      IngressesComposerService.degreeRangeBySign[currentSign];
-    const currentDifference = currentLongitude - currentMinimum;
+    const { minimum } = IngressesComposerService.degreeRangeBySign[sign];
+    const currentIsPastPeak = currentLongitude - minimum >= 15;
+    const previousIsPastPeak = previousLongitude - minimum >= 15;
 
-    return currentDifference >= 15 && previousDifference < 15;
+    return currentIsPastPeak !== previousIsPastPeak;
   }
 
   /**
