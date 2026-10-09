@@ -216,10 +216,10 @@ export const azimuthElevationBodies: AzimuthElevationEphemerisBody[] = [
 
 /**
  * Bodies queried for illumination ephemeris.
- * Used for lunar and inferior planet phase detection.
+ * Used for planetary phase detection. Moon phases are timed by elongation,
+ * so the Moon is not queried.
  */
 export const illuminationBodies: IlluminationEphemerisBody[] = [
-  "moon",
   "mercury",
   "venus",
   "mars",

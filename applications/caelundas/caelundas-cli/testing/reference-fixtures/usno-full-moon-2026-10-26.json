@@ -1,0 +1,22 @@
+{
+  "events": [
+    {
+      "note": "USNO: Full Moon, 26 October 2026, 04:12 UT, which is 00:12 EDT on 26 October in Philadelphia, not the 25th",
+      "start": "2026-10-26T04:12:00Z",
+      "summary": "🌙 🌕 Full Moon"
+    }
+  ],
+  "name": "The 26 October 2026 Full Moon seen from Philadelphia",
+  "retrieved": "2026-10-07",
+  "source": {
+    "name": "US Naval Observatory, Astronomical Applications Department: Phases of the Moon API",
+    "url": "https://aa.usno.navy.mil/api/moon/phases/date?date=2026-10-20&nump=4"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-10-26",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-10-25"
+  }
+}
