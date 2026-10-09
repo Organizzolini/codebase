@@ -20,6 +20,7 @@ const fixtureNames = [
   "horizons-mercury-opposite-mars-2027-02-16",
   "horizons-mercury-opposite-mars-2027-03-11",
   "horizons-mercury-venus-near-miss-2026-02-17",
+  "usno-full-moon-2026-10-26",
   "usno-full-moon-opposition-2026-03-03",
   "usno-march-equinox-2026",
   "usno-philadelphia-moonset-2026-05-19",

@@ -562,7 +562,7 @@ describe(EphemerisService, () => {
         diameterBodies: ["sun", "moon"],
         distanceBodies: ["sun", "mercury", "venus", "mars"],
         end: moment.utc("2024-03-21T00:01:00.000Z"),
-        illuminationBodies: ["moon", "mercury", "venus", "mars"],
+        illuminationBodies: ["mercury", "venus", "mars"],
         start: moment.utc("2024-03-21T00:00:00.000Z"),
       });
     });
