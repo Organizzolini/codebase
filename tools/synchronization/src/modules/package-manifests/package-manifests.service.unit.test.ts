@@ -228,9 +228,9 @@ describe(PackageManifestsService, () => {
 
       const summary = service.checkAll(workspaceRoot);
 
-      expect(summary.checkedCount).toBe(28);
+      expect(summary.checkedCount).toBe(29);
       expect(summary.isSynchronized).toBe(true);
-      expect(summary.succeededProjects).toHaveLength(28);
+      expect(summary.succeededProjects).toHaveLength(29);
       expect(summary.failedProjects).toHaveLength(0);
     });
   });
@@ -272,7 +272,7 @@ describe(PackageManifestsService, () => {
   });
 
   describe("writeAll", () => {
-    it("writes metadata across all 28 packages", () => {
+    it("writes metadata across all 29 packages", () => {
       fileContents.set(rootManifestPath, JSON.stringify(mockRootManifest));
 
       for (const projectPath of PUBLISHABLE_PACKAGE_PROJECTS) {
@@ -292,7 +292,7 @@ describe(PackageManifestsService, () => {
 
       service.writeAll(workspaceRoot);
 
-      expect(writeFileSync).toHaveBeenCalledTimes(28);
+      expect(writeFileSync).toHaveBeenCalledTimes(29);
     });
   });
 });

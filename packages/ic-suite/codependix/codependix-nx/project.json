@@ -1,0 +1,45 @@
+{
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "implicitDependencies": ["codependix-cli"],
+  "name": "codependix-nx",
+  "projectType": "library",
+  "sourceRoot": "packages/ic-suite/codependix/codependix-nx",
+  "tags": [
+    "framework:nestjs",
+    "generator:nestjs-service-project",
+    "language:typescript",
+    "layer:cli",
+    "name:codependix-nx",
+    "type:package"
+  ],
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "options": {
+        "configFile": "packages/ic-suite/codependix/codependix-nx/vite.config.ts",
+        "generatePackageJson": false,
+        "outputPath": "packages/ic-suite/codependix/codependix-nx/dist"
+      },
+      "outputs": ["{options.outputPath}"]
+    },
+    "build-projects": {},
+    "codometer": {},
+    "dependency-cruiser": {},
+    "deprecate-code": {},
+    "format-code": {},
+    "guard-code": {},
+    "knip": {},
+    "lint-code": {},
+    "markdown-lint": {},
+    "oxfmt": {},
+    "oxlint": {},
+    "pack": {},
+    "prettier": {},
+    "spell-check": {},
+    "test-code": {},
+    "type-coverage": {},
+    "typecheck": {},
+    "typecheck-code": {},
+    "yaml-lint": {}
+  }
+}

@@ -1,62 +1,60 @@
 {
   "author": "Jimmy Paolini",
-  "bin": {
-    "codependix": "./dist/src/main.js"
-  },
   "bugs": {
     "url": "https://github.com/organizzolini/codebase/issues"
   },
   "dependencies": {
-    "@codependix/boundaries": "workspace:*",
-    "@codependix/configuration": "workspace:*",
-    "@codependix/core": "workspace:*",
-    "@codependix/output": "workspace:*",
+    "@codependix/cli": "workspace:*",
     "@nestjs/common": "catalog:ic-suite",
-    "@nestjs/config": "catalog:",
     "@nestjs/core": "catalog:ic-suite",
-    "nest-commander": "catalog:",
-    "pino": "catalog:",
-    "pino-pretty": "catalog:",
-    "reflect-metadata": "catalog:",
-    "zod": "catalog:"
+    "@nx/devkit": "catalog:",
+    "@swc-node/register": "catalog:",
+    "@swc/core": "catalog:",
+    "reflect-metadata": "catalog:"
   },
-  "description": "Command-line tool for exporting and validating Nx, NestJS, and file-level dependency graphs and boundaries",
+  "description": "Nx plugin inferring a per-project codependix boundary gate, judged over each project's Nx dependency closure",
   "devDependencies": {
-    "@codebase/logging": "workspace:*",
     "@golevelup/ts-vitest": "catalog:",
     "@nestjs/testing": "catalog:",
     "@nx/eslint-plugin": "catalog:",
-    "@swc-node/register": "catalog:",
-    "@swc/core": "catalog:",
     "@swc/helpers": "catalog:",
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
+  "executors": "./executors.json",
   "exports": {
-    ".": "./src/index.ts",
-    "./main": "./src/main.ts",
-    "./package.json": "./package.json"
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./executors.json": "./executors.json",
+    "./package.json": "./package.json",
+    "./src/executors/*": "./src/executors/*"
   },
   "files": [
     "CHANGELOG.md",
     "dist",
+    "executors.json",
     "LICENSE",
     "README.md"
   ],
-  "homepage": "https://github.com/organizzolini/codebase/tree/main/packages/ic-suite/codependix/codependix-cli#readme",
+  "homepage": "https://github.com/organizzolini/codebase/tree/main/packages/ic-suite/codependix/codependix-nx#readme",
   "keywords": [
     "architecture-linter",
     "boundaries",
-    "cli",
     "codependix",
     "dependency-graph",
-    "mermaid"
+    "nx",
+    "nx-plugin"
   ],
   "license": "MIT",
   "main": "src/index.ts",
-  "name": "@codependix/cli",
+  "name": "@codependix/nx",
+  "nx": {
+    "executors": "./executors.json"
+  },
   "publishConfig": {
     "access": "public",
     "exports": {
@@ -64,15 +62,16 @@
         "types": "./dist/src/index.d.ts",
         "default": "./dist/src/index.js"
       },
-      "./main": "./dist/src/main.js",
-      "./package.json": "./package.json"
+      "./executors.json": "./executors.json",
+      "./package.json": "./package.json",
+      "./src/executors/*": "./dist/src/executors/*.js"
     },
     "main": "./dist/src/index.js",
     "registry": "https://registry.npmjs.org",
     "types": "./dist/src/index.d.ts"
   },
   "repository": {
-    "directory": "packages/ic-suite/codependix/codependix-cli",
+    "directory": "packages/ic-suite/codependix/codependix-nx",
     "type": "git",
     "url": "git+https://github.com/organizzolini/codebase.git"
   },
@@ -82,5 +81,5 @@
     "strict": true
   },
   "types": "src/index.ts",
-  "version": "0.0.13"
+  "version": "0.0.0"
 }

@@ -1,0 +1,10 @@
+{
+  "$schema": "../../../../node_modules/nx/schemas/executors.json",
+  "executors": {
+    "gate": {
+      "description": "Fail a project whose dependency graphs break a codependix boundary rule charged to it, built over the project and its Nx dependencies.",
+      "implementation": "./src/executors/gate/executor",
+      "schema": "./src/executors/gate/schema.json"
+    }
+  }
+}

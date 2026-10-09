@@ -313,7 +313,7 @@ tool's other `--check` name is its own gating word — `depth`, `limits`,
 The four ic-suite toolchains — conformetry, codometer, callidescope, and
 codependix — will share one five-layer spine, each layer depending only
 downward, plus an optional `nx` plugin layer above `cli` where one exists
-(callidescope and conformetry only). This pull request lands the vocabulary
+(callidescope, codependix, and conformetry). This pull request lands the vocabulary
 first, by design: the `layer:*` tags below arrive with each toolchain's own
 pull request, not with this one, so no package carries one yet. See
 [ADR 0013](docs/adr/0013-name-the-ic-suite-layers.md) for the sharp test that
