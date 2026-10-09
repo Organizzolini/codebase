@@ -96,7 +96,7 @@
     "zod": "catalog:"
   },
   "engines": {
-    "node": ">=24.16.0",
+    "node": ">=",
     "vscode": "^1.22.0"
   },
   "exports": {
@@ -105,7 +105,7 @@
   "keywords": [],
   "license": "MIT",
   "name": "codebase",
-  "packageManager": "pnpm@12.6.0",
+  "packageManager": "pnpm@12.10.1",
   "release": {
     "extends": "./configuration/release.config.cjs"
   },
