@@ -35,14 +35,12 @@ import type { Moment } from "moment-timezone";
 /**
  * Swiss Ephemeris computation orchestration service for caelundas.
  * Delegates coordinate, phenomena, and horizon computations to specialized sub-services.
- *
  * @see {@link ./ephemeris.constants#} for initialization and SE body constants
  * @see {@link ./ephemeris.types#} for data structures
  */
 @Injectable()
 export class EphemerisService {
   // 🏗 Dependency Injection
-
   constructor(
     private readonly ephemerisAggregationService: EphemerisAggregationService,
     private readonly ephemerisCoordinateService: EphemerisCoordinateService,
@@ -55,35 +53,25 @@ export class EphemerisService {
   }
 
   // 🔐 Private Fields
-
   // 🔑 Public Fields
-
   // 🔏 Private Methods
 
-  /**
-   * Returns the aggregation service.
-   */
+  /** Returns the aggregation service. */
   private getAggregationService(): EphemerisAggregationService {
     return this.ephemerisAggregationService;
   }
 
-  /**
-   * Returns the constants service.
-   */
+  /** Returns the constants service. */
   private getConstantsService(): EphemerisConstantsService {
     return this.ephemerisConstantsService;
   }
 
-  /**
-   * Returns the coordinate service.
-   */
+  /** Returns the coordinate service. */
   private getCoordinateService(): EphemerisCoordinateService {
     return this.ephemerisCoordinateService;
   }
 
-  /**
-   * Returns the horizon service.
-   */
+  /** Returns the horizon service. */
   private getHorizonService(): EphemerisHorizonService {
     return this.ephemerisHorizonService;
   }
@@ -368,6 +356,18 @@ export class EphemerisService {
       throw new Error(`Missing ${fieldName} at ${timestamp}`);
     }
     return data.distance;
+  }
+
+  /** Safely extracts radial distance speed from ephemeris. */
+  public getDistanceSpeedFromEphemeris(
+    ephemeris: DistanceEphemeris,
+    timestamp: string,
+  ): number {
+    const data = ephemeris[timestamp];
+    if (data?.distanceSpeed === undefined) {
+      throw new Error(`Missing distance speed at ${timestamp}`);
+    }
+    return data.distanceSpeed;
   }
 
   /**

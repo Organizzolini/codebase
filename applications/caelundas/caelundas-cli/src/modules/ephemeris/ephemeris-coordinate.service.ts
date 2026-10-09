@@ -43,7 +43,12 @@ export class EphemerisCoordinateService {
     body: Exclude<Body, Node>,
     julianDayEphemerisTime: number,
     flags: number = SWISS_EPHEMERIS_FLAGS,
-  ): { distance: number; latitude: number; longitude: number } {
+  ): {
+    distance: number;
+    distanceSpeed: number;
+    latitude: number;
+    longitude: number;
+  } {
     const swissEphemerisConstant =
       this.ephemerisConstantsService.getSwissEphemerisConstantForBody(body);
     const result = calc(julianDayEphemerisTime, swissEphemerisConstant, flags);
@@ -52,6 +57,7 @@ export class EphemerisCoordinateService {
     }
     return {
       distance: result.data[2],
+      distanceSpeed: result.data[5],
       latitude: result.data[1],
       longitude: result.data[0],
     };
@@ -156,11 +162,11 @@ export class EphemerisCoordinateService {
     for (const date of this.time.generateMinutes(start, end)) {
       const { julianDayEphemerisTime } = this.time.dateToJulianDays(date);
       const timestamp = date.toISOString();
-      const { distance } = this.computeBodyCoordinates(
+      const { distance, distanceSpeed } = this.computeBodyCoordinates(
         body,
         julianDayEphemerisTime,
       );
-      ephemeris[timestamp] = { distance };
+      ephemeris[timestamp] = { distance, distanceSpeed };
     }
     return ephemeris;
   }
@@ -196,7 +202,12 @@ export class EphemerisCoordinateService {
   public getBodyCoordinatesWithDistance(
     body: Exclude<Body, Node>,
     julianDayEphemerisTime: number,
-  ): { distance: number; latitude: number; longitude: number } {
+  ): {
+    distance: number;
+    distanceSpeed: number;
+    latitude: number;
+    longitude: number;
+  } {
     return this.computeBodyCoordinates(body, julianDayEphemerisTime);
   }
 

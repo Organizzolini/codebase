@@ -20,6 +20,7 @@ const fixtureNames = [
   "horizons-mercury-opposite-mars-2027-02-16",
   "horizons-mercury-opposite-mars-2027-03-11",
   "horizons-mercury-venus-near-miss-2026-02-17",
+  "usno-full-moon-2026-10-26",
   "usno-full-moon-opposition-2026-03-03",
   "usno-march-equinox-2026",
   "usno-philadelphia-moonset-2026-05-19",
@@ -38,6 +39,8 @@ const fixtureNames = [
   "horizons-venus-no-eastern-brilliancy-2026-10-20",
   "horizons-venus-no-western-brilliancy-2026-10-27",
   "horizons-mercury-no-brilliancy-2026-05-14",
+  "usno-solar-aphelion-2026-07-06",
+  "usno-solar-perihelion-2026-01-03",
 ];
 
 describe.each(fixtureNames)("reference fixture %s", (name) => {

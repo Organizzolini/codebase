@@ -74,7 +74,7 @@ aspect is in orb, the weeks a planet is retrograde.
 | Category | Events |
 | -------- | ------ |
 | Aspects | Major and minor aspects, plus triple, quadruple, quintuple, and sextuple configurations and stelliums |
-| Phases | New moon, first quarter, full moon, last quarter |
+| Phases | New moon, waxing crescent, first quarter, waxing gibbous, full moon, waning gibbous, last quarter, waning crescent |
 | Eclipses | Solar and lunar |
 | Retrogrades | Stations and retrograde periods |
 | Ingresses | Bodies entering a zodiac sign |
@@ -82,6 +82,29 @@ aspect is in orb, the weeks a planet is retrograde.
 | Monthly lunar cycle | Apogee and perigee |
 | Daily cycles | Sunrise, sunset, moonrise, moonset |
 | Twilights | Civil, nautical, and astronomical |
+
+### Moon phases
+
+Every Moon phase is timed by the Moon's apparent geocentric ecliptic longitude
+minus the Sun's, not by how much of the Moon is lit:
+
+| Phase | Moon − Sun longitude |
+| ----- | -------------------- |
+| New Moon | 0° |
+| Waxing Crescent | 45° |
+| First Quarter | 90° |
+| Waxing Gibbous | 135° |
+| Full Moon | 180° |
+| Waning Gibbous | 225° |
+| Last Quarter | 270° |
+| Waning Crescent | 315° |
+
+The four primary phases follow the definition the US Naval Observatory and
+the almanacs publish, and land within two minutes of their times. The
+crescent and gibbous phases begin at the octants halfway between them, so
+each of the eight phases spans 45° of elongation. Illumination would put the
+crescent and gibbous boundaries near 60° and 120°, not halfway, and its
+extremes miss New and Full Moon by up to half an hour.
 
 ## Stored events
 
@@ -190,11 +213,11 @@ Call stacks traced through `applications/caelundas/caelundas-cli`, deepest first
 
 | Measure | Value |
 | --- | --- |
-| Callables | 854 |
+| Callables | 852 |
 | Files | 172 |
-| Calls traced | 1047 |
+| Calls traced | 1051 |
 | Call stacks | 96 |
-| Deepest stack | 15 |
+| Deepest stack | 16 |
 | Stacks through recursion | 0 |
 | Unfollowable calls | 30 |
 
@@ -209,12 +232,12 @@ What this project is judged against, as declared in its own `callidescope.config
 
 ### Call stacks (depth)
 
-**1. `CaelundasCommand.run`** — depth ≥ 15 · decorated-method
+**1. `CaelundasCommand.run`** — depth ≥ 16 · decorated-method
 
 ```text
 🚀 CaelundasCommand.run(): Promise<void> [applications/caelundas/caelundas-cli/src/modules/caelundas/caelundas.command.ts:64]
    ↳ Executes the full calendar generation pipeline.
-  └─> PerfectiveService.detect(input: Input): DetectedCalendarEvent[] [applications/caelundas/caelundas-cli/src/modules/perfective/perfective.service.ts:203]
+  └─> PerfectiveService.detect(input: Input): DetectedCalendarEvent[] [applications/caelundas/caelundas-cli/src/modules/perfective/perfective.service.ts:207]
      ↳ Detects all perfective (instantaneous) astronomical events within the given date range.
     └─> PerfectiveService.detectDayEvents(…): { events: DetectedCalendarEvent[]; previousAspectBodies: AspectBodies[]; } [applications/caelundas/caelundas-cli/src/modules/perfective/perfective.service.ts:59]
        ↳ Sweeps one day minute-by-minute, aggregating perfective events and rolling aspect state forward.
@@ -226,22 +249,23 @@ What this project is judged against, as declared in its own `callidescope.config
              ↳ Runs all simple-aspect detectors for a minute and flattens their detected events.
             └─> PhasesService.detect(args: DetectPlanetaryEventsArguments): DetectedCalendarEvent[] ⚠ deprecated [applications/caelundas/caelundas-cli/src/modules/phases/phases.service.ts:52]
                ↳ Detects all planetary phase events for a given minute. Combines detection from all three planets (Venus, Mercury, Mars).
-              └─> PhasesService.getMartianPhaseEvents(args: MartianPhaseEventArguments): DetectedCalendarEvent[] [applications/caelundas/caelundas-cli/src/modules/phases/phases.service.ts:147]
-                 ↳ Produces Martian phase events for one minute using precomputed phase parameters.
-                └─> MartianPhaseService.getMartianPhaseEvents(args: MartianPhaseEventArguments): DetectedCalendarEvent[] [applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:218]
-                   ↳ Produces Martian phase events for one minute using precomputed phase parameters.
-                  └─> MartianPhaseService.detectMartianPhases(parameters: PhaseParameters, minute: Moment): DetectedCalendarEvent[] [applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:61]
-                     ↳ Detects martian phases.
-                    └─> PhaseCalculationService.isMorningRise(args: RiseSetLongitudeArguments): boolean [applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:347]
-                       ↳ Determines whether planet rises in morning.
-                      └─> PhaseCalculationService.isMorning(args: CurrentLongitudeArguments): boolean [applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:340]
-                         ↳ Determines whether planet is in morning position (western).
-                        └─> PhaseCalculationService.isWestern(args: CurrentLongitudeArguments): boolean [applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:413]
-                           ↳ Determines whether planet is west of sun, by the wrapped signed elongation.
-                          └─> PhaseCalculationService.getSignedElongation(args: CurrentLongitudeArguments): number [applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:86]
-                             ↳ Derives the signed elongation of the planet from the Sun, in (−180°, 180°].
-                            └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:188]
-                               ↳ Normalizes an angle in degrees to the range [0, 360).
+              └─> PhasesService.getMercurianPhaseEvents(args: MercurianPhaseEventArguments): DetectedCalendarEvent[] [applications/caelundas/caelundas-cli/src/modules/phases/phases.service.ts:163]
+                 ↳ Produces Mercurian morning/evening phase events for one minute.
+                └─> MercurianPhaseService.getMercurianPhaseEvents(args: MercurianPhaseEventArguments): DetectedCalendarEvent[] [applications/caelundas/caelundas-cli/src/modules/phases/mercurian-phase.service.ts:217]
+                   ↳ Produces Mercurian morning/evening phase events for one minute.
+                  └─> MercurianPhaseService.detectMercurianMorningPhases(parameters: PhaseParameters, minute: Moment): DetectedCalendarEvent[] [applications/caelundas/caelundas-cli/src/modules/phases/mercurian-phase.service.ts:91]
+                     ↳ Detects mercurian morning phases.
+                    └─> PhaseCalculationService.isWesternBrightest(args: BrightnessLongitudeArguments): boolean [applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:451]
+                       ↳ Determines whether planet is brightest while western.
+                      └─> PhaseCalculationService.isBrightest(args: BrightnessesArguments): boolean [applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:290]
+                         ↳ Determines whether planet is brightest among previous and next margin samples.
+                        └─> PhaseCalculationService.getBrightnesses(…): { currentBrightness: number; nextBrightnesses: number[]; previousBrightnesses: number[]; } [applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:257]
+                           ↳ Derives brightnesses from current and margin illumination/distance samples.
+                          └─> PhaseCalculationService.mapBrightnessArray(distances: number[], illuminations: number[], label: string): number[] [applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:67]
+                             ↳ Derives one brightness per sample, refusing mismatched sample arrays.
+                            └─> PhaseCalculationService.map(…)(distance: number, index: number): number [applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:77]
+                              └─> PhaseCalculationService.getBrightness(args: BrightnessArguments): number [applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:56]
+                                 ↳ Derives apparent brightness from illumination and distance.
 ```
 
 **2. `MajorAspectsService.detect`** — depth ≥ 8 · orphan-root
@@ -260,7 +284,7 @@ What this project is judged against, as declared in its own `callidescope.config
              ↳ Returns `true` when the angular separation between two bodies falls within the configured orb for the given aspect.
             └─> MathService.getAngle(longitude1: Longitude, longitude2: Longitude): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:69]
                ↳ Calculates the shortest angular distance between two ecliptic longitudes.
-              └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:188]
+              └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:155]
                  ↳ Normalizes an angle in degrees to the range [0, 360).
 ```
 
@@ -316,7 +340,7 @@ What this project is judged against, as declared in its own `callidescope.config
          ↳ Derives current longitude/latitude separation angles and eclipse diameter sum.
         └─> MathService.getAngle(longitude1: Longitude, longitude2: Longitude): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:69]
            ↳ Calculates the shortest angular distance between two ecliptic longitudes.
-          └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:188]
+          └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:155]
              ↳ Normalizes an angle in degrees to the range [0, 360).
 ```
 
@@ -333,7 +357,7 @@ What this project is judged against, as declared in its own `callidescope.config
          ↳ Derives current longitude/latitude separation angles and eclipse diameter sum.
         └─> MathService.getAngle(longitude1: Longitude, longitude2: Longitude): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:69]
            ↳ Calculates the shortest angular distance between two ecliptic longitudes.
-          └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:188]
+          └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:155]
              ↳ Normalizes an angle in degrees to the range [0, 360).
 ```
 
@@ -451,7 +475,7 @@ What this project is judged against, as declared in its own `callidescope.config
        ↳ Computes node coordinate (lunar node or perigee). Dispatches to the appropriate computation based on node type.
       └─> EphemerisCoordinateService.computeLunarPerigeeCoordinate(julianDayUniversalTime: number): { latitude: number; longitude: number; } [applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-coordinate.service.ts:64]
          ↳ Computes lunar perigee (apogee in modern terms) ecliptic coordinates.
-        └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:188]
+        └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:155]
            ↳ Normalizes an angle in degrees to the range [0, 360).
 ```
 
@@ -466,7 +490,7 @@ What this project is judged against, as declared in its own `callidescope.config
        ↳ Derives current longitude/latitude separation angles and eclipse diameter sum.
       └─> MathService.getAngle(longitude1: Longitude, longitude2: Longitude): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:69]
          ↳ Calculates the shortest angular distance between two ecliptic longitudes.
-        └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:188]
+        └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:155]
            ↳ Normalizes an angle in degrees to the range [0, 360).
 ```
 
@@ -481,7 +505,7 @@ What this project is judged against, as declared in its own `callidescope.config
        ↳ Derives current longitude/latitude separation angles and eclipse diameter sum.
       └─> MathService.getAngle(longitude1: Longitude, longitude2: Longitude): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:69]
          ↳ Calculates the shortest angular distance between two ecliptic longitudes.
-        └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:188]
+        └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:155]
            ↳ Normalizes an angle in degrees to the range [0, 360).
 ```
 
@@ -550,7 +574,7 @@ What this project is judged against, as declared in its own `callidescope.config
        ↳ Returns `true` when the angular separation between two bodies falls within the configured orb for the given aspect.
       └─> MathService.getAngle(longitude1: Longitude, longitude2: Longitude): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:69]
          ↳ Calculates the shortest angular distance between two ecliptic longitudes.
-        └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:188]
+        └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:155]
            ↳ Normalizes an angle in degrees to the range [0, 360).
 ```
 
@@ -827,7 +851,7 @@ What this project is judged against, as declared in its own `callidescope.config
      ↳ Returns `true` when the angular separation between two bodies falls within the configured orb for the given aspect.
     └─> MathService.getAngle(longitude1: Longitude, longitude2: Longitude): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:69]
        ↳ Calculates the shortest angular distance between two ecliptic longitudes.
-      └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:188]
+      └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:155]
          ↳ Normalizes an angle in degrees to the range [0, 360).
 ```
 
@@ -885,7 +909,7 @@ What this project is judged against, as declared in its own `callidescope.config
      ↳ Returns `true` when the angular separation between two bodies falls within the configured orb for the given aspect.
     └─> MathService.getAngle(longitude1: Longitude, longitude2: Longitude): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:69]
        ↳ Calculates the shortest angular distance between two ecliptic longitudes.
-      └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:188]
+      └─> MathService.normalizeDegrees(degrees: number): number [applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:155]
          ↳ Normalizes an angle in degrees to the range [0, 360).
 ```
 
@@ -953,7 +977,7 @@ What this project is judged against, as declared in its own `callidescope.config
 ```text
 🚀 EphemerisService.getDiameterEphemerisByBody(…): Record<"lunar apogee" | "lunar perigee" | "north lunar node" | "south lunar node" | "ceres" | "chiron" | "juno" | "lilith" | "pallas" | "vesta" | "jupiter" | "mars" | "mercury" | ... 6 more ... | "venus", DiameterEphemeris> [applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris.service.ts:277]
    ↳ Computes minute-by-minute apparent angular diameter for the requested bodies. pheno_ut() returns apparent diameter in…
-  └─> EphemerisPhenomenaService.computeDiameterForBody(…): DiameterEphemeris [applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-phenomena.service.ts:96]
+  └─> EphemerisPhenomenaService.computeDiameterForBody(…): DiameterEphemeris [applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-phenomena.service.ts:81]
      ↳ Computes minute-by-minute apparent angular diameter for a single body.
     └─> EphemerisConstantsService.getSwissEphemerisConstantForBody(body: Exclude<Body, Node>): number [applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-constants.service.ts:36]
        ↳ Looks up the Swiss Ephemeris constant for a non-node body (planet or asteroid).
@@ -964,8 +988,8 @@ What this project is judged against, as declared in its own `callidescope.config
 ```text
 🚀 EphemerisService.getIlluminationEphemerisByBody(…): Record<"lunar apogee" | "lunar perigee" | "north lunar node" | "south lunar node" | "ceres" | "chiron" | "juno" | "lilith" | "pallas" | "vesta" | "jupiter" | "mars" | "mercury" | ... 6 more ... | "venus", IlluminationEphemeris> [applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris.service.ts:392]
    ↳ Computes per-body illumination series for the requested range.
-  └─> EphemerisPhenomenaService.computeIlluminationForBody(…): IlluminationEphemeris [applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-phenomena.service.ts:132]
-     ↳ Computes minute-by-minute illumination fraction, apparent magnitude and phase angle for requested bodies.
+  └─> EphemerisPhenomenaService.computeIlluminationForBody(…): IlluminationEphemeris [applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-phenomena.service.ts:115]
+     ↳ Computes minute-by-minute illumination fraction for requested bodies.
     └─> EphemerisConstantsService.getSwissEphemerisConstantForBody(body: Exclude<Body, Node>): number [applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-constants.service.ts:36]
        ↳ Looks up the Swiss Ephemeris constant for a non-node body (planet or asteroid).
 ```
@@ -1375,7 +1399,7 @@ What this project is judged against, as declared in its own `callidescope.config
 | `AnnualSolarCycleEventsService.getWinterEvents` | 8 | `AnnualSolarCycleEventsService.isWinterSolstice`, `AnnualSolarCycleEventsService.buildWinterSolsticeEvent`, `AnnualSolarCycleEventsService.isThirteenthHexadecan`, `AnnualSolarCycleEventsService.buildThirteenthHexadecanEvent`, `AnnualSolarCycleEventsService.isImbolc`, `AnnualSolarCycleEventsService.buildImbolcEvent`, `AnnualSolarCycleEventsService.isFifteenthHexadecan`, `AnnualSolarCycleEventsService.buildFifteenthHexadecanEvent` | `applications/caelundas/caelundas-cli/src/modules/annual-solar-cycle/annual-solar-cycle-events.service.ts:123` |
 | `ProgressiveService.detect` | 8 | `AspectsService.detectProgressive`, `RetrogradesService.detectProgressive`, `EclipsesService.detectProgressive`, `IngressesService.detectProgressive`, `MonthlyLunarCycleService.detectProgressive`, `TwilightsService.detectProgressive`, `PhasesService.detectProgressive`, `AnnualSolarCycleService.detectProgressive` | `applications/caelundas/caelundas-cli/src/modules/progressive/progressive.service.ts:47` |
 | `CaelundasCommand.run` | 8 | `InputService.parse`, `PerfectiveService.detect`, `ProgressiveService.detect`, `CaelundasCommand.toSorted(…)`, `CalendarEventsService.upsert`, `CalendarEventsService.findInRange`, `CalendarService.write`, `CalendarService.writeJson` | `applications/caelundas/caelundas-cli/src/modules/caelundas/caelundas.command.ts:64` |
-| `PhasesService.detectProgressive` | 7 | `PhasesService.filter(…)`, `PhasesService.filter(…)`, `VenusianPhaseService.getVenusianPhaseProgressiveEvents`, `PhasesService.filter(…)`, `MercurianPhaseService.getMercurianPhaseProgressiveEvents`, `PhasesService.filter(…)`, `MartianPhaseService.getMartianPhaseProgressiveEvents` | `applications/caelundas/caelundas-cli/src/modules/phases/phases.service.ts:97` |
+| `PhasesService.detectProgressive` | 7 | `PhasesService.filter(…)`, `PhasesService.filter(…)`, `VenusianPhaseService.getVenusianPhaseProgressiveEvents`, `PhasesService.filter(…)`, `MercurianPhaseService.getMercurianPhaseProgressiveEvents`, `PhasesService.filter(…)`, `MartianPhaseService.getMartianPhaseProgressiveEvents` | `applications/caelundas/caelundas-cli/src/modules/phases/phases.service.ts:104` |
 | `PerfectiveService.detectOrbitalEvents` | 7 | `RetrogradesService.detect`, `IngressesService.detect`, `MonthlyLunarCycleService.detect`, `AnnualSolarCycleService.detect`, `PhasesService.getMartianPhaseEvents`, `PhasesService.getMercurianPhaseEvents`, `PhasesService.getVenusianPhaseEvents` | `applications/caelundas/caelundas-cli/src/modules/perfective/perfective.service.ts:152` |
 | `AspectsService.detectSimpleAspects` | 6 | `IngressesService.detect`, `PhasesService.detect`, `RetrogradesService.detect`, `MajorAspectsService.detect`, `MinorAspectsService.detect`, `SpecialtyAspectsService.detect` | `applications/caelundas/caelundas-cli/src/modules/aspects/aspects.service.ts:90` |
 | `RetrogradesService.detectBodyStations` | 6 | `EphemerisService.getCoordinateFromEphemeris`, `RetrogradesService.getPreviousLongitudes`, `RetrogradesService.getNextLongitudes`, `RetrogradesService.isRetrograde`, `RetrogradesService.buildRetrogradeEvent`, `RetrogradesService.isDirect` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:56` |
@@ -1385,13 +1409,12 @@ What this project is judged against, as declared in its own `callidescope.config
 | `AnnualSolarCycleService.getSolarApsisEvents` | 5 | `AnnualSolarCycleService.getSolarDistances`, `MathService.isMaximum`, `AnnualSolarCycleEventsService.buildAphelionEvent`, `MathService.isMinimum`, `AnnualSolarCycleEventsService.buildPerihelionEvent` | `applications/caelundas/caelundas-cli/src/modules/annual-solar-cycle/annual-solar-cycle.service.ts:281` |
 | `AspectsService.detectCompositeAspects` | 5 | `QuadrupleAspectsService.detect`, `QuintupleAspectsService.detect`, `SextupleAspectsService.detect`, `StelliumService.detect`, `TripleAspectsService.detect` | `applications/caelundas/caelundas-cli/src/modules/aspects/aspects.service.ts:72` |
 | `EclipseEventService.getProgressiveEventsForFrame` | 5 | `EclipseEventService.filter(…)`, `EclipseEventService.filter(…)`, `EclipseEventService.filter(…)`, `ProgressiveUtilitiesService.pairProgressiveEvents`, `EclipseEventService.map(…)` | `applications/caelundas/caelundas-cli/src/modules/eclipses/eclipse-event.service.ts:112` |
-| `MonthlyLunarCycleService.detect` | 5 | `EphemerisService.getIlluminationFromEphemeris`, `MonthlyLunarCycleService.getPreviousIlluminations`, `MonthlyLunarCycleService.getNextIlluminations`, `MonthlyLunarCycleService.isLunarPhase`, `MonthlyLunarCycleService.buildMonthlyLunarCycleEvent` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:372` |
+| `TwilightsService.detectProgressive` | 5 | `TwilightsService.filter(…)`, `TwilightsService.getEventsByCategory`, `TwilightsComposerService.buildDawnProgressiveEvents`, `TwilightsComposerService.buildDuskProgressiveEvents`, `TwilightsComposerService.pairAndBuild` | `applications/caelundas/caelundas-cli/src/modules/twilights/twilights.service.ts:163` |
 | `MartianPhaseService.detectMartianPhases` | 5 | `PhaseCalculationService.isMorningRise`, `PhaseCalculationService.isMorningSet`, `PhaseCalculationService.isEveningRise`, `PhaseCalculationService.isEveningSet`, `MartianPhaseService.buildMartianPhaseEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:61` |
 | `MercurianPhaseService.detectMercurianEveningPhases` | 5 | `PhaseCalculationService.isEveningRise`, `PhaseCalculationService.isEasternElongation`, `PhaseCalculationService.isEasternBrightest`, `PhaseCalculationService.isEveningSet`, `MercurianPhaseService.buildMercurianPhaseEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/mercurian-phase.service.ts:61` |
 | `MercurianPhaseService.detectMercurianMorningPhases` | 5 | `PhaseCalculationService.isMorningRise`, `PhaseCalculationService.isWesternBrightest`, `PhaseCalculationService.isWesternElongation`, `PhaseCalculationService.isMorningSet`, `MercurianPhaseService.buildMercurianPhaseEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/mercurian-phase.service.ts:91` |
 | `VenusianPhaseService.detectVenusianEveningPhases` | 5 | `PhaseCalculationService.isEveningRise`, `PhaseCalculationService.isEasternElongation`, `PhaseCalculationService.isEasternBrightest`, `PhaseCalculationService.isEveningSet`, `VenusianPhaseService.buildVenusianPhaseEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/venusian-phase.service.ts:61` |
 | `VenusianPhaseService.detectVenusianMorningPhases` | 5 | `PhaseCalculationService.isMorningRise`, `PhaseCalculationService.isWesternBrightest`, `PhaseCalculationService.isWesternElongation`, `PhaseCalculationService.isMorningSet`, `VenusianPhaseService.buildVenusianPhaseEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/venusian-phase.service.ts:89` |
-| `TwilightsService.detectProgressive` | 5 | `TwilightsService.filter(…)`, `TwilightsService.getEventsByCategory`, `TwilightsComposerService.buildDawnProgressiveEvents`, `TwilightsComposerService.buildDuskProgressiveEvents`, `TwilightsComposerService.pairAndBuild` | `applications/caelundas/caelundas-cli/src/modules/twilights/twilights.service.ts:163` |
 | `ProgressiveAspectService.buildProgressiveAspectEvents` | 5 | `ProgressiveAspectService.filter(…)`, `ProgressiveAspectService.groupBy(…)`, `ProgressiveAspectService.filter(…)`, `ProgressiveAspectService.filter(…)`, `ProgressiveAspectService.map(…)` | `applications/caelundas/caelundas-cli/src/modules/progressive/progressive-aspect.service.ts:60` |
 | `StelliumService.composeStelliums` | 5 | `StelliumService.groupAspectsByType`, `StelliumService.buildConjunctionClusters`, `StelliumService.allPairsConjunct`, `AspectCalculationSupportService.determineCompoundPhaseFromSnapshots`, `StelliumService.createStelliumEvent` | `applications/caelundas/caelundas-cli/src/modules/stellium/stellium.service.ts:148` |
 | `TripleAspectsComposerService.pairProgressiveGroup` | 5 | `TripleAspectsComposerService.toSorted(…)`, `TripleAspectsComposerService.filter(…)`, `TripleAspectsComposerService.toSorted(…)`, `TripleAspectsComposerService.filter(…)`, `TripleAspectsComposerService.pairProgressiveGroupPairs` | `applications/caelundas/caelundas-cli/src/modules/triple-aspects/triple-aspects-composer.service.ts:425` |
@@ -1411,8 +1434,8 @@ What this project is judged against, as declared in its own `callidescope.config
 | `MinorAspectsComposerService.processAspectGroup` | 4 | `MinorAspectsComposerService.filter(…)`, `MinorAspectsComposerService.filter(…)`, `ProgressiveUtilitiesService.pairProgressiveEvents`, `MinorAspectsComposerService.map(…)` | `applications/caelundas/caelundas-cli/src/modules/minor-aspects/minor-aspects-composer.service.ts:234` |
 | `EphemerisCoordinateService.computeDistanceForBody` | 3 | `EphemerisTimeService.generateMinutes`, `EphemerisTimeService.dateToJulianDays`, `EphemerisCoordinateService.computeBodyCoordinates` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-coordinate.service.ts:149` |
 | `EphemerisCoordinateService.computeNodeBodyMinutes` | 3 | `EphemerisTimeService.generateMinutes`, `EphemerisTimeService.dateToJulianDays`, `EphemerisCoordinateService.computeNodeCoordinate` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-coordinate.service.ts:173` |
-| `EphemerisPhenomenaService.computeDiameterForBody` | 3 | `EphemerisConstantsService.getSwissEphemerisConstantForBody`, `EphemerisTimeService.generateMinutes`, `EphemerisTimeService.dateToJulianDays` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-phenomena.service.ts:96` |
-| `EphemerisPhenomenaService.computeIlluminationForBody` | 3 | `EphemerisConstantsService.getSwissEphemerisConstantForBody`, `EphemerisTimeService.generateMinutes`, `EphemerisTimeService.dateToJulianDays` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-phenomena.service.ts:132` |
+| `EphemerisPhenomenaService.computeDiameterForBody` | 3 | `EphemerisConstantsService.getSwissEphemerisConstantForBody`, `EphemerisTimeService.generateMinutes`, `EphemerisTimeService.dateToJulianDays` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-phenomena.service.ts:81` |
+| `EphemerisPhenomenaService.computeIlluminationForBody` | 3 | `EphemerisConstantsService.getSwissEphemerisConstantForBody`, `EphemerisTimeService.generateMinutes`, `EphemerisTimeService.dateToJulianDays` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-phenomena.service.ts:115` |
 | `EphemerisService.getAzimuthElevationEphemerisByBody` | 3 | `EphemerisHorizonService.computeAzimuthElevationForBody`, `EphemerisService.getHorizonService`, `typedFromEntries` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris.service.ts:173` |
 | `EphemerisService.getDiameterEphemerisByBody` | 3 | `EphemerisPhenomenaService.computeDiameterForBody`, `EphemerisService.getPhenomenaService`, `typedFromEntries` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris.service.ts:277` |
 | `EphemerisService.getDistanceEphemerisByBody` | 3 | `EphemerisCoordinateService.computeDistanceForBody`, `EphemerisService.getCoordinateService`, `typedFromEntries` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris.service.ts:320` |
@@ -1434,11 +1457,10 @@ What this project is judged against, as declared in its own `callidescope.config
 | `IngressesService.detectProgressive` | 3 | `IngressesComposerService.filterSignIngressEvents`, `IngressesComposerService.groupSignIngressEventsByBody`, `IngressesComposerService.buildProgressiveSpansForBody` | `applications/caelundas/caelundas-cli/src/modules/ingresses/ingresses.service.ts:153` |
 | `IngressesService.getPeakIngressEvents` | 3 | `IngressesComposerService.getLongitudes`, `IngressesComposerService.isPeakIngress`, `IngressesComposerService.buildPeakIngressEvent` | `applications/caelundas/caelundas-cli/src/modules/ingresses/ingresses.service.ts:252` |
 | `IngressesService.getSignIngressEvents` | 3 | `IngressesComposerService.getLongitudes`, `IngressesComposerService.isSignIngress`, `IngressesComposerService.buildSignIngressEvent` | `applications/caelundas/caelundas-cli/src/modules/ingresses/ingresses.service.ts:309` |
-| `MonthlyLunarCycleService.extractLunarPhaseFromCategories` | 3 | `MonthlyLunarCycleService.map(…)`, `MonthlyLunarCycleService.find(…)`, `isLunarPhase` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:99` |
-| `MonthlyLunarCycleService.isLunarPhase` | 3 | `MonthlyLunarCycleService.isNewMoon`, `MonthlyLunarCycleService.isFullMoon`, `MonthlyLunarCycleService.isQuarterPhase` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:213` |
-| `MonthlyLunarCycleService.detectProgressive` | 3 | `MonthlyLunarCycleService.filter(…)`, `MonthlyLunarCycleService.sortBy(…)`, `MonthlyLunarCycleService.getMonthlyLunarCycleProgressiveEvent` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:444` |
-| `PhaseCalculationService.gatherCurrentEphemeris` | 3 | `PhaseCalculationService.gatherPositions`, `EphemerisService.getMagnitudeFromEphemeris`, `EphemerisService.getPhaseAngleFromEphemeris` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:116` |
-| `PhaseCalculationService.gatherPhaseParameters` | 3 | `PhaseCalculationService.gatherCurrentEphemeris`, `PhaseCalculationService.gatherMarginEphemeris`, `PhaseCalculationService.gatherPositions` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:185` |
+| `MonthlyLunarCycleService.extractLunarPhaseFromCategories` | 3 | `MonthlyLunarCycleService.map(…)`, `MonthlyLunarCycleService.find(…)`, `isLunarPhase` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:74` |
+| `MonthlyLunarCycleService.detectProgressive` | 3 | `MonthlyLunarCycleService.filter(…)`, `MonthlyLunarCycleService.sortBy(…)`, `MonthlyLunarCycleService.getMonthlyLunarCycleProgressiveEvent` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:332` |
+| `PhaseCalculationService.gatherCurrentEphemeris` | 3 | `EphemerisService.getDistanceFromEphemeris`, `EphemerisService.getIlluminationFromEphemeris`, `EphemerisService.getCoordinateFromEphemeris` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:108` |
+| `PhaseCalculationService.gatherPhaseParameters` | 3 | `PhaseCalculationService.gatherCurrentEphemeris`, `PhaseCalculationService.gatherMarginEphemeris`, `EphemerisService.getCoordinateFromEphemeris` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:191` |
 | `MartianPhaseService.getMartianEveningProgressiveEvents` | 3 | `ProgressiveUtilitiesService.pairProgressiveEvents`, `PhaseCalculationService.filterByCategory`, `MartianPhaseService.map(…)` | `applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:174` |
 | `MartianPhaseService.getMartianMorningProgressiveEvents` | 3 | `ProgressiveUtilitiesService.pairProgressiveEvents`, `PhaseCalculationService.filterByCategory`, `MartianPhaseService.map(…)` | `applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:196` |
 | `MercurianPhaseService.getMercurianEveningProgressiveEvents` | 3 | `ProgressiveUtilitiesService.pairProgressiveEvents`, `PhaseCalculationService.filterByCategory`, `MercurianPhaseService.map(…)` | `applications/caelundas/caelundas-cli/src/modules/phases/mercurian-phase.service.ts:173` |
@@ -1481,7 +1503,7 @@ What this project is judged against, as declared in its own `callidescope.config
 | `CalendarService.buildEventContent` | 2 | `CalendarService.generateUid`, `CalendarService.buildEventProperties` | `applications/caelundas/caelundas-cli/src/modules/calendar/calendar.service.ts:105` |
 | `CalendarService.buildFileContent` | 2 | `CalendarService.buildTimezoneContent`, `CalendarService.map(…)` | `applications/caelundas/caelundas-cli/src/modules/calendar/calendar.service.ts:150` |
 | `EphemerisCoordinateService.computeNodeCoordinate` | 2 | `EphemerisCoordinateService.computeLunarPerigeeCoordinate`, `EphemerisCoordinateService.computeRegularNodeCoordinate` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-coordinate.service.ts:87` |
-| `EphemerisPhenomenaService.computePhenoForMinute` | 2 | `EphemerisPhenomenaService.computePhenoForSunMinute`, `EphemerisPhenomenaService.computePhenoForBodyMinute` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-phenomena.service.ts:213` |
+| `EphemerisPhenomenaService.computePhenoForMinute` | 2 | `EphemerisPhenomenaService.computePhenoForSunMinute`, `EphemerisPhenomenaService.computePhenoForBodyMinute` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-phenomena.service.ts:188` |
 | `EphemerisAggregationService.computeNonNodeBodyMinutes` | 2 | `EphemerisTimeService.generateMinutes`, `EphemerisAggregationService.processNonNodeBodyMinute` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-aggregation.service.ts:57` |
 | `AnnualSolarCycleEventsService.getAutumnalToVernalEvents` | 2 | `AnnualSolarCycleEventsService.getAutumnEvents`, `AnnualSolarCycleEventsService.getWinterEvents` | `applications/caelundas/caelundas-cli/src/modules/annual-solar-cycle/annual-solar-cycle-events.service.ts:335` |
 | `AnnualSolarCycleEventsService.getVernalToAutumnalEvents` | 2 | `AnnualSolarCycleEventsService.getSpringEvents`, `AnnualSolarCycleEventsService.getSummerEvents` | `applications/caelundas/caelundas-cli/src/modules/annual-solar-cycle/annual-solar-cycle-events.service.ts:346` |
@@ -1503,24 +1525,28 @@ What this project is judged against, as declared in its own `callidescope.config
 | `IngressesComposerService.buildProgressiveSpansForBody` | 2 | `IngressesComposerService.sortBy(…)`, `IngressesComposerService.getSignIngressDurationEvent` | `applications/caelundas/caelundas-cli/src/modules/ingresses/ingresses-composer.service.ts:182` |
 | `IngressesComposerService.resolveDecan` | 2 | `IngressesComposerService.getDecan`, `isDecan` | `applications/caelundas/caelundas-cli/src/modules/ingresses/ingresses-composer.service.ts:418` |
 | `IngressesService.getSign` | 2 | `IngressesService.find(…)`, `objectEntries` | `applications/caelundas/caelundas-cli/src/modules/ingresses/ingresses.service.ts:72` |
-| `PhaseCalculationService.isEasternBrightest` | 2 | `PhaseCalculationService.isEastern`, `PhaseCalculationService.isBrightest` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:285` |
-| `PhaseCalculationService.isEasternElongation` | 2 | `PhaseCalculationService.isElongation`, `PhaseCalculationService.isEastern` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:292` |
-| `PhaseCalculationService.isElongation` | 2 | `MathService.isMaximum`, `PhaseCalculationService.getElongationAngle` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:299` |
-| `PhaseCalculationService.isEveningRise` | 2 | `PhaseCalculationService.isEvening`, `PhaseCalculationService.isRise` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:326` |
-| `PhaseCalculationService.isEveningSet` | 2 | `PhaseCalculationService.isEvening`, `PhaseCalculationService.isSet` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:333` |
-| `PhaseCalculationService.isMorningRise` | 2 | `PhaseCalculationService.isMorning`, `PhaseCalculationService.isRise` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:347` |
-| `PhaseCalculationService.isMorningSet` | 2 | `PhaseCalculationService.isMorning`, `PhaseCalculationService.isSet` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:354` |
-| `PhaseCalculationService.isWesternBrightest` | 2 | `PhaseCalculationService.isWestern`, `PhaseCalculationService.isBrightest` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:420` |
-| `PhaseCalculationService.isWesternElongation` | 2 | `PhaseCalculationService.isElongation`, `PhaseCalculationService.isWestern` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:427` |
-| `MartianPhaseService.getMartianPhaseEvents` | 2 | `PhaseCalculationService.gatherPhaseParameters`, `MartianPhaseService.detectMartianPhases` | `applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:218` |
-| `MartianPhaseService.getMartianPhaseProgressiveEvents` | 2 | `MartianPhaseService.getMartianMorningProgressiveEvents`, `MartianPhaseService.getMartianEveningProgressiveEvents` | `applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:241` |
-| `MercurianPhaseService.getMercurianPhaseProgressiveEvents` | 2 | `MercurianPhaseService.getMercurianMorningProgressiveEvents`, `MercurianPhaseService.getMercurianEveningProgressiveEvents` | `applications/caelundas/caelundas-cli/src/modules/phases/mercurian-phase.service.ts:243` |
-| `VenusianPhaseService.getVenusianPhaseProgressiveEvents` | 2 | `VenusianPhaseService.getVenusianMorningProgressiveEvents`, `VenusianPhaseService.getVenusianEveningProgressiveEvents` | `applications/caelundas/caelundas-cli/src/modules/phases/venusian-phase.service.ts:258` |
-| `RetrogradesService.isDirect` | 2 | `RetrogradesService.every(…)`, `RetrogradesService.every(…)` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:154` |
-| `RetrogradesService.isRetrograde` | 2 | `RetrogradesService.every(…)`, `RetrogradesService.every(…)` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:184` |
+| `MonthlyLunarCycleService.getLunarPhases` | 2 | `MonthlyLunarCycleService.getElongationWindow`, `MonthlyLunarCycleService.filter(…)` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:141` |
+| `MonthlyLunarCycleService.detect` | 2 | `MonthlyLunarCycleService.map(…)`, `MonthlyLunarCycleService.getLunarPhases` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:284` |
 | `TwilightsComposerService.pairAndBuild` | 2 | `ProgressiveUtilitiesService.pairProgressiveEvents`, `TwilightsComposerService.map(…)` | `applications/caelundas/caelundas-cli/src/modules/twilights/twilights-composer.service.ts:114` |
 | `TwilightsService.detect` | 2 | `TwilightsDetectorService.getSunElevations`, `TwilightsDetectorService.buildTwilightTransitionEvents` | `applications/caelundas/caelundas-cli/src/modules/twilights/twilights.service.ts:133` |
-| `PerfectiveService.detect` | 2 | `DatetimeService.generateDates`, `PerfectiveService.detectDayEvents` | `applications/caelundas/caelundas-cli/src/modules/perfective/perfective.service.ts:203` |
+| `PhaseCalculationService.gatherMarginEphemeris` | 2 | `PhaseCalculationService.from(…)`, `PhaseCalculationService.from(…)` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:151` |
+| `PhaseCalculationService.getBrightnesses` | 2 | `PhaseCalculationService.getBrightness`, `PhaseCalculationService.mapBrightnessArray` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:257` |
+| `PhaseCalculationService.isEasternBrightest` | 2 | `PhaseCalculationService.isEastern`, `PhaseCalculationService.isBrightest` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:310` |
+| `PhaseCalculationService.isEasternElongation` | 2 | `PhaseCalculationService.isElongation`, `PhaseCalculationService.isEastern` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:317` |
+| `PhaseCalculationService.isElongation` | 2 | `MathService.isMaximum`, `PhaseCalculationService.getElongationAngle` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:324` |
+| `PhaseCalculationService.isEveningRise` | 2 | `PhaseCalculationService.isEvening`, `PhaseCalculationService.isRise` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:357` |
+| `PhaseCalculationService.isEveningSet` | 2 | `PhaseCalculationService.isEvening`, `PhaseCalculationService.isSet` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:364` |
+| `PhaseCalculationService.isMorningRise` | 2 | `PhaseCalculationService.isMorning`, `PhaseCalculationService.isRise` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:378` |
+| `PhaseCalculationService.isMorningSet` | 2 | `PhaseCalculationService.isMorning`, `PhaseCalculationService.isSet` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:385` |
+| `PhaseCalculationService.isWesternBrightest` | 2 | `PhaseCalculationService.isWestern`, `PhaseCalculationService.isBrightest` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:451` |
+| `PhaseCalculationService.isWesternElongation` | 2 | `PhaseCalculationService.isElongation`, `PhaseCalculationService.isWestern` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:458` |
+| `MartianPhaseService.getMartianPhaseEvents` | 2 | `PhaseCalculationService.gatherPhaseParameters`, `MartianPhaseService.detectMartianPhases` | `applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:218` |
+| `MartianPhaseService.getMartianPhaseProgressiveEvents` | 2 | `MartianPhaseService.getMartianMorningProgressiveEvents`, `MartianPhaseService.getMartianEveningProgressiveEvents` | `applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:243` |
+| `MercurianPhaseService.getMercurianPhaseProgressiveEvents` | 2 | `MercurianPhaseService.getMercurianMorningProgressiveEvents`, `MercurianPhaseService.getMercurianEveningProgressiveEvents` | `applications/caelundas/caelundas-cli/src/modules/phases/mercurian-phase.service.ts:245` |
+| `VenusianPhaseService.getVenusianPhaseProgressiveEvents` | 2 | `VenusianPhaseService.getVenusianMorningProgressiveEvents`, `VenusianPhaseService.getVenusianEveningProgressiveEvents` | `applications/caelundas/caelundas-cli/src/modules/phases/venusian-phase.service.ts:260` |
+| `RetrogradesService.isDirect` | 2 | `RetrogradesService.every(…)`, `RetrogradesService.every(…)` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:154` |
+| `RetrogradesService.isRetrograde` | 2 | `RetrogradesService.every(…)`, `RetrogradesService.every(…)` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:184` |
+| `PerfectiveService.detect` | 2 | `DatetimeService.generateDates`, `PerfectiveService.detectDayEvents` | `applications/caelundas/caelundas-cli/src/modules/perfective/perfective.service.ts:207` |
 | `AspectsUtilitiesService.isPerfective` | 2 | `AspectsUtilitiesService.isPerfectiveConjunct`, `AspectsUtilitiesService.isPerfectiveNonConjunct` | `applications/caelundas/caelundas-cli/src/modules/aspects/aspects-utilities.service.ts:221` |
 | `AspectsUtilitiesService.anonymous` | 2 | `AspectsUtilitiesService.computeAngles`, `AspectsUtilitiesService.getAspectPhase` | `applications/caelundas/caelundas-cli/src/modules/aspects/aspects-utilities.service.ts:287` |
 | `MajorAspectEventService.buildMajorAspectEvent` | 2 | `MajorAspectEventService.getMajorAspect`, `MajorAspectEventService.assembleMajorAspectEvent` | `applications/caelundas/caelundas-cli/src/modules/major-aspects/major-aspect-event.service.ts:121` |
@@ -1570,7 +1596,7 @@ What this project is judged against, as declared in its own `callidescope.config
 | `CalendarService.write` | 1 | `CalendarService.buildFileContent` | `applications/caelundas/caelundas-cli/src/modules/calendar/calendar.service.ts:203` |
 | `CalendarService.writeJson` | 1 | `CalendarService.map(…)` | `applications/caelundas/caelundas-cli/src/modules/calendar/calendar.service.ts:239` |
 | `MathService.getAngle` | 1 | `MathService.normalizeDegrees` | `applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:69` |
-| `MathService.getCombinations` | 1 | `MathService.combine` | `applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:124` |
+| `MathService.getCombinations` | 1 | `MathService.combine` | `applications/caelundas/caelundas-cli/src/modules/math/math.service.ts:91` |
 | `EphemerisCoordinateService.computeBodyCoordinates` | 1 | `EphemerisConstantsService.getSwissEphemerisConstantForBody` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-coordinate.service.ts:40` |
 | `EphemerisCoordinateService.computeLunarPerigeeCoordinate` | 1 | `MathService.normalizeDegrees` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-coordinate.service.ts:64` |
 | `EphemerisCoordinateService.computeRegularNodeCoordinate` | 1 | `MathService.normalizeDegrees` | `applications/caelundas/caelundas-cli/src/modules/ephemeris/ephemeris-coordinate.service.ts:102` |
@@ -1672,49 +1698,13 @@ What this project is judged against, as declared in its own `callidescope.config
 | `IngressesService.buildDecanIngressEvent` | 1 | `IngressesComposerService.buildDecanIngressEvent` | `applications/caelundas/caelundas-cli/src/modules/ingresses/ingresses.service.ts:91` |
 | `IngressesService.buildPeakIngressEvent` | 1 | `IngressesComposerService.buildPeakIngressEvent` | `applications/caelundas/caelundas-cli/src/modules/ingresses/ingresses.service.ts:106` |
 | `IngressesService.buildSignIngressEvent` | 1 | `IngressesComposerService.buildSignIngressEvent` | `applications/caelundas/caelundas-cli/src/modules/ingresses/ingresses.service.ts:119` |
-| `MonthlyLunarCycleService.getMonthlyLunarCycleProgressiveEvent` | 1 | `MonthlyLunarCycleService.extractLunarPhaseFromCategories` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:130` |
-| `MonthlyLunarCycleService.getNextIlluminations` | 1 | `MonthlyLunarCycleService.from(…)` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:162` |
-| `MonthlyLunarCycleService.from(…)` | 1 | `EphemerisService.getIlluminationFromEphemeris` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:166` |
-| `MonthlyLunarCycleService.getPreviousIlluminations` | 1 | `MonthlyLunarCycleService.from(…)` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:179` |
-| `MonthlyLunarCycleService.from(…)` | 1 | `EphemerisService.getIlluminationFromEphemeris` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:183` |
-| `MonthlyLunarCycleService.buildMonthlyLunarCycleEvent` | 1 | `CalendarService.buildInstantEvent` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:314` |
-| `PhaseCalculationService.gatherPositions` | 1 | `PhaseCalculationService.read` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:59` |
-| `PhaseCalculationService.read` | 1 | `EphemerisService.getCoordinateFromEphemeris` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:62` |
-| `PhaseCalculationService.getSignedElongation` | 1 | `MathService.normalizeDegrees` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:86` |
-| `PhaseCalculationService.filterByCategory` | 1 | `PhaseCalculationService.filter(…)` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:99` |
-| `PhaseCalculationService.gatherMarginEphemeris` | 1 | `PhaseCalculationService.from(…)` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:160` |
-| `PhaseCalculationService.from(…)` | 1 | `EphemerisService.getMagnitudeFromEphemeris` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:167` |
-| `PhaseCalculationService.getElongationAngle` | 1 | `MathService.getAngularSeparation` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:243` |
-| `PhaseCalculationService.isBrightest` | 1 | `PhaseCalculationService.getElongationAngle` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:261` |
-| `PhaseCalculationService.isEastern` | 1 | `PhaseCalculationService.getSignedElongation` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:278` |
-| `PhaseCalculationService.isEvening` | 1 | `PhaseCalculationService.isEastern` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:319` |
-| `PhaseCalculationService.isMorning` | 1 | `PhaseCalculationService.isWestern` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:340` |
-| `PhaseCalculationService.isRise` | 1 | `MathService.getAngle` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:361` |
-| `PhaseCalculationService.isSet` | 1 | `MathService.getAngle` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:387` |
-| `PhaseCalculationService.isWestern` | 1 | `PhaseCalculationService.getSignedElongation` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:413` |
-| `MartianPhaseService.buildMartianPhaseEvent` | 1 | `PhaseCalculationService.formatTimeZoneIso` | `applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:97` |
-| `MartianPhaseService.map(…)` | 1 | `MartianPhaseService.getMarsEveningVisibilityDurationEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:188` |
-| `MartianPhaseService.map(…)` | 1 | `MartianPhaseService.getMarsMorningVisibilityDurationEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:210` |
-| `MercurianPhaseService.buildMercurianPhaseEvent` | 1 | `PhaseCalculationService.formatTimeZoneIso` | `applications/caelundas/caelundas-cli/src/modules/phases/mercurian-phase.service.ts:136` |
-| `MercurianPhaseService.map(…)` | 1 | `MercurianPhaseService.getMercuryEveningVisibilityDurationEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/mercurian-phase.service.ts:187` |
-| `MercurianPhaseService.map(…)` | 1 | `MercurianPhaseService.getMercuryMorningVisibilityDurationEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/mercurian-phase.service.ts:209` |
-| `VenusianPhaseService.buildVenusianPhaseEvent` | 1 | `PhaseCalculationService.formatTimeZoneIso` | `applications/caelundas/caelundas-cli/src/modules/phases/venusian-phase.service.ts:131` |
-| `VenusianPhaseService.map(…)` | 1 | `VenusianPhaseService.getVenusEveningVisibilityDurationEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/venusian-phase.service.ts:202` |
-| `VenusianPhaseService.map(…)` | 1 | `VenusianPhaseService.getVenusMorningVisibilityDurationEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/venusian-phase.service.ts:224` |
-| `PhasesService.getMartianPhaseEvents` | 1 | `MartianPhaseService.getMartianPhaseEvents` | `applications/caelundas/caelundas-cli/src/modules/phases/phases.service.ts:147` |
-| `PhasesService.getMercurianPhaseEvents` | 1 | `MercurianPhaseService.getMercurianPhaseEvents` | `applications/caelundas/caelundas-cli/src/modules/phases/phases.service.ts:156` |
-| `PhasesService.getVenusianPhaseEvents` | 1 | `VenusianPhaseService.getVenusianPhaseEvents` | `applications/caelundas/caelundas-cli/src/modules/phases/phases.service.ts:165` |
-| `RetrogradesService.getNextLongitudes` | 1 | `RetrogradesService.from(…)` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:94` |
-| `RetrogradesService.from(…)` | 1 | `EphemerisService.getCoordinateFromEphemeris` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:98` |
-| `RetrogradesService.getPreviousLongitudes` | 1 | `RetrogradesService.from(…)` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:111` |
-| `RetrogradesService.from(…)` | 1 | `EphemerisService.getCoordinateFromEphemeris` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:115` |
-| `RetrogradesService.every(…)` | 1 | `MathService.normalizeForComparison` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:161` |
-| `RetrogradesService.every(…)` | 1 | `MathService.normalizeForComparison` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:170` |
-| `RetrogradesService.every(…)` | 1 | `MathService.normalizeForComparison` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:191` |
-| `RetrogradesService.every(…)` | 1 | `MathService.normalizeForComparison` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:200` |
-| `RetrogradesService.buildRetrogradeEvent` | 1 | `capitalize` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:243` |
-| `RetrogradesService.detect` | 1 | `RetrogradesService.detectBodyStations` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:308` |
-| `RetrogradesService.map(…)` | 1 | `RetrogradesService.getRetrogradeProgressiveEvent` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:384` |
+| `MonthlyLunarCycleService.getElongation` | 1 | `EphemerisService.getCoordinateFromEphemeris` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:106` |
+| `MonthlyLunarCycleService.getElongationWindow` | 1 | `MonthlyLunarCycleService.getElongation` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:123` |
+| `MonthlyLunarCycleService.filter(…)` | 1 | `MonthlyLunarCycleService.isElongationReached` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:143` |
+| `MonthlyLunarCycleService.getMonthlyLunarCycleProgressiveEvent` | 1 | `MonthlyLunarCycleService.extractLunarPhaseFromCategories` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:154` |
+| `MonthlyLunarCycleService.isElongationReached` | 1 | `MonthlyLunarCycleService.offset` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:192` |
+| `MonthlyLunarCycleService.buildMonthlyLunarCycleEvent` | 1 | `CalendarService.buildInstantEvent` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:238` |
+| `MonthlyLunarCycleService.map(…)` | 1 | `MonthlyLunarCycleService.buildMonthlyLunarCycleEvent` | `applications/caelundas/caelundas-cli/src/modules/monthly-lunar-cycle/monthly-lunar-cycle.service.ts:286` |
 | `TwilightsBuilderService.buildAstronomicalDawnEvent` | 1 | `TwilightsBuilderService.buildTransitionEvent` | `applications/caelundas/caelundas-cli/src/modules/twilights/twilights-builder.service.ts:61` |
 | `TwilightsBuilderService.buildAstronomicalDuskEvent` | 1 | `TwilightsBuilderService.buildTransitionEvent` | `applications/caelundas/caelundas-cli/src/modules/twilights/twilights-builder.service.ts:68` |
 | `TwilightsBuilderService.buildCivilDawnEvent` | 1 | `TwilightsBuilderService.buildTransitionEvent` | `applications/caelundas/caelundas-cli/src/modules/twilights/twilights-builder.service.ts:75` |
@@ -1743,6 +1733,40 @@ What this project is judged against, as declared in its own `callidescope.config
 | `TwilightsService.buildNauticalDuskEvent` | 1 | `TwilightsBuilderService.buildNauticalDuskEvent` | `applications/caelundas/caelundas-cli/src/modules/twilights/twilights.service.ts:111` |
 | `TwilightsService.getEventsByCategory` | 1 | `TwilightsService.filter(…)` | `applications/caelundas/caelundas-cli/src/modules/twilights/twilights.service.ts:169` |
 | `TwilightsService.builder` | 1 | `TwilightsBuilderService.getNightDurationEvent` | `applications/caelundas/caelundas-cli/src/modules/twilights/twilights.service.ts:197` |
+| `PhaseCalculationService.mapBrightnessArray` | 1 | `PhaseCalculationService.map(…)` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:67` |
+| `PhaseCalculationService.map(…)` | 1 | `PhaseCalculationService.getBrightness` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:77` |
+| `PhaseCalculationService.filterByCategory` | 1 | `PhaseCalculationService.filter(…)` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:91` |
+| `PhaseCalculationService.from(…)` | 1 | `EphemerisService.getDistanceFromEphemeris` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:159` |
+| `PhaseCalculationService.from(…)` | 1 | `EphemerisService.getIlluminationFromEphemeris` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:173` |
+| `PhaseCalculationService.getElongationAngle` | 1 | `MathService.getAngle` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:283` |
+| `PhaseCalculationService.isBrightest` | 1 | `PhaseCalculationService.getBrightnesses` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:290` |
+| `PhaseCalculationService.isEvening` | 1 | `PhaseCalculationService.isEastern` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:350` |
+| `PhaseCalculationService.isMorning` | 1 | `PhaseCalculationService.isWestern` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:371` |
+| `PhaseCalculationService.isRise` | 1 | `MathService.getAngle` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:392` |
+| `PhaseCalculationService.isSet` | 1 | `MathService.getAngle` | `applications/caelundas/caelundas-cli/src/modules/phases/phase-calculation.service.ts:418` |
+| `MartianPhaseService.buildMartianPhaseEvent` | 1 | `PhaseCalculationService.formatTimeZoneIso` | `applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:97` |
+| `MartianPhaseService.map(…)` | 1 | `MartianPhaseService.getMarsEveningVisibilityDurationEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:188` |
+| `MartianPhaseService.map(…)` | 1 | `MartianPhaseService.getMarsMorningVisibilityDurationEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/martian-phase.service.ts:210` |
+| `MercurianPhaseService.buildMercurianPhaseEvent` | 1 | `PhaseCalculationService.formatTimeZoneIso` | `applications/caelundas/caelundas-cli/src/modules/phases/mercurian-phase.service.ts:136` |
+| `MercurianPhaseService.map(…)` | 1 | `MercurianPhaseService.getMercuryEveningVisibilityDurationEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/mercurian-phase.service.ts:187` |
+| `MercurianPhaseService.map(…)` | 1 | `MercurianPhaseService.getMercuryMorningVisibilityDurationEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/mercurian-phase.service.ts:209` |
+| `VenusianPhaseService.buildVenusianPhaseEvent` | 1 | `PhaseCalculationService.formatTimeZoneIso` | `applications/caelundas/caelundas-cli/src/modules/phases/venusian-phase.service.ts:131` |
+| `VenusianPhaseService.map(…)` | 1 | `VenusianPhaseService.getVenusEveningVisibilityDurationEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/venusian-phase.service.ts:202` |
+| `VenusianPhaseService.map(…)` | 1 | `VenusianPhaseService.getVenusMorningVisibilityDurationEvent` | `applications/caelundas/caelundas-cli/src/modules/phases/venusian-phase.service.ts:224` |
+| `PhasesService.getMartianPhaseEvents` | 1 | `MartianPhaseService.getMartianPhaseEvents` | `applications/caelundas/caelundas-cli/src/modules/phases/phases.service.ts:154` |
+| `PhasesService.getMercurianPhaseEvents` | 1 | `MercurianPhaseService.getMercurianPhaseEvents` | `applications/caelundas/caelundas-cli/src/modules/phases/phases.service.ts:163` |
+| `PhasesService.getVenusianPhaseEvents` | 1 | `VenusianPhaseService.getVenusianPhaseEvents` | `applications/caelundas/caelundas-cli/src/modules/phases/phases.service.ts:172` |
+| `RetrogradesService.getNextLongitudes` | 1 | `RetrogradesService.from(…)` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:94` |
+| `RetrogradesService.from(…)` | 1 | `EphemerisService.getCoordinateFromEphemeris` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:98` |
+| `RetrogradesService.getPreviousLongitudes` | 1 | `RetrogradesService.from(…)` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:111` |
+| `RetrogradesService.from(…)` | 1 | `EphemerisService.getCoordinateFromEphemeris` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:115` |
+| `RetrogradesService.every(…)` | 1 | `MathService.normalizeForComparison` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:161` |
+| `RetrogradesService.every(…)` | 1 | `MathService.normalizeForComparison` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:170` |
+| `RetrogradesService.every(…)` | 1 | `MathService.normalizeForComparison` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:191` |
+| `RetrogradesService.every(…)` | 1 | `MathService.normalizeForComparison` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:200` |
+| `RetrogradesService.buildRetrogradeEvent` | 1 | `capitalize` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:243` |
+| `RetrogradesService.detect` | 1 | `RetrogradesService.detectBodyStations` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:308` |
+| `RetrogradesService.map(…)` | 1 | `RetrogradesService.getRetrogradeProgressiveEvent` | `applications/caelundas/caelundas-cli/src/modules/retrogrades/retrogrades.service.ts:384` |
 | `AspectCalculationSupportService.determineCompoundPhaseFromSnapshots` | 1 | `AspectCalculationSupportService.filterByBodies` | `applications/caelundas/caelundas-cli/src/modules/aspects/aspect-calculation-support.service.ts:32` |
 | `AspectCalculationSupportService.filterByBodies` | 1 | `AspectCalculationSupportService.filter(…)` | `applications/caelundas/caelundas-cli/src/modules/aspects/aspect-calculation-support.service.ts:47` |
 | `AspectCalculationSupportService.getLongitudesWindowForBody` | 1 | `EphemerisService.getLongitudesWindow` | `applications/caelundas/caelundas-cli/src/modules/aspects/aspect-calculation-support.service.ts:75` |
@@ -1950,7 +1974,6 @@ flowchart LR
   TwilightsModule
   TypeOrmModule
   AnnualSolarCycleModule --> EphemerisModule
-  AnnualSolarCycleModule --> MathModule
   AnnualSolarCycleModule --> ProgressiveUtilitiesModule
   AspectsModule --> MajorAspectsModule
   AspectsModule --> MinorAspectsModule
@@ -2234,7 +2257,6 @@ graph LR
   file_src_modules_phases_martian_phase_service_unit_test_ts["src/modules/phases/martian-phase.service.unit.test.ts"]
   file_src_modules_phases_mercurian_phase_service_ts["src/modules/phases/mercurian-phase.service.ts"]
   file_src_modules_phases_mercurian_phase_service_unit_test_ts["src/modules/phases/mercurian-phase.service.unit.test.ts"]
-  file_src_modules_phases_phase_calculation_service_integration_test_ts["src/modules/phases/phase-calculation.service.integration.test.ts"]
   file_src_modules_phases_phase_calculation_service_ts["src/modules/phases/phase-calculation.service.ts"]
   file_src_modules_phases_phase_calculation_service_unit_test_ts["src/modules/phases/phase-calculation.service.unit.test.ts"]
   file_src_modules_phases_phases_constants_ts["src/modules/phases/phases.constants.ts"]
@@ -2332,6 +2354,7 @@ graph LR
   file_testing_compound_aspects_end_to_end_test_ts["testing/compound-aspects.end-to-end.test.ts"]
   file_testing_major_aspects_utilities_ts["testing/major-aspects.utilities.ts"]
   file_testing_mocks_ts["testing/mocks.ts"]
+  file_testing_moon_phases_reference_end_to_end_test_ts["testing/moon-phases-reference.end-to-end.test.ts"]
   file_testing_pipeline_reference_end_to_end_test_ts["testing/pipeline-reference.end-to-end.test.ts"]
   file_testing_pipeline_window_constants_ts["testing/pipeline-window.constants.ts"]
   file_testing_pipeline_window_end_to_end_test_ts["testing/pipeline-window.end-to-end.test.ts"]
@@ -2372,7 +2395,6 @@ graph LR
   file_src_modules_annual_solar_cycle_annual_solar_cycle_module_ts --> file_src_modules_annual_solar_cycle_annual_solar_cycle_events_service_ts
   file_src_modules_annual_solar_cycle_annual_solar_cycle_module_ts --> file_src_modules_annual_solar_cycle_annual_solar_cycle_service_ts
   file_src_modules_annual_solar_cycle_annual_solar_cycle_module_ts --> file_src_modules_ephemeris_ephemeris_module_ts
-  file_src_modules_annual_solar_cycle_annual_solar_cycle_module_ts --> file_src_modules_math_math_module_ts
   file_src_modules_annual_solar_cycle_annual_solar_cycle_module_ts --> file_src_modules_progressive_progressive_utilities_module_ts
   file_src_modules_annual_solar_cycle_annual_solar_cycle_service_ts --> file_src_modules_annual_solar_cycle_annual_solar_cycle_events_service_ts
   file_src_modules_annual_solar_cycle_annual_solar_cycle_service_ts --> file_src_modules_annual_solar_cycle_annual_solar_cycle_constants_ts
@@ -2380,7 +2402,6 @@ graph LR
   file_src_modules_annual_solar_cycle_annual_solar_cycle_service_ts --> file_src_modules_caelundas_database_caelundas_database_types_ts
   file_src_modules_annual_solar_cycle_annual_solar_cycle_service_ts --> file_src_modules_ephemeris_ephemeris_service_ts
   file_src_modules_annual_solar_cycle_annual_solar_cycle_service_ts --> file_src_modules_ephemeris_ephemeris_types_ts
-  file_src_modules_annual_solar_cycle_annual_solar_cycle_service_ts --> file_src_modules_math_math_service_ts
   file_src_modules_annual_solar_cycle_annual_solar_cycle_service_ts --> file_src_modules_progressive_progressive_utilities_service_ts
   file_src_modules_annual_solar_cycle_annual_solar_cycle_service_unit_test_ts --> file_src_modules_annual_solar_cycle_annual_solar_cycle_events_service_ts
   file_src_modules_annual_solar_cycle_annual_solar_cycle_service_unit_test_ts --> file_src_modules_annual_solar_cycle_annual_solar_cycle_service_ts
@@ -2388,7 +2409,6 @@ graph LR
   file_src_modules_annual_solar_cycle_annual_solar_cycle_service_unit_test_ts --> file_src_modules_caelundas_caelundas_constants_ts
   file_src_modules_annual_solar_cycle_annual_solar_cycle_service_unit_test_ts --> file_src_modules_ephemeris_ephemeris_module_ts
   file_src_modules_annual_solar_cycle_annual_solar_cycle_service_unit_test_ts --> file_src_modules_ephemeris_ephemeris_types_ts
-  file_src_modules_annual_solar_cycle_annual_solar_cycle_service_unit_test_ts --> file_src_modules_math_math_service_ts
   file_src_modules_annual_solar_cycle_annual_solar_cycle_service_unit_test_ts --> file_src_modules_progressive_progressive_utilities_service_ts
   file_src_modules_annual_solar_cycle_annual_solar_cycle_types_ts --> file_src_modules_ephemeris_ephemeris_types_ts
   file_src_modules_aspects_aspect_calculation_support_service_ts --> file_src_modules_aspects_aspects_types_ts
@@ -2946,10 +2966,10 @@ graph LR
   file_src_modules_minor_aspects_minor_aspects_service_unit_test_ts --> file_src_modules_progressive_progressive_utilities_service_ts
   file_src_modules_minor_aspects_minor_aspects_types_ts --> file_src_modules_caelundas_caelundas_types_ts
   file_src_modules_minor_aspects_minor_aspects_types_ts --> file_src_modules_ephemeris_ephemeris_types_ts
+  file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_constants_ts --> file_src_modules_caelundas_caelundas_types_ts
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_module_ts --> file_src_modules_calendar_calendar_module_ts
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_module_ts --> file_src_modules_ephemeris_ephemeris_module_ts
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_module_ts --> file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_ts
-  file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_integration_test_ts --> file_src_modules_caelundas_caelundas_constants_ts
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_integration_test_ts --> file_src_modules_calendar_calendar_service_ts
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_integration_test_ts --> file_src_modules_ephemeris_ephemeris_module_ts
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_integration_test_ts --> file_src_modules_ephemeris_ephemeris_types_ts
@@ -2961,9 +2981,9 @@ graph LR
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_ts --> file_src_modules_caelundas_symbol_caelundas_constants_ts
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_ts --> file_src_modules_calendar_calendar_service_ts
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_ts --> file_src_modules_ephemeris_ephemeris_service_ts
-  file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_ts --> file_src_modules_ephemeris_ephemeris_types_ts
+  file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_ts --> file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_constants_ts
+  file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_ts --> file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_types_ts
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_unit_test_ts --> file_src_modules_caelundas_database_caelundas_database_types_ts
-  file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_unit_test_ts --> file_src_modules_caelundas_caelundas_constants_ts
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_unit_test_ts --> file_src_modules_caelundas_caelundas_types_ts
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_unit_test_ts --> file_src_modules_caelundas_symbol_caelundas_constants_ts
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_unit_test_ts --> file_src_modules_calendar_calendar_service_ts
@@ -2971,6 +2991,7 @@ graph LR
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_unit_test_ts --> file_src_modules_ephemeris_ephemeris_types_ts
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_unit_test_ts --> file_src_modules_math_math_service_ts
   file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_unit_test_ts --> file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_ts
+  file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_types_ts --> file_src_modules_ephemeris_ephemeris_types_ts
   file_src_modules_perfective_perfective_module_ts --> file_src_modules_annual_solar_cycle_annual_solar_cycle_module_ts
   file_src_modules_perfective_perfective_module_ts --> file_src_modules_aspects_aspects_module_ts
   file_src_modules_perfective_perfective_module_ts --> file_src_modules_daily_cycles_daily_cycles_module_ts
@@ -3043,19 +3064,12 @@ graph LR
   file_src_modules_phases_mercurian_phase_service_unit_test_ts --> file_src_modules_phases_phases_constants_ts
   file_src_modules_phases_mercurian_phase_service_unit_test_ts --> file_src_modules_phases_phases_types_ts
   file_src_modules_phases_mercurian_phase_service_unit_test_ts --> file_src_modules_progressive_progressive_utilities_service_ts
-  file_src_modules_phases_phase_calculation_service_integration_test_ts --> file_src_modules_caelundas_caelundas_constants_ts
-  file_src_modules_phases_phase_calculation_service_integration_test_ts --> file_src_modules_ephemeris_ephemeris_service_ts
-  file_src_modules_phases_phase_calculation_service_integration_test_ts --> file_src_modules_ephemeris_ephemeris_types_ts
-  file_src_modules_phases_phase_calculation_service_integration_test_ts --> file_src_modules_math_math_service_ts
-  file_src_modules_phases_phase_calculation_service_integration_test_ts --> file_src_modules_phases_phase_calculation_service_ts
-  file_src_modules_phases_phase_calculation_service_integration_test_ts --> file_src_modules_phases_phases_types_ts
   file_src_modules_phases_phase_calculation_service_ts --> file_src_modules_caelundas_database_caelundas_database_types_ts
   file_src_modules_phases_phase_calculation_service_ts --> file_src_modules_caelundas_caelundas_constants_ts
   file_src_modules_phases_phase_calculation_service_ts --> file_src_modules_ephemeris_ephemeris_service_ts
-  file_src_modules_phases_phase_calculation_service_ts --> file_src_modules_ephemeris_ephemeris_types_ts
   file_src_modules_phases_phase_calculation_service_ts --> file_src_modules_math_math_service_ts
-  file_src_modules_phases_phase_calculation_service_ts --> file_src_modules_phases_phases_constants_ts
   file_src_modules_phases_phase_calculation_service_ts --> file_src_modules_phases_phases_types_ts
+  file_src_modules_phases_phase_calculation_service_ts --> file_src_modules_twilights_twilights_service_ts
   file_src_modules_phases_phase_calculation_service_unit_test_ts --> file_src_modules_ephemeris_ephemeris_service_ts
   file_src_modules_phases_phase_calculation_service_unit_test_ts --> file_src_modules_math_math_service_ts
   file_src_modules_phases_phase_calculation_service_unit_test_ts --> file_src_modules_phases_phase_calculation_service_ts
@@ -3533,6 +3547,13 @@ graph LR
   file_testing_major_aspects_utilities_ts --> file_src_modules_math_math_service_ts
   file_testing_major_aspects_utilities_ts --> file_src_modules_progressive_progressive_aspect_service_ts
   file_testing_major_aspects_utilities_ts --> file_src_modules_progressive_progressive_utilities_service_ts
+  file_testing_moon_phases_reference_end_to_end_test_ts --> file_src_modules_caelundas_database_caelundas_database_types_ts
+  file_testing_moon_phases_reference_end_to_end_test_ts --> file_src_modules_ephemeris_ephemeris_service_ts
+  file_testing_moon_phases_reference_end_to_end_test_ts --> file_src_modules_monthly_lunar_cycle_monthly_lunar_cycle_service_ts
+  file_testing_moon_phases_reference_end_to_end_test_ts --> file_testing_pipeline_window_constants_ts
+  file_testing_moon_phases_reference_end_to_end_test_ts --> file_testing_pipeline_window_module_ts
+  file_testing_moon_phases_reference_end_to_end_test_ts --> file_testing_reference_fixtures_types_ts
+  file_testing_moon_phases_reference_end_to_end_test_ts --> file_testing_reference_fixtures_utilities_ts
   file_testing_pipeline_reference_end_to_end_test_ts --> file_testing_pipeline_window_constants_ts
   file_testing_pipeline_reference_end_to_end_test_ts --> file_testing_pipeline_window_functions_ts
   file_testing_pipeline_reference_end_to_end_test_ts --> file_testing_reference_fixtures_utilities_ts
