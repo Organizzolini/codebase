@@ -21,6 +21,12 @@ import type { NxProject, NxProjectGraph } from "@codependix/nx-projects";
  * be repacked at the call site.
  */
 export interface BoundaryCheckContext {
+  /**
+   * The projects every level's graph is built over: `selectedProjects` and
+   * everything they depend on, or `selectedProjects` alone under
+   * `--no-dependencies` — see `RunContextService.resolveBuildProjects`.
+   */
+  readonly buildProjects: NxProject[];
   readonly configuration: ResolvedCodependixConfiguration;
   /**
    * The graph types this run judges.
@@ -36,7 +42,8 @@ export interface BoundaryCheckContext {
   /** Every project the graph knows, apart from the workspace root. */
   readonly projects: NxProject[];
   /**
-   * The projects the run was narrowed to, which is what every level judges.
+   * The projects the run was narrowed to: a finding fails the run only when
+   * it is charged to one of these.
    *
    * Identical to `projects` unless `--projects` or `--tags` named a
    * selection, so the gate judges the whole workspace by default and a
@@ -46,14 +53,30 @@ export interface BoundaryCheckContext {
   readonly workingDirectory: string;
 }
 
-/** One project whose graph could not be built, and why. */
+/**
+ * One graph that could not be built, charged to the project(s) it was being
+ * built for.
+ *
+ * A container that cannot boot fails its own project, since that container
+ * really cannot boot — but the class it failed on often lives in a
+ * dependency, so `ownerProject` names that dependency when the stack shows it.
+ */
 export interface BoundaryCheckFailure {
+  /** The raised error's message. */
   readonly error: string;
-  readonly projectName: string;
+  readonly level: CodependixBoundaryLevel;
+  /**
+   * The project owning the first stack frame inside the root of a project
+   * the charged ones depend on, when that is not a charged project. Absent when no frame resolves to a
+   * project: a guessed owner would blame a project that did nothing wrong.
+   */
+  readonly ownerProject?: string | undefined;
+  /** The projects this failure is charged to, sorted. */
+  readonly projects: readonly string[];
 }
 
 /**
- * What one `--check boundaries` pass found.
+ * What one `--check boundaries` pass found, each finding judged.
  *
  * Failures are carried beside violations rather than thrown, for the same
  * reason every export pass carries them: a NestJS project that cannot boot
@@ -62,9 +85,91 @@ export interface BoundaryCheckFailure {
  * has.
  */
 export interface BoundaryCheckOutcome {
+  readonly failures: JudgedBoundaryFinding<BoundaryCheckFailure>[];
+  readonly violations: JudgedBoundaryFinding<BoundaryViolation>[];
+}
+
+/** What every level found, charged but not yet judged. */
+export interface BoundaryLevelOutcome {
   readonly failures: BoundaryCheckFailure[];
   readonly violations: BoundaryViolation[];
 }
+
+/**
+ * One boundary pass's findings as `--format json` prints them, under the
+ * `boundaries` key.
+ *
+ * Every finding carries its verdict, so a reader can tell a finding that
+ * failed the run from a note about a dependency without re-deriving it from
+ * `judgedProjects`.
+ */
+export interface BoundaryReport {
+  /** Every container that could not boot, charged and judged. */
+  readonly failures: BoundaryReportFailure[];
+  /** The projects the run judged, sorted — what a finding must be charged to to fail. */
+  readonly judgedProjects: string[];
+  /** Every edge or cycle that broke a declared rule, charged and judged. */
+  readonly violations: BoundaryReportViolation[];
+}
+
+/** Arguments accepted when building a run's `BoundaryReport`. */
+export interface BoundaryReportArguments {
+  readonly judgedProjects: readonly string[];
+  readonly outcome: BoundaryCheckOutcome;
+}
+
+/** One container failure in a `BoundaryReport`. */
+export interface BoundaryReportFailure {
+  readonly error: string;
+  readonly level: CodependixBoundaryLevel;
+  /** Present only when the failing code belongs to another project. */
+  readonly ownerProject?: string;
+  readonly projects: readonly string[];
+  readonly verdict: BoundaryVerdict;
+}
+
+/** One rule violation in a `BoundaryReport`. */
+export interface BoundaryReportViolation {
+  /** The whole cycle for an `acyclic` rule, and `null` for an access rule. */
+  readonly cycle: null | readonly string[];
+  readonly level: CodependixBoundaryLevel;
+  readonly message: string;
+  readonly projects: readonly string[];
+  readonly rule: string;
+  readonly source: string;
+  readonly target: string;
+  readonly verdict: BoundaryVerdict;
+}
+
+/**
+ * Whether a finding fails the run, or is reported as a note against the
+ * dependency it lives in.
+ *
+ * `"fail"` when a charged project is one the run judges; `"note"` when every
+ * charged project is only in the build set — a dependency the judged
+ * projects are built from, whose finding they inherit but cannot fix.
+ */
+export type BoundaryVerdict = "fail" | "note";
+
+/** Arguments accepted when collecting one graph's failure. */
+export interface CollectFailureArguments {
+  readonly error: unknown;
+  /**
+   * The whole Nx project graph, rather than the build set, so an owner is
+   * still found in a dependency `--no-dependencies` left out of the build.
+   */
+  readonly graph: NxProjectGraph;
+  readonly level: CodependixBoundaryLevel;
+  /** The projects the failing graph was being built for. */
+  readonly projects: readonly string[];
+  /** Every project the workspace knows, for resolving the failure's owner. */
+  readonly workspaceProjects: readonly NxProject[];
+}
+
+/** A violation or failure, with the verdict the run reached on it. */
+export type JudgedBoundaryFinding<Finding> = Finding & {
+  readonly verdict: BoundaryVerdict;
+};
 
 /** Arguments accepted when judging one graph level against its rules. */
 export interface LevelCheckArguments {

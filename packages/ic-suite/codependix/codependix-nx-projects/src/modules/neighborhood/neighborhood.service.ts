@@ -234,6 +234,46 @@ export class NeighborhoodService {
     return `  ${this.toNodeIdentifier(projectName)}["${projectName}"]`;
   }
 
+  /**
+   * Widens project names to everything they transitively depend on.
+   *
+   * Dependencies, never dependents, and every edge kind Nx draws — static,
+   * dynamic, and implicit alike: a boundary finding in a project the named
+   * one builds on is part of what that project is, while one in a project
+   * that merely uses it is not. Modelled on callidescope-nx's walk of the same
+   * name. A name or target the graph holds no node for — an `npm:` package,
+   * or a typo — is dropped rather than reached.
+   */
+  resolveDependencyClosure(
+    graph: NxProjectGraph,
+    projectNames: readonly string[],
+  ): string[] {
+    const known = new Set(Object.keys(graph.nodes));
+    const reached = new Set<string>();
+    let pending = projectNames.filter((name) => known.has(name));
+
+    // Walked a rank at a time; a cycle terminates because a name already
+    // reached is never walked again.
+    while (pending.length > 0) {
+      const next: string[] = [];
+
+      for (const projectName of pending) {
+        if (reached.has(projectName)) continue;
+
+        reached.add(projectName);
+        next.push(
+          ...(graph.dependencies[projectName] ?? [])
+            .map((dependency) => dependency.target)
+            .filter((target) => known.has(target)),
+        );
+      }
+
+      pending = next;
+    }
+
+    return this.sortNames([...reached]);
+  }
+
   /** Sorts names into a stable order, dropping duplicates. */
   sortNames(names: string[]): string[] {
     return [...new Set(names)].toSorted((first, second) =>

@@ -36,6 +36,7 @@ const createMockPhaseInputs = (): DetectPlanetaryEventsArguments => {
   const distanceEphemeris = {
     "2024-01-01T00:00:00.000Z": {
       distance: 1,
+      distanceSpeed: 0,
     },
   };
   const illuminationEphemeris = {

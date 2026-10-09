@@ -860,7 +860,11 @@ describe(ConfigurationService, () => {
   describe("a command-line selection", () => {
     /** Resolves a configuration whose only include glob is `packages/*`. */
     function buildConfiguration(
-      selection: { projects?: string; tags?: string } = {},
+      selection: {
+        dependencies?: boolean;
+        projects?: string;
+        tags?: string;
+      } = {},
     ): ResolvedCodependixConfiguration {
       return service.resolveConfiguration(
         { include: ["packages/*"] },
@@ -877,9 +881,22 @@ describe(ConfigurationService, () => {
 
     it("resolves to empty lists when nothing was named", () => {
       expect(buildConfiguration().selection).toStrictEqual({
+        dependencies: true,
         projects: [],
         tags: [],
       });
+    });
+
+    // --no-dependencies narrows the build to the named set; left off, the
+    // build widens to everything the named set depends on.
+    it("builds over the dependencies unless --no-dependencies was given", () => {
+      expect(
+        buildConfiguration({ dependencies: false, projects: "widgets" })
+          .selection.dependencies,
+      ).toBe(false);
+      expect(
+        buildConfiguration({ dependencies: true }).selection.dependencies,
+      ).toBe(true);
     });
 
     describe("isProjectIncluded", () => {

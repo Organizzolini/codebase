@@ -278,6 +278,8 @@ export interface CodependixProjectConfiguration {
  * beside the configuration file this package already parses.
  */
 export interface CodependixSelectionArguments {
+  /** `false` for `--no-dependencies` — see `ResolvedCodependixSelection`. */
+  dependencies?: boolean | undefined;
   projects?: string | undefined;
   tags?: string | undefined;
 }
@@ -322,6 +324,15 @@ export interface MapCommandOptions {
    */
   check?: string | true | undefined;
   config?: string | undefined;
+  /**
+   * Whether `--projects`/`--tags` build over the named projects' dependency
+   * closure too — `false` for `--no-dependencies`.
+   *
+   * `undefined` when neither `--dependencies` nor `--no-dependencies` was
+   * given, which builds over the closure. Inert without a selection, since
+   * every project is then both built and judged.
+   */
+  dependencies?: boolean | undefined;
   directory?: string | undefined;
   /** Overrides `exclude` for this run. Refused when never configured. */
   exclude?: string[] | undefined;
@@ -463,6 +474,15 @@ export interface ResolvedCodependixMarkdownOutput {
  * selection naming something narrows both to what it names.
  */
 export interface ResolvedCodependixSelection {
+  /**
+   * Whether graphs are built over the selected projects' dependency closure,
+   * or over the selected projects alone.
+   *
+   * `true` unless `--no-dependencies` was given. Either way only the selected
+   * projects are judged: a finding charged to a dependency is reported as a
+   * note rather than failing the run.
+   */
+  dependencies: boolean;
   /** Globs matched against a project's name or its workspace-relative root. */
   projects: string[];
   /** Nx tags, matched exactly against a project's own. */

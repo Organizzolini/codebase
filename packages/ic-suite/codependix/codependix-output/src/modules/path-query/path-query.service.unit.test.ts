@@ -32,6 +32,9 @@ describe(PathQueryService, () => {
     overrides: Partial<GraphRunContext> = {},
   ): GraphRunContext {
     return {
+      buildProjects: [
+        { absoluteRoot: "/root/package-a", name: "package-a", tags: [] },
+      ],
       configuration: {
         boundaries: {
           fileImports: { python: [], typescript: [] },
@@ -41,7 +44,7 @@ describe(PathQueryService, () => {
         exclude: [],
         include: ["**"],
         projectGraph: undefined,
-        selection: { projects: [], tags: [] },
+        selection: { dependencies: true, projects: [], tags: [] },
         workspace: {},
       },
       enabledGraphTypes: new Set([

@@ -2,6 +2,10 @@ import { mkdtemp, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
+import {
+  BoundaryOutcomeReportService,
+  BoundaryReportService,
+} from "@codependix/boundaries";
 import { Test } from "@nestjs/testing";
 import {
   afterEach,
@@ -18,6 +22,7 @@ import { AnchorsService } from "../anchors/anchors.service";
 import { CombinedOutputService } from "./combined-output.service";
 
 import type { CombinedGraphExports } from "../graph-run/graph-run.types";
+import type { BoundaryReportArguments } from "@codependix/boundaries";
 import type { MockInstance } from "vitest";
 
 describe(CombinedOutputService, () => {
@@ -36,9 +41,42 @@ describe(CombinedOutputService, () => {
     },
   };
 
+  const BOUNDARIES: BoundaryReportArguments = {
+    judgedProjects: ["b", "a"],
+    outcome: {
+      failures: [
+        {
+          error: "Cannot access 'Word' before initialization",
+          level: "nestjsModules",
+          ownerProject: "c",
+          projects: ["a"],
+          verdict: "fail",
+        },
+      ],
+      violations: [
+        {
+          cycle: ["x", "y", "x"],
+          level: "nxProjects",
+          message: "no-cycles: x → y → x is a cycle.",
+          projects: ["x", "y"],
+          rule: "no-cycles",
+          scope: "workspace",
+          source: "y",
+          target: "x",
+          verdict: "note",
+        },
+      ],
+    },
+  };
+
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      providers: [AnchorsService, CombinedOutputService],
+      providers: [
+        AnchorsService,
+        BoundaryOutcomeReportService,
+        BoundaryReportService,
+        CombinedOutputService,
+      ],
     }).compile();
 
     service = await module.resolve(CombinedOutputService);
@@ -208,6 +246,121 @@ describe(CombinedOutputService, () => {
 
       expect(writtenJson.trim()).toBe("{}");
       expect(writtenMarkdown.trim()).toBe("");
+    });
+
+    describe("with a boundary check's findings", () => {
+      it("prints the findings under a boundaries key beside the graph types", () => {
+        service.run({
+          boundaries: BOUNDARIES,
+          format: "json",
+          graphs: GRAPHS,
+          jsonOutputPath: undefined,
+          markdownOutputPath: undefined,
+          workingDirectory,
+        });
+
+        const printed = JSON.parse(
+          String(writeSpy.mock.calls[0]?.[0]),
+        ) as Record<string, unknown>;
+
+        expect(Object.keys(printed)).toStrictEqual([
+          "fileImports",
+          "nxProjects",
+          "boundaries",
+        ]);
+        expect(printed["boundaries"]).toStrictEqual({
+          failures: [
+            {
+              error: "Cannot access 'Word' before initialization",
+              level: "nestjsModules",
+              ownerProject: "c",
+              projects: ["a"],
+              verdict: "fail",
+            },
+          ],
+          judgedProjects: ["a", "b"],
+          violations: [
+            {
+              cycle: ["x", "y", "x"],
+              level: "nxProjects",
+              message: "no-cycles: x → y → x is a cycle.",
+              projects: ["x", "y"],
+              rule: "no-cycles",
+              source: "y",
+              target: "x",
+              verdict: "note",
+            },
+          ],
+        });
+      });
+
+      it("prints only the boundaries key for a run that exported nothing", () => {
+        service.run({
+          boundaries: BOUNDARIES,
+          format: "json",
+          graphs: {},
+          jsonOutputPath: undefined,
+          markdownOutputPath: undefined,
+          workingDirectory,
+        });
+
+        const printed = JSON.parse(
+          String(writeSpy.mock.calls[0]?.[0]),
+        ) as Record<string, unknown>;
+
+        expect(Object.keys(printed)).toStrictEqual(["boundaries"]);
+      });
+
+      it("prints a Boundaries section after the graph types' sections", () => {
+        service.run({
+          boundaries: BOUNDARIES,
+          format: "markdown",
+          graphs: GRAPHS,
+          jsonOutputPath: undefined,
+          markdownOutputPath: undefined,
+          workingDirectory,
+        });
+
+        const printed = String(writeSpy.mock.calls[0]?.[0]);
+
+        expect(printed).toContain("### Boundaries");
+        expect(printed).toContain(
+          '<!-- codependix:start name="boundaries" -->',
+        );
+        expect(printed).toContain("Judged projects: a, b.");
+        expect(printed).toContain(
+          "- **fail** nestjsModules a: Cannot access 'Word' before initialization (failed in code owned by c)",
+        );
+        expect(printed).toContain(
+          "- **note** nxProjects in dependency x, y, not failing: no-cycles: x → y → x is a cycle.",
+        );
+        expect(printed.indexOf("### Boundaries")).toBeGreaterThan(
+          printed.indexOf("### Nx Neighborhood"),
+        );
+      });
+
+      it("writes the boundaries to --json-output and --markdown-output", async () => {
+        service.run({
+          boundaries: BOUNDARIES,
+          format: "json",
+          graphs: {},
+          jsonOutputPath: "combined.json",
+          markdownOutputPath: "combined.md",
+          workingDirectory,
+        });
+
+        const writtenJson = JSON.parse(
+          await readFile(path.join(workingDirectory, "combined.json"), "utf8"),
+        ) as Record<string, unknown>;
+        const writtenMarkdown = await readFile(
+          path.join(workingDirectory, "combined.md"),
+          "utf8",
+        );
+
+        expect(Object.keys(writtenJson)).toStrictEqual(["boundaries"]);
+        expect(writtenMarkdown).toContain("## 🕸️ Codependix");
+        expect(writtenMarkdown).toContain("### Boundaries");
+      });
     });
   });
 });

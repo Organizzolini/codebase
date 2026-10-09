@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.2](https://github.com/organizzolini/codebase/compare/v3.0.1...v3.0.2) (2026-10-09)
+
+### 🐛 Bug Fixes
+
+* **caelundas:** 🐛 report one solar perihelion and aphelion per year ([#1470](https://github.com/organizzolini/codebase/issues/1470)) ([fc3a634](https://github.com/organizzolini/codebase/commit/fc3a634393dec64db7158c808953c5e095e195d7)), closes [#1346](https://github.com/organizzolini/codebase/issues/1346) [#1387](https://github.com/organizzolini/codebase/issues/1387) [#1410](https://github.com/organizzolini/codebase/issues/1410) [#1346](https://github.com/organizzolini/codebase/issues/1346) [#1378](https://github.com/organizzolini/codebase/issues/1378) [#1379](https://github.com/organizzolini/codebase/issues/1379) [#1341](https://github.com/organizzolini/codebase/issues/1341) [#1410](https://github.com/organizzolini/codebase/issues/1410) [#1346](https://github.com/organizzolini/codebase/issues/1346)
+* **caelundas:** 🐛 time primary Moon phases by ecliptic longitude ([#1414](https://github.com/organizzolini/codebase/issues/1414)) ([ece0475](https://github.com/organizzolini/codebase/commit/ece0475539920233da5054107b19c4fe4a7fd0a9)), closes [#1380](https://github.com/organizzolini/codebase/issues/1380) [#1381](https://github.com/organizzolini/codebase/issues/1381) [#1408](https://github.com/organizzolini/codebase/issues/1408) [#1389](https://github.com/organizzolini/codebase/issues/1389)
+
+## [3.0.1](https://github.com/organizzolini/codebase/compare/v3.0.0...v3.0.1) (2026-10-08)
+
+### 🐛 Bug Fixes
+
+* **caelundas:** 🐛 detect exact conjunctions and oppositions by sign change ([#1413](https://github.com/organizzolini/codebase/issues/1413)) ([2318faf](https://github.com/organizzolini/codebase/commit/2318faf39ee303fb6b75bcb669131736c959589d)), closes [#1353](https://github.com/organizzolini/codebase/issues/1353) [#1354](https://github.com/organizzolini/codebase/issues/1354) [#1355](https://github.com/organizzolini/codebase/issues/1355) [#1341](https://github.com/organizzolini/codebase/issues/1341) [#1408](https://github.com/organizzolini/codebase/issues/1408)
+
+## [3.0.0](https://github.com/organizzolini/codebase/compare/v2.35.5...v3.0.0) (2026-10-08)
+
+### ⚠ BREAKING CHANGES
+
+* **codependix:** 💥 charge boundary findings to the projects they belong to (#1409)
+
+### ✨ Features
+
+* **codependix:** ✨ print boundary findings in the markdown and json output ([#1415](https://github.com/organizzolini/codebase/issues/1415)) ([5031d07](https://github.com/organizzolini/codebase/commit/5031d07e7b37b41d63311603e16c29cc6efacc7a)), closes [#1409](https://github.com/organizzolini/codebase/issues/1409) [#1401](https://github.com/organizzolini/codebase/issues/1401) [#1221](https://github.com/organizzolini/codebase/issues/1221) [#1409](https://github.com/organizzolini/codebase/issues/1409)
+* **codependix:** 💥 charge boundary findings to the projects they belong to ([#1409](https://github.com/organizzolini/codebase/issues/1409)) ([ff4cce2](https://github.com/organizzolini/codebase/commit/ff4cce25cb7f41a16fbdafcfe61663b910a02c75)), closes [#1201](https://github.com/organizzolini/codebase/issues/1201) [#1400](https://github.com/organizzolini/codebase/issues/1400) [#1221](https://github.com/organizzolini/codebase/issues/1221) [#1201](https://github.com/organizzolini/codebase/issues/1201) [#1218](https://github.com/organizzolini/codebase/issues/1218)
+
+### 📝 Documentation
+
+* **codependix:** 📝 add an example for each boundary attribution rule ([#1419](https://github.com/organizzolini/codebase/issues/1419)) ([3da2f6e](https://github.com/organizzolini/codebase/commit/3da2f6e499ee2a25d3c7037ed43b72127df2d1b9)), closes [#1402](https://github.com/organizzolini/codebase/issues/1402) [#1221](https://github.com/organizzolini/codebase/issues/1221) [#1415](https://github.com/organizzolini/codebase/issues/1415) [#1409](https://github.com/organizzolini/codebase/issues/1409)
+
+## [2.35.5](https://github.com/organizzolini/codebase/compare/v2.35.4...v2.35.5) (2026-10-08)
+
+### 🐛 Bug Fixes
+
+* **ic-suite:** 🐛 exit non-zero when an ic-suite cli command throws ([#1486](https://github.com/organizzolini/codebase/issues/1486)) ([7cd6b5c](https://github.com/organizzolini/codebase/commit/7cd6b5c1af92d56ffd112e2ea5b4d84d91fabbd2)), closes [#1480](https://github.com/organizzolini/codebase/issues/1480) [#1480](https://github.com/organizzolini/codebase/issues/1480) [#1479](https://github.com/organizzolini/codebase/issues/1479) [#1480](https://github.com/organizzolini/codebase/issues/1480)
+
 ## [2.35.4](https://github.com/organizzolini/codebase/compare/v2.35.3...v2.35.4) (2026-10-08)
 
 ### 🐛 Bug Fixes

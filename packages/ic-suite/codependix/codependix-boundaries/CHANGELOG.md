@@ -1,3 +1,19 @@
+## 0.0.11 (2026-10-08)
+
+### 🚀 Features
+
+- **codependix:** ✨ print boundary findings in the markdown and json output ([#1415](https://github.com/organizzolini/codebase/pull/1415), [#1401](https://github.com/organizzolini/codebase/issues/1401))
+- ⚠️  **codependix:** 💥 charge boundary findings to the projects they belong to ([#1409](https://github.com/organizzolini/codebase/pull/1409), [#1400](https://github.com/organizzolini/codebase/issues/1400))
+
+### ⚠️  Breaking Changes
+
+- **codependix:** 💥 charge boundary findings to the projects they belong to  ([#1409](https://github.com/organizzolini/codebase/pull/1409), [#1400](https://github.com/organizzolini/codebase/issues/1400))
+
+### 🧱 Updated Dependencies
+
+- Updated codependix-configuration to 0.0.12
+- Updated codependix-nx-projects to 0.0.11
+
 ## 0.0.10 (2026-10-08)
 
 ### 🧱 Updated Dependencies

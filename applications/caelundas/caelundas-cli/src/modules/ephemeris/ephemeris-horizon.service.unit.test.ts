@@ -51,6 +51,14 @@ describe(EphemerisHorizonService, () => {
       latitude: 2.47,
       longitude: 19.09,
     });
+    vi.mocked(coordinateService.getBodyCoordinatesWithDistance).mockReturnValue(
+      {
+        distance: 1.01,
+        distanceSpeed: 0,
+        latitude: -1.2,
+        longitude: 120.5,
+      },
+    );
     vi.mocked(timeService.dateToJulianDays).mockReturnValue({
       julianDayEphemerisTime: 2_460_395.5,
       julianDayUniversalTime: 2_460_395.499_306,

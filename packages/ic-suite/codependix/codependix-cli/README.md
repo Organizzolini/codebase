@@ -33,20 +33,22 @@ for this repository's own.
 | ---- | ------- |
 | `--check [check]` | Fail on a comma-separated set drawn from `boundaries` and `reports` |
 | `--config [config]` | Path to a `codependix.config.ts`. Searched for upward from `--directory` when omitted |
+| `--dependencies` | Build `--check boundaries` over the dependencies of the projects `--projects` or `--tags` named, reporting their findings as notes (default). No effect without `--projects` or `--tags` |
+| `--no-dependencies` | Build `--check boundaries` over only the projects `--projects` or `--tags` named, not their dependencies. No effect without `--projects` or `--tags` |
 | `-d, --directory [directory]` | Workspace root whose Nx project graph this run reads. Defaults to the working directory |
 | `--exclude [exclude]` | Comma-separated globs overriding the configured `exclude`. Refused when `exclude` was never configured |
 | `--file-imports` | Build, check, and write the `fileImports` graph type for this run |
 | `--no-file-imports` | Skip the `fileImports` graph type for this run |
-| `-f, --format [format]` | What to print to standard output, one of `json` and `markdown` (default: `markdown`). A graph type prints only when the run also configured a workspace destination for it, even if its own toggle flag enabled it |
+| `-f, --format [format]` | What to print to standard output, one of `json` and `markdown` (default: `markdown`). A graph type prints only when the run also configured a workspace destination for it, even if its own toggle flag enabled it. A `--check boundaries` run adds its findings, under a `boundaries` key in `json` and a `Boundaries` section in `markdown` |
 | `--include [include]` | Comma-separated globs overriding the configured `include`. Refused when `include` was never configured |
-| `--json-output [jsonOutput]` | Write every active graph type's data, combined into one JSON file at this path, keyed by graph type name. A type appears only when the run also configured a workspace destination for it |
-| `--markdown-output [markdownOutput]` | Write every active graph type's rendered diagram, combined into one Markdown file at this path. A type appears only when the run also configured a workspace destination for it |
+| `--json-output [jsonOutput]` | Write every active graph type's data, combined into one JSON file at this path, keyed by graph type name. A type appears only when the run also configured a workspace destination for it. A `--check boundaries` run adds its findings under a `boundaries` key |
+| `--markdown-output [markdownOutput]` | Write every active graph type's rendered diagram, combined into one Markdown file at this path. A type appears only when the run also configured a workspace destination for it. A `--check boundaries` run adds its findings as a `Boundaries` section |
 | `--nestjs-modules` | Build, check, and write the `nestjsModules` graph type for this run |
 | `--no-nestjs-modules` | Skip the `nestjsModules` graph type for this run |
 | `--nx-projects` | Build, check, and write the `nxProjects` graph type for this run |
 | `--no-nx-projects` | Skip the `nxProjects` graph type for this run |
-| `--projects [projects]` | Comma-separated project names or roots to export for, as globs, beyond those `include` already selects. Also narrows the Workspace Graph and `--check boundaries` to the named set |
-| `--tags [tags]` | Comma-separated Nx tags to export for, beyond what `include` already selects. Also narrows the Workspace Graph and `--check boundaries` to the tagged projects |
+| `--projects [projects]` | Comma-separated project names or roots to export for, as globs, beyond those `include` already selects. Also narrows the Workspace Graph to the named set, and `--check boundaries` to failing only on findings charged to it |
+| `--tags [tags]` | Comma-separated Nx tags to export for, beyond what `include` already selects. Narrows the Workspace Graph and `--check boundaries` to the tagged projects, as `--projects` does |
 | `--write` | Writes every configured export |
 
 ### The two `--check` names
@@ -78,6 +80,26 @@ unreadable together.
 - A bare `--check`, or one whose value is only separators, is refused. Read as
   "gate nothing" it would be a gate that cannot fail, which is worse than no
   gate at all because it looks like protection.
+
+### Which project a boundary finding fails
+
+Every finding is charged to the project or projects it belongs to: a cycle to
+every project owning a node on it, a forbidden edge to the project owning its
+source, a file- or NestJS-level finding to the project whose graph it was
+found in, and a container that cannot boot to that container's project — its
+message naming the project that owns the class it failed on, when the stack
+shows another one.
+
+`--projects` and `--tags` name the projects a run judges. Graphs are built
+over those projects and everything they transitively depend on, and a finding
+fails the run only when it is charged to a named project. One charged only to
+a dependency is logged as a note, "in dependency", without failing:
+the named project is built on it, but it is not that project's to fix.
+`--no-dependencies` builds over the named projects alone. With neither flag
+every project is judged. A `--projects`/`--tags` selection that matches no
+project at all — a misspelled name, a tag nobody carries, or the workspace
+root — is refused as a rejected command line rather than run as a gate that
+judges nothing.
 
 ### When no mode is named
 
@@ -117,6 +139,32 @@ terminal and pastes into an issue. `--format json` is for a machine reading
 standard output, so every diagnostic goes to standard error — keeping standard
 output clean and parseable as data.
 
+### The boundary report
+
+`--check boundaries` logs its findings to standard error and, given
+`--format`, `--json-output`, or `--markdown-output`, also prints them as a
+report: under a `boundaries` key in JSON, and as a `### Boundaries` section in
+Markdown. A `--check boundaries`-only run, which exports nothing, prints just
+that report; a run that also exports carries both in one document. Without one
+of those flags a boundaries-only run prints nothing, and a run that also
+exports prints its graphs exactly as it did before.
+
+The JSON holds `judgedProjects` (the projects whose findings fail the run),
+`violations` (`level`, `rule`, `message`, `source`, `target`, `cycle`, the
+charged `projects`, and a `verdict` of `fail` or `note`) and `failures`
+(`level`, `error`, the charged `projects`, an `ownerProject` when the failing
+code belongs to another project, and a `verdict`). A `note` is a finding that
+lives in a dependency of a judged project and does not fail the run. The
+Markdown lists the same findings under each project they are charged to, a
+note marked as not failing.
+
+Who a finding is charged to is worked through, with the report each case
+prints, in four examples:
+[a cycle](../codependix-examples/examples/boundary-cycles/README.md),
+[a forbidden edge](../codependix-examples/examples/boundary-forbidden-edges/README.md),
+[a dependent of either](../codependix-examples/examples/boundary-dependency-notes/README.md),
+and [a container that cannot boot](../codependix-examples/examples/boundary-boot-failures/README.md).
+
 ## Packages
 
 | Package | Role |
@@ -124,7 +172,7 @@ output clean and parseable as data.
 | [`@codependix/cli`](.) | Orchestrates the four graph builders and delivers their exports |
 | [`@codependix/boundaries`](../codependix-boundaries/README.md) | Builds each level's graph for a workspace, judges it against the declared rules, and reports what breaks them. `--check boundaries` delegates to it wholesale |
 | [`@codependix/configuration`](../codependix-configuration/README.md) | Reads `codependix.config.ts` and resolves per-project export destinations and boundary rules |
-| [`@codependix/examples`](../codependix-examples/README.md) | Sixteen subjects built to be graphed, each with the guide codependix renders from it |
+| [`@codependix/examples`](../codependix-examples/README.md) | Twenty-one subjects built to be graphed, each with the guide codependix renders from it |
 | [`@codependix/nx-projects`](../codependix-nx-projects/README.md) | Builds a project's Nx Neighborhood and the whole-workspace Workspace Graph |
 | [`@codependix/nestjs-modules`](../codependix-nestjs-modules/README.md) | Explores a NestJS project's container and builds its module graph |
 | [`@codependix/file-imports`](../codependix-file-imports/README.md) | Builds a project's file-level import graph — a `typescript` module walking its own `ts.Program`, and a `python` module parsing `import`/`from ... import` statements |
@@ -236,11 +284,13 @@ flowchart LR
   WorkspaceGraphsModule
   BoundaryCheckModule --> BoundariesModule
   BoundaryCheckModule --> ModuleGraphModule
+  BoundaryCheckModule --> NeighborhoodModule
   BoundaryCheckModule --> NestjsProjectModule
   BoundaryCheckModule --> PythonModule
   BoundaryCheckModule --> TypescriptModule
   BoundaryCheckModule --> WorkspaceGraphModule
   CombinedOutputModule --> AnchorsModule
+  CombinedOutputModule --> BoundaryCheckModule
   ConfigurationModule --> InputModule
   ConfigurationModule --> OverrideResolutionModule
   DeliveryModule --> AnchorsModule
@@ -310,6 +360,7 @@ graph LR
   file_src_main_end_to_end_test_ts["src/main.end-to-end.test.ts"]
   file_src_main_module_ts["src/main.module.ts"]
   file_src_main_ts["src/main.ts"]
+  file_src_main_unit_test_ts["src/main.unit.test.ts"]
   file_src_modules_map_map_command_integration_test_ts["src/modules/map/map.command.integration.test.ts"]
   file_src_modules_map_map_command_ts["src/modules/map/map.command.ts"]
   file_src_modules_map_map_command_unit_test_ts["src/modules/map/map.command.unit.test.ts"]

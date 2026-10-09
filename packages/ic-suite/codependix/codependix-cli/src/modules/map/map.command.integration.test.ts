@@ -673,4 +673,346 @@ describe("map command", () => {
       expect(exitCode).toBe(1);
     });
   });
+
+  describe("boundary checks charged to projects", () => {
+    let originalWorkingDirectory: string;
+    const workingDirectories: string[] = [];
+
+    /**
+     * Writes a fixture workspace whose Nx graph draws the given edges between
+     * the given projects, judged by the given `nxProjects` rules.
+     */
+    function writeFixture(args: {
+      edges: [string, string][];
+      projects: string[];
+      rules: string;
+    }): string {
+      const workingDirectory = mkdtempSync(
+        path.join(tmpdir(), "codependix-charge-"),
+      );
+
+      workingDirectories.push(workingDirectory);
+      writeFileSync(
+        path.join(workingDirectory, "codependix-graph.json"),
+        JSON.stringify({
+          dependencies: Object.fromEntries(
+            args.projects.map((source) => [
+              source,
+              args.edges
+                .filter(([from]) => from === source)
+                .map(([, target]) => ({ source, target, type: "static" })),
+            ]),
+          ),
+          nodes: Object.fromEntries(
+            args.projects.map((name) => [
+              name,
+              { data: { root: `packages/${name}` }, name, type: "lib" },
+            ]),
+          ),
+        }),
+      );
+      writeFileSync(
+        path.join(workingDirectory, "codependix.config.ts"),
+        [
+          "export default {",
+          `  boundaries: { nxProjects: ${args.rules} },`,
+          '  projectGraph: "codependix-graph.json",',
+          "};",
+          "",
+        ].join("\n"),
+      );
+
+      return workingDirectory;
+    }
+
+    /** Runs `--check boundaries` over a fixture, collecting what it logged. */
+    async function check(
+      workingDirectory: string,
+      options: MapCommandOptions,
+    ): Promise<{
+      exitCode: number;
+      loggedErrors: unknown[][];
+      loggedWarns: unknown[][];
+      printed: string;
+    }> {
+      process.chdir(workingDirectory);
+      process.exitCode = 0;
+
+      const errorSpy = vi.spyOn(LoggerService.prototype, "error");
+      const warnSpy = vi.spyOn(LoggerService.prototype, "warn");
+      const printSpy = vi.spyOn(process.stdout, "write").mockReturnValue(true);
+      const module = await Test.createTestingModule({
+        imports: [MainModule],
+      }).compile();
+
+      await module.get(MapCommand, { strict: false }).run([], {
+        check: "boundaries",
+        directory: workingDirectory,
+        ...options,
+      });
+
+      const exitCode = process.exitCode;
+      const loggedErrors = [...errorSpy.mock.calls];
+      const loggedWarns = [...warnSpy.mock.calls];
+      const printed = printSpy.mock.calls
+        .map(([chunk]) => String(chunk))
+        .join("");
+
+      errorSpy.mockRestore();
+      warnSpy.mockRestore();
+      printSpy.mockRestore();
+      process.exitCode = 0;
+      process.chdir(originalWorkingDirectory);
+
+      return {
+        exitCode: typeof exitCode === "string" ? Number(exitCode) : exitCode,
+        loggedErrors,
+        loggedWarns,
+        printed,
+      };
+    }
+
+    const ACYCLIC = '[{ kind: "acyclic", name: "no-cycles" }]';
+    const FORBID_A_TO_B =
+      '[{ from: { id: ["a"] }, kind: "forbid", name: "a-is-a-leaf", to: { id: ["b"] } }]';
+
+    let cycleWorkspace: string;
+    let forbidWorkspace: string;
+
+    beforeAll(() => {
+      originalWorkingDirectory = process.cwd();
+      // a ⇄ b is a cycle; c depends on a; d depends on nothing at all.
+      cycleWorkspace = writeFixture({
+        edges: [
+          ["a", "b"],
+          ["b", "a"],
+          ["c", "a"],
+        ],
+        projects: ["a", "b", "c", "d"],
+        rules: ACYCLIC,
+      });
+      // a → b is forbidden; c depends on a.
+      forbidWorkspace = writeFixture({
+        edges: [
+          ["a", "b"],
+          ["c", "a"],
+        ],
+        projects: ["a", "b", "c"],
+        rules: FORBID_A_TO_B,
+      });
+    });
+
+    afterAll(() => {
+      for (const workingDirectory of workingDirectories) {
+        rmSync(workingDirectory, { force: true, recursive: true });
+      }
+    });
+
+    it("fails a cross-project cycle for a named project, naming both", async () => {
+      const { exitCode, loggedErrors } = await check(cycleWorkspace, {
+        projects: "a",
+      });
+
+      expect(exitCode).toBe(1);
+      expect(loggedErrors).toContainEqual([
+        "🕸️ Found codependix boundary violations",
+        undefined,
+        {
+          summary: "1 boundary violation across 1 rule.",
+          violations: ["nxProjects a, b: no-cycles: a → b → a is a cycle."],
+        },
+      ]);
+    });
+
+    // D5 at the command line: the cycle fails whichever end was named.
+    it("fails a cross-project cycle for the other named project too", async () => {
+      const { exitCode, loggedErrors } = await check(cycleWorkspace, {
+        projects: "b",
+      });
+
+      expect(exitCode).toBe(1);
+      expect(loggedErrors).toContainEqual([
+        "🕸️ Found codependix boundary violations",
+        undefined,
+        {
+          summary: "1 boundary violation across 1 rule.",
+          violations: ["nxProjects a, b: no-cycles: a → b → a is a cycle."],
+        },
+      ]);
+    });
+
+    // A misspelled name in a hook must not become a green gate that judged
+    // nothing at all.
+    it("rejects a selection that matches no project", async () => {
+      const { exitCode, loggedErrors } = await check(cycleWorkspace, {
+        projects: "a-typo",
+      });
+
+      expect(exitCode).toBe(1);
+      expect(loggedErrors).toContainEqual([
+        "🕸️ Rejected the command line",
+        undefined,
+        {
+          reason:
+            "--projects a-typo matched no project, so there is nothing to judge or draw.",
+        },
+      ]);
+    });
+
+    it("passes a named project that depends on neither end of a cycle", async () => {
+      const { exitCode, loggedErrors, loggedWarns } = await check(
+        cycleWorkspace,
+        { projects: "d" },
+      );
+
+      expect(exitCode).toBe(0);
+      expect(loggedErrors).toStrictEqual([]);
+      expect(loggedWarns).toStrictEqual([]);
+    });
+
+    it("passes a named project depending on a cycle, noting it in the dependency", async () => {
+      const { exitCode, loggedErrors, loggedWarns } = await check(
+        cycleWorkspace,
+        { projects: "c" },
+      );
+
+      expect(exitCode).toBe(0);
+      expect(loggedErrors).toStrictEqual([]);
+      expect(loggedWarns).toContainEqual([
+        "🕸️ Found codependix boundary findings in dependencies, not failing",
+        undefined,
+        {
+          failures: [],
+          violations: [
+            "nxProjects in dependency a, b, not failing: no-cycles: a → b → a is a cycle.",
+          ],
+        },
+      ]);
+    });
+
+    it("fails a forbidden edge for the project it leaves", async () => {
+      const { exitCode, loggedErrors } = await check(forbidWorkspace, {
+        projects: "a",
+      });
+
+      expect(exitCode).toBe(1);
+      expect(loggedErrors).toContainEqual([
+        "🕸️ Found codependix boundary violations",
+        undefined,
+        {
+          summary: "1 boundary violation across 1 rule.",
+          violations: ["nxProjects a: a-is-a-leaf: a must not depend on b."],
+        },
+      ]);
+    });
+
+    it("never fails a forbidden edge for the project it reaches", async () => {
+      const { exitCode } = await check(forbidWorkspace, { projects: "b" });
+
+      expect(exitCode).toBe(0);
+    });
+
+    it("still fails every project on a cycle with no selection at all", async () => {
+      const { exitCode } = await check(cycleWorkspace, {});
+
+      expect(exitCode).toBe(1);
+    });
+
+    // --no-dependencies builds over the named set alone, so a dependency's
+    // finding is no longer noted, and an edge leaving the set is not drawn.
+    it("narrows the build to the named projects under --no-dependencies", async () => {
+      const noted = await check(forbidWorkspace, {
+        dependencies: false,
+        projects: "c",
+      });
+      const cycle = await check(cycleWorkspace, {
+        dependencies: false,
+        projects: "a",
+      });
+
+      expect(noted.exitCode).toBe(0);
+      expect(noted.loggedWarns).toStrictEqual([]);
+      expect(cycle.exitCode).toBe(0);
+    });
+
+    describe("printed as a report", () => {
+      it("prints a failing run's findings as JSON under a boundaries key", async () => {
+        const { exitCode, printed } = await check(cycleWorkspace, {
+          format: "json",
+          projects: "a",
+        });
+
+        expect(exitCode).toBe(1);
+        expect(JSON.parse(printed)).toStrictEqual({
+          boundaries: {
+            failures: [],
+            judgedProjects: ["a"],
+            violations: [
+              {
+                cycle: ["a", "b", "a"],
+                level: "nxProjects",
+                message: "no-cycles: a → b → a is a cycle.",
+                projects: ["a", "b"],
+                rule: "no-cycles",
+                source: "b",
+                target: "a",
+                verdict: "fail",
+              },
+            ],
+          },
+        });
+      });
+
+      it("prints a dependency's finding as a note", async () => {
+        const { exitCode, printed } = await check(cycleWorkspace, {
+          format: "json",
+          projects: "c",
+        });
+        const report = JSON.parse(printed) as {
+          boundaries: { violations: { verdict: string }[] };
+        };
+
+        expect(exitCode).toBe(0);
+        expect(
+          report.boundaries.violations.map((v) => v.verdict),
+        ).toStrictEqual(["note"]);
+      });
+
+      it("prints Markdown grouped by charged project, marking a note as not failing", async () => {
+        const { printed } = await check(cycleWorkspace, {
+          format: "markdown",
+          projects: "c",
+        });
+
+        expect(printed).toContain("### Boundaries");
+        expect(printed).toContain("Judged projects: c.");
+        expect(printed).toContain("#### a");
+        expect(printed).toContain(
+          "- **note** nxProjects in dependency a, b, not failing: no-cycles: a → b → a is a cycle.",
+        );
+      });
+
+      it("prints a clean run's report with no findings", async () => {
+        const { exitCode, printed } = await check(cycleWorkspace, {
+          format: "json",
+          projects: "d",
+        });
+
+        expect(exitCode).toBe(0);
+        expect(JSON.parse(printed)).toStrictEqual({
+          boundaries: {
+            failures: [],
+            judgedProjects: ["d"],
+            violations: [],
+          },
+        });
+      });
+
+      it("prints nothing when no format or output was asked for", async () => {
+        const { printed } = await check(cycleWorkspace, { projects: "a" });
+
+        expect(printed).toBe("");
+      });
+    });
+  });
 });
