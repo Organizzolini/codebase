@@ -71,25 +71,34 @@ perfects, a planet stations, or a body crosses a sign boundary.
 moments into the periods a reader actually wants on a calendar: the days an
 aspect is in orb, the weeks a planet is retrograde.
 
-| Category | Events |
-| -------- | ------ |
-| Aspects | Major and minor aspects, plus triple, quadruple, quintuple, and sextuple configurations and stelliums |
-| Phases | New moon, waxing crescent, first quarter, waxing gibbous, full moon, waning gibbous, last quarter, waning crescent |
-| Eclipses | Solar and lunar |
+| Family | Events |
+| ------ | ------ |
+| Aspects | Major (conjunct, opposite, sextile, square, trine), minor, and harmonic aspects between the Sun, Moon, planets, Chiron, Lilith, four asteroids, the north lunar node, and the lunar apogee; forming, exact, and dissolving moments, and the span between them |
+| Compound aspects | Triple (grand trine, hammer, T-square, yod), quadruple (boomerang, butterfly, cradle, grand cross, hourglass, kite, mystic rectangle), pentagram, hexagram, and stelliums of four or more bodies |
+| Monthly lunar cycle | The eight Moon phases, each as an instant and as the span until the next |
+| Planetary phases | Mercury, Venus, and Mars: conjunctions, Mars's opposition, the greatest elongations of Mercury and Venus, brightest, rise and set, and morning- and evening-star visibility spans |
+| Eclipses | Solar and lunar: begin, maximum, and end |
 | Retrogrades | Stations and retrograde periods |
-| Ingresses | Bodies entering a zodiac sign |
-| Annual solar cycle | Solstices, equinoxes, cross-quarter points |
+| Ingresses | Sign, decan, and peak ingresses, and the span in each sign |
+| Annual solar cycle | Solstices, equinoxes, cross-quarter days, hexadecans, perihelion and aphelion |
 | Lunar apsides | Lunar apogee and perigee, where the Moon's radial speed changes sign |
-| Daily cycles | Sunrise, sunset, moonrise, moonset |
-| Twilights | Civil, nautical, and astronomical |
+| Daily cycles | Sunrise, sunset, solar zenith and nadir, moonrise, moonset, lunar zenith and nadir |
+| Twilights | Civil, nautical, and astronomical dawn and dusk, with the Daylight, twilight, and Night spans |
+
+## Conventions
+
+Where astronomy and astrology each have more than one accepted definition,
+caelundas picks one. These are the choices, so you can reconcile a caelundas
+calendar with another source.
 
 ### Moon phases
 
 Every Moon phase is timed by the Moon's apparent geocentric ecliptic longitude
-minus the Sun's, not by how much of the Moon is lit:
+minus the Sun's, E, normalized to [0°, 360°). Positions are Swiss Ephemeris
+apparent geocentric values. Illumination is not used:
 
-| Phase | Moon − Sun longitude |
-| ----- | -------------------- |
+| Phase | E |
+| ----- | - |
 | New Moon | 0° |
 | Waxing Crescent | 45° |
 | First Quarter | 90° |
@@ -100,11 +109,64 @@ minus the Sun's, not by how much of the Moon is lit:
 | Waning Crescent | 315° |
 
 The four primary phases follow the definition the US Naval Observatory and
-the almanacs publish, and land within two minutes of their times. The
-crescent and gibbous phases begin at the octants halfway between them, so
-each of the eight phases spans 45° of elongation. Illumination would put the
-crescent and gibbous boundaries near 60° and 120°, not halfway, and its
-extremes miss New and Full Moon by up to half an hour.
+the almanacs publish. Each phase is stamped at the whole minute nearest the
+crossing, which is how USNO rounds, so primary phases land within two minutes
+of its times. The crescent and gibbous phases begin at the octants halfway
+between them, so each of the eight phases spans 45° of elongation.
+Illumination would put the crescent and gibbous boundaries near 60° and 120°,
+not halfway, and its extremes miss New and Full Moon by up to half an hour.
+
+### Lunar points
+
+- **True node.** The north lunar node is Swiss Ephemeris's true (osculating)
+  node, not the smoothed mean node. It wobbles by up to about 1.5° around the
+  mean node, so it can differ from calendars that use the mean node and
+  occasionally turns direct or retrograde on a different day. The south node
+  is computed as the opposite point but used in no event, so it appears in no
+  aspect or ingress.
+- **Lilith and the lunar apogee.** Both are tracked, as separate bodies.
+  Lilith is the mean lunar apogee, a smooth average. The lunar apogee is the
+  osculating apogee, the instantaneous value, which can stray from the mean by
+  tens of degrees. Most astrology software offers one or the other,
+  so expect one of the two to match it.
+
+### Stelliums
+
+A stellium is four or more bodies that are all in conjunction with one
+another. Conjunction uses the aspect orb, 8°, and every pair must be within
+it, not just a chain of neighbors. Detection finds each maximal clique of
+pairwise conjunct bodies with four or more members.
+
+### Ingresses
+
+- **Decans** are equal 10° thirds of a sign, numbered 1 to 3 from the sign's
+  first degree. Decan 1 begins at the sign boundary, which is the sign
+  ingress, so a decan ingress into decan 1 appears only when a body moves
+  backward from decan 2.
+- **Peak ingress** is the moment a body's longitude within its sign reaches
+  15°, the midpoint of the sign, in either forward or retrograde direction.
+  A retrograde re-entry across a sign boundary does not fire a peak ingress.
+
+### Daily cycles
+
+- **Zenith and nadir** are the highest and lowest altitude the body reaches,
+  found as local extrema of its altitude each minute. This is not the
+  meridian transit the US Naval Observatory lists: the two differ when the
+  body's declination changes, and by most for the Moon.
+- **Altitude** is the refracted (apparent) altitude from Swiss Ephemeris,
+  not the geometric one: the call passes pressure 0, which Swiss Ephemeris
+  estimates from the observer's height (sea level here), and 0 °C.
+- **Sunrise, sunset, moonrise, and moonset** are times the body crosses the
+  horizon with topocentric parallax, the standard upper-limb altitude for the
+  Sun (-0.833°), and the Moon's topocentric semidiameter.
+
+### Twilights
+
+Civil, nautical, and astronomical twilight begin and end when the Sun's
+refracted altitude (see Daily cycles) crosses -6°, -12°, and -18°. **Daylight**
+runs from civil dawn to civil dusk, so it includes the civil twilights and is
+longer than sunrise to sunset. **Night** runs from astronomical dusk to
+astronomical dawn.
 
 ## Stored events
 
