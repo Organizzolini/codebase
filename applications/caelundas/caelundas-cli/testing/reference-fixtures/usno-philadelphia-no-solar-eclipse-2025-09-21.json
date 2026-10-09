@@ -1,0 +1,31 @@
+{
+  "absent": [
+    "📍 ☀️🐉 Partial Solar Eclipse (Topocentric Visibility)",
+    "📍 ☀️🐉▶️ Partial Solar Eclipse begins",
+    "📍 ☀️🐉◀️ Partial Solar Eclipse ends",
+    "📍 ☀️🐉🎯 Partial Solar Eclipse maximum"
+  ],
+  "counts": {
+    "🌐 ☀️🐉▶️ Partial Solar Eclipse begins": 1
+  },
+  "events": [
+    {
+      "note": "NASA global P1 17:29:31.8 UT (https://eclipse.gsfc.nasa.gov/SEplot/SEplot2001/SE2025Sep21P.GIF): the eclipse is in the window, seen only from the South Pacific, New Zealand and Antarctica. USNO answers \"Eclipse not visible from selected location\" for Philadelphia",
+      "start": "2025-09-21T17:29:32Z",
+      "summary": "🌐 ☀️🐉▶️ Partial Solar Eclipse begins"
+    }
+  ],
+  "name": "The partial solar eclipse of 21 September 2025 is not visible from Philadelphia",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "US Naval Observatory, solar eclipse local circumstances for Philadelphia (39.949309, -75.17169, 0 m)",
+    "url": "https://aa.usno.navy.mil/api/eclipses/solar/date?date=2025-09-21&coords=39.949309,-75.17169&height=0"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2025-09-22",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2025-09-21"
+  }
+}

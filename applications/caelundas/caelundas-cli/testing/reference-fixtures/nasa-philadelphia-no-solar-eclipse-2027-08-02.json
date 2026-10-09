@@ -1,0 +1,31 @@
+{
+  "absent": [
+    "📍 ☀️🐉 Total Solar Eclipse (Topocentric Visibility)",
+    "📍 ☀️🐉▶️ Total Solar Eclipse begins",
+    "📍 ☀️🐉◀️ Total Solar Eclipse ends",
+    "📍 ☀️🐉🎯 Total Solar Eclipse maximum"
+  ],
+  "counts": {
+    "🌐 ☀️🐉▶️ Total Solar Eclipse begins": 1
+  },
+  "events": [
+    {
+      "note": "NASA global P1 07:30:00.3 UT, printed with ΔT 84.8 s. The penumbra covers the Atlantic at sunrise, Europe, Africa and the Middle East, and leaves Earth (P4 12:42:59.6 UT) before it reaches North America's daylit side. USNO's solar eclipse API returned HTTP 500 for every 2027 date on 2026-10-08 and again on re-query, so NASA's map is the authority here Swiss Ephemeris's own `sol_eclipse_when_loc` for Philadelphia, run in review, finds no visible solar eclipse until 2028-01-26.",
+      "start": "2027-08-02T07:30:00Z",
+      "summary": "🌐 ☀️🐉▶️ Total Solar Eclipse begins"
+    }
+  ],
+  "name": "The total solar eclipse of 2 August 2027 is not visible from Philadelphia",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "NASA Goddard Space Flight Center, Fred Espenak: solar eclipse diagram, global contacts and the penumbra's path on Earth",
+    "url": "https://eclipse.gsfc.nasa.gov/SEplot/SEplot2001/SE2027Aug02T.GIF"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2027-08-03",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2027-08-02"
+  }
+}

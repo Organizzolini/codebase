@@ -15,6 +15,13 @@ export const radiusKilometersByHorizonBody: Record<
   AzimuthElevationEphemerisBody,
   number
 > = { moon: 1737.4, sun: 695_700 };
+/**
+ * Standard atmospheric refraction at the horizon, 34′ in degrees, as the US
+ * Naval Observatory uses it. Rise and set, and eclipse visibility, all judge
+ * the horizon by it: a body is up while its true elevation plus this plus its
+ * semidiameter is above zero.
+ */
+export const HORIZON_REFRACTION_DEGREES = 34 / 60;
 /** Swiss Ephemeris flag for converting ecliptic coordinates to horizontal (azimuth/elevation). */
 export const ECLIPTIC_TO_HORIZONTAL_FLAG: number = constants.SE_ECL2HOR;
 /**

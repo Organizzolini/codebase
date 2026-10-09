@@ -107,8 +107,6 @@ export class EclipsesService {
           geocentricPhases: {
             lunarPhases: geocentricResult.lunarPhases,
             lunarType: geocentricResult.lunarType,
-            solarPhases: geocentricResult.solarPhases,
-            solarType: geocentricResult.solarType,
           },
           minute: args.minute,
           moonAzimuthElevationEphemeris: args.moonAzimuthElevationEphemeris,

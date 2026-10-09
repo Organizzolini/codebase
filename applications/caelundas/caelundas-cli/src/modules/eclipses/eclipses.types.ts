@@ -1,4 +1,13 @@
 /**
+ * The topocentric Moon's least separation from the Sun over a local solar
+ * eclipse, degrees, and the observer's Sun and Moon at the minute nearest it.
+ */
+export interface ClosestApproach {
+  sample: TopocentricSample;
+  separation: number;
+}
+
+/**
  * How far one eclipse has to go at one minute, seen from Earth's center.
  *
  * The eclipse is in progress while `separation` is below `contactLimit`;
@@ -35,6 +44,13 @@ export interface EclipseCoordinates {
   longitudeSun: number;
 }
 
+/** Previous, current and next minute of geocentric eclipse coordinates. */
+export interface EclipseCoordinatesWindow {
+  current: EclipseCoordinates;
+  next: EclipseCoordinates;
+  previous: EclipseCoordinates;
+}
+
 /**
  * Reference frame for eclipse visibility reporting.
  * - `geocentric`: Eclipse as seen from Earth's centre (always occurs when geometry aligns)
@@ -63,3 +79,32 @@ export type LunarEclipseType = "partial" | "penumbral" | "total";
 
 /** How deep a solar eclipse goes: see {@link EclipseType}. */
 export type SolarEclipseType = "annular" | "hybrid" | "partial" | "total";
+
+/**
+ * The Sun or the Moon as the observer sees it at one minute: topocentric
+ * apparent ecliptic position of date and semidiameter, in degrees.
+ */
+export interface TopocentricDisc {
+  /**
+   * How far the upper limb stands above the horizon, degrees, as rise and
+   * set judge it: true elevation plus 34′ of refraction plus semidiameter.
+   * Positive while the body is up.
+   */
+  clearance: number;
+  latitude: number;
+  longitude: number;
+  semidiameter: number;
+}
+
+/** The Sun and the Moon as the observer sees them at one minute. */
+export interface TopocentricSample {
+  moon: TopocentricDisc;
+  sun: TopocentricDisc;
+}
+
+/** Previous, current and next minute of the observer's Sun and Moon. */
+export interface TopocentricWindow {
+  current: TopocentricSample;
+  next: TopocentricSample;
+  previous: TopocentricSample;
+}

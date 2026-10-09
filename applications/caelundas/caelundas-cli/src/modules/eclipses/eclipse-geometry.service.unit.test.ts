@@ -108,33 +108,127 @@ describe(EclipseGeometryService, () => {
     expect(result.nextCoordinates.distanceSun).toBeCloseTo(0.991, 9);
   });
 
-  it("samples topocentric visibility around the current minute", () => {
-    const minute = moment.utc("2024-04-08T18:00:00.000Z");
+  it("samples the topocentric Sun and Moon around the current minute", () => {
+    const minute = moment.utc("2026-08-12T17:54:00.000Z");
     const currentIso = minute.toISOString();
     const previousIso = minute.clone().subtract(1, "minute").toISOString();
+    const moonAzimuthElevationEphemeris = {};
+    const fieldValues = {
+      azimuth: 200,
+      eclipticLatitude: 0.4,
+      eclipticLongitude: 140,
+      elevation: 63,
+      semidiameter: 0.25,
+      trueElevation: -1,
+    };
 
     ephemerisService.getAzimuthElevationFromEphemeris.mockImplementation(
-      (_ephemeris, minuteIso) => {
-        if (minuteIso === currentIso) {
-          return 10;
-        }
-        if (minuteIso === previousIso) {
-          return -5;
-        }
-        return 3;
-      },
+      (ephemeris, minuteIso, field) =>
+        fieldValues[field] +
+        (ephemeris === moonAzimuthElevationEphemeris ? 0.01 : 0) +
+        (minuteIso === currentIso ? 0 : minuteIso === previousIso ? -1 : 1),
     );
 
-    expect(
-      service.getAllTopocentricVisibilities({
-        minute,
-        moonAzimuthElevationEphemeris: {},
-        sunAzimuthElevationEphemeris: {},
-      }),
-    ).toStrictEqual({
-      currentVisibility: { isLunarVisible: true, isSolarVisible: true },
-      nextVisibility: { isLunarVisible: true, isSolarVisible: true },
-      previousVisibility: { isLunarVisible: false, isSolarVisible: false },
+    const result = service.getAllTopocentricSamples({
+      minute,
+      moonAzimuthElevationEphemeris,
+      sunAzimuthElevationEphemeris: {},
+    });
+
+    expect(result.current.sun).toStrictEqual({
+      // True elevation −1° plus 34′ of refraction plus the 0.25° semidiameter.
+      clearance: expect.closeTo(-1 + 34 / 60 + 0.25, 9) as number,
+      latitude: 0.4,
+      longitude: 140,
+      semidiameter: 0.25,
+    });
+    expect(result.current.moon.longitude).toBeCloseTo(140.01, 9);
+    expect(result.previous.sun.longitude).toBe(139);
+    expect(result.next.moon.latitude).toBeCloseTo(1.41, 9);
+  });
+
+  describe("getTopocentricSample", () => {
+    const minute = moment.utc("2026-08-12T17:54:00.000Z");
+    const position = {
+      azimuth: 200,
+      eclipticLatitude: 0.4,
+      eclipticLongitude: 140,
+      elevation: 63,
+      semidiameter: 0.25,
+      trueElevation: 62.99,
+    };
+
+    it("reads the observer's Sun and Moon at one minute", () => {
+      ephemerisService.getAzimuthElevationFromEphemeris.mockImplementation(
+        (ephemeris, minuteIso, field) => {
+          const value = ephemeris[minuteIso]?.[field];
+          if (value === undefined) {
+            throw new Error(`Missing ${field} at ${minuteIso}`);
+          }
+          return value;
+        },
+      );
+      const ephemeris = { [minute.toISOString()]: position };
+
+      expect(
+        service.getTopocentricSample({
+          minute,
+          moonAzimuthElevationEphemeris: ephemeris,
+          sunAzimuthElevationEphemeris: ephemeris,
+        })?.sun,
+      ).toStrictEqual({
+        clearance: expect.closeTo(62.99 + 34 / 60 + 0.25, 9) as number,
+        latitude: 0.4,
+        longitude: 140,
+        semidiameter: 0.25,
+      });
+    });
+
+    it("is null past the end of either body's ephemeris", () => {
+      expect(
+        service.getTopocentricSample({
+          minute,
+          moonAzimuthElevationEphemeris: { [minute.toISOString()]: position },
+          sunAzimuthElevationEphemeris: {},
+        }),
+      ).toBeNull();
+    });
+  });
+
+  describe("getTopocentricSolarContactGeometry", () => {
+    /** One body seen from the ground, with its upper limb well above the horizon. */
+    const disc = (
+      longitude: number,
+      latitude: number,
+      semidiameter: number,
+    ): {
+      clearance: number;
+      latitude: number;
+      longitude: number;
+      semidiameter: number;
+    } => ({
+      clearance: 30,
+      latitude,
+      longitude,
+      semidiameter,
+    });
+
+    it("puts the limbs in contact at the sum of the topocentric semidiameters", () => {
+      const { contactLimit } = service.getTopocentricSolarContactGeometry({
+        moon: disc(100, 0, 0.27),
+        sun: disc(100, 0, 0.26),
+      });
+
+      expect(contactLimit).toBeCloseTo(0.53, 9);
+    });
+
+    it("measures the great-circle separation of the topocentric Moon from the Sun", () => {
+      const { separation } = service.getTopocentricSolarContactGeometry({
+        moon: disc(100.3, 0.4, 0.27),
+        sun: disc(100, 0, 0.26),
+      });
+
+      expect(separation).toBeCloseTo(0.5, 4);
     });
   });
 

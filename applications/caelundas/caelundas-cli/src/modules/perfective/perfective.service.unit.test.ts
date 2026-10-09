@@ -47,7 +47,6 @@ const baseInput: Input = {
 const emptyEphemerides = {
   azimuthElevationEphemerisByBody: {} as never,
   coordinateEphemerisByBody: {} as never,
-  diameterEphemerisByBody: {} as never,
   distanceEphemerisByBody: {} as never,
   illuminationEphemerisByBody: {} as never,
 };
