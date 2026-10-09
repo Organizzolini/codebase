@@ -177,14 +177,12 @@ export class PerfectiveService {
       }),
       ...this.phasesService.getMartianPhaseEvents({
         marsCoordinateEphemeris: coordinateEphemerisByBody.mars,
-        marsDistanceEphemeris: distanceEphemerisByBody.mars,
         marsIlluminationEphemeris: illuminationEphemerisByBody.mars,
         minute,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
       }),
       ...this.phasesService.getMercurianPhaseEvents({
         mercuryCoordinateEphemeris: coordinateEphemerisByBody.mercury,
-        mercuryDistanceEphemeris: distanceEphemerisByBody.mercury,
         mercuryIlluminationEphemeris: illuminationEphemerisByBody.mercury,
         minute,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
@@ -193,7 +191,6 @@ export class PerfectiveService {
         minute,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
         venusCoordinateEphemeris: coordinateEphemerisByBody.venus,
-        venusDistanceEphemeris: distanceEphemerisByBody.venus,
         venusIlluminationEphemeris: illuminationEphemerisByBody.venus,
       }),
     ];

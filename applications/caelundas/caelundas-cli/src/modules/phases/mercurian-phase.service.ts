@@ -219,14 +219,12 @@ export class MercurianPhaseService {
   ): DetectedCalendarEvent[] {
     const {
       mercuryCoordinateEphemeris,
-      mercuryDistanceEphemeris,
       mercuryIlluminationEphemeris,
       minute,
       sunCoordinateEphemeris,
     } = args;
 
     const parameters = this.phaseCalculationService.gatherPhaseParameters({
-      distanceEphemeris: mercuryDistanceEphemeris,
       illuminationEphemeris: mercuryIlluminationEphemeris,
       minute,
       planetCoordinateEphemeris: mercuryCoordinateEphemeris,

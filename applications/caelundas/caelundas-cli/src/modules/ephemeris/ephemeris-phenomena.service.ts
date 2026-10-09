@@ -23,6 +23,19 @@ export class EphemerisPhenomenaService {
 
   // 🔐 Private Fields
 
+  /**
+   * The Sun's illumination entry, constant rather than computed per minute.
+   *
+   * Nothing reads the Sun's magnitude or phase angle, so a pheno_ut call
+   * every minute to store them would be wasted; the mean apparent magnitude
+   * stands in, and the Sun is fully lit by definition.
+   */
+  private static readonly sunIllumination = {
+    illumination: 100,
+    magnitude: -26.74,
+    phaseAngle: 0,
+  } as const;
+
   // 🔑 Public Fields
 
   // 🔏 Private Methods
@@ -30,9 +43,11 @@ export class EphemerisPhenomenaService {
   // 🌎 Public Methods
 
   /**
-   * Computes minute-by-minute illumination fraction for requested bodies.
-   * Illumination is stored as a percentage (0-100). The Sun is always 100%.
-   * Uses pheno_ut() which returns a fraction (0-1); multiplied by 100 for storage.
+   * Computes minute-by-minute illumination fraction, apparent magnitude and phase angle for requested bodies.
+   * Illumination is stored as a percentage (0-100); the Sun's entry is constant.
+   * Uses pheno_ut(), which returns the phase angle in data[0], the illuminated
+   * fraction (0-1) in data[1], multiplied by 100 for storage, and the apparent
+   * magnitude in data[4].
    *
    * @throws When pheno_ut fails for a non-Sun body.
    */
@@ -49,7 +64,7 @@ export class EphemerisPhenomenaService {
       const { julianDayUniversalTime } = this.time.dateToJulianDays(date);
       const timestamp = date.toISOString();
       if (body === "sun") {
-        ephemeris[timestamp] = { illumination: 100 };
+        ephemeris[timestamp] = { ...EphemerisPhenomenaService.sunIllumination };
         continue;
       }
       const result = pheno_ut(
@@ -60,13 +75,21 @@ export class EphemerisPhenomenaService {
       if (result.flag < 0) {
         throw new Error(`pheno_ut failed for ${body}: ${result.error}`);
       }
-      ephemeris[timestamp] = { illumination: result.data[1] * 100 };
+      ephemeris[timestamp] = {
+        illumination: result.data[1] * 100,
+        magnitude: result.data[4],
+        phaseAngle: result.data[0],
+      };
     }
     return ephemeris;
   }
 
   /**
+<<<<<<< HEAD
+   * Computes pheno (illumination, magnitude, phase angle and diameter) for a non-Sun body at a specific moment.
+=======
    * Computes pheno illumination for a non-Sun body at a specific moment.
+>>>>>>> origin/main
    * Stores results into the provided ephemeris maps if requested.
    *
    * @throws When pheno_ut fails.
@@ -96,7 +119,11 @@ export class EphemerisPhenomenaService {
       throw new Error(`pheno_ut failed for ${body}: ${result.error}`);
     }
     if (needsIllumination)
-      illuminationEphemeris[timestamp] = { illumination: result.data[1] * 100 };
+      illuminationEphemeris[timestamp] = {
+        illumination: result.data[1] * 100,
+        magnitude: result.data[4],
+        phaseAngle: result.data[0],
+      };
   }
 
   /**
@@ -114,7 +141,9 @@ export class EphemerisPhenomenaService {
     if (args.body === "sun") {
       // The Sun is always fully illuminated, so there is nothing to ask pheno_ut.
       if (args.needsIllumination)
-        args.illuminationEphemeris[args.timestamp] = { illumination: 100 };
+        args.illuminationEphemeris[args.timestamp] = {
+          ...EphemerisPhenomenaService.sunIllumination,
+        };
     } else {
       this.computePhenoForBodyMinute(args);
     }

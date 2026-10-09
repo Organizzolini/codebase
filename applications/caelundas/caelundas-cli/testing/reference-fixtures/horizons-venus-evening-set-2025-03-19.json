@@ -1,0 +1,26 @@
+{
+  "absent": ["♀️🌄↧ Venus Morning Set"],
+  "counts": {
+    "♀️🌇↧ Venus Evening Set": 1
+  },
+  "events": [
+    {
+      "note": "Caelundas sets an inner planet when its ecliptic longitude gap to the Sun closes through 6°. Horizons: Venus 4.96°, Sun 358.96°, so Venus is east of the Sun across 0° Aries and the set is an evening set; the gap reaches 6° at 07:59 UT",
+      "start": "2025-03-19T07:59:00Z",
+      "summary": "♀️🌇↧ Venus Evening Set"
+    }
+  ],
+  "name": "Venus closes on the Sun from the east across 0° Aries on 19 March 2025",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "JPL Horizons API: geocentric observer ecliptic longitude (quantity 31) of Venus and the Sun, one-minute steps",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='299'&CENTER='500@399'&EPHEM_TYPE='OBSERVER'&START_TIME='2025-03-18 00:00'&STOP_TIME='2025-03-21 00:00'&STEP_SIZE='1 m'&QUANTITIES='31'&CSV_FORMAT='YES'&EXTRA_PREC='YES'"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2025-03-20",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2025-03-19"
+  }
+}

@@ -33,14 +33,12 @@ import type { Moment } from "moment-timezone";
 /**
  * Swiss Ephemeris computation orchestration service for caelundas.
  * Delegates coordinate, phenomena, and horizon computations to specialized sub-services.
- *
  * @see {@link ./ephemeris.constants#} for initialization and SE body constants
  * @see {@link ./ephemeris.types#} for data structures
  */
 @Injectable()
 export class EphemerisService {
   // 🏗 Dependency Injection
-
   constructor(
     private readonly ephemerisAggregationService: EphemerisAggregationService,
     private readonly ephemerisCoordinateService: EphemerisCoordinateService,
@@ -53,35 +51,25 @@ export class EphemerisService {
   }
 
   // 🔐 Private Fields
-
   // 🔑 Public Fields
-
   // 🔏 Private Methods
 
-  /**
-   * Returns the aggregation service.
-   */
+  /** Returns the aggregation service. */
   private getAggregationService(): EphemerisAggregationService {
     return this.ephemerisAggregationService;
   }
 
-  /**
-   * Returns the constants service.
-   */
+  /** Returns the constants service. */
   private getConstantsService(): EphemerisConstantsService {
     return this.ephemerisConstantsService;
   }
 
-  /**
-   * Returns the coordinate service.
-   */
+  /** Returns the coordinate service. */
   private getCoordinateService(): EphemerisCoordinateService {
     return this.ephemerisCoordinateService;
   }
 
-  /**
-   * Returns the horizon service.
-   */
+  /** Returns the horizon service. */
   private getHorizonService(): EphemerisHorizonService {
     return this.ephemerisHorizonService;
   }
@@ -201,10 +189,22 @@ export class EphemerisService {
     fieldName: keyof HorizonPosition,
   ): number {
     const data = ephemeris[timestamp];
-    if (data?.[fieldName] === undefined) {
+    if (data === undefined) {
       throw new Error(`Missing ${fieldName} at ${timestamp}`);
     }
-    return data[fieldName];
+    if (fieldName === "semidiameter") {
+      if (data.semidiameter === undefined) {
+        throw new Error(`Missing ${fieldName} at ${timestamp}`);
+      }
+      return data.semidiameter;
+    }
+    if (fieldName === "trueElevation") {
+      if (data.trueElevation === undefined) {
+        throw new Error(`Missing ${fieldName} at ${timestamp}`);
+      }
+      return data.trueElevation;
+    }
+    return fieldName === "azimuth" ? data.azimuth : data.elevation;
   }
 
   /**
@@ -308,12 +308,7 @@ export class EphemerisService {
     return data.distance;
   }
 
-  /**
-   * Safely extracts the radial speed (AU per day, positive while receding)
-   * from a distance ephemeris.
-   *
-   * @throws When timestamp or field is missing from ephemeris.
-   */
+  /** Safely extracts radial distance speed from ephemeris. */
   public getDistanceSpeedFromEphemeris(
     ephemeris: DistanceEphemeris,
     timestamp: string,
@@ -427,5 +422,39 @@ export class EphemerisService {
         "longitude",
       ),
     };
+  }
+
+  /**
+   * Safely extracts apparent visual magnitude from ephemeris.
+   *
+   * @throws When timestamp or field is missing from ephemeris.
+   */
+  public getMagnitudeFromEphemeris(
+    ephemeris: IlluminationEphemeris,
+    timestamp: string,
+    fieldName: string,
+  ): number {
+    const data = ephemeris[timestamp];
+    if (data?.magnitude === undefined) {
+      throw new Error(`Missing ${fieldName} at ${timestamp}`);
+    }
+    return data.magnitude;
+  }
+
+  /**
+   * Safely extracts the phase angle (Sun–body–observer, degrees) from ephemeris.
+   *
+   * @throws When timestamp or field is missing from ephemeris.
+   */
+  public getPhaseAngleFromEphemeris(
+    ephemeris: IlluminationEphemeris,
+    timestamp: string,
+    fieldName: string,
+  ): number {
+    const data = ephemeris[timestamp];
+    if (data?.phaseAngle === undefined) {
+      throw new Error(`Missing ${fieldName} at ${timestamp}`);
+    }
+    return data.phaseAngle;
   }
 }

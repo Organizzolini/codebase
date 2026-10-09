@@ -120,8 +120,16 @@ describe("ephemeris.types", () => {
   describe("illuminationEphemeris type", () => {
     it("accepts valid illumination fraction values", () => {
       const ephemeris: IlluminationEphemeris = {
-        "2024-03-21T00:00:00.000Z": { illumination: 0.567 },
-        "2024-03-21T00:01:00.000Z": { illumination: 0.568 },
+        "2024-03-21T00:00:00.000Z": {
+          illumination: 0.567,
+          magnitude: 0,
+          phaseAngle: 0,
+        },
+        "2024-03-21T00:01:00.000Z": {
+          illumination: 0.568,
+          magnitude: 0,
+          phaseAngle: 0,
+        },
       };
 
       expect(ephemeris["2024-03-21T00:00:00.000Z"]?.illumination).toBe(0.567);
@@ -129,10 +137,18 @@ describe("ephemeris.types", () => {
 
     it("accepts values between 0 and 1", () => {
       const darkMoon: IlluminationEphemeris = {
-        "2024-03-21T00:00:00.000Z": { illumination: 0.001 },
+        "2024-03-21T00:00:00.000Z": {
+          illumination: 0.001,
+          magnitude: 0,
+          phaseAngle: 0,
+        },
       };
       const fullMoon: IlluminationEphemeris = {
-        "2024-03-21T00:00:00.000Z": { illumination: 0.999 },
+        "2024-03-21T00:00:00.000Z": {
+          illumination: 0.999,
+          magnitude: 0,
+          phaseAngle: 0,
+        },
       };
 
       expect(darkMoon["2024-03-21T00:00:00.000Z"]?.illumination).toBeLessThan(

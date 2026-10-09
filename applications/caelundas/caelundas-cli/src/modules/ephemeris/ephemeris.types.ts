@@ -5,8 +5,7 @@ import type { Body } from "../caelundas/caelundas.types";
 /**
  * Time-indexed ephemeris of horizontal coordinates (observer frame).
  *
- * Keys are ISO timestamps, values are {@link HorizonPosition}s. Positions are
- * topocentric: parallax is applied for the observer's location.
+ * Keys are ISO timestamps, values contain azimuth and elevation in degrees.
  * Used for calculating rise, set, and culmination events.
  *
  * @see {@link getAzimuthElevationFromEphemeris} for data retrieval
@@ -85,9 +84,7 @@ export interface Ephemerides {
   illuminationEphemerisByBody: Record<Body, IlluminationEphemeris>;
 }
 
-/**
- * Where a body sits in one observer's sky at one minute, from its topocentric position.
- */
+/** Position in horizontal coordinates. */
 export interface HorizonPosition {
   /** Degrees from North, clockwise through East (0° North, 90° East, 180° South, 270° West). */
   azimuth: number;
@@ -97,19 +94,23 @@ export interface HorizonPosition {
   eclipticLongitude: number;
   /** Apparent (refracted) elevation of the center, degrees; refraction is dropped below the horizon. */
   elevation: number;
-  /** Topocentric angular radius, degrees: half the disc the observer sees. */
-  semidiameter: number;
-  /** True (airless, unrefracted) elevation of the center, degrees. */
-  trueElevation: number;
+  semidiameter?: number;
+  trueElevation?: number;
 }
 
 /**
- * Time-indexed ephemeris of illumination fraction.
+ * Time-indexed ephemeris of illumination fraction, apparent magnitude and phase angle.
  *
- * Keys are ISO timestamps, values are illumination percentages (0-100).
+ * Keys are ISO timestamps. `illumination` is the illuminated fraction as a
+ * percentage (0-100); `magnitude` is the apparent visual magnitude, smaller
+ * meaning brighter; `phaseAngle` is the Sun–body–observer angle in degrees,
+ * 0° fully lit and 180° fully dark. All three come from the same phenomena call.
  * Used for lunar phase and planetary phase calculations.
  */
-export type IlluminationEphemeris = Record<string, { illumination: number }>;
+export type IlluminationEphemeris = Record<
+  string,
+  { illumination: number; magnitude: number; phaseAngle: number }
+>;
 
 /**
  * Bodies for which illumination ephemerides are generated.

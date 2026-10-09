@@ -1,0 +1,23 @@
+{
+  "absent": ["♀️🔆 Venus Eastern Brightest"],
+  "events": [
+    {
+      "note": "Anchor: Horizons puts Venus's ecliptic longitude gap to the Sun through 6° at 09:30 UT. The absence: pheno_ut has a local magnitude minimum, -4.250, at 2026-10-21 04:38 UT with Venus 8.4° east of the Sun but at phase angle 168.4°, a thin crescent near inferior conjunction, so it is not a greatest brilliancy",
+      "start": "2026-10-20T09:30:00Z",
+      "summary": "♀️🌇↧ Venus Evening Set"
+    }
+  ],
+  "name": "No Venus greatest brilliancy as Venus nears inferior conjunction on 21 October 2026",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "JPL Horizons API: geocentric apparent magnitude, elongation, phase angle and observer ecliptic longitude (quantities 9, 23, 24, 31), one-minute steps, cross-checked against Swiss Ephemeris pheno_ut",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='299'&CENTER='500@399'&EPHEM_TYPE='OBSERVER'&START_TIME='2026-10-19 12:00'&STOP_TIME='2026-10-22 12:00'&STEP_SIZE='1 m'&QUANTITIES='9,23,24,31'&CSV_FORMAT='YES'&EXTRA_PREC='YES'"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-10-21",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-10-20"
+  }
+}

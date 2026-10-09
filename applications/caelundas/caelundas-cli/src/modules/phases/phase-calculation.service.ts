@@ -5,18 +5,27 @@ import { LoggerService } from "@codebase/logging";
 import { MARGIN_MINUTES } from "../caelundas/caelundas.constants";
 import { EphemerisService } from "../ephemeris/ephemeris.service";
 import { MathService } from "../math/math.service";
-import { TwilightsService } from "../twilights/twilights.service";
+
+import {
+  MAXIMUM_BRILLIANCY_PHASE_ANGLE_DEGREES,
+  RISE_SET_ELONGATION_DEGREES,
+} from "./phases.constants";
 
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type {
-  BrightnessArguments,
+  CoordinateEphemeris,
+  Coordinates,
+} from "../ephemeris/ephemeris.types";
+import type {
   BrightnessesArguments,
   BrightnessLongitudeArguments,
   CurrentLongitudeArguments,
   ElongationLongitudeArguments,
   GatherCurrentEphemerisArguments,
+  GatheredPositions,
   GatherMarginEphemerisArguments,
   GatherPhaseParametersArguments,
+  GatherPositionsArguments,
   MarginEphemerisSample,
   PhaseParameters,
   RiseSetLongitudeArguments,
@@ -40,47 +49,46 @@ export class PhaseCalculationService {
 
   // 🔐 Private Fields
 
-  private readonly riseSetThreshold = TwilightsService.degreesByTwilight.civil;
-
   // 🔑 Public Fields
 
   // 🔏 Private Methods
 
   /**
-   * Derives apparent brightness from illumination and distance.
-   *
-   * Inverse-square: the same illuminated fraction seen twice as far away
-   * reads a quarter as bright. Relative, not a magnitude — only ever compared
-   * against other samples of the same body.
+   * Reads the planet's and sun's ecliptic latitude and longitude at one timestamp.
    */
-  private getBrightness(args: BrightnessArguments): number {
-    return args.illumination / args.distance ** 2;
+  private gatherPositions(args: GatherPositionsArguments): GatheredPositions {
+    const { planetCoordinateEphemeris, sunCoordinateEphemeris, timestamp } =
+      args;
+    const read = (
+      ephemeris: CoordinateEphemeris,
+      coordinate: "latitude" | "longitude",
+    ): number =>
+      this.ephemerisService.getCoordinateFromEphemeris(
+        ephemeris,
+        timestamp,
+        coordinate,
+      );
+    return {
+      latitudePlanet: read(planetCoordinateEphemeris, "latitude"),
+      latitudeSun: read(sunCoordinateEphemeris, "latitude"),
+      longitudePlanet: read(planetCoordinateEphemeris, "longitude"),
+      longitudeSun: read(sunCoordinateEphemeris, "longitude"),
+    };
   }
 
   /**
-   * Derives one brightness per sample, refusing mismatched sample arrays.
+   * Derives the signed elongation of the planet from the Sun, in (−180°, 180°].
    *
-   * The two arrays are read positionally — sample `n`'s distance against
-   * sample `n`'s illumination — so a length mismatch is not a shorter answer
-   * but a wrong one, and the `label` names which margin was malformed.
+   * Positive means the planet lies east of the Sun (ahead of it in
+   * longitude), negative west. The difference is wrapped, so a planet at 4°
+   * Aries is 6° east of a Sun at 28° Pisces rather than 354° west of it.
    */
-  private mapBrightnessArray(
-    distances: number[],
-    illuminations: number[],
-    label: string,
-  ): number[] {
-    if (distances.length !== illuminations.length) {
-      throw new Error(
-        `${label} distances and illuminations arrays must have the same length`,
-      );
-    }
-    return distances.map((distance, index) => {
-      const illumination = illuminations[index];
-      if (illumination === undefined) {
-        throw new Error(`Missing illumination at index ${index}`);
-      }
-      return this.getBrightness({ distance, illumination });
-    });
+  private getSignedElongation(args: CurrentLongitudeArguments): number {
+    const difference =
+      this.mathService.normalizeDegrees(
+        args.currentLongitudePlanet - args.currentLongitudeSun + 180,
+      ) - 180;
+    return difference === -180 ? 180 : difference;
   }
 
   // 🌎 Public Methods
@@ -109,80 +117,66 @@ export class PhaseCalculationService {
     args: GatherCurrentEphemerisArguments,
   ): Pick<
     PhaseParameters,
-    | "currentDistance"
-    | "currentIllumination"
+    | "currentLatitudePlanet"
+    | "currentLatitudeSun"
     | "currentLongitudePlanet"
     | "currentLongitudeSun"
+    | "currentMagnitude"
+    | "currentPhaseAngle"
   > {
     const {
-      distanceEphemeris,
       illuminationEphemeris,
       isoNow,
       planetCoordinateEphemeris,
       sunCoordinateEphemeris,
     } = args;
+    const position = this.gatherPositions({
+      planetCoordinateEphemeris,
+      sunCoordinateEphemeris,
+      timestamp: isoNow,
+    });
     return {
-      currentDistance: this.ephemerisService.getDistanceFromEphemeris(
-        distanceEphemeris,
-        isoNow,
-        "currentDistance",
-      ),
-      currentIllumination: this.ephemerisService.getIlluminationFromEphemeris(
+      currentLatitudePlanet: position.latitudePlanet,
+      currentLatitudeSun: position.latitudeSun,
+      currentLongitudePlanet: position.longitudePlanet,
+      currentLongitudeSun: position.longitudeSun,
+      currentMagnitude: this.ephemerisService.getMagnitudeFromEphemeris(
         illuminationEphemeris,
         isoNow,
-        "currentIllumination",
+        "currentMagnitude",
       ),
-      currentLongitudePlanet: this.ephemerisService.getCoordinateFromEphemeris(
-        planetCoordinateEphemeris,
+      currentPhaseAngle: this.ephemerisService.getPhaseAngleFromEphemeris(
+        illuminationEphemeris,
         isoNow,
-        "longitude",
-      ),
-      currentLongitudeSun: this.ephemerisService.getCoordinateFromEphemeris(
-        sunCoordinateEphemeris,
-        isoNow,
-        "longitude",
+        "currentPhaseAngle",
       ),
     };
   }
 
   /**
-   * Gathers margin ephemeris arrays for brightness extrema detection.
+   * Gathers the margin of apparent magnitudes before or after the minute,
+   * for brightness extrema detection.
    */
   gatherMarginEphemeris(
     args: GatherMarginEphemerisArguments,
   ): MarginEphemerisSample {
-    const { direction, distanceEphemeris, illuminationEphemeris, minute } =
-      args;
+    const { direction, illuminationEphemeris, minute } = args;
 
-    const distances = Array.from(
+    const magnitudes = Array.from(
       { length: MARGIN_MINUTES },
       (_index, index) => {
         const m =
           direction === "previous"
             ? minute.clone().subtract(MARGIN_MINUTES - index, "minutes")
             : minute.clone().add(index + 1, "minute");
-        return this.ephemerisService.getDistanceFromEphemeris(
-          distanceEphemeris,
-          m.toISOString(),
-          `${direction}Distance`,
-        );
-      },
-    );
-    const illuminations = Array.from(
-      { length: MARGIN_MINUTES },
-      (_index, index) => {
-        const m =
-          direction === "previous"
-            ? minute.clone().subtract(MARGIN_MINUTES - index, "minutes")
-            : minute.clone().add(index + 1, "minute");
-        return this.ephemerisService.getIlluminationFromEphemeris(
+        return this.ephemerisService.getMagnitudeFromEphemeris(
           illuminationEphemeris,
           m.toISOString(),
-          `${direction}Illumination`,
+          `${direction}Magnitude`,
         );
       },
     );
-    return { distances, illuminations };
+    return { magnitudes };
   }
 
   /**
@@ -190,7 +184,6 @@ export class PhaseCalculationService {
    */
   gatherPhaseParameters(args: GatherPhaseParametersArguments): PhaseParameters {
     const {
-      distanceEphemeris,
       illuminationEphemeris,
       minute,
       planetCoordinateEphemeris,
@@ -200,7 +193,6 @@ export class PhaseCalculationService {
     const isoPrevious = minute.clone().subtract(1, "minute").toISOString();
     const isoNext = minute.clone().add(1, "minute").toISOString();
     const current = this.gatherCurrentEphemeris({
-      distanceEphemeris,
       illuminationEphemeris,
       isoNow,
       planetCoordinateEphemeris,
@@ -208,100 +200,83 @@ export class PhaseCalculationService {
     });
     const previous = this.gatherMarginEphemeris({
       direction: "previous",
-      distanceEphemeris,
       illuminationEphemeris,
       minute,
     });
     const next = this.gatherMarginEphemeris({
       direction: "next",
-      distanceEphemeris,
       illuminationEphemeris,
       minute,
     });
+    const nextPosition = this.gatherPositions({
+      planetCoordinateEphemeris,
+      sunCoordinateEphemeris,
+      timestamp: isoNext,
+    });
+    const previousPosition = this.gatherPositions({
+      planetCoordinateEphemeris,
+      sunCoordinateEphemeris,
+      timestamp: isoPrevious,
+    });
     return {
       ...current,
-      nextDistances: next.distances,
-      nextIlluminations: next.illuminations,
-      nextLongitudePlanet: this.ephemerisService.getCoordinateFromEphemeris(
-        planetCoordinateEphemeris,
-        isoNext,
-        "longitude",
-      ),
-      nextLongitudeSun: this.ephemerisService.getCoordinateFromEphemeris(
-        sunCoordinateEphemeris,
-        isoNext,
-        "longitude",
-      ),
-      previousDistances: previous.distances,
-      previousIlluminations: previous.illuminations,
-      previousLongitudePlanet: this.ephemerisService.getCoordinateFromEphemeris(
-        planetCoordinateEphemeris,
-        isoPrevious,
-        "longitude",
-      ),
-      previousLongitudeSun: this.ephemerisService.getCoordinateFromEphemeris(
-        sunCoordinateEphemeris,
-        isoPrevious,
-        "longitude",
-      ),
+      nextLatitudePlanet: nextPosition.latitudePlanet,
+      nextLatitudeSun: nextPosition.latitudeSun,
+      nextLongitudePlanet: nextPosition.longitudePlanet,
+      nextLongitudeSun: nextPosition.longitudeSun,
+      nextMagnitudes: next.magnitudes,
+      previousLatitudePlanet: previousPosition.latitudePlanet,
+      previousLatitudeSun: previousPosition.latitudeSun,
+      previousLongitudePlanet: previousPosition.longitudePlanet,
+      previousLongitudeSun: previousPosition.longitudeSun,
+      previousMagnitudes: previous.magnitudes,
     };
   }
 
   /**
-   * Derives brightnesses from current and margin illumination/distance samples.
+   * Derives the elongation: the true angular separation between planet and sun.
    *
-   * The margins are what make a brightness maximum detectable: a sample is
-   * only brightest if the samples either side of it are dimmer, so all three
-   * are computed together rather than one call at a time.
+   * A planet well north or south of the ecliptic reads farther from the Sun
+   * than its longitude gap alone, which is why greatest elongation is timed
+   * by this rather than by the longitude gap.
    */
-  getBrightnesses(args: BrightnessesArguments): {
-    currentBrightness: number;
-    nextBrightnesses: number[];
-    previousBrightnesses: number[];
-  } {
-    return {
-      currentBrightness: this.getBrightness({
-        distance: args.currentDistance,
-        illumination: args.currentIllumination,
-      }),
-      nextBrightnesses: this.mapBrightnessArray(
-        args.nextDistances,
-        args.nextIlluminations,
-        "next",
-      ),
-      previousBrightnesses: this.mapBrightnessArray(
-        args.previousDistances,
-        args.previousIlluminations,
-        "previous",
-      ),
-    };
+  getElongationAngle(planet: Coordinates, sun: Coordinates): number {
+    return this.mathService.getAngularSeparation(planet, sun);
   }
 
   /**
-   * Derives elongation angle between planet and sun.
-   */
-  getElongationAngle(longitudePlanet: number, longitudeSun: number): number {
-    return this.mathService.getAngle(longitudePlanet, longitudeSun);
-  }
-
-  /**
-   * Determines whether planet is brightest among previous and next margin samples.
+   * Determines whether the planet is at greatest brilliancy: its apparent
+   * magnitude is lower (brighter) than every margin sample before it and no
+   * higher than every margin sample after it.
+   *
+   * Two magnitude minima are not brilliancies and are refused: a thin
+   * crescent near inferior conjunction, past
+   * {@link MAXIMUM_BRILLIANCY_PHASE_ANGLE_DEGREES}, and a planet lost in the
+   * Sun's glare, closer to it than the rise and set threshold.
+   *
+   * This gate measures the true separation while rise and set use the
+   * longitude gap; near an inferior conjunction far from the ecliptic the
+   * two differ, and the phase-angle gate covers that difference.
    */
   isBrightest(args: BrightnessesArguments): boolean {
-    const { currentBrightness, nextBrightnesses, previousBrightnesses } =
-      this.getBrightnesses(args);
+    const { currentMagnitude, nextMagnitudes, previousMagnitudes } = args;
 
     return (
-      currentBrightness > Math.max(...previousBrightnesses) &&
-      currentBrightness >= Math.max(...nextBrightnesses)
+      currentMagnitude < Math.min(...previousMagnitudes) &&
+      currentMagnitude <= Math.min(...nextMagnitudes) &&
+      args.currentPhaseAngle < MAXIMUM_BRILLIANCY_PHASE_ANGLE_DEGREES &&
+      this.getElongationAngle(
+        [args.currentLongitudePlanet, args.currentLatitudePlanet],
+        [args.currentLongitudeSun, args.currentLatitudeSun],
+      ) >= RISE_SET_ELONGATION_DEGREES
     );
   }
 
   /**
-   * Determines whether planet is east of sun.
+   * Determines whether planet is east of sun, by the wrapped signed elongation.
    */
   isEastern(args: CurrentLongitudeArguments): boolean {
-    return args.currentLongitudePlanet > args.currentLongitudeSun;
+    return this.getSignedElongation(args) > 0;
   }
 
   /**
@@ -322,24 +297,18 @@ export class PhaseCalculationService {
    * Determines whether planet is at elongation maximum.
    */
   isElongation(args: ElongationLongitudeArguments): boolean {
-    const {
-      currentLongitudePlanet,
-      currentLongitudeSun,
-      nextLongitudePlanet,
-      nextLongitudeSun,
-      previousLongitudePlanet,
-      previousLongitudeSun,
-    } = args;
-
     return this.mathService.isMaximum({
       current: this.getElongationAngle(
-        currentLongitudePlanet,
-        currentLongitudeSun,
+        [args.currentLongitudePlanet, args.currentLatitudePlanet],
+        [args.currentLongitudeSun, args.currentLatitudeSun],
       ),
-      next: this.getElongationAngle(nextLongitudePlanet, nextLongitudeSun),
+      next: this.getElongationAngle(
+        [args.nextLongitudePlanet, args.nextLatitudePlanet],
+        [args.nextLongitudeSun, args.nextLatitudeSun],
+      ),
       previous: this.getElongationAngle(
-        previousLongitudePlanet,
-        previousLongitudeSun,
+        [args.previousLongitudePlanet, args.previousLatitudePlanet],
+        [args.previousLongitudeSun, args.previousLatitudeSun],
       ),
     });
   }
@@ -407,8 +376,8 @@ export class PhaseCalculationService {
     );
 
     return (
-      previousAngle < this.riseSetThreshold &&
-      currentAngle >= this.riseSetThreshold
+      previousAngle < RISE_SET_ELONGATION_DEGREES &&
+      currentAngle >= RISE_SET_ELONGATION_DEGREES
     );
   }
 
@@ -433,16 +402,16 @@ export class PhaseCalculationService {
     );
 
     return (
-      previousAngle > this.riseSetThreshold &&
-      currentAngle <= this.riseSetThreshold
+      previousAngle > RISE_SET_ELONGATION_DEGREES &&
+      currentAngle <= RISE_SET_ELONGATION_DEGREES
     );
   }
 
   /**
-   * Determines whether planet is west of sun.
+   * Determines whether planet is west of sun, by the wrapped signed elongation.
    */
   isWestern(args: CurrentLongitudeArguments): boolean {
-    return args.currentLongitudePlanet < args.currentLongitudeSun;
+    return this.getSignedElongation(args) < 0;
   }
 
   /**

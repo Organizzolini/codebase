@@ -47,49 +47,6 @@ describe(PhaseCalculationService, () => {
     expect(service).toBeDefined();
   });
 
-  it("derives brightness values from current and margin samples", () => {
-    const brightnesses = service.getBrightnesses({
-      currentDistance: 2,
-      currentIllumination: 8,
-      nextDistances: [2, 4],
-      nextIlluminations: [8, 8],
-      previousDistances: [2, 1],
-      previousIlluminations: [8, 2],
-    });
-
-    expect(brightnesses.currentBrightness).toBe(2);
-    expect(brightnesses.nextBrightnesses).toStrictEqual([2, 0.5]);
-    expect(brightnesses.previousBrightnesses).toStrictEqual([2, 2]);
-  });
-
-  it("throws when brightness distance and illumination lengths differ", () => {
-    expect(() =>
-      service.getBrightnesses({
-        currentDistance: 2,
-        currentIllumination: 8,
-        nextDistances: [2, 4],
-        nextIlluminations: [8],
-        previousDistances: [2, 1],
-        previousIlluminations: [8, 2],
-      }),
-    ).toThrow(
-      "next distances and illuminations arrays must have the same length",
-    );
-  });
-
-  it("throws when a brightness illumination sample is missing", () => {
-    expect(() =>
-      service.getBrightnesses({
-        currentDistance: 2,
-        currentIllumination: 8,
-        nextDistances: [2, 4],
-        nextIlluminations: [8, undefined] as unknown as number[],
-        previousDistances: [2, 1],
-        previousIlluminations: [8, 2],
-      }),
-    ).toThrow("Missing illumination at index 1");
-  });
-
   it("detects rise and set threshold crossings", () => {
     mathService.getAngle.mockReturnValueOnce(5).mockReturnValueOnce(7);
 
@@ -114,23 +71,34 @@ describe(PhaseCalculationService, () => {
     ).toBe(true);
   });
 
-  it("evaluates elongation maxima from previous/current/next angles", () => {
-    mathService.getAngle
+  it("evaluates elongation maxima from previous/current/next angular separations", () => {
+    mathService.getAngularSeparation
       .mockReturnValueOnce(11)
       .mockReturnValueOnce(13)
       .mockReturnValueOnce(9);
     mathService.isMaximum.mockReturnValueOnce(true);
 
     const isElongation = service.isElongation({
+      currentLatitudePlanet: 2,
+      currentLatitudeSun: 0,
       currentLongitudePlanet: 10,
       currentLongitudeSun: 4,
+      nextLatitudePlanet: 3,
+      nextLatitudeSun: 0,
       nextLongitudePlanet: 11,
       nextLongitudeSun: 4,
+      previousLatitudePlanet: 1,
+      previousLatitudeSun: 0,
       previousLongitudePlanet: 9,
       previousLongitudeSun: 4,
     });
 
     expect(isElongation).toBe(true);
+    expect(mathService.getAngularSeparation).toHaveBeenNthCalledWith(
+      1,
+      [10, 2],
+      [4, 0],
+    );
     expect(mathService.isMaximum).toHaveBeenCalledWith({
       current: 11,
       next: 13,
@@ -146,14 +114,14 @@ describe(PhaseCalculationService, () => {
 
     expect(
       service.isEasternBrightest({
-        currentDistance: 2,
-        currentIllumination: 8,
+        currentLatitudePlanet: 0,
+        currentLatitudeSun: 0,
         currentLongitudePlanet: 10,
         currentLongitudeSun: 4,
-        nextDistances: [2],
-        nextIlluminations: [8],
-        previousDistances: [2],
-        previousIlluminations: [8],
+        currentMagnitude: -4,
+        currentPhaseAngle: 90,
+        nextMagnitudes: [-3],
+        previousMagnitudes: [-3],
       }),
     ).toBe(false);
 
@@ -170,20 +138,32 @@ describe(PhaseCalculationService, () => {
 
     expect(
       service.isEasternElongation({
+        currentLatitudePlanet: 0,
+        currentLatitudeSun: 0,
         currentLongitudePlanet: 10,
         currentLongitudeSun: 4,
+        nextLatitudePlanet: 0,
+        nextLatitudeSun: 0,
         nextLongitudePlanet: 11,
         nextLongitudeSun: 4,
+        previousLatitudePlanet: 0,
+        previousLatitudeSun: 0,
         previousLongitudePlanet: 9,
         previousLongitudeSun: 4,
       }),
     ).toBe(true);
     expect(
       service.isWesternElongation({
+        currentLatitudePlanet: 0,
+        currentLatitudeSun: 0,
         currentLongitudePlanet: 2,
         currentLongitudeSun: 4,
+        nextLatitudePlanet: 0,
+        nextLatitudeSun: 0,
         nextLongitudePlanet: 3,
         nextLongitudeSun: 4,
+        previousLatitudePlanet: 0,
+        previousLatitudeSun: 0,
         previousLongitudePlanet: 1,
         previousLongitudeSun: 4,
       }),
@@ -194,17 +174,65 @@ describe(PhaseCalculationService, () => {
     isWesternSpy.mockRestore();
   });
 
-  it("identifies brightest samples when current brightness exceeds surrounding values", () => {
+  it("identifies brightest samples when the current magnitude is below the surrounding values", () => {
+    mathService.getAngularSeparation.mockReturnValue(40);
+    const position = {
+      currentLatitudePlanet: 0,
+      currentLatitudeSun: 0,
+      currentLongitudePlanet: 140,
+      currentLongitudeSun: 100,
+      currentPhaseAngle: 117,
+    };
+
     expect(
       service.isBrightest({
-        currentDistance: 1,
-        currentIllumination: 10,
-        nextDistances: [1, 1],
-        nextIlluminations: [8, 7],
-        previousDistances: [1, 1],
-        previousIlluminations: [8, 7],
+        ...position,
+        currentMagnitude: -4.8,
+        nextMagnitudes: [-4.7, -4.6],
+        previousMagnitudes: [-4.6, -4.7],
       }),
     ).toBe(true);
+    expect(
+      service.isBrightest({
+        ...position,
+        currentMagnitude: -4.8,
+        nextMagnitudes: [-4.7, -4.6],
+        previousMagnitudes: [-4.9, -4.7],
+      }),
+    ).toBe(false);
+  });
+
+  it("refuses a magnitude minimum past the brilliancy phase angle or inside the rise and set threshold", () => {
+    const minimum = {
+      currentLatitudePlanet: 0,
+      currentLatitudeSun: 0,
+      currentLongitudePlanet: 140,
+      currentLongitudeSun: 100,
+      currentMagnitude: -4.8,
+      nextMagnitudes: [-4.7],
+      previousMagnitudes: [-4.7],
+    };
+
+    mathService.getAngularSeparation.mockReturnValue(40);
+
+    expect(service.isBrightest({ ...minimum, currentPhaseAngle: 159.9 })).toBe(
+      true,
+    );
+    expect(service.isBrightest({ ...minimum, currentPhaseAngle: 160 })).toBe(
+      false,
+    );
+
+    mathService.getAngularSeparation.mockReturnValue(5.9);
+
+    expect(service.isBrightest({ ...minimum, currentPhaseAngle: 90 })).toBe(
+      false,
+    );
+
+    mathService.getAngularSeparation.mockReturnValue(6);
+
+    expect(service.isBrightest({ ...minimum, currentPhaseAngle: 90 })).toBe(
+      true,
+    );
   });
 
   it("formats timezone-aware ISO timestamps", () => {

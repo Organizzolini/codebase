@@ -50,24 +50,18 @@ export class PhasesService {
    * @deprecated Use {@link getMartianPhaseEvents}, {@link getMercurianPhaseEvents}, or {@link getVenusianPhaseEvents} directly
    */
   detect(args: DetectPlanetaryEventsArguments): DetectedCalendarEvent[] {
-    const {
-      coordinateEphemerisByBody,
-      distanceEphemerisByBody,
-      illuminationEphemerisByBody,
-      minute,
-    } = args;
+    const { coordinateEphemerisByBody, illuminationEphemerisByBody, minute } =
+      args;
 
     const events: DetectedCalendarEvent[] = [
       ...this.getMartianPhaseEvents({
         marsCoordinateEphemeris: coordinateEphemerisByBody.mars,
-        marsDistanceEphemeris: distanceEphemerisByBody.mars,
         marsIlluminationEphemeris: illuminationEphemerisByBody.mars,
         minute,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
       }),
       ...this.getMercurianPhaseEvents({
         mercuryCoordinateEphemeris: coordinateEphemerisByBody.mercury,
-        mercuryDistanceEphemeris: distanceEphemerisByBody.mercury,
         mercuryIlluminationEphemeris: illuminationEphemerisByBody.mercury,
         minute,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
@@ -76,7 +70,6 @@ export class PhasesService {
         minute,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
         venusCoordinateEphemeris: coordinateEphemerisByBody.venus,
-        venusDistanceEphemeris: distanceEphemerisByBody.venus,
         venusIlluminationEphemeris: illuminationEphemerisByBody.venus,
       }),
     ];

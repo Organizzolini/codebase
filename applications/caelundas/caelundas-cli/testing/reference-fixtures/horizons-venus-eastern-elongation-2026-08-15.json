@@ -1,0 +1,26 @@
+{
+  "absent": ["♀️⬅️📏 Venus Western Elongation"],
+  "counts": {
+    "♀️📏➡️ Venus Eastern Elongation": 1
+  },
+  "events": [
+    {
+      "note": "Horizons: Venus 45.8923° east of the Sun at 06:31:32 UT (parabolic fit to one-minute samples). In-The-Sky.org lists 14 August 21:59 UT, the maximum of the ecliptic longitude difference rather than of the angular separation",
+      "start": "2026-08-15T06:32:00Z",
+      "summary": "♀️📏➡️ Venus Eastern Elongation"
+    }
+  ],
+  "name": "Venus's greatest eastern elongation on 15 August 2026",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "JPL Horizons API: geocentric apparent RA and Dec (quantity 2) of the planet and the Sun, one-minute steps, angular separation computed from them",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='299'&CENTER='500@399'&EPHEM_TYPE='OBSERVER'&START_TIME='2026-08-13 00:00'&STOP_TIME='2026-08-17 23:00'&STEP_SIZE='1 m'&QUANTITIES='2'&ANG_FORMAT='DEG'&CSV_FORMAT='YES'&EXTRA_PREC='YES'"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-08-16",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-08-15"
+  }
+}
