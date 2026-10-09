@@ -1,0 +1,32 @@
+{
+  "events": [
+    {
+      "note": "Query: COMMAND 10, 599 and '2060;' over 2026-01-15 04:59-05:01. In effect before the window opens, so it is reported at the first minute, 00:00 EST. Horizons, 2026-01-15 04:59-05:01 UT: Sun 295.044-295.046, Jupiter 109.456, Chiron 22.673. Sun opposes Jupiter (185.6, orb 8), and Chiron squares the Sun (87.6) and Jupiter (86.8, orb 6) at all three minutes. The summary lists the symbols in the order the de-duplicated candidate names its bodies (PR #1423); the bodies, phase and focal body are unchanged.",
+      "start": "2026-01-15T05:00:00Z",
+      "summary": "➡️ ⊤ ♃-☀️-⚷ Chiron, Jupiter, Sun t-square forming (Chiron focal)"
+    },
+    {
+      "note": "Query: COMMAND 199 and 999 over 2026-01-17 19:45-19:55. Mercury-Pluto enters the 8 degree conjunction orb: Horizons puts Pluto minus Mercury at 8.0005 at 19:49 UT and 7.9994 at 19:50 UT on 2026-01-17.",
+      "start": "2026-01-17T19:50:00Z",
+      "summary": "➡️ ☿ ☌ ♇ Mercury forming conjunct Pluto"
+    },
+    {
+      "note": "Query: COMMAND 10, 199, 299, 499, '4;' and 999 over 2026-01-17 19:49-19:51. Closes when its last leg, Mercury-Pluto, enters orb. Horizons at 2026-01-17 19:50 UT: Mercury 295.244, Mars 295.674, Sun 297.712, Venus 300.373, Vesta 303.136, Pluto 303.244, a 7.999 degree spread, so all 15 pairs are within the 8 degree conjunction orb. Its other legs formed before the window. 💫 is the 6-body stellium symbol; the summary read 'undefined' there until the symbol fix for #1362 (PR #1423).",
+      "start": "2026-01-17T19:50:00Z",
+      "summary": "➡️ 💫 ♂️-☿-♇-☀️-♀️-⚶ Mars, Mercury, Pluto, Sun, Venus, Vesta stellium forming"
+    }
+  ],
+  "name": "Compound aspects in effect at the start of 15-17 January 2026, and the stellium their legs close into",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "NASA JPL Horizons API: observer table, CENTER='500@399', QUANTITIES='31' (apparent ecliptic longitude), STEP_SIZE='1 m', UT",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-01-17",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-01-15"
+  }
+}

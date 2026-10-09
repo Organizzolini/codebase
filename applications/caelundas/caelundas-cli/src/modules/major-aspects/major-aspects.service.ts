@@ -12,6 +12,10 @@ import {
 import { MajorAspectEventService } from "./major-aspect-event.service";
 import { MajorAspectProgressiveService } from "./major-aspect-progressive.service";
 
+import type {
+  AspectBodies,
+  SimpleAspectDetectorArguments,
+} from "../aspects/aspects.types";
 import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-database.types";
 import type { AspectPhase, Body } from "../caelundas/caelundas.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
@@ -145,6 +149,24 @@ export class MajorAspectsService {
       detect: (argumentsObject) =>
         this.detectAspectForBodyPair(argumentsObject),
       minute: args.minute,
+    });
+  }
+
+  /**
+   * Lists the major aspects in orb at this minute and the minutes either side,
+   * so a sweep can seed its active-aspect registry at the window start.
+   */
+  detectActive(args: SimpleAspectDetectorArguments): AspectBodies[] {
+    const { coordinateEphemerisByBody, minute } = args;
+    return this.aspectsUtilitiesService.getActiveAspectBodies({
+      aspects: majorAspects,
+      bodies: majorAspectBodies,
+      getLongitudesWindow: (window) =>
+        this.getLongitudesWindowForBody({
+          ...window,
+          coordinateEphemerisByBody,
+        }),
+      minute,
     });
   }
 

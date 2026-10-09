@@ -16,6 +16,8 @@ import {
  * add its name here: a failing case goes in first, the fix after it.
  */
 const fixtureNames = [
+  "horizons-january-compound-aspects-2026-01",
+  "horizons-mars-pluto-t-squares-2026-10",
   "horizons-mercury-opposite-mars-2027-02-07",
   "horizons-mercury-opposite-mars-2027-02-16",
   "horizons-mercury-opposite-mars-2027-03-11",
