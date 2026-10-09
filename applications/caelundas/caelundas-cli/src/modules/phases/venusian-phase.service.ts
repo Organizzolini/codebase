@@ -236,12 +236,10 @@ export class VenusianPhaseService {
       minute,
       sunCoordinateEphemeris,
       venusCoordinateEphemeris,
-      venusDistanceEphemeris,
       venusIlluminationEphemeris,
     } = args;
 
     const parameters = this.phaseCalculationService.gatherPhaseParameters({
-      distanceEphemeris: venusDistanceEphemeris,
       illuminationEphemeris: venusIlluminationEphemeris,
       minute,
       planetCoordinateEphemeris: venusCoordinateEphemeris,

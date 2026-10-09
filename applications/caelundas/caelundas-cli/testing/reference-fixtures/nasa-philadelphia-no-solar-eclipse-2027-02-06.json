@@ -1,0 +1,31 @@
+{
+  "absent": [
+    "📍 ☀️🐉 Annular Solar Eclipse (Topocentric Visibility)",
+    "📍 ☀️🐉▶️ Annular Solar Eclipse begins",
+    "📍 ☀️🐉◀️ Annular Solar Eclipse ends",
+    "📍 ☀️🐉🎯 Annular Solar Eclipse maximum"
+  ],
+  "counts": {
+    "🌐 ☀️🐉▶️ Annular Solar Eclipse begins": 1
+  },
+  "events": [
+    {
+      "note": "NASA global P1 12:57:23.5 UT, printed with ΔT 84.3 s. The penumbra's northern limit crosses northern South America and West Africa, well south of Philadelphia. USNO's solar eclipse API returned HTTP 500 for every 2027 date on 2026-10-08 and again on re-query, so NASA's map is the authority here Swiss Ephemeris's own `sol_eclipse_when_loc` for Philadelphia, run in review, finds no visible solar eclipse until 2028-01-26.",
+      "start": "2027-02-06T12:57:23Z",
+      "summary": "🌐 ☀️🐉▶️ Annular Solar Eclipse begins"
+    }
+  ],
+  "name": "The annular solar eclipse of 6 February 2027 is not visible from Philadelphia",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "NASA Goddard Space Flight Center, Fred Espenak: solar eclipse diagram, global contacts and the penumbra's path on Earth",
+    "url": "https://eclipse.gsfc.nasa.gov/SEplot/SEplot2001/SE2027Feb06A.GIF"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2027-02-07",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2027-02-06"
+  }
+}

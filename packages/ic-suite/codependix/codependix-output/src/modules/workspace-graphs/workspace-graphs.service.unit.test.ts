@@ -52,6 +52,7 @@ describe(WorkspaceGraphsService, () => {
     ];
 
     return {
+      buildProjects: projects,
       configuration: {
         boundaries: {
           fileImports: { python: [], typescript: [] },
@@ -61,7 +62,7 @@ describe(WorkspaceGraphsService, () => {
         exclude: [],
         include: ["**"],
         projectGraph: undefined,
-        selection: { projects: [], tags: [] },
+        selection: { dependencies: true, projects: [], tags: [] },
         workspace: {},
       },
       enabledGraphTypes: new Set([

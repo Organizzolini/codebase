@@ -19,6 +19,7 @@ import type {
   CompositeAspectDetector,
   ProgressiveAspectDetector,
   SimpleAspectDetector,
+  SimpleAspectDetectorArguments,
 } from "./aspects.types";
 import type { Moment } from "moment-timezone";
 
@@ -245,5 +246,27 @@ export class AspectsService {
       count: progressiveEvents.length,
     });
     return progressiveEvents;
+  }
+
+  /**
+   * Seeds the active-aspect registry for a sweep whose first minute is `minute`.
+   *
+   * Returns every simple aspect already in orb, so composers see the legs that
+   * formed before the window opened, and the compound aspects those legs make,
+   * as forming at the first minute. It emits no simple-aspect events.
+   */
+  seed(args: SimpleAspectDetectorArguments): {
+    aspectBodies: AspectBodies[];
+    events: DetectedCalendarEvent[];
+  } {
+    const aspectBodies = this.simpleAspectDetectors.flatMap(
+      (simpleAspectDetector) => simpleAspectDetector.detectActive(args),
+    );
+    const events = this.detectCompositeAspects(aspectBodies, args.minute, []);
+    this.logger.debug("🌱 Seeded the active aspects", undefined, {
+      aspects: aspectBodies.length,
+      events: events.length,
+    });
+    return { aspectBodies, events };
   }
 }

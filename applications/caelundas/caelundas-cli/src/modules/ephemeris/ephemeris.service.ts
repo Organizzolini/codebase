@@ -3,7 +3,6 @@ import { Injectable } from "@nestjs/common";
 import {
   azimuthElevationBodies as allAzimuthElevationBodies,
   bodies as allBodies,
-  diameterBodies as allDiameterBodies,
   distanceBodies as allDistanceBodies,
   illuminationBodies as allIlluminationBodies,
 } from "../caelundas/caelundas.constants";
@@ -23,10 +22,9 @@ import type {
   AzimuthElevationEphemerisBody,
   CoordinateEphemeris,
   Coordinates,
-  DiameterEphemeris,
-  DiameterEphemerisBody,
   DistanceEphemeris,
   DistanceEphemerisBody,
+  HorizonPosition,
   IlluminationEphemeris,
   IlluminationEphemerisBody,
 } from "./ephemeris.types";
@@ -35,14 +33,12 @@ import type { Moment } from "moment-timezone";
 /**
  * Swiss Ephemeris computation orchestration service for caelundas.
  * Delegates coordinate, phenomena, and horizon computations to specialized sub-services.
- *
  * @see {@link ./ephemeris.constants#} for initialization and SE body constants
  * @see {@link ./ephemeris.types#} for data structures
  */
 @Injectable()
 export class EphemerisService {
   // 🏗 Dependency Injection
-
   constructor(
     private readonly ephemerisAggregationService: EphemerisAggregationService,
     private readonly ephemerisCoordinateService: EphemerisCoordinateService,
@@ -55,35 +51,25 @@ export class EphemerisService {
   }
 
   // 🔐 Private Fields
-
   // 🔑 Public Fields
-
   // 🔏 Private Methods
 
-  /**
-   * Returns the aggregation service.
-   */
+  /** Returns the aggregation service. */
   private getAggregationService(): EphemerisAggregationService {
     return this.ephemerisAggregationService;
   }
 
-  /**
-   * Returns the constants service.
-   */
+  /** Returns the constants service. */
   private getConstantsService(): EphemerisConstantsService {
     return this.ephemerisConstantsService;
   }
 
-  /**
-   * Returns the coordinate service.
-   */
+  /** Returns the coordinate service. */
   private getCoordinateService(): EphemerisCoordinateService {
     return this.ephemerisCoordinateService;
   }
 
-  /**
-   * Returns the horizon service.
-   */
+  /** Returns the horizon service. */
   private getHorizonService(): EphemerisHorizonService {
     return this.ephemerisHorizonService;
   }
@@ -105,7 +91,7 @@ export class EphemerisService {
   // 🌎 Public Methods
 
   /**
-   * Computes all five ephemeris types for all bodies in a single pass, eliminating
+   * Computes all four ephemeris types for all bodies in a single pass, eliminating
    * redundant calc() calls that would occur when each type is computed independently.
    *
    * Savings vs. Calling each get*EphemerisByBody function separately:
@@ -113,15 +99,14 @@ export class EphemerisService {
    *   second calc() call — saves ~6,000 calc() calls/day for sun, mercury, venus, mars.
    * - Azimuth/elevation: reuses ecliptic coords from coordinate calc() result instead
    *   of a second calc() call before azalt() — saves ~3,000 calc() calls/day for sun, moon.
-   * - Moon illumination + diameter: single pheno_ut() provides both data[1] (illumination
-   *   fraction) and data[3] (apparent diameter) — saves ~1,500 pheno_ut() calls/day.
+   * - Illumination: one pheno_ut() per illuminated non-Sun body per minute; the Sun is
+   *   always 100% and needs none.
    * - Swiss Ephemeris constant lookup hoisted outside the minute loop per body.
    */
   public computeAllEphemerides(args: {
     azimuthElevationBodies: AzimuthElevationEphemerisBody[];
     coordinateBodies: Body[];
     coordinates: Coordinates;
-    diameterBodies: DiameterEphemerisBody[];
     distanceBodies: DistanceEphemerisBody[];
     end: Moment;
     illuminationBodies: IlluminationEphemerisBody[];
@@ -129,7 +114,6 @@ export class EphemerisService {
   }): {
     azimuthElevationEphemerisByBody: Record<Body, AzimuthElevationEphemeris>;
     coordinateEphemerisByBody: Record<Body, CoordinateEphemeris>;
-    diameterEphemerisByBody: Record<Body, DiameterEphemeris>;
     distanceEphemerisByBody: Record<Body, DistanceEphemeris>;
     illuminationEphemerisByBody: Record<Body, IlluminationEphemeris>;
   } {
@@ -137,7 +121,6 @@ export class EphemerisService {
       azimuthElevationBodies,
       coordinateBodies,
       coordinates,
-      diameterBodies,
       distanceBodies,
       end,
       illuminationBodies,
@@ -147,7 +130,6 @@ export class EphemerisService {
     const aggregationService = this.getAggregationService();
     const featureSets = aggregationService.buildEphemerisFeatureSets({
       azimuthElevationBodies,
-      diameterBodies,
       distanceBodies,
       illuminationBodies,
     });
@@ -197,20 +179,32 @@ export class EphemerisService {
 
   /**
    * Safely extracts one field of a horizon position: azimuth, apparent or true
-   * elevation, or semidiameter.
+   * elevation, topocentric ecliptic latitude or longitude, or semidiameter.
    *
    * @throws When timestamp or field is missing from ephemeris.
    */
   public getAzimuthElevationFromEphemeris(
     ephemeris: AzimuthElevationEphemeris,
     timestamp: string,
-    fieldName: "azimuth" | "elevation" | "semidiameter" | "trueElevation",
+    fieldName: keyof HorizonPosition,
   ): number {
     const data = ephemeris[timestamp];
-    if (data?.[fieldName] === undefined) {
+    if (data === undefined) {
       throw new Error(`Missing ${fieldName} at ${timestamp}`);
     }
-    return data[fieldName];
+    if (fieldName === "semidiameter") {
+      if (data.semidiameter === undefined) {
+        throw new Error(`Missing ${fieldName} at ${timestamp}`);
+      }
+      return data.semidiameter;
+    }
+    if (fieldName === "trueElevation") {
+      if (data.trueElevation === undefined) {
+        throw new Error(`Missing ${fieldName} at ${timestamp}`);
+      }
+      return data.trueElevation;
+    }
+    return fieldName === "azimuth" ? data.azimuth : data.elevation;
   }
 
   /**
@@ -272,50 +266,6 @@ export class EphemerisService {
   }
 
   /**
-   * Computes minute-by-minute apparent angular diameter for the requested bodies.
-   * pheno_ut() returns apparent diameter in degrees.
-   */
-  public getDiameterEphemerisByBody(args: {
-    bodies: DiameterEphemerisBody[];
-    end: Moment;
-    start: Moment;
-    timezone: string;
-  }): Record<Body, DiameterEphemeris> {
-    const { bodies, end, start } = args;
-    const entries: [Body, DiameterEphemeris][] = [];
-
-    for (const body of bodies) {
-      entries.push([
-        body,
-        this.getPhenomenaService().computeDiameterForBody({
-          body,
-          end,
-          start,
-        }),
-      ]);
-    }
-
-    return typedFromEntries(entries);
-  }
-
-  /**
-   * Safely extracts angular diameter from ephemeris.
-   *
-   * @throws When timestamp or field is missing from ephemeris.
-   */
-  public getDiameterFromEphemeris(
-    ephemeris: DiameterEphemeris,
-    timestamp: string,
-    fieldName: string,
-  ): number {
-    const data = ephemeris[timestamp];
-    if (data?.diameter === undefined) {
-      throw new Error(`Missing ${fieldName} at ${timestamp}`);
-    }
-    return data.diameter;
-  }
-
-  /**
    * Computes minute-by-minute geocentric distance for the requested bodies.
    */
   public getDistanceEphemerisByBody(args: {
@@ -358,6 +308,18 @@ export class EphemerisService {
     return data.distance;
   }
 
+  /** Safely extracts radial distance speed from ephemeris. */
+  public getDistanceSpeedFromEphemeris(
+    ephemeris: DistanceEphemeris,
+    timestamp: string,
+  ): number {
+    const data = ephemeris[timestamp];
+    if (data?.distanceSpeed === undefined) {
+      throw new Error(`Missing distance speed at ${timestamp}`);
+    }
+    return data.distanceSpeed;
+  }
+
   /**
    * Aggregates all ephemeris data types for all relevant bodies across a date range.
    */
@@ -369,7 +331,6 @@ export class EphemerisService {
   }): {
     azimuthElevationEphemerisByBody: Record<Body, AzimuthElevationEphemeris>;
     coordinateEphemerisByBody: Record<Body, CoordinateEphemeris>;
-    diameterEphemerisByBody: Record<Body, DiameterEphemeris>;
     distanceEphemerisByBody: Record<Body, DistanceEphemeris>;
     illuminationEphemerisByBody: Record<Body, IlluminationEphemeris>;
   } {
@@ -379,7 +340,6 @@ export class EphemerisService {
       azimuthElevationBodies: allAzimuthElevationBodies,
       coordinateBodies: allBodies,
       coordinates,
-      diameterBodies: allDiameterBodies,
       distanceBodies: allDistanceBodies,
       end,
       illuminationBodies: allIlluminationBodies,
@@ -462,5 +422,39 @@ export class EphemerisService {
         "longitude",
       ),
     };
+  }
+
+  /**
+   * Safely extracts apparent visual magnitude from ephemeris.
+   *
+   * @throws When timestamp or field is missing from ephemeris.
+   */
+  public getMagnitudeFromEphemeris(
+    ephemeris: IlluminationEphemeris,
+    timestamp: string,
+    fieldName: string,
+  ): number {
+    const data = ephemeris[timestamp];
+    if (data?.magnitude === undefined) {
+      throw new Error(`Missing ${fieldName} at ${timestamp}`);
+    }
+    return data.magnitude;
+  }
+
+  /**
+   * Safely extracts the phase angle (Sun–body–observer, degrees) from ephemeris.
+   *
+   * @throws When timestamp or field is missing from ephemeris.
+   */
+  public getPhaseAngleFromEphemeris(
+    ephemeris: IlluminationEphemeris,
+    timestamp: string,
+    fieldName: string,
+  ): number {
+    const data = ephemeris[timestamp];
+    if (data?.phaseAngle === undefined) {
+      throw new Error(`Missing ${fieldName} at ${timestamp}`);
+    }
+    return data.phaseAngle;
   }
 }

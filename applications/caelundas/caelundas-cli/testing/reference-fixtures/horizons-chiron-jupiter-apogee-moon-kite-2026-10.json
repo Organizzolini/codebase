@@ -1,0 +1,38 @@
+{
+  "counts": {
+    "➡️ 🪁 ♃-⚷-🌚-🌙 Chiron, Jupiter, Lunar Apogee, Moon kite forming (Moon focal)": 1,
+    "⬅️ 🪁 ♃-⚷-🌚-🌙 Chiron, Jupiter, Lunar Apogee, Moon kite dissolving (Moon focal)": 1,
+    "🪁 ♃-⚷-🌚-🌙 Chiron, Jupiter, Lunar Apogee, Moon kite (Moon focal)": 1
+  },
+  "events": [
+    {
+      "note": "Query: COMMAND 599 (Jupiter) over 2026-10-21 03:37-03:41; the Lunar Apogee is the osculating apogee, which is not a Horizons body and Horizons cannot list it, so its longitude here is Swiss Ephemeris SE_OSCU_APOG, the body the pipeline uses, bounded independently: the apogee direction computed from Horizons geocentric Moon state vectors (COMMAND 301, EPHEM_TYPE='VECTORS', CENTER='500@399', REF_PLANE='ECLIPTIC', VEC_CORR='NONE', TIME_TYPE='UT', eccentricity vector with GM of Earth plus Moon) is 268.49734 in the J2000 ecliptic at 03:39 UT against Swiss Ephemeris' 268.49741, and carrying it to the ecliptic of date with IAU 2006 precession (0.3747) and nutation (0.0023) agrees with Swiss Ephemeris to 0.0003 degrees. GM of Earth alone moves it 10 degrees, so the apogee is defined by that convention, not by Horizons. Forms when its last leg, the Jupiter-Lunar Apogee trine, enters the 6 degree orb: Jupiter 142.8752 and 142.8753, apogee 268.8760 and 268.8741, separation 126.0008 at 03:38 UT and 125.9988 at 03:39 UT. Horizons at 03:38 UT: Moon (COMMAND 301) 325.3343, Jupiter (599) 142.8752, Chiron ('2060;') 28.5782; at 03:39 UT: Moon 325.3429, Jupiter 142.8753, Chiron 28.5781, apogee 268.8741. The other five legs are already in orb at 03:39: Jupiter-Chiron trine, separation 114.2972, 0.297 degrees inside the 6 degree orb; Chiron-Lunar Apogee trine, 119.7040, 5.704 inside (at least 5.05 inside through 14:22); Moon-Jupiter opposition, 182.4676, in orb since 2026-10-20 07:01 UT (Moon 314.7451, Jupiter 142.7500, deviation 8.0049 at 07:00; Moon 314.7535, Jupiter 142.7501, deviation 7.9966 at 07:01); Moon-Chiron sextile, 63.2352, 0.765 inside the 4 degree orb, in orb since 02:11 UT (Moon 324.5743, Chiron 28.5810, deviation 4.0067 at 02:10; Moon 324.5829, Chiron 28.5810, deviation 3.9981 at 02:11); and Moon-Lunar Apogee sextile, 56.4688, 0.469 inside, in orb since 02:55 UT (Moon 324.9542, apogee 268.9578, deviation 4.0036 at 02:54; Moon 324.9628, apogee 268.9559, deviation 3.9931 at 02:55). The Moon opposes Jupiter and sextiles the other two, so it is the focal body. The separation changes 0.002 degrees a minute, so the 0.001 degree bound on the apogee fixes this boundary to within one minute, which is the fixture's tolerance; the Horizons-only boundary below is exact to the minute.",
+      "start": "2026-10-21T03:39:00Z",
+      "summary": "➡️ 🪁 ♃-⚷-🌚-🌙 Chiron, Jupiter, Lunar Apogee, Moon kite forming (Moon focal)"
+    },
+    {
+      "end": "2026-10-21T14:22:00Z",
+      "note": "Ends on the minute its first leg dissolves, the Moon-Jupiter opposition (COMMAND 301, 599 over 2026-10-21 14:21-14:23): Horizons puts the separation at 172.0060 at 14:22 UT, 0.006 inside the 8 degree orb, and 171.9973 at 14:23 UT, outside it. Every other leg stays in orb through 14:22: the Moon-Lunar Apogee sextile until 15:24 UT and the Moon-Chiron sextile until 17:26 UT.",
+      "start": "2026-10-21T03:39:00Z",
+      "summary": "🪁 ♃-⚷-🌚-🌙 Chiron, Jupiter, Lunar Apogee, Moon kite (Moon focal)"
+    },
+    {
+      "note": "The dissolving boundary of the span above, stamped at the dissolving leg's last minute in orb.",
+      "start": "2026-10-21T14:22:00Z",
+      "summary": "⬅️ 🪁 ♃-⚷-🌚-🌙 Chiron, Jupiter, Lunar Apogee, Moon kite dissolving (Moon focal)"
+    }
+  ],
+  "name": "The one Chiron, Jupiter, Lunar Apogee and Moon kite of 20-21 October 2026",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "NASA JPL Horizons API: observer table, CENTER='500@399', QUANTITIES='31' (apparent ecliptic longitude), EXTRA_PREC='YES', STEP_SIZE='1 m', UT; Lunar Apogee from Swiss Ephemeris SE_OSCU_APOG, cross-checked against Horizons geocentric Moon state vectors",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api"
+  },
+  "toleranceMinutes": 1,
+  "window": {
+    "endDate": "2026-10-21",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-10-20"
+  }
+}

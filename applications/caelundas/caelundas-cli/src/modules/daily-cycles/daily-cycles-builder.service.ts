@@ -3,6 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { LoggerService } from "@codebase/logging";
 
 import { CalendarService } from "../calendar/calendar.service";
+import { HORIZON_REFRACTION_DEGREES } from "../ephemeris/ephemeris.constants";
 import { EphemerisService } from "../ephemeris/ephemeris.service";
 import { MathService } from "../math/math.service";
 
@@ -28,9 +29,6 @@ export class DailyCyclesBuilderService {
 
   // 🔐 Private Fields
 
-  /** Standard atmospheric refraction at the horizon, 34′, as the US Naval Observatory uses. */
-  private static readonly horizonRefractionDegrees =
-    34 / MathService.arcminutesPerDegree;
   private static readonly lunarCategories = [
     "Astronomy",
     "Astrology",
@@ -436,11 +434,7 @@ export class DailyCyclesBuilderService {
               isoTimestamp,
               "semidiameter",
             );
-      return (
-        trueElevation +
-        DailyCyclesBuilderService.horizonRefractionDegrees +
-        semidiameter
-      );
+      return trueElevation + HORIZON_REFRACTION_DEGREES + semidiameter;
     };
     return {
       current: clearanceAt(minute),

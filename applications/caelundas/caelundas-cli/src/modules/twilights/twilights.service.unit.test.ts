@@ -47,12 +47,16 @@ describe(TwilightsService, () => {
       const sunAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
         [currentMinute.toISOString()]: {
           azimuth: 86,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: -5.9,
           semidiameter: 0.27,
           trueElevation: -5.9,
         },
         [previousMinute.toISOString()]: {
           azimuth: 85,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: -6.1,
           semidiameter: 0.27,
           trueElevation: -6.1,
@@ -74,12 +78,16 @@ describe(TwilightsService, () => {
       const sunAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
         [currentMinute.toISOString()]: {
           azimuth: 161,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: 45,
           semidiameter: 0.27,
           trueElevation: 45,
         },
         [previousMinute.toISOString()]: {
           azimuth: 160,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: 44,
           semidiameter: 0.27,
           trueElevation: 44,
@@ -355,6 +363,8 @@ describe(TwilightsService, () => {
       const sunAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
         [minute.toISOString()]: {
           azimuth: 180,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: -6,
           semidiameter: 0.27,
           trueElevation: -6,

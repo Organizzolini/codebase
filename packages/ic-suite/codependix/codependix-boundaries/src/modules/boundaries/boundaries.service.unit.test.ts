@@ -8,7 +8,12 @@ import { BoundarySelectorService } from "./boundary-selector.service";
 import type { BoundaryGraph, BoundaryNode } from "./boundaries.types";
 import type { CodependixBoundaryRule } from "@codependix/configuration";
 
-/** Builds a project-level graph from `"a>b"` shorthand. */
+/**
+ * Builds a project-level graph from `"a>b"` shorthand.
+ *
+ * Each default node is its own project, as every node in a real Nx-level
+ * graph is — see `BoundaryGraphService.buildNxGraph`.
+ */
 function buildGraph(args: {
   edges: string[];
   nodes?: BoundaryNode[];
@@ -23,7 +28,8 @@ function buildGraph(args: {
   return {
     edges,
     level: "nxProjects",
-    nodes: args.nodes ?? [...named].toSorted().map((id) => ({ id })),
+    nodes:
+      args.nodes ?? [...named].toSorted().map((id) => ({ id, project: id })),
     scope: "workspace",
   };
 }
@@ -84,6 +90,7 @@ describe(BoundariesService, () => {
         cycle: undefined,
         level: "nxProjects",
         message: "a-is-a-leaf: a must not depend on b.",
+        projects: ["a"],
         rule: "a-is-a-leaf",
         scope: "workspace",
         source: "a",
@@ -337,6 +344,7 @@ describe(BoundariesService, () => {
         cycle: ["a", "b", "a"],
         level: "nxProjects",
         message: "no-cycles: a → b → a is a cycle.",
+        projects: ["a", "b"],
         rule: "no-cycles",
         scope: "workspace",
         source: "b",
@@ -372,5 +380,101 @@ describe(BoundariesService, () => {
       "second-rule",
       "first-rule",
     ]);
+  });
+
+  // 💳 Charging
+
+  describe("charging", () => {
+    /** A file-level graph: every node belongs to the graph's own project. */
+    const FILE_GRAPH: BoundaryGraph = {
+      edges: [
+        { source: "src/a.ts", target: "src/b.ts" },
+        { source: "src/b.ts", target: "src/a.ts" },
+      ],
+      level: "typescript",
+      nodes: [
+        { id: "src/a.ts", path: "src/a.ts", project: "widgets" },
+        { id: "src/b.ts", path: "src/b.ts", project: "widgets" },
+      ],
+      scope: "widgets",
+    };
+
+    // D4: the edge belongs to the project that wrote the dependency.
+    it("charges a forbidden edge to its source's project alone", () => {
+      const violations = service.evaluate({
+        graph: buildGraph({ edges: ["a>b"] }),
+        rules: [
+          {
+            from: { id: ["a"] },
+            kind: "forbid",
+            name: "a-is-a-leaf",
+            to: { id: ["b"] },
+          },
+        ],
+      });
+
+      expect(violations.map((violation) => violation.projects)).toStrictEqual([
+        ["a"],
+      ]);
+    });
+
+    it("charges an edge no allow rule covers to its source's project", () => {
+      const violations = service.evaluate({
+        graph: buildGraph({ edges: ["c>a"] }),
+        rules: [
+          {
+            from: { id: ["c"] },
+            kind: "allow",
+            name: "c-reaches-nothing",
+            to: { id: [] },
+          },
+        ],
+      });
+
+      expect(violations.map((violation) => violation.projects)).toStrictEqual([
+        ["c"],
+      ]);
+    });
+
+    // D5: every project on the cycle is part of the problem.
+    it("charges a cross-project cycle to every project on it, once each", () => {
+      const violations = service.evaluate({
+        graph: buildGraph({ edges: ["a>b", "b>c", "c>a"] }),
+        rules: [{ kind: "acyclic", name: "no-cycles" }],
+      });
+
+      expect(violations.map((violation) => violation.projects)).toStrictEqual([
+        ["a", "b", "c"],
+      ]);
+    });
+
+    it("charges a file-level cycle to the project whose files form it", () => {
+      const violations = service.evaluate({
+        graph: FILE_GRAPH,
+        rules: [{ kind: "acyclic", name: "no-cycles" }],
+      });
+
+      expect(violations.map((violation) => violation.projects)).toStrictEqual([
+        ["widgets"],
+      ]);
+    });
+
+    it("charges an endpoint the graph does not list to the graph's scope", () => {
+      const violations = service.evaluate({
+        graph: { ...FILE_GRAPH, nodes: [] },
+        rules: [
+          {
+            from: { id: ["src/a.ts"] },
+            kind: "forbid",
+            name: "a-is-a-leaf",
+            to: { id: ["src/b.ts"] },
+          },
+        ],
+      });
+
+      expect(violations.map((violation) => violation.projects)).toStrictEqual([
+        ["widgets"],
+      ]);
+    });
   });
 });

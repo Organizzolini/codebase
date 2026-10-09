@@ -59,19 +59,14 @@ export class PerfectiveService {
   private detectDayEvents(args: {
     coordinates: Coordinates;
     date: Moment;
-    previousAspectBodies: AspectBodies[];
+    /** Undefined on the sweep's first day, which seeds the registry instead. */
+    previousAspectBodies: AspectBodies[] | undefined;
     timezone: string;
   }): {
     events: DetectedCalendarEvent[];
     previousAspectBodies: AspectBodies[];
   } {
-    const {
-      coordinates,
-      date,
-      previousAspectBodies: initialAspectBodies,
-      timezone,
-    } = args;
-    let previousAspectBodies = initialAspectBodies;
+    const { coordinates, date, timezone } = args;
     const startOfDay = date.clone().startOf("day");
     const endOfDay = date.clone().endOf("day");
     const ephemerides = this.ephemerisService.getEphemerides({
@@ -81,6 +76,15 @@ export class PerfectiveService {
       timezone,
     });
     const events: DetectedCalendarEvent[] = [];
+    let previousAspectBodies = args.previousAspectBodies;
+    if (previousAspectBodies === undefined) {
+      const seeded = this.aspectsService.seed({
+        coordinateEphemerisByBody: ephemerides.coordinateEphemerisByBody,
+        minute: startOfDay,
+      });
+      previousAspectBodies = seeded.aspectBodies;
+      events.push(...seeded.events);
+    }
     for (const minute of this.datetimeService.generateMinutes(
       startOfDay,
       endOfDay,
@@ -124,17 +128,17 @@ export class PerfectiveService {
     const {
       azimuthElevationEphemerisByBody,
       coordinateEphemerisByBody,
-      diameterEphemerisByBody,
+      distanceEphemerisByBody,
     } = ephemerides;
     return [
       ...this.eclipsesService.detect({
         minute,
         moonAzimuthElevationEphemeris: azimuthElevationEphemerisByBody.moon,
         moonCoordinateEphemeris: coordinateEphemerisByBody.moon,
-        moonDiameterEphemeris: diameterEphemerisByBody.moon,
+        moonDistanceEphemeris: distanceEphemerisByBody.moon,
         sunAzimuthElevationEphemeris: azimuthElevationEphemerisByBody.sun,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
-        sunDiameterEphemeris: diameterEphemerisByBody.sun,
+        sunDistanceEphemeris: distanceEphemerisByBody.sun,
       }),
       ...this.dailyCyclesService.detect({
         minute,
@@ -163,7 +167,8 @@ export class PerfectiveService {
       ...this.ingressesService.detect({ coordinateEphemerisByBody, minute }),
       ...this.monthlyLunarCycleService.detect({
         minute,
-        moonIlluminationEphemeris: illuminationEphemerisByBody.moon,
+        moonCoordinateEphemeris: coordinateEphemerisByBody.moon,
+        sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
       }),
       ...this.monthlyLunarCycleService.detectApsides({
         minute,
@@ -176,14 +181,12 @@ export class PerfectiveService {
       }),
       ...this.phasesService.getMartianPhaseEvents({
         marsCoordinateEphemeris: coordinateEphemerisByBody.mars,
-        marsDistanceEphemeris: distanceEphemerisByBody.mars,
         marsIlluminationEphemeris: illuminationEphemerisByBody.mars,
         minute,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
       }),
       ...this.phasesService.getMercurianPhaseEvents({
         mercuryCoordinateEphemeris: coordinateEphemerisByBody.mercury,
-        mercuryDistanceEphemeris: distanceEphemerisByBody.mercury,
         mercuryIlluminationEphemeris: illuminationEphemerisByBody.mercury,
         minute,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
@@ -192,7 +195,6 @@ export class PerfectiveService {
         minute,
         sunCoordinateEphemeris: coordinateEphemerisByBody.sun,
         venusCoordinateEphemeris: coordinateEphemerisByBody.venus,
-        venusDistanceEphemeris: distanceEphemerisByBody.venus,
         venusIlluminationEphemeris: illuminationEphemerisByBody.venus,
       }),
     ];
@@ -210,7 +212,7 @@ export class PerfectiveService {
   detect(input: Input): DetectedCalendarEvent[] {
     const { end, latitude, longitude, start, timezone } = input;
     const coordinates: Coordinates = [longitude, latitude];
-    let previousAspectBodies: AspectBodies[] = [];
+    let previousAspectBodies: AspectBodies[] | undefined;
     const perfectiveEvents: DetectedCalendarEvent[] = [];
     for (const date of this.datetimeService.generateDates(
       start,

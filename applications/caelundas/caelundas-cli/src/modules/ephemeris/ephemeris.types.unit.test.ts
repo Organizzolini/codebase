@@ -6,8 +6,6 @@ import type {
   CoordinateEphemeris,
   CoordinateEphemerisBody,
   Coordinates,
-  DiameterEphemeris,
-  DiameterEphemerisBody,
   DistanceEphemeris,
   DistanceEphemerisBody,
   IlluminationEphemeris,
@@ -83,12 +81,16 @@ describe("ephemeris.types", () => {
       const ephemeris: AzimuthElevationEphemeris = {
         "2024-03-21T00:00:00.000Z": {
           azimuth: 90.5,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: 45.2,
           semidiameter: 0.27,
           trueElevation: 45.2,
         },
         "2024-03-21T00:01:00.000Z": {
           azimuth: 91,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: 46,
           semidiameter: 0.27,
           trueElevation: 46,
@@ -103,6 +105,8 @@ describe("ephemeris.types", () => {
       const ephemeris: AzimuthElevationEphemeris = {
         "2024-03-21T00:00:00.000Z": {
           azimuth: 180,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: -15.5,
           semidiameter: 0.27,
           trueElevation: -15.5,
@@ -116,8 +120,16 @@ describe("ephemeris.types", () => {
   describe("illuminationEphemeris type", () => {
     it("accepts valid illumination fraction values", () => {
       const ephemeris: IlluminationEphemeris = {
-        "2024-03-21T00:00:00.000Z": { illumination: 0.567 },
-        "2024-03-21T00:01:00.000Z": { illumination: 0.568 },
+        "2024-03-21T00:00:00.000Z": {
+          illumination: 0.567,
+          magnitude: 0,
+          phaseAngle: 0,
+        },
+        "2024-03-21T00:01:00.000Z": {
+          illumination: 0.568,
+          magnitude: 0,
+          phaseAngle: 0,
+        },
       };
 
       expect(ephemeris["2024-03-21T00:00:00.000Z"]?.illumination).toBe(0.567);
@@ -125,10 +137,18 @@ describe("ephemeris.types", () => {
 
     it("accepts values between 0 and 1", () => {
       const darkMoon: IlluminationEphemeris = {
-        "2024-03-21T00:00:00.000Z": { illumination: 0.001 },
+        "2024-03-21T00:00:00.000Z": {
+          illumination: 0.001,
+          magnitude: 0,
+          phaseAngle: 0,
+        },
       };
       const fullMoon: IlluminationEphemeris = {
-        "2024-03-21T00:00:00.000Z": { illumination: 0.999 },
+        "2024-03-21T00:00:00.000Z": {
+          illumination: 0.999,
+          magnitude: 0,
+          phaseAngle: 0,
+        },
       };
 
       expect(darkMoon["2024-03-21T00:00:00.000Z"]?.illumination).toBeLessThan(
@@ -169,33 +189,6 @@ describe("ephemeris.types", () => {
     });
   });
 
-  describe("diameterEphemeris type", () => {
-    it("accepts valid angular diameter values", () => {
-      const ephemeris: DiameterEphemeris = {
-        "2024-03-21T00:00:00.000Z": { diameter: 0.5334 },
-        "2024-03-21T00:01:00.000Z": { diameter: 0.5181 },
-      };
-
-      expect(ephemeris["2024-03-21T00:00:00.000Z"]?.diameter).toBe(0.5334);
-    });
-
-    it("accepts diameter values in degrees", () => {
-      const sunDiameter: DiameterEphemeris = {
-        "2024-03-21T00:00:00.000Z": { diameter: 0.5334 }, // ~0.53 degrees
-      };
-      const moonDiameter: DiameterEphemeris = {
-        "2024-03-21T00:00:00.000Z": { diameter: 0.5181 }, // ~0.52 degrees
-      };
-
-      expect(sunDiameter["2024-03-21T00:00:00.000Z"]?.diameter).toBeGreaterThan(
-        0.5,
-      );
-      expect(
-        moonDiameter["2024-03-21T00:00:00.000Z"]?.diameter,
-      ).toBeGreaterThan(0.5);
-    });
-  });
-
   describe("body type constraints", () => {
     it("accepts sun and moon for AzimuthElevationEphemerisBody", () => {
       const sun: AzimuthElevationEphemerisBody = "sun";
@@ -220,25 +213,18 @@ describe("ephemeris.types", () => {
       expect(bodies).toContain("venus");
     });
 
-    it("accepts sun and moon for DiameterEphemerisBody", () => {
-      const bodies: DiameterEphemerisBody[] = ["sun", "moon"];
-
-      expect(bodies).toHaveLength(2);
-      expect(bodies).toContain("sun");
-      expect(bodies).toContain("moon");
-    });
-
-    it("accepts sun, venus, mercury, mars for DistanceEphemerisBody", () => {
+    it("accepts sun, moon, venus, mercury, mars for DistanceEphemerisBody", () => {
       const bodies: DistanceEphemerisBody[] = [
         "sun",
+        "moon",
         "venus",
         "mercury",
         "mars",
       ];
 
-      expect(bodies).toHaveLength(4);
+      expect(bodies).toHaveLength(5);
       expect(bodies).toContain("sun");
-      expect(bodies).not.toContain("moon");
+      expect(bodies).toContain("moon");
     });
 
     it("accepts all bodies for CoordinateEphemerisBody", () => {

@@ -1,0 +1,26 @@
+{
+  "absent": ["⚷ → ♈⛰️ Chiron peak ingress Aries"],
+  "counts": {
+    "⚷ → ♈ Chiron ingress Aries": 1
+  },
+  "events": [
+    {
+      "note": "Horizons ObsEcLon crosses 30 degrees backwards at 2026-09-18T01:50:00Z; the re-entry into Aries is a sign ingress, not a peak; window dates are Philadelphia local, so 17-18 September covers 01:50 UT on the 18th",
+      "start": "2026-09-18T01:50:00Z",
+      "summary": "⚷ → ♈ Chiron ingress Aries"
+    }
+  ],
+  "name": "Chiron re-enters Aries backwards on 18 September 2026",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "NASA JPL Horizons, observer table quantity 31 (ObsEcLon), geocentric, 1-minute step",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='2060;'&OBJ_DATA='NO'&MAKE_EPHEM='YES'&EPHEM_TYPE='OBSERVER'&CENTER='500@399'&START_TIME='2026-09-16 00:00'&STOP_TIME='2026-09-20 00:00'&STEP_SIZE='1m'&QUANTITIES='31'"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-09-18",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-09-17"
+  }
+}

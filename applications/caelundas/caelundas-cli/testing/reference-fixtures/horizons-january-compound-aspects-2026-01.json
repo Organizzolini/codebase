@@ -1,0 +1,43 @@
+{
+  "events": [
+    {
+      "note": "Query: COMMAND 10, 599 and '2060;' over 2026-01-15 04:59-05:01. In effect before the window opens, so it is reported at the first minute, 00:00 EST. Horizons, 2026-01-15 04:59-05:01 UT: Sun 295.044-295.046, Jupiter 109.456, Chiron 22.673. Sun opposes Jupiter (185.6, orb 8), and Chiron squares the Sun (87.6) and Jupiter (86.8, orb 6) at all three minutes. The symbols list the opposition pair in canonical body order, Jupiter then the Sun, then the focal body, Chiron (PR #1423).",
+      "start": "2026-01-15T05:00:00Z",
+      "summary": "➡️ ⊤ ♃-☀️-⚷ Chiron, Jupiter, Sun t-square forming (Chiron focal)"
+    },
+    {
+      "note": "Query: COMMAND 10, 199, 299, 499 at 2026-01-15 04:59-05:01, and every other stellium body (301, 599, 699, 799, 899, 999, '2060;', '1;', '2;', '3;', '4;') to rule it out. In effect before the window opens, so it is reported at the first minute, 00:00 EST. Horizons at 05:00 UT: Mercury 290.968, Mars 293.642, Sun 295.045, Venus 297.080, a 6.112 degree spread, and all six pairs stay within the 8 degree conjunction orb at 04:59, 05:00 and 05:01. The clique is maximal: Vesta 301.761 is 8.119 from Mars and 10.792 from Mercury, Pluto 303.160 is 9.518 from Mars and 12.192 from Mercury, and Juno 275.972 is 21.108 from Venus. Lilith, the North Lunar Node and the Lunar Apogee are not Horizons bodies; Swiss Ephemeris puts them at 242.85, 340.00 and 238.46, over 40 degrees from Mercury. Vesta is already conjunct with Venus, the Sun and Pluto, so the conjunction component is not itself a clique: only maximal-clique detection (#1363, PR #1427) reports this one.",
+      "start": "2026-01-15T05:00:00Z",
+      "summary": "➡️ 🌟 ♂️-☿-☀️-♀️ Mars, Mercury, Sun, Venus stellium forming"
+    },
+    {
+      "end": "2026-01-17T17:32:00Z",
+      "note": "Query: as above, and COMMAND 10, 199, 299, 499, '4;' and 999 over 2026-01-17 17:31-17:33. Ends when Vesta joins: Horizons puts Vesta minus Mercury at 8.0001 at 17:31 UT and 7.9993 at 17:32 UT, while Mars-Vesta is already 7.487. The membership change dissolves this 4-body clique on the minute the 5-body one forms.",
+      "start": "2026-01-15T05:00:00Z",
+      "summary": "🌟 ♂️-☿-☀️-♀️ Mars, Mercury, Sun, Venus stellium"
+    },
+    {
+      "note": "Query: COMMAND 199 and 999 over 2026-01-17 19:45-19:55. Mercury-Pluto enters the 8 degree conjunction orb: Horizons puts Pluto minus Mercury at 8.0005 at 19:49 UT and 7.9994 at 19:50 UT on 2026-01-17.",
+      "start": "2026-01-17T19:50:00Z",
+      "summary": "➡️ ☿ ☌ ♇ Mercury forming conjunct Pluto"
+    },
+    {
+      "note": "Query: COMMAND 10, 199, 299, 499, '4;' and 999 over 2026-01-17 19:49-19:51. Closes when its last leg, Mercury-Pluto, enters orb. Horizons at 2026-01-17 19:50 UT: Mercury 295.244, Mars 295.674, Sun 297.712, Venus 300.373, Vesta 303.136, Pluto 303.244, a 7.999 degree spread, so all 15 pairs are within the 8 degree conjunction orb. Its other legs formed before the window. 💫 is the 6-body stellium symbol; the summary read 'undefined' there until the symbol fix for #1362 (PR #1423).",
+      "start": "2026-01-17T19:50:00Z",
+      "summary": "➡️ 💫 ♂️-☿-♇-☀️-♀️-⚶ Mars, Mercury, Pluto, Sun, Venus, Vesta stellium forming"
+    }
+  ],
+  "name": "Compound aspects in effect at the start of 15-17 January 2026, and the stellium their legs close into",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "NASA JPL Horizons API: observer table, CENTER='500@399', QUANTITIES='31' (apparent ecliptic longitude), STEP_SIZE='1 m', UT",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-01-17",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-01-15"
+  }
+}

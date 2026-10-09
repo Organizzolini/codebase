@@ -5,8 +5,7 @@ import type { Body } from "../caelundas/caelundas.types";
 /**
  * Time-indexed ephemeris of horizontal coordinates (observer frame).
  *
- * Keys are ISO timestamps, values are {@link HorizonPosition}s. Positions are
- * topocentric: parallax is applied for the observer's location.
+ * Keys are ISO timestamps, values contain azimuth and elevation in degrees.
  * Used for calculating rise, set, and culmination events.
  *
  * @see {@link getAzimuthElevationFromEphemeris} for data retrieval
@@ -48,28 +47,14 @@ export type CoordinateEphemerisBody = Body;
 export type Coordinates = [Longitude, Latitude];
 
 /**
- * Time-indexed ephemeris of apparent angular diameter.
+ * Time-indexed ephemeris of observer-body distance and its rate of change.
  *
- * Keys are ISO timestamps, values are angular diameters in degrees.
- * Used for eclipse predictions and occultation calculations.
- */
-export type DiameterEphemeris = Record<string, { diameter: number }>;
-
-/**
- * Bodies for which diameter ephemerides are generated.
- * Limited to Sun and Moon for eclipse calculations.
- *
- * @remarks A copy of this type exists in `caelundas.constants.ts` to avoid a circular
- * import. Update both when the body set changes.
- */
-export type DiameterEphemerisBody = Extract<Body, "moon" | "sun">;
-
-/**
- * Time-indexed ephemeris of observer-body distance.
- *
- * Keys are ISO timestamps, values are distances in astronomical units (AU) and
- * the radial speed in AU per day (negative while approaching, positive while receding).
- * Used for apsis detection (perihelion/aphelion, perigee/apogee).
+ * Keys are ISO timestamps. `distance` is in astronomical units (AU) and
+ * `distanceSpeed` is the radial speed in AU per day, positive while the body
+ * recedes. Apsis detection (perihelion/aphelion, perigee/apogee) reads the
+ * sign of `distanceSpeed`, not the distance itself: the distance series has
+ * small steps where the Swiss Ephemeris files change polynomial segment, while
+ * the speed stays smooth through them and crosses zero once per apsis.
  */
 export type DistanceEphemeris = Record<
   string,
@@ -78,7 +63,8 @@ export type DistanceEphemeris = Record<
 
 /**
  * Bodies for which distance ephemerides are generated.
- * Includes Sun and Moon (for apsis) and inner planets with visible orbital variations.
+ * Includes Sun (for apsis), Moon (for eclipse parallax and semidiameter) and
+ * inner planets with visible orbital variations.
  *
  * @remarks A copy of this type exists in `caelundas.constants.ts` to avoid a circular
  * import. Update both when the body set changes.
@@ -94,32 +80,37 @@ export type DistanceEphemerisBody = Extract<
 export interface Ephemerides {
   azimuthElevationEphemerisByBody: Record<Body, AzimuthElevationEphemeris>;
   coordinateEphemerisByBody: Record<Body, CoordinateEphemeris>;
-  diameterEphemerisByBody: Record<Body, DiameterEphemeris>;
   distanceEphemerisByBody: Record<Body, DistanceEphemeris>;
   illuminationEphemerisByBody: Record<Body, IlluminationEphemeris>;
 }
 
-/**
- * Where a body sits in one observer's sky at one minute, from its topocentric position.
- */
+/** Position in horizontal coordinates. */
 export interface HorizonPosition {
-  /** Degrees, as Swiss Ephemeris `azalt` measures it. */
+  /** Degrees from North, clockwise through East (0° North, 90° East, 180° South, 270° West). */
   azimuth: number;
+  /** Topocentric apparent ecliptic latitude of date, degrees. */
+  eclipticLatitude: number;
+  /** Topocentric apparent ecliptic longitude of date, degrees. */
+  eclipticLongitude: number;
   /** Apparent (refracted) elevation of the center, degrees; refraction is dropped below the horizon. */
   elevation: number;
-  /** Topocentric angular radius, degrees: half the disc the observer sees. */
-  semidiameter: number;
-  /** True (airless, unrefracted) elevation of the center, degrees. */
-  trueElevation: number;
+  semidiameter?: number;
+  trueElevation?: number;
 }
 
 /**
- * Time-indexed ephemeris of illumination fraction.
+ * Time-indexed ephemeris of illumination fraction, apparent magnitude and phase angle.
  *
- * Keys are ISO timestamps, values are illumination percentages (0-100).
+ * Keys are ISO timestamps. `illumination` is the illuminated fraction as a
+ * percentage (0-100); `magnitude` is the apparent visual magnitude, smaller
+ * meaning brighter; `phaseAngle` is the Sun–body–observer angle in degrees,
+ * 0° fully lit and 180° fully dark. All three come from the same phenomena call.
  * Used for lunar phase and planetary phase calculations.
  */
-export type IlluminationEphemeris = Record<string, { illumination: number }>;
+export type IlluminationEphemeris = Record<
+  string,
+  { illumination: number; magnitude: number; phaseAngle: number }
+>;
 
 /**
  * Bodies for which illumination ephemerides are generated.

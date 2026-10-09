@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 
-import type { Longitude } from "../ephemeris/ephemeris.types";
+import type { Coordinates, Longitude } from "../ephemeris/ephemeris.types";
 import type { NeighborValues } from "./math.types";
 
 /**
@@ -42,6 +42,23 @@ export class MathService {
   // 🌎 Public Methods
 
   /**
+   * Whether a value crosses zero upward nearest the current minute: a
+   * crossing between the previous minute and this one belongs here when it
+   * falls in its second half, and one between this minute and the next when
+   * it falls in its first half. Each crossing lands on exactly one minute.
+   */
+  crossesUpwardNearCurrent(args: NeighborValues): boolean {
+    const { current, next, previous } = args;
+    if (previous < 0 && current >= 0) {
+      return previous / (previous - current) >= 0.5;
+    }
+    if (current < 0 && next >= 0) {
+      return current / (current - next) < 0.5;
+    }
+    return false;
+  }
+
+  /**
    * Calculates the shortest angular distance between two ecliptic longitudes.
    *
    * This function computes the minimum arc length between two positions on the
@@ -75,6 +92,39 @@ export class MathService {
       angle = 360 - angle;
     }
     return angle;
+  }
+
+  /**
+   * Calculates the true angular separation between two ecliptic positions.
+   *
+   * Unlike {@link getAngle}, which compares longitudes alone, this measures
+   * the great-circle arc between the two points, so latitude counts. It takes
+   * the arctangent of the cross and dot products, which stays exact for both
+   * tiny and near-antipodal separations where the arccosine form loses
+   * precision. The result is in [0, 180] degrees.
+   *
+   * @example
+   * ```typescript
+   * mathService.getAngularSeparation([10, 0], [350, 0]);  // Returns 20
+   * mathService.getAngularSeparation([100, 30], [100, -15]); // Returns 45
+   * ```
+   */
+  getAngularSeparation(first: Coordinates, second: Coordinates): number {
+    const toRadians = Math.PI / 180;
+    const [firstLongitude, firstLatitude] = first;
+    const [secondLongitude, secondLatitude] = second;
+    const latitude1 = firstLatitude * toRadians;
+    const latitude2 = secondLatitude * toRadians;
+    const longitudeGap = (secondLongitude - firstLongitude) * toRadians;
+    const across = Math.hypot(
+      Math.cos(latitude2) * Math.sin(longitudeGap),
+      Math.cos(latitude1) * Math.sin(latitude2) -
+        Math.sin(latitude1) * Math.cos(latitude2) * Math.cos(longitudeGap),
+    );
+    const along =
+      Math.sin(latitude1) * Math.sin(latitude2) +
+      Math.cos(latitude1) * Math.cos(latitude2) * Math.cos(longitudeGap);
+    return Math.atan2(across, along) / toRadians;
   }
 
   /**

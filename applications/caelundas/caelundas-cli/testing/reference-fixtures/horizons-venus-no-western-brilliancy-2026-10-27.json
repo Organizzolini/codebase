@@ -1,0 +1,23 @@
+{
+  "absent": ["♀️🔆 Venus Western Brightest"],
+  "events": [
+    {
+      "note": "Anchor: Horizons puts Venus's ecliptic longitude gap to the Sun through 6° west at 21:41 UT. The absence: pheno_ut has a local magnitude minimum, -4.260, at 2026-10-28 01:51 UT with Venus 8.5° west of the Sun but at phase angle 168.3°, a thin crescent near inferior conjunction, so it is not a greatest brilliancy",
+      "start": "2026-10-27T21:41:00Z",
+      "summary": "♀️🌄↥ Venus Morning Rise"
+    }
+  ],
+  "name": "No Venus greatest brilliancy as Venus leaves inferior conjunction on 28 October 2026",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "JPL Horizons API: geocentric apparent magnitude, elongation, phase angle and observer ecliptic longitude (quantities 9, 23, 24, 31), one-minute steps, cross-checked against Swiss Ephemeris pheno_ut",
+    "url": "https://ssd.jpl.nasa.gov/api/horizons.api?format=text&COMMAND='299'&CENTER='500@399'&EPHEM_TYPE='OBSERVER'&START_TIME='2026-10-26 12:00'&STOP_TIME='2026-10-29 00:00'&STEP_SIZE='1 m'&QUANTITIES='9,23,24,31'&CSV_FORMAT='YES'&EXTRA_PREC='YES'"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-10-28",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-10-27"
+  }
+}

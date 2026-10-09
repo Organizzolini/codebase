@@ -15,7 +15,6 @@ import type * as EphemerisConstantsModule from "./ephemeris.constants";
 import type {
   AzimuthElevationEphemeris,
   CoordinateEphemeris,
-  DiameterEphemeris,
   DistanceEphemeris,
   IlluminationEphemeris,
 } from "./ephemeris.types";
@@ -65,7 +64,6 @@ describe(EphemerisService, () => {
               .mockReturnValue({
                 azimuthEntries: [],
                 coordinateEntries: [],
-                diameterEntries: [],
                 distanceEntries: [],
                 illuminationEntries: [],
               }),
@@ -73,14 +71,12 @@ describe(EphemerisService, () => {
               .fn<
                 (args: {
                   azimuthElevationBodies: string[];
-                  diameterBodies: string[];
                   distanceBodies: string[];
                   illuminationBodies: string[];
                 }) => EphemerisFeatureSets
               >()
               .mockReturnValue({
                 azimuthElevationSet: new Set(["sun"]),
-                diameterSet: new Set(["sun"]),
                 distanceSet: new Set(["sun"]),
                 illuminationSet: new Set(["sun"]),
               }),
@@ -95,7 +91,6 @@ describe(EphemerisService, () => {
                     string,
                     CoordinateEphemeris
                   >;
-                  diameterEphemerisByBody: Record<string, DiameterEphemeris>;
                   distanceEphemerisByBody: Record<string, DistanceEphemeris>;
                   illuminationEphemerisByBody: Record<
                     string,
@@ -106,7 +101,6 @@ describe(EphemerisService, () => {
               .mockReturnValue({
                 azimuthElevationEphemerisByBody: {},
                 coordinateEphemerisByBody: {},
-                diameterEphemerisByBody: {},
                 distanceEphemerisByBody: {},
                 illuminationEphemerisByBody: {},
               }),
@@ -175,6 +169,8 @@ describe(EphemerisService, () => {
               .mockReturnValue({
                 "2024-03-21T00:00:00.000Z": {
                   azimuth: 180,
+                  eclipticLatitude: 0,
+                  eclipticLongitude: 0,
                   elevation: 44.8,
                   semidiameter: 0.27,
                   trueElevation: 44.8,
@@ -185,17 +181,6 @@ describe(EphemerisService, () => {
         {
           provide: EphemerisPhenomenaService,
           useValue: createMock<EphemerisPhenomenaService>({
-            computeDiameterForBody: vi
-              .fn<
-                (args: {
-                  body: string;
-                  end: Moment;
-                  start: Moment;
-                }) => DiameterEphemeris
-              >()
-              .mockReturnValue({
-                "2024-03-21T00:00:00.000Z": { diameter: 0.5 },
-              }),
             computeIlluminationForBody: vi
               .fn<
                 (args: {
@@ -205,7 +190,11 @@ describe(EphemerisService, () => {
                 }) => IlluminationEphemeris
               >()
               .mockReturnValue({
-                "2024-03-21T00:00:00.000Z": { illumination: 75 },
+                "2024-03-21T00:00:00.000Z": {
+                  illumination: 75,
+                  magnitude: 0,
+                  phaseAngle: 0,
+                },
               }),
           }),
         },
@@ -249,6 +238,8 @@ describe(EphemerisService, () => {
       const ephemeris: AzimuthElevationEphemeris = {
         "2024-03-21T00:00:00.000Z": {
           azimuth: 180,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: 44.8,
           semidiameter: 0.27,
           trueElevation: 44.8,
@@ -268,6 +259,8 @@ describe(EphemerisService, () => {
       const ephemeris: AzimuthElevationEphemeris = {
         "2024-03-21T00:00:00.000Z": {
           azimuth: 180,
+          eclipticLatitude: 0,
+          eclipticLongitude: 0,
           elevation: 44.8,
           semidiameter: 0.27,
           trueElevation: 44.79,
@@ -304,20 +297,6 @@ describe(EphemerisService, () => {
       ).toBe(120.5);
     });
 
-    it("returns diameter values", () => {
-      const ephemeris: DiameterEphemeris = {
-        "2024-03-21T00:00:00.000Z": { diameter: 0.5 },
-      };
-
-      expect(
-        service.getDiameterFromEphemeris(
-          ephemeris,
-          "2024-03-21T00:00:00.000Z",
-          "diameter",
-        ),
-      ).toBe(0.5);
-    });
-
     it("returns distance values", () => {
       const ephemeris: DistanceEphemeris = {
         "2024-03-21T00:00:00.000Z": { distance: 1.01, distanceSpeed: 0 },
@@ -334,7 +313,11 @@ describe(EphemerisService, () => {
 
     it("returns illumination values", () => {
       const ephemeris: IlluminationEphemeris = {
-        "2024-03-21T00:00:00.000Z": { illumination: 75 },
+        "2024-03-21T00:00:00.000Z": {
+          illumination: 75,
+          magnitude: 0,
+          phaseAngle: 0,
+        },
       };
 
       expect(
@@ -356,12 +339,6 @@ describe(EphemerisService, () => {
       expect(() =>
         service.getAzimuthElevationFromEphemeris({}, "missing", "elevation"),
       ).toThrow("Missing elevation at missing");
-    });
-
-    it("throws when diameter accessor timestamp is missing", () => {
-      expect(() =>
-        service.getDiameterFromEphemeris({}, "missing", "diameter"),
-      ).toThrow("Missing diameter at missing");
     });
 
     it("throws when distance accessor timestamp is missing", () => {
@@ -387,7 +364,6 @@ describe(EphemerisService, () => {
         azimuthElevationBodies: ["sun"],
         coordinateBodies: ["sun"],
         coordinates: [-74.006, 40.7128],
-        diameterBodies: ["sun"],
         distanceBodies: ["sun"],
         end: moment.utc("2024-03-21T00:01:00.000Z"),
         illuminationBodies: ["sun"],
@@ -398,7 +374,6 @@ describe(EphemerisService, () => {
         ephemerisAggregationService.buildEphemerisFeatureSets,
       ).toHaveBeenCalledWith({
         azimuthElevationBodies: ["sun"],
-        diameterBodies: ["sun"],
         distanceBodies: ["sun"],
         illuminationBodies: ["sun"],
       });
@@ -410,7 +385,6 @@ describe(EphemerisService, () => {
           end: moment.utc("2024-03-21T00:01:00.000Z"),
           featureSets: {
             azimuthElevationSet: new Set(["sun"]),
-            diameterSet: new Set(["sun"]),
             distanceSet: new Set(["sun"]),
             illuminationSet: new Set(["sun"]),
           },
@@ -424,7 +398,6 @@ describe(EphemerisService, () => {
       ).toHaveBeenCalledWith({
         azimuthEntries: [],
         coordinateEntries: [],
-        diameterEntries: [],
         distanceEntries: [],
         illuminationEntries: [],
       });
@@ -468,24 +441,6 @@ describe(EphemerisService, () => {
         start: moment.utc("2024-03-21T00:00:00.000Z"),
       });
       expect(result.moon).toBeDefined();
-    });
-
-    it("delegates diameter by body to phenomena service", () => {
-      const result = service.getDiameterEphemerisByBody({
-        bodies: ["sun"],
-        end: moment.utc("2024-03-21T00:01:00.000Z"),
-        start: moment.utc("2024-03-21T00:00:00.000Z"),
-        timezone: "UTC",
-      });
-
-      expect(
-        ephemerisPhenomenaService.computeDiameterForBody,
-      ).toHaveBeenCalledWith({
-        body: "sun",
-        end: moment.utc("2024-03-21T00:01:00.000Z"),
-        start: moment.utc("2024-03-21T00:00:00.000Z"),
-      });
-      expect(result.sun).toBeDefined();
     });
 
     it("delegates distance by body to coordinate service", () => {
@@ -562,10 +517,9 @@ describe(EphemerisService, () => {
           "south lunar node",
         ],
         coordinates: [-74.006, 40.7128],
-        diameterBodies: ["sun", "moon"],
         distanceBodies: ["sun", "moon", "mercury", "venus", "mars"],
         end: moment.utc("2024-03-21T00:01:00.000Z"),
-        illuminationBodies: ["moon", "mercury", "venus", "mars"],
+        illuminationBodies: ["mercury", "venus", "mars"],
         start: moment.utc("2024-03-21T00:00:00.000Z"),
       });
     });

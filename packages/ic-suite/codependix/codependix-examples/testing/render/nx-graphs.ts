@@ -38,6 +38,8 @@ interface ExampleProject {
   readonly name: string;
   /** Workspace-relative root. `"."` marks the workspace root project. */
   readonly root: string;
+  /** Nx tags, such as `framework:nestjs`, when the example needs any. */
+  readonly tags?: string[];
 }
 
 // ♟️ Constants
@@ -163,7 +165,14 @@ export function buildProjectGraph(workspace: ExampleWorkspace): NxProjectGraph {
     nodes: Object.fromEntries(
       workspace.projects.map((project) => [
         project.name,
-        { data: { root: project.root }, name: project.name, type: "lib" },
+        {
+          data: {
+            root: project.root,
+            ...(project.tags !== undefined && { tags: project.tags }),
+          },
+          name: project.name,
+          type: "lib",
+        },
       ]),
     ),
   };

@@ -22,18 +22,22 @@ const createTimestamp = (): moment.Moment =>
   moment.utc("2024-06-01T06:00:00.000Z");
 
 const createPhaseParameters = (): PhaseParameters => ({
-  currentDistance: 1,
-  currentIllumination: 50,
+  currentLatitudePlanet: 0,
+  currentLatitudeSun: 0,
   currentLongitudePlanet: 100,
   currentLongitudeSun: 90,
-  nextDistances: [1, 1],
-  nextIlluminations: [50, 50],
+  currentMagnitude: -1,
+  currentPhaseAngle: 90,
+  nextLatitudePlanet: 0,
+  nextLatitudeSun: 0,
   nextLongitudePlanet: 101,
   nextLongitudeSun: 91,
-  previousDistances: [1, 1],
-  previousIlluminations: [50, 50],
+  nextMagnitudes: [-1, -1],
+  previousLatitudePlanet: 0,
+  previousLatitudeSun: 0,
   previousLongitudePlanet: 99,
   previousLongitudeSun: 89,
+  previousMagnitudes: [-1, -1],
 });
 
 const configurePhaseCalculationServiceMock = (
@@ -140,7 +144,6 @@ describe(MartianPhaseService, () => {
 
       const events = service.getMartianPhaseEvents({
         marsCoordinateEphemeris: {},
-        marsDistanceEphemeris: {},
         marsIlluminationEphemeris: {},
         minute: timestamp,
         sunCoordinateEphemeris: {},
@@ -167,7 +170,6 @@ describe(MartianPhaseService, () => {
 
       const events = service.getMartianPhaseEvents({
         marsCoordinateEphemeris: {},
-        marsDistanceEphemeris: {},
         marsIlluminationEphemeris: {},
         minute: timestamp,
         sunCoordinateEphemeris: {},
@@ -187,7 +189,6 @@ describe(MartianPhaseService, () => {
 
       const events = service.getMartianPhaseEvents({
         marsCoordinateEphemeris: {},
-        marsDistanceEphemeris: {},
         marsIlluminationEphemeris: {},
         minute: timestamp,
         sunCoordinateEphemeris: {},
@@ -207,7 +208,6 @@ describe(MartianPhaseService, () => {
 
       const events = service.getMartianPhaseEvents({
         marsCoordinateEphemeris: {},
-        marsDistanceEphemeris: {},
         marsIlluminationEphemeris: {},
         minute: timestamp,
         sunCoordinateEphemeris: {},
@@ -227,7 +227,6 @@ describe(MartianPhaseService, () => {
 
       const events = service.getMartianPhaseEvents({
         marsCoordinateEphemeris: {},
-        marsDistanceEphemeris: {},
         marsIlluminationEphemeris: {},
         minute: timestamp,
         sunCoordinateEphemeris: {},
@@ -247,7 +246,6 @@ describe(MartianPhaseService, () => {
 
       const events = service.getMartianPhaseEvents({
         marsCoordinateEphemeris: {},
-        marsDistanceEphemeris: {},
         marsIlluminationEphemeris: {},
         minute: timestamp,
         sunCoordinateEphemeris: {},
@@ -266,7 +264,6 @@ describe(MartianPhaseService, () => {
 
       const events = service.getMartianPhaseEvents({
         marsCoordinateEphemeris: {},
-        marsDistanceEphemeris: {},
         marsIlluminationEphemeris: {},
         minute: timestamp,
         sunCoordinateEphemeris: {},
@@ -288,7 +285,6 @@ describe(MartianPhaseService, () => {
 
       const events = service.getMartianPhaseEvents({
         marsCoordinateEphemeris: {},
-        marsDistanceEphemeris: {},
         marsIlluminationEphemeris: {},
         minute: timestamp,
         sunCoordinateEphemeris: {},

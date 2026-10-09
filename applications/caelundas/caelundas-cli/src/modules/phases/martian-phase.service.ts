@@ -220,14 +220,12 @@ export class MartianPhaseService {
   ): DetectedCalendarEvent[] {
     const {
       marsCoordinateEphemeris,
-      marsDistanceEphemeris,
       marsIlluminationEphemeris,
       minute,
       sunCoordinateEphemeris,
     } = args;
 
     const parameters = this.phaseCalculationService.gatherPhaseParameters({
-      distanceEphemeris: marsDistanceEphemeris,
       illuminationEphemeris: marsIlluminationEphemeris,
       minute,
       planetCoordinateEphemeris: marsCoordinateEphemeris,

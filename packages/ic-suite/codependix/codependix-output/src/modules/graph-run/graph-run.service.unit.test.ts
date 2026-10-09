@@ -41,6 +41,7 @@ describe(GraphRunService, () => {
     ];
 
     return {
+      buildProjects: projects,
       configuration: {
         boundaries: {
           fileImports: { python: [], typescript: [] },
@@ -50,7 +51,7 @@ describe(GraphRunService, () => {
         exclude: [],
         include: ["**"],
         projectGraph: undefined,
-        selection: { projects: [], tags: [] },
+        selection: { dependencies: true, projects: [], tags: [] },
         workspace: {},
       },
       enabledGraphTypes: new Set([

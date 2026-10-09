@@ -3,7 +3,6 @@ import { Injectable } from "@nestjs/common";
 import { LoggerService } from "@codebase/logging";
 
 import { EphemerisService } from "../ephemeris/ephemeris.service";
-import { MathService } from "../math/math.service";
 import { ProgressiveUtilitiesService } from "../progressive/progressive-utilities.service";
 
 import { AnnualSolarCycleEventsService } from "./annual-solar-cycle-events.service";
@@ -43,7 +42,6 @@ export class AnnualSolarCycleService {
   constructor(
     private readonly logger: LoggerService,
     private readonly ephemerisService: EphemerisService,
-    private readonly mathService: MathService,
     private readonly progressiveUtilitiesService: ProgressiveUtilitiesService,
     private readonly annualSolarCycleEventsService: AnnualSolarCycleEventsService,
   ) {
@@ -70,6 +68,19 @@ export class AnnualSolarCycleService {
     return advancingPairs.map(([beginning, ending]) =>
       this.getSolarAdvancingDurationEvent(beginning, ending),
     );
+  }
+
+  /**
+   * The minute of the pair whose radial speed is nearer zero, so the apsis is
+   * stamped at the nearest minute. A tie goes to the later minute.
+   */
+  private getNearestApsisMinute(
+    minute: Moment,
+    speeds: SolarDistanceSample,
+  ): Moment {
+    return Math.abs(speeds.previous) < Math.abs(speeds.current)
+      ? minute.clone().subtract(1, "minute")
+      : minute;
   }
 
   /** Pairs perihelion-to-aphelion markers into Solar Retreating duration events. */
@@ -105,29 +116,22 @@ export class AnnualSolarCycleService {
     };
   }
 
-  /** Samples Sun-Earth distance at previous, current, and next minute for extrema checks. */
-  private getSolarDistances(
+  /** Samples the Sun's radial speed at the minute and the minute before it. */
+  private getSolarDistanceSpeeds(
     minute: Moment,
     sunDistanceEphemeris: DistanceEphemeris,
   ): SolarDistanceSample {
     const previousMinute = minute.clone().subtract(1, "minute");
-    const nextMinute = minute.clone().add(1, "minute");
-    const current = this.ephemerisService.getDistanceFromEphemeris(
-      sunDistanceEphemeris,
-      minute.toISOString(),
-      "distance",
-    );
-    const previous = this.ephemerisService.getDistanceFromEphemeris(
-      sunDistanceEphemeris,
-      previousMinute.toISOString(),
-      "distance",
-    );
-    const next = this.ephemerisService.getDistanceFromEphemeris(
-      sunDistanceEphemeris,
-      nextMinute.toISOString(),
-      "distance",
-    );
-    return { current, next, previous };
+    return {
+      current: this.ephemerisService.getDistanceSpeedFromEphemeris(
+        sunDistanceEphemeris,
+        minute.toISOString(),
+      ),
+      previous: this.ephemerisService.getDistanceSpeedFromEphemeris(
+        sunDistanceEphemeris,
+        previousMinute.toISOString(),
+      ),
+    };
   }
 
   /** Builds the progressive span event for Earth moving from perihelion toward aphelion. */
@@ -261,11 +265,18 @@ export class AnnualSolarCycleService {
    * and apparent solar diameter. Perihelion typically occurs in early January,
    * aphelion in early July.
    *
-   * @see {@link getDistanceFromEphemeris} for distance retrieval
-   * @see {@link isMaximum} for aphelion detection
-   * @see {@link isMinimum} for perihelion detection
+   * @see {@link getDistanceSpeedFromEphemeris} for radial speed retrieval
    *
    * @remarks
+   * An apsis is a sign change of the Sun's radial speed between two adjacent
+   * minutes, stamped at whichever of the two has the smaller speed magnitude.
+   * The distance series is not used: the Swiss Ephemeris files store polynomial
+   * segments, and the distance steps by about 3e-9 AU where one segment hands
+   * over to the next (light-time correction repeats the step about eight
+   * minutes later). Near an apsis the distance changes by only about 1.5e-9 AU
+   * across half an hour, so such a step fakes or hides an extremum. The
+   * radial speed is smooth through the steps and crosses zero once per apsis.
+   *
    * Perihelion: ~147.1 million km (Earth moving fastest, ~30.3 km/s)
    * Aphelion: ~152.1 million km (Earth moving slowest, ~29.3 km/s)
    *
@@ -282,16 +293,19 @@ export class AnnualSolarCycleService {
     args: DetectSolarApsisEventsArguments,
   ): DetectedCalendarEvent[] {
     const { minute, sunDistanceEphemeris } = args;
-    const distances = this.getSolarDistances(minute, sunDistanceEphemeris);
+    const speeds = this.getSolarDistanceSpeeds(minute, sunDistanceEphemeris);
+    const apsisMinute = this.getNearestApsisMinute(minute, speeds);
     const solarApsisEvents: DetectedCalendarEvent[] = [];
-    if (this.mathService.isMaximum({ ...distances })) {
+    // Receding (positive speed) turning to approaching: farthest point.
+    if (speeds.previous > 0 && speeds.current <= 0) {
       solarApsisEvents.push(
-        this.annualSolarCycleEventsService.buildAphelionEvent(minute),
+        this.annualSolarCycleEventsService.buildAphelionEvent(apsisMinute),
       );
     }
-    if (this.mathService.isMinimum({ ...distances })) {
+    // Approaching (negative speed) turning to receding: nearest point.
+    if (speeds.previous < 0 && speeds.current >= 0) {
       solarApsisEvents.push(
-        this.annualSolarCycleEventsService.buildPerihelionEvent(minute),
+        this.annualSolarCycleEventsService.buildPerihelionEvent(apsisMinute),
       );
     }
     return solarApsisEvents;

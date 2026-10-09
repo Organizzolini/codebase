@@ -1,0 +1,50 @@
+{
+  "absent": [
+    "📍 ☀️🐉 Total Solar Eclipse (Topocentric Visibility)",
+    "📍 ☀️🐉▶️ Total Solar Eclipse begins",
+    "📍 ☀️🐉◀️ Total Solar Eclipse ends",
+    "📍 ☀️🐉🎯 Total Solar Eclipse maximum"
+  ],
+  "counts": {
+    "📍 ☀️🐉 Partial Solar Eclipse (Topocentric Visibility)": 1,
+    "📍 ☀️🐉▶️ Partial Solar Eclipse begins": 1,
+    "📍 ☀️🐉◀️ Partial Solar Eclipse ends": 1,
+    "📍 ☀️🐉🎯 Partial Solar Eclipse maximum": 1
+  },
+  "events": [
+    {
+      "note": "USNO \"Eclipse Begins\" 17:11:21.9 UT (C1, ΔT 74.0 s), Sun altitude 64.8°. JPL Horizons topocentric Sun and Moon (site -75.17169, 39.949309, 0 km, airless apparent) put the limbs in contact at 17:11:28",
+      "start": "2026-08-12T17:11:22Z",
+      "summary": "📍 ☀️🐉▶️ Partial Solar Eclipse begins"
+    },
+    {
+      "note": "USNO \"Maximum Eclipse\" 17:53:51.6 UT, magnitude 0.151, obscuration 6.9%: the Moon never covers the Sun from here, so the local title says Partial though the eclipse is total elsewhere on Earth. Swiss Ephemeris swe_sol_eclipse_when_loc agrees: C1 17:11:21, maximum 17:53:57, C4 18:35:03, magnitude 0.151, partial",
+      "start": "2026-08-12T17:53:52Z",
+      "summary": "📍 ☀️🐉🎯 Partial Solar Eclipse maximum"
+    },
+    {
+      "note": "USNO \"Eclipse Ends\" 18:34:53.1 UT (C4); Horizons puts the last contact at 18:35:00",
+      "start": "2026-08-12T18:34:53Z",
+      "summary": "📍 ☀️🐉◀️ Partial Solar Eclipse ends"
+    },
+    {
+      "end": "2026-08-12T18:34:53Z",
+      "note": "The local span runs from C1 to C4",
+      "start": "2026-08-12T17:11:22Z",
+      "summary": "📍 ☀️🐉 Partial Solar Eclipse (Topocentric Visibility)"
+    }
+  ],
+  "name": "The solar eclipse of 12 August 2026 seen from Philadelphia",
+  "retrieved": "2026-10-08",
+  "source": {
+    "name": "US Naval Observatory, solar eclipse local circumstances for Philadelphia (39.949309, -75.17169, 0 m)",
+    "url": "https://aa.usno.navy.mil/api/eclipses/solar/date?date=2026-08-12&coords=39.949309,-75.17169&height=0"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-08-13",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-08-12"
+  }
+}

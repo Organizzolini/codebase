@@ -49,6 +49,7 @@ import type { DetectedCalendarEvent } from "../caelundas-database/caelundas-data
 import type { Body } from "../caelundas/caelundas.types";
 import type { CoordinateEphemeris } from "../ephemeris/ephemeris.types";
 import type {
+  AspectBodies,
   CompositeAspectDetector,
   ProgressiveAspectDetector,
   SimpleAspectDetector,
@@ -532,6 +533,7 @@ describe(AspectsService, () => {
         detect: vi
           .fn<SimpleAspectDetector["detect"]>()
           .mockReturnValue([simpleEvent]),
+        detectActive: vi.fn<SimpleAspectDetector["detectActive"]>(),
       };
       const mockCompositeAspectDetector = {
         detect: vi
@@ -574,6 +576,91 @@ describe(AspectsService, () => {
       expect(
         mockProgressiveAspectDetector.detectProgressive,
       ).toHaveBeenCalledWith([simpleEvent]);
+    });
+  });
+
+  describe("seed", () => {
+    it("returns every aspect already in orb and composes compounds from an empty past", () => {
+      const minute = moment.utc("2026-10-01T04:00:00Z");
+      const compositeEvent = {
+        categories: ["Astronomy", "Astrology", "Compound Aspect", "Forming"],
+        description: "T-Square",
+        end: minute,
+        start: minute,
+        summary: "T-Square",
+      } satisfies DetectedCalendarEvent;
+      const majorActive = [
+        { aspect: "opposite", bodies: ["mars", "pluto"] },
+        { aspect: "square", bodies: ["mercury", "mars"] },
+      ] satisfies AspectBodies[];
+      const minorActive = [
+        { aspect: "quincunx", bodies: ["sun", "neptune"] },
+      ] satisfies AspectBodies[];
+      const mockMajorDetector = {
+        detect: vi.fn<SimpleAspectDetector["detect"]>(),
+        detectActive: vi
+          .fn<SimpleAspectDetector["detectActive"]>()
+          .mockReturnValue(majorActive),
+      };
+      const mockMinorDetector = {
+        detect: vi.fn<SimpleAspectDetector["detect"]>(),
+        detectActive: vi
+          .fn<SimpleAspectDetector["detectActive"]>()
+          .mockReturnValue(minorActive),
+      };
+      const mockCompositeAspectDetector = {
+        detect: vi
+          .fn<CompositeAspectDetector["detect"]>()
+          .mockReturnValue([compositeEvent]),
+      };
+      const seedingService = new AspectsService(
+        [mockMajorDetector, mockMinorDetector],
+        [mockCompositeAspectDetector],
+        [],
+        new LoggerService(),
+      );
+      const coordinateEphemerisByBody = {} as Record<Body, CoordinateEphemeris>;
+
+      const seeded = seedingService.seed({ coordinateEphemerisByBody, minute });
+
+      expect(mockMajorDetector.detectActive).toHaveBeenCalledWith({
+        coordinateEphemerisByBody,
+        minute,
+      });
+      expect(seeded.aspectBodies).toStrictEqual([
+        ...majorActive,
+        ...minorActive,
+      ]);
+      expect(mockCompositeAspectDetector.detect).toHaveBeenCalledWith({
+        currentAspectBodies: [...majorActive, ...minorActive],
+        minute,
+        previousAspectBodies: [],
+      });
+      expect(seeded.events).toStrictEqual([compositeEvent]);
+    });
+
+    it("emits no simple-aspect events", () => {
+      const minute = moment.utc("2026-10-01T04:00:00Z");
+      const mockSimpleAspectDetector = {
+        detect: vi.fn<SimpleAspectDetector["detect"]>(),
+        detectActive: vi
+          .fn<SimpleAspectDetector["detectActive"]>()
+          .mockReturnValue([{ aspect: "trine", bodies: ["sun", "moon"] }]),
+      };
+      const seedingService = new AspectsService(
+        [mockSimpleAspectDetector],
+        [],
+        [],
+        new LoggerService(),
+      );
+
+      const seeded = seedingService.seed({
+        coordinateEphemerisByBody: {} as Record<Body, CoordinateEphemeris>,
+        minute,
+      });
+
+      expect(mockSimpleAspectDetector.detect).not.toHaveBeenCalled();
+      expect(seeded.events).toStrictEqual([]);
     });
   });
 });
