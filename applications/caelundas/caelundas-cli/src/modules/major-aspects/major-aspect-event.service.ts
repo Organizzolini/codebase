@@ -5,7 +5,7 @@ import { LoggerService } from "@codebase/logging";
 
 import { AspectsUtilitiesService } from "../aspects/aspects-utilities.service";
 import { majorAspects } from "../caelundas/caelundas.constants";
-import { capitalize } from "../caelundas/caelundas.types";
+import { bodyDisplayName } from "../caelundas/caelundas.types";
 import {
   symbolByBody,
   symbolByMajorAspect,
@@ -89,8 +89,8 @@ export class MajorAspectEventService {
   }): { categories: string[]; description: string; summary: string } {
     const { body1, body2, majorAspect, phase } = args;
 
-    const body1Capitalized = capitalize(body1);
-    const body2Capitalized = capitalize(body2);
+    const body1Capitalized = bodyDisplayName(body1);
+    const body2Capitalized = bodyDisplayName(body2);
     const body1Symbol = symbolByBody[body1];
     const body2Symbol = symbolByBody[body2];
     const majorAspectSymbol = symbolByMajorAspect[majorAspect];

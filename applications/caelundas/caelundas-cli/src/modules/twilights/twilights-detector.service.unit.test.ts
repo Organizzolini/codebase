@@ -130,8 +130,18 @@ describe(TwilightsDetectorService, () => {
       const minute = moment.utc("2024-03-21T06:00:00.000Z");
       const previousMinute = minute.clone().subtract(1, "minute");
       const ephemeris: AzimuthElevationEphemeris = {
-        [minute.toISOString()]: { azimuth: 86, elevation: -5.9 },
-        [previousMinute.toISOString()]: { azimuth: 85, elevation: -6.1 },
+        [minute.toISOString()]: {
+          azimuth: 86,
+          elevation: -5.9,
+          semidiameter: 0.27,
+          trueElevation: -5.9,
+        },
+        [previousMinute.toISOString()]: {
+          azimuth: 85,
+          elevation: -6.1,
+          semidiameter: 0.27,
+          trueElevation: -6.1,
+        },
       };
 
       const result = service.getSunElevations(ephemeris, minute);

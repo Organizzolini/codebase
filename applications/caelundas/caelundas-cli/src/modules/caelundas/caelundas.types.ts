@@ -1,4 +1,6 @@
 // 🏷️ Types
+import _ from "lodash";
+
 import {
   aspects,
   bodies,
@@ -287,14 +289,32 @@ export type TripleAspect = keyof typeof symbolByTripleAspect;
 export type VenusianPhase = keyof typeof symbolByVenusianPhase;
 
 /**
+ * Names a body the way every summary, description, category and progressive
+ * grouping key does: lodash start case ("north lunar node" becomes "North Lunar Node").
+ *
+ * Define the display name here, once, and invert it with {@link bodyFromDisplayName}.
+ */
+export function bodyDisplayName(body: string): string {
+  return _.startCase(body);
+}
+
+/**
+ * Inverts {@link bodyDisplayName}: returns the body a display name belongs to,
+ * or `undefined` when the name is not a body's canonical display name.
+ */
+export function bodyFromDisplayName(displayName: string): Body | undefined {
+  return bodyByDisplayName.get(displayName);
+}
+
+/**
  * Uppercases the first character of a string literal type.
  *
  * Mirrors `Capitalize<T>` at the value level. Prefer this over
  * `_.startCase` + `as Capitalize<T>` — the assertion is confined here.
  * @example
  * ```ts
- * const bodyCapitalized = capitalize(body);
- * // ^? Capitalize<Body>
+ * const signCapitalized = capitalize(sign);
+ * // ^? Capitalize<Sign>
  * ```
  */
 export function capitalize<T extends string>(str: T): Capitalize<T> {
@@ -456,3 +476,7 @@ export function uncapitalize<T extends string>(str: T): Uncapitalize<T> {
   // type-coverage:ignore-next-line
   return (str.charAt(0).toLowerCase() + str.slice(1)) as Uncapitalize<T>;
 }
+
+const bodyByDisplayName: ReadonlyMap<string, Body> = new Map(
+  bodies.map((body) => [bodyDisplayName(body), body]),
+);

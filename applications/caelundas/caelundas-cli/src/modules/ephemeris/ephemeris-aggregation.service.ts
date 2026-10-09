@@ -124,21 +124,21 @@ export class EphemerisAggregationService {
     const { julianDayEphemerisTime, julianDayUniversalTime } =
       this.time.dateToJulianDays(date);
     const timestamp = date.toISOString();
-    const { distance, latitude, longitude } =
+    const { distance, distanceSpeed, latitude, longitude } =
       this.coordinate.getBodyCoordinatesWithDistance(
         body,
         julianDayEphemerisTime,
       );
     accumulators.coordinateEphemeris[timestamp] = { latitude, longitude };
-    if (needsDistance) accumulators.distanceEphemeris[timestamp] = { distance };
-    if (needsAzimuth) {
+    if (needsDistance) {
+      accumulators.distanceEphemeris[timestamp] = { distance, distanceSpeed };
+    }
+    if (needsAzimuth && this.constant.isHorizonBody(body)) {
       accumulators.azimuthElevationEphemeris[timestamp] =
         this.horizon.computeAzimuthElevationForMinute({
           body,
-          distance,
+          julianDayEphemerisTime,
           julianDayUniversalTime,
-          latitude,
-          longitude,
           observerLatitude,
           observerLongitude,
         });

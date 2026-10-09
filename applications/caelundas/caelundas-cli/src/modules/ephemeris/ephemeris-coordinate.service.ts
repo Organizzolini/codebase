@@ -1,14 +1,16 @@
 import { Injectable } from "@nestjs/common";
-import { calc, constants, nod_aps_ut } from "sweph";
+import { calc, constants, nod_aps_ut, set_topo } from "sweph";
 
 import { MathService } from "../math/math.service";
 
 import { EphemerisConstantsService } from "./ephemeris-constants.service";
 import { EphemerisTimeService } from "./ephemeris-time.service";
 import {
+  OBSERVER_ELEVATION_METERS,
   OSCULATING_ORBITAL_ELEMENTS_FLAG,
   SWISS_EPHEMERIS_FLAGS,
   swissEphemerisConstantByNode,
+  TOPOCENTRIC_EPHEMERIS_FLAGS,
 } from "./ephemeris.constants";
 
 import type { Body, Node } from "../caelundas/caelundas.types";
@@ -35,24 +37,27 @@ export class EphemerisCoordinateService {
   // 🔏 Private Methods
 
   /**
-   * Computes body ecliptic coordinates (longitude, latitude, distance).
+   * Computes body ecliptic coordinates (longitude, latitude, distance) with the given flags.
    */
   private computeBodyCoordinates(
     body: Exclude<Body, Node>,
     julianDayEphemerisTime: number,
-  ): { distance: number; latitude: number; longitude: number } {
+    flags: number = SWISS_EPHEMERIS_FLAGS,
+  ): {
+    distance: number;
+    distanceSpeed: number;
+    latitude: number;
+    longitude: number;
+  } {
     const swissEphemerisConstant =
       this.ephemerisConstantsService.getSwissEphemerisConstantForBody(body);
-    const result = calc(
-      julianDayEphemerisTime,
-      swissEphemerisConstant,
-      SWISS_EPHEMERIS_FLAGS,
-    );
+    const result = calc(julianDayEphemerisTime, swissEphemerisConstant, flags);
     if (result.flag < 0) {
       throw new Error(`calc failed for ${body}: ${result.error}`);
     }
     return {
       distance: result.data[2],
+      distanceSpeed: result.data[5],
       latitude: result.data[1],
       longitude: result.data[0],
     };
@@ -157,11 +162,11 @@ export class EphemerisCoordinateService {
     for (const date of this.time.generateMinutes(start, end)) {
       const { julianDayEphemerisTime } = this.time.dateToJulianDays(date);
       const timestamp = date.toISOString();
-      const { distance } = this.computeBodyCoordinates(
+      const { distance, distanceSpeed } = this.computeBodyCoordinates(
         body,
         julianDayEphemerisTime,
       );
-      ephemeris[timestamp] = { distance };
+      ephemeris[timestamp] = { distance, distanceSpeed };
     }
     return ephemeris;
   }
@@ -197,7 +202,45 @@ export class EphemerisCoordinateService {
   public getBodyCoordinatesWithDistance(
     body: Exclude<Body, Node>,
     julianDayEphemerisTime: number,
-  ): { distance: number; latitude: number; longitude: number } {
+  ): {
+    distance: number;
+    distanceSpeed: number;
+    latitude: number;
+    longitude: number;
+  } {
     return this.computeBodyCoordinates(body, julianDayEphemerisTime);
+  }
+
+  /**
+   * Computes a body's apparent ecliptic coordinates as seen from an observer
+   * on the Earth's surface (sea level), rather than from the Earth's center.
+   *
+   * @remarks
+   * The difference is parallax: up to about 1° for the Moon, under 9″ for the
+   * Sun. Rise, set, culmination and local eclipse work need this position.
+   * Longitude and latitude are degrees of date; distance is in AU, so it also
+   * yields the topocentric semidiameter. `set_topo` is global Swiss Ephemeris
+   * state, so it is set on every call rather than trusted from an earlier one.
+   *
+   * @throws When calc fails for the body.
+   */
+  public getTopocentricBodyCoordinates(args: {
+    body: Exclude<Body, Node>;
+    julianDayEphemerisTime: number;
+    observerLatitude: number;
+    observerLongitude: number;
+  }): { distance: number; latitude: number; longitude: number } {
+    const {
+      body,
+      julianDayEphemerisTime,
+      observerLatitude,
+      observerLongitude,
+    } = args;
+    set_topo(observerLongitude, observerLatitude, OBSERVER_ELEVATION_METERS);
+    return this.computeBodyCoordinates(
+      body,
+      julianDayEphemerisTime,
+      TOPOCENTRIC_EPHEMERIS_FLAGS,
+    );
   }
 }

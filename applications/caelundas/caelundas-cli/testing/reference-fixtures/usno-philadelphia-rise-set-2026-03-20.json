@@ -1,0 +1,62 @@
+{
+  "events": [
+    {
+      "note": "USNO 2026-03-20: Sun Rise 07:04 EDT (UTC-4)",
+      "start": "2026-03-20T11:04:00Z",
+      "summary": "☀️ 🔼 Sunrise"
+    },
+    {
+      "note": "USNO 2026-03-20: Sun Set 19:13 EDT (UTC-4)",
+      "start": "2026-03-20T23:13:00Z",
+      "summary": "☀️ 🔽 Sunset"
+    },
+    {
+      "note": "USNO 2026-03-20: Moon Rise 07:38 EDT (UTC-4)",
+      "start": "2026-03-20T11:38:00Z",
+      "summary": "🌙 🔼 Moonrise"
+    },
+    {
+      "note": "USNO 2026-03-20: Moon Set 21:28 EDT (UTC-4), listed under 2026-03-21 UTC",
+      "start": "2026-03-21T01:28:00Z",
+      "summary": "🌙 🔽 Moonset"
+    },
+    {
+      "note": "USNO 2026-03-21: Sun Rise 07:02 EDT (UTC-4)",
+      "start": "2026-03-21T11:02:00Z",
+      "summary": "☀️ 🔼 Sunrise"
+    },
+    {
+      "note": "USNO 2026-03-21: Sun Set 19:14 EDT (UTC-4)",
+      "start": "2026-03-21T23:14:00Z",
+      "summary": "☀️ 🔽 Sunset"
+    },
+    {
+      "note": "USNO 2026-03-21: Moon Rise 08:06 EDT (UTC-4)",
+      "start": "2026-03-21T12:06:00Z",
+      "summary": "🌙 🔼 Moonrise"
+    },
+    {
+      "note": "USNO 2026-03-20: Sun Upper Transit 13:08 EDT (UTC-4); the solar culmination must not move with the rise and set fix",
+      "start": "2026-03-20T17:08:00Z",
+      "summary": "☀️ ⏫ Solar Zenith"
+    },
+    {
+      "note": "USNO 2026-03-21: Sun Upper Transit 13:08 EDT (UTC-4)",
+      "start": "2026-03-21T17:08:00Z",
+      "summary": "☀️ ⏫ Solar Zenith"
+    }
+  ],
+  "name": "Philadelphia sunrise, sunset, solar culmination, moonrise and moonset on 20 and 21 March 2026",
+  "retrieved": "2026-10-07",
+  "source": {
+    "name": "US Naval Observatory, Astronomical Applications Department: Rise, Set and Transit API (one day)",
+    "url": "https://aa.usno.navy.mil/api/rstt/oneday?date=2026-03-20&coords=39.949309,-75.17169&tz=0&dst=false"
+  },
+  "toleranceMinutes": 2,
+  "window": {
+    "endDate": "2026-03-21",
+    "latitude": 39.949309,
+    "longitude": -75.17169,
+    "startDate": "2026-03-20"
+  }
+}

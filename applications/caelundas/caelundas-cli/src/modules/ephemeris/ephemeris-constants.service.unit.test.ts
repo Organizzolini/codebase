@@ -14,6 +14,18 @@ describe(EphemerisConstantsService, () => {
     service = await module.resolve(EphemerisConstantsService);
   });
 
+  describe("isHorizonBody", () => {
+    it("returns true for the Sun and the Moon", () => {
+      expect(service.isHorizonBody("sun")).toBe(true);
+      expect(service.isHorizonBody("moon")).toBe(true);
+    });
+
+    it("returns false for other bodies", () => {
+      expect(service.isHorizonBody("mars")).toBe(false);
+      expect(service.isHorizonBody("north lunar node")).toBe(false);
+    });
+  });
+
   describe("isNode", () => {
     it("returns true for node bodies", () => {
       expect(service.isNode("north lunar node")).toBe(true);

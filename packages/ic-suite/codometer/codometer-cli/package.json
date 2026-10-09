@@ -32,6 +32,7 @@
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "catalog:",
     "typescript": "catalog:",
+    "vite": "catalog:",
     "vitest": "catalog:"
   },
   "exports": {
@@ -83,5 +84,5 @@
     "strict": true
   },
   "types": "src/index.ts",
-  "version": "0.0.9"
+  "version": "0.0.12"
 }

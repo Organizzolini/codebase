@@ -1,6 +1,6 @@
 # 🕸️ Codependix Examples
 
-**Seventeen small subjects built to be graphed, so every graph codependix draws
+**Twenty-one small subjects built to be graphed, so every graph codependix draws
 has somewhere to point.**
 
 Codependix draws dependency graphs at four levels — the Nx Neighborhood, the
@@ -62,6 +62,10 @@ renderer chains them with, declared once in
 | [`auto-created-sections`](examples/auto-created-sections) | Exactly where a missing `## 🕸️ Codependix` section lands, in every branch |
 | [`check-and-write`](examples/check-and-write) | What each `--check` name gates, what drift is reported as, and the four command lines refused outright |
 | [`boundary-rules`](examples/boundary-rules) | The three rule kinds, judged by the real evaluator — including the implicit edge no lint rule can see |
+| [`boundary-cycles`](examples/boundary-cycles) | A cycle is charged to every project on it, so a cross-project cycle fails both — and naming either finds it |
+| [`boundary-forbidden-edges`](examples/boundary-forbidden-edges) | A `forbid` violation, or an edge no `allow` covers, is charged to the project that owns its source and no other |
+| [`boundary-dependency-notes`](examples/boundary-dependency-notes) | A project that only depends on a finding is told, not failed — and what `--no-dependencies` changes |
+| [`boundary-boot-failures`](examples/boundary-boot-failures) | A container that cannot boot fails its own project and names the project that owns the class it died on |
 | [`refusals`](examples/refusals) | Every refusal, with the reproduction that produces it |
 | [`path-queries`](examples/path-queries) | How `codependix path` traces shortest connecting paths across graph levels in Markdown, JSON, and Mermaid |
 | [`json-exports`](examples/json-exports) | Every graph's JSON shape, and the two workspace rules switched off for these files |
@@ -227,11 +231,15 @@ graph LR
   file_codependix_config_ts["codependix.config.ts"]
   file_codometer_config_ts["codometer.config.ts"]
   file_eslint_config_ts["eslint.config.ts"]
+  file_testing_boundary_attribution_integration_test_ts["testing/boundary-attribution.integration.test.ts"]
   file_testing_examples_integration_test_ts["testing/examples.integration.test.ts"]
   file_testing_graphs_integration_test_ts["testing/graphs.integration.test.ts"]
   file_testing_render_examples_ts["testing/render-examples.ts"]
   file_testing_render_anchor_placement_ts["testing/render/anchor-placement.ts"]
+  file_testing_render_boundary_attribution_ts["testing/render/boundary-attribution.ts"]
+  file_testing_render_boundary_boot_failures_ts["testing/render/boundary-boot-failures.ts"]
   file_testing_render_boundary_rules_ts["testing/render/boundary-rules.ts"]
+  file_testing_render_boundary_run_ts["testing/render/boundary-run.ts"]
   file_testing_render_builders_ts["testing/render/builders.ts"]
   file_testing_render_catalog_ts["testing/render/catalog.ts"]
   file_testing_render_configuration_ts["testing/render/configuration.ts"]
@@ -249,6 +257,10 @@ graph LR
   file_testing_render_typescript_imports_ts["testing/render/typescript-imports.ts"]
   file_testing_setup_ts["testing/setup.ts"]
   file_vitest_config_ts["vitest.config.ts"]
+  file_testing_boundary_attribution_integration_test_ts --> file_testing_render_boundary_attribution_ts
+  file_testing_boundary_attribution_integration_test_ts --> file_testing_render_boundary_boot_failures_ts
+  file_testing_boundary_attribution_integration_test_ts --> file_testing_render_boundary_run_ts
+  file_testing_boundary_attribution_integration_test_ts --> file_testing_render_builders_ts
   file_testing_examples_integration_test_ts --> file_testing_render_anchor_placement_ts
   file_testing_examples_integration_test_ts --> file_testing_render_builders_ts
   file_testing_examples_integration_test_ts --> file_testing_render_catalog_ts
@@ -270,10 +282,25 @@ graph LR
   file_testing_render_anchor_placement_ts --> file_testing_render_export_delivery_ts
   file_testing_render_anchor_placement_ts --> file_testing_render_paths_ts
   file_testing_render_anchor_placement_ts --> file_testing_render_types_ts
+  file_testing_render_boundary_attribution_ts --> file_testing_render_boundary_run_ts
+  file_testing_render_boundary_attribution_ts --> file_testing_render_builders_ts
+  file_testing_render_boundary_attribution_ts --> file_testing_render_document_ts
+  file_testing_render_boundary_attribution_ts --> file_testing_render_nx_graphs_ts
+  file_testing_render_boundary_attribution_ts --> file_testing_render_types_ts
+  file_testing_render_boundary_boot_failures_ts --> file_testing_render_boundary_run_ts
+  file_testing_render_boundary_boot_failures_ts --> file_testing_render_document_ts
+  file_testing_render_boundary_boot_failures_ts --> file_testing_render_nx_graphs_ts
+  file_testing_render_boundary_boot_failures_ts --> file_testing_render_paths_ts
+  file_testing_render_boundary_boot_failures_ts --> file_testing_render_types_ts
   file_testing_render_boundary_rules_ts --> file_testing_render_builders_ts
   file_testing_render_boundary_rules_ts --> file_testing_render_document_ts
   file_testing_render_boundary_rules_ts --> file_testing_render_types_ts
+  file_testing_render_boundary_run_ts --> file_testing_render_builders_ts
+  file_testing_render_boundary_run_ts --> file_testing_render_document_ts
+  file_testing_render_boundary_run_ts --> file_testing_render_nx_graphs_ts
   file_testing_render_catalog_ts --> file_testing_render_anchor_placement_ts
+  file_testing_render_catalog_ts --> file_testing_render_boundary_attribution_ts
+  file_testing_render_catalog_ts --> file_testing_render_boundary_boot_failures_ts
   file_testing_render_catalog_ts --> file_testing_render_boundary_rules_ts
   file_testing_render_catalog_ts --> file_testing_render_configuration_ts
   file_testing_render_catalog_ts --> file_testing_render_export_delivery_ts

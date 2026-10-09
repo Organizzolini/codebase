@@ -12,6 +12,7 @@ import {
   BOUNDARY_LEVEL_ORDER,
   WORKSPACE_SCOPE,
 } from "./boundary-check.constants";
+import { BoundaryFailureService } from "./boundary-failure.service";
 import { BoundaryGraphService } from "./boundary-graph.service";
 
 import type {
@@ -23,6 +24,8 @@ import type {
   BoundaryCheckContext,
   BoundaryCheckFailure,
   BoundaryCheckOutcome,
+  BoundaryLevelOutcome,
+  BoundaryVerdict,
   LevelCheckArguments,
 } from "./boundary-check.types";
 import type {
@@ -51,6 +54,7 @@ export class BoundaryCheckService {
 
   constructor(
     private readonly boundariesService: BoundariesService,
+    private readonly boundaryFailureService: BoundaryFailureService,
     private readonly boundaryGraphService: BoundaryGraphService,
     private readonly moduleGraphService: ModuleGraphService,
     private readonly nestjsProjectService: NestjsProjectService,
@@ -64,17 +68,6 @@ export class BoundaryCheckService {
   // 🔑 Public Fields
 
   // 🔏 Private Methods
-
-  /** Turns a raised error into a `BoundaryCheckFailure` for the given project. */
-  private collectProjectFailure(
-    projectName: string,
-    error: unknown,
-  ): BoundaryCheckFailure {
-    return {
-      error: error instanceof Error ? error.message : String(error),
-      projectName,
-    };
-  }
 
   /**
    * The `CodependixGraphType` each boundary level is judged under.
@@ -99,6 +92,38 @@ export class BoundaryCheckService {
     };
 
     return graphTypesByLevel[level];
+  }
+
+  /**
+   * Judges every charged finding: it fails the run when one of its projects
+   * is judged, and is a note against the dependency it lives in otherwise.
+   */
+  private judge(
+    outcome: BoundaryLevelOutcome,
+    context: BoundaryCheckContext,
+  ): BoundaryCheckOutcome {
+    const judged = new Set(
+      context.selectedProjects.map((project) => project.name),
+    );
+
+    return {
+      failures: outcome.failures.map((failure) => ({
+        ...failure,
+        verdict: this.resolveVerdict(failure.projects, judged),
+      })),
+      violations: outcome.violations.map((violation) => ({
+        ...violation,
+        verdict: this.resolveVerdict(violation.projects, judged),
+      })),
+    };
+  }
+
+  /** `"fail"` when any charged project is judged, and `"note"` otherwise. */
+  private resolveVerdict(
+    projects: readonly string[],
+    judged: ReadonlySet<string>,
+  ): BoundaryVerdict {
+    return projects.some((project) => judged.has(project)) ? "fail" : "note";
   }
 
   /**
@@ -127,7 +152,7 @@ export class BoundaryCheckService {
   }
 
   /**
-   * Judges one level, whichever of the four builders it needs.
+   * Builds one level's findings, whichever of the four builders it needs.
    *
    * A record keyed by level rather than a switch: the record type requires
    * every `CodependixBoundaryLevel` to have an entry, so a fifth level added
@@ -135,12 +160,12 @@ export class BoundaryCheckService {
    */
   private async runLevel(
     args: LevelCheckArguments,
-  ): Promise<BoundaryCheckOutcome> {
+  ): Promise<BoundaryLevelOutcome> {
     const runners: Record<
       CodependixBoundaryLevel,
       (
         levelArguments: LevelCheckArguments,
-      ) => BoundaryCheckOutcome | Promise<BoundaryCheckOutcome>
+      ) => BoundaryLevelOutcome | Promise<BoundaryLevelOutcome>
     > = {
       nestjsModules: async (levelArguments) =>
         this.runNestjsLevel(levelArguments),
@@ -157,7 +182,7 @@ export class BoundaryCheckService {
   /** Judges every `framework:nestjs` project's module graph. */
   private async runNestjsLevel(
     args: LevelCheckArguments,
-  ): Promise<BoundaryCheckOutcome> {
+  ): Promise<BoundaryLevelOutcome> {
     return this.runProjectLevel({
       buildGraph: async (project) =>
         this.boundaryGraphService.buildNestjsGraph(
@@ -166,25 +191,31 @@ export class BoundaryCheckService {
             project.name,
           ),
         ),
+      levelArguments: args,
       projects: this.nestjsProjectService.discoverProjects(
-        args.context.selectedProjects,
+        args.context.buildProjects,
       ),
-      rules: args.rules,
     });
   }
 
-  /** Judges the whole-workspace Nx project graph. */
-  private runNxLevel(args: LevelCheckArguments): BoundaryCheckOutcome {
-    const { context, rules } = args;
+  /**
+   * Judges the whole-workspace Nx project graph, drawn over the build set so
+   * no edge from a judged project into a dependency is dropped.
+   *
+   * A graph that cannot be built is charged to every judged project, since
+   * none of them could be judged at this level.
+   */
+  private runNxLevel(args: LevelCheckArguments): BoundaryLevelOutcome {
+    const { context, level, rules } = args;
 
     try {
       const graph = this.boundaryGraphService.buildNxGraph({
-        projects: context.selectedProjects,
+        projects: context.buildProjects,
         scope: WORKSPACE_SCOPE,
         workingDirectory: context.workingDirectory,
         workspaceGraph: this.workspaceGraphService.buildWorkspaceGraph(
           context.graph,
-          context.selectedProjects,
+          context.buildProjects,
         ),
       });
 
@@ -194,27 +225,37 @@ export class BoundaryCheckService {
       };
     } catch (error) {
       return {
-        failures: [this.collectProjectFailure(WORKSPACE_SCOPE, error)],
+        failures: [
+          this.boundaryFailureService.collect({
+            error,
+            graph: context.graph,
+            level,
+            projects: context.selectedProjects.map((project) => project.name),
+            workspaceProjects: context.projects,
+          }),
+        ],
         violations: [],
       };
     }
   }
 
   /**
-   * Judges every project at one level, isolating each project's failure.
+   * Judges every project in the build set at one level, isolating each
+   * project's failure.
    *
    * The three per-project levels differ only in how a project is discovered
    * and how its graph is built, so the loop around them is written once: a
-   * project that raises is collected as a failure and every other project is
-   * still judged. `buildGraph` may be asynchronous because the NestJS level's
-   * is — booting a container is the one graph this tool cannot build
-   * synchronously.
+   * project that raises is collected as a failure charged to it, and every
+   * other project is still judged. `buildGraph` may be asynchronous because
+   * the NestJS level's is — booting a container is the one graph this tool
+   * cannot build synchronously.
    */
   private async runProjectLevel<Project extends { name: string }>(args: {
     buildGraph: (project: Project) => BoundaryGraph | Promise<BoundaryGraph>;
+    levelArguments: LevelCheckArguments;
     projects: readonly Project[];
-    rules: readonly CodependixBoundaryRule[];
-  }): Promise<BoundaryCheckOutcome> {
+  }): Promise<BoundaryLevelOutcome> {
+    const { context, level, rules } = args.levelArguments;
     const failures: BoundaryCheckFailure[] = [];
     const violations: BoundaryViolation[] = [];
 
@@ -222,11 +263,17 @@ export class BoundaryCheckService {
       try {
         const graph = await args.buildGraph(project);
 
-        violations.push(
-          ...this.boundariesService.evaluate({ graph, rules: args.rules }),
-        );
+        violations.push(...this.boundariesService.evaluate({ graph, rules }));
       } catch (error) {
-        failures.push(this.collectProjectFailure(project.name, error));
+        failures.push(
+          this.boundaryFailureService.collect({
+            error,
+            graph: context.graph,
+            level,
+            projects: [project.name],
+            workspaceProjects: context.projects,
+          }),
+        );
       }
     }
 
@@ -236,23 +283,21 @@ export class BoundaryCheckService {
   /** Judges every `language:python` project's file-level import graph. */
   private async runPythonImportsLevel(
     args: LevelCheckArguments,
-  ): Promise<BoundaryCheckOutcome> {
+  ): Promise<BoundaryLevelOutcome> {
     return this.runProjectLevel({
       buildGraph: (project) =>
         this.boundaryGraphService.buildPythonImportGraph(
           this.pythonService.buildGraph(project),
         ),
-      projects: this.pythonService.discoverProjects(
-        args.context.selectedProjects,
-      ),
-      rules: args.rules,
+      levelArguments: args,
+      projects: this.pythonService.discoverProjects(args.context.buildProjects),
     });
   }
 
   /** Judges every TypeScript project's file-level import graph. */
   private async runTypescriptImportsLevel(
     args: LevelCheckArguments,
-  ): Promise<BoundaryCheckOutcome> {
+  ): Promise<BoundaryLevelOutcome> {
     return this.runProjectLevel({
       buildGraph: (project) =>
         this.boundaryGraphService.buildTypescriptImportGraph(
@@ -260,10 +305,10 @@ export class BoundaryCheckService {
             this.typescriptService.buildProgram(project),
           ),
         ),
+      levelArguments: args,
       projects: this.typescriptService.discoverProjects(
-        args.context.selectedProjects,
+        args.context.buildProjects,
       ),
-      rules: args.rules,
     });
   }
 
@@ -285,7 +330,7 @@ export class BoundaryCheckService {
     context: BoundaryCheckContext,
   ): Promise<BoundaryCheckOutcome> {
     const { boundaries } = context.configuration;
-    const outcomes: BoundaryCheckOutcome[] = [];
+    const outcomes: BoundaryLevelOutcome[] = [];
 
     for (const level of BOUNDARY_LEVEL_ORDER) {
       if (!context.enabledGraphTypes.has(this.graphTypeForLevel(level))) {
@@ -299,9 +344,12 @@ export class BoundaryCheckService {
       }
     }
 
-    return {
-      failures: outcomes.flatMap((outcome) => outcome.failures),
-      violations: outcomes.flatMap((outcome) => outcome.violations),
-    };
+    return this.judge(
+      {
+        failures: outcomes.flatMap((outcome) => outcome.failures),
+        violations: outcomes.flatMap((outcome) => outcome.violations),
+      },
+      context,
+    );
   }
 }

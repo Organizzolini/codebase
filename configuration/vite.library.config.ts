@@ -101,6 +101,11 @@ export function createViteLibraryConfig(
           }
           return true;
         },
+        output: {
+          // NestJS logger contexts and error names read a class's `.name`, which
+          // bundling and minification would otherwise rename or mangle.
+          keepNames: true,
+        },
       },
     },
     plugins: [

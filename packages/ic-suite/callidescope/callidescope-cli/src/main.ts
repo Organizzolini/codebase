@@ -30,8 +30,11 @@ async function main(): Promise<void> {
   await CommandFactory.run(MainModule, {
     bufferLogs: true,
     logger,
-    serviceErrorHandler: (error: Error): void => {
-      logger.error("🔭 Failed a run", error.stack, { reason: error.message });
+    // nest-commander's default `serviceErrorHandler` only writes the error to
+    // stderr, leaving the process to exit `0` on a thrown command error. Set
+    // a non-zero exit code explicitly so CI and the pre-commit hook can fail.
+    serviceErrorHandler: (error: Error) => {
+      logger.error(error.message, error.stack);
       process.exitCode = 1;
     },
   });

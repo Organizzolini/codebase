@@ -196,14 +196,15 @@ export class EphemerisService {
   }
 
   /**
-   * Safely extracts azimuth or elevation data from horizon coordinate ephemeris.
+   * Safely extracts one field of a horizon position: azimuth, apparent or true
+   * elevation, or semidiameter.
    *
    * @throws When timestamp or field is missing from ephemeris.
    */
   public getAzimuthElevationFromEphemeris(
     ephemeris: AzimuthElevationEphemeris,
     timestamp: string,
-    fieldName: "azimuth" | "elevation",
+    fieldName: "azimuth" | "elevation" | "semidiameter" | "trueElevation",
   ): number {
     const data = ephemeris[timestamp];
     if (data?.[fieldName] === undefined) {
@@ -355,6 +356,23 @@ export class EphemerisService {
       throw new Error(`Missing ${fieldName} at ${timestamp}`);
     }
     return data.distance;
+  }
+
+  /**
+   * Safely extracts the radial speed (AU per day, positive while receding)
+   * from a distance ephemeris.
+   *
+   * @throws When timestamp or field is missing from ephemeris.
+   */
+  public getDistanceSpeedFromEphemeris(
+    ephemeris: DistanceEphemeris,
+    timestamp: string,
+  ): number {
+    const data = ephemeris[timestamp];
+    if (data?.distanceSpeed === undefined) {
+      throw new Error(`Missing distance speed at ${timestamp}`);
+    }
+    return data.distanceSpeed;
   }
 
   /**

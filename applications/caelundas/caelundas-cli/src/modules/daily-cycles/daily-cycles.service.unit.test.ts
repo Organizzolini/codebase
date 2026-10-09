@@ -1,6 +1,6 @@
 import { Test } from "@nestjs/testing";
 import moment, { type Moment } from "moment-timezone";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { LoggerService } from "@codebase/logging";
 
@@ -11,7 +11,10 @@ import { MathService } from "../math/math.service";
 import { DailyCyclesBuilderService } from "./daily-cycles-builder.service";
 import { DailyCyclesService } from "./daily-cycles.service";
 
-import type { AzimuthElevationEphemeris } from "../ephemeris/ephemeris.types";
+import type {
+  AzimuthElevationEphemeris,
+  HorizonPosition,
+} from "../ephemeris/ephemeris.types";
 import type { LogData } from "@codebase/logging";
 
 vi.mock("fs", () => ({
@@ -20,15 +23,38 @@ vi.mock("fs", () => ({
   },
 }));
 
-interface ServicePrivate {
-  isRise: (args: { current: number; previous: number }) => boolean;
-  isSet: (args: { current: number; previous: number }) => boolean;
+/** A horizon sample whose true elevation matches its apparent one unless given. */
+function horizon(
+  azimuth: number,
+  elevation: number,
+  trueElevation = elevation,
+): HorizonPosition {
+  return { azimuth, elevation, semidiameter: 0.27, trueElevation };
+}
+
+/** Three consecutive minutes of true elevation around `minute`, as an ephemeris. */
+function riseSetEphemeris(args: {
+  minute: Moment;
+  semidiameter?: number;
+  trueElevations: [previous: number, current: number, next: number];
+}): AzimuthElevationEphemeris {
+  const { minute, semidiameter = 0.27, trueElevations } = args;
+  const [previous, current, next] = trueElevations;
+  const sample = (trueElevation: number): HorizonPosition => ({
+    azimuth: 90,
+    elevation: trueElevation,
+    semidiameter,
+    trueElevation,
+  });
+  return {
+    [minute.clone().add(1, "minute").toISOString()]: sample(next),
+    [minute.clone().subtract(1, "minute").toISOString()]: sample(previous),
+    [minute.toISOString()]: sample(current),
+  };
 }
 
 describe(DailyCyclesService, () => {
   let service: DailyCyclesService;
-  let helperService: DailyCyclesBuilderService;
-  let s: ServicePrivate;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -81,56 +107,10 @@ describe(DailyCyclesService, () => {
       ],
     }).compile();
     service = await module.resolve(DailyCyclesService);
-    helperService = await module.resolve(DailyCyclesBuilderService);
-    s = helperService;
   });
 
   describe("dailySolarCycle.events", () => {
     describe("detect", () => {
-      it("detects sunrise event when sun rises above horizon", () => {
-        const currentMinute = moment.utc("2024-03-21T06:30:00.000Z");
-        const previousMinute = currentMinute.clone().subtract(1, "minute");
-        const nextMinute = currentMinute.clone().add(1, "minute");
-
-        // Sun rising above horizon (threshold is -16/60 degrees = -0.2667)
-        const sunAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-          [currentMinute.toISOString()]: { azimuth: 91, elevation: -0.1 },
-          [nextMinute.toISOString()]: { azimuth: 92, elevation: 0.1 },
-          [previousMinute.toISOString()]: { azimuth: 90, elevation: -0.3 },
-        };
-
-        const events = service.getDailySolarCycleEvents({
-          minute: currentMinute,
-          sunAzimuthElevationEphemeris,
-        });
-
-        expect(events).toHaveLength(1);
-        expect(events[0]?.summary).toContain("Sunrise");
-        expect(events[0]?.categories).toContain("Solar");
-      });
-
-      it("detects sunset event when sun sets below horizon", () => {
-        const currentMinute = moment.utc("2024-03-21T18:30:00.000Z");
-        const previousMinute = currentMinute.clone().subtract(1, "minute");
-        const nextMinute = currentMinute.clone().add(1, "minute");
-
-        // Sun setting below horizon
-        const sunAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-          [currentMinute.toISOString()]: { azimuth: 271, elevation: -0.3 },
-          [nextMinute.toISOString()]: { azimuth: 272, elevation: -0.5 },
-          [previousMinute.toISOString()]: { azimuth: 270, elevation: -0.1 },
-        };
-
-        const events = service.getDailySolarCycleEvents({
-          minute: currentMinute,
-          sunAzimuthElevationEphemeris,
-        });
-
-        expect(events).toHaveLength(1);
-        expect(events[0]?.summary).toContain("Sunset");
-        expect(events[0]?.categories).toContain("Solar");
-      });
-
       it("detects solar zenith when sun reaches maximum elevation", () => {
         const currentMinute = moment.utc("2024-03-21T12:00:00.000Z");
         const previousMinute = currentMinute.clone().subtract(1, "minute");
@@ -138,9 +118,9 @@ describe(DailyCyclesService, () => {
 
         // Sun at local maximum elevation
         const sunAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-          [currentMinute.toISOString()]: { azimuth: 180, elevation: 45 },
-          [nextMinute.toISOString()]: { azimuth: 182, elevation: 44.9 },
-          [previousMinute.toISOString()]: { azimuth: 178, elevation: 44.9 },
+          [currentMinute.toISOString()]: horizon(180, 45),
+          [nextMinute.toISOString()]: horizon(182, 44.9),
+          [previousMinute.toISOString()]: horizon(178, 44.9),
         };
 
         const events = service.getDailySolarCycleEvents({
@@ -160,9 +140,9 @@ describe(DailyCyclesService, () => {
 
         // Sun at local minimum elevation (below horizon at night)
         const sunAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-          [currentMinute.toISOString()]: { azimuth: 0, elevation: -45 },
-          [nextMinute.toISOString()]: { azimuth: 2, elevation: -44.9 },
-          [previousMinute.toISOString()]: { azimuth: 358, elevation: -44.9 },
+          [currentMinute.toISOString()]: horizon(0, -45),
+          [nextMinute.toISOString()]: horizon(2, -44.9),
+          [previousMinute.toISOString()]: horizon(358, -44.9),
         };
 
         const events = service.getDailySolarCycleEvents({
@@ -182,9 +162,9 @@ describe(DailyCyclesService, () => {
 
         // Sun in middle of sky, not at any threshold
         const sunAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-          [currentMinute.toISOString()]: { azimuth: 151, elevation: 30 },
-          [nextMinute.toISOString()]: { azimuth: 152, elevation: 31 },
-          [previousMinute.toISOString()]: { azimuth: 150, elevation: 29 },
+          [currentMinute.toISOString()]: horizon(151, 30),
+          [nextMinute.toISOString()]: horizon(152, 31),
+          [previousMinute.toISOString()]: horizon(150, 29),
         };
 
         const events = service.getDailySolarCycleEvents({
@@ -193,27 +173,6 @@ describe(DailyCyclesService, () => {
         });
 
         expect(events).toHaveLength(0);
-      });
-
-      it("returns multiple events if they occur at the same minute", () => {
-        const currentMinute = moment.utc("2024-03-21T06:30:00.000Z");
-        const previousMinute = currentMinute.clone().subtract(1, "minute");
-        const nextMinute = currentMinute.clone().add(1, "minute");
-
-        // Edge case: sunrise and maximum at same time
-        const sunAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-          [currentMinute.toISOString()]: { azimuth: 91, elevation: -0.2 },
-          [nextMinute.toISOString()]: { azimuth: 92, elevation: -0.25 },
-          [previousMinute.toISOString()]: { azimuth: 90, elevation: -0.3 },
-        };
-
-        const events = service.getDailySolarCycleEvents({
-          minute: currentMinute,
-          sunAzimuthElevationEphemeris,
-        });
-
-        // Should have sunrise and potentially zenith if the elevation is at a maximum
-        expect(events.length).toBeGreaterThanOrEqual(1);
       });
     });
 
@@ -288,52 +247,6 @@ describe(DailyCyclesService, () => {
 
   describe("dailyLunarCycle.events", () => {
     describe("detect", () => {
-      it("detects moonrise event when moon rises above horizon", () => {
-        const currentMinute = moment.utc("2024-03-21T20:30:00.000Z");
-        const previousMinute = currentMinute.clone().subtract(1, "minute");
-        const nextMinute = currentMinute.clone().add(1, "minute");
-
-        // Moon rising above horizon (threshold is -16/60 degrees = -0.2667)
-        const moonAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-          [currentMinute.toISOString()]: { azimuth: 91, elevation: -0.1 },
-          [nextMinute.toISOString()]: { azimuth: 92, elevation: 0.1 },
-          [previousMinute.toISOString()]: { azimuth: 90, elevation: -0.3 },
-        };
-
-        const events = service.getDailyLunarCycleEvents({
-          minute: currentMinute,
-          moonAzimuthElevationEphemeris,
-        });
-
-        expect(events).toHaveLength(1);
-        expect(events[0]).toBeDefined();
-        expect(events[0]?.summary).toContain("Moonrise");
-        expect(events[0]?.categories).toContain("Lunar");
-      });
-
-      it("detects moonset event when moon sets below horizon", () => {
-        const currentMinute = moment.utc("2024-03-22T06:30:00.000Z");
-        const previousMinute = currentMinute.clone().subtract(1, "minute");
-        const nextMinute = currentMinute.clone().add(1, "minute");
-
-        // Moon setting below horizon
-        const moonAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-          [currentMinute.toISOString()]: { azimuth: 271, elevation: -0.3 },
-          [nextMinute.toISOString()]: { azimuth: 272, elevation: -0.5 },
-          [previousMinute.toISOString()]: { azimuth: 270, elevation: -0.1 },
-        };
-
-        const events = service.getDailyLunarCycleEvents({
-          minute: currentMinute,
-          moonAzimuthElevationEphemeris,
-        });
-
-        expect(events).toHaveLength(1);
-        expect(events[0]).toBeDefined();
-        expect(events[0]?.summary).toContain("Moonset");
-        expect(events[0]?.categories).toContain("Lunar");
-      });
-
       it("detects lunar zenith when moon reaches maximum elevation", () => {
         const currentMinute = moment.utc("2024-03-22T01:00:00.000Z");
         const previousMinute = currentMinute.clone().subtract(1, "minute");
@@ -341,9 +254,9 @@ describe(DailyCyclesService, () => {
 
         // Moon at local maximum elevation
         const moonAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-          [currentMinute.toISOString()]: { azimuth: 180, elevation: 40 },
-          [nextMinute.toISOString()]: { azimuth: 182, elevation: 39.9 },
-          [previousMinute.toISOString()]: { azimuth: 178, elevation: 39.9 },
+          [currentMinute.toISOString()]: horizon(180, 40),
+          [nextMinute.toISOString()]: horizon(182, 39.9),
+          [previousMinute.toISOString()]: horizon(178, 39.9),
         };
 
         const events = service.getDailyLunarCycleEvents({
@@ -364,9 +277,9 @@ describe(DailyCyclesService, () => {
 
         // Moon at local minimum elevation (below horizon during day)
         const moonAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-          [currentMinute.toISOString()]: { azimuth: 0, elevation: -40 },
-          [nextMinute.toISOString()]: { azimuth: 2, elevation: -39.9 },
-          [previousMinute.toISOString()]: { azimuth: 358, elevation: -39.9 },
+          [currentMinute.toISOString()]: horizon(0, -40),
+          [nextMinute.toISOString()]: horizon(2, -39.9),
+          [previousMinute.toISOString()]: horizon(358, -39.9),
         };
 
         const events = service.getDailyLunarCycleEvents({
@@ -387,9 +300,9 @@ describe(DailyCyclesService, () => {
 
         // Moon in middle of sky, not at any threshold
         const moonAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-          [currentMinute.toISOString()]: { azimuth: 151, elevation: 30 },
-          [nextMinute.toISOString()]: { azimuth: 152, elevation: 31 },
-          [previousMinute.toISOString()]: { azimuth: 150, elevation: 29 },
+          [currentMinute.toISOString()]: horizon(151, 30),
+          [nextMinute.toISOString()]: horizon(152, 31),
+          [previousMinute.toISOString()]: horizon(150, 29),
         };
 
         const events = service.getDailyLunarCycleEvents({
@@ -398,30 +311,6 @@ describe(DailyCyclesService, () => {
         });
 
         expect(events).toHaveLength(0);
-      });
-
-      it("handles multiple events at once", () => {
-        const currentMinute = moment.utc("2024-03-21T20:30:00.000Z");
-        const previousMinute = currentMinute.clone().subtract(1, "minute");
-        const nextMinute = currentMinute.clone().add(1, "minute");
-
-        // Moonrise with a local maximum (unlikely in reality but tests code path)
-        const moonAzimuthElevationEphemeris: AzimuthElevationEphemeris = {
-          [currentMinute.toISOString()]: { azimuth: 91, elevation: -0.2 },
-          [nextMinute.toISOString()]: { azimuth: 92, elevation: -0.25 },
-          [previousMinute.toISOString()]: { azimuth: 90, elevation: -0.3 },
-        };
-
-        const events = service.getDailyLunarCycleEvents({
-          minute: currentMinute,
-          moonAzimuthElevationEphemeris,
-        });
-
-        // Should have at least moonrise or zenith (depends on exact threshold)
-        expect(events.length).toBeGreaterThanOrEqual(1);
-        expect(
-          events.some((e) => e.categories.includes("Daily Lunar Cycle")),
-        ).toBe(true);
       });
     });
 
@@ -490,115 +379,97 @@ describe(DailyCyclesService, () => {
     });
   });
 
-  describe("private utility methods", () => {
-    beforeEach(() => {
-      vi.restoreAllMocks();
+  describe("rise and set", () => {
+    const minute = moment.utc("2026-03-20T11:04:00.000Z");
+    const sunriseSummary = "☀️ 🔼 Sunrise";
+    const sunsetSummary = "☀️ 🔽 Sunset";
+    const moonriseSummary = "🌙 🔼 Moonrise";
+    const moonsetSummary = "🌙 🔽 Moonset";
+
+    function solarSummaries(
+      trueElevations: [number, number, number],
+    ): string[] {
+      return service
+        .getDailySolarCycleEvents({
+          minute,
+          sunAzimuthElevationEphemeris: riseSetEphemeris({
+            minute,
+            trueElevations,
+          }),
+        })
+        .map((event) => event.summary);
+    }
+
+    function lunarSummaries(args: {
+      semidiameter: number;
+      trueElevations: [number, number, number];
+    }): string[] {
+      return service
+        .getDailyLunarCycleEvents({
+          minute,
+          moonAzimuthElevationEphemeris: riseSetEphemeris({ minute, ...args }),
+        })
+        .map((event) => event.summary);
+    }
+
+    it("rises the Sun when its true elevation crosses the standard -0.8333 degrees", () => {
+      expect(solarSummaries([-0.9, -0.8, -0.7])).toContain(sunriseSummary);
     });
 
-    describe("dailyCyclesService.sunRadiusDegrees", () => {
-      it("has correct value for sun radius", () => {
-        expect.hasAssertions(); // Sun radius is 16 arcminutes, 60 arcminutes per degree
-        expect(DailyCyclesService.sunRadiusDegrees).toBeCloseTo(16 / 60, 5);
-        expect(DailyCyclesService.sunRadiusDegrees).toBeCloseTo(0.2667, 3);
-      });
+    it("sets the Sun when its true elevation crosses the standard -0.8333 degrees", () => {
+      expect(solarSummaries([-0.7, -0.8, -0.9])).toContain(sunsetSummary);
     });
 
-    describe("isRise", () => {
-      it("returns true when crossing above sun radius threshold", () => {
-        expect.hasAssertions(); // Rise occurs when elevation goes from below -DailyCyclesService.sunRadiusDegrees to above
-
-        const result = s.isRise({
-          current: 0, // Above threshold
-          previous: -0.5, // Below threshold (-0.2667)
-        });
-
-        expect(result).toBe(true);
-      });
-
-      it("returns true at exact threshold crossing", () => {
-        const result = s.isRise({
-          current: -DailyCyclesService.sunRadiusDegrees + 0.01, // Just above threshold
-          previous: -DailyCyclesService.sunRadiusDegrees - 0.01, // Just below threshold
-        });
-
-        expect(result).toBe(true);
-      });
-
-      it("returns false when elevation stays below threshold", () => {
-        const result = s.isRise({
-          current: -0.5,
-          previous: -1,
-        });
-
-        expect(result).toBe(false);
-      });
-
-      it("returns false when elevation stays above threshold", () => {
-        const result = s.isRise({
-          current: 1,
-          previous: 0.5,
-        });
-
-        expect(result).toBe(false);
-      });
-
-      it("returns false when crossing threshold downward (set direction)", () => {
-        const result = s.isRise({
-          current: -0.5, // Below threshold
-          previous: 0, // Above threshold
-        });
-
-        expect(result).toBe(false);
-      });
+    it("ignores the Sun crossing the old -16 arcminute line above the standard altitude", () => {
+      expect(solarSummaries([-0.3, -0.2, -0.1])).toStrictEqual([]);
     });
 
-    describe("isSet", () => {
-      it("returns true when crossing below sun radius threshold", () => {
-        expect.hasAssertions(); // Set occurs when elevation goes from above -DailyCyclesService.sunRadiusDegrees to below
+    it("stamps a rise on the minute nearest the crossing, not the minute after it", () => {
+      // Crossing 4 seconds after the previous minute: it belongs to that minute.
+      expect(solarSummaries([-0.84, -0.74, -0.64])).not.toContain(
+        sunriseSummary,
+      );
+      // Crossing 10 seconds after this minute: it belongs to this minute.
+      expect(solarSummaries([-0.88, -0.84, -0.8])).toContain(sunriseSummary);
+    });
 
-        const result = s.isSet({
-          current: -0.5, // Below threshold
-          previous: 0, // Above threshold
-        });
+    it("stamps a set on the minute nearest the crossing, not the minute after it", () => {
+      expect(solarSummaries([-0.83, -0.93, -1.03])).not.toContain(
+        sunsetSummary,
+      );
+      expect(solarSummaries([-0.79, -0.83, -0.87])).toContain(sunsetSummary);
+    });
 
-        expect(result).toBe(true);
-      });
+    it("rises the Moon when its upper limb clears refraction and its own semidiameter", () => {
+      // Threshold -(34 arcminutes + 0.3 degrees) = -0.8667 degrees.
+      expect(
+        lunarSummaries({
+          semidiameter: 0.3,
+          trueElevations: [-0.9, -0.86, -0.82],
+        }),
+      ).toContain(moonriseSummary);
+      // Threshold -(34 arcminutes + 0.2 degrees) = -0.7667 degrees: not yet risen.
+      expect(
+        lunarSummaries({
+          semidiameter: 0.2,
+          trueElevations: [-0.9, -0.86, -0.82],
+        }),
+      ).not.toContain(moonriseSummary);
+    });
 
-      it("returns true at exact threshold crossing", () => {
-        const result = s.isSet({
-          current: -DailyCyclesService.sunRadiusDegrees - 0.01, // Just below threshold
-          previous: -DailyCyclesService.sunRadiusDegrees + 0.01, // Just above threshold
-        });
-
-        expect(result).toBe(true);
-      });
-
-      it("returns false when elevation stays above threshold", () => {
-        const result = s.isSet({
-          current: 0.5,
-          previous: 1,
-        });
-
-        expect(result).toBe(false);
-      });
-
-      it("returns false when elevation stays below threshold", () => {
-        const result = s.isSet({
-          current: -1,
-          previous: -0.5,
-        });
-
-        expect(result).toBe(false);
-      });
-
-      it("returns false when crossing threshold upward (rise direction)", () => {
-        const result = s.isSet({
-          current: 0, // Above threshold
-          previous: -0.5, // Below threshold
-        });
-
-        expect(result).toBe(false);
-      });
+    it("sets the Moon when its upper limb drops below refraction and its own semidiameter", () => {
+      expect(
+        lunarSummaries({
+          semidiameter: 0.3,
+          trueElevations: [-0.82, -0.86, -0.9],
+        }),
+      ).toContain(moonsetSummary);
+      expect(
+        lunarSummaries({
+          semidiameter: 0.2,
+          trueElevations: [-0.82, -0.86, -0.9],
+        }),
+      ).not.toContain(moonsetSummary);
     });
   });
 });

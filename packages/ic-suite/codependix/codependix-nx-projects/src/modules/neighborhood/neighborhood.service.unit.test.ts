@@ -357,6 +357,83 @@ describe(NeighborhoodService, () => {
     });
   });
 
+  describe("resolveDependencyClosure", () => {
+    it("reaches every project a diamond's top depends on, once each", () => {
+      const graph = buildGraph({
+        bottom: [],
+        left: [["bottom", "static"]],
+        right: [["bottom", "static"]],
+        top: [
+          ["left", "static"],
+          ["right", "static"],
+        ],
+      });
+
+      expect(service.resolveDependencyClosure(graph, ["top"])).toStrictEqual([
+        "bottom",
+        "left",
+        "right",
+        "top",
+      ]);
+    });
+
+    it("never reaches a project that only depends on the named one", () => {
+      const graph = buildGraph({ a: [["b", "static"]], b: [] });
+
+      expect(service.resolveDependencyClosure(graph, ["b"])).toStrictEqual([
+        "b",
+      ]);
+    });
+
+    it("terminates on a cycle in the project graph", () => {
+      const graph = buildGraph({
+        a: [["b", "static"]],
+        b: [["a", "static"]],
+        c: [["a", "static"]],
+      });
+
+      expect(service.resolveDependencyClosure(graph, ["c"])).toStrictEqual([
+        "a",
+        "b",
+        "c",
+      ]);
+    });
+
+    it("follows an implicit edge as well as a static one", () => {
+      const graph = buildGraph({
+        a: [["b", "implicit"]],
+        b: [["c", "dynamic"]],
+        c: [],
+      });
+
+      expect(service.resolveDependencyClosure(graph, ["a"])).toStrictEqual([
+        "a",
+        "b",
+        "c",
+      ]);
+    });
+
+    it("drops a name and a target the graph has no node for", () => {
+      const graph: ProjectGraph = {
+        dependencies: {
+          a: [
+            { source: "a", target: "npm:left-pad", type: "static" },
+            { source: "a", target: "b", type: "static" },
+          ],
+        },
+        nodes: {
+          a: { data: { root: "packages/a" }, name: "a", type: "lib" },
+          b: { data: { root: "packages/b" }, name: "b", type: "lib" },
+        },
+      };
+
+      // `b` has no dependency list at all, which Nx omits for a leaf.
+      expect(
+        service.resolveDependencyClosure(graph, ["a", "missing"]),
+      ).toStrictEqual(["a", "b"]);
+    });
+  });
+
   describe("renderMermaid", () => {
     it("renders the neighborhood and marks the project it centres on", () => {
       const graph = buildGraph({ caelundas: [["logger", "static"]] });

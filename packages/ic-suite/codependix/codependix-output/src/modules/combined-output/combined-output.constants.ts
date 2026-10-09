@@ -8,6 +8,18 @@ import {
 
 import type { CodependixGraphType } from "@codependix/configuration";
 
+/**
+ * The anchor name a combined Markdown destination splices the boundary
+ * report under, and the key `--format json` prints it under.
+ *
+ * Not a `CodependixGraphType`: a boundary report is what one pass found, not
+ * a graph a run exports, so it cannot collide with a graph type's own name.
+ */
+export const BOUNDARIES_KEY = "boundaries";
+
+/** `### <subheading>` placed above the boundary report's anchor. */
+export const BOUNDARIES_MARKDOWN_SUBHEADING = "Boundaries";
+
 /** What `--format json` prints: every active graph type's data, keyed by type. */
 export const FORMAT_JSON = "json";
 

@@ -193,6 +193,20 @@
           "projects": ["tag:language:python", "tag:language:typescript"]
         },
         "inputs": ["^production", "dependency-versions", "production"]
+      },
+      {
+        "cache": true,
+        "dependsOn": ["^build"],
+        "description": "The `packages/ic-suite/<suite>/` override of the default `build` entry above: every field is identical except the one extra input. Each ic-suite `vite.config.ts` builds from `configuration/vite.library.config.ts`, which belongs to the root project, so without it a change there neither invalidates a cached build nor makes these packages affected — and Nx release reads that same affected set to decide which packages a commit republishes. Kept as a full second entry because Nx does not merge across matching targetDefaults array entries; the last one whose `filter` matches a project replaces the earlier entry wholesale.",
+        "filter": {
+          "projects": ["packages/ic-suite/*/*"]
+        },
+        "inputs": [
+          "^production",
+          "{workspaceRoot}/configuration/vite.library.config.ts",
+          "dependency-versions",
+          "production"
+        ]
       }
     ],
     "build-projects": {

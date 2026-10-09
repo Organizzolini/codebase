@@ -1,9 +1,11 @@
 import {
   type BoundaryCheckOutcome,
   BoundaryCheckService,
+  BoundaryOutcomeReportService,
   BoundaryReportService,
   type BoundaryViolation,
   type GraphRunContext,
+  type JudgedBoundaryFinding,
   RunContextService,
 } from "@codependix/boundaries";
 import {
@@ -50,14 +52,16 @@ function buildMode(overrides: Partial<RunMode> = {}): RunMode {
   };
 }
 
-const VIOLATION: BoundaryViolation = {
+const VIOLATION: JudgedBoundaryFinding<BoundaryViolation> = {
   cycle: undefined,
   level: "nxProjects",
   message: "layers: a must not depend on b.",
+  projects: ["a"],
   rule: "layers",
   scope: "workspace",
   source: "a",
   target: "b",
+  verdict: "fail",
 };
 
 describe(MapCommand, () => {
@@ -99,6 +103,7 @@ describe(MapCommand, () => {
   /** Hands the command a context, as `RunContextService.build` resolves one. */
   function buildContextWithInclude(include: string[]): GraphRunContext {
     return {
+      buildProjects: [],
       configuration: {
         boundaries: {
           fileImports: { python: [], typescript: [] },
@@ -108,7 +113,7 @@ describe(MapCommand, () => {
         exclude: [],
         include,
         projectGraph: undefined,
-        selection: { projects: [], tags: [] },
+        selection: { dependencies: true, projects: [], tags: [] },
         workspace: {},
       },
       enabledGraphTypes: new Set([
@@ -179,8 +184,11 @@ describe(MapCommand, () => {
     combinedOutputService = createMock<CombinedOutputService>();
     configurationService = createMock<ConfigurationService>();
     loggerService = createMock<LoggerService>();
+    const boundaryReportService = new BoundaryReportService();
+
     reportingService = new ReportingService(
-      new BoundaryReportService(),
+      new BoundaryOutcomeReportService(boundaryReportService),
+      boundaryReportService,
       loggerService,
     );
     runContextService = createMock<RunContextService>();
@@ -522,7 +530,7 @@ describe(MapCommand, () => {
       undefined,
       {
         summary: "1 boundary violation across 1 rule.",
-        violations: ["nxProjects workspace: layers: a must not depend on b."],
+        violations: ["nxProjects a: layers: a must not depend on b."],
       },
     );
   });
@@ -530,7 +538,14 @@ describe(MapCommand, () => {
   it("fails and logs a project whose graph could not be judged", async () => {
     selectMode({ checksBoundaries: true, writes: false });
     vi.mocked(boundaryCheckService.run).mockResolvedValue({
-      failures: [{ error: "boom", projectName: "lexico" }],
+      failures: [
+        {
+          error: "boom",
+          level: "nestjsModules",
+          projects: ["lexico"],
+          verdict: "fail",
+        },
+      ],
       violations: [],
     });
 
@@ -540,7 +555,7 @@ describe(MapCommand, () => {
     expect(loggerService.error).toHaveBeenCalledWith(
       "💥 Failed running codependix",
       undefined,
-      { failures: [{ error: "boom", projectName: "lexico" }] },
+      { failures: ["nestjsModules lexico: boom"] },
     );
   });
 
@@ -745,6 +760,26 @@ describe(MapCommand, () => {
     );
   });
 
+  // 🧭 Dependency closure
+
+  it("delegates --dependencies to an unconditional true", () => {
+    expect(buildCommand().parseDependencies()).toBe(true);
+  });
+
+  it("delegates --no-dependencies to an unconditional false", () => {
+    expect(buildCommand().parseNoDependencies()).toBe(false);
+  });
+
+  it("hands --no-dependencies to the run context builder", async () => {
+    await run({ check: "boundaries", dependencies: false, projects: "a" });
+
+    expect(runContextService.build).toHaveBeenCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({ dependencies: false }) as unknown,
+      }),
+    );
+  });
+
   // 🎛️ Graph-type toggles
 
   it("delegates --file-imports to an unconditional true", () => {
@@ -889,5 +924,132 @@ describe(MapCommand, () => {
     await run({ check: "boundaries" });
 
     expect(combinedOutputService.run).not.toHaveBeenCalled();
+  });
+
+  describe("the boundary report", () => {
+    const FAILING_OUTCOME: BoundaryCheckOutcome = {
+      failures: [],
+      violations: [VIOLATION],
+    };
+
+    /** Judges `b` and `a`, as a run narrowed to them would. */
+    function judgeProjects(): GraphRunContext {
+      const context = buildContextWithInclude(["**"]);
+      const judged = {
+        ...context,
+        selectedProjects: ["b", "a"].map((name) => ({
+          absoluteRoot: `/workspace/${name}`,
+          name,
+          tags: [],
+        })),
+      };
+
+      vi.mocked(runContextService.build).mockResolvedValue(judged);
+
+      return judged;
+    }
+
+    it("prints a boundaries-only run's findings when --format was given", async () => {
+      judgeProjects();
+      vi.mocked(combinedOutputService.resolveFormat).mockReturnValue({
+        errors: [],
+        format: "json",
+      });
+      selectMode({ checksBoundaries: true, writes: false });
+      vi.mocked(boundaryCheckService.run).mockResolvedValue(FAILING_OUTCOME);
+
+      await run({
+        check: "boundaries",
+        directory: "/workspace",
+        format: "json",
+      });
+
+      expect(combinedOutputService.run).toHaveBeenCalledExactlyOnceWith({
+        boundaries: { judgedProjects: ["b", "a"], outcome: FAILING_OUTCOME },
+        format: "json",
+        graphs: {},
+        jsonOutputPath: undefined,
+        markdownOutputPath: undefined,
+        workingDirectory: "/workspace",
+      });
+    });
+
+    it("still fails the run whose findings it printed", async () => {
+      judgeProjects();
+      selectMode({ checksBoundaries: true, writes: false });
+      vi.mocked(boundaryCheckService.run).mockResolvedValue(FAILING_OUTCOME);
+
+      await run({ check: "boundaries", format: "json" });
+
+      expect(combinedOutputService.run).toHaveBeenCalledTimes(1);
+      expect(process.exitCode).toBe(1);
+    });
+
+    it.each([
+      ["--json-output", { jsonOutput: "boundaries.json" }],
+      ["--markdown-output", { markdownOutput: "boundaries.md" }],
+    ])(
+      "prints a boundaries-only run's findings when %s was given",
+      async (_flag, flag) => {
+        judgeProjects();
+        selectMode({ checksBoundaries: true, writes: false });
+
+        await run({ check: "boundaries", ...flag });
+
+        expect(combinedOutputService.run).toHaveBeenCalledTimes(1);
+      },
+    );
+
+    it("carries the boundaries and the exports in one combined document", async () => {
+      judgeProjects();
+      selectMode({ checksBoundaries: true, writes: true });
+      vi.mocked(boundaryCheckService.run).mockResolvedValue(FAILING_OUTCOME);
+      vi.mocked(codependixService.run).mockResolvedValue(
+        buildMapRun(
+          { failures: [], results: [] },
+          { nxProjects: { json: {}, markdown: "diagram" } },
+        ),
+      );
+
+      await run({ check: "boundaries", format: "json", write: true });
+
+      expect(combinedOutputService.run).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          boundaries: { judgedProjects: ["b", "a"], outcome: FAILING_OUTCOME },
+          graphs: { nxProjects: { json: {}, markdown: "diagram" } },
+        }),
+      );
+    });
+
+    it("leaves the boundaries out of an export run that asked for no output", async () => {
+      judgeProjects();
+      selectMode({ checksBoundaries: true, writes: true });
+      vi.mocked(codependixService.run).mockResolvedValue(
+        buildMapRun(
+          { failures: [], results: [] },
+          { nxProjects: { json: {}, markdown: "diagram" } },
+        ),
+      );
+
+      await run({ check: "boundaries", write: true });
+
+      expect(combinedOutputService.run).toHaveBeenCalledExactlyOnceWith({
+        format: "markdown",
+        graphs: { nxProjects: { json: {}, markdown: "diagram" } },
+        jsonOutputPath: undefined,
+        markdownOutputPath: undefined,
+        workingDirectory: "/workspace",
+      });
+    });
+
+    it("prints nothing for a boundaries-only run that asked for no output", async () => {
+      judgeProjects();
+      selectMode({ checksBoundaries: true, writes: false });
+      vi.mocked(boundaryCheckService.run).mockResolvedValue(FAILING_OUTCOME);
+
+      await run({ check: "boundaries" });
+
+      expect(combinedOutputService.run).not.toHaveBeenCalled();
+    });
   });
 });

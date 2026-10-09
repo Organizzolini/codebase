@@ -7,7 +7,11 @@ import {
   aspectBodies as specialtyAspectBodies,
   specialtyAspects,
 } from "../caelundas/caelundas.constants";
-import { isBody, isSpecialtyAspect } from "../caelundas/caelundas.types";
+import {
+  bodyDisplayName,
+  isBody,
+  isSpecialtyAspect,
+} from "../caelundas/caelundas.types";
 import {
   symbolByBody,
   symbolBySpecialtyAspect,
@@ -91,7 +95,7 @@ export class SpecialtyAspectsComposerService {
   } {
     const bodiesCapitalized = _.sortBy(
       categories.filter((category) =>
-        specialtyAspectBodies.map((b) => _.startCase(b)).includes(category),
+        specialtyAspectBodies.map((b) => bodyDisplayName(b)).includes(category),
       ),
     );
     const aspectCapitalized = categories.find((category) =>
@@ -236,7 +240,7 @@ export class SpecialtyAspectsComposerService {
   specialtyAspectGroupKey(event: DetectedCalendarEvent): string {
     const bodiesCapitalized = _.sortBy(
       event.categories.filter((category) =>
-        specialtyAspectBodies.map((b) => _.startCase(b)).includes(category),
+        specialtyAspectBodies.map((b) => bodyDisplayName(b)).includes(category),
       ),
     );
     const aspectCapitalized = event.categories.find((category) =>

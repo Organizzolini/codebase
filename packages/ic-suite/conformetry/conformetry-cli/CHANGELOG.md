@@ -1,3 +1,29 @@
+## 0.0.12 (2026-10-08)
+
+### 🩹 Fixes
+
+- **ic-suite:** 🐛 exit non-zero when an ic-suite cli command throws ([#1486](https://github.com/organizzolini/codebase/pull/1486), [#1479](https://github.com/organizzolini/codebase/issues/1479))
+
+## 0.0.11 (2026-10-08)
+
+### 🧱 Updated Dependencies
+
+- Updated conformetry-configuration to 0.0.12
+- Updated conformetry-generation to 0.0.12
+- Updated conformetry-validation to 0.0.11
+- Updated conformetry-output to 0.0.11
+- Updated conformetry-core to 0.0.11
+
+## 0.0.10 (2026-10-08)
+
+### 🧱 Updated Dependencies
+
+- Updated conformetry-configuration to 0.0.11
+- Updated conformetry-generation to 0.0.11
+- Updated conformetry-validation to 0.0.10
+- Updated conformetry-output to 0.0.10
+- Updated conformetry-core to 0.0.10
+
 ## 0.0.9 (2026-10-08)
 
 ### 🧱 Updated Dependencies

@@ -32,8 +32,6 @@ export class DailyCyclesService {
 
   // 🔑 Public Fields
 
-  static readonly sunRadiusDegrees = 16 / MathService.arcminutesPerDegree;
-
   // 🔏 Private Methods
 
   // 🌎 Public Methods
@@ -42,21 +40,21 @@ export class DailyCyclesService {
    * Detects daily solar cycle events at a specific time point.
    *
    * Analyzes Sun's elevation angle over three consecutive minutes to identify the
-   * four key daily events: sunrise (elevation crosses 0° upward), solar zenith
-   * (local maximum elevation), sunset (elevation crosses 0° downward), and solar
-   * nadir (local minimum elevation).
+   * four key daily events: sunrise (true elevation crosses −0.8333° upward), solar
+   * zenith (local maximum elevation), sunset (true elevation crosses −0.8333°
+   * downward), and solar nadir (local minimum elevation).
    *
    *
    * @remarks
    * - Uses ±1 minute window (previous, current, next) for event detection
-   * - **Sunrise**: Elevation crosses 0° horizon moving upward (isRise)
+   * - **Sunrise**: True elevation crosses the standard −0.8333° moving upward (isRise)
    * - **Solar Zenith**: Local maximum elevation (typically near local noon)
-   * - **Sunset**: Elevation crosses 0° horizon moving downward (isSet)
+   * - **Sunset**: True elevation crosses the standard −0.8333° moving downward (isSet)
    * - **Solar Nadir**: Local minimum elevation (typically near local midnight)
    * - Returns empty array if no event detected at this time
    * - At most one event type detected per minute (events well-separated in time)
    * - Elevation is measured from horizon: 0° = horizon, 90° = directly overhead (zenith)
-   * - Does not account for atmospheric refraction (uses geometric elevation)
+   * - Rise and set use true elevation against 34′ standard refraction plus the 16′ semidiameter
    *
    * @see {@link isRise} for sunrise detection (horizon crossing upward)
    * @see {@link isSet} for sunset detection (horizon crossing downward)
@@ -156,8 +154,8 @@ export class DailyCyclesService {
    * Analyzes the Moon's elevation at the current minute and surrounding minutes
    * to identify key daily events: moonrise (horizon crossing upward), lunar zenith
    * (culmination/highest point), moonset (horizon crossing downward), and lunar nadir
-   * (lowest point below horizon). Uses elevation thresholds accounting for the Moon's
-   * apparent diameter.
+   * (lowest point below horizon). Rise and set compare the topocentric true elevation
+   * with −(34′ refraction + the Moon's own semidiameter); parallax is already in it.
    *
    * @see {@link getAzimuthElevationFromEphemeris} for ephemeris data retrieval
    * @see {@link isRise} for rise detection algorithm
@@ -182,8 +180,14 @@ export class DailyCyclesService {
       ephemeris: moonAzimuthElevationEphemeris,
       minute,
     });
+    const clearanceWindow =
+      this.dailyCyclesBuilderService.getHorizonClearanceWindow({
+        body: "moon",
+        ephemeris: moonAzimuthElevationEphemeris,
+        minute,
+      });
 
-    if (this.dailyCyclesBuilderService.isRise({ ...elevationWindow })) {
+    if (this.dailyCyclesBuilderService.isRise(clearanceWindow)) {
       dailyLunarCycleEvents.push(
         this.dailyCyclesBuilderService.buildMoonriseEvent(minute),
       );
@@ -193,7 +197,7 @@ export class DailyCyclesService {
         this.dailyCyclesBuilderService.buildLunarZenithEvent(minute),
       );
     }
-    if (this.dailyCyclesBuilderService.isSet({ ...elevationWindow })) {
+    if (this.dailyCyclesBuilderService.isSet(clearanceWindow)) {
       dailyLunarCycleEvents.push(
         this.dailyCyclesBuilderService.buildMoonsetEvent(minute),
       );
@@ -210,9 +214,9 @@ export class DailyCyclesService {
   /**
    * Detects daily solar cycle events at a specific minute.
    *
-   * Checks for sunrise (elevation crosses 0° upward), solar zenith (local maximum),
-   * sunset (elevation crosses 0° downward), and solar nadir (local minimum) by comparing
-   * elevation values at the previous, current, and next minute.
+   * Checks for sunrise (true elevation crosses −0.8333° upward), solar zenith (local
+   * maximum), sunset (true elevation crosses −0.8333° downward), and solar nadir (local
+   * minimum) by comparing values at the previous, current, and next minute.
    *
    */
   getDailySolarCycleEvents(args: {
@@ -225,8 +229,14 @@ export class DailyCyclesService {
       ephemeris: sunAzimuthElevationEphemeris,
       minute,
     });
+    const clearanceWindow =
+      this.dailyCyclesBuilderService.getHorizonClearanceWindow({
+        body: "sun",
+        ephemeris: sunAzimuthElevationEphemeris,
+        minute,
+      });
 
-    if (this.dailyCyclesBuilderService.isRise({ ...elevationWindow })) {
+    if (this.dailyCyclesBuilderService.isRise(clearanceWindow)) {
       dailySolarCycleEvents.push(
         this.dailyCyclesBuilderService.buildSunriseEvent(minute),
       );
@@ -236,7 +246,7 @@ export class DailyCyclesService {
         this.dailyCyclesBuilderService.buildSolarZenithEvent(minute),
       );
     }
-    if (this.dailyCyclesBuilderService.isSet({ ...elevationWindow })) {
+    if (this.dailyCyclesBuilderService.isSet(clearanceWindow)) {
       dailySolarCycleEvents.push(
         this.dailyCyclesBuilderService.buildSunsetEvent(minute),
       );

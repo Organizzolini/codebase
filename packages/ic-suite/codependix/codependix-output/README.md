@@ -77,11 +77,13 @@ flowchart LR
   WorkspaceGraphsModule
   BoundaryCheckModule --> BoundariesModule
   BoundaryCheckModule --> ModuleGraphModule
+  BoundaryCheckModule --> NeighborhoodModule
   BoundaryCheckModule --> NestjsProjectModule
   BoundaryCheckModule --> PythonModule
   BoundaryCheckModule --> TypescriptModule
   BoundaryCheckModule --> WorkspaceGraphModule
   CombinedOutputModule --> AnchorsModule
+  CombinedOutputModule --> BoundaryCheckModule
   ConfigurationModule --> InputModule
   ConfigurationModule --> OverrideResolutionModule
   DeliveryModule --> AnchorsModule
@@ -206,7 +208,6 @@ graph LR
   file_src_modules_combined_output_combined_output_service_ts --> file_src_modules_combined_output_combined_output_types_ts
   file_src_modules_combined_output_combined_output_service_ts --> file_src_modules_delivery_delivery_constants_ts
   file_src_modules_combined_output_combined_output_service_ts --> file_src_modules_graph_run_graph_run_constants_ts
-  file_src_modules_combined_output_combined_output_service_ts --> file_src_modules_graph_run_graph_run_types_ts
   file_src_modules_combined_output_combined_output_service_unit_test_ts --> file_src_modules_anchors_anchors_service_ts
   file_src_modules_combined_output_combined_output_service_unit_test_ts --> file_src_modules_combined_output_combined_output_service_ts
   file_src_modules_combined_output_combined_output_service_unit_test_ts --> file_src_modules_graph_run_graph_run_types_ts

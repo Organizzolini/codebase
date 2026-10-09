@@ -995,6 +995,7 @@ graph LR
   file_src_main_end_to_end_test_ts["src/main.end-to-end.test.ts"]
   file_src_main_module_ts["src/main.module.ts"]
   file_src_main_ts["src/main.ts"]
+  file_src_main_unit_test_ts["src/main.unit.test.ts"]
   file_src_main_utilities_ts["src/main.utilities.ts"]
   file_src_main_utilities_unit_test_ts["src/main.utilities.unit.test.ts"]
   file_src_modules_changes_changes_command_ts["src/modules/changes/changes.command.ts"]
@@ -1019,6 +1020,7 @@ graph LR
   file_testing_mocks_ts["testing/mocks.ts"]
   file_testing_setup_ts["testing/setup.ts"]
   file_testing_target_tree_ts["testing/target-tree.ts"]
+  file_testing_vite_library_config_integration_test_ts["testing/vite-library-config.integration.test.ts"]
   file_vite_config_ts["vite.config.ts"]
   file_vitest_config_ts["vitest.config.ts"]
   file_src_main_end_to_end_test_ts --> file_src_constants_ts
@@ -1045,6 +1047,7 @@ graph LR
   file_src_modules_measure_measure_command_unit_test_ts --> file_testing_mocks_ts
   file_src_modules_measure_measure_module_ts --> file_src_modules_measure_measure_command_ts
   file_src_repl_ts --> file_src_main_module_ts
+  file_testing_vite_library_config_integration_test_ts --> file_vite_config_ts
 ```
 <!-- codependix:end name="codependix-file-imports" -->
 

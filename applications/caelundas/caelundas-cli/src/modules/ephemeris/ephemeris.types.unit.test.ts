@@ -81,8 +81,18 @@ describe("ephemeris.types", () => {
   describe("azimuthElevationEphemeris type", () => {
     it("accepts valid azimuth and elevation values", () => {
       const ephemeris: AzimuthElevationEphemeris = {
-        "2024-03-21T00:00:00.000Z": { azimuth: 90.5, elevation: 45.2 },
-        "2024-03-21T00:01:00.000Z": { azimuth: 91, elevation: 46 },
+        "2024-03-21T00:00:00.000Z": {
+          azimuth: 90.5,
+          elevation: 45.2,
+          semidiameter: 0.27,
+          trueElevation: 45.2,
+        },
+        "2024-03-21T00:01:00.000Z": {
+          azimuth: 91,
+          elevation: 46,
+          semidiameter: 0.27,
+          trueElevation: 46,
+        },
       };
 
       expect(ephemeris["2024-03-21T00:00:00.000Z"]?.azimuth).toBe(90.5);
@@ -91,7 +101,12 @@ describe("ephemeris.types", () => {
 
     it("accepts negative elevation values (below horizon)", () => {
       const ephemeris: AzimuthElevationEphemeris = {
-        "2024-03-21T00:00:00.000Z": { azimuth: 180, elevation: -15.5 },
+        "2024-03-21T00:00:00.000Z": {
+          azimuth: 180,
+          elevation: -15.5,
+          semidiameter: 0.27,
+          trueElevation: -15.5,
+        },
       };
 
       expect(ephemeris["2024-03-21T00:00:00.000Z"]?.elevation).toBeLessThan(0);
@@ -128,8 +143,8 @@ describe("ephemeris.types", () => {
   describe("distanceEphemeris type", () => {
     it("accepts valid distance values", () => {
       const ephemeris: DistanceEphemeris = {
-        "2024-03-21T00:00:00.000Z": { distance: 1.0001 },
-        "2024-03-21T00:01:00.000Z": { distance: 1.0002 },
+        "2024-03-21T00:00:00.000Z": { distance: 1.0001, distanceSpeed: 0 },
+        "2024-03-21T00:01:00.000Z": { distance: 1.0002, distanceSpeed: 0 },
       };
 
       expect(ephemeris["2024-03-21T00:00:00.000Z"]?.distance).toBe(1.0001);
@@ -137,10 +152,10 @@ describe("ephemeris.types", () => {
 
     it("accepts distance in astronomical units", () => {
       const sunDistance: DistanceEphemeris = {
-        "2024-03-21T00:00:00.000Z": { distance: 1 }, // ~1 AU
+        "2024-03-21T00:00:00.000Z": { distance: 1, distanceSpeed: 0 }, // ~1 AU
       };
       const marsDistance: DistanceEphemeris = {
-        "2024-03-21T00:00:00.000Z": { distance: 1.5 }, // ~1.5 AU
+        "2024-03-21T00:00:00.000Z": { distance: 1.5, distanceSpeed: 0 }, // ~1.5 AU
       };
 
       expect(sunDistance["2024-03-21T00:00:00.000Z"]?.distance).toBeCloseTo(

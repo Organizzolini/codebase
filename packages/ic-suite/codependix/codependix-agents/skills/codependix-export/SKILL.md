@@ -183,15 +183,23 @@ could resurrect an excluded project would make `exclude` advisory.
 matches a project's own Nx tags exactly.
 
 **They narrow what gets drawn and judged.** Naming a selection also narrows the
-whole-workspace graph's node set and every level `--check boundaries` judges to
-the selected projects. Naming neither selects everything, which is why the
-default behavior of both is unchanged.
+whole-workspace graph's node set to the selected projects, and makes them the
+only projects `--check boundaries` judges. Naming neither selects everything,
+which is why the default behavior of both is unchanged.
 
-> ⚠️ **A narrowed gate sees fewer edges.** `--check boundaries` is the branch
-> gate, so a CI job that passes `--projects` or `--tags` is asking for a
-> smaller check than a whole-workspace run, and a green result means less. Use
-> them to narrow a _local_ run; leave them off in CI unless narrowing is the
-> point.
+**The gate builds over their dependencies.** `--check boundaries` builds every
+level's graph over the selected projects plus everything they transitively
+depend on, and charges each finding to projects: a cycle to every project on
+it, a forbidden edge to its source's project, a container boot failure to the
+container's project. A finding fails the run only when it is charged to a
+selected project; one charged only to a dependency is logged as a non-failing
+note "in dependency". `--no-dependencies` builds over the selected projects
+alone — faster, but an edge leaving the selection is no longer drawn.
+
+**A selection that matches nothing is refused**, in every mode: a misspelled
+name, a tag no project carries, or the workspace root (which is never a
+selectable project) exits non-zero as a rejected command line naming the
+patterns, rather than passing a gate that judged nothing.
 
 `include`/`exclude` never do this — they decide which projects have exports
 written for them, and have never reached the workspace graph or the gate. That

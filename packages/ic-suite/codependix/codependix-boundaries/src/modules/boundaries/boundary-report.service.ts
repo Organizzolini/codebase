@@ -27,6 +27,35 @@ export class BoundaryReportService {
   // 🌎 Public Methods
 
   /**
+   * Who a finding is charged to, as the lines and the Markdown report word it.
+   *
+   * The one place that wording lives: a violation and a failure are both
+   * reported as a note when they live only in a dependency, and a reader who
+   * sees the phrase in one report should find it unchanged in the other.
+   * Says "in dependency" because the finding is real, and inherited, but it is
+   * not theirs to fix and it did not fail their run.
+   */
+  public describeCharge(args: {
+    isNote: boolean;
+    projects: readonly string[];
+  }): string {
+    const projects = args.projects.join(", ");
+
+    return args.isNote ? `in dependency ${projects}, not failing` : projects;
+  }
+
+  /**
+   * One line per note — a violation charged only to a dependency of the
+   * projects a run judges — marked as not failing.
+   */
+  public renderNotes(violations: readonly BoundaryViolation[]): string[] {
+    return violations.map(
+      (violation) =>
+        `${violation.level} ${this.describeCharge({ isNote: true, projects: violation.projects })}: ${violation.message}`,
+    );
+  }
+
+  /**
    * One line summarizing what a run found.
    *
    * Counts rules as well as violations, because the two answer different
@@ -46,17 +75,19 @@ export class BoundaryReportService {
   }
 
   /**
-   * One line per violation, each naming its level and scope before the rule's
-   * own sentence.
+   * One line per violation, each naming its level and the projects it is
+   * charged to before the rule's own sentence.
    *
-   * The level and scope lead because the message cannot carry them: the same
-   * rule evaluated at file level fails once per project, and a bare pair of
-   * file paths does not say whose files they are.
+   * The level and projects lead because the message cannot carry them: the
+   * same rule evaluated at file level fails once per project, and a bare pair
+   * of file paths does not say whose files they are. Charged projects rather
+   * than the graph's scope, so an Nx-level finding names the projects that
+   * own it rather than the workspace it was found in.
    */
   public renderViolations(violations: readonly BoundaryViolation[]): string[] {
     return violations.map(
       (violation) =>
-        `${violation.level} ${violation.scope}: ${violation.message}`,
+        `${violation.level} ${this.describeCharge({ isNote: false, projects: violation.projects })}: ${violation.message}`,
     );
   }
 }

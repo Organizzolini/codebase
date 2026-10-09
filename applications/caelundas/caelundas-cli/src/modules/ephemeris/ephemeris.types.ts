@@ -5,15 +5,13 @@ import type { Body } from "../caelundas/caelundas.types";
 /**
  * Time-indexed ephemeris of horizontal coordinates (observer frame).
  *
- * Keys are ISO timestamps, values contain azimuth and elevation in degrees.
+ * Keys are ISO timestamps, values are {@link HorizonPosition}s. Positions are
+ * topocentric: parallax is applied for the observer's location.
  * Used for calculating rise, set, and culmination events.
  *
  * @see {@link getAzimuthElevationFromEphemeris} for data retrieval
  */
-export type AzimuthElevationEphemeris = Record<
-  string,
-  { azimuth: number; elevation: number }
->;
+export type AzimuthElevationEphemeris = Record<string, HorizonPosition>;
 
 /**
  * Bodies for which azimuth/elevation ephemerides are generated.
@@ -67,12 +65,19 @@ export type DiameterEphemeris = Record<string, { diameter: number }>;
 export type DiameterEphemerisBody = Extract<Body, "moon" | "sun">;
 
 /**
- * Time-indexed ephemeris of observer-body distance.
+ * Time-indexed ephemeris of observer-body distance and its rate of change.
  *
- * Keys are ISO timestamps, values are distances in astronomical units (AU).
- * Used for apsis detection (perihelion/aphelion, perigee/apogee).
+ * Keys are ISO timestamps. `distance` is in astronomical units (AU) and
+ * `distanceSpeed` is the radial speed in AU per day, positive while the body
+ * recedes. Apsis detection (perihelion/aphelion, perigee/apogee) reads the
+ * sign of `distanceSpeed`, not the distance itself: the distance series has
+ * small steps where the Swiss Ephemeris files change polynomial segment, while
+ * the speed stays smooth through them and crosses zero once per apsis.
  */
-export type DistanceEphemeris = Record<string, { distance: number }>;
+export type DistanceEphemeris = Record<
+  string,
+  { distance: number; distanceSpeed: number }
+>;
 
 /**
  * Bodies for which distance ephemerides are generated.
@@ -95,6 +100,20 @@ export interface Ephemerides {
   diameterEphemerisByBody: Record<Body, DiameterEphemeris>;
   distanceEphemerisByBody: Record<Body, DistanceEphemeris>;
   illuminationEphemerisByBody: Record<Body, IlluminationEphemeris>;
+}
+
+/**
+ * Where a body sits in one observer's sky at one minute, from its topocentric position.
+ */
+export interface HorizonPosition {
+  /** Degrees, as Swiss Ephemeris `azalt` measures it. */
+  azimuth: number;
+  /** Apparent (refracted) elevation of the center, degrees; refraction is dropped below the horizon. */
+  elevation: number;
+  /** Topocentric angular radius, degrees: half the disc the observer sees. */
+  semidiameter: number;
+  /** True (airless, unrefracted) elevation of the center, degrees. */
+  trueElevation: number;
 }
 
 /**

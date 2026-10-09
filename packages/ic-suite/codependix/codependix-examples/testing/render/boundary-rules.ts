@@ -13,7 +13,9 @@ import type { CodependixBoundaryRule } from "@codependix/configuration";
  * Written as a `BoundaryGraph` directly rather than built from a real Nx
  * workspace: the adapters that flatten the four real graphs into this shape
  * live in `@codependix/cli` and are exercised by the `graph-levels` example.
- * What this example is about is the judging, which starts here.
+ * What this example is about is the judging, which starts here. Each node
+ * names the project that owns it, as the real adapter's do, because that is
+ * who a finding is charged to.
  */
 const ATLAS_PROJECTS: BoundaryGraph = {
   edges: [
@@ -23,10 +25,18 @@ const ATLAS_PROJECTS: BoundaryGraph = {
   ],
   level: "nxProjects",
   nodes: [
-    { id: "atlas-application", tags: ["type:application"] },
-    { id: "atlas-core", tags: ["type:package"] },
-    { id: "atlas-service", tags: ["type:package"] },
-    { id: "atlas-tooling", tags: ["type:application"] },
+    {
+      id: "atlas-application",
+      project: "atlas-application",
+      tags: ["type:application"],
+    },
+    { id: "atlas-core", project: "atlas-core", tags: ["type:package"] },
+    { id: "atlas-service", project: "atlas-service", tags: ["type:package"] },
+    {
+      id: "atlas-tooling",
+      project: "atlas-tooling",
+      tags: ["type:application"],
+    },
   ],
   scope: "workspace",
 };
