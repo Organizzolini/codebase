@@ -78,10 +78,11 @@ function resolveExport(
         subpath.startsWith(prefix) &&
         subpath.endsWith(suffix)
       ) {
-        return target.replace(
-          "*",
-          subpath.slice(prefix.length, subpath.length - suffix.length),
+        const wildcard = subpath.slice(
+          prefix.length,
+          subpath.length - suffix.length,
         );
+        return target.split("*").join(wildcard);
       }
     }
   }
