@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.0.2](https://github.com/organizzolini/codebase/compare/v3.0.1...v3.0.2) (2026-10-09)
+
+### 🐛 Bug Fixes
+
+* **caelundas:** 🐛 report one solar perihelion and aphelion per year ([#1470](https://github.com/organizzolini/codebase/issues/1470)) ([fc3a634](https://github.com/organizzolini/codebase/commit/fc3a634393dec64db7158c808953c5e095e195d7)), closes [#1346](https://github.com/organizzolini/codebase/issues/1346) [#1387](https://github.com/organizzolini/codebase/issues/1387) [#1410](https://github.com/organizzolini/codebase/issues/1410) [#1346](https://github.com/organizzolini/codebase/issues/1346) [#1378](https://github.com/organizzolini/codebase/issues/1378) [#1379](https://github.com/organizzolini/codebase/issues/1379) [#1341](https://github.com/organizzolini/codebase/issues/1341) [#1410](https://github.com/organizzolini/codebase/issues/1410) [#1346](https://github.com/organizzolini/codebase/issues/1346)
+* **caelundas:** 🐛 time primary Moon phases by ecliptic longitude ([#1414](https://github.com/organizzolini/codebase/issues/1414)) ([ece0475](https://github.com/organizzolini/codebase/commit/ece0475539920233da5054107b19c4fe4a7fd0a9)), closes [#1380](https://github.com/organizzolini/codebase/issues/1380) [#1381](https://github.com/organizzolini/codebase/issues/1381) [#1408](https://github.com/organizzolini/codebase/issues/1408) [#1389](https://github.com/organizzolini/codebase/issues/1389)
+
 ## [3.0.1](https://github.com/organizzolini/codebase/compare/v3.0.0...v3.0.1) (2026-10-08)
 
 ### 🐛 Bug Fixes
