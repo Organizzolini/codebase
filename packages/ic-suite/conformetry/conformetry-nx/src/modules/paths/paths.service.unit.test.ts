@@ -254,7 +254,21 @@ describe(PathsService, () => {
       ).resolves.toBeDefined();
     });
 
-    it("falls back to the workspace root when nothing locates the output", async () => {
+    it("refuses to place a new project at the workspace root", async () => {
+      await expect(
+        service.resolveGenerationPath({
+          configurationPath,
+          generatorName: "tanstack-application",
+          inputs: { name: "my-widget" },
+          tree,
+          workspaceRoot,
+        }),
+      ).rejects.toThrow(
+        "Generator tanstack-application cannot tell where to place a new project",
+      );
+    });
+
+    it("tells the user how to place a new project it refuses", async () => {
       await expect(
         service.resolveGenerationPath({
           configurationPath,
@@ -262,7 +276,21 @@ describe(PathsService, () => {
           tree,
           workspaceRoot,
         }),
-      ).resolves.toBe(workspaceRoot);
+      ).rejects.toThrow(
+        /This generator cannot tell where to place a new project\. Pass --directory=<parent folder>.*or declare a type input/u,
+      );
+    });
+
+    it("places a new project at an explicit directory instead of refusing it", async () => {
+      await expect(
+        service.resolveGenerationPath({
+          configurationPath,
+          generatorName: "tanstack-application",
+          inputs: { directory: "applications", name: "my-widget" },
+          tree,
+          workspaceRoot,
+        }),
+      ).resolves.toBe(path.join(workspaceRoot, "applications"));
     });
   });
 
