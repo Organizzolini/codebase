@@ -16,7 +16,7 @@ members = ["applications/affirmancy"]
 [dependency-groups]
 dev = [
     "shellcheck-py>=0.10",
-    "sqlfluff>=3.0",
+    "sqlfluff>=4.4.0",
     "vulture>=2.14",
     "yamllint>=1.35",
 ]
