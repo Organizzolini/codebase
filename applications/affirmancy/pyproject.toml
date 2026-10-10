@@ -28,7 +28,7 @@ dev = [
   "pytest-cov>=6.0",
   "ruff>=0.16.10",
   "ty>=0.0.28",
-  "types-requests>=2.33.0.20260906",
+  "types-requests>=2.33.0.20261006",
   "vulture>=2.14",
 ]
 
